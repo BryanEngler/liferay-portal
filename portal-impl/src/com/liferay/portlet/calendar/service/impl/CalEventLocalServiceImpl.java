@@ -1008,6 +1008,9 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 				CalEvent.class.getName(), "title",
 				event.getSummary().getValue());
 		}
+		else {
+			title = "(none)";
+		}
 
 		// Description
 
@@ -1747,7 +1750,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 			boolean allDay, boolean repeating, TZSRecurrence recurrence)
 		throws PortalException {
 
-		if (title == null) {
+		if (Validator.isNull(title)) {
 			throw new EventTitleException();
 		}
 
