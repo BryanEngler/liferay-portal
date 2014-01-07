@@ -480,13 +480,12 @@ public class SocialRequestLocalServiceImpl
 					socialRequest.getUserId(), socialRequest.getClassPK(),
 					MembershipRequestConstants.STATUS_PENDING);
 
-			for (MembershipRequest membershipRequest :
-					pendingMembershipRequests) {
+			MembershipRequest membershipRequest =
+				pendingMembershipRequests.get(0);
 
-				membershipRequestService.updateStatus(
-					membershipRequest.getMembershipRequestId(), comments,
+			membershipRequestService.updateStatus(
+				membershipRequest.getMembershipRequestId(), comments,
 					status, null);
-			}
 		}
 
 		if (status == SocialRequestConstants.STATUS_CONFIRM) {
