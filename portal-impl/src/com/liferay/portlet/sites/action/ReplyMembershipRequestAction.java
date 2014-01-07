@@ -16,29 +16,35 @@ package com.liferay.portlet.sites.action;
 
 import com.liferay.portal.MembershipRequestCommentsException;
 import com.liferay.portal.NoSuchGroupException;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.liveusers.LiveUsers;
+import com.liferay.portal.model.Group;
 import com.liferay.portal.model.MembershipRequest;
-import com.liferay.portal.model.MembershipRequestConstants;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.MembershipRequestServiceUtil;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.struts.PortletAction;
 import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.WebKeys;
+import com.liferay.portlet.social.model.SocialRequest;
+import com.liferay.portlet.social.model.SocialRequestConstants;
+import com.liferay.portlet.social.service.SocialRequestLocalServiceUtil;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletConfig;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.servlet.http.HttpServletRequest;
 
+import com.liferay.portlet.social.service.SocialRequestServiceUtil;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+
+import java.util.List;
 
 /**
  * @author Jorge Ferrer
@@ -63,20 +69,30 @@ public class ReplyMembershipRequestAction extends PortletAction {
 			String replyComments = ParamUtil.getString(
 				actionRequest, "replyComments");
 
-			ServiceContext serviceContext = ServiceContextFactory.getInstance(
-				actionRequest);
+			MembershipRequest membershipRequest =
+				MembershipRequestServiceUtil.getMembershipRequest(
+				membershipRequestId);
 
-			MembershipRequestServiceUtil.updateStatus(
-				membershipRequestId, replyComments, statusId, serviceContext);
+			List<SocialRequest> userPendingSocialRequests =
+				SocialRequestLocalServiceUtil.getUserRequests(
+					membershipRequest.getUserId(),
+					SocialRequestConstants.STATUS_PENDING, QueryUtil.ALL_POS,
+					QueryUtil.ALL_POS);
 
-			if (statusId == MembershipRequestConstants.STATUS_APPROVED) {
-				MembershipRequest membershipRequest =
-					MembershipRequestServiceUtil.getMembershipRequest(
-						membershipRequestId);
+			for (SocialRequest socialRequest : userPendingSocialRequests) {
+				if (socialRequest.getClassNameId() == PortalUtil.getClassNameId(
+					Group.class.getName()) && socialRequest.getClassPK() ==
+						membershipRequest.getGroupId()) {
 
-				LiveUsers.joinGroup(
-					themeDisplay.getCompanyId(), membershipRequest.getGroupId(),
-					new long[] {membershipRequest.getUserId()});
+					HttpServletRequest request = themeDisplay.getRequest();
+
+					request.setAttribute("comments", replyComments);
+					themeDisplay.setRequest(request);
+
+					SocialRequestServiceUtil.updateRequest(
+						socialRequest.getRequestId(), statusId, themeDisplay);
+					break;
+				}
 			}
 
 			SessionMessages.add(actionRequest, "membershipReplySent");
