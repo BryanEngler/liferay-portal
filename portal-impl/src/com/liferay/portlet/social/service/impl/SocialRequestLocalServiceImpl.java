@@ -14,25 +14,22 @@
 
 package com.liferay.portlet.social.service.impl;
 
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.MembershipRequest;
 import com.liferay.portal.model.MembershipRequestConstants;
 import com.liferay.portal.model.User;
 import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portlet.sites.action.ReplyMembershipRequestAction;
 import com.liferay.portlet.social.RequestUserIdException;
 import com.liferay.portlet.social.model.SocialRequest;
 import com.liferay.portlet.social.model.SocialRequestConstants;
 import com.liferay.portlet.social.service.base.SocialRequestLocalServiceBaseImpl;
 
-import javax.portlet.ActionRequest;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * The social request local service responsible for handling social requests
@@ -453,20 +450,6 @@ public class SocialRequestLocalServiceImpl
 			long requestId, int status, ThemeDisplay themeDisplay)
 		throws PortalException, SystemException {
 
-		HttpServletRequest request = themeDisplay.getRequest();
-		String comments = (String)request.getAttribute("comments");
-
-		if (comments == null){
-			if (status == SocialRequestConstants.STATUS_CONFIRM) {
-				comments = LanguageUtil.get(
-				themeDisplay.getLocale(), "request-approved");
-			}
-			else {
-				comments = LanguageUtil.get(
-				themeDisplay.getLocale(), "request-denied");
-			}
-		}
-
 		SocialRequest socialRequest = socialRequestPersistence.findByPrimaryKey(
 			requestId);
 
@@ -476,17 +459,33 @@ public class SocialRequestLocalServiceImpl
 		socialRequestPersistence.update(socialRequest);
 
 		if (socialRequest.getClassNameId() ==
-			classNameLocalService.getClassNameId(Group.class)) {
+				classNameLocalService.getClassNameId(Group.class)) {
+
+			HttpServletRequest request = themeDisplay.getRequest();
+			String comments = (String)request.getAttribute("comments");
+
+			if (comments == null) {
+				if (status == SocialRequestConstants.STATUS_CONFIRM) {
+					comments = LanguageUtil.get(
+						themeDisplay.getLocale(), "request-approved");
+				}
+				else {
+					comments = LanguageUtil.get(
+						themeDisplay.getLocale(), "request-denied");
+				}
+			}
 
 			List<MembershipRequest> pendingMembershipRequests =
 				membershipRequestLocalService.getMembershipRequests(
 					socialRequest.getUserId(), socialRequest.getClassPK(),
-					MembershipRequestConstants.STATUS_PENDING); //this should only return one request
+					MembershipRequestConstants.STATUS_PENDING);
 
-			for (MembershipRequest membershipRequest : pendingMembershipRequests) {
+			for (MembershipRequest membershipRequest :
+					pendingMembershipRequests) {
+
 				membershipRequestService.updateStatus(
 					membershipRequest.getMembershipRequestId(), comments,
-						status, null);
+					status, null);
 			}
 		}
 

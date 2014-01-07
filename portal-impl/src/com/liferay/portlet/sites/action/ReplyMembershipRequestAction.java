@@ -31,20 +31,21 @@ import com.liferay.portal.util.WebKeys;
 import com.liferay.portlet.social.model.SocialRequest;
 import com.liferay.portlet.social.model.SocialRequestConstants;
 import com.liferay.portlet.social.service.SocialRequestLocalServiceUtil;
+import com.liferay.portlet.social.service.SocialRequestServiceUtil;
+
+import java.util.List;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletConfig;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+
 import javax.servlet.http.HttpServletRequest;
 
-import com.liferay.portlet.social.service.SocialRequestServiceUtil;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-import java.util.List;
 
 /**
  * @author Jorge Ferrer
@@ -71,7 +72,7 @@ public class ReplyMembershipRequestAction extends PortletAction {
 
 			MembershipRequest membershipRequest =
 				MembershipRequestServiceUtil.getMembershipRequest(
-				membershipRequestId);
+					membershipRequestId);
 
 			List<SocialRequest> userPendingSocialRequests =
 				SocialRequestLocalServiceUtil.getUserRequests(
@@ -80,9 +81,10 @@ public class ReplyMembershipRequestAction extends PortletAction {
 					QueryUtil.ALL_POS);
 
 			for (SocialRequest socialRequest : userPendingSocialRequests) {
-				if (socialRequest.getClassNameId() == PortalUtil.getClassNameId(
-					Group.class.getName()) && socialRequest.getClassPK() ==
-						membershipRequest.getGroupId()) {
+				if ((socialRequest.getClassNameId() ==
+						PortalUtil.getClassNameId(Group.class.getName())) &&
+					(socialRequest.getClassPK() ==
+							membershipRequest.getGroupId())) {
 
 					HttpServletRequest request = themeDisplay.getRequest();
 
