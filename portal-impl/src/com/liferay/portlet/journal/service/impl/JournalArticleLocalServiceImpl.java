@@ -6546,8 +6546,9 @@ public class JournalArticleLocalServiceImpl
 		User user = userPersistence.findByPrimaryKey(article.getUserId());
 
 		articleURL +=
-			"&groupId=" + article.getGroupId() + "&articleId=" +
-				article.getArticleId() + "&version=" + article.getVersion();
+			"&_15_groupId=" + article.getGroupId() + "&_15_folderId=" +
+				article.getFolderId() + "&_15_articleId=" +
+					article.getArticleId();
 
 		String fromName = JournalUtil.getEmailFromName(
 			preferences, article.getCompanyId());
