@@ -334,6 +334,7 @@ public class JournalArticleLocalServiceImpl
 
 		if (autoArticleId) {
 			articleId = String.valueOf(counterLocalService.increment());
+			serviceContext.setAttribute("articleId", articleId); //only need to set this when articleId wasnt already set
 		}
 
 		long id = counterLocalService.increment();
@@ -460,6 +461,12 @@ public class JournalArticleLocalServiceImpl
 			article, articleURL, preferences, "requested", serviceContext);
 
 		// Workflow
+
+		String serviceContextArticleURL =
+			articleURL + "&_15_groupId=" + groupId + "&_15_folderId=" +
+				folderId + "&_15_articleId=" + articleId;
+
+		serviceContext.setAttribute("articleURL", serviceContextArticleURL);
 
 		if (classNameId == JournalArticleConstants.CLASSNAME_ID_DEFAULT) {
 			WorkflowHandlerRegistryUtil.startWorkflowInstance(
