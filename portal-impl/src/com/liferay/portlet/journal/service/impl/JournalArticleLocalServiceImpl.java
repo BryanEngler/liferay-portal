@@ -59,6 +59,7 @@ import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
@@ -334,8 +335,9 @@ public class JournalArticleLocalServiceImpl
 
 		if (autoArticleId) {
 			articleId = String.valueOf(counterLocalService.increment());
-			serviceContext.setAttribute("articleId", articleId); //only need to set this when articleId wasnt already set
 		}
+
+		serviceContext.setAttribute("articleId", articleId);
 
 		long id = counterLocalService.increment();
 
@@ -457,16 +459,17 @@ public class JournalArticleLocalServiceImpl
 		PortletPreferences preferences =
 			ServiceContextUtil.getPortletPreferences(serviceContext);
 
+		articleURL =
+			updateArticleURL(
+				articleURL, article.getGroupId(), article.getArticleId(),
+					article.getVersion());
+
 		sendEmail(
 			article, articleURL, preferences, "requested", serviceContext);
 
 		// Workflow
 
-		String serviceContextArticleURL =
-			articleURL + "&_15_groupId=" + groupId + "&_15_folderId=" +
-				folderId + "&_15_articleId=" + articleId;
-
-		serviceContext.setAttribute("articleURL", serviceContextArticleURL);
+		serviceContext.setAttribute("articleURL", articleURL);
 
 		if (classNameId == JournalArticleConstants.CLASSNAME_ID_DEFAULT) {
 			WorkflowHandlerRegistryUtil.startWorkflowInstance(
@@ -938,6 +941,11 @@ public class JournalArticleLocalServiceImpl
 		if ((serviceContext != null) && Validator.isNotNull(articleURL)) {
 			PortletPreferences preferences =
 				ServiceContextUtil.getPortletPreferences(serviceContext);
+
+			articleURL =
+				updateArticleURL(
+					articleURL, article.getGroupId(), article.getArticleId(),
+						article.getVersion());
 
 			if ((preferences != null) && !article.isApproved() &&
 				isLatestVersion(
@@ -4910,6 +4918,13 @@ public class JournalArticleLocalServiceImpl
 		if (serviceContext.getWorkflowAction() ==
 				WorkflowConstants.ACTION_PUBLISH) {
 
+			articleURL =
+				updateArticleURL(
+					articleURL, article.getGroupId(), article.getArticleId(),
+						article.getVersion());
+
+			serviceContext.setAttribute("articleURL", articleURL);
+
 			sendEmail(
 				article, articleURL, preferences, "requested", serviceContext);
 
@@ -5436,6 +5451,11 @@ public class JournalArticleLocalServiceImpl
 					PortletPreferences preferences =
 						ServiceContextUtil.getPortletPreferences(
 							serviceContext);
+
+					articleURL =
+						updateArticleURL(
+							articleURL, article.getGroupId(),
+								article.getArticleId(), article.getVersion());
 
 					sendEmail(
 						article, articleURL, preferences, msg, serviceContext);
@@ -6552,10 +6572,6 @@ public class JournalArticleLocalServiceImpl
 
 		User user = userPersistence.findByPrimaryKey(article.getUserId());
 
-		articleURL +=
-			"&groupId=" + article.getGroupId() + "&articleId=" +
-				article.getArticleId() + "&version=" + article.getVersion();
-
 		String fromName = JournalUtil.getEmailFromName(
 			preferences, article.getCompanyId());
 		String fromAddress = JournalUtil.getEmailFromAddress(
@@ -6621,6 +6637,22 @@ public class JournalArticleLocalServiceImpl
 		subscriptionSender.addRuntimeSubscribers(toAddress, toName);
 
 		subscriptionSender.flushNotificationsAsync();
+	}
+
+	protected String updateArticleURL(
+		String articleURL, long groupId, String articleId, double version) {
+
+		StringBundler sb = new StringBundler(7);
+
+		sb.append(articleURL);
+		sb.append("&_15_groupId=");
+		sb.append(groupId);
+		sb.append("&_15_articleId=");
+		sb.append(articleId);
+		sb.append("&_15_version=");
+		sb.append(version);
+
+		return sb.toString();
 	}
 
 	protected void updateDDMStructureXSD(
