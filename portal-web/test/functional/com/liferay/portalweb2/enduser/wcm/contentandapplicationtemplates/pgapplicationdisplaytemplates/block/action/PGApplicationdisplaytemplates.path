@@ -24,11 +24,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>ADT_IFRAME_TOP</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
 	<td>SUCCESS_MESSAGE</td>
 	<td>//div[contains(@class,'alert') and contains(@class,'alert-success')]</td>
 	<td></td>
@@ -81,7 +76,7 @@
 <!--ADD_MENULIST-->
 <tr>
 	<td>ADD_MENULIST_ADT_TEMPLATE</td>
-	<td>//ul/li/a/span[contains(.,'${key_adtTitle} Template')]</td>
+	<td>//ul/li/a/span[contains(.,'${key_adtType} Template')]</td>
 	<td></td>
 </tr>
 <tr>

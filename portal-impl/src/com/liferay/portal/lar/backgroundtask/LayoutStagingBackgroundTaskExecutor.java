@@ -70,11 +70,11 @@ public class LayoutStagingBackgroundTaskExecutor
 		try {
 			Callable<MissingReferences> layoutStagingCallable =
 				new LayoutStagingCallable(
-					backgroundTask, sourceGroupId, targetGroupId,
-					taskContextMap, userId);
+					backgroundTask.getBackgroundTaskId(), sourceGroupId,
+					targetGroupId, taskContextMap, userId);
 
 			missingReferences = TransactionalCallableUtil.call(
-					_transactionAttribute, layoutStagingCallable);
+				_transactionAttribute, layoutStagingCallable);
 		}
 		catch (Throwable t) {
 			Group sourceGroup = GroupLocalServiceUtil.getGroup(sourceGroupId);
@@ -98,7 +98,8 @@ public class LayoutStagingBackgroundTaskExecutor
 			StagingUtil.unlockGroup(targetGroupId);
 		}
 
-		return processMissingReferences(backgroundTask, missingReferences);
+		return processMissingReferences(
+			backgroundTask.getBackgroundTaskId(), missingReferences);
 	}
 
 	protected void initLayoutSetBranches(
@@ -140,11 +141,10 @@ public class LayoutStagingBackgroundTaskExecutor
 	private class LayoutStagingCallable implements Callable<MissingReferences> {
 
 		private LayoutStagingCallable(
-			BackgroundTask backgroundTask, long sourceGroupId,
-			long targetGroupId, Map<String, Serializable> taskContextMap,
-			long userId) {
+			long backgroundTaskId, long sourceGroupId, long targetGroupId,
+			Map<String, Serializable> taskContextMap, long userId) {
 
-			_backgroundTask = backgroundTask;
+			_backgroundTaskId = backgroundTaskId;
 			_sourceGroupId = sourceGroupId;
 			_targetGroupId = targetGroupId;
 			_taskContextMap = taskContextMap;
@@ -170,16 +170,14 @@ public class LayoutStagingBackgroundTaskExecutor
 					_sourceGroupId, privateLayout, layoutIds, parameterMap,
 					startDate, endDate);
 
-				_backgroundTask = markBackgroundTask(
-					_backgroundTask, "exported");
+				markBackgroundTask(_backgroundTaskId, "exported");
 
 				missingReferences =
 					LayoutLocalServiceUtil.validateImportLayoutsFile(
 						_userId, _targetGroupId, privateLayout, parameterMap,
 						file);
 
-				_backgroundTask = markBackgroundTask(
-					_backgroundTask, "validated");
+				markBackgroundTask(_backgroundTaskId, "validated");
 
 				LayoutLocalServiceUtil.importLayouts(
 					_userId, _targetGroupId, privateLayout, parameterMap, file);
@@ -211,7 +209,7 @@ public class LayoutStagingBackgroundTaskExecutor
 			return missingReferences;
 		}
 
-		private BackgroundTask _backgroundTask;
+		private long _backgroundTaskId;
 		private long _sourceGroupId;
 		private long _targetGroupId;
 		private Map<String, Serializable> _taskContextMap;

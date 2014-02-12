@@ -57,7 +57,7 @@ ManifestSummary manifestSummary = ExportImportHelperUtil.getManifestSummary(them
 						<liferay-ui:message key="name" />
 					</dt>
 					<dd>
-						<%= fileEntry.getTitle() %>
+						<%= HtmlUtil.escape(fileEntry.getTitle()) %>
 					</dd>
 					<dt>
 						<liferay-ui:message key="export" />
@@ -69,14 +69,14 @@ ManifestSummary manifestSummary = ExportImportHelperUtil.getManifestSummary(them
 						%>
 
 						<span onmouseover="Liferay.Portal.ToolTip.show(this, '<%= dateFormatDateTime.format(exportDate) %>')">
-							<liferay-ui:message arguments="<%= LanguageUtil.getTimeDescription(pageContext, System.currentTimeMillis() - exportDate.getTime(), true) %>" key="x-ago" />
+							<liferay-ui:message arguments="<%= LanguageUtil.getTimeDescription(pageContext, System.currentTimeMillis() - exportDate.getTime(), true) %>" key="x-ago" translateArguments="<%= false %>" />
 						</span>
 					</dd>
 					<dt>
 						<liferay-ui:message key="author" />
 					</dt>
 					<dd>
-						<%= fileEntry.getUserName() %>
+						<%= HtmlUtil.escape(fileEntry.getUserName()) %>
 					</dd>
 					<dt>
 						<liferay-ui:message key="size" />

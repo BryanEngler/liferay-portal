@@ -69,8 +69,6 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 				<%@ include file="/html/portlet/asset_publisher/asset_search_results.jspf" %>
 			</liferay-ui:search-container-results>
 
-			<div class="separator"><!-- --></div>
-
 			<liferay-ui:search-container-row
 				className="com.liferay.portal.kernel.search.Document"
 				escapedModel="<%= true %>"
@@ -107,17 +105,17 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 				/>
 
 				<liferay-ui:search-container-column-text
-					name="userName"
-					value="<%= PortalUtil.getUserName(assetEntry) %>"
+					name="user-name"
+					value="<%= HtmlUtil.escape(PortalUtil.getUserName(assetEntry)) %>"
 				/>
 
 				<liferay-ui:search-container-column-date
-					name="modifiedDate"
+					name="modified-date"
 					value="<%= assetEntry.getModifiedDate() %>"
 				/>
 
 				<liferay-ui:search-container-column-text
-					name="descriptiveName"
+					name="site"
 					value="<%= HtmlUtil.escape(group.getDescriptiveName(locale)) %>"
 				/>
 
@@ -130,8 +128,8 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 						data.put("assetentryid", assetEntry.getEntryId());
 						data.put("assetclassname", assetEntry.getClassName());
 						data.put("assettype", assetRendererFactory.getTypeName(locale, true));
-						data.put("assettitle", HtmlUtil.escape(assetEntry.getTitle(locale)));
-						data.put("groupdescriptivename", HtmlUtil.escape(group.getDescriptiveName(locale)));
+						data.put("assettitle", assetEntry.getTitle(locale));
+						data.put("groupdescriptivename", group.getDescriptiveName(locale));
 						%>
 
 						<aui:button cssClass="selector-button" data="<%= data %>" value="choose" />

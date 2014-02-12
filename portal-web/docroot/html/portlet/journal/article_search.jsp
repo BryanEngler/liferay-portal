@@ -26,6 +26,8 @@ portletURL.setParameter("folderId", String.valueOf(folderId));
 
 ArticleSearch searchContainer = new ArticleSearch(liferayPortletRequest, portletURL);
 
+searchContainer.setEmptyResultsMessage("no-web-content-was-found-that-matched-the-specified-filters");
+
 ArticleDisplayTerms displayTerms = (ArticleDisplayTerms)searchContainer.getDisplayTerms();
 %>
 
@@ -108,12 +110,12 @@ ArticleDisplayTerms displayTerms = (ArticleDisplayTerms)searchContainer.getDispl
 			</c:if>
 
 			<c:if test="<%= portletName.equals(PortletKeys.JOURNAL) %>">
-				<aui:select name="<%= displayTerms.STATUS %>">
+				<aui:select name="<%= displayTerms.STATUS %>" value="<%= displayTerms.getStatus() %>">
 					<aui:option value=""></aui:option>
-					<aui:option label="draft" selected='<%= displayTerms.getStatus().equals("draft") %>' />
-					<aui:option label="pending" selected='<%= displayTerms.getStatus().equals("pending") %>' />
-					<aui:option label="approved" selected='<%= displayTerms.getStatus().equals("approved") %>' />
-					<aui:option label="expired" selected='<%= displayTerms.getStatus().equals("expired") %>' />
+					<aui:option label="draft" />
+					<aui:option label="pending" />
+					<aui:option label="approved" />
+					<aui:option label="expired" />
 				</aui:select>
 			</c:if>
 		</aui:fieldset>

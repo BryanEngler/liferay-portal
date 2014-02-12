@@ -17,6 +17,7 @@ package com.liferay.portal.model.impl;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.UserIdMapper;
 
 import java.io.Externalizable;
@@ -32,12 +33,24 @@ import java.io.ObjectOutput;
  * @generated
  */
 public class UserIdMapperCacheModel implements CacheModel<UserIdMapper>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(11);
+		StringBundler sb = new StringBundler(13);
 
-		sb.append("{userIdMapperId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", userIdMapperId=");
 		sb.append(userIdMapperId);
 		sb.append(", userId=");
 		sb.append(userId);
@@ -56,6 +69,7 @@ public class UserIdMapperCacheModel implements CacheModel<UserIdMapper>,
 	public UserIdMapper toEntityModel() {
 		UserIdMapperImpl userIdMapperImpl = new UserIdMapperImpl();
 
+		userIdMapperImpl.setMvccVersion(mvccVersion);
 		userIdMapperImpl.setUserIdMapperId(userIdMapperId);
 		userIdMapperImpl.setUserId(userId);
 
@@ -87,6 +101,7 @@ public class UserIdMapperCacheModel implements CacheModel<UserIdMapper>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		userIdMapperId = objectInput.readLong();
 		userId = objectInput.readLong();
 		type = objectInput.readUTF();
@@ -97,6 +112,7 @@ public class UserIdMapperCacheModel implements CacheModel<UserIdMapper>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(userIdMapperId);
 		objectOutput.writeLong(userId);
 
@@ -122,6 +138,7 @@ public class UserIdMapperCacheModel implements CacheModel<UserIdMapper>,
 		}
 	}
 
+	public long mvccVersion;
 	public long userIdMapperId;
 	public long userId;
 	public String type;

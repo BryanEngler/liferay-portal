@@ -28,6 +28,8 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Tuple;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.model.Group;
+import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.theme.PortletDisplay;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
@@ -175,13 +177,19 @@ public class AssetPublisherDisplayContext {
 				"ddmStructureFieldValue", getDDMStructureFieldValue());
 		}
 
-		AssetPublisherUtil.processAssetEntryQuery(
-			themeDisplay.getUser(), _portletPreferences, assetEntryQuery);
-
 		assetEntryQuery.setAllCategoryIds(getAllAssetCategoryIds());
-		assetEntryQuery.setAllTagIds(
-			AssetTagLocalServiceUtil.getTagIds(
-				themeDisplay.getScopeGroupId(), getAllAssetTagNames()));
+
+		if (hasLayoutGroup(groupIds)) {
+			assetEntryQuery.setAllTagIds(
+				AssetTagLocalServiceUtil.getTagIds(
+					groupIds, getAllAssetTagNames()));
+		}
+		else {
+			assetEntryQuery.setAllTagIds(
+				AssetTagLocalServiceUtil.getTagIds(
+					getGroupIds(), getAllAssetTagNames()));
+		}
+
 		assetEntryQuery.setClassTypeIds(classTypeIds);
 		assetEntryQuery.setEnablePermissions(isEnablePermissions());
 		assetEntryQuery.setExcludeZeroViewCount(isExcludeZeroViewCount());
@@ -211,6 +219,9 @@ public class AssetPublisherDisplayContext {
 		assetEntryQuery.setOrderByCol2(getOrderByColumn2());
 		assetEntryQuery.setOrderByType1(getOrderByType1());
 		assetEntryQuery.setOrderByType2(getOrderByType2());
+
+		AssetPublisherUtil.processAssetEntryQuery(
+			themeDisplay.getUser(), _portletPreferences, assetEntryQuery);
 
 		return assetEntryQuery;
 	}
@@ -406,7 +417,7 @@ public class AssetPublisherDisplayContext {
 	public String getOrderByType1() {
 		if (_orderByType1 == null) {
 			_orderByType1 = GetterUtil.getString(
-				_portletPreferences.getValue("orderByType1", "ASC"));
+				_portletPreferences.getValue("orderByType1", "DESC"));
 		}
 
 		return _orderByType1;
@@ -578,18 +589,13 @@ public class AssetPublisherDisplayContext {
 
 	public Boolean isEnablePermissions() {
 		if (_enablePermissions == null) {
-			if (!PropsValues.ASSET_PUBLISHER_SEARCH_WITH_INDEX) {
-				_enablePermissions = false;
-
-				return _enablePermissions;
-			}
-
 			String portletName = getPortletName();
 
-			if (portletName.equals(PortletKeys.HIGHEST_RATED_ASSETS) ||
-				portletName.equals(PortletKeys.MOST_VIEWED_ASSETS)) {
+			if (!portletName.equals(PortletKeys.HIGHEST_RATED_ASSETS) &&
+				!portletName.equals(PortletKeys.MOST_VIEWED_ASSETS) &&
+				PropsValues.ASSET_PUBLISHER_SEARCH_WITH_INDEX) {
 
-				_enablePermissions = false;
+				_enablePermissions = true;
 
 				return _enablePermissions;
 			}
@@ -761,6 +767,15 @@ public class AssetPublisherDisplayContext {
 		return _showContextLink;
 	}
 
+	public boolean isShowExtraInfo() {
+		if (_showExtraInfo == null) {
+			_showExtraInfo = GetterUtil.getBoolean(
+				_portletPreferences.getValue("showExtraInfo", null), true);
+		}
+
+		return _showExtraInfo;
+	}
+
 	public boolean isShowMetadataDescriptions() {
 		if (_showMetadataDescriptions == null) {
 			_showMetadataDescriptions = GetterUtil.getBoolean(
@@ -807,6 +822,18 @@ public class AssetPublisherDisplayContext {
 		}
 
 		return portletConfig.getPortletName();
+	}
+
+	protected boolean hasLayoutGroup(long[] groupIds) throws SystemException {
+		for (long groupId : groupIds) {
+			Group group = GroupLocalServiceUtil.fetchGroup(groupId);
+
+			if ((group != null) && group.isLayout()) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	protected void setDDMStructure() throws Exception {
@@ -903,6 +930,7 @@ public class AssetPublisherDisplayContext {
 	private Boolean _showAssetTitle;
 	private Boolean _showAvailableLocales;
 	private Boolean _showContextLink;
+	private Boolean _showExtraInfo;
 	private Boolean _showMetadataDescriptions;
 	private Boolean _showOnlyLayoutAssets;
 	private String _socialBookmarksDisplayPosition;

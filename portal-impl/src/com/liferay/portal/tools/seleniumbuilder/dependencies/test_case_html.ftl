@@ -19,7 +19,7 @@
 		<div class="options">
 			<form>
 				<input id="actionCommandLogButton" name="log" onchange="radioCheck()" type="radio">
-					<label for="actionCommandLogButton">Action Command Log</label>
+					<label for="actionCommandLogButton">Command Log</label>
 				</input>
 
 				<input checked="checked" id="xmlLogButton" name="log" onchange="radioCheck()" type="radio">
@@ -42,6 +42,10 @@
 
 		<div>
 			<form>
+				<input id="errorLogSizeButton" name="log" onchange="errorLogSizeCheck()" type="checkbox">
+					<label for="errorLogSizeButton" id="errorLogSize">&nbsp;Increase Error Log Size</label>
+				</input>
+
 				<input id="pauseButton" name="log" onchange="pauseButtonCheck()" type="checkbox">
 					<label for="pauseButton" id="pause">&nbsp;&nbsp;Pause&nbsp;&nbsp;&nbsp;</label>
 				</input>

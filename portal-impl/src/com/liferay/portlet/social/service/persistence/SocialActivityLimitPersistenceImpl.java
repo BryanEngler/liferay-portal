@@ -2033,7 +2033,7 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 			CacheRegistryUtil.clear(SocialActivityLimitImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(SocialActivityLimitImpl.class.getName());
+		EntityCacheUtil.clearCache(SocialActivityLimitImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -2343,7 +2343,7 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 
 		EntityCacheUtil.putResult(SocialActivityLimitModelImpl.ENTITY_CACHE_ENABLED,
 			SocialActivityLimitImpl.class, socialActivityLimit.getPrimaryKey(),
-			socialActivityLimit);
+			socialActivityLimit, false);
 
 		clearUniqueFindersCache(socialActivityLimit);
 		cacheUniqueFindersCache(socialActivityLimit);

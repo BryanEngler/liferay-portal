@@ -19,7 +19,18 @@
 		<b class="alert-icon icon-warning-sign"></b>
 	</c:if>
 
-	<img alt="<liferay-ui:message key="my-account" />" class="user-avatar-image" src="<%= HtmlUtil.escape(user.getPortraitURL(themeDisplay)) %>" />
+	<%
+	String portraitURL = HtmlUtil.escape(user.getPortraitURL(themeDisplay));
+	%>
+
+	<c:choose>
+		<c:when test="<%= BrowserSnifferUtil.isIe(request) && (BrowserSnifferUtil.getMajorVersion(request) < 9) %>">
+			<img alt="" class="user-avatar-image" src="<%= portraitURL %>" />
+		</c:when>
+		<c:otherwise>
+			<span class="user-avatar-image" style="background-image: url('<%= portraitURL %>');"></span>
+		</c:otherwise>
+	</c:choose>
 
 	<span class="user-full-name">
 		<%= HtmlUtil.escape(user.getFullName()) %>
@@ -28,14 +39,14 @@
 
 <c:choose>
 	<c:when test="<%= themeDisplay.isSignedIn() %>">
-		<aui:nav-item anchorCssClass="user-avatar-link" cssClass='<%= themeDisplay.isImpersonated() ? "user-avatar impersonating-user" : "user-avatar" %>' dropdown="<%= true %>" iconCssClass="icon-user" id="userAvatar" label="<%= userName %>">
+		<aui:nav-item anchorCssClass="user-avatar-link" cssClass='<%= themeDisplay.isImpersonated() ? "user-avatar impersonating-user" : "user-avatar" %>' dropdown="<%= true %>" id="userAvatar" label="<%= userName %>">
 			<c:if test="<%= themeDisplay.isImpersonated() %>">
 
 				<%
 				String impersonatingUserLabel = "you-are-impersonating-the-guest-user";
 
 				if (themeDisplay.isSignedIn()) {
-					impersonatingUserLabel = LanguageUtil.format(pageContext, "you-are-impersonating-x", new Object[] {HtmlUtil.escape(user.getFullName())});
+					impersonatingUserLabel = LanguageUtil.format(pageContext, "you-are-impersonating-x", HtmlUtil.escape(user.getFullName()), false);
 				}
 				%>
 
@@ -60,11 +71,11 @@
 
 					if (locale.getLanguage().equals(realUserLocale.getLanguage()) && locale.getCountry().equals(realUserLocale.getCountry())) {
 						doAsUserLanguageId = userLocale.getLanguage() + "_" + userLocale.getCountry();
-						changeLanguageMessage = LanguageUtil.format(realUserLocale, "use-x's-preferred-language-(x)", new String[] {HtmlUtil.escape(user.getFullName()), userLocale.getDisplayLanguage(realUserLocale)});
+						changeLanguageMessage = LanguageUtil.format(realUserLocale, "use-x's-preferred-language-(x)", new String[] {HtmlUtil.escape(user.getFullName()), userLocale.getDisplayLanguage(realUserLocale)}, false);
 					}
 					else {
 						doAsUserLanguageId = realUserLocale.getLanguage() + "_" + realUserLocale.getCountry();
-						changeLanguageMessage = LanguageUtil.format(realUserLocale, "use-your-preferred-language-(x)", realUserLocale.getDisplayLanguage(realUserLocale));
+						changeLanguageMessage = LanguageUtil.format(realUserLocale, "use-your-preferred-language-(x)", realUserLocale.getDisplayLanguage(realUserLocale), false);
 					}
 					%>
 

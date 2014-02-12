@@ -1,0 +1,34 @@
+allprojects {
+	repositories {
+		mavenCentral()
+	}
+}
+
+ext {
+	gradleDir = new File("../../tools/gradle")
+	wrapTasks = ["build", "clean", "compileJava", "jar"]
+}
+
+def wrapTask(String task) {
+	def newTasks = rootProject.subprojects.each {
+		project ->
+			def taskName = "$task${project.name}"
+
+			tasks.create(name: taskName, type: GradleBuild) {
+				dir = "${project.name}"
+				tasks = [ task ]
+			}
+	}
+}
+
+task installGradleWrapper(type: Wrapper) {
+	project.gradleDir.mkdir()
+
+	gradleVersion = "1.10"
+	jarFile	= "${project.gradleDir}/gradle-wrapper.jar"
+	scriptFile = "${project.gradleDir}/gradlew"
+}
+
+wrapTasks.each {
+	wrapTask(it)
+}

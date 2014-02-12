@@ -1983,7 +1983,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, DLFolderImpl.class);
@@ -2158,7 +2158,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 				DLFolder.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -2287,7 +2287,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -3582,7 +3582,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, DLFolderImpl.class);
@@ -3762,7 +3762,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 				DLFolder.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -3905,7 +3905,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -6371,7 +6371,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, DLFolderImpl.class);
@@ -6565,7 +6565,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 				DLFolder.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -6733,7 +6733,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -7403,7 +7403,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, DLFolderImpl.class);
@@ -7596,7 +7596,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 				DLFolder.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -7763,7 +7763,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -8477,7 +8477,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, DLFolderImpl.class);
@@ -8676,7 +8676,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 				DLFolder.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -8859,7 +8859,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -8956,7 +8956,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 			CacheRegistryUtil.clear(DLFolderImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(DLFolderImpl.class.getName());
+		EntityCacheUtil.clearCache(DLFolderImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -9462,7 +9462,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 		}
 
 		EntityCacheUtil.putResult(DLFolderModelImpl.ENTITY_CACHE_ENABLED,
-			DLFolderImpl.class, dlFolder.getPrimaryKey(), dlFolder);
+			DLFolderImpl.class, dlFolder.getPrimaryKey(), dlFolder, false);
 
 		clearUniqueFindersCache(dlFolder);
 		cacheUniqueFindersCache(dlFolder);
@@ -10069,9 +10069,6 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 		}
 		catch (Exception e) {
 			throw processException(e);
-		}
-		finally {
-			FinderCacheUtil.clearCache(DLFolderModelImpl.MAPPING_TABLE_DLFILEENTRYTYPES_DLFOLDERS_NAME);
 		}
 	}
 

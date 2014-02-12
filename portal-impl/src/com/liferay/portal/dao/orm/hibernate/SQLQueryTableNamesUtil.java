@@ -16,18 +16,11 @@ package com.liferay.portal.dao.orm.hibernate;
 
 import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.cache.SingleVMPoolUtil;
-import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.portal.kernel.util.StringUtil;
 
-import java.util.List;
-
-import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.parser.CCJSqlParserManager;
-import net.sf.jsqlparser.parser.JSqlParser;
-import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.select.Select;
-import net.sf.jsqlparser.util.TablesNamesFinder;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Shuyang Zhou
@@ -41,39 +34,80 @@ public class SQLQueryTableNamesUtil {
 			return tableNames;
 		}
 
-		Statement statement = null;
+		String lowerCaseSQL = StringUtil.toLowerCase(sql);
 
-		try {
-			statement = _jSqlParser.parse(new UnsyncStringReader(sql));
+		Set<String> tableNameSet = new HashSet<String>();
+
+		// Find table name from the "from" clause
+
+		int index = 0;
+
+		while ((index = lowerCaseSQL.indexOf(" from ", index)) != -1) {
+			index += 6;
+
+			int[] indexes = _getTableNameIndexes(lowerCaseSQL, index);
+
+			if (indexes != null) {
+				tableNameSet.add(sql.substring(indexes[0], indexes[1]));
+			}
 		}
-		catch (JSQLParserException jsqlpe) {
-			_log.error("Unable to parse SQL: " + sql, jsqlpe);
+
+		// Find table name from the "join" clause
+
+		index = 0;
+
+		while ((index = lowerCaseSQL.indexOf(" join ", index)) != -1) {
+			index += 6;
+
+			int[] indexes = _getTableNameIndexes(lowerCaseSQL, index);
+
+			if (indexes != null) {
+				tableNameSet.add(sql.substring(indexes[0], indexes[1]));
+			}
 		}
 
-		if ((statement == null) || !(statement instanceof Select)) {
-			tableNames = new String[0];
-
-			_portalCache.put(sql, tableNames);
-
-			return tableNames;
-		}
-
-		TablesNamesFinder tablesNamesFinder = new TablesNamesFinder();
-
-		List<String> tableNameList = tablesNamesFinder.getTableList(
-			(Select)statement);
-
-		tableNames = tableNameList.toArray(new String[tableNameList.size()]);
+		tableNames = tableNameSet.toArray(new String[tableNameSet.size()]);
 
 		_portalCache.put(sql, tableNames);
 
 		return tableNames;
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(
-		SQLQueryTableNamesUtil.class);
+	private static int[] _getTableNameIndexes(String sql, int index) {
+		int start = -1;
+		int end = sql.length();
 
-	private static JSqlParser _jSqlParser = new CCJSqlParserManager();
+		for (int i = index; i < sql.length(); i++) {
+			char c = sql.charAt(i);
+
+			if (c == CharPool.OPEN_PARENTHESIS) {
+
+				// There is a subquery in the current clause, so no need to
+				// parse for a table name
+
+				break;
+			}
+			else if ((c == CharPool.SPACE) ||
+					 (c == CharPool.CLOSE_PARENTHESIS)) {
+
+				if (start != -1) {
+					end = i;
+
+					break;
+				}
+			}
+			else if (start == -1) {
+				start = i;
+			}
+		}
+
+		if (start == -1) {
+			return null;
+		}
+
+		return new int[] {start, end};
+	}
+
 	private static PortalCache<String, String[]> _portalCache =
 		SingleVMPoolUtil.getCache(SQLQueryTableNamesUtil.class.getName());
 

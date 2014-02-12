@@ -118,7 +118,7 @@ if (layout != null) {
 											<liferay-util:include page="/html/portlet/staging_bar/view_layout_revision_details.jsp" />
 										</div>
 
-										<liferay-ui:staging cssClass="branching-enabled span5" extended="<%= false %>" layoutSetBranchId="<%= layoutRevision.getLayoutSetBranchId() %>" onlyActions="<%= true %>" />
+										<liferay-ui:staging cssClass="branching-enabled span4" extended="<%= false %>" layoutSetBranchId="<%= layoutRevision.getLayoutSetBranchId() %>" onlyActions="<%= true %>" />
 									</c:when>
 
 									<c:otherwise>
@@ -126,7 +126,7 @@ if (layout != null) {
 											<c:choose>
 												<c:when test="<%= liveLayout == null %>">
 													<span class="last-publication-branch">
-														<liferay-ui:message arguments='<%= "<strong>" + HtmlUtil.escape(layout.getName(locale)) + "</strong>" %>' key="page-x-has-not-been-published-to-live-yet" />
+														<liferay-ui:message arguments='<%= "<strong>" + HtmlUtil.escape(layout.getName(locale)) + "</strong>" %>' key="page-x-has-not-been-published-to-live-yet" translateArguments="<%= false %>" />
 													</span>
 												</c:when>
 												<c:otherwise>

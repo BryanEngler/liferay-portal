@@ -35,6 +35,7 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnmodifiableList;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.model.SystemEvent;
 import com.liferay.portal.model.impl.SystemEventImpl;
@@ -2320,7 +2321,7 @@ public class SystemEventPersistenceImpl extends BasePersistenceImpl<SystemEvent>
 			CacheRegistryUtil.clear(SystemEventImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(SystemEventImpl.class.getName());
+		EntityCacheUtil.clearCache(SystemEventImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -2584,7 +2585,8 @@ public class SystemEventPersistenceImpl extends BasePersistenceImpl<SystemEvent>
 		}
 
 		EntityCacheUtil.putResult(SystemEventModelImpl.ENTITY_CACHE_ENABLED,
-			SystemEventImpl.class, systemEvent.getPrimaryKey(), systemEvent);
+			SystemEventImpl.class, systemEvent.getPrimaryKey(), systemEvent,
+			false);
 
 		systemEvent.resetOriginalValues();
 
@@ -2601,6 +2603,7 @@ public class SystemEventPersistenceImpl extends BasePersistenceImpl<SystemEvent>
 		systemEventImpl.setNew(systemEvent.isNew());
 		systemEventImpl.setPrimaryKey(systemEvent.getPrimaryKey());
 
+		systemEventImpl.setMvccVersion(systemEvent.getMvccVersion());
 		systemEventImpl.setSystemEventId(systemEvent.getSystemEventId());
 		systemEventImpl.setGroupId(systemEvent.getGroupId());
 		systemEventImpl.setCompanyId(systemEvent.getCompanyId());
@@ -2953,10 +2956,22 @@ public class SystemEventPersistenceImpl extends BasePersistenceImpl<SystemEvent>
 			}
 		};
 
-	private static CacheModel<SystemEvent> _nullSystemEventCacheModel = new CacheModel<SystemEvent>() {
-			@Override
-			public SystemEvent toEntityModel() {
-				return _nullSystemEvent;
-			}
-		};
+	private static CacheModel<SystemEvent> _nullSystemEventCacheModel = new NullCacheModel();
+
+	private static class NullCacheModel implements CacheModel<SystemEvent>,
+		MVCCModel {
+		@Override
+		public long getMvccVersion() {
+			return 0;
+		}
+
+		@Override
+		public void setMvccVersion(long mvccVersion) {
+		}
+
+		@Override
+		public SystemEvent toEntityModel() {
+			return _nullSystemEvent;
+		}
+	}
 }

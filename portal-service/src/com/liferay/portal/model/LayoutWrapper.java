@@ -52,6 +52,7 @@ public class LayoutWrapper implements Layout, ModelWrapper<Layout> {
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
+		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("uuid", getUuid());
 		attributes.put("plid", getPlid());
 		attributes.put("groupId", getGroupId());
@@ -90,6 +91,12 @@ public class LayoutWrapper implements Layout, ModelWrapper<Layout> {
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
+		Long mvccVersion = (Long)attributes.get("mvccVersion");
+
+		if (mvccVersion != null) {
+			setMvccVersion(mvccVersion);
+		}
+
 		String uuid = (String)attributes.get("uuid");
 
 		if (uuid != null) {
@@ -292,6 +299,26 @@ public class LayoutWrapper implements Layout, ModelWrapper<Layout> {
 	@Override
 	public void setPrimaryKey(long primaryKey) {
 		_layout.setPrimaryKey(primaryKey);
+	}
+
+	/**
+	* Returns the mvcc version of this layout.
+	*
+	* @return the mvcc version of this layout
+	*/
+	@Override
+	public long getMvccVersion() {
+		return _layout.getMvccVersion();
+	}
+
+	/**
+	* Sets the mvcc version of this layout.
+	*
+	* @param mvccVersion the mvcc version of this layout
+	*/
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		_layout.setMvccVersion(mvccVersion);
 	}
 
 	/**
@@ -1735,6 +1762,12 @@ public class LayoutWrapper implements Layout, ModelWrapper<Layout> {
 	}
 
 	@Override
+	public java.lang.String getDefaultThemeSetting(java.lang.String key,
+		java.lang.String device, boolean inheritLookAndFeel) {
+		return _layout.getDefaultThemeSetting(key, device, inheritLookAndFeel);
+	}
+
+	@Override
 	public java.lang.String getFriendlyURL(java.util.Locale locale) {
 		return _layout.getFriendlyURL(locale);
 	}
@@ -1783,6 +1816,12 @@ public class LayoutWrapper implements Layout, ModelWrapper<Layout> {
 	@Override
 	public com.liferay.portal.model.LayoutType getLayoutType() {
 		return _layout.getLayoutType();
+	}
+
+	@Override
+	public com.liferay.portal.model.Layout getLinkedToLayout()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _layout.getLinkedToLayout();
 	}
 
 	@Override
@@ -1839,6 +1878,12 @@ public class LayoutWrapper implements Layout, ModelWrapper<Layout> {
 	public java.lang.String getThemeSetting(java.lang.String key,
 		java.lang.String device) {
 		return _layout.getThemeSetting(key, device);
+	}
+
+	@Override
+	public java.lang.String getThemeSetting(java.lang.String key,
+		java.lang.String device, boolean inheritLookAndFeel) {
+		return _layout.getThemeSetting(key, device, inheritLookAndFeel);
 	}
 
 	@Override

@@ -117,6 +117,8 @@
 		<staged-model-data-handler-class>com.liferay.portlet.journal.lar.JournalFeedStagedModelDataHandler</staged-model-data-handler-class>
 		<staged-model-data-handler-class>com.liferay.portlet.journal.lar.JournalFolderStagedModelDataHandler</staged-model-data-handler-class>
 		<template-handler>com.liferay.portlet.journal.template.JournalTemplateHandler</template-handler>
+		<user-notification-definitions>com/liferay/portlet/journal/journal-user-notification-definitions.xml</user-notification-definitions>
+		<user-notification-handler-class>com.liferay.portlet.journal.notifications.JournalUserNotificationHandler</user-notification-handler-class>
 		<webdav-storage-token>journal</webdav-storage-token>
 		<webdav-storage-class>com.liferay.portlet.journal.webdav.JournalWebDAVStorageImpl</webdav-storage-class>
 		<control-panel-entry-category>site_administration.content</control-panel-entry-category>
@@ -224,6 +226,8 @@
 		<staged-model-data-handler-class>com.liferay.portlet.documentlibrary.lar.RepositoryStagedModelDataHandler</staged-model-data-handler-class>
 		<social-activity-interpreter-class>com.liferay.portlet.documentlibrary.social.DLFileEntryActivityInterpreter</social-activity-interpreter-class>
 		<social-activity-interpreter-class>com.liferay.portlet.documentlibrary.social.DLFolderActivityInterpreter</social-activity-interpreter-class>
+		<user-notification-definitions>com/liferay/portlet/documentlibrary/document-library-user-notification-definitions.xml</user-notification-definitions>
+		<user-notification-handler-class>com.liferay.portlet.documentlibrary.notifications.DocumentLibraryUserNotificationHandler</user-notification-handler-class>
 		<webdav-storage-token>document_library</webdav-storage-token>
 		<webdav-storage-class>com.liferay.portlet.documentlibrary.webdav.DLWebDAVStorageImpl</webdav-storage-class>
 		<control-panel-entry-category>site_administration.content</control-panel-entry-category>
@@ -321,6 +325,8 @@
 		<staged-model-data-handler-class>com.liferay.portlet.bookmarks.lar.BookmarksFolderStagedModelDataHandler</staged-model-data-handler-class>
 		<social-activity-interpreter-class>com.liferay.portlet.bookmarks.social.BookmarksEntryActivityInterpreter</social-activity-interpreter-class>
 		<social-activity-interpreter-class>com.liferay.portlet.bookmarks.social.BookmarksFolderActivityInterpreter</social-activity-interpreter-class>
+		<user-notification-definitions>com/liferay/portlet/bookmarks/bookmarks-user-notification-definitions.xml</user-notification-definitions>
+		<user-notification-handler-class>com.liferay.portlet.bookmarks.notifications.BookmarksUserNotificationHandler</user-notification-handler-class>
 		<control-panel-entry-category>site_administration.content</control-panel-entry-category>
 		<control-panel-entry-weight>9.0</control-panel-entry-weight>
 		<asset-renderer-factory>com.liferay.portlet.bookmarks.asset.BookmarksEntryAssetRendererFactory</asset-renderer-factory>
@@ -423,6 +429,8 @@
 		<staged-model-data-handler-class>com.liferay.portlet.blogs.lar.BlogsEntryStagedModelDataHandler</staged-model-data-handler-class>
 		<template-handler>com.liferay.portlet.blogs.template.BlogsPortletDisplayTemplateHandler</template-handler>
 		<social-activity-interpreter-class>com.liferay.portlet.blogs.social.BlogsActivityInterpreter</social-activity-interpreter-class>
+		<user-notification-definitions>com/liferay/portlet/blogs/blogs-user-notification-definitions.xml</user-notification-definitions>
+		<user-notification-handler-class>com.liferay.portlet.blogs.notifications.BlogsUserNotificationHandler</user-notification-handler-class>
 		<xml-rpc-method-class>com.liferay.portlet.blogs.util.PingbackMethodImpl</xml-rpc-method-class>
 		<asset-renderer-factory>com.liferay.portlet.blogs.asset.BlogsEntryAssetRendererFactory</asset-renderer-factory>
 		<atom-collection-adapter>com.liferay.portlet.blogs.atom.BlogsEntryAtomCollectionAdapter</atom-collection-adapter>
@@ -470,6 +478,8 @@
 		<staged-model-data-handler-class>com.liferay.portlet.wiki.lar.WikiPageStagedModelDataHandler</staged-model-data-handler-class>
 		<template-handler>com.liferay.portlet.wiki.template.WikiPortletDisplayTemplateHandler</template-handler>
 		<social-activity-interpreter-class>com.liferay.portlet.wiki.social.WikiActivityInterpreter</social-activity-interpreter-class>
+		<user-notification-definitions>com/liferay/portlet/wiki/wiki-user-notification-definitions.xml</user-notification-definitions>
+		<user-notification-handler-class>com.liferay.portlet.wiki.notifications.WikiUserNotificationHandler</user-notification-handler-class>
 		<asset-renderer-factory>com.liferay.portlet.wiki.asset.WikiPageAssetRendererFactory</asset-renderer-factory>
 		<custom-attributes-display>com.liferay.portlet.wiki.WikiPageCustomAttributesDisplay</custom-attributes-display>
 		<permission-propagator>com.liferay.portlet.wiki.security.permission.WikiPermissionPropagatorImpl</permission-propagator>
@@ -762,6 +772,7 @@
 		<private-request-attributes>false</private-request-attributes>
 		<private-session-attributes>false</private-session-attributes>
 		<render-weight>50</render-weight>
+		<header-portlet-css>/html/portlet/language/css/main.css</header-portlet-css>
 		<css-class-wrapper>portlet-language</css-class-wrapper>
 		<add-default-resource>true</add-default-resource>
 	</portlet>
@@ -1750,6 +1761,7 @@
 		<portlet-url-class>com.liferay.portal.struts.StrutsActionPortletURL</portlet-url-class>
 		<portlet-data-handler-class>com.liferay.portlet.dynamicdatalists.lar.DDLPortletDataHandler</portlet-data-handler-class>
 		<staged-model-data-handler-class>com.liferay.portlet.dynamicdatalists.lar.DDLRecordSetStagedModelDataHandler</staged-model-data-handler-class>
+		<staged-model-data-handler-class>com.liferay.portlet.dynamicdatalists.lar.DDLRecordStagedModelDataHandler</staged-model-data-handler-class>
 		<template-handler>com.liferay.portlet.dynamicdatalists.template.DDLTemplateHandler</template-handler>
 		<webdav-storage-token>dynamic_data_lists</webdav-storage-token>
 		<webdav-storage-class>com.liferay.portlet.dynamicdatalists.webdav.DDLWebDAVStorageImpl</webdav-storage-class>

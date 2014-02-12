@@ -52,6 +52,10 @@ PortletPreferences portletPreferences = PortletPreferencesLocalServiceUtil.getSt
 
 PortletPreferences portletSetup = PortletPreferencesFactoryUtil.getStrictLayoutPortletSetup(layout, portletId);
 
+PortletSettings companyPortletSettings = PortletSettingsFactoryUtil.getCompanyPortletSettings(layout.getCompanyId(), portletId);
+PortletSettings groupPortletSettings = PortletSettingsFactoryUtil.getGroupPortletSettings(themeDisplay.getSiteGroupId(), portletId);
+PortletSettings portletInstancePortletSettings = PortletSettingsFactoryUtil.getPortletInstancePortletSettings(layout, portletId);
+
 Group group = null;
 boolean privateLayout = false;
 
@@ -209,6 +213,14 @@ if (!portletId.equals(PortletKeys.PORTLET_CONFIGURATION)) {
 			showPortletCssIcon = true;
 		}
 	}
+
+	if (layoutTypePortlet.isCustomizable() && !layoutTypePortlet.isColumnDisabled(columnId) && LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.CUSTOMIZE)) {
+		showConfigurationIcon = true;
+
+		if (PropsValues.PORTLET_CSS_ENABLED) {
+			showPortletCssIcon = true;
+		}
+	}
 }
 
 if (group.isLayoutPrototype()) {
@@ -325,7 +337,9 @@ portletDisplay.setActive(portlet.isActive());
 portletDisplay.setColumnCount(columnCount);
 portletDisplay.setColumnId(columnId);
 portletDisplay.setColumnPos(columnPos);
+portletDisplay.setCompanyPortletSettings(companyPortletSettings);
 portletDisplay.setControlPanelCategory(portlet.getControlPanelEntryCategory());
+portletDisplay.setGroupPortletSettings(groupPortletSettings);
 portletDisplay.setId(portletId);
 portletDisplay.setInstanceId(instanceId);
 portletDisplay.setModeAbout(modeAbout);
@@ -361,6 +375,7 @@ portletDisplay.setStateMax(stateMax);
 portletDisplay.setStateMin(stateMin);
 portletDisplay.setStateNormal(windowState.equals(WindowState.NORMAL));
 portletDisplay.setStatePopUp(themeDisplay.isStatePopUp());
+portletDisplay.setPortletInstancePortletSettings(portletInstancePortletSettings);
 portletDisplay.setPortletSetup(portletSetup);
 portletDisplay.setWebDAVEnabled(portlet.getWebDAVStorageInstance() != null);
 
@@ -805,7 +820,7 @@ Boolean renderPortletBoundary = GetterUtil.getBoolean(request.getAttribute(WebKe
 		cssClasses += " portlet-borderless";
 	}
 
-	cssClasses = "portlet-boundary portlet-boundary" + HtmlUtil.escapeAttribute(PortalUtil.getPortletNamespace(rootPortletId)) + StringPool.SPACE + cssClasses + StringPool.SPACE + portlet.getCssClassWrapper() + StringPool.SPACE + customCSSClassName;
+	cssClasses = "portlet-boundary portlet-boundary" + HtmlUtil.escapeAttribute(PortalUtil.getPortletNamespace(rootPortletId)) + StringPool.SPACE + cssClasses + StringPool.SPACE + portlet.getCssClassWrapper() + StringPool.SPACE + HtmlUtil.escapeAttribute(customCSSClassName);
 
 	if (portletResourcePortlet != null) {
 		cssClasses += StringPool.SPACE + portletResourcePortlet.getCssClassWrapper();
@@ -813,7 +828,6 @@ Boolean renderPortletBoundary = GetterUtil.getBoolean(request.getAttribute(WebKe
 	%>
 
 	<div class="<%= cssClasses %>" id="p_p_id<%= HtmlUtil.escapeAttribute(renderResponseImpl.getNamespace()) %>" <%= freeformStyles %>>
-		<span id="p_<%= HtmlUtil.escapeAttribute(portletId) %>"></span>
 </c:if>
 
 <c:choose>
@@ -1040,7 +1054,7 @@ if (themeDisplay.isStatePopUp()) {
 							}
 						);
 
-						refreshWindow.location.href = '<%= closeRedirect %>';
+						refreshWindow.location.href = '<%= HtmlUtil.escapeJS(closeRedirect) %>';
 					}
 					else {
 						dialog.detach(hideDialogSignature);

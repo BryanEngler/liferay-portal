@@ -33,6 +33,12 @@
 		<execute action="SOUserBarAddSite#assertElementNotPresent" locator-key1="SAVE_BUTTON" />
 	</command>
 
+	<command name="dashboardPG">
+		<execute action="SOUserBar#click" locator-key1="DASHBOARD" />
+
+		<execute action="Dockbar#assertTextEquals" locator-key1="USER_NAME" value1="${userName}" />
+	</command>
+
 	<command name="deleteSOSite">
 		<var name="key_siteName" value="${siteName}" />
 
@@ -115,7 +121,7 @@
 		<execute action="SOUserBar#click" locator-key1="GO_TO_SITES_DIRECTORY_BUTTON" />
 
 		<execute action="SOUserBarSitesDirectory#type" locator-key1="SITE_SEARCH_FIELD" value1="${siteName}" />
-	
+
 		<if>
 			<equals arg1="${siteType}" arg2="Private Restricted" />
 			<then>
@@ -160,7 +166,15 @@
 			<then>
 				<execute action="SOUserBar#click" locator-key1="DASHBOARD" />
 				<execute action="SOUserBar#click" locator-key1="NOTIFICATION_MENU_COUNT" />
-				<execute action="SOUserBar#click" locator-key1="NOTIFICATION_MENU_ENTRY" />
+
+				<if>
+					<condition action="SOUserBar#isElementPresent" locator-key1="NOTIFICATION_MENU_ENTRY" />
+					<then>
+						<execute action="SOUserBar#click" locator-key1="NOTIFICATION_MENU_ENTRY" />
+					</then>
+				</if>
+
+				<execute action="SOUserBar#click" locator-key1="DASHBOARD" />
 			</then>
 		</while>
 	</command>

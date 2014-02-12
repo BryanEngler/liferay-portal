@@ -1353,7 +1353,7 @@ public class AssetTagStatsPersistenceImpl extends BasePersistenceImpl<AssetTagSt
 			CacheRegistryUtil.clear(AssetTagStatsImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(AssetTagStatsImpl.class.getName());
+		EntityCacheUtil.clearCache(AssetTagStatsImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -1622,7 +1622,7 @@ public class AssetTagStatsPersistenceImpl extends BasePersistenceImpl<AssetTagSt
 
 		EntityCacheUtil.putResult(AssetTagStatsModelImpl.ENTITY_CACHE_ENABLED,
 			AssetTagStatsImpl.class, assetTagStats.getPrimaryKey(),
-			assetTagStats);
+			assetTagStats, false);
 
 		clearUniqueFindersCache(assetTagStats);
 		cacheUniqueFindersCache(assetTagStats);

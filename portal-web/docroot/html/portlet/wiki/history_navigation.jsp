@@ -103,7 +103,7 @@ if (type.equals("html")) {
 			cssClass="central-title"
 			image="pages"
 			label="<%= true %>"
-			message='<%= LanguageUtil.format(pageContext, "comparing-versions-x-and-x", new Object[] {sourceVersionString, targetVersionString}) %>'
+			message='<%= LanguageUtil.format(pageContext, "comparing-versions-x-and-x", new Object[] {sourceVersionString, targetVersionString}, false) %>'
 		/>
 
 		<c:choose>
@@ -170,7 +170,7 @@ if (type.equals("html")) {
 					/>
 
 					<c:if test="<%= Validator.isNotNull(wikiPage.getSummary()) %>">
-						<%= StringPool.COLON + StringPool.SPACE + wikiPage.getSummary() %>
+						<%= StringPool.COLON + StringPool.SPACE + HtmlUtil.escape(wikiPage.getSummary()) %>
 					</c:if>
 
 					<c:if test="<%= wikiPage.isMinorEdit() %>">

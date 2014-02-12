@@ -19,8 +19,6 @@
 <%
 String tabs2 = ParamUtil.getString(request, "tabs2", "general");
 
-String redirect = ParamUtil.getString(request, "redirect");
-
 String emailFromName = ParamUtil.getString(request, "preferences--emailFromName--", MBUtil.getEmailFromName(portletPreferences, company.getCompanyId()));
 String emailFromAddress = ParamUtil.getString(request, "preferences--emailFromAddress--", MBUtil.getEmailFromAddress(portletPreferences, company.getCompanyId()));
 
@@ -56,15 +54,18 @@ String emailSignature = PrefsParamUtil.getString(portletPreferences, request, em
 
 <liferay-portlet:renderURL portletConfiguration="<%= true %>" var="portletURL">
 	<portlet:param name="tabs2" value="<%= tabs2 %>" />
-	<portlet:param name="redirect" value="<%= redirect %>" />
 </liferay-portlet:renderURL>
 
-<liferay-portlet:actionURL portletConfiguration="<%= true %>" var="configurationURL" />
+<liferay-portlet:actionURL portletConfiguration="<%= true %>" var="configurationActionURL" />
 
-<aui:form action="<%= configurationURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveConfiguration();" %>'>
+<liferay-portlet:renderURL portletConfiguration="<%= true %>" var="configurationRenderURL">
+	<portlet:param name="tabs2" value="<%= tabs2 %>" />
+</liferay-portlet:renderURL>
+
+<aui:form action="<%= configurationActionURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveConfiguration();" %>'>
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
 	<aui:input name="tabs2" type="hidden" value="<%= tabs2 %>" />
-	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
+	<aui:input name="redirect" type="hidden" value="<%= configurationRenderURL %>" />
 
 	<%
 	String tabs2Names = "general,email-from,message-added-email,message-updated-email,thread-priorities,user-ranks";
@@ -119,11 +120,11 @@ String emailSignature = PrefsParamUtil.getString(portletPreferences, request, em
 
 				<aui:input name="preferences--threadAsQuestionByDefault--" type="checkbox" value="<%= threadAsQuestionByDefault %>" />
 
-				<aui:select label="show-recent-posts-from-last" name="preferences--recentPostsDateOffset--">
-					<aui:option label='<%= LanguageUtil.format(pageContext, "x-hours", 24) %>' selected='<%= recentPostsDateOffset.equals("1") %>' value="1" />
-					<aui:option label='<%= LanguageUtil.format(pageContext, "x-days", 7) %>' selected='<%= recentPostsDateOffset.equals("7") %>' value="7" />
-					<aui:option label='<%= LanguageUtil.format(pageContext, "x-days", 30) %>' selected='<%= recentPostsDateOffset.equals("30") %>' value="30" />
-					<aui:option label='<%= LanguageUtil.format(pageContext, "x-days", 365) %>' selected='<%= recentPostsDateOffset.equals("365") %>' value="365" />
+				<aui:select label="show-recent-posts-from-last" name="preferences--recentPostsDateOffset--" value="<%= recentPostsDateOffset %>">
+					<aui:option label='<%= LanguageUtil.format(pageContext, "x-hours", "24", false) %>' value="1" />
+					<aui:option label='<%= LanguageUtil.format(pageContext, "x-days", "7", false) %>' value="7" />
+					<aui:option label='<%= LanguageUtil.format(pageContext, "x-days", "30", false) %>' value="30" />
+					<aui:option label='<%= LanguageUtil.format(pageContext, "x-days", "365", false) %>' value="365" />
 				</aui:select>
 			</aui:fieldset>
 		</c:when>

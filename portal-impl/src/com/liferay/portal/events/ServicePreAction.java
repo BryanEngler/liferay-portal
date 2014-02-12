@@ -428,7 +428,7 @@ public class ServicePreAction extends Action {
 				layout = null;
 			}
 			else if (!isLoginRequest(request) &&
-					 ((!viewableGroup || !viewableSourceGroup) ||
+					 (!viewableGroup || !viewableSourceGroup ||
 					  (!redirectToDefaultLayout &&
 					   !hasAccessPermission(
 						   permissionChecker, layout, doAsGroupId,
@@ -581,7 +581,8 @@ public class ServicePreAction extends Action {
 			boolean customizable = layoutTypePortlet.isCustomizable();
 
 			if (!customizable ||
-				(group.isLayoutPrototype() || group.isLayoutSetPrototype())) {
+				group.isLayoutPrototype() || group.isLayoutSetPrototype() ||
+				group.isStagingGroup()) {
 
 				customizedView = false;
 			}
@@ -664,7 +665,14 @@ public class ServicePreAction extends Action {
 			scopeGroupId = doAsGroupId;
 		}
 
-		long siteGroupId = PortalUtil.getSiteGroupId(scopeGroupId);
+		long siteGroupId = 0;
+
+		if (layout.isTypeControlPanel()) {
+			siteGroupId = PortalUtil.getSiteGroupId(scopeGroupId);
+		}
+		else {
+			siteGroupId = PortalUtil.getSiteGroupId(layout.getGroupId());
+		}
 
 		// Theme and color scheme
 
@@ -2164,24 +2172,29 @@ public class ServicePreAction extends Action {
 
 		// Main Journal article
 
-		long mainJournalArticleId = ParamUtil.getLong(request, "p_j_a_id");
+		String strutsAction = PortalUtil.getStrutsAction(request);
 
-		if (mainJournalArticleId > 0) {
-			try {
-				JournalArticle mainJournalArticle =
-					JournalArticleServiceUtil.getArticle(mainJournalArticleId);
+		if (strutsAction.equals(_PATH_PORTAL_LAYOUT)) {
+			long mainJournalArticleId = ParamUtil.getLong(request, "p_j_a_id");
 
-				AssetEntry layoutAssetEntry =
-					AssetEntryLocalServiceUtil.getEntry(
-						JournalArticle.class.getName(),
-						mainJournalArticle.getResourcePrimKey());
+			if (mainJournalArticleId > 0) {
+				try {
+					JournalArticle mainJournalArticle =
+						JournalArticleServiceUtil.getArticle(
+							mainJournalArticleId);
 
-				request.setAttribute(
-					WebKeys.LAYOUT_ASSET_ENTRY, layoutAssetEntry);
-			}
-			catch (NoSuchArticleException nsae) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(nsae.getMessage());
+					AssetEntry layoutAssetEntry =
+						AssetEntryLocalServiceUtil.getEntry(
+							JournalArticle.class.getName(),
+							mainJournalArticle.getResourcePrimKey());
+
+					request.setAttribute(
+						WebKeys.LAYOUT_ASSET_ENTRY, layoutAssetEntry);
+				}
+				catch (NoSuchArticleException nsae) {
+					if (_log.isWarnEnabled()) {
+						_log.warn(nsae.getMessage());
+					}
 				}
 			}
 		}

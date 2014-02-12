@@ -20,8 +20,6 @@
 String tabs1 = ParamUtil.getString(request, "tabs1", "general");
 String tabs2 = ParamUtil.getString(request, "tabs2", "general");
 
-String redirect = ParamUtil.getString(request, "redirect");
-
 String emailFromName = ParamUtil.getString(request, "preferences--emailFromName--", LoginUtil.getEmailFromName(portletPreferences, company.getCompanyId()));
 String emailFromAddress = ParamUtil.getString(request, "preferences--emailFromAddress--", LoginUtil.getEmailFromAddress(portletPreferences, company.getCompanyId()));
 
@@ -48,24 +46,23 @@ String emailSubject = PrefsParamUtil.getString(portletPreferences, request, emai
 String emailBody = PrefsParamUtil.getString(portletPreferences, request, emailBodyParam, defaultEmailBody);
 %>
 
-<liferay-portlet:renderURL portletConfiguration="true" var="portletURL">
+<liferay-portlet:actionURL portletConfiguration="true" var="configurationActionURL" />
+
+<liferay-portlet:renderURL portletConfiguration="true" var="configurationRenderURL">
 	<portlet:param name="tabs1" value="<%= tabs1 %>" />
 	<portlet:param name="tabs2" value="<%= tabs2 %>" />
-	<portlet:param name="redirect" value="<%= redirect %>" />
 </liferay-portlet:renderURL>
 
-<liferay-portlet:actionURL portletConfiguration="true" var="configurationURL" />
-
-<aui:form action="<%= configurationURL %>" method="post" name="fm" onSubmit='<%= renderResponse.getNamespace() + "saveConfiguration();" %>'>
+<aui:form action="<%= configurationActionURL %>" method="post" name="fm" onSubmit='<%= renderResponse.getNamespace() + "saveConfiguration();" %>'>
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
-	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
+	<aui:input name="redirect" type="hidden" value="<%= configurationRenderURL %>" />
 	<aui:input name="tabs1" type="hidden" value="<%= tabs1 %>" />
 	<aui:input name="tabs2" type="hidden" value="<%= tabs2 %>" />
 
 	<liferay-ui:tabs
 		names="general,email-notifications"
 		param="tabs1"
-		url="<%= portletURL %>"
+		url="<%= configurationRenderURL %>"
 	/>
 
 	<c:choose>
@@ -74,7 +71,7 @@ String emailBody = PrefsParamUtil.getString(portletPreferences, request, emailBo
 			<liferay-ui:tabs
 				names="general,password-changed-notification,password-reset-notification"
 				param="tabs2"
-				url="<%= portletURL %>"
+				url="<%= configurationRenderURL %>"
 			/>
 
 			<liferay-ui:error key="emailFromAddress" message="please-enter-a-valid-email-address" />
@@ -241,11 +238,11 @@ String emailBody = PrefsParamUtil.getString(portletPreferences, request, emailBo
 		</c:when>
 		<c:otherwise>
 			<aui:fieldset>
-				<aui:select label="authentication-type" name="preferences--authType--">
+				<aui:select label="authentication-type" name="preferences--authType--" value="<%= authType %>">
 					<aui:option label="default" value="" />
-					<aui:option label="by-email-address" selected="<%= authType.equals(CompanyConstants.AUTH_TYPE_EA) %>" value="<%= CompanyConstants.AUTH_TYPE_EA %>" />
-					<aui:option label="by-screen-name" selected="<%= authType.equals(CompanyConstants.AUTH_TYPE_SN) %>" value="<%= CompanyConstants.AUTH_TYPE_SN %>" />
-					<aui:option label="by-user-id" selected="<%= authType.equals(CompanyConstants.AUTH_TYPE_ID) %>" value="<%= CompanyConstants.AUTH_TYPE_ID %>" />
+					<aui:option label="by-email-address" value="<%= CompanyConstants.AUTH_TYPE_EA %>" />
+					<aui:option label="by-screen-name" value="<%= CompanyConstants.AUTH_TYPE_SN %>" />
+					<aui:option label="by-user-id" value="<%= CompanyConstants.AUTH_TYPE_ID %>" />
 				</aui:select>
 			</aui:fieldset>
 		</c:otherwise>

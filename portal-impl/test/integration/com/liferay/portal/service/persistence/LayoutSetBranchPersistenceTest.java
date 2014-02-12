@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.LayoutSetBranch;
@@ -114,6 +115,8 @@ public class LayoutSetBranchPersistenceTest {
 
 		LayoutSetBranch newLayoutSetBranch = _persistence.create(pk);
 
+		newLayoutSetBranch.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newLayoutSetBranch.setGroupId(ServiceTestUtil.nextLong());
 
 		newLayoutSetBranch.setCompanyId(ServiceTestUtil.nextLong());
@@ -156,6 +159,8 @@ public class LayoutSetBranchPersistenceTest {
 
 		LayoutSetBranch existingLayoutSetBranch = _persistence.findByPrimaryKey(newLayoutSetBranch.getPrimaryKey());
 
+		Assert.assertEquals(existingLayoutSetBranch.getMvccVersion(),
+			newLayoutSetBranch.getMvccVersion());
 		Assert.assertEquals(existingLayoutSetBranch.getLayoutSetBranchId(),
 			newLayoutSetBranch.getLayoutSetBranchId());
 		Assert.assertEquals(existingLayoutSetBranch.getGroupId(),
@@ -198,6 +203,62 @@ public class LayoutSetBranchPersistenceTest {
 			newLayoutSetBranch.getLayoutSetPrototypeUuid());
 		Assert.assertEquals(existingLayoutSetBranch.getLayoutSetPrototypeLinkEnabled(),
 			newLayoutSetBranch.getLayoutSetPrototypeLinkEnabled());
+	}
+
+	@Test
+	public void testCountByGroupId() {
+		try {
+			_persistence.countByGroupId(ServiceTestUtil.nextLong());
+
+			_persistence.countByGroupId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByG_P() {
+		try {
+			_persistence.countByG_P(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.randomBoolean());
+
+			_persistence.countByG_P(0L, ServiceTestUtil.randomBoolean());
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByG_P_N() {
+		try {
+			_persistence.countByG_P_N(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.randomBoolean(), StringPool.BLANK);
+
+			_persistence.countByG_P_N(0L, ServiceTestUtil.randomBoolean(),
+				StringPool.NULL);
+
+			_persistence.countByG_P_N(0L, ServiceTestUtil.randomBoolean(),
+				(String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByG_P_M() {
+		try {
+			_persistence.countByG_P_M(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.randomBoolean(), ServiceTestUtil.randomBoolean());
+
+			_persistence.countByG_P_M(0L, ServiceTestUtil.randomBoolean(),
+				ServiceTestUtil.randomBoolean());
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -247,9 +308,9 @@ public class LayoutSetBranchPersistenceTest {
 
 	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("LayoutSetBranch",
-			"layoutSetBranchId", true, "groupId", true, "companyId", true,
-			"userId", true, "userName", true, "createDate", true,
-			"modifiedDate", true, "privateLayout", true, "name", true,
+			"mvccVersion", true, "layoutSetBranchId", true, "groupId", true,
+			"companyId", true, "userId", true, "userName", true, "createDate",
+			true, "modifiedDate", true, "privateLayout", true, "name", true,
 			"description", true, "master", true, "logoId", true, "themeId",
 			true, "colorSchemeId", true, "wapThemeId", true,
 			"wapColorSchemeId", true, "css", true, "settings", true,
@@ -394,6 +455,8 @@ public class LayoutSetBranchPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		LayoutSetBranch layoutSetBranch = _persistence.create(pk);
+
+		layoutSetBranch.setMvccVersion(ServiceTestUtil.nextLong());
 
 		layoutSetBranch.setGroupId(ServiceTestUtil.nextLong());
 

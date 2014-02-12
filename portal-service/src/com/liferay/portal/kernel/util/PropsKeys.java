@@ -907,10 +907,6 @@ public interface PropsKeys {
 
 	public static final String GLOBAL_STARTUP_EVENTS = "global.startup.events";
 
-	public static final String GOOGLE_APPS_PASSWORD = "google.apps.password";
-
-	public static final String GOOGLE_APPS_USERNAME = "google.apps.username";
-
 	public static final String GOOGLE_GADGET_SERVLET_MAPPING = "google.gadget.servlet.mapping";
 
 	public static final String GROUPS_COMPLEX_SQL_CLASS_NAMES = "groups.complex.sql.class.names";
@@ -1977,6 +1973,8 @@ public interface PropsKeys {
 
 	public static final String PORTAL_INSTANCE_HTTP_PORT = "portal.instance.http.port";
 
+	public static final String PORTAL_INSTANCE_HTTPS_PORT = "portal.instance.https.port";
+
 	public static final String PORTAL_JAAS_AUTH_TYPE = "portal.jaas.auth.type";
 
 	public static final String PORTAL_JAAS_ENABLE = "portal.jaas.enable";
@@ -2373,6 +2371,8 @@ public interface PropsKeys {
 
 	public static final String SQL_DATA_MAX_PARAMETERS = "sql.data.max.parameters";
 
+	public static final String STAGING_LIVE_GROUP_REMOTE_STAGING_ENABLED = "staging.live.group.remote.staging.enabled";
+
 	public static final String STAGING_LOCK_ENABLED = "staging.lock.enabled";
 
 	public static final String STAGING_REMOTE_TRANSFER_BUFFER_SIZE = "staging.remote.transfer.buffer.size";
@@ -2562,6 +2562,8 @@ public interface PropsKeys {
 	public static final String VALUE_OBJECT_FINDER_THREAD_LOCAL_CACHE_MAX_SIZE = "value.object.finder.thread.local.cache.max.size";
 
 	public static final String VALUE_OBJECT_LISTENER = "value.object.listener.";
+
+	public static final String VALUE_OBJECT_MVCC_ENTITY_CACHE_ENABLED = "value.object.mvcc.entity.cache.enabled";
 
 	public static final String VELOCITY_ENGINE_DIRECTIVE_IF_TO_STRING_NULL_CHECK = "velocity.engine.directive.if.to.string.null.check";
 

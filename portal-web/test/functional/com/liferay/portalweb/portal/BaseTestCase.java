@@ -117,11 +117,14 @@ public class BaseTestCase extends LiferaySeleneseTestCase {
 	}
 
 	protected static String currentTestCaseName;
+	protected static boolean tearDownBeforeTest =
+		TestPropsValues.TEAR_DOWN_BEFORE_TEST;
 	protected static int testCaseCount;
 
 	protected Map<String, String> commandScopeVariables;
 	protected Map<String, String> definitionScopeVariables =
 		new HashMap<String, String>();
 	protected Map<String, String> executeScopeVariables;
+	protected Map<String, String> forScopeVariables;
 
 }

@@ -1989,7 +1989,7 @@ public class MDRRulePersistenceImpl extends BasePersistenceImpl<MDRRule>
 			CacheRegistryUtil.clear(MDRRuleImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(MDRRuleImpl.class.getName());
+		EntityCacheUtil.clearCache(MDRRuleImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -2279,7 +2279,7 @@ public class MDRRulePersistenceImpl extends BasePersistenceImpl<MDRRule>
 		}
 
 		EntityCacheUtil.putResult(MDRRuleModelImpl.ENTITY_CACHE_ENABLED,
-			MDRRuleImpl.class, mdrRule.getPrimaryKey(), mdrRule);
+			MDRRuleImpl.class, mdrRule.getPrimaryKey(), mdrRule, false);
 
 		clearUniqueFindersCache(mdrRule);
 		cacheUniqueFindersCache(mdrRule);

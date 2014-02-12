@@ -710,7 +710,7 @@ public class SCProductVersionPersistenceImpl extends BasePersistenceImpl<SCProdu
 				QueryPos qPos = QueryPos.getInstance(q);
 
 				if (bindDirectDownloadURL) {
-					qPos.add(directDownloadURL.toLowerCase());
+					qPos.add(StringUtil.toLowerCase(directDownloadURL));
 				}
 
 				List<SCProductVersion> list = q.list();
@@ -823,7 +823,7 @@ public class SCProductVersionPersistenceImpl extends BasePersistenceImpl<SCProdu
 				QueryPos qPos = QueryPos.getInstance(q);
 
 				if (bindDirectDownloadURL) {
-					qPos.add(directDownloadURL.toLowerCase());
+					qPos.add(StringUtil.toLowerCase(directDownloadURL));
 				}
 
 				count = (Long)q.uniqueResult();
@@ -905,7 +905,7 @@ public class SCProductVersionPersistenceImpl extends BasePersistenceImpl<SCProdu
 			CacheRegistryUtil.clear(SCProductVersionImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(SCProductVersionImpl.class.getName());
+		EntityCacheUtil.clearCache(SCProductVersionImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -1160,7 +1160,7 @@ public class SCProductVersionPersistenceImpl extends BasePersistenceImpl<SCProdu
 
 		EntityCacheUtil.putResult(SCProductVersionModelImpl.ENTITY_CACHE_ENABLED,
 			SCProductVersionImpl.class, scProductVersion.getPrimaryKey(),
-			scProductVersion);
+			scProductVersion, false);
 
 		clearUniqueFindersCache(scProductVersion);
 		cacheUniqueFindersCache(scProductVersion);
@@ -1763,9 +1763,6 @@ public class SCProductVersionPersistenceImpl extends BasePersistenceImpl<SCProdu
 		}
 		catch (Exception e) {
 			throw processException(e);
-		}
-		finally {
-			FinderCacheUtil.clearCache(SCProductVersionModelImpl.MAPPING_TABLE_SCFRAMEWORKVERSI_SCPRODUCTVERS_NAME);
 		}
 	}
 

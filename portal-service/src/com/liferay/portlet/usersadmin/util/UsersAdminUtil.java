@@ -14,12 +14,13 @@
 
 package com.liferay.portlet.usersadmin.util;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.Tuple;
 import com.liferay.portal.model.Address;
 import com.liferay.portal.model.EmailAddress;
 import com.liferay.portal.model.Group;
@@ -46,6 +47,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Jorge Ferrer
  * @author Julio Camarero
  */
+@ProviderType
 public class UsersAdminUtil {
 
 	/**
@@ -178,7 +180,7 @@ public class UsersAdminUtil {
 			orderByCol, orderByType);
 	}
 
-	public static Tuple getOrganizations(Hits hits)
+	public static List<Organization> getOrganizations(Hits hits)
 		throws PortalException, SystemException {
 
 		return getUsersAdmin().getOrganizations(hits);
@@ -219,7 +221,7 @@ public class UsersAdminUtil {
 		return getUsersAdmin().getUserGroupRoles(portletRequest);
 	}
 
-	public static Tuple getUserGroups(Hits hits)
+	public static List<UserGroup> getUserGroups(Hits hits)
 		throws PortalException, SystemException {
 
 		return getUsersAdmin().getUserGroups(hits);
@@ -232,7 +234,7 @@ public class UsersAdminUtil {
 			orderByCol, orderByType);
 	}
 
-	public static Tuple getUsers(Hits hits)
+	public static List<User> getUsers(Hits hits)
 		throws PortalException, SystemException {
 
 		return getUsersAdmin().getUsers(hits);

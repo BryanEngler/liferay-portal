@@ -1,4 +1,4 @@
-<definition>
+<definition component-name="portal-wcm">
 	<set-up>
 		<execute macro="User#firstLoginPG" />
 	</set-up>
@@ -6,52 +6,6 @@
 	<tear-down>
 		<execute macro="Site#tearDownCP" />
 	</tear-down>
-
-	<command name="AddPublicVirtualHostsSiteURL" priority="4">
-		<var name="publicPageVirtualHostURL" value="www.able.com" />
-		<var name="publicSitePage" value="Public Page" />
-		<var name="publicSitePageURL" value="http://www.able.com:8080/public-page" />
-		<var name="publicVirtualHosts" value="true" />
-		<var name="siteName" value="Site Name" />
-
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Page#gotoPagesCP">
-			<var name="portletName" value="Site Pages" />
-			<var name="siteScopeName" value="${siteName}" />
-		</execute>
-
-		<execute macro="SitePage#addCP">
-			<var name="siteScopeSelected" value="true" />
-			<var name="sitePageName" value="${publicSitePage}" />
-			<var name="sitePageType" value="Public" />
-		</execute>
-
-		<execute macro="Page#gotoConfigurationCP">
-			<var name="portletName" value="Site Settings" />
-			<var name="siteScopeName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Site#addVirtualHostsURLCP">
-			<var name="publicPageVirtualHostURL" value="${publicPageVirtualHostURL}" />
-		</execute>
-
-		<execute macro="Page#openURL">
-			<var name="portletName" value="Site Settings" />
-			<var name="virtualHostsURL" value="${publicSitePageURL}" />
-		</execute>
-
-		<execute macro="Site#viewVirtualHostsURLPG">
-			<var name="sitePageName" value="${publicSitePage}" />
-			<var name="sitePageURL" value="${publicSitePageURL}" />
-		</execute>
-	</command>
 
 	<command name="AddChildChildSite" priority="5">
 		<var name="childChildSiteName" value="Child Child SiteName" />
@@ -130,6 +84,52 @@
 		</execute>
 	</command>
 
+	<command name="AddPublicVirtualHostsSiteURL" priority="4">
+		<var name="publicPageVirtualHostURL" value="www.able.com" />
+		<var name="publicSitePage" value="Public Page" />
+		<var name="publicSitePageURL" value="http://www.able.com:8080/public-page" />
+		<var name="publicVirtualHosts" value="true" />
+		<var name="siteName" value="Site Name" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Sites" />
+		</execute>
+
+		<execute macro="Site#addBlankCP">
+			<var name="siteName" value="${siteName}" />
+		</execute>
+
+		<execute macro="Page#gotoPagesCP">
+			<var name="portletName" value="Site Pages" />
+			<var name="siteScopeName" value="${siteName}" />
+		</execute>
+
+		<execute macro="SitePage#addCP">
+			<var name="sitePageName" value="${publicSitePage}" />
+			<var name="sitePagePrivacy" value="Public" />
+			<var name="siteScopeSelected" value="true" />
+		</execute>
+
+		<execute macro="Page#gotoConfigurationCP">
+			<var name="portletName" value="Site Settings" />
+			<var name="siteScopeName" value="${siteName}" />
+		</execute>
+
+		<execute macro="Site#addVirtualHostsURLCP">
+			<var name="publicPageVirtualHostURL" value="${publicPageVirtualHostURL}" />
+		</execute>
+
+		<execute macro="Page#openURL">
+			<var name="portletName" value="Site Settings" />
+			<var name="virtualHostsURL" value="${publicSitePageURL}" />
+		</execute>
+
+		<execute macro="Site#viewVirtualHostsURLPG">
+			<var name="sitePageName" value="${publicSitePage}" />
+			<var name="sitePageURL" value="${publicSitePageURL}" />
+		</execute>
+	</command>
+
 	<command name="AddSite" priority="5">
 		<var name="siteName" value="Site Name" />
 
@@ -201,6 +201,75 @@
 
 		<execute macro="Site#viewCP">
 			<var name="siteName" value="${siteName3}" />
+		</execute>
+	</command>
+
+	<command name="AddSiteWithCommaInName" priority="3">
+		<var name="siteName" value="Site Name," />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Sites" />
+		</execute>
+
+		<execute macro="Site#addBlankCP">
+			<var name="siteName" value="${siteName}" />
+		</execute>
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Sites" />
+		</execute>
+
+		<execute macro="Site#viewCP">
+			<var name="siteName" value="${siteName}" />
+		</execute>
+	</command>
+
+	<command name="AddSiteWithInvalidDuplicateName" priority="3">
+		<var name="siteName" value="Site Name" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Sites" />
+		</execute>
+
+		<execute macro="Site#addBlankCP">
+			<var name="siteName" value="${siteName}" />
+		</execute>
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Sites" />
+		</execute>
+
+		<execute macro="Site#viewCannotAdd">
+			<var name="siteName" value="${siteName}" />
+			<var name="siteNameInvalid" value="Duplicate" />
+		</execute>
+	</command>
+
+	<command name="AddSiteWithInvalidName" priority="3">
+		<var name="siteNameList" value="Site Name*,22222" />
+
+		<for list="${siteNameList}" param="siteName" >
+			<execute macro="Page#gotoCP">
+				<var name="portletName" value="Sites" />
+			</execute>
+
+			<execute macro="Site#viewCannotAdd">
+				<var name="siteName" value="${siteName}" />
+				<var name="siteNameInvalid" value="Invalid" />
+			</execute>
+		</for>
+	</command>
+
+	<command name="AddSiteWithNullName" priority="3">
+		<var name="siteName" value=" " />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Sites" />
+		</execute>
+
+		<execute macro="Site#viewCannotAdd">
+			<var name="siteName" value="${siteName}" />
+			<var name="siteNameInvalid" value="Null" />
 		</execute>
 	</command>
 
@@ -277,15 +346,15 @@
 		</execute>
 
 		<execute macro="SitePage#addCP">
-			<var name="siteScopeSelected" value="true" />
 			<var name="sitePageName" value="${publicSitePage}" />
-			<var name="sitePageType" value="Public" />
+			<var name="sitePagePrivacy" value="Public" />
+			<var name="siteScopeSelected" value="true" />
 		</execute>
 
 		<execute macro="SitePage#addCP">
-			<var name="siteScopeSelected" value="true" />
 			<var name="sitePageName" value="${privateSitePage}" />
-			<var name="sitePageType" value="Private" />
+			<var name="sitePagePrivacy" value="Private" />
+			<var name="siteScopeSelected" value="true" />
 		</execute>
 
 		<execute macro="Page#gotoConfigurationCP">
@@ -338,7 +407,7 @@
 
 		<execute macro="SitePage#addCP">
 			<var name="sitePageName" value="${sitePageName}" />
-			<var name="sitePageType" value="Public" />
+			<var name="sitePagePrivacy" value="Public" />
 			<var name="siteScopeSelected" value="true" />
 		</execute>
 
@@ -407,7 +476,7 @@
 		<execute macro="SitePage#addCP">
 			<var name="siteName" value="${siteName}" />
 			<var name="sitePageName" value="${sitePageName}" />
-			<var name="sitePageType" value="Public" />
+			<var name="sitePagePrivacy" value="Public" />
 		</execute>
 
 		<execute macro="Page#gotoCP">
@@ -426,7 +495,7 @@
 		<execute macro="SitePage#addCP">
 			<var name="siteName" value="${childSiteName}" />
 			<var name="sitePageName" value="${sitePageName}" />
-			<var name="sitePageType" value="Public" />
+			<var name="sitePagePrivacy" value="Public" />
 		</execute>
 
 		<execute macro="Page#gotoCP">
@@ -445,7 +514,7 @@
 		<execute macro="SitePage#addCP">
 			<var name="siteName" value="${childChildSiteName}" />
 			<var name="sitePageName" value="${sitePageName}" />
-			<var name="sitePageType" value="Public" />
+			<var name="sitePagePrivacy" value="Public" />
 		</execute>
 
 		<execute macro="Page#gotoCP">
@@ -488,255 +557,255 @@
 	</command>
 
 	<command name="ViewSiteHierarchiesViaSitesDirectory" priority="5">
-	    <var name="childChildSiteName1" value="Child ChildSite1Name" />
-	    <var name="childChildSiteName2" value="Child ChildSite2Name" />
-	    <var name="childSiteName1" value="Child Site1Name" />
-	    <var name="childSiteName2" value="Child Site2Name" />
-	    <var name="portletName" value="Sites Directory" />
-	    <var name="siteName" value="Site Name" />
-	    <var name="sitePageName" value="Site Page" />
+		<var name="childChildSiteName1" value="Child ChildSite1Name" />
+		<var name="childChildSiteName2" value="Child ChildSite2Name" />
+		<var name="childSiteName1" value="Child Site1Name" />
+		<var name="childSiteName2" value="Child Site2Name" />
+		<var name="portletName" value="Sites Directory" />
+		<var name="siteName" value="Site Name" />
+		<var name="sitePageName" value="Site Page" />
 
-	    <execute macro="Page#gotoCP">
-	     	<var name="portletName" value="Sites" />
-	    </execute>
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Sites" />
+		</execute>
 
-	    <execute macro="Site#addBlankCP">
-	      	<var name="siteName" value="${siteName}" />
-	    </execute>
+		<execute macro="Site#addBlankCP">
+			<var name="siteName" value="${siteName}" />
+		</execute>
 
-	    <execute macro="Page#gotoCP">
-	      	<var name="portletName" value="Sites" />
-	    </execute>
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Sites" />
+		</execute>
 
-	    <execute macro="SitePage#addCP">
-		    <var name="siteName" value="${siteName}" />
-		    <var name="sitePageName" value="${sitePageName}" />
-		    <var name="sitePageType" value="Public" />
-	    </execute>
+		<execute macro="SitePage#addCP">
+			<var name="siteName" value="${siteName}" />
+			<var name="sitePageName" value="${sitePageName}" />
+			<var name="sitePagePrivacy" value="Public" />
+		</execute>
 
-	    <execute macro="Page#gotoCP">
-	      	<var name="portletName" value="Sites" />
-	    </execute>
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Sites" />
+		</execute>
 
-	    <execute macro="Site#addBlankCP">
-		    <var name="parentSiteName" value="${siteName}" />
-		    <var name="siteName" value="${childSiteName1}" />
-	    </execute>
+		<execute macro="Site#addBlankCP">
+			<var name="parentSiteName" value="${siteName}" />
+			<var name="siteName" value="${childSiteName1}" />
+		</execute>
 
-	    <execute macro="Page#gotoCP">
-	      	<var name="portletName" value="Sites" />
-	    </execute>
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Sites" />
+		</execute>
 
-	    <execute macro="SitePage#addCP">
-	      	<var name="siteName" value="${childSiteName1}" />
-	      	<var name="sitePageName" value="${sitePageName}" />
-	      	<var name="sitePageType" value="Public" />
-	    </execute>
+		<execute macro="SitePage#addCP">
+			<var name="siteName" value="${childSiteName1}" />
+			<var name="sitePageName" value="${sitePageName}" />
+			<var name="sitePagePrivacy" value="Public" />
+		</execute>
 
-	    <execute macro="Page#gotoCP">
-	      	<var name="portletName" value="Sites" />
-	    </execute>
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Sites" />
+		</execute>
 
-	    <execute macro="Site#addBlankCP">
-	      	<var name="parentSiteName" value="${childSiteName1}" />
-	      	<var name="siteName" value="${childChildSiteName1}" />
-	    </execute>
+		<execute macro="Site#addBlankCP">
+			<var name="parentSiteName" value="${childSiteName1}" />
+			<var name="siteName" value="${childChildSiteName1}" />
+		</execute>
 
-	    <execute macro="Page#gotoCP">
-	      	<var name="portletName" value="Sites" />
-	    </execute>
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Sites" />
+		</execute>
 
-	    <execute macro="SitePage#addCP">
-	      	<var name="siteName" value="${childChildSiteName1}" />
-	      	<var name="sitePageName" value="${sitePageName}" />
-	      	<var name="sitePageType" value="Public" />
-	    </execute>
+		<execute macro="SitePage#addCP">
+			<var name="siteName" value="${childChildSiteName1}" />
+			<var name="sitePageName" value="${sitePageName}" />
+			<var name="sitePagePrivacy" value="Public" />
+		</execute>
 
-	    <execute macro="Page#gotoCP">
-	      	<var name="portletName" value="Sites" />
-	    </execute>
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Sites" />
+		</execute>
 
-	    <execute macro="Site#addBlankCP">
-	      	<var name="parentSiteName" value="${childSiteName1}" />
-	      	<var name="siteName" value="${childChildSiteName2}" />
-	    </execute>
+		<execute macro="Site#addBlankCP">
+			<var name="parentSiteName" value="${childSiteName1}" />
+			<var name="siteName" value="${childChildSiteName2}" />
+		</execute>
 
-	    <execute macro="Page#gotoCP">
-	      	<var name="portletName" value="Sites" />
-	    </execute>
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Sites" />
+		</execute>
 
-	    <execute macro="SitePage#addCP">
-	      	<var name="siteName" value="${childChildSiteName2}" />
-	      	<var name="sitePageName" value="${sitePageName}" />
-	      	<var name="sitePageType" value="Public" />
-	    </execute>
+		<execute macro="SitePage#addCP">
+			<var name="siteName" value="${childChildSiteName2}" />
+			<var name="sitePageName" value="${sitePageName}" />
+			<var name="sitePagePrivacy" value="Public" />
+		</execute>
 
-	    <execute macro="Page#gotoCP">
-	      	<var name="portletName" value="Sites" />
-	    </execute>
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Sites" />
+		</execute>
 
-	    <execute macro="Site#addBlankCP">
-		    <var name="parentSiteName" value="${siteName}" />
-		    <var name="siteName" value="${childSiteName2}" />
-	    </execute>
+		<execute macro="Site#addBlankCP">
+			<var name="parentSiteName" value="${siteName}" />
+			<var name="siteName" value="${childSiteName2}" />
+		</execute>
 
-	    <execute macro="Page#gotoCP">
-	      	<var name="portletName" value="Sites" />
-	    </execute>
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Sites" />
+		</execute>
 
-	    <execute macro="SitePage#addCP">
-	      	<var name="siteName" value="${childSiteName2}" />
-	      	<var name="sitePageName" value="${sitePageName}" />
-	      	<var name="sitePageType" value="Public" />
-	    </execute>
+		<execute macro="SitePage#addCP">
+			<var name="siteName" value="${childSiteName2}" />
+			<var name="sitePageName" value="${sitePageName}" />
+			<var name="sitePagePrivacy" value="Public" />
+		</execute>
 
-	    <execute macro="Page#gotoPG">
-	      	<var name="pageName" value="${sitePageName}" />
+		<execute macro="Page#gotoPG">
+			<var name="pageName" value="${sitePageName}" />
 			<var name="siteName" value="${childSiteName1}" />
 			<var name="siteURL" value="true" />
-	    </execute>
+		</execute>
 
-	    <execute macro="Portlet#addPG">
-	      	<var name="portletName" value="${portletName}" />
-	    </execute>
+		<execute macro="Portlet#addPG">
+			<var name="portletName" value="${portletName}" />
+		</execute>
 
-	    <execute macro="SitesDirectory#configureSetupPG">
-	      	<var name="directorySites" value="Top Level" />
-	    </execute>
+		<execute macro="SitesDirectory#configureSetupPG">
+			<var name="directorySites" value="Top Level" />
+		</execute>
 
 		<execute macro="Page#gotoPG">
-	      	<var name="pageName" value="${sitePageName}" />
+			<var name="pageName" value="${sitePageName}" />
 			<var name="siteName" value="${childSiteName1}" />
 			<var name="siteURL" value="true" />
-	    </execute>
+		</execute>
 
-	    <execute macro="SitesDirectory#viewDescriptivePG">
-	      	<var name="siteName" value="${siteName}" />
-	    </execute>
+		<execute macro="SitesDirectory#viewDescriptivePG">
+			<var name="siteName" value="${siteName}" />
+		</execute>
 
-	    <execute macro="SitesDirectory#configureSetupPG">
-	      	<var name="directorySites" value="Parent Level" />
-	    </execute>
+		<execute macro="SitesDirectory#configureSetupPG">
+			<var name="directorySites" value="Parent Level" />
+		</execute>
 
 		<execute macro="Page#gotoPG">
-	      	<var name="pageName" value="${sitePageName}" />
+			<var name="pageName" value="${sitePageName}" />
 			<var name="siteName" value="${childSiteName1}" />
 			<var name="siteURL" value="true" />
-	    </execute>
+		</execute>
 
-	    <execute macro="SitesDirectory#viewDescriptivePG">
-	      	<var name="siteName" value="${siteName}" />
-	    </execute>
+		<execute macro="SitesDirectory#viewDescriptivePG">
+			<var name="siteName" value="${siteName}" />
+		</execute>
 
-	    <execute macro="SitesDirectory#configureSetupPG">
-	      	<var name="directorySites" value="Siblings" />
-	    </execute>
+		<execute macro="SitesDirectory#configureSetupPG">
+			<var name="directorySites" value="Siblings" />
+		</execute>
 
 		<execute macro="Page#gotoPG">
-	      	<var name="pageName" value="${sitePageName}" />
+			<var name="pageName" value="${sitePageName}" />
 			<var name="siteName" value="${childSiteName1}" />
 			<var name="siteURL" value="true" />
-	    </execute>
+		</execute>
 
-	    <execute macro="SitesDirectory#viewDescriptivePG">
-	    	<var name="siteName" value="${childSiteName1}" />
-	    </execute>
+		<execute macro="SitesDirectory#viewDescriptivePG">
+			<var name="siteName" value="${childSiteName1}" />
+		</execute>
 
-	    <execute macro="SitesDirectory#viewDescriptivePG">
-	    	<var name="siteName" value="${childSiteName2}" />
-	    </execute>
+		<execute macro="SitesDirectory#viewDescriptivePG">
+			<var name="siteName" value="${childSiteName2}" />
+		</execute>
 
-	    <execute macro="SitesDirectory#configureSetupPG">
-	      	<var name="directorySites" value="Children" />
-	    </execute>
+		<execute macro="SitesDirectory#configureSetupPG">
+			<var name="directorySites" value="Children" />
+		</execute>
 
 		<execute macro="Page#gotoPG">
-	      	<var name="pageName" value="${sitePageName}" />
+			<var name="pageName" value="${sitePageName}" />
 			<var name="siteName" value="${childSiteName1}" />
 			<var name="siteURL" value="true" />
-	    </execute>
+		</execute>
 
-	    <execute macro="SitesDirectory#viewDescriptivePG">
-	    	<var name="siteName" value="${childChildSiteName1}" />
-	    </execute>
+		<execute macro="SitesDirectory#viewDescriptivePG">
+			<var name="siteName" value="${childChildSiteName1}" />
+		</execute>
 
-	    <execute macro="SitesDirectory#viewDescriptivePG">
-	    	<var name="siteName" value="${childChildSiteName2}" />
-	    </execute>
+		<execute macro="SitesDirectory#viewDescriptivePG">
+			<var name="siteName" value="${childChildSiteName2}" />
+		</execute>
 
-	    <execute action="PGSitesdirectory#assertTextEquals" locator-key1="BREADCRUMB" value1="Site Name/Child Site1Name/Site Page" />
+		<execute action="PGSitesdirectory#assertTextEquals" locator-key1="BREADCRUMB" value1="Site Name/Child Site1Name/Site Page" />
 
 		<execute macro="Page#gotoPG">
-	      	<var name="pageName" value="${sitePageName}" />
+			<var name="pageName" value="${sitePageName}" />
 			<var name="siteName" value="${childChildSiteName1}" />
 			<var name="siteURL" value="true" />
-	    </execute>
+		</execute>
 
-	    <execute macro="Portlet#addPG">
-	      	<var name="portletName" value="${portletName}" />
-	    </execute>
+		<execute macro="Portlet#addPG">
+			<var name="portletName" value="${portletName}" />
+		</execute>
 
-	    <execute macro="SitesDirectory#configureSetupPG">
-	      	<var name="directorySites" value="Top Level" />
-	    </execute>
+		<execute macro="SitesDirectory#configureSetupPG">
+			<var name="directorySites" value="Top Level" />
+		</execute>
 
 		<execute macro="Page#gotoPG">
-	      	<var name="pageName" value="${sitePageName}" />
+			<var name="pageName" value="${sitePageName}" />
 			<var name="siteName" value="${childChildSiteName1}" />
 			<var name="siteURL" value="true" />
-	    </execute>
+		</execute>
 
-	    <execute macro="SitesDirectory#viewDescriptivePG">
-	      	<var name="siteName" value="${siteName}" />
-	    </execute>
+		<execute macro="SitesDirectory#viewDescriptivePG">
+			<var name="siteName" value="${siteName}" />
+		</execute>
 
-	    <execute macro="SitesDirectory#configureSetupPG">
-	      	<var name="directorySites" value="Parent Level" />
-	    </execute>
+		<execute macro="SitesDirectory#configureSetupPG">
+			<var name="directorySites" value="Parent Level" />
+		</execute>
 
 		<execute macro="Page#gotoPG">
-	      	<var name="pageName" value="${sitePageName}" />
+			<var name="pageName" value="${sitePageName}" />
 			<var name="siteName" value="${childChildSiteName1}" />
 			<var name="siteURL" value="true" />
-	    </execute>
+		</execute>
 
-	    <execute macro="SitesDirectory#viewDescriptivePG">
-	    	<var name="siteName" value="${childSiteName1}" />
-	    </execute>
+		<execute macro="SitesDirectory#viewDescriptivePG">
+			<var name="siteName" value="${childSiteName1}" />
+		</execute>
 
-	    <execute macro="SitesDirectory#viewDescriptivePG">
-	    	<var name="siteName" value="${childSiteName2}" />
-	    </execute>
+		<execute macro="SitesDirectory#viewDescriptivePG">
+			<var name="siteName" value="${childSiteName2}" />
+		</execute>
 
-	    <execute macro="SitesDirectory#configureSetupPG">
-	      	<var name="directorySites" value="Siblings" />
-	    </execute>
+		<execute macro="SitesDirectory#configureSetupPG">
+			<var name="directorySites" value="Siblings" />
+		</execute>
 
 		<execute macro="Page#gotoPG">
-	      	<var name="pageName" value="${sitePageName}" />
+			<var name="pageName" value="${sitePageName}" />
 			<var name="siteName" value="${childChildSiteName1}" />
 			<var name="siteURL" value="true" />
-	    </execute>
+		</execute>
 
-	    <execute macro="SitesDirectory#viewDescriptivePG">
-	    	<var name="siteName" value="${childChildSiteName1}" />
-	    </execute>
+		<execute macro="SitesDirectory#viewDescriptivePG">
+			<var name="siteName" value="${childChildSiteName1}" />
+		</execute>
 
-	    <execute macro="SitesDirectory#viewDescriptivePG">
-	    	<var name="siteName" value="${childChildSiteName2}" />
-	    </execute>
+		<execute macro="SitesDirectory#viewDescriptivePG">
+			<var name="siteName" value="${childChildSiteName2}" />
+		</execute>
 
-	    <execute macro="SitesDirectory#configureSetupPG">
-	      	<var name="directorySites" value="Children" />
-	    </execute>
+		<execute macro="SitesDirectory#configureSetupPG">
+			<var name="directorySites" value="Children" />
+		</execute>
 
 		<execute macro="Page#gotoPG">
-	      	<var name="pageName" value="${sitePageName}" />
+			<var name="pageName" value="${sitePageName}" />
 			<var name="siteName" value="${childChildSiteName1}" />
 			<var name="siteURL" value="true" />
-	    </execute>
+		</execute>
 
-	    <execute action="PGSitesdirectory#assertTextEquals" locator-key1="INFO_MESSAGE" value1="No sites were found." />
-	    <execute action="PGSitesdirectory#assertTextEquals" locator-key1="BREADCRUMB" value1="Site Name/Child Site1Name/Child ChildSite1Name/Site Page" />
+		<execute action="PGSitesdirectory#assertTextEquals" locator-key1="INFO_MESSAGE" value1="No sites were found." />
+		<execute action="PGSitesdirectory#assertTextEquals" locator-key1="BREADCRUMB" value1="Site Name/Child Site1Name/Child ChildSite1Name/Site Page" />
 	</command>
 </definition>

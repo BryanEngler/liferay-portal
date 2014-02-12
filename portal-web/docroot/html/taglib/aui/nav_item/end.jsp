@@ -26,6 +26,10 @@ String bodyContentString = StringPool.BLANK;
 if (bodyContent != null) {
 	bodyContentString = bodyContent.getString();
 }
+
+if (Validator.isNull(title)) {
+	title = HtmlUtil.stripHtml(LanguageUtil.get(pageContext, label));
+}
 %>
 
 <c:if test="<%= !dropdown || Validator.isNotNull(bodyContentString.trim()) %>">
@@ -45,7 +49,7 @@ if (bodyContent != null) {
 					</c:if>
 
 					<span class="nav-item-label">
-						<liferay-ui:message key="<%= label %>" localizeKey="<%= false %>" />
+						<liferay-ui:message key="<%= label %>" localizeKey="<%= localizeLabel %>" />
 					</span>
 
 					<c:if test="<%= dropdown %>">
@@ -123,7 +127,7 @@ if (bodyContent != null) {
 			</aui:script>
 
 			<c:if test="<%= wrapDropDownMenu %>">
-				<ul class='dropdown-menu <%= LanguageUtil.get(locale, "lang.dir").equals("rtl") ? "pull-right" : StringPool.BLANK %>'>
+				<ul class="dropdown-menu">
 			</c:if>
 		</c:if>
 

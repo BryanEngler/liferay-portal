@@ -44,7 +44,6 @@ import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.ContentTypes;
-import com.liferay.portal.kernel.util.CalendarUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.InstanceFactory;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -59,6 +58,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.ModelListener;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
@@ -69,6 +69,7 @@ import java.io.Serializable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -211,7 +212,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			CacheRegistryUtil.clear(${entity.name}Impl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(${entity.name}Impl.class.getName());
+		EntityCacheUtil.clearCache(${entity.name}Impl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -672,7 +673,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			</#if>
 		</#if>
 
-		EntityCacheUtil.putResult(${entity.name}ModelImpl.ENTITY_CACHE_ENABLED, ${entity.name}Impl.class, ${entity.varName}.getPrimaryKey(), ${entity.varName});
+		EntityCacheUtil.putResult(${entity.name}ModelImpl.ENTITY_CACHE_ENABLED, ${entity.name}Impl.class, ${entity.varName}.getPrimaryKey(), ${entity.varName}, false);
 
 		<#assign uniqueFinderList = entity.getUniqueFinderList()>
 
@@ -1229,9 +1230,6 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 					catch (Exception e) {
 						throw processException(e);
 					}
-					finally {
-						FinderCacheUtil.clearCache(${entity.name}ModelImpl.MAPPING_TABLE_${stringUtil.upperCase(column.mappingTable)}_NAME);
-					}
 				}
 			</#if>
 		</#if>
@@ -1268,7 +1266,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 					CacheRegistryUtil.clear(${entity.name}Impl.class.getName());
 				}
 
-				EntityCacheUtil.clearCache(${entity.name}Impl.class.getName());
+				EntityCacheUtil.clearCache(${entity.name}Impl.class);
 				FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 				FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 			}
@@ -1285,7 +1283,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			try {
 				session = openSession();
 
-				SQLQuery q = session.createSQLQuery("SELECT COUNT(*) AS COUNT_VALUE FROM ${entity.table} WHERE ${scopeColumn.DBName} = ? AND (left${pkColumn.methodName} = 0 OR left${pkColumn.methodName} IS NULL OR right${pkColumn.methodName} = 0 OR right${pkColumn.methodName} IS NULL)");
+				SQLQuery q = session.createSynchronizedSQLQuery("SELECT COUNT(*) AS COUNT_VALUE FROM ${entity.table} WHERE ${scopeColumn.DBName} = ? AND (left${pkColumn.methodName} = 0 OR left${pkColumn.methodName} IS NULL OR right${pkColumn.methodName} = 0 OR right${pkColumn.methodName} IS NULL)");
 
 				q.addScalar(COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
 
@@ -1355,7 +1353,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 					CacheRegistryUtil.clear(${entity.name}Impl.class.getName());
 				}
 
-				EntityCacheUtil.clearCache(${entity.name}Impl.class.getName());
+				EntityCacheUtil.clearCache(${entity.name}Impl.class);
 				FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 				FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 			}
@@ -1370,7 +1368,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			try {
 				session = openSession();
 
-				SQLQuery q = session.createSQLQuery("SELECT ${entity.PKDBName} FROM ${entity.table} WHERE (${scopeColumn.DBName} = ?) AND (left${entity.PKDBName} BETWEEN ? AND ?)");
+				SQLQuery q = session.createSynchronizedSQLQuery("SELECT ${entity.PKDBName} FROM ${entity.table} WHERE (${scopeColumn.DBName} = ?) AND (left${entity.PKDBName} BETWEEN ? AND ?)");
 
 				q.addScalar("${pkColumn.methodName}", com.liferay.portal.kernel.dao.orm.Type.LONG);
 
@@ -1396,7 +1394,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			try {
 				session = openSession();
 
-				SQLQuery q = session.createSQLQuery("SELECT right${pkColumn.methodName} FROM ${entity.table} WHERE (${scopeColumn.DBName} = ?) AND (parent${pkColumn.methodName} = ?) ORDER BY right${pkColumn.methodName} DESC");
+				SQLQuery q = session.createSynchronizedSQLQuery("SELECT right${pkColumn.methodName} FROM ${entity.table} WHERE (${scopeColumn.DBName} = ?) AND (parent${pkColumn.methodName} = ?) ORDER BY right${pkColumn.methodName} DESC");
 
 				q.addScalar("right${pkColumn.methodName}", com.liferay.portal.kernel.dao.orm.Type.LONG);
 
@@ -1442,7 +1440,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			try {
 				session = openSession();
 
-				SQLQuery q = session.createSQLQuery("SELECT ${pkColumn.DBName} FROM ${entity.table} WHERE ${scopeColumn.DBName} = ? AND parent${pkColumn.methodName} = ? ORDER BY ${pkColumn.name} ASC");
+				SQLQuery q = session.createSynchronizedSQLQuery("SELECT ${pkColumn.DBName} FROM ${entity.table} WHERE ${scopeColumn.DBName} = ? AND parent${pkColumn.methodName} = ? ORDER BY ${pkColumn.name} ASC");
 
 				q.addScalar("${pkColumn.name}", com.liferay.portal.kernel.dao.orm.Type.LONG);
 
@@ -1492,7 +1490,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 				CacheRegistryUtil.clear(${entity.name}Impl.class.getName());
 			}
 
-			EntityCacheUtil.clearCache(${entity.name}Impl.class.getName());
+			EntityCacheUtil.clearCache(${entity.name}Impl.class);
 			FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 			FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 		}
@@ -1719,11 +1717,78 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 
 	};
 
-	private static CacheModel<${entity.name}> _null${entity.name}CacheModel = new CacheModel<${entity.name}>() {
-		@Override
-		public ${entity.name} toEntityModel() {
-			return _null${entity.name};
+	private static CacheModel<${entity.name}> _null${entity.name}CacheModel =
+
+	<#if entity.isMvccEnabled()>
+		new NullCacheModel();
+
+		private static class NullCacheModel implements CacheModel<${entity.name}>, MVCCModel {
+
+			@Override
+			public long getMvccVersion() {
+				return 0;
+			}
+
+			@Override
+			public void setMvccVersion(long mvccVersion) {
+			}
+
+			@Override
+			public ${entity.name} toEntityModel() {
+				return _null${entity.name};
+			}
+
 		}
-	};
+	<#else>
+		new CacheModel<${entity.name}>() {
+
+			@Override
+			public ${entity.name} toEntityModel() {
+				return _null${entity.name};
+			}
+
+		};
+	</#if>
 
 }
+
+<#function bindParameter finderColsList>
+	<#list finderColsList as finderCol>
+		<#if !finderCol.hasArrayableOperator() || finderCol.type == "String">
+			<#return true>
+		</#if>
+	</#list>
+
+	<#return false>
+</#function>
+
+<#macro finderQPos
+	_arrayable = false
+>
+	<#list finderColsList as finderCol>
+		<#if _arrayable && finderCol.hasArrayableOperator()>
+			<#if finderCol.type == "String">
+				for (String ${finderCol.name} : ${finderCol.names}) {
+					if (${finderCol.name} != null && !${finderCol.name}.isEmpty()) {
+						qPos.add(${finderCol.name});
+					}
+				}
+			</#if>
+		<#elseif finderCol.isPrimitiveType()>
+			qPos.add(${finderCol.name}${serviceBuilder.getPrimitiveObjValue("${finderCol.type}")});
+
+		<#else>
+			if (bind${finderCol.methodName}) {
+				qPos.add(
+					<#if finderCol.type == "Date">
+						new Timestamp(${finderCol.name}.getTime())
+					<#elseif finderCol.type == "String" && !finderCol.isCaseSensitive()>
+						StringUtil.toLowerCase(${finderCol.name})
+					<#else>
+						${finderCol.name}
+					</#if>
+				);
+			}
+		</#if>
+	</#list>
+</#macro>

@@ -29,13 +29,18 @@
 	<td></td>
 </tr>
 <tr>
-	<td>ENTRY_DRAFT_STATUS</td>
-	<td>//div[contains(@class,'entry') and contains(@class,'draft')]/div/h3</td>
+	<td>ENTRY_STATUS</td>
+	<td>//span[@class='taglib-workflow-status']//strong[contains(@class,'workflow-value')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>ENTRY_CONTENT</td>
 	<td>//div[@class='entry-body']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ENTRY_CONTENT_CKE_EDIT</td>
+	<td>//div[@class='entry-body']/div[contains(@class,'cke_editable') and contains(.,'${key_entryContent}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -257,6 +262,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>COMMENTS_REPLY_AS_BUTTON</td>
+	<td>//button[@type='button' and contains(.,'Reply as...')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>COMMENTS_CANCEL_BUTTON</td>
 	<td>//button[@type='button' and contains(.,'Cancel')]</td>
 	<td></td>
@@ -285,6 +295,11 @@
 <tr>
 	<td>COMMENT_3</td>
 	<td>xpath=(//div[@class='lfr-discussion-message'])[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>COMMENT_USER_NAME</td>
+	<td>//span[@class='user-name']</td>
 	<td></td>
 </tr>
 <tr>

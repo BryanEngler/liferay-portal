@@ -23,6 +23,8 @@ import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.Verifier;
 import aQute.bnd.version.Version;
 
+import com.liferay.portal.cache.key.JavaMD5CacheKeyGenerator;
+import com.liferay.portal.kernel.cache.key.CacheKeyGenerator;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -58,6 +60,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import java.security.CodeSource;
+import java.security.NoSuchAlgorithmException;
 import java.security.ProtectionDomain;
 
 import java.util.ArrayList;
@@ -685,6 +688,18 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 		return String.valueOf(level);
 	}
 
+	private String _getHashcode(String[] keys) {
+		try {
+			CacheKeyGenerator cacheKeyGenerator = new JavaMD5CacheKeyGenerator(
+				128);
+
+			return String.valueOf(cacheKeyGenerator.getCacheKey(keys));
+		}
+		catch (NoSuchAlgorithmException nsae) {
+			throw new RuntimeException(nsae);
+		}
+	}
+
 	private Set<Class<?>> _getInterfaces(Object bean) {
 		Set<Class<?>> interfaces = new HashSet<Class<?>>();
 
@@ -706,12 +721,20 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 	}
 
 	private String _getSystemPackagesExtra() {
+		String[] systemPackagesExtra =
+			PropsValues.MODULE_FRAMEWORK_SYSTEM_PACKAGES_EXTRA;
+
+		String hashcode = _getHashcode(systemPackagesExtra);
+
 		File coreDir = new File(
 			PropsValues.LIFERAY_WEB_PORTAL_CONTEXT_TEMPDIR, "osgi");
 
 		File cacheFile = new File(coreDir, "system-packages.txt");
+		File hashcodeFile = new File(coreDir, "system-packages.hash");
 
-		if (cacheFile.exists()) {
+		if (cacheFile.exists() && hashcodeFile.exists() &&
+			_hasMatchingHashcode(hashcodeFile, hashcode)) {
+
 			try {
 				return FileUtil.read(cacheFile);
 			}
@@ -724,9 +747,7 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 
 		StringBundler sb = new StringBundler();
 
-		for (String extraPackage :
-				PropsValues.MODULE_FRAMEWORK_SYSTEM_PACKAGES_EXTRA) {
-
+		for (String extraPackage : systemPackagesExtra) {
 			sb.append(extraPackage);
 			sb.append(StringPool.COMMA);
 		}
@@ -784,6 +805,7 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 
 		try {
 			FileUtil.write(cacheFile, sb.toString());
+			FileUtil.write(hashcodeFile, hashcode);
 		}
 		catch (IOException ioe) {
 			_log.error(ioe, ioe);
@@ -812,6 +834,23 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 
 		if (parameters.containsKey(Constants.ACTIVATION_LAZY)) {
 			return true;
+		}
+
+		return false;
+	}
+
+	private boolean _hasMatchingHashcode(
+		File hashcodeFile, String expectedHashcode) {
+
+		try {
+			String actualHashcode = FileUtil.read(hashcodeFile);
+
+			if (actualHashcode.equals(expectedHashcode)) {
+				return true;
+			}
+		}
+		catch (IOException ioe) {
+			_log.error(ioe, ioe);
 		}
 
 		return false;

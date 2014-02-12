@@ -17,6 +17,7 @@ package com.liferay.portal.model.impl;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.ResourcePermission;
 
 import java.io.Externalizable;
@@ -32,12 +33,24 @@ import java.io.ObjectOutput;
  * @generated
  */
 public class ResourcePermissionCacheModel implements CacheModel<ResourcePermission>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(17);
+		StringBundler sb = new StringBundler(19);
 
-		sb.append("{resourcePermissionId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", resourcePermissionId=");
 		sb.append(resourcePermissionId);
 		sb.append(", companyId=");
 		sb.append(companyId);
@@ -62,6 +75,7 @@ public class ResourcePermissionCacheModel implements CacheModel<ResourcePermissi
 	public ResourcePermission toEntityModel() {
 		ResourcePermissionImpl resourcePermissionImpl = new ResourcePermissionImpl();
 
+		resourcePermissionImpl.setMvccVersion(mvccVersion);
 		resourcePermissionImpl.setResourcePermissionId(resourcePermissionId);
 		resourcePermissionImpl.setCompanyId(companyId);
 
@@ -92,6 +106,7 @@ public class ResourcePermissionCacheModel implements CacheModel<ResourcePermissi
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		resourcePermissionId = objectInput.readLong();
 		companyId = objectInput.readLong();
 		name = objectInput.readUTF();
@@ -105,6 +120,7 @@ public class ResourcePermissionCacheModel implements CacheModel<ResourcePermissi
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(resourcePermissionId);
 		objectOutput.writeLong(companyId);
 
@@ -129,6 +145,7 @@ public class ResourcePermissionCacheModel implements CacheModel<ResourcePermissi
 		objectOutput.writeLong(actionIds);
 	}
 
+	public long mvccVersion;
 	public long resourcePermissionId;
 	public long companyId;
 	public String name;

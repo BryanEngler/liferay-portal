@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.CookieKeys;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -274,6 +275,31 @@ public class LayoutImpl extends LayoutBaseImpl {
 	}
 
 	@Override
+	public String getDefaultThemeSetting(
+		String key, String device, boolean inheritLookAndFeel) {
+
+		if (!inheritLookAndFeel) {
+			try {
+				Theme theme = getTheme(device);
+
+				return theme.getSetting(key);
+			}
+			catch (Exception e) {
+			}
+		}
+
+		try {
+			LayoutSet layoutSet = getLayoutSet();
+
+			return layoutSet.getThemeSetting(key, device);
+		}
+		catch (Exception e) {
+		}
+
+		return StringPool.BLANK;
+	}
+
+	@Override
 	public String getFriendlyURL(Locale locale) {
 		Layout layout = this;
 
@@ -369,6 +395,19 @@ public class LayoutImpl extends LayoutBaseImpl {
 	}
 
 	@Override
+	public Layout getLinkedToLayout() throws SystemException {
+		long linkToLayoutId = GetterUtil.getLong(
+			getTypeSettingsProperty("linkToLayoutId"));
+
+		if (linkToLayoutId <= 0) {
+			return null;
+		}
+
+		return LayoutLocalServiceUtil.fetchLayout(
+			getGroupId(), isPrivateLayout(), linkToLayoutId);
+	}
+
+	@Override
 	public long getParentPlid() throws PortalException, SystemException {
 		if (getParentLayoutId() == LayoutConstants.DEFAULT_PARENT_LAYOUT_ID) {
 			return 0;
@@ -433,6 +472,13 @@ public class LayoutImpl extends LayoutBaseImpl {
 
 	@Override
 	public String getThemeSetting(String key, String device) {
+		return getThemeSetting(key, device, isInheritLookAndFeel());
+	}
+
+	@Override
+	public String getThemeSetting(
+		String key, String device, boolean inheritLookAndFeel) {
+
 		UnicodeProperties typeSettingsProperties = getTypeSettingsProperties();
 
 		String value = typeSettingsProperties.getProperty(
@@ -442,25 +488,7 @@ public class LayoutImpl extends LayoutBaseImpl {
 			return value;
 		}
 
-		if (!isInheritLookAndFeel()) {
-			try {
-				Theme theme = getTheme(device);
-
-				return theme.getSetting(key);
-			}
-			catch (Exception e) {
-			}
-		}
-
-		try {
-			LayoutSet layoutSet = getLayoutSet();
-
-			value = layoutSet.getThemeSetting(key, device);
-		}
-		catch (Exception e) {
-		}
-
-		return value;
+		return getDefaultThemeSetting(key, device, inheritLookAndFeel);
 	}
 
 	@Override

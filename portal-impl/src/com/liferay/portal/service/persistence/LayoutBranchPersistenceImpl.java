@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.util.UnmodifiableList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.LayoutBranch;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.model.impl.LayoutBranchImpl;
 import com.liferay.portal.model.impl.LayoutBranchModelImpl;
@@ -2023,7 +2024,7 @@ public class LayoutBranchPersistenceImpl extends BasePersistenceImpl<LayoutBranc
 			CacheRegistryUtil.clear(LayoutBranchImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(LayoutBranchImpl.class.getName());
+		EntityCacheUtil.clearCache(LayoutBranchImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -2322,7 +2323,8 @@ public class LayoutBranchPersistenceImpl extends BasePersistenceImpl<LayoutBranc
 		}
 
 		EntityCacheUtil.putResult(LayoutBranchModelImpl.ENTITY_CACHE_ENABLED,
-			LayoutBranchImpl.class, layoutBranch.getPrimaryKey(), layoutBranch);
+			LayoutBranchImpl.class, layoutBranch.getPrimaryKey(), layoutBranch,
+			false);
 
 		clearUniqueFindersCache(layoutBranch);
 		cacheUniqueFindersCache(layoutBranch);
@@ -2342,6 +2344,7 @@ public class LayoutBranchPersistenceImpl extends BasePersistenceImpl<LayoutBranc
 		layoutBranchImpl.setNew(layoutBranch.isNew());
 		layoutBranchImpl.setPrimaryKey(layoutBranch.getPrimaryKey());
 
+		layoutBranchImpl.setMvccVersion(layoutBranch.getMvccVersion());
 		layoutBranchImpl.setLayoutBranchId(layoutBranch.getLayoutBranchId());
 		layoutBranchImpl.setGroupId(layoutBranch.getGroupId());
 		layoutBranchImpl.setCompanyId(layoutBranch.getCompanyId());
@@ -2682,10 +2685,22 @@ public class LayoutBranchPersistenceImpl extends BasePersistenceImpl<LayoutBranc
 			}
 		};
 
-	private static CacheModel<LayoutBranch> _nullLayoutBranchCacheModel = new CacheModel<LayoutBranch>() {
-			@Override
-			public LayoutBranch toEntityModel() {
-				return _nullLayoutBranch;
-			}
-		};
+	private static CacheModel<LayoutBranch> _nullLayoutBranchCacheModel = new NullCacheModel();
+
+	private static class NullCacheModel implements CacheModel<LayoutBranch>,
+		MVCCModel {
+		@Override
+		public long getMvccVersion() {
+			return 0;
+		}
+
+		@Override
+		public void setMvccVersion(long mvccVersion) {
+		}
+
+		@Override
+		public LayoutBranch toEntityModel() {
+			return _nullLayoutBranch;
+		}
+	}
 }

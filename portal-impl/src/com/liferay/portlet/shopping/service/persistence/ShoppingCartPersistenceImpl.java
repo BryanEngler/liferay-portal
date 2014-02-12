@@ -1342,7 +1342,7 @@ public class ShoppingCartPersistenceImpl extends BasePersistenceImpl<ShoppingCar
 			CacheRegistryUtil.clear(ShoppingCartImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(ShoppingCartImpl.class.getName());
+		EntityCacheUtil.clearCache(ShoppingCartImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -1608,7 +1608,8 @@ public class ShoppingCartPersistenceImpl extends BasePersistenceImpl<ShoppingCar
 		}
 
 		EntityCacheUtil.putResult(ShoppingCartModelImpl.ENTITY_CACHE_ENABLED,
-			ShoppingCartImpl.class, shoppingCart.getPrimaryKey(), shoppingCart);
+			ShoppingCartImpl.class, shoppingCart.getPrimaryKey(), shoppingCart,
+			false);
 
 		clearUniqueFindersCache(shoppingCart);
 		cacheUniqueFindersCache(shoppingCart);

@@ -1,4 +1,4 @@
-<definition>
+<definition component-name="portal-workflow">
 	<property name="web.plugins.includes" value="kaleo-web" />
 
 	<var name="pageName" value="Page Comments Page" />
@@ -131,7 +131,7 @@
 		</execute>
 
 		<execute macro="Workflow#assignToMeTaskByActions">
-		<var name="workflowAssetTitle" value="${commentBody}" />
+			<var name="workflowAssetTitle" value="${commentBody}" />
 			<var name="workflowAssetType" value="Comments" />
 			<var name="workflowTask" value="Review" />
 		</execute>

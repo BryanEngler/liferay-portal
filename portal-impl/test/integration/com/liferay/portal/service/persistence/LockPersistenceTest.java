@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Lock;
@@ -114,6 +115,8 @@ public class LockPersistenceTest {
 
 		Lock newLock = _persistence.create(pk);
 
+		newLock.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newLock.setUuid(ServiceTestUtil.randomString());
 
 		newLock.setCompanyId(ServiceTestUtil.nextLong());
@@ -138,6 +141,8 @@ public class LockPersistenceTest {
 
 		Lock existingLock = _persistence.findByPrimaryKey(newLock.getPrimaryKey());
 
+		Assert.assertEquals(existingLock.getMvccVersion(),
+			newLock.getMvccVersion());
 		Assert.assertEquals(existingLock.getUuid(), newLock.getUuid());
 		Assert.assertEquals(existingLock.getLockId(), newLock.getLockId());
 		Assert.assertEquals(existingLock.getCompanyId(), newLock.getCompanyId());
@@ -153,6 +158,61 @@ public class LockPersistenceTest {
 		Assert.assertEquals(Time.getShortTimestamp(
 				existingLock.getExpirationDate()),
 			Time.getShortTimestamp(newLock.getExpirationDate()));
+	}
+
+	@Test
+	public void testCountByUuid() {
+		try {
+			_persistence.countByUuid(StringPool.BLANK);
+
+			_persistence.countByUuid(StringPool.NULL);
+
+			_persistence.countByUuid((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByUuid_C() {
+		try {
+			_persistence.countByUuid_C(StringPool.BLANK,
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByUuid_C(StringPool.NULL, 0L);
+
+			_persistence.countByUuid_C((String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByLtExpirationDate() {
+		try {
+			_persistence.countByLtExpirationDate(ServiceTestUtil.nextDate());
+
+			_persistence.countByLtExpirationDate(ServiceTestUtil.nextDate());
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_K() {
+		try {
+			_persistence.countByC_K(StringPool.BLANK, StringPool.BLANK);
+
+			_persistence.countByC_K(StringPool.NULL, StringPool.NULL);
+
+			_persistence.countByC_K((String)null, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -189,10 +249,11 @@ public class LockPersistenceTest {
 	}
 
 	protected OrderByComparator getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("Lock_", "uuid", true,
-			"lockId", true, "companyId", true, "userId", true, "userName",
-			true, "createDate", true, "className", true, "key", true, "owner",
-			true, "inheritable", true, "expirationDate", true);
+		return OrderByComparatorFactoryUtil.create("Lock_", "mvccVersion",
+			true, "uuid", true, "lockId", true, "companyId", true, "userId",
+			true, "userName", true, "createDate", true, "className", true,
+			"key", true, "owner", true, "inheritable", true, "expirationDate",
+			true);
 	}
 
 	@Test
@@ -328,6 +389,8 @@ public class LockPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		Lock lock = _persistence.create(pk);
+
+		lock.setMvccVersion(ServiceTestUtil.nextLong());
 
 		lock.setUuid(ServiceTestUtil.randomString());
 

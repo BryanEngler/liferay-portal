@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.LayoutBranch;
 import com.liferay.portal.model.impl.LayoutBranchModelImpl;
@@ -113,6 +114,8 @@ public class LayoutBranchPersistenceTest {
 
 		LayoutBranch newLayoutBranch = _persistence.create(pk);
 
+		newLayoutBranch.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newLayoutBranch.setGroupId(ServiceTestUtil.nextLong());
 
 		newLayoutBranch.setCompanyId(ServiceTestUtil.nextLong());
@@ -135,6 +138,8 @@ public class LayoutBranchPersistenceTest {
 
 		LayoutBranch existingLayoutBranch = _persistence.findByPrimaryKey(newLayoutBranch.getPrimaryKey());
 
+		Assert.assertEquals(existingLayoutBranch.getMvccVersion(),
+			newLayoutBranch.getMvccVersion());
 		Assert.assertEquals(existingLayoutBranch.getLayoutBranchId(),
 			newLayoutBranch.getLayoutBranchId());
 		Assert.assertEquals(existingLayoutBranch.getGroupId(),
@@ -155,6 +160,59 @@ public class LayoutBranchPersistenceTest {
 			newLayoutBranch.getDescription());
 		Assert.assertEquals(existingLayoutBranch.getMaster(),
 			newLayoutBranch.getMaster());
+	}
+
+	@Test
+	public void testCountByLayoutSetBranchId() {
+		try {
+			_persistence.countByLayoutSetBranchId(ServiceTestUtil.nextLong());
+
+			_persistence.countByLayoutSetBranchId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByL_P() {
+		try {
+			_persistence.countByL_P(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByL_P(0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByL_P_N() {
+		try {
+			_persistence.countByL_P_N(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), StringPool.BLANK);
+
+			_persistence.countByL_P_N(0L, 0L, StringPool.NULL);
+
+			_persistence.countByL_P_N(0L, 0L, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByL_P_M() {
+		try {
+			_persistence.countByL_P_M(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), ServiceTestUtil.randomBoolean());
+
+			_persistence.countByL_P_M(0L, 0L, ServiceTestUtil.randomBoolean());
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -193,9 +251,10 @@ public class LayoutBranchPersistenceTest {
 
 	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("LayoutBranch",
-			"LayoutBranchId", true, "groupId", true, "companyId", true,
-			"userId", true, "userName", true, "layoutSetBranchId", true,
-			"plid", true, "name", true, "description", true, "master", true);
+			"mvccVersion", true, "LayoutBranchId", true, "groupId", true,
+			"companyId", true, "userId", true, "userName", true,
+			"layoutSetBranchId", true, "plid", true, "name", true,
+			"description", true, "master", true);
 	}
 
 	@Test
@@ -335,6 +394,8 @@ public class LayoutBranchPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		LayoutBranch layoutBranch = _persistence.create(pk);
+
+		layoutBranch.setMvccVersion(ServiceTestUtil.nextLong());
 
 		layoutBranch.setGroupId(ServiceTestUtil.nextLong());
 

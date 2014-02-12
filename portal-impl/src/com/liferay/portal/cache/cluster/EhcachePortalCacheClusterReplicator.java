@@ -26,17 +26,17 @@ import java.util.Properties;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
-import net.sf.ehcache.distribution.CacheReplicator;
+import net.sf.ehcache.event.CacheEventListener;
 
 /**
  * @author Shuyang Zhou
  */
-public class EhcachePortalCacheClusterReplicator implements CacheReplicator {
+public class EhcachePortalCacheClusterReplicator implements CacheEventListener {
 
 	public EhcachePortalCacheClusterReplicator(Properties properties) {
 		if (properties != null) {
 			_replicatePuts = GetterUtil.getBoolean(
-				properties.getProperty(_REPLICATE_PUTS));
+				properties.getProperty(_REPLICATE_PUTS), true);
 			_replicatePutsViaCopy = GetterUtil.getBoolean(
 				properties.getProperty(_REPLICATE_PUTS_VIA_COPY));
 			_replicateRemovals = GetterUtil.getBoolean(
@@ -49,27 +49,12 @@ public class EhcachePortalCacheClusterReplicator implements CacheReplicator {
 	}
 
 	@Override
-	public boolean alive() {
-		return true;
-	}
-
-	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}
 
 	@Override
 	public void dispose() {
-	}
-
-	@Override
-	public boolean isReplicateUpdatesViaCopy() {
-		return false;
-	}
-
-	@Override
-	public boolean notAlive() {
-		return false;
 	}
 
 	@Override
@@ -124,7 +109,9 @@ public class EhcachePortalCacheClusterReplicator implements CacheReplicator {
 	public void notifyElementUpdated(Ehcache ehcache, Element element)
 		throws CacheException {
 
-		if (!_replicateUpdates) {
+		if (!_replicateUpdates ||
+			!ClusterReplicationThreadLocal.isReplicateUpdate()) {
+
 			return;
 		}
 
@@ -169,7 +156,7 @@ public class EhcachePortalCacheClusterReplicator implements CacheReplicator {
 	private static final String _REPLICATE_UPDATES_VIA_COPY =
 		"replicateUpdatesViaCopy";
 
-	private boolean _replicatePuts;
+	private boolean _replicatePuts = true;
 	private boolean _replicatePutsViaCopy;
 	private boolean _replicateRemovals = true;
 	private boolean _replicateUpdates = true;

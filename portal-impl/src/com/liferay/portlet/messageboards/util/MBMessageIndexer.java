@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
@@ -86,8 +85,15 @@ public class MBMessageIndexer extends BaseIndexer {
 
 		DLFileEntry dlFileEntry = (DLFileEntry)obj;
 
-		MBMessage message = MBMessageAttachmentsUtil.getMessage(
-			dlFileEntry.getFileEntryId());
+		MBMessage message = null;
+
+		try {
+			message = MBMessageAttachmentsUtil.getMessage(
+				dlFileEntry.getFileEntryId());
+		}
+		catch (Exception e) {
+			return;
+		}
 
 		document.addKeyword(Field.CATEGORY_ID, message.getCategoryId());
 
@@ -111,8 +117,42 @@ public class MBMessageIndexer extends BaseIndexer {
 			long entryClassPK, String actionId)
 		throws Exception {
 
+		MBMessage message = MBMessageLocalServiceUtil.getMessage(entryClassPK);
+
+		if (message.isDiscussion()) {
+			Indexer indexer = IndexerRegistryUtil.getIndexer(
+				message.getClassName());
+
+			return indexer.hasPermission(
+				permissionChecker, message.getClassName(), message.getClassPK(),
+				ActionKeys.VIEW);
+		}
+
 		return MBMessagePermission.contains(
 			permissionChecker, entryClassPK, ActionKeys.VIEW);
+	}
+
+	@Override
+	public boolean isVisible(long classPK, int status) throws Exception {
+		MBMessage message = MBMessageLocalServiceUtil.getMessage(classPK);
+
+		return isVisible(message.getStatus(), status);
+	}
+
+	@Override
+	public boolean isVisibleRelatedEntry(long classPK, int status)
+		throws Exception {
+
+		MBMessage message = MBMessageLocalServiceUtil.getMessage(classPK);
+
+		if (message.isDiscussion()) {
+			Indexer indexer = IndexerRegistryUtil.getIndexer(
+				message.getClassName());
+
+			return indexer.isVisible(message.getClassPK(), status);
+		}
+
+		return true;
 	}
 
 	@Override
@@ -171,6 +211,8 @@ public class MBMessageIndexer extends BaseIndexer {
 		if (obj instanceof MBCategory) {
 			MBCategory category = (MBCategory)obj;
 
+			searchContext.setCompanyId(category.getCompanyId());
+
 			BooleanQuery booleanQuery = BooleanQueryFactoryUtil.create(
 				searchContext);
 
@@ -179,9 +221,7 @@ public class MBMessageIndexer extends BaseIndexer {
 			booleanQuery.addRequiredTerm(
 				"categoryId", category.getCategoryId());
 
-			Hits hits = SearchEngineUtil.search(
-				getSearchEngineId(), category.getCompanyId(), booleanQuery,
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+			Hits hits = SearchEngineUtil.search(searchContext, booleanQuery);
 
 			for (int i = 0; i < hits.getLength(); i++) {
 				Document document = hits.doc(i);
@@ -205,6 +245,8 @@ public class MBMessageIndexer extends BaseIndexer {
 		else if (obj instanceof MBThread) {
 			MBThread thread = (MBThread)obj;
 
+			searchContext.setCompanyId(thread.getCompanyId());
+
 			MBMessage message = MBMessageLocalServiceUtil.getMessage(
 				thread.getRootMessageId());
 
@@ -215,9 +257,7 @@ public class MBMessageIndexer extends BaseIndexer {
 
 			booleanQuery.addRequiredTerm("threadId", thread.getThreadId());
 
-			Hits hits = SearchEngineUtil.search(
-				getSearchEngineId(), message.getCompanyId(), booleanQuery,
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+			Hits hits = SearchEngineUtil.search(searchContext, booleanQuery);
 
 			for (int i = 0; i < hits.getLength(); i++) {
 				Document document = hits.doc(i);
@@ -435,6 +475,10 @@ public class MBMessageIndexer extends BaseIndexer {
 			@Override
 			protected void performAction(Object object) throws PortalException {
 				MBMessage message = (MBMessage)object;
+
+				if (message.isDiscussion() && message.isRoot()) {
+					return;
+				}
 
 				Document document = getDocument(message);
 

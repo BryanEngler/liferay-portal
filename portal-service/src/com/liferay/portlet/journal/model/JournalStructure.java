@@ -14,6 +14,9 @@
 
 package com.liferay.portlet.journal.model;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.LocaleException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -28,8 +31,14 @@ import java.util.Map;
  * @author Brian Wing Shun Chan
  * @author Marcellus Tavares
  */
+@ProviderType
 public interface JournalStructure
 	extends Cloneable, Comparable<JournalStructure>, Serializable {
+
+	public Object clone();
+
+	@Override
+	public boolean equals(Object obj);
 
 	public long getCompanyId();
 
@@ -44,6 +53,10 @@ public interface JournalStructure
 	public String getDescription(String languageId);
 
 	public String getDescription(String languageId, boolean useDefault);
+
+	public String getDescriptionCurrentLanguageId();
+
+	public String getDescriptionCurrentValue();
 
 	public Map<Locale, String> getDescriptionMap();
 
@@ -73,6 +86,10 @@ public interface JournalStructure
 
 	public String getName(String languageId, boolean useDefault);
 
+	public String getNameCurrentLanguageId();
+
+	public String getNameCurrentValue();
+
 	public Map<Locale, String> getNameMap();
 
 	public String getParentStructureId();
@@ -98,6 +115,9 @@ public interface JournalStructure
 
 	public boolean isNew();
 
+	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
+		throws LocaleException;
+
 	public void setCompanyId(long companyId);
 
 	public void setCreateDate(Date createDate);
@@ -108,6 +128,8 @@ public interface JournalStructure
 
 	public void setDescription(
 		String description, Locale locale, Locale defaultLocale);
+
+	public void setDescriptionCurrentLanguageId(String languageId);
 
 	public void setDescriptionMap(Map<Locale, String> descriptionMap);
 
@@ -133,6 +155,8 @@ public interface JournalStructure
 	public void setName(String name, Locale locale);
 
 	public void setName(String name, Locale locale, Locale defaultLocale);
+
+	public void setNameCurrentLanguageId(String languageId);
 
 	public void setNameMap(Map<Locale, String> nameMap);
 

@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -44,7 +45,7 @@ import javax.servlet.ServletContext;
  */
 public class ServletContextUtil {
 
-	public static final String PATH_WEB_XML = "/WEB-INF/web.xml";
+	public static final String PATH_WEB_INF = "/WEB-INF";
 
 	public static final String URI_ATTRIBUTE =
 		ServletContextUtil.class.getName().concat(".rootURI");
@@ -112,10 +113,28 @@ public class ServletContextUtil {
 						_log.error("Resource URL for " + curPath + " is null");
 					}
 					else {
-						URLConnection urlConnection = url.openConnection();
+						URLConnection urlConnection = null;
 
-						if (urlConnection.getLastModified() > lastModified) {
-							lastModified = urlConnection.getLastModified();
+						try {
+							urlConnection = url.openConnection();
+
+							if (urlConnection.getLastModified() >
+									lastModified) {
+
+								lastModified = urlConnection.getLastModified();
+							}
+						}
+						finally {
+							if (urlConnection != null) {
+								try {
+									InputStream inputStream =
+										urlConnection.getInputStream();
+
+									inputStream.close();
+								}
+								catch (IOException ioe) {
+								}
+							}
 						}
 					}
 				}
@@ -161,11 +180,11 @@ public class ServletContextUtil {
 		}
 
 		try {
-			URL rootURL = servletContext.getResource(PATH_WEB_XML);
+			URL rootURL = servletContext.getResource(PATH_WEB_INF);
 
 			String path = rootURL.getPath();
 
-			int index = path.indexOf(PATH_WEB_XML);
+			int index = path.indexOf(PATH_WEB_INF);
 
 			if (index < 0) {
 				throw new MalformedURLException("Invalid URL " + rootURL);

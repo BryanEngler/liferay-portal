@@ -3480,7 +3480,7 @@ public class SocialActivitySetPersistenceImpl extends BasePersistenceImpl<Social
 			CacheRegistryUtil.clear(SocialActivitySetImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(SocialActivitySetImpl.class.getName());
+		EntityCacheUtil.clearCache(SocialActivitySetImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -3789,7 +3789,7 @@ public class SocialActivitySetPersistenceImpl extends BasePersistenceImpl<Social
 
 		EntityCacheUtil.putResult(SocialActivitySetModelImpl.ENTITY_CACHE_ENABLED,
 			SocialActivitySetImpl.class, socialActivitySet.getPrimaryKey(),
-			socialActivitySet);
+			socialActivitySet, false);
 
 		socialActivitySet.resetOriginalValues();
 

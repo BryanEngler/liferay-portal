@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.PasswordPolicy;
@@ -114,6 +115,8 @@ public class PasswordPolicyPersistenceTest {
 
 		PasswordPolicy newPasswordPolicy = _persistence.create(pk);
 
+		newPasswordPolicy.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newPasswordPolicy.setUuid(ServiceTestUtil.randomString());
 
 		newPasswordPolicy.setCompanyId(ServiceTestUtil.nextLong());
@@ -184,6 +187,8 @@ public class PasswordPolicyPersistenceTest {
 
 		PasswordPolicy existingPasswordPolicy = _persistence.findByPrimaryKey(newPasswordPolicy.getPrimaryKey());
 
+		Assert.assertEquals(existingPasswordPolicy.getMvccVersion(),
+			newPasswordPolicy.getMvccVersion());
 		Assert.assertEquals(existingPasswordPolicy.getUuid(),
 			newPasswordPolicy.getUuid());
 		Assert.assertEquals(existingPasswordPolicy.getPasswordPolicyId(),
@@ -257,6 +262,74 @@ public class PasswordPolicyPersistenceTest {
 	}
 
 	@Test
+	public void testCountByUuid() {
+		try {
+			_persistence.countByUuid(StringPool.BLANK);
+
+			_persistence.countByUuid(StringPool.NULL);
+
+			_persistence.countByUuid((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByUuid_C() {
+		try {
+			_persistence.countByUuid_C(StringPool.BLANK,
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByUuid_C(StringPool.NULL, 0L);
+
+			_persistence.countByUuid_C((String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByCompanyId() {
+		try {
+			_persistence.countByCompanyId(ServiceTestUtil.nextLong());
+
+			_persistence.countByCompanyId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_DP() {
+		try {
+			_persistence.countByC_DP(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.randomBoolean());
+
+			_persistence.countByC_DP(0L, ServiceTestUtil.randomBoolean());
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_N() {
+		try {
+			_persistence.countByC_N(ServiceTestUtil.nextLong(), StringPool.BLANK);
+
+			_persistence.countByC_N(0L, StringPool.NULL);
+
+			_persistence.countByC_N(0L, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		PasswordPolicy newPasswordPolicy = addPasswordPolicy();
 
@@ -291,12 +364,12 @@ public class PasswordPolicyPersistenceTest {
 	}
 
 	protected OrderByComparator getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("PasswordPolicy", "uuid",
-			true, "passwordPolicyId", true, "companyId", true, "userId", true,
-			"userName", true, "createDate", true, "modifiedDate", true,
-			"defaultPolicy", true, "name", true, "description", true,
-			"changeable", true, "changeRequired", true, "minAge", true,
-			"checkSyntax", true, "allowDictionaryWords", true,
+		return OrderByComparatorFactoryUtil.create("PasswordPolicy",
+			"mvccVersion", true, "uuid", true, "passwordPolicyId", true,
+			"companyId", true, "userId", true, "userName", true, "createDate",
+			true, "modifiedDate", true, "defaultPolicy", true, "name", true,
+			"description", true, "changeable", true, "changeRequired", true,
+			"minAge", true, "checkSyntax", true, "allowDictionaryWords", true,
 			"minAlphanumeric", true, "minLength", true, "minLowerCase", true,
 			"minNumbers", true, "minSymbols", true, "minUpperCase", true,
 			"regex", true, "history", true, "historyCount", true, "expireable",
@@ -446,6 +519,8 @@ public class PasswordPolicyPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		PasswordPolicy passwordPolicy = _persistence.create(pk);
+
+		passwordPolicy.setMvccVersion(ServiceTestUtil.nextLong());
 
 		passwordPolicy.setUuid(ServiceTestUtil.randomString());
 

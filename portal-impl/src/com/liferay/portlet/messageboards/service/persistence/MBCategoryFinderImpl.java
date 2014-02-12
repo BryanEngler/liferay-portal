@@ -130,7 +130,7 @@ public class MBCategoryFinderImpl
 					groupId);
 			}
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME, Type.LONG);
 
@@ -212,7 +212,7 @@ public class MBCategoryFinderImpl
 					groupId);
 			}
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addEntity("MBCategory", MBCategoryImpl.class);
 
@@ -249,7 +249,7 @@ public class MBCategoryFinderImpl
 
 				category.setGroupId(group.getGroupId());
 				category.setCompanyId(group.getCompanyId());
-				category.setName(group.getName());
+				category.setName(group.getDescriptiveName());
 				category.setDescription(group.getDescription());
 				category.setThreadCount(threadCount);
 				category.setMessageCount(messageCount);

@@ -35,7 +35,9 @@ String defaultLogoutPagePath = PrefsPropsUtil.getString(company.getCompanyId(), 
 
 <liferay-ui:error-marker key="errorSection" value="general" />
 
-<h3><liferay-ui:message key="main-configuration" /></h3>
+<h3><liferay-ui:message key="general" /></h3>
+
+<h4><liferay-ui:message key="main-configuration" /></h4>
 
 <aui:model-context bean="<%= account %>" model="<%= Account.class %>" />
 
@@ -62,20 +64,20 @@ String defaultLogoutPagePath = PrefsPropsUtil.getString(company.getCompanyId(), 
 	</aui:col>
 </aui:row>
 
-<h3><liferay-ui:message key="navigation" /></h3>
+<h4><liferay-ui:message key="navigation" /></h4>
 
 <aui:row>
 	<aui:col width="<%= 50 %>">
 		<aui:input bean="<%= company %>" helpMessage="home-url-help" label="home-url" model="<%= Company.class %>" name="homeURL" />
+
+		<aui:input helpMessage="default-landing-page-help" label="default-landing-page" name='<%= "settings--" + PropsKeys.DEFAULT_LANDING_PAGE_PATH + "--" %>' type="text" value="<%= defaultLandingPagePath %>" />
 	</aui:col>
 	<aui:col width="<%= 50 %>">
-		<aui:input helpMessage="default-landing-page-help" label="default-landing-page" name='<%= "settings--" + PropsKeys.DEFAULT_LANDING_PAGE_PATH + "--" %>' type="text" value="<%= defaultLandingPagePath %>" />
-
 		<aui:input helpMessage="default-logout-page-help" label="default-logout-page" name='<%= "settings--" + PropsKeys.DEFAULT_LOGOUT_PAGE_PATH + "--" %>' type="text" value="<%= defaultLogoutPagePath %>" />
 	</aui:col>
 </aui:row>
 
-<h3><liferay-ui:message key="additional-information" /></h3>
+<h4><liferay-ui:message key="additional-information" /></h4>
 
 <aui:row>
 	<aui:col width="<%= 50 %>">
@@ -84,10 +86,10 @@ String defaultLogoutPagePath = PrefsPropsUtil.getString(company.getCompanyId(), 
 		<aui:input name="legalId" />
 
 		<aui:input name="legalType" />
+
+		<aui:input name="sicCode" />
 	</aui:col>
 	<aui:col width="<%= 50 %>">
-		<aui:input name="sicCode" />
-
 		<aui:input name="tickerSymbol" />
 
 		<aui:input name="industry" />

@@ -367,7 +367,7 @@ public class RatingsStatsPersistenceImpl extends BasePersistenceImpl<RatingsStat
 			CacheRegistryUtil.clear(RatingsStatsImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(RatingsStatsImpl.class.getName());
+		EntityCacheUtil.clearCache(RatingsStatsImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -595,7 +595,8 @@ public class RatingsStatsPersistenceImpl extends BasePersistenceImpl<RatingsStat
 		}
 
 		EntityCacheUtil.putResult(RatingsStatsModelImpl.ENTITY_CACHE_ENABLED,
-			RatingsStatsImpl.class, ratingsStats.getPrimaryKey(), ratingsStats);
+			RatingsStatsImpl.class, ratingsStats.getPrimaryKey(), ratingsStats,
+			false);
 
 		clearUniqueFindersCache(ratingsStats);
 		cacheUniqueFindersCache(ratingsStats);

@@ -42,7 +42,7 @@ List<String> versions = (List<String>)request.getAttribute("liferay-ui:app-view-
 	<a class="entry-link" href="<%= url %>" title="<%= HtmlUtil.escapeAttribute(title + " - " + description) %>">
 		<c:if test="<%= Validator.isNotNull(thumbnailSrc) %>">
 			<div class="entry-thumbnail">
-				<img alt="" border="no" class="img-polaroid" src="<%= thumbnailSrc %>" />
+				<img alt="" border="no" class="img-polaroid" src="<%= HtmlUtil.escapeAttribute(thumbnailSrc) %>" />
 
 				<c:if test="<%= locked %>">
 					<img alt="<liferay-ui:message key="locked" />" class="locked-icon" src="<%= themeDisplay.getPathThemeImages() %>/file_system/large/overlay_lock.png" />
@@ -95,7 +95,7 @@ List<String> versions = (List<String>)request.getAttribute("liferay-ui:app-view-
 							</dt>
 							<dd>
 
-								<%= containerName %>
+								<%= HtmlUtil.escape(containerName) %>
 
 							</dd>
 						</c:if>
@@ -127,7 +127,7 @@ List<String> versions = (List<String>)request.getAttribute("liferay-ui:app-view-
 							<liferay-ui:icon
 								image='<%= "../file_system/small/" + DLUtil.getFileIcon(fileEntry.getExtension()) %>'
 								label="<%= true %>"
-								message='<%= LanguageUtil.format(locale, "attachment-added-by-x", HtmlUtil.escape(fileEntry.getUserName())) %>'
+								message='<%= LanguageUtil.format(locale, "attachment-added-by-x", HtmlUtil.escape(fileEntry.getUserName()), false) %>'
 							/>
 						</span>
 
@@ -160,7 +160,7 @@ List<String> versions = (List<String>)request.getAttribute("liferay-ui:app-view-
 						<liferay-ui:icon
 							image="message"
 							label="<%= true %>"
-							message='<%= LanguageUtil.format(locale, "comment-by-x", HtmlUtil.escape(userDisplay.getFullName())) %>'
+							message='<%= LanguageUtil.format(locale, "comment-by-x", HtmlUtil.escape(userDisplay.getFullName()), false) %>'
 						/>
 					</span>
 

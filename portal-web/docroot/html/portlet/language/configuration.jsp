@@ -16,15 +16,13 @@
 
 <%@ include file="/html/portlet/language/init.jsp" %>
 
-<%
-String redirect = ParamUtil.getString(request, "redirect");
-%>
+<liferay-portlet:actionURL portletConfiguration="true" var="configurationActionURL" />
 
-<liferay-portlet:actionURL portletConfiguration="true" var="configurationURL" />
+<liferay-portlet:renderURL portletConfiguration="true" var="configurationRenderURL" />
 
-<aui:form action="<%= configurationURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveConfiguration();" %>'>
+<aui:form action="<%= configurationActionURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveConfiguration();" %>'>
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
-	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
+	<aui:input name="redirect" type="hidden" value="<%= configurationRenderURL %>" />
 
 	<aui:fieldset label="languages">
 		<aui:input name="preferences--languageIds--" type="hidden" />
@@ -67,11 +65,11 @@ String redirect = ParamUtil.getString(request, "redirect");
 	</aui:fieldset>
 
 	<aui:fieldset>
-		<aui:select name="preferences--displayStyle--">
-			<aui:option label="icon" selected="<%= displayStyle == LanguageTag.LIST_ICON %>" value="<%= LanguageTag.LIST_ICON %>" />
-			<aui:option label="long-text" selected="<%= displayStyle == LanguageTag.LIST_LONG_TEXT %>" value="<%= LanguageTag.LIST_LONG_TEXT %>" />
-			<aui:option label="short-text" selected="<%= displayStyle == LanguageTag.LIST_SHORT_TEXT %>" value="<%= LanguageTag.LIST_SHORT_TEXT %>" />
-			<aui:option label="select-box" selected="<%= displayStyle == LanguageTag.SELECT_BOX %>" value="<%= LanguageTag.SELECT_BOX %>" />
+		<aui:select name="preferences--displayStyle--" value="<%= displayStyle %>">
+			<aui:option label="icon" value="<%= LanguageTag.LIST_ICON %>" />
+			<aui:option label="long-text" value="<%= LanguageTag.LIST_LONG_TEXT %>" />
+			<aui:option label="short-text" value="<%= LanguageTag.LIST_SHORT_TEXT %>" />
+			<aui:option label="select-box" value="<%= LanguageTag.SELECT_BOX %>" />
 		</aui:select>
 	</aui:fieldset>
 

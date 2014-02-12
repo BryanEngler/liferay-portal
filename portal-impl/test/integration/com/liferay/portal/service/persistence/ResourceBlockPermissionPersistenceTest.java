@@ -112,6 +112,8 @@ public class ResourceBlockPermissionPersistenceTest {
 
 		ResourceBlockPermission newResourceBlockPermission = _persistence.create(pk);
 
+		newResourceBlockPermission.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newResourceBlockPermission.setResourceBlockId(ServiceTestUtil.nextLong());
 
 		newResourceBlockPermission.setRoleId(ServiceTestUtil.nextLong());
@@ -122,6 +124,8 @@ public class ResourceBlockPermissionPersistenceTest {
 
 		ResourceBlockPermission existingResourceBlockPermission = _persistence.findByPrimaryKey(newResourceBlockPermission.getPrimaryKey());
 
+		Assert.assertEquals(existingResourceBlockPermission.getMvccVersion(),
+			newResourceBlockPermission.getMvccVersion());
 		Assert.assertEquals(existingResourceBlockPermission.getResourceBlockPermissionId(),
 			newResourceBlockPermission.getResourceBlockPermissionId());
 		Assert.assertEquals(existingResourceBlockPermission.getResourceBlockId(),
@@ -130,6 +134,43 @@ public class ResourceBlockPermissionPersistenceTest {
 			newResourceBlockPermission.getRoleId());
 		Assert.assertEquals(existingResourceBlockPermission.getActionIds(),
 			newResourceBlockPermission.getActionIds());
+	}
+
+	@Test
+	public void testCountByResourceBlockId() {
+		try {
+			_persistence.countByResourceBlockId(ServiceTestUtil.nextLong());
+
+			_persistence.countByResourceBlockId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByRoleId() {
+		try {
+			_persistence.countByRoleId(ServiceTestUtil.nextLong());
+
+			_persistence.countByRoleId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByR_R() {
+		try {
+			_persistence.countByR_R(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByR_R(0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -169,8 +210,8 @@ public class ResourceBlockPermissionPersistenceTest {
 
 	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("ResourceBlockPermission",
-			"resourceBlockPermissionId", true, "resourceBlockId", true,
-			"roleId", true, "actionIds", true);
+			"mvccVersion", true, "resourceBlockPermissionId", true,
+			"resourceBlockId", true, "roleId", true, "actionIds", true);
 	}
 
 	@Test
@@ -315,6 +356,8 @@ public class ResourceBlockPermissionPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		ResourceBlockPermission resourceBlockPermission = _persistence.create(pk);
+
+		resourceBlockPermission.setMvccVersion(ServiceTestUtil.nextLong());
 
 		resourceBlockPermission.setResourceBlockId(ServiceTestUtil.nextLong());
 

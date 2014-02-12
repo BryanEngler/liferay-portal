@@ -1,4 +1,4 @@
-<definition>
+<definition component-name="portal-wcm">
 	<set-up>
 		<execute macro="User#firstLoginPG" />
 	</set-up>
@@ -14,7 +14,7 @@
 		<var name="portletName" value="Sites Directory" />
 		<var name="siteName" value="Site Name" />
 		<var name="sitePageName" value="Site Page" />
-		<var name="sitePageType" value="Public" />
+		<var name="sitePagePrivacy" value="Public" />
 
 		<execute macro="Page#gotoCP">
 			<var name="portletName" value="Sites" />
@@ -31,7 +31,7 @@
 		<execute macro="SitePage#addCP">
 			<var name="siteName" value="${siteName}" />
 			<var name="sitePageName" value="${sitePageName}" />
-			<var name="sitePageType" value="${sitePageType}" />
+			<var name="sitePagePrivacy" value="${sitePagePrivacy}" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -60,7 +60,7 @@
 		<execute macro="SitePage#addCP">
 			<var name="siteName" value="${childSiteName1}" />
 			<var name="sitePageName" value="${sitePageName}" />
-			<var name="sitePageType" value="${sitePageType}" />
+			<var name="sitePagePrivacy" value="${sitePagePrivacy}" />
 		</execute>
 
 		<execute macro="Page#gotoCP">
@@ -79,7 +79,7 @@
 		<execute macro="SitePage#addCP">
 			<var name="siteName" value="${childSiteName2}" />
 			<var name="sitePageName" value="${sitePageName}" />
-			<var name="sitePageType" value="${sitePageType}" />
+			<var name="sitePagePrivacy" value="${sitePagePrivacy}" />
 		</execute>
 
 		<execute macro="Page#gotoCP">
@@ -98,7 +98,7 @@
 		<execute macro="SitePage#addCP">
 			<var name="siteName" value="${childSiteName3}" />
 			<var name="sitePageName" value="${sitePageName}" />
-			<var name="sitePageType" value="${sitePageType}" />
+			<var name="sitePagePrivacy" value="${sitePagePrivacy}" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -136,8 +136,8 @@
 		<execute action="PGSitesdirectory#assertTextEquals" locator-key1="INFO_MESSAGE" value1="No sites were found." />
 
 		<execute macro="SitesDirectory#configureSetupPG">
-			<var name="directorySites" value="Top Level" />
 			<var name="directoryDisplayStyle" value="List Hierarchy" />
+			<var name="directorySites" value="Top Level" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -148,10 +148,10 @@
 
 		<execute macro="SitesDirectory#viewListHierarchyPG">
 			<var name="availableSiteName" value="Liferay" />
-			<var name="currentSiteName" value="${siteName}" />
 			<var name="childSiteName1" value="${childSiteName1}" />
 			<var name="childSiteName2" value="${childSiteName2}" />
 			<var name="childSiteName3" value="${childSiteName3}" />
+			<var name="currentSiteName" value="${siteName}" />
 		</execute>
 	</command>
 </definition>

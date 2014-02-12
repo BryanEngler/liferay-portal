@@ -7,7 +7,7 @@
 <#assign theme_settings = themeDisplay.getThemeSettings() />
 
 <#assign root_css_class = "aui " + languageUtil.get(locale, "lang.dir") />
-<#assign css_class = theme_display.getColorScheme().getCssClass() + " yui3-skin-sam" />
+<#assign css_class = htmlUtil.escape(theme_display.getColorScheme().getCssClass()) + " yui3-skin-sam" />
 
 <#assign liferay_toggle_controls = sessionClicks.get(request, "liferay_toggle_controls", "visible") />
 
@@ -316,18 +316,19 @@
 	<#assign logo_css_class = logo_css_class + " custom-logo" />
 </#if>
 
-<#if is_guest_group>
-	<#assign show_site_name = false />
-<#else>
-	<#assign show_site_name_supported = getterUtil.getBoolean(theme_settings["show-site-name-supported"]!"", true) />
+<#assign show_site_name_supported = getterUtil.getBoolean(theme_settings["show-site-name-supported"]!"", true) />
 
-	<#assign show_site_name_default = getterUtil.getBoolean(theme_settings["show-site-name-default"]!"", show_site_name_supported) />
+<#assign show_site_name_default = getterUtil.getBoolean(theme_settings["show-site-name-default"]!"", show_site_name_supported) />
 
-	<#assign show_site_name = getterUtil.getBoolean(layout.layoutSet.getSettingsProperty("showSiteName"), show_site_name_default) />
-</#if>
+<#assign show_site_name = getterUtil.getBoolean(layout.layoutSet.getSettingsProperty("showSiteName"), show_site_name_default) />
 
 <#assign site_logo = company_logo />
-<#assign logo_description = htmlUtil.escape(site_name) />
+
+<#assign logo_description = "" />
+
+<#if !$show_site_name>
+	<#assign logo_description = htmlUtil.escape(site_name) />
+</#if>
 
 <#-- ---------- Navigation ---------- -->
 

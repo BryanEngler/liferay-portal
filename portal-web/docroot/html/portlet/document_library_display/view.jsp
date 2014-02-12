@@ -116,7 +116,7 @@ request.setAttribute("view.jsp-useAssetEntryQuery", String.valueOf(useAssetEntry
 
 						<div class="lfr-asset-metadata">
 							<div class="lfr-asset-icon lfr-asset-date">
-								<%= LanguageUtil.format(pageContext, "last-updated-x", dateFormatDateTime.format(folder.getModifiedDate())) %>
+								<%= LanguageUtil.format(pageContext, "last-updated-x", dateFormatDateTime.format(folder.getModifiedDate()), false) %>
 							</div>
 
 							<div class="lfr-asset-icon lfr-asset-subfolders">
@@ -154,7 +154,6 @@ request.setAttribute("view.jsp-useAssetEntryQuery", String.valueOf(useAssetEntry
 
 								<liferay-ui:search-container-row
 									className="com.liferay.portal.kernel.repository.model.Folder"
-									escapedModel="<%= true %>"
 									keyProperty="folderId"
 									modelVar="curFolder"
 									rowVar="row"
@@ -189,7 +188,7 @@ request.setAttribute("view.jsp-useAssetEntryQuery", String.valueOf(useAssetEntry
 						/>
 
 						<div class="lfr-asset-name">
-							<h4><%= (folder != null) ? folder.getName() : LanguageUtil.get(pageContext, "home") %></h4>
+							<h4><%= (folder != null) ? HtmlUtil.escape(folder.getName()) : LanguageUtil.get(pageContext, "home") %></h4>
 						</div>
 					</div>
 

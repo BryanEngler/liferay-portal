@@ -49,6 +49,16 @@
 	<td></td>
 </tr>
 <tr>
+	<td>RSS_LINK</td>
+	<td>//div[contains(@class,'category-subscription-types')]/span/a/span[contains(.,'RSS')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SUBSCRIBE_LINK</td>
+	<td>//div[contains(@class,'category-subscription-types')]/span/a/span[contains(.,'Subscribe')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td></td>
 	<td></td>
 	<td></td>
@@ -85,34 +95,74 @@
 	<td></td>
 </tr>
 <tr>
+	<td>NAVIGATION_SEARCH_FIELD</td>
+	<td>//input[contains(@class,'search-query')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>NAVIGATION_SEARCH_BUTTON</td>
+	<td>//button[@type='submit']</td>
+	<td></td>
+</tr>
+<tr>
 	<td></td>
 	<td></td>
 	<td></td>
 </tr>
 <!--CATEGORY_TABLE-->
 <tr>
-	<td>CATEGORY_TABLE_CATEGORY_1</td>
-	<td>xpath=(//div[contains(@id,'mbCategoriesSearchContainer')]//tr/td[1]/a)[1]</td>
+	<td>CATEGORY_TABLE_PANEL</td>
+	<td>//div[@id=&quot;messageBoardsCategoriesPanel&quot;]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>CATEGORY_TABLE_CATEGORIES_1</td>
-	<td>xpath=(//div[contains(@id,'mbCategoriesSearchContainer')]//tr/td[2]/a)[1]</td>
+	<td>CATEGORY_TABLE_CATEGORY</td>
+	<td>//div[contains(@id,'mbCategoriesSearchContainer')]//tr[contains(.,'${key_categoryName}')]/td[1]/a/span[@class='category-title'] | //div[contains(@id,'mbCategoriesSearchContainer')]//tr[contains(.,'${key_categoryName}')]/td[1]/a/strong[contains(.,'${key_categoryName}')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>CATEGORY_TABLE_THREADS_1</td>
-	<td>xpath=(//div[contains(@id,'mbCategoriesSearchContainer')]//tr/td[3]/a)[1]</td>
+	<td>CATEGORY_TABLE_CATEGORY_DESCRIPTION</td>
+	<td>//div[contains(@id,'mbCategoriesSearchContainer')]//tr[contains(.,'${key_categoryName}')]/td[1]/a/div[@class='category-description']</td>
 	<td></td>
 </tr>
 <tr>
-	<td>CATEGORY_TABLE_POSTS_1</td>
-	<td>xpath=(//div[contains(@id,'mbCategoriesSearchContainer')]//tr/td[4]/a)[1]</td>
+	<td>CATEGORY_TABLE_CATEGORY_SUBCATEGORY</td>
+	<td>//div[contains(@id,'mbCategoriesSearchContainer')]//tr[contains(.,'${key_categoryName}')]/td/a[2]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>CATEGORY_TABLE_ACTIONS_1</td>
-	<td>xpath=(//div[contains(@id,'mbCategoriesSearchContainer')]//tr/td/div/a[@title='Actions'])[1]</td>
+	<td>CATEGORY_TABLE_CATEGORY_SUBCATEGORY_GENERIC</td>
+	<td>//div[contains(@id,'mbCategoriesSearchContainer')]//tr[1]/td/a[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CATEGORY_TABLE_CATEGORY_GENERIC</td>
+	<td>//div[contains(@id,'mbCategoriesSearchContainer')]//tr[1]/td[1]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CATEGORY_TABLE_CATEGORIES</td>
+	<td>//div[contains(@id,'mbCategoriesSearchContainer')]//tr[contains(.,'${key_categoryName}')]/td[2]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CATEGORY_TABLE_THREADS</td>
+	<td>//div[contains(@id,'mbCategoriesSearchContainer')]//tr[contains(.,'${key_categoryName}')]/td[3]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CATEGORY_TABLE_POSTS</td>
+	<td>//div[contains(@id,'mbCategoriesSearchContainer')]//tr[contains(.,'${key_categoryName}')]/td[4]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CATEGORY_TABLE_ACTIONS</td>
+	<td>//div[contains(@id,'mbCategoriesSearchContainer')]//tr[contains(.,'${key_categoryName}')]/td/div/a[@title='Actions']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CATEGORY_TABLE_ACTIONS_GENERIC</td>
+	<td>//div[contains(@id,'mbCategoriesSearchContainer')]//tr[1]//a[@title='Actions']</td>
 	<td></td>
 </tr>
 <tr>
@@ -162,6 +212,11 @@
 	<td></td>
 </tr>
 <!--THREAD_TABLE-->
+<tr>
+	<td>THREAD_TABLE_PANEL</td>
+	<td>//div[@id=&quot;messageBoardsThreadsPanel&quot;]</td>
+	<td></td>
+</tr>
 <tr>
 	<td>THREAD_TABLE_THREAD</td>
 	<td>//div[contains(@id,'mbThreadsSearchContainer')]//tr[contains(.,'${key_threadSubject}')]/td[1]/a</td>

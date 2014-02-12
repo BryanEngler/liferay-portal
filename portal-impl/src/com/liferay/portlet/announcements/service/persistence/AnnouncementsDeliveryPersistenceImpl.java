@@ -898,7 +898,7 @@ public class AnnouncementsDeliveryPersistenceImpl extends BasePersistenceImpl<An
 			CacheRegistryUtil.clear(AnnouncementsDeliveryImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(AnnouncementsDeliveryImpl.class.getName());
+		EntityCacheUtil.clearCache(AnnouncementsDeliveryImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -1155,7 +1155,7 @@ public class AnnouncementsDeliveryPersistenceImpl extends BasePersistenceImpl<An
 
 		EntityCacheUtil.putResult(AnnouncementsDeliveryModelImpl.ENTITY_CACHE_ENABLED,
 			AnnouncementsDeliveryImpl.class,
-			announcementsDelivery.getPrimaryKey(), announcementsDelivery);
+			announcementsDelivery.getPrimaryKey(), announcementsDelivery, false);
 
 		clearUniqueFindersCache(announcementsDelivery);
 		cacheUniqueFindersCache(announcementsDelivery);

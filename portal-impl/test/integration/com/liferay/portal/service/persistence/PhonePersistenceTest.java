@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.model.Phone;
 import com.liferay.portal.service.ServiceTestUtil;
@@ -111,6 +112,8 @@ public class PhonePersistenceTest {
 
 		Phone newPhone = _persistence.create(pk);
 
+		newPhone.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newPhone.setUuid(ServiceTestUtil.randomString());
 
 		newPhone.setCompanyId(ServiceTestUtil.nextLong());
@@ -139,6 +142,8 @@ public class PhonePersistenceTest {
 
 		Phone existingPhone = _persistence.findByPrimaryKey(newPhone.getPrimaryKey());
 
+		Assert.assertEquals(existingPhone.getMvccVersion(),
+			newPhone.getMvccVersion());
 		Assert.assertEquals(existingPhone.getUuid(), newPhone.getUuid());
 		Assert.assertEquals(existingPhone.getPhoneId(), newPhone.getPhoneId());
 		Assert.assertEquals(existingPhone.getCompanyId(),
@@ -159,6 +164,100 @@ public class PhonePersistenceTest {
 			newPhone.getExtension());
 		Assert.assertEquals(existingPhone.getTypeId(), newPhone.getTypeId());
 		Assert.assertEquals(existingPhone.getPrimary(), newPhone.getPrimary());
+	}
+
+	@Test
+	public void testCountByUuid() {
+		try {
+			_persistence.countByUuid(StringPool.BLANK);
+
+			_persistence.countByUuid(StringPool.NULL);
+
+			_persistence.countByUuid((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByUuid_C() {
+		try {
+			_persistence.countByUuid_C(StringPool.BLANK,
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByUuid_C(StringPool.NULL, 0L);
+
+			_persistence.countByUuid_C((String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByCompanyId() {
+		try {
+			_persistence.countByCompanyId(ServiceTestUtil.nextLong());
+
+			_persistence.countByCompanyId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByUserId() {
+		try {
+			_persistence.countByUserId(ServiceTestUtil.nextLong());
+
+			_persistence.countByUserId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_C() {
+		try {
+			_persistence.countByC_C(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByC_C(0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_C_C() {
+		try {
+			_persistence.countByC_C_C(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), ServiceTestUtil.nextLong());
+
+			_persistence.countByC_C_C(0L, 0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_C_C_P() {
+		try {
+			_persistence.countByC_C_C_P(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), ServiceTestUtil.nextLong(),
+				ServiceTestUtil.randomBoolean());
+
+			_persistence.countByC_C_C_P(0L, 0L, 0L,
+				ServiceTestUtil.randomBoolean());
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -195,11 +294,11 @@ public class PhonePersistenceTest {
 	}
 
 	protected OrderByComparator getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("Phone", "uuid", true,
-			"phoneId", true, "companyId", true, "userId", true, "userName",
-			true, "createDate", true, "modifiedDate", true, "classNameId",
-			true, "classPK", true, "number", true, "extension", true, "typeId",
-			true, "primary", true);
+		return OrderByComparatorFactoryUtil.create("Phone", "mvccVersion",
+			true, "uuid", true, "phoneId", true, "companyId", true, "userId",
+			true, "userName", true, "createDate", true, "modifiedDate", true,
+			"classNameId", true, "classPK", true, "number", true, "extension",
+			true, "typeId", true, "primary", true);
 	}
 
 	@Test
@@ -316,6 +415,8 @@ public class PhonePersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		Phone phone = _persistence.create(pk);
+
+		phone.setMvccVersion(ServiceTestUtil.nextLong());
 
 		phone.setUuid(ServiceTestUtil.randomString());
 

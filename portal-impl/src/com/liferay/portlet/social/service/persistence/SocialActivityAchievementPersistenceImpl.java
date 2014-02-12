@@ -3154,7 +3154,7 @@ public class SocialActivityAchievementPersistenceImpl
 			CacheRegistryUtil.clear(SocialActivityAchievementImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(SocialActivityAchievementImpl.class.getName());
+		EntityCacheUtil.clearCache(SocialActivityAchievementImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -3507,7 +3507,8 @@ public class SocialActivityAchievementPersistenceImpl
 
 		EntityCacheUtil.putResult(SocialActivityAchievementModelImpl.ENTITY_CACHE_ENABLED,
 			SocialActivityAchievementImpl.class,
-			socialActivityAchievement.getPrimaryKey(), socialActivityAchievement);
+			socialActivityAchievement.getPrimaryKey(),
+			socialActivityAchievement, false);
 
 		clearUniqueFindersCache(socialActivityAchievement);
 		cacheUniqueFindersCache(socialActivityAchievement);

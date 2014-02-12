@@ -894,7 +894,7 @@ public class AnnouncementsFlagPersistenceImpl extends BasePersistenceImpl<Announ
 			CacheRegistryUtil.clear(AnnouncementsFlagImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(AnnouncementsFlagImpl.class.getName());
+		EntityCacheUtil.clearCache(AnnouncementsFlagImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -1149,7 +1149,7 @@ public class AnnouncementsFlagPersistenceImpl extends BasePersistenceImpl<Announ
 
 		EntityCacheUtil.putResult(AnnouncementsFlagModelImpl.ENTITY_CACHE_ENABLED,
 			AnnouncementsFlagImpl.class, announcementsFlag.getPrimaryKey(),
-			announcementsFlag);
+			announcementsFlag, false);
 
 		clearUniqueFindersCache(announcementsFlag);
 		cacheUniqueFindersCache(announcementsFlag);

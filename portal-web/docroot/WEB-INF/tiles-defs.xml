@@ -418,10 +418,6 @@
 		<put name="portlet_content" value="/portlet/dockbar/add_content_redirect.jsp" />
 	</definition>
 
-	<definition name="portlet.dockbar.add_layout" extends="portlet.dockbar">
-		<put name="portlet_content" value="/portlet/layouts_admin/add_layout.jsp" />
-	</definition>
-
 	<definition name="portlet.dockbar.add_panel" extends="portlet.dockbar">
 		<put name="portlet_content" value="/portlet/dockbar/add_panel.jsp" />
 	</definition>
@@ -864,6 +860,10 @@
 
 	<definition name="portlet.layouts_admin" extends="portlet" />
 
+	<definition name="portlet.layouts_admin.add_layout" extends="portlet.layouts_admin">
+		<put name="portlet_content" value="/portlet/layouts_admin/add_layout.jsp" />
+	</definition>
+
 	<definition name="portlet.layouts_admin.edit_layouts" extends="portlet.layouts_admin">
 		<put name="portlet_content" value="/portlet/layouts_admin/view.jsp" />
 	</definition>
@@ -1004,6 +1004,10 @@
 
 	<definition name="portlet.mobile_device_rules.edit_rule_group_instance_priorities" extends="portlet.mobile_device_rules">
 		<put name="portlet_content" value="/portlet/mobile_device_rules/edit_rule_group_instance_priorities.jsp" />
+	</definition>
+
+	<definition name="portlet.mobile_device_rules.select_rule_group" extends="portlet.mobile_device_rules">
+		<put name="portlet_content" value="/portlet/mobile_device_rules/select_rule_group.jsp" />
 	</definition>
 
 	<definition name="portlet.mobile_device_rules.view" extends="portlet.mobile_device_rules">

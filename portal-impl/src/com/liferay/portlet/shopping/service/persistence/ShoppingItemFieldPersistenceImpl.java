@@ -629,7 +629,7 @@ public class ShoppingItemFieldPersistenceImpl extends BasePersistenceImpl<Shoppi
 			CacheRegistryUtil.clear(ShoppingItemFieldImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(ShoppingItemFieldImpl.class.getName());
+		EntityCacheUtil.clearCache(ShoppingItemFieldImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -825,7 +825,7 @@ public class ShoppingItemFieldPersistenceImpl extends BasePersistenceImpl<Shoppi
 
 		EntityCacheUtil.putResult(ShoppingItemFieldModelImpl.ENTITY_CACHE_ENABLED,
 			ShoppingItemFieldImpl.class, shoppingItemField.getPrimaryKey(),
-			shoppingItemField);
+			shoppingItemField, false);
 
 		shoppingItemField.resetOriginalValues();
 

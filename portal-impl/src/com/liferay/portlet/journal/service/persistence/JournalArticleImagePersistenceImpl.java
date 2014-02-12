@@ -2213,7 +2213,7 @@ public class JournalArticleImagePersistenceImpl extends BasePersistenceImpl<Jour
 			CacheRegistryUtil.clear(JournalArticleImageImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(JournalArticleImageImpl.class.getName());
+		EntityCacheUtil.clearCache(JournalArticleImageImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -2527,7 +2527,7 @@ public class JournalArticleImagePersistenceImpl extends BasePersistenceImpl<Jour
 
 		EntityCacheUtil.putResult(JournalArticleImageModelImpl.ENTITY_CACHE_ENABLED,
 			JournalArticleImageImpl.class, journalArticleImage.getPrimaryKey(),
-			journalArticleImage);
+			journalArticleImage, false);
 
 		clearUniqueFindersCache(journalArticleImage);
 		cacheUniqueFindersCache(journalArticleImage);

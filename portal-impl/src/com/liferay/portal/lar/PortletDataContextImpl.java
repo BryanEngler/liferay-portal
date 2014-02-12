@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.lar.ExportImportClassedModelUtil;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.ManifestSummary;
 import com.liferay.portal.kernel.lar.PortletDataContext;
@@ -35,6 +36,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateRange;
+import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -78,10 +80,8 @@ import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.TeamLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
-import com.liferay.portlet.asset.model.AssetCategory;
 import com.liferay.portlet.asset.model.AssetEntry;
 import com.liferay.portlet.asset.model.AssetLink;
-import com.liferay.portlet.asset.service.AssetCategoryLocalServiceUtil;
 import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
 import com.liferay.portlet.asset.service.AssetLinkLocalServiceUtil;
 import com.liferay.portlet.asset.service.AssetTagLocalServiceUtil;
@@ -151,24 +151,14 @@ public class PortletDataContextImpl implements PortletDataContext {
 		initXStream();
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             com.liferay.portal.kernel.lar.BaseStagedModelDataHandler#exportAssetCategories(
+	 *             PortletDataContext, StagedModel)}
+	 */
+	@Deprecated
 	@Override
-	public void addAssetCategories(Class<?> clazz, long classPK)
-		throws SystemException {
-
-		List<AssetCategory> assetCategories =
-			AssetCategoryLocalServiceUtil.getCategories(
-				clazz.getName(), classPK);
-
-		_assetCategoryUuidsMap.put(
-			getPrimaryKeyString(clazz, classPK),
-			StringUtil.split(
-				ListUtil.toString(
-					assetCategories, AssetCategory.UUID_ACCESSOR)));
-		_assetCategoryIdsMap.put(
-			getPrimaryKeyString(clazz, classPK),
-			StringUtil.split(
-				ListUtil.toString(
-					assetCategories, AssetCategory.CATEGORY_ID_ACCESSOR), 0L));
+	public void addAssetCategories(Class<?> clazz, long classPK) {
 	}
 
 	@Override
@@ -285,7 +275,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 			return;
 		}
 
-		long classPK = getClassPK(classedModel);
+		long classPK = ExportImportClassedModelUtil.getClassPK(classedModel);
 
 		addAssetCategories(clazz, classPK);
 		addAssetLinks(clazz, classPK);
@@ -568,6 +558,10 @@ public class PortletDataContextImpl implements PortletDataContext {
 			getPrimaryKeyString(className, classPK), ratingsEntries);
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	@Override
 	public Element addReferenceElement(
 		ClassedModel referrerClassedModel, Element element,
@@ -586,8 +580,8 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 		return addReferenceElement(
 			referrerClassedModel, element, classedModel,
-			classedModel.getModelClassName(), StringPool.BLANK, referenceType,
-			missing);
+			ExportImportClassedModelUtil.getClassName(classedModel),
+			StringPool.BLANK, referenceType, missing);
 	}
 
 	@Override
@@ -598,7 +592,8 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 		return addReferenceElement(
 			referrerClassedModel, element, classedModel,
-			classedModel.getModelClassName(), binPath, referenceType, missing);
+			ExportImportClassedModelUtil.getClassName(classedModel), binPath,
+			referenceType, missing);
 	}
 
 	@Override
@@ -807,14 +802,22 @@ public class PortletDataContextImpl implements PortletDataContext {
 		return _assetCategoryIdsMap.get(getPrimaryKeyString(clazz, classPK));
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	@Override
 	public Map<String, long[]> getAssetCategoryIdsMap() {
-		return _assetCategoryIdsMap;
+		return Collections.emptyMap();
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	@Override
 	public Map<String, String[]> getAssetCategoryUuidsMap() {
-		return _assetCategoryUuidsMap;
+		return Collections.emptyMap();
 	}
 
 	@Override
@@ -916,15 +919,28 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 	@Override
 	public Element getExportDataElement(ClassedModel classedModel) {
-		return getExportDataElement(classedModel, classedModel.getModelClass());
+		return getExportDataElement(
+			classedModel,
+			ExportImportClassedModelUtil.getClassSimpleName(classedModel));
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             #getExportDataElement(ClassedModel, String)}
+	 */
+	@Deprecated
 	@Override
 	public Element getExportDataElement(
 		ClassedModel classedModel, Class<?> modelClass) {
 
-		Element groupElement = getExportDataGroupElement(
-			modelClass.getSimpleName());
+		return getExportDataElement(classedModel, modelClass.getSimpleName());
+	}
+
+	@Override
+	public Element getExportDataElement(
+		ClassedModel classedModel, String modelClassSimpleName) {
+
+		Element groupElement = getExportDataGroupElement(modelClassSimpleName);
 
 		Element element = null;
 
@@ -985,11 +1001,9 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 	@Override
 	public Element getImportDataElement(StagedModel stagedModel) {
-		StagedModelType stagedModelType = stagedModel.getStagedModelType();
-
 		return getImportDataElement(
-			stagedModelType.getClassSimpleName(), "uuid",
-			stagedModel.getUuid());
+			ExportImportClassedModelUtil.getClassSimpleName(stagedModel),
+			"uuid", stagedModel.getUuid());
 	}
 
 	@Override
@@ -1017,10 +1031,9 @@ public class PortletDataContextImpl implements PortletDataContext {
 	public Element getImportDataStagedModelElement(StagedModel stagedModel) {
 		String path = ExportImportPathUtil.getModelPath(stagedModel);
 
-		StagedModelType stagedModelType = stagedModel.getStagedModelType();
-
 		return getImportDataElement(
-			stagedModelType.getClassSimpleName(), "path", path);
+			ExportImportClassedModelUtil.getClassSimpleName(stagedModel),
+			"path", path);
 	}
 
 	@Override
@@ -1066,6 +1079,10 @@ public class PortletDataContextImpl implements PortletDataContext {
 		return map;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	@Override
 	public long getOldPlid() {
 		return _oldPlid;
@@ -1156,6 +1173,10 @@ public class PortletDataContextImpl implements PortletDataContext {
 		return getReferenceDataElement(parentElement, clazz, groupId, uuid);
 	}
 
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	@Override
 	public List<Element> getReferenceDataElements(
 		Element parentElement, Class<?> clazz) {
@@ -1192,6 +1213,21 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 	@Override
 	public Element getReferenceElement(
+		Element parentElement, Class<?> clazz, long groupId, String uuid,
+		String referenceType) {
+
+		List<Element> referenceElements = getReferenceElements(
+			parentElement, clazz, groupId, uuid, 0, referenceType);
+
+		if (!referenceElements.isEmpty()) {
+			return referenceElements.get(0);
+		}
+
+		return null;
+	}
+
+	@Override
+	public Element getReferenceElement(
 		StagedModel parentStagedModel, Class<?> clazz, long classPK) {
 
 		List<Element> referenceElements = getReferenceElements(
@@ -1216,6 +1252,10 @@ public class PortletDataContextImpl implements PortletDataContext {
 		return ExportImportPathUtil.getRootPath(this);
 	}
 
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	@Override
 	public Set<String> getScopedPrimaryKeys() {
 		return _scopedPrimaryKeys;
@@ -1291,6 +1331,10 @@ public class PortletDataContextImpl implements PortletDataContext {
 		return _userPersonalSiteGroupId;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	@Override
 	public List<String> getZipEntries() {
 		return getZipReader().getEntries();
@@ -1354,6 +1398,10 @@ public class PortletDataContextImpl implements PortletDataContext {
 		return getZipReader().getEntryAsString(path);
 	}
 
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	@Override
 	public List<String> getZipFolderEntries() {
 		return getZipFolderEntries(StringPool.SLASH);
@@ -1423,9 +1471,10 @@ public class PortletDataContextImpl implements PortletDataContext {
 			return;
 		}
 
-		long classPK = getClassPK(classedModel);
+		long classPK = ExportImportClassedModelUtil.getClassPK(classedModel);
 
-		long newClassPK = getClassPK(newClassedModel);
+		long newClassPK = ExportImportClassedModelUtil.getClassPK(
+			newClassedModel);
 
 		Map<Long, Long> newPrimaryKeysMap =
 			(Map<Long, Long>)getNewPrimaryKeysMap(clazz);
@@ -1805,6 +1854,10 @@ public class PortletDataContextImpl implements PortletDataContext {
 		return addScopedPrimaryKey(String.class, path);
 	}
 
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	@Override
 	public boolean isPathNotExportedInScope(String path) {
 		return !isPathExportedInScope(path);
@@ -2052,7 +2105,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 		Element element, String path, ClassedModel classedModel,
 		Class<?> clazz) {
 
-		long classPK = getClassPK(classedModel);
+		long classPK = ExportImportClassedModelUtil.getClassPK(classedModel);
 
 		ServiceContext serviceContext = new ServiceContext();
 
@@ -2182,7 +2235,8 @@ public class PortletDataContextImpl implements PortletDataContext {
 		if (missing) {
 			referenceElement.addAttribute(
 				"referrer-class-name",
-				referrerClassedModel.getModelClassName());
+				ExportImportClassedModelUtil.getClassName(
+					referrerClassedModel));
 
 			if (referrerClassedModel instanceof PortletModel) {
 				Portlet portlet = (Portlet)referrerClassedModel;
@@ -2241,17 +2295,6 @@ public class PortletDataContextImpl implements PortletDataContext {
 		}
 	}
 
-	protected long getClassPK(ClassedModel classedModel) {
-		if (classedModel instanceof ResourcedModel) {
-			ResourcedModel resourcedModel = (ResourcedModel)classedModel;
-
-			return resourcedModel.getResourcePrimKey();
-		}
-		else {
-			return (Long)classedModel.getPrimaryKeyObj();
-		}
-	}
-
 	protected Element getDataElement(
 		Element parentElement, String attribute, String value) {
 
@@ -2264,17 +2307,13 @@ public class PortletDataContextImpl implements PortletDataContext {
 		sb.append("staged-model");
 		sb.append("[@");
 		sb.append(attribute);
-		sb.append("='");
-		sb.append(value);
-		sb.append("']");
+		sb.append(StringPool.EQUAL);
+		sb.append(HtmlUtil.escapeXPathAttribute(value));
+		sb.append(StringPool.CLOSE_BRACKET);
 
 		XPath xPath = SAXReaderUtil.createXPath(sb.toString());
 
 		return (Element)xPath.selectSingleNode(parentElement);
-	}
-
-	protected String getExpandoPath(String path) {
-		return ExportImportPathUtil.getExpandoPath(path);
 	}
 
 	protected Element getExportDataGroupElement(String name) {
@@ -2315,7 +2354,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 		StringBundler sb = new StringBundler(5);
 
 		sb.append("missing-reference[@class-name='");
-		sb.append(classedModel.getModelClassName());
+		sb.append(ExportImportClassedModelUtil.getClassName(classedModel));
 		sb.append("' and @class-pk='");
 		sb.append(String.valueOf(classedModel.getPrimaryKeyObj()));
 		sb.append("']");
@@ -2363,15 +2402,15 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 				StringBuilder sb = new StringBuilder(5);
 
-				sb.append("staged-model[@uuid='");
-				sb.append(uuid);
+				sb.append("staged-model[@uuid=");
+				sb.append(HtmlUtil.escapeXPathAttribute(uuid));
 
 				if (groupId != null) {
-					sb.append("' and @group-id='");
-					sb.append(groupId);
+					sb.append(" and @group-id=");
+					sb.append(HtmlUtil.escapeXPathAttribute(groupId));
 				}
 
-				sb.append("']");
+				sb.append(StringPool.CLOSE_BRACKET);
 
 				XPath xPath = SAXReaderUtil.createXPath(sb.toString());
 
@@ -2406,32 +2445,34 @@ public class PortletDataContextImpl implements PortletDataContext {
 			return Collections.emptyList();
 		}
 
-		StringBundler sb = new StringBundler(5);
+		StringBundler sb = new StringBundler(13);
 
-		sb.append("reference[@class-name='");
-		sb.append(clazz.getName());
+		sb.append("reference[@class-name=");
+		sb.append(HtmlUtil.escapeXPathAttribute(clazz.getName()));
 
 		if (groupId > 0) {
-			sb.append("' and @group-id='");
+			sb.append(" and @group-id='");
 			sb.append(groupId);
+			sb.append(StringPool.APOSTROPHE);
 		}
 
 		if (Validator.isNotNull(uuid)) {
-			sb.append("' and @uuid='");
-			sb.append(uuid);
+			sb.append(" and @uuid=");
+			sb.append(HtmlUtil.escapeXPathAttribute(uuid));
 		}
 
 		if (classPK > 0) {
-			sb.append("' and @class-pk='");
+			sb.append(" and @class-pk='");
 			sb.append(classPK);
+			sb.append(StringPool.APOSTROPHE);
 		}
 
 		if (referenceType != null) {
-			sb.append("' and @type='");
-			sb.append(referenceType);
+			sb.append(" and @type=");
+			sb.append(HtmlUtil.escapeXPathAttribute(referenceType));
 		}
 
-		sb.append("']");
+		sb.append(StringPool.CLOSE_BRACKET);
 
 		XPath xPath = SAXReaderUtil.createXPath(sb.toString());
 
@@ -2452,7 +2493,8 @@ public class PortletDataContextImpl implements PortletDataContext {
 	}
 
 	protected String getReferenceKey(ClassedModel classedModel) {
-		String referenceKey = classedModel.getModelClassName();
+		String referenceKey = ExportImportClassedModelUtil.getClassName(
+			classedModel);
 
 		return referenceKey.concat(StringPool.POUND).concat(
 			String.valueOf(classedModel.getPrimaryKeyObj()));
@@ -2514,8 +2556,6 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 	private Map<String, long[]> _assetCategoryIdsMap =
 		new HashMap<String, long[]>();
-	private Map<String, String[]> _assetCategoryUuidsMap =
-		new HashMap<String, String[]>();
 	private Map<String, List<AssetLink>> _assetLinksMap =
 		new HashMap<String, List<AssetLink>>();
 	private Map<String, String[]> _assetTagNamesMap =

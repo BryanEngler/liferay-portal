@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ResourceTypePermission;
 import com.liferay.portal.model.impl.ResourceTypePermissionModelImpl;
@@ -113,6 +114,8 @@ public class ResourceTypePermissionPersistenceTest {
 
 		ResourceTypePermission newResourceTypePermission = _persistence.create(pk);
 
+		newResourceTypePermission.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newResourceTypePermission.setCompanyId(ServiceTestUtil.nextLong());
 
 		newResourceTypePermission.setGroupId(ServiceTestUtil.nextLong());
@@ -127,6 +130,8 @@ public class ResourceTypePermissionPersistenceTest {
 
 		ResourceTypePermission existingResourceTypePermission = _persistence.findByPrimaryKey(newResourceTypePermission.getPrimaryKey());
 
+		Assert.assertEquals(existingResourceTypePermission.getMvccVersion(),
+			newResourceTypePermission.getMvccVersion());
 		Assert.assertEquals(existingResourceTypePermission.getResourceTypePermissionId(),
 			newResourceTypePermission.getResourceTypePermissionId());
 		Assert.assertEquals(existingResourceTypePermission.getCompanyId(),
@@ -139,6 +144,49 @@ public class ResourceTypePermissionPersistenceTest {
 			newResourceTypePermission.getRoleId());
 		Assert.assertEquals(existingResourceTypePermission.getActionIds(),
 			newResourceTypePermission.getActionIds());
+	}
+
+	@Test
+	public void testCountByRoleId() {
+		try {
+			_persistence.countByRoleId(ServiceTestUtil.nextLong());
+
+			_persistence.countByRoleId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_N_R() {
+		try {
+			_persistence.countByC_N_R(ServiceTestUtil.nextLong(),
+				StringPool.BLANK, ServiceTestUtil.nextLong());
+
+			_persistence.countByC_N_R(0L, StringPool.NULL, 0L);
+
+			_persistence.countByC_N_R(0L, (String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_G_N_R() {
+		try {
+			_persistence.countByC_G_N_R(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), StringPool.BLANK,
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByC_G_N_R(0L, 0L, StringPool.NULL, 0L);
+
+			_persistence.countByC_G_N_R(0L, 0L, (String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -178,8 +226,9 @@ public class ResourceTypePermissionPersistenceTest {
 
 	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("ResourceTypePermission",
-			"resourceTypePermissionId", true, "companyId", true, "groupId",
-			true, "name", true, "roleId", true, "actionIds", true);
+			"mvccVersion", true, "resourceTypePermissionId", true, "companyId",
+			true, "groupId", true, "name", true, "roleId", true, "actionIds",
+			true);
 	}
 
 	@Test
@@ -328,6 +377,8 @@ public class ResourceTypePermissionPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		ResourceTypePermission resourceTypePermission = _persistence.create(pk);
+
+		resourceTypePermission.setMvccVersion(ServiceTestUtil.nextLong());
 
 		resourceTypePermission.setCompanyId(ServiceTestUtil.nextLong());
 

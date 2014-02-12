@@ -1,4 +1,4 @@
-<definition>
+<definition component-name="portal-wcm">
 	<var name="pageName" value="Web Content Display Page" />
 	<var name="portletName" value="Web Content Display" />
 
@@ -73,7 +73,7 @@
 		<execute macro="SitePage#addCP">
 			<var name="siteName" value="${siteName}" />
 			<var name="sitePageName" value="${sitePageName}" />
-			<var name="sitePageType" value="Public" />
+			<var name="sitePagePrivacy" value="Public" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -99,39 +99,6 @@
 			<var name="pageName" value="${pageName}" />
 			<var name="webContentContent" value="${webContentContent}" />
 			<var name="webContentTitle" value="${webContentTitle}" />
-		</execute>
-	</command>
-
-	<command name="AddWebContentViaAddContentPanel" priority="5">
-		<var name="pageName" value="Web Content Page" />
-		<var name="webContentContent" value="WC WebContent Content" />
-		<var name="webContentTitle" value="WC WebContent Title" />
-
-		<execute macro="Page#gotoContentCP">
-			<var name="portletName" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="${webContentContent}" />
-			<var name="webContentTitle" value="${webContentTitle}" />
-		</execute>
-
-		<execute macro="Page#addPG">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="Content#addPG">
-			<var name="assetTitle" value="${webContentTitle}" />
-			<var name="pageName" value="${pageName}" />
-			<var name="webContentContent" value="${webContentContent}" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="${webContentContent}" />
 		</execute>
 	</command>
 
@@ -254,6 +221,39 @@
 
 		<execute macro="WebContent#tearDownCP">
 			<var name="contentScopeName" value="${pageName1}" />
+		</execute>
+	</command>
+
+	<command name="AddWebContentViaAddContentPanel" priority="5">
+		<var name="pageName" value="Web Content Page" />
+		<var name="webContentContent" value="WC WebContent Content" />
+		<var name="webContentTitle" value="WC WebContent Title" />
+
+		<execute macro="Page#gotoContentCP">
+			<var name="portletName" value="Web Content" />
+		</execute>
+
+		<execute macro="WebContent#addCP">
+			<var name="webContentContent" value="${webContentContent}" />
+			<var name="webContentTitle" value="${webContentTitle}" />
+		</execute>
+
+		<execute macro="Page#addPG">
+			<var name="pageName" value="${pageName}" />
+		</execute>
+
+		<execute macro="Page#gotoPG">
+			<var name="pageName" value="${pageName}" />
+		</execute>
+
+		<execute macro="Content#addPG">
+			<var name="assetTitle" value="${webContentTitle}" />
+			<var name="pageName" value="${pageName}" />
+			<var name="webContentContent" value="${webContentContent}" />
+		</execute>
+
+		<execute macro="WebContent#viewPGViaWCD">
+			<var name="webContentContent" value="${webContentContent}" />
 		</execute>
 	</command>
 

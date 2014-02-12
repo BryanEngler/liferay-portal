@@ -37,6 +37,7 @@ import com.liferay.portal.kernel.util.UnmodifiableList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.Country;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.model.impl.CountryImpl;
 import com.liferay.portal.model.impl.CountryModelImpl;
@@ -1348,7 +1349,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 			CacheRegistryUtil.clear(CountryImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(CountryImpl.class.getName());
+		EntityCacheUtil.clearCache(CountryImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -1640,7 +1641,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 		}
 
 		EntityCacheUtil.putResult(CountryModelImpl.ENTITY_CACHE_ENABLED,
-			CountryImpl.class, country.getPrimaryKey(), country);
+			CountryImpl.class, country.getPrimaryKey(), country, false);
 
 		clearUniqueFindersCache(country);
 		cacheUniqueFindersCache(country);
@@ -1660,6 +1661,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 		countryImpl.setNew(country.isNew());
 		countryImpl.setPrimaryKey(country.getPrimaryKey());
 
+		countryImpl.setMvccVersion(country.getMvccVersion());
 		countryImpl.setCountryId(country.getCountryId());
 		countryImpl.setName(country.getName());
 		countryImpl.setA2(country.getA2());
@@ -2003,10 +2005,22 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 			}
 		};
 
-	private static CacheModel<Country> _nullCountryCacheModel = new CacheModel<Country>() {
-			@Override
-			public Country toEntityModel() {
-				return _nullCountry;
-			}
-		};
+	private static CacheModel<Country> _nullCountryCacheModel = new NullCacheModel();
+
+	private static class NullCacheModel implements CacheModel<Country>,
+		MVCCModel {
+		@Override
+		public long getMvccVersion() {
+			return 0;
+		}
+
+		@Override
+		public void setMvccVersion(long mvccVersion) {
+		}
+
+		@Override
+		public Country toEntityModel() {
+			return _nullCountry;
+		}
+	}
 }

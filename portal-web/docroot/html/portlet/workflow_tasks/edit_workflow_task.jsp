@@ -148,7 +148,7 @@ request.setAttribute(WebKeys.WORKFLOW_ASSET_PREVIEW, Boolean.TRUE);
 
 				<div class="lfr-asset-status">
 					<aui:field-wrapper label="state">
-						<liferay-ui:input-resource url="<%= LanguageUtil.get(pageContext, WorkflowInstanceLinkLocalServiceUtil.getState(companyId, groupId, className, classPK)) %>" />
+						<liferay-ui:input-resource url="<%= LanguageUtil.get(pageContext, HtmlUtil.escape(WorkflowInstanceLinkLocalServiceUtil.getState(companyId, groupId, className, classPK))) %>" />
 					</aui:field-wrapper>
 				</div>
 			</aui:col>
@@ -182,18 +182,18 @@ request.setAttribute(WebKeys.WORKFLOW_ASSET_PREVIEW, Boolean.TRUE);
 		<c:if test="<%= Validator.isNotNull(workflowTask.getDescription()) %>">
 			<div class="lfr-asset-field">
 				<aui:field-wrapper label="description">
-					<%= workflowTask.getDescription() %>
+					<%= HtmlUtil.escape(workflowTask.getDescription()) %>
 				</aui:field-wrapper>
 			</div>
 		</c:if>
 
 		<liferay-ui:panel-container cssClass="task-panel-container" extended="<%= true %>">
 			<c:if test="<%= assetRenderer != null %>">
-				<liferay-ui:panel defaultState="open" title='<%= LanguageUtil.format(pageContext, "preview-of-x", ResourceActionsUtil.getModelResource(locale, className)) %>'>
+				<liferay-ui:panel defaultState="open" title='<%= LanguageUtil.format(pageContext, "preview-of-x", ResourceActionsUtil.getModelResource(locale, className), false) %>'>
 					<div class="task-content-actions">
 						<liferay-ui:icon-list>
 							<c:if test="<%= assetRenderer.hasViewPermission(permissionChecker) %>">
-								<liferay-ui:icon image="view" method="get" target='<%= assetRenderer.isPreviewInContext() ? "_blank" : StringPool.BLANK %>' url="<%= viewFullContentURLString %>" />
+								<liferay-ui:icon image="view" message="view[action]" method="get" target='<%= assetRenderer.isPreviewInContext() ? "_blank" : StringPool.BLANK %>' url="<%= viewFullContentURLString %>" />
 							</c:if>
 
 							<c:if test="<%= editPortletURL != null %>">
@@ -212,7 +212,7 @@ request.setAttribute(WebKeys.WORKFLOW_ASSET_PREVIEW, Boolean.TRUE);
 									<c:when test="<%= assetRenderer.hasEditPermission(permissionChecker) && showEditURL %>">
 
 										<%
-										String taglibEditURL = "javascript:Liferay.Util.openWindow({id: '" + renderResponse.getNamespace() + "editAsset', title: '" + LanguageUtil.format(pageContext, "edit-x", HtmlUtil.escape(assetRenderer.getTitle(locale))) + "', uri:'" + HtmlUtil.escapeURL(editPortletURLString) + "'});";
+										String taglibEditURL = "javascript:Liferay.Util.openWindow({id: '" + renderResponse.getNamespace() + "editAsset', title: '" + LanguageUtil.format(pageContext, "edit-x", HtmlUtil.escape(assetRenderer.getTitle(locale)), false) + "', uri:'" + HtmlUtil.escapeURL(editPortletURLString) + "'});";
 										%>
 
 										<liferay-ui:icon image="edit" url="<%= taglibEditURL %>" />
@@ -238,7 +238,7 @@ request.setAttribute(WebKeys.WORKFLOW_ASSET_PREVIEW, Boolean.TRUE);
 
 					<c:choose>
 						<c:when test="<%= path == null %>">
-							<%= workflowHandler.getSummary(classPK, locale) %>
+							<%= HtmlUtil.escape(workflowHandler.getSummary(classPK, locale)) %>
 						</c:when>
 						<c:otherwise>
 							<liferay-util:include page="<%= path %>" portletId="<%= assetRendererFactory.getPortletId() %>" />
@@ -299,7 +299,7 @@ request.setAttribute(WebKeys.WORKFLOW_ASSET_PREVIEW, Boolean.TRUE);
 			/>
 
 			<div class="task-name">
-				<%= LanguageUtil.get(pageContext, workflowTask.getName()) %>
+				<%= LanguageUtil.get(pageContext, HtmlUtil.escape(workflowTask.getName())) %>
 			</div>
 		</div>
 

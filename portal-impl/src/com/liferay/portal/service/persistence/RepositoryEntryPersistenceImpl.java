@@ -37,6 +37,7 @@ import com.liferay.portal.kernel.util.UnmodifiableList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.model.RepositoryEntry;
 import com.liferay.portal.model.impl.RepositoryEntryImpl;
@@ -2283,7 +2284,7 @@ public class RepositoryEntryPersistenceImpl extends BasePersistenceImpl<Reposito
 			CacheRegistryUtil.clear(RepositoryEntryImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(RepositoryEntryImpl.class.getName());
+		EntityCacheUtil.clearCache(RepositoryEntryImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -2624,7 +2625,7 @@ public class RepositoryEntryPersistenceImpl extends BasePersistenceImpl<Reposito
 
 		EntityCacheUtil.putResult(RepositoryEntryModelImpl.ENTITY_CACHE_ENABLED,
 			RepositoryEntryImpl.class, repositoryEntry.getPrimaryKey(),
-			repositoryEntry);
+			repositoryEntry, false);
 
 		clearUniqueFindersCache(repositoryEntry);
 		cacheUniqueFindersCache(repositoryEntry);
@@ -2644,6 +2645,7 @@ public class RepositoryEntryPersistenceImpl extends BasePersistenceImpl<Reposito
 		repositoryEntryImpl.setNew(repositoryEntry.isNew());
 		repositoryEntryImpl.setPrimaryKey(repositoryEntry.getPrimaryKey());
 
+		repositoryEntryImpl.setMvccVersion(repositoryEntry.getMvccVersion());
 		repositoryEntryImpl.setUuid(repositoryEntry.getUuid());
 		repositoryEntryImpl.setRepositoryEntryId(repositoryEntry.getRepositoryEntryId());
 		repositoryEntryImpl.setGroupId(repositoryEntry.getGroupId());
@@ -2994,10 +2996,22 @@ public class RepositoryEntryPersistenceImpl extends BasePersistenceImpl<Reposito
 			}
 		};
 
-	private static CacheModel<RepositoryEntry> _nullRepositoryEntryCacheModel = new CacheModel<RepositoryEntry>() {
-			@Override
-			public RepositoryEntry toEntityModel() {
-				return _nullRepositoryEntry;
-			}
-		};
+	private static CacheModel<RepositoryEntry> _nullRepositoryEntryCacheModel = new NullCacheModel();
+
+	private static class NullCacheModel implements CacheModel<RepositoryEntry>,
+		MVCCModel {
+		@Override
+		public long getMvccVersion() {
+			return 0;
+		}
+
+		@Override
+		public void setMvccVersion(long mvccVersion) {
+		}
+
+		@Override
+		public RepositoryEntry toEntityModel() {
+			return _nullRepositoryEntry;
+		}
+	}
 }

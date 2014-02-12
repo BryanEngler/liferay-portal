@@ -23,7 +23,7 @@ public interface EntityCache {
 
 	public void clearCache();
 
-	public void clearCache(String className);
+	public void clearCache(Class<?> clazz);
 
 	public void clearLocalCache();
 
@@ -39,6 +39,10 @@ public interface EntityCache {
 	public void putResult(
 		boolean entityCacheEnabled, Class<?> clazz, Serializable primaryKey,
 		Serializable result);
+
+	public void putResult(
+		boolean entityCacheEnabled, Class<?> clazz, Serializable primaryKey,
+		Serializable result, boolean quiet);
 
 	public void removeCache(String className);
 

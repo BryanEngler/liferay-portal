@@ -1,4 +1,4 @@
-<definition>
+<definition component-name="portal-administration">
 	<set-up>
 		<execute macro="User#firstLoginPG" />
 	</set-up>
@@ -18,7 +18,7 @@
 
 		<execute macro="WebContent#tearDownCP" />
 
-        <execute macro="Page#tearDownPG" />
+		<execute macro="Page#tearDownPG" />
 	</tear-down>
 
 	<command name="EditDefaultUserAssociationsOrganizationSites" priority="5">
@@ -288,6 +288,62 @@
 		</execute>
 	</command>
 
+	<command name="ViewAuthenticationCAS" priority="3">
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Portal Settings" />
+		</execute>
+
+		<execute macro="PortalSettings#viewAuthenticationCASCP" />
+	</command>
+
+	<command name="ViewAuthenticationGeneral" priority="3">
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Portal Settings" />
+		</execute>
+
+		<execute macro="PortalSettings#viewAuthenticationGeneralCP" />
+	</command>
+
+	<command name="ViewAuthenticationLDAP" priority="3">
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Portal Settings" />
+		</execute>
+
+		<execute macro="PortalSettings#viewAuthenticationLDAPCP" />
+	</command>
+
+	<command name="ViewAuthenticationNTLM" priority="3">
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Portal Settings" />
+		</execute>
+
+		<execute macro="PortalSettings#viewAuthenticationNTLMCP" />
+	</command>
+
+	<command name="ViewAuthenticationOpenID" priority="3">
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Portal Settings" />
+		</execute>
+
+		<execute macro="PortalSettings#viewAuthenticationOpenIDCP" />
+	</command>
+
+	<command name="ViewAuthenticationOpenSSO" priority="3">
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Portal Settings" />
+		</execute>
+
+		<execute macro="PortalSettings#viewAuthenticationOpenSSOCP" />
+	</command>
+
+	<command name="ViewAuthenticationSiteMinder" priority="3">
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Portal Settings" />
+		</execute>
+
+		<execute macro="PortalSettings#viewAuthenticationSiteMinderCP" />
+	</command>
+
 	<command name="ViewContentSharingDisabledAcrossSitesViaAP" priority="5">
 		<var name="childSiteName" value="Child SiteName" />
 		<var name="entryContent" value="Blogs Entry Content" />
@@ -297,8 +353,8 @@
 		<var name="parentSite" value="Site Name" />
 		<var name="portletName1" value="Asset Publisher" />
 		<var name="portletName2" value="Web Content Display" />
+		<var name="sitePagePrivacy" value="Public" />
 		<var name="siteScopeName" value="Child SiteName" />
-		<var name="sitePageType" value="Public" />
 		<var name="webContentContent" value="WC WebContent Content" />
 		<var name="webContentTitle" value="WC WebContent Title" />
 
@@ -338,7 +394,7 @@
 		<execute macro="SitePage#addCP">
 			<var name="siteName" value="${parentSite}" />
 			<var name="sitePageName" value="${pageName1}" />
-			<var name="sitePageType" value="${sitePageType}" />
+			<var name="sitePagePrivacy" value="${sitePagePrivacy}" />
 		</execute>
 
 		<execute macro="Page#openURL">
@@ -356,9 +412,9 @@
 		</execute>
 
 		<execute macro="SitePage#addCP">
-			<var name="siteScopeSelected" value="true" />
 			<var name="sitePageName" value="${pageName2}" />
-			<var name="sitePageType" value="${sitePageType}" />
+			<var name="sitePagePrivacy" value="${sitePagePrivacy}" />
+			<var name="siteScopeSelected" value="true" />
 		</execute>
 
 		<execute macro="Page#openURL">
@@ -381,8 +437,8 @@
 		</execute>
 
 		<execute macro="AssetPublisherPortlet#configureSiteScopePG">
-			<var name="siteScopeType" value="Child Site" />
 			<var name="siteName" value="${childSiteName}" />
+			<var name="siteScopeType" value="Child Site" />
 		</execute>
 
 		<execute macro="Page#openURL">
@@ -429,8 +485,8 @@
 		</execute>
 
 		<execute macro="AssetPublisherPortlet#configureSiteScopePG">
-			<var name="siteScopeType" value="Parent Site" />
 			<var name="siteName" value="${parentSite}" />
+			<var name="siteScopeType" value="Parent Site" />
 		</execute>
 
 		<execute macro="Page#openURL">
@@ -465,8 +521,8 @@
 		<var name="liferaySiteName" value="Liferay" />
 		<var name="pageName" value="AP Test Page" />
 		<var name="portletName" value="Asset Publisher" />
-		<var name="sitePageType" value="Public" />
 		<var name="siteName" value="Site Name" />
+		<var name="sitePagePrivacy" value="Public" />
 
 		<execute macro="Page#gotoCP">
 			<var name="portletName" value="Portal Settings" />
@@ -495,7 +551,7 @@
 		<execute macro="SitePage#addCP">
 			<var name="siteName" value="${siteName}" />
 			<var name="sitePageName" value="${pageName}" />
-			<var name="sitePageType" value="${sitePageType}" />
+			<var name="sitePagePrivacy" value="${sitePagePrivacy}" />
 		</execute>
 
 		<execute macro="Page#openURL">
@@ -555,8 +611,8 @@
 		</execute>
 
 		<execute macro="AssetPublisherPortlet#configureSiteScopePG">
-			<var name="siteScopeType" value="Site" />
 			<var name="siteName" value="${siteName}" />
+			<var name="siteScopeType" value="Site" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -569,5 +625,45 @@
 			<var name="siteScope1" value="${siteName}" />
 			<var name="siteScope2" value="${liferaySiteName}" />
 		</execute>
+	</command>
+
+	<command name="ViewDefaultUserAssociations" priority="3">
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Portal Settings" />
+		</execute>
+
+		<execute macro="PortalSettings#viewDefaultUserAssociationsCP" />
+	</command>
+
+	<command name="ViewEmailNotificationsAccountCreatedNotification" priority="3">
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Portal Settings" />
+		</execute>
+
+		<execute macro="PortalSettings#viewEmailNotificationsAccountCreatedNotificationCP" />
+	</command>
+
+	<command name="ViewEmailNotificationsPasswordChangedNotification" priority="3">
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Portal Settings" />
+		</execute>
+
+		<execute macro="PortalSettings#viewEmailNotificationsPasswordChangedNotificationCP" />
+	</command>
+
+	<command name="ViewEmailNotificationsSender" priority="3">
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Portal Settings" />
+		</execute>
+
+		<execute macro="PortalSettings#viewEmailNotificationsSenderCP" />
+	</command>
+
+	<command name="ViewReservedCredentialsScreenNames" priority="3">
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Portal Settings" />
+		</execute>
+
+		<execute macro="PortalSettings#viewReservedCredentialsScreenNamesCP" />
 	</command>
 </definition>

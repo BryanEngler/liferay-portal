@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
+import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
@@ -112,6 +113,9 @@ public class AssetUtil {
 		CharPool.QUESTION, CharPool.QUOTE, CharPool.RETURN, CharPool.SEMICOLON,
 		CharPool.SLASH, CharPool.STAR, CharPool.TILDE
 	};
+
+	public static final String[] SELECTED_FIELD_NAMES =
+		{Field.ENTRY_CLASS_NAME, Field.ENTRY_CLASS_PK};
 
 	public static Set<String> addLayoutTags(
 		HttpServletRequest request, List<AssetTag> tags) {
@@ -248,8 +252,8 @@ public class AssetUtil {
 
 	public static PortletURL getAddPortletURL(
 			LiferayPortletRequest liferayPortletRequest,
-			LiferayPortletResponse liferayPortletResponse, String className,
-			long classTypeId, long[] allAssetCategoryIds,
+			LiferayPortletResponse liferayPortletResponse, long groupId,
+			String className, long classTypeId, long[] allAssetCategoryIds,
 			String[] allAssetTagNames, String redirect)
 		throws Exception {
 
@@ -261,12 +265,12 @@ public class AssetUtil {
 			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
 				className);
 
-		if (assetRendererFactory == null) {
+		if ((assetRendererFactory == null) ||
+			!assetRendererFactory.hasAddPermission(
+				themeDisplay.getPermissionChecker(), groupId, classTypeId)) {
+
 			return null;
 		}
-
-		liferayPortletRequest.setAttribute(
-			WebKeys.ASSET_RENDERER_FACTORY_CLASS_TYPE_ID, classTypeId);
 
 		PortletURL addPortletURL = assetRendererFactory.getURLAdd(
 			liferayPortletRequest, liferayPortletResponse);
@@ -371,11 +375,36 @@ public class AssetUtil {
 		return addPortletURL;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             #getAddPortletURL(LiferayPortletRequest,
+	 *             LiferayPortletResponse, long, String, long, long[], String[],
+	 *             String))}
+	 */
+	@Deprecated
+	public static PortletURL getAddPortletURL(
+			LiferayPortletRequest liferayPortletRequest,
+			LiferayPortletResponse liferayPortletResponse, String className,
+			long classTypeId, long[] allAssetCategoryIds,
+			String[] allAssetTagNames, String redirect)
+		throws Exception {
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)liferayPortletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		return getAddPortletURL(
+			liferayPortletRequest, liferayPortletResponse,
+			themeDisplay.getScopeGroupId(), className, classTypeId,
+			allAssetCategoryIds, allAssetTagNames, redirect);
+	}
+
 	public static Map<String, PortletURL> getAddPortletURLs(
 			LiferayPortletRequest liferayPortletRequest,
-			LiferayPortletResponse liferayPortletResponse, long[] classNameIds,
-			long[] classTypeIds, long[] allAssetCategoryIds,
-			String[] allAssetTagNames, String redirect)
+			LiferayPortletResponse liferayPortletResponse, long groupId,
+			long[] classNameIds, long[] classTypeIds,
+			long[] allAssetCategoryIds, String[] allAssetTagNames,
+			String redirect)
 		throws Exception {
 
 		ThemeDisplay themeDisplay =
@@ -426,8 +455,9 @@ public class AssetUtil {
 
 			if ((classTypeIds.length == 0) || classTypes.isEmpty()) {
 				PortletURL addPortletURL = getAddPortletURL(
-					liferayPortletRequest, liferayPortletResponse, className, 0,
-					allAssetCategoryIds, allAssetTagNames, redirect);
+					liferayPortletRequest, liferayPortletResponse, groupId,
+					className, 0, allAssetCategoryIds, allAssetTagNames,
+					redirect);
 
 				if (addPortletURL != null) {
 					addPortletURLs.put(className, addPortletURL);
@@ -439,7 +469,7 @@ public class AssetUtil {
 					(classTypeIds.length == 0)) {
 
 					PortletURL addPortletURL = getAddPortletURL(
-						liferayPortletRequest, liferayPortletResponse,
+						liferayPortletRequest, liferayPortletResponse, groupId,
 						className, classTypeId, allAssetCategoryIds,
 						allAssetTagNames, redirect);
 
@@ -455,6 +485,30 @@ public class AssetUtil {
 		}
 
 		return addPortletURLs;
+	}
+
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             #getAddPortletURLs(LiferayPortletRequest,
+	 *             LiferayPortletResponse, long, long[], long[], long[],
+	 *             String[], String)}
+	 */
+	@Deprecated
+	public static Map<String, PortletURL> getAddPortletURLs(
+			LiferayPortletRequest liferayPortletRequest,
+			LiferayPortletResponse liferayPortletResponse, long[] classNameIds,
+			long[] classTypeIds, long[] allAssetCategoryIds,
+			String[] allAssetTagNames, String redirect)
+		throws Exception {
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)liferayPortletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		return getAddPortletURLs(
+			liferayPortletRequest, liferayPortletResponse,
+			themeDisplay.getScopeGroupId(), classNameIds, classTypeIds,
+			allAssetCategoryIds, allAssetTagNames, redirect);
 	}
 
 	public static List<AssetEntry> getAssetEntries(Hits hits) {
@@ -592,54 +646,36 @@ public class AssetUtil {
 			int start, int end)
 		throws Exception {
 
-		Indexer searcher = AssetSearcher.getInstance();
-
-		AssetSearcher assetSearcher = (AssetSearcher)searcher;
-
-		assetSearcher.setAssetEntryQuery(assetEntryQuery);
-
-		Layout layout = assetEntryQuery.getLayout();
-
-		if (layout != null) {
-			searchContext.setAttribute(Field.LAYOUT_UUID, layout.getUuid());
-		}
-
-		String ddmStructureFieldName = (String)assetEntryQuery.getAttribute(
-			"ddmStructureFieldName");
-		Serializable ddmStructureFieldValue = assetEntryQuery.getAttribute(
-			"ddmStructureFieldValue");
-
-		if (Validator.isNotNull(ddmStructureFieldName) &&
-			Validator.isNotNull(ddmStructureFieldValue)) {
-
-			searchContext.setAttribute(
-				"ddmStructureFieldName", ddmStructureFieldName);
-			searchContext.setAttribute(
-				"ddmStructureFieldValue", ddmStructureFieldValue);
-		}
-
-		String paginationType = GetterUtil.getString(
-			assetEntryQuery.getPaginationType(), "more");
-
-		if (!paginationType.equals("none") &&
-			!paginationType.equals("simple")) {
-
-			searchContext.setAttribute("paginationType", paginationType);
-		}
-
-		searchContext.setClassTypeIds(assetEntryQuery.getClassTypeIds());
-		searchContext.setEnd(end);
-		searchContext.setGroupIds(assetEntryQuery.getGroupIds());
-
-		if (Validator.isNotNull(assetEntryQuery.getKeywords())) {
-			searchContext.setLike(true);
-		}
-
-		searchContext.setSorts(
-			getSorts(assetEntryQuery, searchContext.getLocale()));
-		searchContext.setStart(start);
+		AssetSearcher assetSearcher = getAssetSearcher(
+			searchContext, assetEntryQuery, start, end);
 
 		return assetSearcher.search(searchContext);
+	}
+
+	public static BaseModelSearchResult<AssetEntry> searchAssetEntries(
+			HttpServletRequest request, AssetEntryQuery assetEntryQuery,
+			int start, int end)
+		throws Exception {
+
+		SearchContext searchContext = SearchContextFactory.getInstance(request);
+
+		return searchAssetEntries(searchContext, assetEntryQuery, start, end);
+	}
+
+	public static BaseModelSearchResult<AssetEntry> searchAssetEntries(
+			SearchContext searchContext, AssetEntryQuery assetEntryQuery,
+			int start, int end)
+		throws Exception {
+
+		AssetSearcher assetSearcher = getAssetSearcher(
+			searchContext, assetEntryQuery, start, end);
+
+		Hits hits = assetSearcher.search(searchContext, SELECTED_FIELD_NAMES);
+
+		List<AssetEntry> assetEntries = getAssetEntries(hits);
+
+		return new BaseModelSearchResult<AssetEntry>(
+			assetEntries, hits.getLength());
 	}
 
 	public static String substituteCategoryPropertyVariables(
@@ -720,6 +756,61 @@ public class AssetUtil {
 		}
 
 		return new String(textCharArray);
+	}
+
+	protected static AssetSearcher getAssetSearcher(
+			SearchContext searchContext, AssetEntryQuery assetEntryQuery,
+			int start, int end)
+		throws Exception {
+
+		Indexer searcher = AssetSearcher.getInstance();
+
+		AssetSearcher assetSearcher = (AssetSearcher)searcher;
+
+		assetSearcher.setAssetEntryQuery(assetEntryQuery);
+
+		Layout layout = assetEntryQuery.getLayout();
+
+		if (layout != null) {
+			searchContext.setAttribute(Field.LAYOUT_UUID, layout.getUuid());
+		}
+
+		String ddmStructureFieldName = (String)assetEntryQuery.getAttribute(
+			"ddmStructureFieldName");
+		Serializable ddmStructureFieldValue = assetEntryQuery.getAttribute(
+			"ddmStructureFieldValue");
+
+		if (Validator.isNotNull(ddmStructureFieldName) &&
+			Validator.isNotNull(ddmStructureFieldValue)) {
+
+			searchContext.setAttribute(
+				"ddmStructureFieldName", ddmStructureFieldName);
+			searchContext.setAttribute(
+				"ddmStructureFieldValue", ddmStructureFieldValue);
+		}
+
+		String paginationType = GetterUtil.getString(
+			assetEntryQuery.getPaginationType(), "more");
+
+		if (!paginationType.equals("none") &&
+			!paginationType.equals("simple")) {
+
+			searchContext.setAttribute("paginationType", paginationType);
+		}
+
+		searchContext.setClassTypeIds(assetEntryQuery.getClassTypeIds());
+		searchContext.setEnd(end);
+		searchContext.setGroupIds(assetEntryQuery.getGroupIds());
+
+		if (Validator.isNotNull(assetEntryQuery.getKeywords())) {
+			searchContext.setLike(true);
+		}
+
+		searchContext.setSorts(
+			getSorts(assetEntryQuery, searchContext.getLocale()));
+		searchContext.setStart(start);
+
+		return assetSearcher;
 	}
 
 	protected static Sort getSort(

@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.EmailAddress;
+import com.liferay.portal.model.MVCCModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -34,12 +35,24 @@ import java.util.Date;
  * @generated
  */
 public class EmailAddressCacheModel implements CacheModel<EmailAddress>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(27);
 
-		sb.append("{uuid=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", uuid=");
 		sb.append(uuid);
 		sb.append(", emailAddressId=");
 		sb.append(emailAddressId);
@@ -71,6 +84,8 @@ public class EmailAddressCacheModel implements CacheModel<EmailAddress>,
 	@Override
 	public EmailAddress toEntityModel() {
 		EmailAddressImpl emailAddressImpl = new EmailAddressImpl();
+
+		emailAddressImpl.setMvccVersion(mvccVersion);
 
 		if (uuid == null) {
 			emailAddressImpl.setUuid(StringPool.BLANK);
@@ -124,6 +139,7 @@ public class EmailAddressCacheModel implements CacheModel<EmailAddress>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		uuid = objectInput.readUTF();
 		emailAddressId = objectInput.readLong();
 		companyId = objectInput.readLong();
@@ -141,6 +157,8 @@ public class EmailAddressCacheModel implements CacheModel<EmailAddress>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
+
 		if (uuid == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
@@ -175,6 +193,7 @@ public class EmailAddressCacheModel implements CacheModel<EmailAddress>,
 		objectOutput.writeBoolean(primary);
 	}
 
+	public long mvccVersion;
 	public String uuid;
 	public long emailAddressId;
 	public long companyId;

@@ -1,4 +1,4 @@
-<definition>
+<definition component-name="portal-tools">
 	<set-up>
 		<execute macro="User#firstLoginPG" />
 
@@ -536,7 +536,8 @@
 	</command>
 
 	<command name="PluginsSecurityManagerPortletSmoke" priority="5">
-		<property name="portlet.plugins.includes" value="plugin-security-manager-portlet" />
+		<property name="java.security" value="true" />
+		<property name="portlet.plugins.includes" value="plugins-security-manager-portlet" />
 
 		<var name="appName" value="Plugins Security Manager" />
 

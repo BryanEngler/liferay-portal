@@ -1378,7 +1378,7 @@ public class DDMStorageLinkPersistenceImpl extends BasePersistenceImpl<DDMStorag
 			CacheRegistryUtil.clear(DDMStorageLinkImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(DDMStorageLinkImpl.class.getName());
+		EntityCacheUtil.clearCache(DDMStorageLinkImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -1648,7 +1648,7 @@ public class DDMStorageLinkPersistenceImpl extends BasePersistenceImpl<DDMStorag
 
 		EntityCacheUtil.putResult(DDMStorageLinkModelImpl.ENTITY_CACHE_ENABLED,
 			DDMStorageLinkImpl.class, ddmStorageLink.getPrimaryKey(),
-			ddmStorageLink);
+			ddmStorageLink, false);
 
 		clearUniqueFindersCache(ddmStorageLink);
 		cacheUniqueFindersCache(ddmStorageLink);

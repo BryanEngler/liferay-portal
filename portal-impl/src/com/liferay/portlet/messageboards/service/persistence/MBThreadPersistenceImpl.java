@@ -27,7 +27,6 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.CalendarUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.InstanceFactory;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -49,6 +48,8 @@ import com.liferay.portlet.messageboards.model.impl.MBThreadImpl;
 import com.liferay.portlet.messageboards.model.impl.MBThreadModelImpl;
 
 import java.io.Serializable;
+
+import java.sql.Timestamp;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1982,7 +1983,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, MBThreadImpl.class);
@@ -2157,7 +2158,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				MBThread.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -2286,7 +2287,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -3094,7 +3095,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, MBThreadImpl.class);
@@ -3274,7 +3275,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				MBThread.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -3368,6 +3369,13 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			return findByG_C(groupId, categoryIds, start, end, orderByComparator);
 		}
 
+		if (categoryIds == null) {
+			categoryIds = new long[0];
+		}
+		else {
+			categoryIds = ArrayUtil.unique(categoryIds);
+		}
+
 		StringBundler query = new StringBundler();
 
 		if (getDB().isSupportsInlineDistinct()) {
@@ -3377,35 +3385,22 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			query.append(_FILTER_SQL_SELECT_MBTHREAD_NO_INLINE_DISTINCT_WHERE_1);
 		}
 
-		boolean conjunctionable = false;
+		query.append(_FINDER_COLUMN_G_C_GROUPID_2);
 
-		if (conjunctionable) {
-			query.append(WHERE_AND);
-		}
-
-		query.append(_FINDER_COLUMN_G_C_GROUPID_5);
-
-		conjunctionable = true;
-
-		if ((categoryIds == null) || (categoryIds.length > 0)) {
-			if (conjunctionable) {
-				query.append(WHERE_AND);
-			}
-
+		if (categoryIds.length > 0) {
 			query.append(StringPool.OPEN_PARENTHESIS);
 
-			for (int i = 0; i < categoryIds.length; i++) {
-				query.append(_FINDER_COLUMN_G_C_CATEGORYID_5);
+			query.append(_FINDER_COLUMN_G_C_CATEGORYID_7);
 
-				if ((i + 1) < categoryIds.length) {
-					query.append(WHERE_OR);
-				}
-			}
+			query.append(StringUtil.merge(categoryIds));
 
 			query.append(StringPool.CLOSE_PARENTHESIS);
 
-			conjunctionable = true;
+			query.append(StringPool.CLOSE_PARENTHESIS);
 		}
+
+		query.setStringAt(removeConjunction(query.stringAt(query.index() - 1)),
+			query.index() - 1);
 
 		if (!getDB().isSupportsInlineDistinct()) {
 			query.append(_FILTER_SQL_SELECT_MBTHREAD_NO_INLINE_DISTINCT_WHERE_2);
@@ -3439,7 +3434,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, MBThreadImpl.class);
@@ -3451,10 +3446,6 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			QueryPos qPos = QueryPos.getInstance(q);
 
 			qPos.add(groupId);
-
-			if (categoryIds != null) {
-				qPos.add(categoryIds);
-			}
 
 			return (List<MBThread>)QueryUtil.list(q, getDialect(), start, end);
 		}
@@ -3524,7 +3515,14 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 	public List<MBThread> findByG_C(long groupId, long[] categoryIds,
 		int start, int end, OrderByComparator orderByComparator)
 		throws SystemException {
-		if ((categoryIds != null) && (categoryIds.length == 1)) {
+		if (categoryIds == null) {
+			categoryIds = new long[0];
+		}
+		else {
+			categoryIds = ArrayUtil.unique(categoryIds);
+		}
+
+		if (categoryIds.length == 1) {
 			return findByG_C(groupId, categoryIds[0], start, end,
 				orderByComparator);
 		}
@@ -3565,35 +3563,22 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 
 			query.append(_SQL_SELECT_MBTHREAD_WHERE);
 
-			boolean conjunctionable = false;
+			query.append(_FINDER_COLUMN_G_C_GROUPID_2);
 
-			if (conjunctionable) {
-				query.append(WHERE_AND);
-			}
-
-			query.append(_FINDER_COLUMN_G_C_GROUPID_5);
-
-			conjunctionable = true;
-
-			if ((categoryIds == null) || (categoryIds.length > 0)) {
-				if (conjunctionable) {
-					query.append(WHERE_AND);
-				}
-
+			if (categoryIds.length > 0) {
 				query.append(StringPool.OPEN_PARENTHESIS);
 
-				for (int i = 0; i < categoryIds.length; i++) {
-					query.append(_FINDER_COLUMN_G_C_CATEGORYID_5);
+				query.append(_FINDER_COLUMN_G_C_CATEGORYID_7);
 
-					if ((i + 1) < categoryIds.length) {
-						query.append(WHERE_OR);
-					}
-				}
+				query.append(StringUtil.merge(categoryIds));
 
 				query.append(StringPool.CLOSE_PARENTHESIS);
 
-				conjunctionable = true;
+				query.append(StringPool.CLOSE_PARENTHESIS);
 			}
+
+			query.setStringAt(removeConjunction(query.stringAt(query.index() -
+						1)), query.index() - 1);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
@@ -3616,10 +3601,6 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				QueryPos qPos = QueryPos.getInstance(q);
 
 				qPos.add(groupId);
-
-				if (categoryIds != null) {
-					qPos.add(categoryIds);
-				}
 
 				if (!pagination) {
 					list = (List<MBThread>)QueryUtil.list(q, getDialect(),
@@ -3739,6 +3720,13 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 	@Override
 	public int countByG_C(long groupId, long[] categoryIds)
 		throws SystemException {
+		if (categoryIds == null) {
+			categoryIds = new long[0];
+		}
+		else {
+			categoryIds = ArrayUtil.unique(categoryIds);
+		}
+
 		Object[] finderArgs = new Object[] {
 				groupId, StringUtil.merge(categoryIds)
 			};
@@ -3751,35 +3739,22 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 
 			query.append(_SQL_COUNT_MBTHREAD_WHERE);
 
-			boolean conjunctionable = false;
+			query.append(_FINDER_COLUMN_G_C_GROUPID_2);
 
-			if (conjunctionable) {
-				query.append(WHERE_AND);
-			}
-
-			query.append(_FINDER_COLUMN_G_C_GROUPID_5);
-
-			conjunctionable = true;
-
-			if ((categoryIds == null) || (categoryIds.length > 0)) {
-				if (conjunctionable) {
-					query.append(WHERE_AND);
-				}
-
+			if (categoryIds.length > 0) {
 				query.append(StringPool.OPEN_PARENTHESIS);
 
-				for (int i = 0; i < categoryIds.length; i++) {
-					query.append(_FINDER_COLUMN_G_C_CATEGORYID_5);
+				query.append(_FINDER_COLUMN_G_C_CATEGORYID_7);
 
-					if ((i + 1) < categoryIds.length) {
-						query.append(WHERE_OR);
-					}
-				}
+				query.append(StringUtil.merge(categoryIds));
 
 				query.append(StringPool.CLOSE_PARENTHESIS);
 
-				conjunctionable = true;
+				query.append(StringPool.CLOSE_PARENTHESIS);
 			}
+
+			query.setStringAt(removeConjunction(query.stringAt(query.index() -
+						1)), query.index() - 1);
 
 			String sql = query.toString();
 
@@ -3793,10 +3768,6 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				QueryPos qPos = QueryPos.getInstance(q);
 
 				qPos.add(groupId);
-
-				if (categoryIds != null) {
-					qPos.add(categoryIds);
-				}
 
 				count = (Long)q.uniqueResult();
 
@@ -3849,7 +3820,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -3887,39 +3858,33 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			return countByG_C(groupId, categoryIds);
 		}
 
+		if (categoryIds == null) {
+			categoryIds = new long[0];
+		}
+		else {
+			categoryIds = ArrayUtil.unique(categoryIds);
+		}
+
 		StringBundler query = new StringBundler();
 
 		query.append(_FILTER_SQL_COUNT_MBTHREAD_WHERE);
 
-		boolean conjunctionable = false;
+		query.append(_FINDER_COLUMN_G_C_GROUPID_2);
 
-		if (conjunctionable) {
-			query.append(WHERE_AND);
-		}
-
-		query.append(_FINDER_COLUMN_G_C_GROUPID_5);
-
-		conjunctionable = true;
-
-		if ((categoryIds == null) || (categoryIds.length > 0)) {
-			if (conjunctionable) {
-				query.append(WHERE_AND);
-			}
-
+		if (categoryIds.length > 0) {
 			query.append(StringPool.OPEN_PARENTHESIS);
 
-			for (int i = 0; i < categoryIds.length; i++) {
-				query.append(_FINDER_COLUMN_G_C_CATEGORYID_5);
+			query.append(_FINDER_COLUMN_G_C_CATEGORYID_7);
 
-				if ((i + 1) < categoryIds.length) {
-					query.append(WHERE_OR);
-				}
-			}
+			query.append(StringUtil.merge(categoryIds));
 
 			query.append(StringPool.CLOSE_PARENTHESIS);
 
-			conjunctionable = true;
+			query.append(StringPool.CLOSE_PARENTHESIS);
 		}
+
+		query.setStringAt(removeConjunction(query.stringAt(query.index() - 1)),
+			query.index() - 1);
 
 		String sql = InlineSQLHelperUtil.replacePermissionCheck(query.toString(),
 				MBThread.class.getName(),
@@ -3930,7 +3895,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -3938,10 +3903,6 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			QueryPos qPos = QueryPos.getInstance(q);
 
 			qPos.add(groupId);
-
-			if (categoryIds != null) {
-				qPos.add(categoryIds);
-			}
 
 			Long count = (Long)q.uniqueResult();
 
@@ -3956,11 +3917,8 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 	}
 
 	private static final String _FINDER_COLUMN_G_C_GROUPID_2 = "mbThread.groupId = ? AND ";
-	private static final String _FINDER_COLUMN_G_C_GROUPID_5 = "(" +
-		removeConjunction(_FINDER_COLUMN_G_C_GROUPID_2) + ")";
 	private static final String _FINDER_COLUMN_G_C_CATEGORYID_2 = "mbThread.categoryId = ?";
-	private static final String _FINDER_COLUMN_G_C_CATEGORYID_5 = "(" +
-		removeConjunction(_FINDER_COLUMN_G_C_CATEGORYID_2) + ")";
+	private static final String _FINDER_COLUMN_G_C_CATEGORYID_7 = "mbThread.categoryId IN (";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_G_NOTC = new FinderPath(MBThreadModelImpl.ENTITY_CACHE_ENABLED,
 			MBThreadModelImpl.FINDER_CACHE_ENABLED, MBThreadImpl.class,
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByG_NotC",
@@ -4510,7 +4468,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, MBThreadImpl.class);
@@ -4690,7 +4648,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				MBThread.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -4833,7 +4791,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -5417,7 +5375,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, MBThreadImpl.class);
@@ -5597,7 +5555,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				MBThread.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -5738,7 +5696,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -6446,7 +6404,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				QueryPos qPos = QueryPos.getInstance(q);
 
 				if (bindLastPostDate) {
-					qPos.add(CalendarUtil.getTimestamp(lastPostDate));
+					qPos.add(new Timestamp(lastPostDate.getTime()));
 				}
 
 				qPos.add(priority);
@@ -6742,7 +6700,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		QueryPos qPos = QueryPos.getInstance(q);
 
 		if (bindLastPostDate) {
-			qPos.add(CalendarUtil.getTimestamp(lastPostDate));
+			qPos.add(new Timestamp(lastPostDate.getTime()));
 		}
 
 		qPos.add(priority);
@@ -6829,7 +6787,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				QueryPos qPos = QueryPos.getInstance(q);
 
 				if (bindLastPostDate) {
-					qPos.add(CalendarUtil.getTimestamp(lastPostDate));
+					qPos.add(new Timestamp(lastPostDate.getTime()));
 				}
 
 				qPos.add(priority);
@@ -7025,7 +6983,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				qPos.add(categoryId);
 
 				if (bindLastPostDate) {
-					qPos.add(CalendarUtil.getTimestamp(lastPostDate));
+					qPos.add(new Timestamp(lastPostDate.getTime()));
 				}
 
 				if (!pagination) {
@@ -7338,7 +7296,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		qPos.add(categoryId);
 
 		if (bindLastPostDate) {
-			qPos.add(CalendarUtil.getTimestamp(lastPostDate));
+			qPos.add(new Timestamp(lastPostDate.getTime()));
 		}
 
 		if (orderByComparator != null) {
@@ -7486,7 +7444,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, MBThreadImpl.class);
@@ -7502,7 +7460,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			qPos.add(categoryId);
 
 			if (bindLastPostDate) {
-				qPos.add(CalendarUtil.getTimestamp(lastPostDate));
+				qPos.add(new Timestamp(lastPostDate.getTime()));
 			}
 
 			return (List<MBThread>)QueryUtil.list(q, getDialect(), start, end);
@@ -7683,7 +7641,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				MBThread.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -7702,7 +7660,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		qPos.add(categoryId);
 
 		if (bindLastPostDate) {
-			qPos.add(CalendarUtil.getTimestamp(lastPostDate));
+			qPos.add(new Timestamp(lastPostDate.getTime()));
 		}
 
 		if (orderByComparator != null) {
@@ -7795,7 +7753,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				qPos.add(categoryId);
 
 				if (bindLastPostDate) {
-					qPos.add(CalendarUtil.getTimestamp(lastPostDate));
+					qPos.add(new Timestamp(lastPostDate.getTime()));
 				}
 
 				count = (Long)q.uniqueResult();
@@ -7859,7 +7817,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -7871,7 +7829,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			qPos.add(categoryId);
 
 			if (bindLastPostDate) {
-				qPos.add(CalendarUtil.getTimestamp(lastPostDate));
+				qPos.add(new Timestamp(lastPostDate.getTime()));
 			}
 
 			Long count = (Long)q.uniqueResult();
@@ -8500,7 +8458,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, MBThreadImpl.class);
@@ -8686,7 +8644,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				MBThread.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -8786,6 +8744,13 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				orderByComparator);
 		}
 
+		if (categoryIds == null) {
+			categoryIds = new long[0];
+		}
+		else {
+			categoryIds = ArrayUtil.unique(categoryIds);
+		}
+
 		StringBundler query = new StringBundler();
 
 		if (getDB().isSupportsInlineDistinct()) {
@@ -8795,43 +8760,26 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			query.append(_FILTER_SQL_SELECT_MBTHREAD_NO_INLINE_DISTINCT_WHERE_1);
 		}
 
-		boolean conjunctionable = false;
+		query.append(_FINDER_COLUMN_G_C_S_GROUPID_2);
 
-		if (conjunctionable) {
-			query.append(WHERE_AND);
-		}
-
-		query.append(_FINDER_COLUMN_G_C_S_GROUPID_5);
-
-		conjunctionable = true;
-
-		if ((categoryIds == null) || (categoryIds.length > 0)) {
-			if (conjunctionable) {
-				query.append(WHERE_AND);
-			}
-
+		if (categoryIds.length > 0) {
 			query.append(StringPool.OPEN_PARENTHESIS);
 
-			for (int i = 0; i < categoryIds.length; i++) {
-				query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_5);
+			query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_7);
 
-				if ((i + 1) < categoryIds.length) {
-					query.append(WHERE_OR);
-				}
-			}
+			query.append(StringUtil.merge(categoryIds));
 
 			query.append(StringPool.CLOSE_PARENTHESIS);
 
-			conjunctionable = true;
-		}
+			query.append(StringPool.CLOSE_PARENTHESIS);
 
-		if (conjunctionable) {
 			query.append(WHERE_AND);
 		}
 
-		query.append(_FINDER_COLUMN_G_C_S_STATUS_5);
+		query.append(_FINDER_COLUMN_G_C_S_STATUS_2);
 
-		conjunctionable = true;
+		query.setStringAt(removeConjunction(query.stringAt(query.index() - 1)),
+			query.index() - 1);
 
 		if (!getDB().isSupportsInlineDistinct()) {
 			query.append(_FILTER_SQL_SELECT_MBTHREAD_NO_INLINE_DISTINCT_WHERE_2);
@@ -8865,7 +8813,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, MBThreadImpl.class);
@@ -8877,10 +8825,6 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			QueryPos qPos = QueryPos.getInstance(q);
 
 			qPos.add(groupId);
-
-			if (categoryIds != null) {
-				qPos.add(categoryIds);
-			}
 
 			qPos.add(status);
 
@@ -8955,7 +8899,14 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 	public List<MBThread> findByG_C_S(long groupId, long[] categoryIds,
 		int status, int start, int end, OrderByComparator orderByComparator)
 		throws SystemException {
-		if ((categoryIds != null) && (categoryIds.length == 1)) {
+		if (categoryIds == null) {
+			categoryIds = new long[0];
+		}
+		else {
+			categoryIds = ArrayUtil.unique(categoryIds);
+		}
+
+		if (categoryIds.length == 1) {
 			return findByG_C_S(groupId, categoryIds[0], status, start, end,
 				orderByComparator);
 		}
@@ -8999,43 +8950,26 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 
 			query.append(_SQL_SELECT_MBTHREAD_WHERE);
 
-			boolean conjunctionable = false;
+			query.append(_FINDER_COLUMN_G_C_S_GROUPID_2);
 
-			if (conjunctionable) {
-				query.append(WHERE_AND);
-			}
-
-			query.append(_FINDER_COLUMN_G_C_S_GROUPID_5);
-
-			conjunctionable = true;
-
-			if ((categoryIds == null) || (categoryIds.length > 0)) {
-				if (conjunctionable) {
-					query.append(WHERE_AND);
-				}
-
+			if (categoryIds.length > 0) {
 				query.append(StringPool.OPEN_PARENTHESIS);
 
-				for (int i = 0; i < categoryIds.length; i++) {
-					query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_5);
+				query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_7);
 
-					if ((i + 1) < categoryIds.length) {
-						query.append(WHERE_OR);
-					}
-				}
+				query.append(StringUtil.merge(categoryIds));
 
 				query.append(StringPool.CLOSE_PARENTHESIS);
 
-				conjunctionable = true;
-			}
+				query.append(StringPool.CLOSE_PARENTHESIS);
 
-			if (conjunctionable) {
 				query.append(WHERE_AND);
 			}
 
-			query.append(_FINDER_COLUMN_G_C_S_STATUS_5);
+			query.append(_FINDER_COLUMN_G_C_S_STATUS_2);
 
-			conjunctionable = true;
+			query.setStringAt(removeConjunction(query.stringAt(query.index() -
+						1)), query.index() - 1);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
@@ -9058,10 +8992,6 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				QueryPos qPos = QueryPos.getInstance(q);
 
 				qPos.add(groupId);
-
-				if (categoryIds != null) {
-					qPos.add(categoryIds);
-				}
 
 				qPos.add(status);
 
@@ -9190,6 +9120,13 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 	@Override
 	public int countByG_C_S(long groupId, long[] categoryIds, int status)
 		throws SystemException {
+		if (categoryIds == null) {
+			categoryIds = new long[0];
+		}
+		else {
+			categoryIds = ArrayUtil.unique(categoryIds);
+		}
+
 		Object[] finderArgs = new Object[] {
 				groupId, StringUtil.merge(categoryIds), status
 			};
@@ -9202,43 +9139,26 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 
 			query.append(_SQL_COUNT_MBTHREAD_WHERE);
 
-			boolean conjunctionable = false;
+			query.append(_FINDER_COLUMN_G_C_S_GROUPID_2);
 
-			if (conjunctionable) {
-				query.append(WHERE_AND);
-			}
-
-			query.append(_FINDER_COLUMN_G_C_S_GROUPID_5);
-
-			conjunctionable = true;
-
-			if ((categoryIds == null) || (categoryIds.length > 0)) {
-				if (conjunctionable) {
-					query.append(WHERE_AND);
-				}
-
+			if (categoryIds.length > 0) {
 				query.append(StringPool.OPEN_PARENTHESIS);
 
-				for (int i = 0; i < categoryIds.length; i++) {
-					query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_5);
+				query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_7);
 
-					if ((i + 1) < categoryIds.length) {
-						query.append(WHERE_OR);
-					}
-				}
+				query.append(StringUtil.merge(categoryIds));
 
 				query.append(StringPool.CLOSE_PARENTHESIS);
 
-				conjunctionable = true;
-			}
+				query.append(StringPool.CLOSE_PARENTHESIS);
 
-			if (conjunctionable) {
 				query.append(WHERE_AND);
 			}
 
-			query.append(_FINDER_COLUMN_G_C_S_STATUS_5);
+			query.append(_FINDER_COLUMN_G_C_S_STATUS_2);
 
-			conjunctionable = true;
+			query.setStringAt(removeConjunction(query.stringAt(query.index() -
+						1)), query.index() - 1);
 
 			String sql = query.toString();
 
@@ -9252,10 +9172,6 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				QueryPos qPos = QueryPos.getInstance(q);
 
 				qPos.add(groupId);
-
-				if (categoryIds != null) {
-					qPos.add(categoryIds);
-				}
 
 				qPos.add(status);
 
@@ -9313,7 +9229,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -9354,47 +9270,37 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			return countByG_C_S(groupId, categoryIds, status);
 		}
 
+		if (categoryIds == null) {
+			categoryIds = new long[0];
+		}
+		else {
+			categoryIds = ArrayUtil.unique(categoryIds);
+		}
+
 		StringBundler query = new StringBundler();
 
 		query.append(_FILTER_SQL_COUNT_MBTHREAD_WHERE);
 
-		boolean conjunctionable = false;
+		query.append(_FINDER_COLUMN_G_C_S_GROUPID_2);
 
-		if (conjunctionable) {
-			query.append(WHERE_AND);
-		}
-
-		query.append(_FINDER_COLUMN_G_C_S_GROUPID_5);
-
-		conjunctionable = true;
-
-		if ((categoryIds == null) || (categoryIds.length > 0)) {
-			if (conjunctionable) {
-				query.append(WHERE_AND);
-			}
-
+		if (categoryIds.length > 0) {
 			query.append(StringPool.OPEN_PARENTHESIS);
 
-			for (int i = 0; i < categoryIds.length; i++) {
-				query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_5);
+			query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_7);
 
-				if ((i + 1) < categoryIds.length) {
-					query.append(WHERE_OR);
-				}
-			}
+			query.append(StringUtil.merge(categoryIds));
 
 			query.append(StringPool.CLOSE_PARENTHESIS);
 
-			conjunctionable = true;
-		}
+			query.append(StringPool.CLOSE_PARENTHESIS);
 
-		if (conjunctionable) {
 			query.append(WHERE_AND);
 		}
 
-		query.append(_FINDER_COLUMN_G_C_S_STATUS_5);
+		query.append(_FINDER_COLUMN_G_C_S_STATUS_2);
 
-		conjunctionable = true;
+		query.setStringAt(removeConjunction(query.stringAt(query.index() - 1)),
+			query.index() - 1);
 
 		String sql = InlineSQLHelperUtil.replacePermissionCheck(query.toString(),
 				MBThread.class.getName(),
@@ -9405,7 +9311,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -9413,10 +9319,6 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			QueryPos qPos = QueryPos.getInstance(q);
 
 			qPos.add(groupId);
-
-			if (categoryIds != null) {
-				qPos.add(categoryIds);
-			}
 
 			qPos.add(status);
 
@@ -9433,14 +9335,9 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 	}
 
 	private static final String _FINDER_COLUMN_G_C_S_GROUPID_2 = "mbThread.groupId = ? AND ";
-	private static final String _FINDER_COLUMN_G_C_S_GROUPID_5 = "(" +
-		removeConjunction(_FINDER_COLUMN_G_C_S_GROUPID_2) + ")";
 	private static final String _FINDER_COLUMN_G_C_S_CATEGORYID_2 = "mbThread.categoryId = ? AND ";
-	private static final String _FINDER_COLUMN_G_C_S_CATEGORYID_5 = "(" +
-		removeConjunction(_FINDER_COLUMN_G_C_S_CATEGORYID_2) + ")";
+	private static final String _FINDER_COLUMN_G_C_S_CATEGORYID_7 = "mbThread.categoryId IN (";
 	private static final String _FINDER_COLUMN_G_C_S_STATUS_2 = "mbThread.status = ?";
-	private static final String _FINDER_COLUMN_G_C_S_STATUS_5 = "(" +
-		removeConjunction(_FINDER_COLUMN_G_C_S_STATUS_2) + ")";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_G_C_NOTS = new FinderPath(MBThreadModelImpl.ENTITY_CACHE_ENABLED,
 			MBThreadModelImpl.FINDER_CACHE_ENABLED, MBThreadImpl.class,
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByG_C_NotS",
@@ -10026,7 +9923,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, MBThreadImpl.class);
@@ -10212,7 +10109,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				MBThread.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -10314,6 +10211,13 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				orderByComparator);
 		}
 
+		if (categoryIds == null) {
+			categoryIds = new long[0];
+		}
+		else {
+			categoryIds = ArrayUtil.unique(categoryIds);
+		}
+
 		StringBundler query = new StringBundler();
 
 		if (getDB().isSupportsInlineDistinct()) {
@@ -10323,43 +10227,26 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			query.append(_FILTER_SQL_SELECT_MBTHREAD_NO_INLINE_DISTINCT_WHERE_1);
 		}
 
-		boolean conjunctionable = false;
+		query.append(_FINDER_COLUMN_G_C_NOTS_GROUPID_2);
 
-		if (conjunctionable) {
-			query.append(WHERE_AND);
-		}
-
-		query.append(_FINDER_COLUMN_G_C_NOTS_GROUPID_5);
-
-		conjunctionable = true;
-
-		if ((categoryIds == null) || (categoryIds.length > 0)) {
-			if (conjunctionable) {
-				query.append(WHERE_AND);
-			}
-
+		if (categoryIds.length > 0) {
 			query.append(StringPool.OPEN_PARENTHESIS);
 
-			for (int i = 0; i < categoryIds.length; i++) {
-				query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_5);
+			query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_7);
 
-				if ((i + 1) < categoryIds.length) {
-					query.append(WHERE_OR);
-				}
-			}
+			query.append(StringUtil.merge(categoryIds));
 
 			query.append(StringPool.CLOSE_PARENTHESIS);
 
-			conjunctionable = true;
-		}
+			query.append(StringPool.CLOSE_PARENTHESIS);
 
-		if (conjunctionable) {
 			query.append(WHERE_AND);
 		}
 
-		query.append(_FINDER_COLUMN_G_C_NOTS_STATUS_5);
+		query.append(_FINDER_COLUMN_G_C_NOTS_STATUS_2);
 
-		conjunctionable = true;
+		query.setStringAt(removeConjunction(query.stringAt(query.index() - 1)),
+			query.index() - 1);
 
 		if (!getDB().isSupportsInlineDistinct()) {
 			query.append(_FILTER_SQL_SELECT_MBTHREAD_NO_INLINE_DISTINCT_WHERE_2);
@@ -10393,7 +10280,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, MBThreadImpl.class);
@@ -10405,10 +10292,6 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			QueryPos qPos = QueryPos.getInstance(q);
 
 			qPos.add(groupId);
-
-			if (categoryIds != null) {
-				qPos.add(categoryIds);
-			}
 
 			qPos.add(status);
 
@@ -10483,7 +10366,14 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 	public List<MBThread> findByG_C_NotS(long groupId, long[] categoryIds,
 		int status, int start, int end, OrderByComparator orderByComparator)
 		throws SystemException {
-		if ((categoryIds != null) && (categoryIds.length == 1)) {
+		if (categoryIds == null) {
+			categoryIds = new long[0];
+		}
+		else {
+			categoryIds = ArrayUtil.unique(categoryIds);
+		}
+
+		if (categoryIds.length == 1) {
 			return findByG_C_NotS(groupId, categoryIds[0], status, start, end,
 				orderByComparator);
 		}
@@ -10527,43 +10417,26 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 
 			query.append(_SQL_SELECT_MBTHREAD_WHERE);
 
-			boolean conjunctionable = false;
+			query.append(_FINDER_COLUMN_G_C_NOTS_GROUPID_2);
 
-			if (conjunctionable) {
-				query.append(WHERE_AND);
-			}
-
-			query.append(_FINDER_COLUMN_G_C_NOTS_GROUPID_5);
-
-			conjunctionable = true;
-
-			if ((categoryIds == null) || (categoryIds.length > 0)) {
-				if (conjunctionable) {
-					query.append(WHERE_AND);
-				}
-
+			if (categoryIds.length > 0) {
 				query.append(StringPool.OPEN_PARENTHESIS);
 
-				for (int i = 0; i < categoryIds.length; i++) {
-					query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_5);
+				query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_7);
 
-					if ((i + 1) < categoryIds.length) {
-						query.append(WHERE_OR);
-					}
-				}
+				query.append(StringUtil.merge(categoryIds));
 
 				query.append(StringPool.CLOSE_PARENTHESIS);
 
-				conjunctionable = true;
-			}
+				query.append(StringPool.CLOSE_PARENTHESIS);
 
-			if (conjunctionable) {
 				query.append(WHERE_AND);
 			}
 
-			query.append(_FINDER_COLUMN_G_C_NOTS_STATUS_5);
+			query.append(_FINDER_COLUMN_G_C_NOTS_STATUS_2);
 
-			conjunctionable = true;
+			query.setStringAt(removeConjunction(query.stringAt(query.index() -
+						1)), query.index() - 1);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
@@ -10586,10 +10459,6 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				QueryPos qPos = QueryPos.getInstance(q);
 
 				qPos.add(groupId);
-
-				if (categoryIds != null) {
-					qPos.add(categoryIds);
-				}
 
 				qPos.add(status);
 
@@ -10718,6 +10587,13 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 	@Override
 	public int countByG_C_NotS(long groupId, long[] categoryIds, int status)
 		throws SystemException {
+		if (categoryIds == null) {
+			categoryIds = new long[0];
+		}
+		else {
+			categoryIds = ArrayUtil.unique(categoryIds);
+		}
+
 		Object[] finderArgs = new Object[] {
 				groupId, StringUtil.merge(categoryIds), status
 			};
@@ -10730,43 +10606,26 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 
 			query.append(_SQL_COUNT_MBTHREAD_WHERE);
 
-			boolean conjunctionable = false;
+			query.append(_FINDER_COLUMN_G_C_NOTS_GROUPID_2);
 
-			if (conjunctionable) {
-				query.append(WHERE_AND);
-			}
-
-			query.append(_FINDER_COLUMN_G_C_NOTS_GROUPID_5);
-
-			conjunctionable = true;
-
-			if ((categoryIds == null) || (categoryIds.length > 0)) {
-				if (conjunctionable) {
-					query.append(WHERE_AND);
-				}
-
+			if (categoryIds.length > 0) {
 				query.append(StringPool.OPEN_PARENTHESIS);
 
-				for (int i = 0; i < categoryIds.length; i++) {
-					query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_5);
+				query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_7);
 
-					if ((i + 1) < categoryIds.length) {
-						query.append(WHERE_OR);
-					}
-				}
+				query.append(StringUtil.merge(categoryIds));
 
 				query.append(StringPool.CLOSE_PARENTHESIS);
 
-				conjunctionable = true;
-			}
+				query.append(StringPool.CLOSE_PARENTHESIS);
 
-			if (conjunctionable) {
 				query.append(WHERE_AND);
 			}
 
-			query.append(_FINDER_COLUMN_G_C_NOTS_STATUS_5);
+			query.append(_FINDER_COLUMN_G_C_NOTS_STATUS_2);
 
-			conjunctionable = true;
+			query.setStringAt(removeConjunction(query.stringAt(query.index() -
+						1)), query.index() - 1);
 
 			String sql = query.toString();
 
@@ -10780,10 +10639,6 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				QueryPos qPos = QueryPos.getInstance(q);
 
 				qPos.add(groupId);
-
-				if (categoryIds != null) {
-					qPos.add(categoryIds);
-				}
 
 				qPos.add(status);
 
@@ -10841,7 +10696,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -10882,47 +10737,37 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			return countByG_C_NotS(groupId, categoryIds, status);
 		}
 
+		if (categoryIds == null) {
+			categoryIds = new long[0];
+		}
+		else {
+			categoryIds = ArrayUtil.unique(categoryIds);
+		}
+
 		StringBundler query = new StringBundler();
 
 		query.append(_FILTER_SQL_COUNT_MBTHREAD_WHERE);
 
-		boolean conjunctionable = false;
+		query.append(_FINDER_COLUMN_G_C_NOTS_GROUPID_2);
 
-		if (conjunctionable) {
-			query.append(WHERE_AND);
-		}
-
-		query.append(_FINDER_COLUMN_G_C_NOTS_GROUPID_5);
-
-		conjunctionable = true;
-
-		if ((categoryIds == null) || (categoryIds.length > 0)) {
-			if (conjunctionable) {
-				query.append(WHERE_AND);
-			}
-
+		if (categoryIds.length > 0) {
 			query.append(StringPool.OPEN_PARENTHESIS);
 
-			for (int i = 0; i < categoryIds.length; i++) {
-				query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_5);
+			query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_7);
 
-				if ((i + 1) < categoryIds.length) {
-					query.append(WHERE_OR);
-				}
-			}
+			query.append(StringUtil.merge(categoryIds));
 
 			query.append(StringPool.CLOSE_PARENTHESIS);
 
-			conjunctionable = true;
-		}
+			query.append(StringPool.CLOSE_PARENTHESIS);
 
-		if (conjunctionable) {
 			query.append(WHERE_AND);
 		}
 
-		query.append(_FINDER_COLUMN_G_C_NOTS_STATUS_5);
+		query.append(_FINDER_COLUMN_G_C_NOTS_STATUS_2);
 
-		conjunctionable = true;
+		query.setStringAt(removeConjunction(query.stringAt(query.index() - 1)),
+			query.index() - 1);
 
 		String sql = InlineSQLHelperUtil.replacePermissionCheck(query.toString(),
 				MBThread.class.getName(),
@@ -10933,7 +10778,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -10941,10 +10786,6 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			QueryPos qPos = QueryPos.getInstance(q);
 
 			qPos.add(groupId);
-
-			if (categoryIds != null) {
-				qPos.add(categoryIds);
-			}
 
 			qPos.add(status);
 
@@ -10961,14 +10802,9 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 	}
 
 	private static final String _FINDER_COLUMN_G_C_NOTS_GROUPID_2 = "mbThread.groupId = ? AND ";
-	private static final String _FINDER_COLUMN_G_C_NOTS_GROUPID_5 = "(" +
-		removeConjunction(_FINDER_COLUMN_G_C_NOTS_GROUPID_2) + ")";
 	private static final String _FINDER_COLUMN_G_C_NOTS_CATEGORYID_2 = "mbThread.categoryId = ? AND ";
-	private static final String _FINDER_COLUMN_G_C_NOTS_CATEGORYID_5 = "(" +
-		removeConjunction(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_2) + ")";
+	private static final String _FINDER_COLUMN_G_C_NOTS_CATEGORYID_7 = "mbThread.categoryId IN (";
 	private static final String _FINDER_COLUMN_G_C_NOTS_STATUS_2 = "mbThread.status != ?";
-	private static final String _FINDER_COLUMN_G_C_NOTS_STATUS_5 = "(" +
-		removeConjunction(_FINDER_COLUMN_G_C_NOTS_STATUS_2) + ")";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_G_NOTC_S = new FinderPath(MBThreadModelImpl.ENTITY_CACHE_ENABLED,
 			MBThreadModelImpl.FINDER_CACHE_ENABLED, MBThreadImpl.class,
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByG_NotC_S",
@@ -11554,7 +11390,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, MBThreadImpl.class);
@@ -11740,7 +11576,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				MBThread.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -11894,7 +11730,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -12510,7 +12346,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, MBThreadImpl.class);
@@ -12696,7 +12532,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 				MBThread.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -12850,7 +12686,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -12934,7 +12770,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			CacheRegistryUtil.clear(MBThreadImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(MBThreadImpl.class.getName());
+		EntityCacheUtil.clearCache(MBThreadImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -13388,7 +13224,7 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		}
 
 		EntityCacheUtil.putResult(MBThreadModelImpl.ENTITY_CACHE_ENABLED,
-			MBThreadImpl.class, mbThread.getPrimaryKey(), mbThread);
+			MBThreadImpl.class, mbThread.getPrimaryKey(), mbThread, false);
 
 		clearUniqueFindersCache(mbThread);
 		cacheUniqueFindersCache(mbThread);

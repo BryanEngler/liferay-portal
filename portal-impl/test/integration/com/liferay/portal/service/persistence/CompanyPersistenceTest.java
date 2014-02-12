@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.model.impl.CompanyModelImpl;
@@ -113,6 +114,8 @@ public class CompanyPersistenceTest {
 
 		Company newCompany = _persistence.create(pk);
 
+		newCompany.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newCompany.setAccountId(ServiceTestUtil.nextLong());
 
 		newCompany.setWebId(ServiceTestUtil.randomString());
@@ -135,6 +138,8 @@ public class CompanyPersistenceTest {
 
 		Company existingCompany = _persistence.findByPrimaryKey(newCompany.getPrimaryKey());
 
+		Assert.assertEquals(existingCompany.getMvccVersion(),
+			newCompany.getMvccVersion());
 		Assert.assertEquals(existingCompany.getCompanyId(),
 			newCompany.getCompanyId());
 		Assert.assertEquals(existingCompany.getAccountId(),
@@ -149,6 +154,58 @@ public class CompanyPersistenceTest {
 		Assert.assertEquals(existingCompany.getMaxUsers(),
 			newCompany.getMaxUsers());
 		Assert.assertEquals(existingCompany.getActive(), newCompany.getActive());
+	}
+
+	@Test
+	public void testCountByWebId() {
+		try {
+			_persistence.countByWebId(StringPool.BLANK);
+
+			_persistence.countByWebId(StringPool.NULL);
+
+			_persistence.countByWebId((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByMx() {
+		try {
+			_persistence.countByMx(StringPool.BLANK);
+
+			_persistence.countByMx(StringPool.NULL);
+
+			_persistence.countByMx((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByLogoId() {
+		try {
+			_persistence.countByLogoId(ServiceTestUtil.nextLong());
+
+			_persistence.countByLogoId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountBySystem() {
+		try {
+			_persistence.countBySystem(ServiceTestUtil.randomBoolean());
+
+			_persistence.countBySystem(ServiceTestUtil.randomBoolean());
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -185,10 +242,10 @@ public class CompanyPersistenceTest {
 	}
 
 	protected OrderByComparator getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("Company", "companyId",
-			true, "accountId", true, "webId", true, "key", true, "mx", true,
-			"homeURL", true, "logoId", true, "system", true, "maxUsers", true,
-			"active", true);
+		return OrderByComparatorFactoryUtil.create("Company", "mvccVersion",
+			true, "companyId", true, "accountId", true, "webId", true, "key",
+			true, "mx", true, "homeURL", true, "logoId", true, "system", true,
+			"maxUsers", true, "active", true);
 	}
 
 	@Test
@@ -328,6 +385,8 @@ public class CompanyPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		Company company = _persistence.create(pk);
+
+		company.setMvccVersion(ServiceTestUtil.nextLong());
 
 		company.setAccountId(ServiceTestUtil.nextLong());
 

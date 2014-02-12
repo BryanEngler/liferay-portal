@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnmodifiableList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.model.Release;
 import com.liferay.portal.model.impl.ReleaseImpl;
@@ -198,7 +199,7 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 				QueryPos qPos = QueryPos.getInstance(q);
 
 				if (bindServletContextName) {
-					qPos.add(servletContextName.toLowerCase());
+					qPos.add(StringUtil.toLowerCase(servletContextName));
 				}
 
 				List<Release> list = q.list();
@@ -304,7 +305,7 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 				QueryPos qPos = QueryPos.getInstance(q);
 
 				if (bindServletContextName) {
-					qPos.add(servletContextName.toLowerCase());
+					qPos.add(StringUtil.toLowerCase(servletContextName));
 				}
 
 				count = (Long)q.uniqueResult();
@@ -383,7 +384,7 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 			CacheRegistryUtil.clear(ReleaseImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(ReleaseImpl.class.getName());
+		EntityCacheUtil.clearCache(ReleaseImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -603,7 +604,7 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 		}
 
 		EntityCacheUtil.putResult(ReleaseModelImpl.ENTITY_CACHE_ENABLED,
-			ReleaseImpl.class, release.getPrimaryKey(), release);
+			ReleaseImpl.class, release.getPrimaryKey(), release, false);
 
 		clearUniqueFindersCache(release);
 		cacheUniqueFindersCache(release);
@@ -623,6 +624,7 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 		releaseImpl.setNew(release.isNew());
 		releaseImpl.setPrimaryKey(release.getPrimaryKey());
 
+		releaseImpl.setMvccVersion(release.getMvccVersion());
 		releaseImpl.setReleaseId(release.getReleaseId());
 		releaseImpl.setCreateDate(release.getCreateDate());
 		releaseImpl.setModifiedDate(release.getModifiedDate());
@@ -967,10 +969,22 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 			}
 		};
 
-	private static CacheModel<Release> _nullReleaseCacheModel = new CacheModel<Release>() {
-			@Override
-			public Release toEntityModel() {
-				return _nullRelease;
-			}
-		};
+	private static CacheModel<Release> _nullReleaseCacheModel = new NullCacheModel();
+
+	private static class NullCacheModel implements CacheModel<Release>,
+		MVCCModel {
+		@Override
+		public long getMvccVersion() {
+			return 0;
+		}
+
+		@Override
+		public void setMvccVersion(long mvccVersion) {
+		}
+
+		@Override
+		public Release toEntityModel() {
+			return _nullRelease;
+		}
+	}
 }

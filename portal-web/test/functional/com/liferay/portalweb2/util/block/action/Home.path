@@ -108,6 +108,16 @@
 	<td></td>
 	<td></td>
 </tr>
+<tr>
+	<td>ERROR_MESSAGE_ALERT_INFO</td>
+	<td>//tr[contains(.,'This site is inactive. Please contact the administrator.')]/td[@align='center']</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
 <!--SCOPE_SELECTOR_MENULIST-->
 <tr>
 	<td>SCOPE_SELECTOR_MENULIST_ITEM</td>
@@ -142,18 +152,28 @@
 	<td></td>
 </tr>
 <tr>
+	<td>PAGE_TEMPLATE_1</td>
+	<td>xpath=(//li[contains(@class,'lfr-nav-updateable')])[1]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PAGE_CHILD_PAGE</td>
+	<td>//ul[contains(@class,'child-menu')]/li[contains(.,'${key_childPageName}')]/a</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PAGE_1_CHILD_PAGE_1</td>
-	<td>xpath=(//li[contains(@class,'lfr-nav-deletable')])[1]/ul[contains(@class,'child-menu')]/li/a</td>
+	<td>xpath=(//li[contains(@class,'lfr-nav-deletable')])[1]/ul[contains(@class,'child-menu')]/li[1]/a</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_1_CHILD_PAGE_2</td>
-	<td>xpath=(//li[contains(@class,'lfr-nav-deletable')])[1]/ul[contains(@class,'child-menu')]/li/a</td>
+	<td>xpath=(//li[contains(@class,'lfr-nav-deletable')])[1]/ul[contains(@class,'child-menu')]/li[2]/a</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_1_CHILD_PAGE_3</td>
-	<td>xpath=(//li[contains(@class,'lfr-nav-deletable')])[1]/ul[contains(@class,'child-menu')]/li/a</td>
+	<td>xpath=(//li[contains(@class,'lfr-nav-deletable')])[1]/ul[contains(@class,'child-menu')]/li[3]/a</td>
 	<td></td>
 </tr>
 <tr>
@@ -162,18 +182,23 @@
 	<td></td>
 </tr>
 <tr>
+	<td>PAGE_TEMPLATE_2</td>
+	<td>xpath=(//li[contains(@class,'lfr-nav-updateable')])[2]/a</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PAGE_2_GUEST_VIEW</td>
 	<td>xpath=(//li[contains(@class,'lfr-nav-item')])[2]/a</td>
 	<td></td>
 </tr>
 <tr>
-	<td>PAGE_2_STAGING</td>
-	<td>//nav[@id='navigation']/ul/li[2]/a/span</td>
+	<td>PAGE_3</td>
+	<td>xpath=(//li[contains(@class,'lfr-nav-deletable')])[3]/a</td>
 	<td></td>
 </tr>
 <tr>
-	<td>PAGE_3</td>
-	<td>xpath=(//li[contains(@class,'lfr-nav-deletable')])[3]/a</td>
+	<td>PAGE_TEMPLATE_3</td>
+	<td>xpath=(//li[contains(@class,'lfr-nav-updateable')])[3]/a</td>
 	<td></td>
 </tr>
 <tr>
@@ -210,6 +235,38 @@
 <tr>
 	<td>BREADCRUMB_3</td>
 	<td>xpath=(//nav[@id='breadcrumbs']/ul/li/a)[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--PAGE_COLUMN-->
+<tr>
+	<td>PAGE_COLUMN_1</td>
+	<td>//div[@id='content']//div[@id='column-1']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PAGE_COLUMN_2</td>
+	<td>//div[@id='content']//div[@id='column-2']</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--PAGE_COLUMN_PORTLET-->
+<tr>
+	<td>PAGE_COLUMN_PORTLET_COLUMN_1_PORTLET_TITLE</td>
+	<td>//div[@id='column-1']//h1[@class='portlet-title']//span[contains(@class,'portlet-title-text') and contains(.,'${key_portletTitleName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PAGE_COLUMN_PORTLET_COLUMN_2_PORTLET_TITLE</td>
+	<td>//div[@id='column-2']//h1[@class='portlet-title']//span[contains(@class,'portlet-title-text') and contains(.,'${key_portletTitleName}')]</td>
 	<td></td>
 </tr>
 <tr>

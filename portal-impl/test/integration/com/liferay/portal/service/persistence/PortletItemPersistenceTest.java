@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.PortletItem;
@@ -114,6 +115,8 @@ public class PortletItemPersistenceTest {
 
 		PortletItem newPortletItem = _persistence.create(pk);
 
+		newPortletItem.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newPortletItem.setGroupId(ServiceTestUtil.nextLong());
 
 		newPortletItem.setCompanyId(ServiceTestUtil.nextLong());
@@ -136,6 +139,8 @@ public class PortletItemPersistenceTest {
 
 		PortletItem existingPortletItem = _persistence.findByPrimaryKey(newPortletItem.getPrimaryKey());
 
+		Assert.assertEquals(existingPortletItem.getMvccVersion(),
+			newPortletItem.getMvccVersion());
 		Assert.assertEquals(existingPortletItem.getPortletItemId(),
 			newPortletItem.getPortletItemId());
 		Assert.assertEquals(existingPortletItem.getGroupId(),
@@ -158,6 +163,49 @@ public class PortletItemPersistenceTest {
 			newPortletItem.getPortletId());
 		Assert.assertEquals(existingPortletItem.getClassNameId(),
 			newPortletItem.getClassNameId());
+	}
+
+	@Test
+	public void testCountByG_C() {
+		try {
+			_persistence.countByG_C(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByG_C(0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByG_P_C() {
+		try {
+			_persistence.countByG_P_C(ServiceTestUtil.nextLong(),
+				StringPool.BLANK, ServiceTestUtil.nextLong());
+
+			_persistence.countByG_P_C(0L, StringPool.NULL, 0L);
+
+			_persistence.countByG_P_C(0L, (String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByG_N_P_C() {
+		try {
+			_persistence.countByG_N_P_C(ServiceTestUtil.nextLong(),
+				StringPool.BLANK, StringPool.BLANK, ServiceTestUtil.nextLong());
+
+			_persistence.countByG_N_P_C(0L, StringPool.NULL, StringPool.NULL, 0L);
+
+			_persistence.countByG_N_P_C(0L, (String)null, (String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -196,9 +244,9 @@ public class PortletItemPersistenceTest {
 
 	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("PortletItem",
-			"portletItemId", true, "groupId", true, "companyId", true,
-			"userId", true, "userName", true, "createDate", true,
-			"modifiedDate", true, "name", true, "portletId", true,
+			"mvccVersion", true, "portletItemId", true, "groupId", true,
+			"companyId", true, "userId", true, "userName", true, "createDate",
+			true, "modifiedDate", true, "name", true, "portletId", true,
 			"classNameId", true);
 	}
 
@@ -342,6 +390,8 @@ public class PortletItemPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		PortletItem portletItem = _persistence.create(pk);
+
+		portletItem.setMvccVersion(ServiceTestUtil.nextLong());
 
 		portletItem.setGroupId(ServiceTestUtil.nextLong());
 

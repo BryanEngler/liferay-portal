@@ -40,27 +40,27 @@ int mdrRuleGroupInstancesCount = MDRRuleGroupInstanceServiceUtil.getRuleGroupIns
 			<%= HtmlUtil.escape(rootNodeName) %>
 		</c:when>
 		<c:otherwise>
-			<aui:a href='<%= redirectURL.toString() + "#tab=mobileDeviceRules" %>'>
-				<%= HtmlUtil.escape(rootNodeName) %>
-			</aui:a>
+			<aui:a href='<%= redirectURL.toString() + "#tab=mobileDeviceRules" %>'><%= HtmlUtil.escape(rootNodeName) %></aui:a>
 		</c:otherwise>
 	</c:choose>
 </liferay-util:buffer>
 
-<aui:input checked="<%= mdrRuleGroupInstancesCount == 0 %>" disabled="<%= mdrRuleGroupInstancesCount > 0 %>" id="inheritRuleGroupInstances" label='<%= LanguageUtil.format(pageContext, "use-the-same-mobile-device-rules-of-the-x", rootNodeNameLink) %>' name="inheritRuleGroupInstances" type="radio" value="<%= true %>" />
+<aui:input checked="<%= mdrRuleGroupInstancesCount == 0 %>" disabled="<%= mdrRuleGroupInstancesCount > 0 %>" id="inheritRuleGroupInstances" label='<%= LanguageUtil.format(pageContext, "use-the-same-mobile-device-rules-of-the-x", rootNodeNameLink, false) %>' name="inheritRuleGroupInstances" type="radio" value="<%= true %>" />
 
 <aui:input checked="<%= mdrRuleGroupInstancesCount > 0 %>" id="uniqueRuleGroupInstances" label="define-specific-mobile-device-rules-for-this-page" name="inheritRuleGroupInstances" type="radio" value="<%= false %>" />
 
 <div class="<%= (mdrRuleGroupInstancesCount == 0) ? StringPool.BLANK : "hide" %>" id="<portlet:namespace />inheritRuleGroupInstancesContainer">
 	<div class="alert alert-info">
-		<liferay-ui:message arguments="<%= rootNodeNameLink %>" key="mobile-device-rules-will-be-inhertited-from-x" />
+		<liferay-ui:message arguments="<%= rootNodeNameLink %>" key="mobile-device-rules-will-be-inhertited-from-x" translateArguments="<%= false %>" />
 	</div>
 </div>
 
 <div class="<%= (mdrRuleGroupInstancesCount > 0) ? StringPool.BLANK : "hide" %>" id="<portlet:namespace />uniqueRuleGroupInstancesContainer">
-	<%@ include file="/html/portlet/layouts_admin/layout/mobile_device_rules_toolbar.jspf" %>
-
-	<%@ include file="/html/portlet/layouts_admin/layout/mobile_device_rules_rule_group_instances.jspf" %>
+	<liferay-util:include page="/html/portlet/layouts_admin/layout/mobile_device_rules_rule_group_instances.jsp">
+		<liferay-util:param name="groupId" value="<%= String.valueOf(groupId) %>" />
+		<liferay-util:param name="className" value="<%= className %>" />
+		<liferay-util:param name="classPK" value="<%= String.valueOf(classPK) %>" />
+	</liferay-util:include>
 </div>
 
 <aui:script>

@@ -16,15 +16,13 @@
 
 <%@ include file="/html/portlet/web_proxy/init.jsp" %>
 
-<%
-String redirect = ParamUtil.getString(request, "redirect");
-%>
+<liferay-portlet:actionURL portletConfiguration="true" var="configurationActionURL" />
 
-<liferay-portlet:actionURL portletConfiguration="true" var="configurationURL" />
+<liferay-portlet:renderURL portletConfiguration="true" var="configurationRenderURL" />
 
-<aui:form action="<%= configurationURL %>" method="post" name="fm">
+<aui:form action="<%= configurationActionURL %>" method="post" name="fm">
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
-	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
+	<aui:input name="redirect" type="hidden" value="<%= configurationRenderURL %>" />
 
 	<aui:fieldset>
 		<aui:input autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) || windowState.equals(LiferayWindowState.POP_UP) %>" cssClass="lfr-input-text-container" label="url" name="preferences--initUrl--" value="<%= initUrl %>" />
@@ -35,10 +33,10 @@ String redirect = ParamUtil.getString(request, "redirect");
 
 		<aui:input cssClass="lfr-input-text-container" name="preferences--proxyPort--" value="<%= proxyPort %>" />
 
-		<aui:select name="preferences--proxyAuthentication--">
-			<aui:option label="none" selected='<%= proxyAuthentication.equals("none") %>' />
-			<aui:option label="basic" selected='<%= proxyAuthentication.equals("basic") %>' />
-			<aui:option label="ntlm" selected='<%= proxyAuthentication.equals("ntlm") %>' />
+		<aui:select name="preferences--proxyAuthentication--" value="<%= proxyAuthentication %>">
+			<aui:option label="none" />
+			<aui:option label="basic" />
+			<aui:option label="ntlm" />
 		</aui:select>
 
 		<aui:input cssClass="lfr-input-text-container" name="preferences--proxyAuthenticationUsername--" value="<%= proxyAuthenticationUsername %>" />

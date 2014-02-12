@@ -93,11 +93,11 @@ request.setAttribute(WebKeys.WORKFLOW_ASSET_PREVIEW, Boolean.TRUE);
 		<liferay-ui:panel-container cssClass="task-panel-container" extended="<%= true %>" id="preview">
 
 			<c:if test="<%= assetRenderer != null %>">
-				<liferay-ui:panel defaultState="open" title='<%= LanguageUtil.format(pageContext, "preview-of-x", ResourceActionsUtil.getModelResource(locale, className)) %>'>
+				<liferay-ui:panel defaultState="open" title='<%= LanguageUtil.format(pageContext, "preview-of-x", ResourceActionsUtil.getModelResource(locale, className), false) %>'>
 					<div class="task-content-actions">
 						<liferay-ui:icon-list>
 							<c:if test="<%= assetRenderer.hasViewPermission(permissionChecker) %>">
-								<liferay-ui:icon image="view" method="get" url="<%= viewFullContentURL.toString() %>" />
+								<liferay-ui:icon image="view" message="view[action]" method="get" url="<%= viewFullContentURL.toString() %>" />
 							</c:if>
 						</liferay-ui:icon-list>
 					</div>
@@ -115,7 +115,7 @@ request.setAttribute(WebKeys.WORKFLOW_ASSET_PREVIEW, Boolean.TRUE);
 
 					<c:choose>
 						<c:when test="<%= path == null %>">
-							<%= workflowHandler.getSummary(classPK, locale) %>
+							<%= HtmlUtil.escape(workflowHandler.getSummary(classPK, locale)) %>
 						</c:when>
 						<c:otherwise>
 							<liferay-util:include page="<%= path %>" portletId="<%= assetRendererFactory.getPortletId() %>" />
@@ -177,7 +177,7 @@ request.setAttribute(WebKeys.WORKFLOW_ASSET_PREVIEW, Boolean.TRUE);
 								buffer.append("<span class=\"task-name\" id=\"");
 								buffer.append(workflowTask.getWorkflowTaskId());
 								buffer.append("\">");
-								buffer.append(LanguageUtil.get(pageContext, workflowTask.getName()));
+								buffer.append(LanguageUtil.get(pageContext, HtmlUtil.escape(workflowTask.getName())));
 								buffer.append("</span>");
 								%>
 
@@ -257,7 +257,7 @@ request.setAttribute(WebKeys.WORKFLOW_ASSET_PREVIEW, Boolean.TRUE);
 			/>
 
 			<div class="lfr-asset-name">
-				<%= workflowInstance.getWorkflowDefinitionName() %>
+				<%= HtmlUtil.escape(workflowInstance.getWorkflowDefinitionName()) %>
 			</div>
 		</div>
 

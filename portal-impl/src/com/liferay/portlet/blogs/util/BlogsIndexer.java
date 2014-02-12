@@ -56,6 +56,7 @@ public class BlogsIndexer extends BaseIndexer {
 	public static final String PORTLET_ID = PortletKeys.BLOGS;
 
 	public BlogsIndexer() {
+		setFilterSearch(true);
 		setPermissionAware(true);
 	}
 
@@ -77,6 +78,13 @@ public class BlogsIndexer extends BaseIndexer {
 
 		return BlogsEntryPermission.contains(
 			permissionChecker, entryClassPK, ActionKeys.VIEW);
+	}
+
+	@Override
+	public boolean isVisible(long classPK, int status) throws Exception {
+		BlogsEntry entry = BlogsEntryLocalServiceUtil.getEntry(classPK);
+
+		return isVisible(entry.getStatus(), status);
 	}
 
 	@Override

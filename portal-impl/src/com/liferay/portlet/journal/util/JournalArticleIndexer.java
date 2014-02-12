@@ -23,7 +23,9 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BaseIndexer;
+import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
+import com.liferay.portal.kernel.search.BooleanQueryFactoryUtil;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
@@ -103,6 +105,21 @@ public class JournalArticleIndexer extends BaseIndexer {
 
 		return JournalArticlePermission.contains(
 			permissionChecker, entryClassPK, ActionKeys.VIEW);
+	}
+
+	@Override
+	public boolean isVisible(long classPK, int status) throws Exception {
+		List<JournalArticle> articles =
+			JournalArticleLocalServiceUtil.getArticlesByResourcePrimKey(
+				classPK);
+
+		for (JournalArticle article : articles) {
+			if (isVisible(article.getStatus(), status)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	@Override
@@ -266,13 +283,26 @@ public class JournalArticleIndexer extends BaseIndexer {
 			return;
 		}
 
-		field = DocumentImpl.getLocalizedName(searchContext.getLocale(), field);
+		String localizedField = DocumentImpl.getLocalizedName(
+			searchContext.getLocale(), field);
 
-		if (searchContext.isAndSearch()) {
-			searchQuery.addRequiredTerm(field, value, like);
+		if (Validator.isNull(searchContext.getKeywords())) {
+			BooleanQuery localizedQuery = BooleanQueryFactoryUtil.create(
+				searchContext);
+
+			localizedQuery.addTerm(field, value, like);
+			localizedQuery.addTerm(localizedField, value, like);
+
+			BooleanClauseOccur booleanClauseOccur = BooleanClauseOccur.SHOULD;
+
+			if (searchContext.isAndSearch()) {
+				booleanClauseOccur = BooleanClauseOccur.MUST;
+			}
+
+			searchQuery.add(localizedQuery, booleanClauseOccur);
 		}
 		else {
-			searchQuery.addTerm(field, value, like);
+			searchQuery.addTerm(localizedField, value, like);
 		}
 	}
 

@@ -17,6 +17,7 @@ package com.liferay.portal.model.impl;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.UserNotificationEvent;
 
 import java.io.Externalizable;
@@ -32,12 +33,24 @@ import java.io.ObjectOutput;
  * @generated
  */
 public class UserNotificationEventCacheModel implements CacheModel<UserNotificationEvent>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(23);
 
-		sb.append("{uuid=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", uuid=");
 		sb.append(uuid);
 		sb.append(", userNotificationEventId=");
 		sb.append(userNotificationEventId);
@@ -65,6 +78,8 @@ public class UserNotificationEventCacheModel implements CacheModel<UserNotificat
 	@Override
 	public UserNotificationEvent toEntityModel() {
 		UserNotificationEventImpl userNotificationEventImpl = new UserNotificationEventImpl();
+
+		userNotificationEventImpl.setMvccVersion(mvccVersion);
 
 		if (uuid == null) {
 			userNotificationEventImpl.setUuid(StringPool.BLANK);
@@ -104,6 +119,7 @@ public class UserNotificationEventCacheModel implements CacheModel<UserNotificat
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		uuid = objectInput.readUTF();
 		userNotificationEventId = objectInput.readLong();
 		companyId = objectInput.readLong();
@@ -119,6 +135,8 @@ public class UserNotificationEventCacheModel implements CacheModel<UserNotificat
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
+
 		if (uuid == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
@@ -151,6 +169,7 @@ public class UserNotificationEventCacheModel implements CacheModel<UserNotificat
 		objectOutput.writeBoolean(archived);
 	}
 
+	public long mvccVersion;
 	public String uuid;
 	public long userNotificationEventId;
 	public long companyId;

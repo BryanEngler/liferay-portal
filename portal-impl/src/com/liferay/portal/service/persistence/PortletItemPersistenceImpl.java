@@ -35,6 +35,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnmodifiableList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.model.PortletItem;
 import com.liferay.portal.model.impl.PortletItemImpl;
@@ -1389,7 +1390,7 @@ public class PortletItemPersistenceImpl extends BasePersistenceImpl<PortletItem>
 				qPos.add(groupId);
 
 				if (bindName) {
-					qPos.add(name.toLowerCase());
+					qPos.add(StringUtil.toLowerCase(name));
 				}
 
 				if (bindPortletId) {
@@ -1539,7 +1540,7 @@ public class PortletItemPersistenceImpl extends BasePersistenceImpl<PortletItem>
 				qPos.add(groupId);
 
 				if (bindName) {
-					qPos.add(name.toLowerCase());
+					qPos.add(StringUtil.toLowerCase(name));
 				}
 
 				if (bindPortletId) {
@@ -1629,7 +1630,7 @@ public class PortletItemPersistenceImpl extends BasePersistenceImpl<PortletItem>
 			CacheRegistryUtil.clear(PortletItemImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(PortletItemImpl.class.getName());
+		EntityCacheUtil.clearCache(PortletItemImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -1910,7 +1911,8 @@ public class PortletItemPersistenceImpl extends BasePersistenceImpl<PortletItem>
 		}
 
 		EntityCacheUtil.putResult(PortletItemModelImpl.ENTITY_CACHE_ENABLED,
-			PortletItemImpl.class, portletItem.getPrimaryKey(), portletItem);
+			PortletItemImpl.class, portletItem.getPrimaryKey(), portletItem,
+			false);
 
 		clearUniqueFindersCache(portletItem);
 		cacheUniqueFindersCache(portletItem);
@@ -1930,6 +1932,7 @@ public class PortletItemPersistenceImpl extends BasePersistenceImpl<PortletItem>
 		portletItemImpl.setNew(portletItem.isNew());
 		portletItemImpl.setPrimaryKey(portletItem.getPrimaryKey());
 
+		portletItemImpl.setMvccVersion(portletItem.getMvccVersion());
 		portletItemImpl.setPortletItemId(portletItem.getPortletItemId());
 		portletItemImpl.setGroupId(portletItem.getGroupId());
 		portletItemImpl.setCompanyId(portletItem.getCompanyId());
@@ -2270,10 +2273,22 @@ public class PortletItemPersistenceImpl extends BasePersistenceImpl<PortletItem>
 			}
 		};
 
-	private static CacheModel<PortletItem> _nullPortletItemCacheModel = new CacheModel<PortletItem>() {
-			@Override
-			public PortletItem toEntityModel() {
-				return _nullPortletItem;
-			}
-		};
+	private static CacheModel<PortletItem> _nullPortletItemCacheModel = new NullCacheModel();
+
+	private static class NullCacheModel implements CacheModel<PortletItem>,
+		MVCCModel {
+		@Override
+		public long getMvccVersion() {
+			return 0;
+		}
+
+		@Override
+		public void setMvccVersion(long mvccVersion) {
+		}
+
+		@Override
+		public PortletItem toEntityModel() {
+			return _nullPortletItem;
+		}
+	}
 }

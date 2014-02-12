@@ -20,12 +20,14 @@ import com.liferay.portal.NoSuchImageException;
 import com.liferay.portal.NoSuchLayoutException;
 import com.liferay.portal.NoSuchUserException;
 import com.liferay.portal.dao.orm.common.SQLTransformer;
+import com.liferay.portal.events.StartupHelperUtil;
 import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.cluster.ClusterExecutorUtil;
 import com.liferay.portal.kernel.cluster.ClusterInvokeThreadLocal;
 import com.liferay.portal.kernel.cluster.ClusterRequest;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
+import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.image.ImageBag;
@@ -219,6 +221,10 @@ import java.lang.reflect.Method;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -457,6 +463,8 @@ public class PortalImpl implements Portal {
 		_reservedParams.add("p_p_col_id");
 		_reservedParams.add("p_p_col_pos");
 		_reservedParams.add("p_p_col_count");
+		_reservedParams.add("p_p_boundary");
+		_reservedParams.add("p_p_decorate");
 		_reservedParams.add("p_p_static");
 		_reservedParams.add("p_p_isolated");
 
@@ -1004,22 +1012,29 @@ public class PortalImpl implements Portal {
 			Layout layout)
 		throws PortalException, SystemException {
 
-		LayoutSet layoutSet = themeDisplay.getLayoutSet();
+		String virtualHostname = getVirtualHostname(
+			themeDisplay.getLayoutSet());
 
-		String virtualHost = null;
-
-		if (Validator.isNotNull(layoutSet.getVirtualHostname())) {
-			virtualHost = layoutSet.getVirtualHostname();
-		}
-		else {
+		if (Validator.isNull(virtualHostname)) {
 			Company company = themeDisplay.getCompany();
 
-			virtualHost = company.getVirtualHostname();
+			virtualHostname = company.getVirtualHostname();
+		}
+
+		String portalURL = themeDisplay.getPortalURL();
+
+		String portalDomain = HttpUtil.getDomain(portalURL);
+
+		if (!Validator.isBlank(portalDomain) &&
+			!StringUtil.equalsIgnoreCase(portalDomain, _LOCALHOST) &&
+			StringUtil.equalsIgnoreCase(virtualHostname, _LOCALHOST)) {
+
+			virtualHostname = portalDomain;
 		}
 
 		String i18nPath = buildI18NPath(locale);
 
-		if (Validator.isNull(virtualHost)) {
+		if (Validator.isNull(virtualHostname)) {
 			return canonicalURL.replaceFirst(
 				_PUBLIC_GROUP_SERVLET_MAPPING,
 				i18nPath.concat(_PUBLIC_GROUP_SERVLET_MAPPING));
@@ -1027,11 +1042,11 @@ public class PortalImpl implements Portal {
 
 		// www.liferay.com:8080/ctx/page to www.liferay.com:8080/ctx/es/page
 
-		int pos = canonicalURL.indexOf(virtualHost);
+		int pos = canonicalURL.indexOf(virtualHostname);
 
 		if (pos > 0) {
 			pos = canonicalURL.indexOf(
-				CharPool.SLASH, pos + virtualHost.length());
+				CharPool.SLASH, pos + virtualHostname.length());
 
 			if (Validator.isNotNull(_pathContext)) {
 				pos = canonicalURL.indexOf(
@@ -1416,12 +1431,42 @@ public class PortalImpl implements Portal {
 
 	@Override
 	public long getClassNameId(Class<?> clazz) {
-		return ClassNameLocalServiceUtil.getClassNameId(clazz);
+		return getClassNameId(clazz.getName());
 	}
 
 	@Override
 	public long getClassNameId(String value) {
-		return ClassNameLocalServiceUtil.getClassNameId(value);
+		if (!StartupHelperUtil.isUpgrading()) {
+			return ClassNameLocalServiceUtil.getClassNameId(value);
+		}
+
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			ps = con.prepareStatement(
+				"select classNameId from ClassName_ where value = ?");
+
+			ps.setString(1, value);
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				return rs.getLong("classNameId");
+			}
+		}
+		catch (Exception e) {
+			throw new RuntimeException(
+				"Unable to get class name ID from value " + value, e);
+		}
+		finally {
+			DataAccess.cleanUp(con, ps, rs);
+		}
+
+		return 0;
 	}
 
 	@Override
@@ -2472,25 +2517,16 @@ public class PortalImpl implements Portal {
 
 	@Override
 	public int[] getGroupFriendlyURLIndex(String requestURI) {
-		int x = 0;
-		int y = 0;
+		if (requestURI.startsWith(
+				_PRIVATE_GROUP_SERVLET_MAPPING + StringPool.SLASH) ||
+			requestURI.startsWith(
+				_PRIVATE_USER_SERVLET_MAPPING + StringPool.SLASH) ||
+			requestURI.startsWith(
+				_PUBLIC_GROUP_SERVLET_MAPPING + StringPool.SLASH)) {
 
-		if (requestURI.startsWith(_PRIVATE_GROUP_SERVLET_MAPPING) ||
-			requestURI.startsWith(_PRIVATE_USER_SERVLET_MAPPING) ||
-			requestURI.startsWith(_PUBLIC_GROUP_SERVLET_MAPPING)) {
+			int x = requestURI.indexOf(StringPool.SLASH, 1);
 
-			x = requestURI.indexOf(StringPool.SLASH, 1);
-
-			if (x == -1) {
-
-				// /web
-
-				requestURI += StringPool.SLASH;
-
-				x = requestURI.indexOf(CharPool.SLASH, 1);
-			}
-
-			y = requestURI.indexOf(CharPool.SLASH, x + 1);
+			int y = requestURI.indexOf(CharPool.SLASH, x + 1);
 
 			if (y == -1) {
 
@@ -3291,9 +3327,11 @@ public class PortalImpl implements Portal {
 			}
 		}
 
-		HttpSession session = request.getSession();
+		HttpSession session = request.getSession(false);
 
-		if (session.getAttribute(Globals.LOCALE_KEY) != null) {
+		if ((session != null) &&
+			session.getAttribute(Globals.LOCALE_KEY) != null) {
+
 			locale = (Locale)session.getAttribute(Globals.LOCALE_KEY);
 
 			if (LanguageUtil.isAvailableLocale(groupId, locale)) {
@@ -4835,7 +4873,8 @@ public class PortalImpl implements Portal {
 			};
 		}
 		else if (scopeGroup.isLayoutSetPrototype() ||
-				 scopeGroup.isRegularSite() || scopeGroup.isUser()) {
+				 scopeGroup.isOrganization() || scopeGroup.isRegularSite() ||
+				 scopeGroup.isUser()) {
 
 			return new long[] {groupId, companyGroup.getGroupId()};
 		}
@@ -5000,7 +5039,7 @@ public class PortalImpl implements Portal {
 			((parameterMap == null) || !parameterMap.containsKey("themeId"))) {
 
 			sb.append("&themeId=");
-			sb.append(theme.getThemeId());
+			sb.append(HttpUtil.encodeURL(theme.getThemeId()));
 		}
 
 		if (uri.endsWith(".jsp") &&
@@ -5008,7 +5047,7 @@ public class PortalImpl implements Portal {
 			 !parameterMap.containsKey("colorSchemeId"))) {
 
 			sb.append("&colorSchemeId=");
-			sb.append(colorScheme.getColorSchemeId());
+			sb.append(HttpUtil.encodeURL(colorScheme.getColorSchemeId()));
 		}
 
 		// Minifier
@@ -6732,7 +6771,12 @@ public class PortalImpl implements Portal {
 			if (_securePortalPort.get() == -1) {
 				int securePortalPort = request.getServerPort();
 
-				_securePortalPort.compareAndSet(-1, securePortalPort);
+				if (_securePortalPort.compareAndSet(-1, securePortalPort) &&
+					StringUtil.equalsIgnoreCase(
+						Http.HTTPS, PropsValues.WEB_SERVER_PROTOCOL)) {
+
+					notifyPortalPortEventListeners(securePortalPort);
+				}
 			}
 		}
 		else {
@@ -7274,25 +7318,22 @@ public class PortalImpl implements Portal {
 	}
 
 	protected String getCanonicalDomain(
-		boolean canonicalURL, String virtualHostname, String portalDomain) {
+		String virtualHostname, String portalDomain) {
 
-		if (canonicalURL || Validator.isBlank(portalDomain)) {
+		if (Validator.isBlank(portalDomain) ||
+			StringUtil.equalsIgnoreCase(portalDomain, _LOCALHOST) ||
+			!StringUtil.equalsIgnoreCase(virtualHostname, _LOCALHOST)) {
+
 			return virtualHostname;
 		}
 
 		int pos = portalDomain.indexOf(CharPool.COLON);
 
-		if (pos != -1) {
-			portalDomain = portalDomain.substring(0, pos);
+		if (pos == -1) {
+			return portalDomain;
 		}
 
-		if (!StringUtil.equalsIgnoreCase(portalDomain, _LOCALHOST) &&
-			StringUtil.equalsIgnoreCase(virtualHostname, _LOCALHOST)) {
-
-			virtualHostname = portalDomain;
-		}
-
-		return virtualHostname;
+		return portalDomain.substring(0, pos);
 	}
 
 	protected Map<String, List<Portlet>> getCategoriesMap(
@@ -7456,25 +7497,23 @@ public class PortalImpl implements Portal {
 				 !StringUtil.equalsIgnoreCase(virtualHostname, _LOCALHOST))) {
 
 				virtualHostname = getCanonicalDomain(
-					canonicalURL, virtualHostname, portalDomain);
+					virtualHostname, portalDomain);
 
 				virtualHostname = getPortalURL(
 					virtualHostname, themeDisplay.getServerPort(),
 					themeDisplay.isSecure());
 
-				if (canonicalURL || virtualHostname.contains(portalDomain)) {
-					String path = StringPool.BLANK;
+				String path = StringPool.BLANK;
 
-					if (themeDisplay.isWidget()) {
-						path = PropsValues.WIDGET_SERVLET_MAPPING;
-					}
-
-					if (themeDisplay.isI18n() && !canonicalURL) {
-						path = themeDisplay.getI18nPath();
-					}
-
-					return virtualHostname.concat(_pathContext).concat(path);
+				if (themeDisplay.isWidget()) {
+					path = PropsValues.WIDGET_SERVLET_MAPPING;
 				}
+
+				if (themeDisplay.isI18n() && !canonicalURL) {
+					path = themeDisplay.getI18nPath();
+				}
+
+				return virtualHostname.concat(_pathContext).concat(path);
 			}
 			else {
 				LayoutSet curLayoutSet = LayoutSetLocalServiceUtil.getLayoutSet(
@@ -7510,7 +7549,7 @@ public class PortalImpl implements Portal {
 							virtualHostname, _LOCALHOST)) {
 
 						virtualHostname = getCanonicalDomain(
-							canonicalURL, virtualHostname, portalDomain);
+							virtualHostname, portalDomain);
 
 						portalURL = getPortalURL(
 							virtualHostname, themeDisplay.getServerPort(),
@@ -7794,8 +7833,8 @@ public class PortalImpl implements Portal {
 		String i18nPath = null;
 
 		if ((I18nFilter.getLanguageIds().contains(locale.toString()) &&
-			 ((PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE == 1) &&
-			  !locale.equals(LocaleUtil.getDefault()))) ||
+			 (PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE == 1) &&
+			 !locale.equals(LocaleUtil.getDefault())) ||
 			(PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE == 2)) {
 
 			i18nLanguageId = locale.toString();

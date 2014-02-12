@@ -27,8 +27,8 @@ public class EntityCacheUtil {
 		getEntityCache().clearCache();
 	}
 
-	public static void clearCache(String className) {
-		getEntityCache().clearCache(className);
+	public static void clearCache(Class<?> clazz) {
+		getEntityCache().clearCache(clazz);
 	}
 
 	public static void clearLocalCache() {
@@ -66,6 +66,14 @@ public class EntityCacheUtil {
 
 		getEntityCache().putResult(
 			entityCacheEnabled, clazz, primaryKey, result);
+	}
+
+	public static void putResult(
+		boolean entityCacheEnabled, Class<?> clazz, Serializable primaryKey,
+		Serializable result, boolean quiet) {
+
+		getEntityCache().putResult(
+			entityCacheEnabled, clazz, primaryKey, result, quiet);
 	}
 
 	public static void removeCache(String className) {

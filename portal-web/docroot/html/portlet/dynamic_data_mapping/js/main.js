@@ -5,6 +5,8 @@ AUI.add(
 		var Lang = A.Lang;
 		var FormBuilderField = A.FormBuilderField;
 
+		var BODY = A.getBody();
+
 		var instanceOf = A.instanceOf;
 		var isObject = Lang.isObject;
 
@@ -14,6 +16,8 @@ AUI.add(
 
 		var MAP_HIDDEN_FIELD_ATTRS = {
 			checkbox: ['readOnly', 'required'],
+
+			separator: ['readOnly', 'required', 'predefinedValue', 'indexType'],
 
 			DEFAULT: ['readOnly']
 		};
@@ -124,7 +128,6 @@ AUI.add(
 							addNode: Liferay.Language.get('add-field'),
 							button: Liferay.Language.get('button'),
 							buttonType: Liferay.Language.get('button-type'),
-							close: Liferay.Language.get('close'),
 							deleteFieldsMessage: Liferay.Language.get('are-you-sure-you-want-to-delete-the-selected-entries'),
 							duplicateMessage: Liferay.Language.get('duplicate'),
 							editMessage: Liferay.Language.get('edit'),
@@ -174,6 +177,8 @@ AUI.add(
 						);
 
 						instance.addTarget(Liferay.Util.getOpener().Liferay);
+
+						instance._toggleInputDirection(translationManager.get('defaultLocale'));
 					},
 
 					bindUI: function() {
@@ -265,6 +270,8 @@ AUI.add(
 						instance._updateFieldsLocalizationMap(event.prevVal);
 
 						instance._syncFieldsLocaleUI(event.newVal);
+
+						instance._toggleInputDirection(event.newVal);
 					},
 
 					_appendStructureChildren: function(field, buffer) {
@@ -525,7 +532,7 @@ AUI.add(
 					_renderSettings: function() {
 						var instance = this;
 
-						LiferayFormBuilder.superclass._renderSettings.apply(instance, arguments);
+						instance._renderPropertyList();
 
 						instance.propertyList.on('model:change', instance._onPropertyModelChange, instance);
 					},
@@ -604,6 +611,13 @@ AUI.add(
 								instance._syncFieldsLocaleUI(locale, field.get('fields'));
 							}
 						);
+					},
+
+					_toggleInputDirection: function(locale) {
+						var rtl = (Liferay.Language.direction[locale] === 'rtl');
+
+						BODY.toggleClass('form-builder-ltr-inputs', !rtl);
+						BODY.toggleClass('form-builder-rtl-inputs', rtl);
 					},
 
 					_updateFieldOptionsLocalizationMap: function(field, locale) {
@@ -825,6 +839,12 @@ AUI.add(
 					iconClass: 'icon-picture',
 					label: Liferay.Language.get('image'),
 					type: 'wcm-image'
+				},
+				{
+					hiddenAttributes: MAP_HIDDEN_FIELD_ATTRS.separator,
+					iconClass: 'icon-fb-separator',
+					label: Liferay.Language.get('separator'),
+					type: 'ddm-separator'
 				}
 			]
 		};

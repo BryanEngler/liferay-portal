@@ -17,6 +17,7 @@ package com.liferay.portal.model.impl;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.Region;
 
 import java.io.Externalizable;
@@ -31,12 +32,25 @@ import java.io.ObjectOutput;
  * @see Region
  * @generated
  */
-public class RegionCacheModel implements CacheModel<Region>, Externalizable {
+public class RegionCacheModel implements CacheModel<Region>, Externalizable,
+	MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(11);
+		StringBundler sb = new StringBundler(13);
 
-		sb.append("{regionId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", regionId=");
 		sb.append(regionId);
 		sb.append(", countryId=");
 		sb.append(countryId);
@@ -55,6 +69,7 @@ public class RegionCacheModel implements CacheModel<Region>, Externalizable {
 	public Region toEntityModel() {
 		RegionImpl regionImpl = new RegionImpl();
 
+		regionImpl.setMvccVersion(mvccVersion);
 		regionImpl.setRegionId(regionId);
 		regionImpl.setCountryId(countryId);
 
@@ -81,6 +96,7 @@ public class RegionCacheModel implements CacheModel<Region>, Externalizable {
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		regionId = objectInput.readLong();
 		countryId = objectInput.readLong();
 		regionCode = objectInput.readUTF();
@@ -91,6 +107,7 @@ public class RegionCacheModel implements CacheModel<Region>, Externalizable {
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(regionId);
 		objectOutput.writeLong(countryId);
 
@@ -111,6 +128,7 @@ public class RegionCacheModel implements CacheModel<Region>, Externalizable {
 		objectOutput.writeBoolean(active);
 	}
 
+	public long mvccVersion;
 	public long regionId;
 	public long countryId;
 	public String regionCode;

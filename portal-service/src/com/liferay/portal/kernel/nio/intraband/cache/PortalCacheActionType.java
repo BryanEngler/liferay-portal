@@ -19,6 +19,7 @@ package com.liferay.portal.kernel.nio.intraband.cache;
  */
 public enum PortalCacheActionType {
 
-	DESTROY, GET, GET_BULK, PUT, PUT_TTL, RECONFIGURE, REMOVE, REMOVE_ALL
+	CLEAR_ALL, DESTROY, GET, PUT, PUT_QUIET, PUT_QUIET_TTL, PUT_TTL,
+	RECONFIGURE, REMOVE, REMOVE_ALL, REMOVE_CACHE
 
 }

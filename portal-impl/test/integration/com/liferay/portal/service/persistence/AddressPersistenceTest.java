@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.model.Address;
 import com.liferay.portal.service.ServiceTestUtil;
@@ -111,6 +112,8 @@ public class AddressPersistenceTest {
 
 		Address newAddress = _persistence.create(pk);
 
+		newAddress.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newAddress.setUuid(ServiceTestUtil.randomString());
 
 		newAddress.setCompanyId(ServiceTestUtil.nextLong());
@@ -151,6 +154,8 @@ public class AddressPersistenceTest {
 
 		Address existingAddress = _persistence.findByPrimaryKey(newAddress.getPrimaryKey());
 
+		Assert.assertEquals(existingAddress.getMvccVersion(),
+			newAddress.getMvccVersion());
 		Assert.assertEquals(existingAddress.getUuid(), newAddress.getUuid());
 		Assert.assertEquals(existingAddress.getAddressId(),
 			newAddress.getAddressId());
@@ -189,6 +194,115 @@ public class AddressPersistenceTest {
 	}
 
 	@Test
+	public void testCountByUuid() {
+		try {
+			_persistence.countByUuid(StringPool.BLANK);
+
+			_persistence.countByUuid(StringPool.NULL);
+
+			_persistence.countByUuid((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByUuid_C() {
+		try {
+			_persistence.countByUuid_C(StringPool.BLANK,
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByUuid_C(StringPool.NULL, 0L);
+
+			_persistence.countByUuid_C((String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByCompanyId() {
+		try {
+			_persistence.countByCompanyId(ServiceTestUtil.nextLong());
+
+			_persistence.countByCompanyId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByUserId() {
+		try {
+			_persistence.countByUserId(ServiceTestUtil.nextLong());
+
+			_persistence.countByUserId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_C() {
+		try {
+			_persistence.countByC_C(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByC_C(0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_C_C() {
+		try {
+			_persistence.countByC_C_C(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), ServiceTestUtil.nextLong());
+
+			_persistence.countByC_C_C(0L, 0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_C_C_M() {
+		try {
+			_persistence.countByC_C_C_M(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), ServiceTestUtil.nextLong(),
+				ServiceTestUtil.randomBoolean());
+
+			_persistence.countByC_C_C_M(0L, 0L, 0L,
+				ServiceTestUtil.randomBoolean());
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_C_C_P() {
+		try {
+			_persistence.countByC_C_C_P(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), ServiceTestUtil.nextLong(),
+				ServiceTestUtil.randomBoolean());
+
+			_persistence.countByC_C_C_P(0L, 0L, 0L,
+				ServiceTestUtil.randomBoolean());
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		Address newAddress = addAddress();
 
@@ -222,12 +336,12 @@ public class AddressPersistenceTest {
 	}
 
 	protected OrderByComparator getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("Address", "uuid", true,
-			"addressId", true, "companyId", true, "userId", true, "userName",
-			true, "createDate", true, "modifiedDate", true, "classNameId",
-			true, "classPK", true, "street1", true, "street2", true, "street3",
-			true, "city", true, "zip", true, "regionId", true, "countryId",
-			true, "typeId", true, "mailing", true, "primary", true);
+		return OrderByComparatorFactoryUtil.create("Address", "mvccVersion",
+			true, "uuid", true, "addressId", true, "companyId", true, "userId",
+			true, "userName", true, "createDate", true, "modifiedDate", true,
+			"classNameId", true, "classPK", true, "street1", true, "street2",
+			true, "street3", true, "city", true, "zip", true, "regionId", true,
+			"countryId", true, "typeId", true, "mailing", true, "primary", true);
 	}
 
 	@Test
@@ -344,6 +458,8 @@ public class AddressPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		Address address = _persistence.create(pk);
+
+		address.setMvccVersion(ServiceTestUtil.nextLong());
 
 		address.setUuid(ServiceTestUtil.randomString());
 

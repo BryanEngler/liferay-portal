@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.VirtualHost;
 import com.liferay.portal.model.impl.VirtualHostModelImpl;
@@ -113,6 +114,8 @@ public class VirtualHostPersistenceTest {
 
 		VirtualHost newVirtualHost = _persistence.create(pk);
 
+		newVirtualHost.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newVirtualHost.setCompanyId(ServiceTestUtil.nextLong());
 
 		newVirtualHost.setLayoutSetId(ServiceTestUtil.nextLong());
@@ -123,6 +126,8 @@ public class VirtualHostPersistenceTest {
 
 		VirtualHost existingVirtualHost = _persistence.findByPrimaryKey(newVirtualHost.getPrimaryKey());
 
+		Assert.assertEquals(existingVirtualHost.getMvccVersion(),
+			newVirtualHost.getMvccVersion());
 		Assert.assertEquals(existingVirtualHost.getVirtualHostId(),
 			newVirtualHost.getVirtualHostId());
 		Assert.assertEquals(existingVirtualHost.getCompanyId(),
@@ -131,6 +136,33 @@ public class VirtualHostPersistenceTest {
 			newVirtualHost.getLayoutSetId());
 		Assert.assertEquals(existingVirtualHost.getHostname(),
 			newVirtualHost.getHostname());
+	}
+
+	@Test
+	public void testCountByHostname() {
+		try {
+			_persistence.countByHostname(StringPool.BLANK);
+
+			_persistence.countByHostname(StringPool.NULL);
+
+			_persistence.countByHostname((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_L() {
+		try {
+			_persistence.countByC_L(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByC_L(0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -169,8 +201,8 @@ public class VirtualHostPersistenceTest {
 
 	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("VirtualHost",
-			"virtualHostId", true, "companyId", true, "layoutSetId", true,
-			"hostname", true);
+			"mvccVersion", true, "virtualHostId", true, "companyId", true,
+			"layoutSetId", true, "hostname", true);
 	}
 
 	@Test
@@ -311,6 +343,8 @@ public class VirtualHostPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		VirtualHost virtualHost = _persistence.create(pk);
+
+		virtualHost.setMvccVersion(ServiceTestUtil.nextLong());
 
 		virtualHost.setCompanyId(ServiceTestUtil.nextLong());
 

@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.notifications.UserNotificationDefinition;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -1925,6 +1926,8 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 			newVersion = MathUtil.format(oldVersion + 0.1, 1, 1);
 
 			page = wikiPagePersistence.create(pageId);
+
+			page.setUuid(serviceContext.getUuid());
 		}
 
 		page.setResourcePrimKey(resourcePrimKey);
@@ -2244,10 +2247,6 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 			return StringPool.BLANK;
 		}
 
-		if (Validator.isNotNull(serviceContext.getLayoutFullURL())) {
-			return StringPool.BLANK;
-		}
-
 		HttpServletRequest request = serviceContext.getRequest();
 
 		if (request == null) {
@@ -2288,10 +2287,6 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 	protected String getPageURL(
 			WikiNode node, WikiPage page, ServiceContext serviceContext)
 		throws PortalException, SystemException {
-
-		if (Validator.isNotNull(serviceContext.getLayoutFullURL())) {
-			return StringPool.BLANK;
-		}
 
 		HttpServletRequest request = serviceContext.getRequest();
 
@@ -2404,6 +2399,12 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 			boolean update)
 		throws PortalException, SystemException {
 
+		String layoutFullURL = serviceContext.getLayoutFullURL();
+
+		if (!page.isApproved() || Validator.isNull(layoutFullURL)) {
+			return;
+		}
+
 		PortletPreferences preferences = null;
 
 		String rootPortletId = serviceContext.getRootPortletId();
@@ -2487,6 +2488,7 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 		SubscriptionSender subscriptionSender = new SubscriptionSender();
 
 		subscriptionSender.setBody(body);
+		subscriptionSender.setClassPK(page.getPageId());
 		subscriptionSender.setCompanyId(page.getCompanyId());
 		subscriptionSender.setContextAttributes(
 			"[$DIFFS_URL$]",
@@ -2505,6 +2507,17 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 		subscriptionSender.setHtmlFormat(true);
 		subscriptionSender.setMailId(
 			"wiki_page", page.getNodeId(), page.getPageId());
+
+		int notificationType =
+			UserNotificationDefinition.NOTIFICATION_TYPE_ADD_ENTRY;
+
+		if (serviceContext.isCommandUpdate()) {
+			notificationType =
+				UserNotificationDefinition.NOTIFICATION_TYPE_UPDATE_ENTRY;
+		}
+
+		subscriptionSender.setNotificationType(notificationType);
+
 		subscriptionSender.setPortletId(PortletKeys.WIKI);
 		subscriptionSender.setReplyToAddress(fromAddress);
 		subscriptionSender.setScopeGroupId(node.getGroupId());

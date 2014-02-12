@@ -118,7 +118,9 @@ public class EhcacheStreamBootstrapHelpUtil {
 		List<String> cacheNames = new ArrayList<String>();
 
 		for (Ehcache ehcache : ehcaches) {
-			cacheNames.add(ehcache.getName());
+			if (cacheManager == ehcache.getCacheManager()) {
+				cacheNames.add(ehcache.getName());
+			}
 		}
 
 		ClusterRequest clusterRequest = ClusterRequest.createMulticastRequest(
@@ -151,6 +153,12 @@ public class EhcacheStreamBootstrapHelpUtil {
 			}
 
 			return;
+		}
+
+		if (_log.isInfoEnabled()) {
+			_log.info(
+				"Load cache data from cluster node " +
+					clusterNodeResponse.getClusterNode());
 		}
 
 		Socket socket = null;
@@ -209,6 +217,12 @@ public class EhcacheStreamBootstrapHelpUtil {
 							object);
 				}
 			}
+		}
+		catch (Exception e) {
+			throw new Exception(
+				"Unable to load cache data from cluster node " +
+					clusterNodeResponse.getClusterNode(),
+				e);
 		}
 		finally {
 			if (objectInputStream != null) {

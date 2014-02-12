@@ -1994,7 +1994,7 @@ public class AssetVocabularyPersistenceImpl extends BasePersistenceImpl<AssetVoc
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, AssetVocabularyImpl.class);
@@ -2170,7 +2170,7 @@ public class AssetVocabularyPersistenceImpl extends BasePersistenceImpl<AssetVoc
 				AssetVocabulary.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -2299,7 +2299,7 @@ public class AssetVocabularyPersistenceImpl extends BasePersistenceImpl<AssetVoc
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -3222,7 +3222,7 @@ public class AssetVocabularyPersistenceImpl extends BasePersistenceImpl<AssetVoc
 				qPos.add(groupId);
 
 				if (bindName) {
-					qPos.add(name.toLowerCase());
+					qPos.add(StringUtil.toLowerCase(name));
 				}
 
 				if (!pagination) {
@@ -3521,7 +3521,7 @@ public class AssetVocabularyPersistenceImpl extends BasePersistenceImpl<AssetVoc
 		qPos.add(groupId);
 
 		if (bindName) {
-			qPos.add(name.toLowerCase());
+			qPos.add(StringUtil.toLowerCase(name));
 		}
 
 		if (orderByComparator != null) {
@@ -3665,7 +3665,7 @@ public class AssetVocabularyPersistenceImpl extends BasePersistenceImpl<AssetVoc
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, AssetVocabularyImpl.class);
@@ -3679,7 +3679,7 @@ public class AssetVocabularyPersistenceImpl extends BasePersistenceImpl<AssetVoc
 			qPos.add(groupId);
 
 			if (bindName) {
-				qPos.add(name.toLowerCase());
+				qPos.add(StringUtil.toLowerCase(name));
 			}
 
 			return (List<AssetVocabulary>)QueryUtil.list(q, getDialect(),
@@ -3861,7 +3861,7 @@ public class AssetVocabularyPersistenceImpl extends BasePersistenceImpl<AssetVoc
 				AssetVocabulary.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -3878,7 +3878,7 @@ public class AssetVocabularyPersistenceImpl extends BasePersistenceImpl<AssetVoc
 		qPos.add(groupId);
 
 		if (bindName) {
-			qPos.add(name.toLowerCase());
+			qPos.add(StringUtil.toLowerCase(name));
 		}
 
 		if (orderByComparator != null) {
@@ -3968,7 +3968,7 @@ public class AssetVocabularyPersistenceImpl extends BasePersistenceImpl<AssetVoc
 				qPos.add(groupId);
 
 				if (bindName) {
-					qPos.add(name.toLowerCase());
+					qPos.add(StringUtil.toLowerCase(name));
 				}
 
 				count = (Long)q.uniqueResult();
@@ -4032,7 +4032,7 @@ public class AssetVocabularyPersistenceImpl extends BasePersistenceImpl<AssetVoc
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -4042,7 +4042,7 @@ public class AssetVocabularyPersistenceImpl extends BasePersistenceImpl<AssetVoc
 			qPos.add(groupId);
 
 			if (bindName) {
-				qPos.add(name.toLowerCase());
+				qPos.add(StringUtil.toLowerCase(name));
 			}
 
 			Long count = (Long)q.uniqueResult();
@@ -4121,7 +4121,7 @@ public class AssetVocabularyPersistenceImpl extends BasePersistenceImpl<AssetVoc
 			CacheRegistryUtil.clear(AssetVocabularyImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(AssetVocabularyImpl.class.getName());
+		EntityCacheUtil.clearCache(AssetVocabularyImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -4477,7 +4477,7 @@ public class AssetVocabularyPersistenceImpl extends BasePersistenceImpl<AssetVoc
 
 		EntityCacheUtil.putResult(AssetVocabularyModelImpl.ENTITY_CACHE_ENABLED,
 			AssetVocabularyImpl.class, assetVocabulary.getPrimaryKey(),
-			assetVocabulary);
+			assetVocabulary, false);
 
 		clearUniqueFindersCache(assetVocabulary);
 		cacheUniqueFindersCache(assetVocabulary);

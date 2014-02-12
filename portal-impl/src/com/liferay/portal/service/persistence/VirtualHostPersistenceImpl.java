@@ -35,6 +35,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnmodifiableList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.model.VirtualHost;
 import com.liferay.portal.model.impl.VirtualHostImpl;
@@ -612,7 +613,7 @@ public class VirtualHostPersistenceImpl extends BasePersistenceImpl<VirtualHost>
 			CacheRegistryUtil.clear(VirtualHostImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(VirtualHostImpl.class.getName());
+		EntityCacheUtil.clearCache(VirtualHostImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -870,7 +871,8 @@ public class VirtualHostPersistenceImpl extends BasePersistenceImpl<VirtualHost>
 		}
 
 		EntityCacheUtil.putResult(VirtualHostModelImpl.ENTITY_CACHE_ENABLED,
-			VirtualHostImpl.class, virtualHost.getPrimaryKey(), virtualHost);
+			VirtualHostImpl.class, virtualHost.getPrimaryKey(), virtualHost,
+			false);
 
 		clearUniqueFindersCache(virtualHost);
 		cacheUniqueFindersCache(virtualHost);
@@ -890,6 +892,7 @@ public class VirtualHostPersistenceImpl extends BasePersistenceImpl<VirtualHost>
 		virtualHostImpl.setNew(virtualHost.isNew());
 		virtualHostImpl.setPrimaryKey(virtualHost.getPrimaryKey());
 
+		virtualHostImpl.setMvccVersion(virtualHost.getMvccVersion());
 		virtualHostImpl.setVirtualHostId(virtualHost.getVirtualHostId());
 		virtualHostImpl.setCompanyId(virtualHost.getCompanyId());
 		virtualHostImpl.setLayoutSetId(virtualHost.getLayoutSetId());
@@ -1224,10 +1227,22 @@ public class VirtualHostPersistenceImpl extends BasePersistenceImpl<VirtualHost>
 			}
 		};
 
-	private static CacheModel<VirtualHost> _nullVirtualHostCacheModel = new CacheModel<VirtualHost>() {
-			@Override
-			public VirtualHost toEntityModel() {
-				return _nullVirtualHost;
-			}
-		};
+	private static CacheModel<VirtualHost> _nullVirtualHostCacheModel = new NullCacheModel();
+
+	private static class NullCacheModel implements CacheModel<VirtualHost>,
+		MVCCModel {
+		@Override
+		public long getMvccVersion() {
+			return 0;
+		}
+
+		@Override
+		public void setMvccVersion(long mvccVersion) {
+		}
+
+		@Override
+		public VirtualHost toEntityModel() {
+			return _nullVirtualHost;
+		}
+	}
 }

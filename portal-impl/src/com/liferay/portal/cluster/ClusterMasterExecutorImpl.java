@@ -128,6 +128,11 @@ public class ClusterMasterExecutorImpl implements ClusterMasterExecutor {
 	}
 
 	@Override
+	public boolean isEnabled() {
+		return _enabled;
+	}
+
+	@Override
 	public boolean isMaster() {
 		return _master;
 	}
@@ -241,7 +246,7 @@ public class ClusterMasterExecutorImpl implements ClusterMasterExecutor {
 	private ClusterExecutor _clusterExecutor;
 	private Set<ClusterMasterTokenTransitionListener>
 		_clusterMasterTokenTransitionListeners =
-		new HashSet<ClusterMasterTokenTransitionListener>();
+			new HashSet<ClusterMasterTokenTransitionListener>();
 	private volatile boolean _enabled;
 	private volatile String _localClusterNodeAddress;
 

@@ -25,7 +25,7 @@
 					<i class="caret"></i>
 				</span>
 
-				<input class="search-query span9" id="<%= id + displayTerms.KEYWORDS %>" name="<portlet:namespace /><%= displayTerms.KEYWORDS %>" placeholder="<liferay-ui:message key="keywords" />" type="text" value="<%= displayTerms.getKeywords() %>" />
+				<input class="search-query span9" id="<%= id + displayTerms.KEYWORDS %>" name="<portlet:namespace /><%= displayTerms.KEYWORDS %>" placeholder="<liferay-ui:message key="keywords" />" type="text" value="<%= HtmlUtil.escapeAttribute(displayTerms.getKeywords()) %>" />
 
 				<button class="btn" type="submit">
 					<%= LanguageUtil.get(pageContext, buttonLabel, "search") %>
@@ -45,4 +45,4 @@
 					</aui:select>
 				</liferay-util:buffer>
 
-				<liferay-ui:message arguments="<%= andOperator %>" key="match-x-of-the-following-fields" />
+				<liferay-ui:message arguments="<%= andOperator %>" key="match-x-of-the-following-fields" translateArguments="<%= false %>" />

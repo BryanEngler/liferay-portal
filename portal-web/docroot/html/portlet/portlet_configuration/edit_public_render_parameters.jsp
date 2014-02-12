@@ -42,7 +42,7 @@ editPublicRenderParameterURL.setParameter("portletResource", portletResource);
 </portlet:actionURL>
 
 <div class="alert alert-info">
-	<liferay-ui:message arguments='<%= "http://www.liferay.com/community/wiki/-/wiki/Main/Portlet+Communication+Configuration" %>' key="set-up-the-communication-among-the-portlets-that-use-public-render-parameters" />
+	<liferay-ui:message arguments='<%= "http://www.liferay.com/community/wiki/-/wiki/Main/Portlet+Communication+Configuration" %>' key="set-up-the-communication-among-the-portlets-that-use-public-render-parameters" translateArguments="<%= false %>" />
 </div>
 
 <aui:form action="<%= editPRPURL %>" method="post" name="fm">
@@ -64,7 +64,7 @@ editPublicRenderParameterURL.setParameter("portletResource", portletResource);
 		>
 			<liferay-ui:search-container-column-text
 				name="shared-parameter"
-				value="<%= publicRenderParameterConfiguration.getPublicRenderParameter().getIdentifier() %>"
+				value="<%= HtmlUtil.escape(publicRenderParameterConfiguration.getPublicRenderParameter().getIdentifier()) %>"
 			/>
 
 			<liferay-ui:search-container-column-text
@@ -77,7 +77,7 @@ editPublicRenderParameterURL.setParameter("portletResource", portletResource);
 				name="read-value-from-parameter"
 			>
 				<aui:select label="" name="<%= publicRenderParameterConfiguration.getMappingKey() %>">
-					<aui:option label="<%= publicRenderParameterConfiguration.getPublicRenderParameter().getIdentifier() %>" value="" />
+					<aui:option label="<%= HtmlUtil.escape(publicRenderParameterConfiguration.getPublicRenderParameter().getIdentifier()) %>" value="" />
 
 					<%
 					for (PublicRenderParameter publicRenderParameter : publicRenderParameters) {
@@ -88,7 +88,7 @@ editPublicRenderParameterURL.setParameter("portletResource", portletResource);
 						}
 					%>
 
-						<aui:option label="<%= publicRenderParameter.getIdentifier() %>" selected="<%= publicRenderParameterName.equals(publicRenderParameterConfiguration.getMappingValue()) %>" value="<%= publicRenderParameterName %>" />
+						<aui:option label="<%= HtmlUtil.escape(publicRenderParameter.getIdentifier()) %>" selected="<%= publicRenderParameterName.equals(publicRenderParameterConfiguration.getMappingValue()) %>" value="<%= publicRenderParameterName %>" />
 
 					<%
 					}
@@ -112,7 +112,7 @@ editPublicRenderParameterURL.setParameter("portletResource", portletResource);
 	for (PublicRenderParameterConfiguration publicRenderParameterConfiguration : publicRenderParameterConfigurations) {
 	%>
 
-		Liferay.Util.disableToggleBoxes('<portlet:namespace /><%= PublicRenderParameterConfiguration.IGNORE_PREFIX + publicRenderParameterConfiguration.getPublicRenderParameterName() %>' + 'Checkbox', '<portlet:namespace /><%= PublicRenderParameterConfiguration.MAPPING_PREFIX + publicRenderParameterConfiguration.getPublicRenderParameterName() %>', true);
+		Liferay.Util.disableToggleBoxes('<portlet:namespace /><%= PublicRenderParameterConfiguration.IGNORE_PREFIX + HtmlUtil.escapeJS(publicRenderParameterConfiguration.getPublicRenderParameterName()) %>' + 'Checkbox', '<portlet:namespace /><%= PublicRenderParameterConfiguration.MAPPING_PREFIX + HtmlUtil.escapeJS(publicRenderParameterConfiguration.getPublicRenderParameterName()) %>', true);
 
 	<%
 	}

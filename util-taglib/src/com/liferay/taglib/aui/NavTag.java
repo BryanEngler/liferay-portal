@@ -17,6 +17,7 @@ package com.liferay.taglib.aui;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.User;
@@ -51,12 +52,22 @@ public class NavTag extends BaseNavTag {
 
 			StringBundler sb = navBarTag.getResponsiveButtonsSB();
 
-			sb.append("<a class=\"btn btn-navbar\" id=\"");
+			sb.append("<a class=\"btn btn-navbar");
+
+			String cssClass = getCssClass();
+
+			if (Validator.isNotNull(cssClass)) {
+				sb.append(StringPool.SPACE);
+				sb.append(cssClass);
+				sb.append("-btn");
+			}
+
+			sb.append("\" id=\"");
 			sb.append(_getNamespacedId());
 			sb.append("NavbarBtn\" ");
 			sb.append("data-navId=\"");
 			sb.append(_getNamespacedId());
-			sb.append("\">");
+			sb.append("\" tabindex=\"0\">");
 
 			String icon = getIcon();
 

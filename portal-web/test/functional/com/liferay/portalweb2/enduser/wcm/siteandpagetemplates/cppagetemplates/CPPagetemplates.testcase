@@ -1,4 +1,4 @@
-<definition>
+<definition component-name="portal-wcm">
 	<set-up>
 		<execute macro="User#firstLoginPG" />
 	</set-up>
@@ -53,7 +53,7 @@
 			<var name="pageTemplateName" value="${pageTemplateName}" />
 			<var name="siteName" value="${siteName}" />
 			<var name="sitePageName" value="${sitePageName}" />
-			<var name="sitePageType" value="Public" />
+			<var name="sitePagePrivacy" value="Public" />
 		</execute>
 
 		<execute macro="Page#openURL">
@@ -62,6 +62,35 @@
 		</execute>
 
 		<execute macro="SitePage#viewPageTemplatePG" >
+			<var name="pageTemplateName" value="${pageTemplateName}" />
+		</execute>
+	</command>
+
+	<command name="DeletePageTemplate" priority="5">
+		<var name="pageTemplateName" value="Page Template Name" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Page Templates" />
+		</execute>
+
+		<execute macro="PageTemplate#addCP">
+			<var name="pageTemplateActive" value="Yes" />
+			<var name="pageTemplateName" value="${pageTemplateName}" />
+		</execute>
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Page Templates" />
+		</execute>
+
+		<execute macro="PageTemplate#deleteCP">
+			<var name="pageTemplateName" value="${pageTemplateName}" />
+		</execute>
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Page Templates" />
+		</execute>
+
+		<execute macro="PageTemplate#viewDefaultCP">
 			<var name="pageTemplateName" value="${pageTemplateName}" />
 		</execute>
 	</command>

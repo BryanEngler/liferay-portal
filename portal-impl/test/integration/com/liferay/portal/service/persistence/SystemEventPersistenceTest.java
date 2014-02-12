@@ -111,6 +111,8 @@ public class SystemEventPersistenceTest {
 
 		SystemEvent newSystemEvent = _persistence.create(pk);
 
+		newSystemEvent.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newSystemEvent.setGroupId(ServiceTestUtil.nextLong());
 
 		newSystemEvent.setCompanyId(ServiceTestUtil.nextLong());
@@ -141,6 +143,8 @@ public class SystemEventPersistenceTest {
 
 		SystemEvent existingSystemEvent = _persistence.findByPrimaryKey(newSystemEvent.getPrimaryKey());
 
+		Assert.assertEquals(existingSystemEvent.getMvccVersion(),
+			newSystemEvent.getMvccVersion());
 		Assert.assertEquals(existingSystemEvent.getSystemEventId(),
 			newSystemEvent.getSystemEventId());
 		Assert.assertEquals(existingSystemEvent.getGroupId(),
@@ -170,6 +174,58 @@ public class SystemEventPersistenceTest {
 			newSystemEvent.getType());
 		Assert.assertEquals(existingSystemEvent.getExtraData(),
 			newSystemEvent.getExtraData());
+	}
+
+	@Test
+	public void testCountByGroupId() {
+		try {
+			_persistence.countByGroupId(ServiceTestUtil.nextLong());
+
+			_persistence.countByGroupId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByG_S() {
+		try {
+			_persistence.countByG_S(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByG_S(0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByG_C_C() {
+		try {
+			_persistence.countByG_C_C(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), ServiceTestUtil.nextLong());
+
+			_persistence.countByG_C_C(0L, 0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByG_C_C_T() {
+		try {
+			_persistence.countByG_C_C_T(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextInt());
+
+			_persistence.countByG_C_C_T(0L, 0L, 0L, 0);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -208,9 +264,9 @@ public class SystemEventPersistenceTest {
 
 	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("SystemEvent",
-			"systemEventId", true, "groupId", true, "companyId", true,
-			"userId", true, "userName", true, "createDate", true,
-			"classNameId", true, "classPK", true, "classUuid", true,
+			"mvccVersion", true, "systemEventId", true, "groupId", true,
+			"companyId", true, "userId", true, "userName", true, "createDate",
+			true, "classNameId", true, "classPK", true, "classUuid", true,
 			"referrerClassNameId", true, "parentSystemEventId", true,
 			"systemEventSetKey", true, "type", true, "extraData", true);
 	}
@@ -331,6 +387,8 @@ public class SystemEventPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		SystemEvent systemEvent = _persistence.create(pk);
+
+		systemEvent.setMvccVersion(ServiceTestUtil.nextLong());
 
 		systemEvent.setGroupId(ServiceTestUtil.nextLong());
 

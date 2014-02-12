@@ -41,7 +41,6 @@
 	<classpathentry kind="lib" path="lib/development/hsql.jar"/>
 	<classpathentry kind="lib" path="lib/development/interbase.jar"/>
 	<classpathentry kind="lib" path="lib/development/j2h.jar"/>
-	<classpathentry kind="lib" path="lib/development/jaas.jar"/>
 	<classpathentry kind="lib" path="lib/development/jalopy.jar"/>
 	<classpathentry kind="lib" path="lib/development/jargs.jar"/>
 	<classpathentry kind="lib" path="lib/development/jarjar.jar"/>
@@ -53,7 +52,6 @@
 	<classpathentry kind="lib" path="lib/development/jhighlight.jar"/>
 	<classpathentry kind="lib" path="lib/development/jms.jar"/>
 	<classpathentry kind="lib" path="lib/development/jndi.jar"/>
-	<classpathentry kind="lib" path="lib/development/jnet.jar"/>
 	<classpathentry kind="lib" path="lib/development/jserrorcollector.jar"/>
 	<classpathentry kind="lib" path="lib/development/jsp-api.jar"/>
 	<classpathentry kind="lib" path="lib/development/jta.jar"/>
@@ -79,6 +77,7 @@
 	<classpathentry kind="lib" path="lib/development/selenium-java.jar"/>
 	<classpathentry kind="lib" path="lib/development/selenium-server.jar"/>
 	<classpathentry kind="lib" path="lib/development/servlet-api.jar"/>
+	<classpathentry kind="lib" path="lib/development/sikuli-script.jar"/>
 	<classpathentry kind="lib" path="lib/development/smtp.jar"/>
 	<classpathentry kind="lib" path="lib/development/sonar-ant-task.jar"/>
 	<classpathentry kind="lib" path="lib/development/spring-instrument.jar"/>
@@ -231,7 +230,6 @@
 	<classpathentry kind="lib" path="lib/portal/lucene-queryparser.jar"/>
 	<classpathentry kind="lib" path="lib/portal/lucene-spellchecker.jar"/>
 	<classpathentry kind="lib" path="lib/portal/mchange-commons-java.jar"/>
-	<classpathentry kind="lib" path="lib/portal/memcached.jar"/>
 	<classpathentry kind="lib" path="lib/portal/metadata-extractor.jar"/>
 	<classpathentry kind="lib" path="lib/portal/mime4j-core.jar"/>
 	<classpathentry kind="lib" path="lib/portal/mime4j-dom.jar"/>

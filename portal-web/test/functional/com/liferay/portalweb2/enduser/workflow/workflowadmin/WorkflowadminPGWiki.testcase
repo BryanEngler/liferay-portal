@@ -1,4 +1,4 @@
-<definition>
+<definition component-name="portal-workflow">
 	<property name="web.plugins.includes" value="kaleo-web" />
 
 	<var name="pageName" value="Wiki Page" />
@@ -101,7 +101,7 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="WikiPage#viewPagePG">
+		<execute macro="WikiPage#viewPG">
 			<var name="wikiPageContent" value="${wikiPageContent}" />
 			<var name="wikiPageRevision" value="1.0" />
 			<var name="wikiPageTitle" value="${wikiPageTitle}" />

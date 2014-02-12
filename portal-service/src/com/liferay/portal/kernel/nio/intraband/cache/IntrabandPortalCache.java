@@ -30,10 +30,6 @@ import java.io.Serializable;
 
 import java.nio.ByteBuffer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 /**
  * @author Shuyang Zhou
  */
@@ -52,42 +48,6 @@ public class IntrabandPortalCache
 		SystemDataType systemDataType = SystemDataType.PORTAL_CACHE;
 
 		_portalCacheType = systemDataType.getValue();
-	}
-
-	@Override
-	public void destroy() {
-		Serializer serializer = _createSerializer(
-			PortalCacheActionType.DESTROY);
-
-		_intraband.sendDatagram(
-			_registrationReference,
-			Datagram.createRequestDatagram(
-				_portalCacheType, serializer.toByteBuffer()));
-	}
-
-	@Override
-	public Collection<V> get(Collection<K> keys) {
-		Serializer serializer = _createSerializer(
-			PortalCacheActionType.GET_BULK);
-
-		serializer.writeObject((Serializable)keys);
-
-		try {
-			return (Collection<V>)_syncSend(serializer.toByteBuffer());
-		}
-		catch (Exception e) {
-			if (_log.isWarnEnabled()) {
-				_log.warn("Unable to bulk get, coverting to cache miss", e);
-			}
-
-			List<V> values = new ArrayList<V>(keys.size());
-
-			for (int i = 0; i < keys.size(); i++) {
-				values.add(null);
-			}
-
-			return values;
-		}
 	}
 
 	@Override
@@ -130,6 +90,35 @@ public class IntrabandPortalCache
 	public void put(K key, V value, int timeToLive) {
 		Serializer serializer = _createSerializer(
 			PortalCacheActionType.PUT_TTL);
+
+		serializer.writeObject(key);
+		serializer.writeObject(value);
+		serializer.writeInt(timeToLive);
+
+		_intraband.sendDatagram(
+			_registrationReference,
+			Datagram.createRequestDatagram(
+				_portalCacheType, serializer.toByteBuffer()));
+	}
+
+	@Override
+	public void putQuiet(K key, V value) {
+		Serializer serializer = _createSerializer(
+			PortalCacheActionType.PUT_QUIET);
+
+		serializer.writeObject(key);
+		serializer.writeObject(value);
+
+		_intraband.sendDatagram(
+			_registrationReference,
+			Datagram.createRequestDatagram(
+				_portalCacheType, serializer.toByteBuffer()));
+	}
+
+	@Override
+	public void putQuiet(K key, V value, int timeToLive) {
+		Serializer serializer = _createSerializer(
+			PortalCacheActionType.PUT_QUIET_TTL);
 
 		serializer.writeObject(key);
 		serializer.writeObject(value);

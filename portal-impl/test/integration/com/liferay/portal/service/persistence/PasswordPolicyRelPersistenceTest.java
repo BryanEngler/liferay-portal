@@ -112,6 +112,8 @@ public class PasswordPolicyRelPersistenceTest {
 
 		PasswordPolicyRel newPasswordPolicyRel = _persistence.create(pk);
 
+		newPasswordPolicyRel.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newPasswordPolicyRel.setPasswordPolicyId(ServiceTestUtil.nextLong());
 
 		newPasswordPolicyRel.setClassNameId(ServiceTestUtil.nextLong());
@@ -122,6 +124,8 @@ public class PasswordPolicyRelPersistenceTest {
 
 		PasswordPolicyRel existingPasswordPolicyRel = _persistence.findByPrimaryKey(newPasswordPolicyRel.getPrimaryKey());
 
+		Assert.assertEquals(existingPasswordPolicyRel.getMvccVersion(),
+			newPasswordPolicyRel.getMvccVersion());
 		Assert.assertEquals(existingPasswordPolicyRel.getPasswordPolicyRelId(),
 			newPasswordPolicyRel.getPasswordPolicyRelId());
 		Assert.assertEquals(existingPasswordPolicyRel.getPasswordPolicyId(),
@@ -130,6 +134,31 @@ public class PasswordPolicyRelPersistenceTest {
 			newPasswordPolicyRel.getClassNameId());
 		Assert.assertEquals(existingPasswordPolicyRel.getClassPK(),
 			newPasswordPolicyRel.getClassPK());
+	}
+
+	@Test
+	public void testCountByPasswordPolicyId() {
+		try {
+			_persistence.countByPasswordPolicyId(ServiceTestUtil.nextLong());
+
+			_persistence.countByPasswordPolicyId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_C() {
+		try {
+			_persistence.countByC_C(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByC_C(0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -168,8 +197,8 @@ public class PasswordPolicyRelPersistenceTest {
 
 	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("PasswordPolicyRel",
-			"passwordPolicyRelId", true, "passwordPolicyId", true,
-			"classNameId", true, "classPK", true);
+			"mvccVersion", true, "passwordPolicyRelId", true,
+			"passwordPolicyId", true, "classNameId", true, "classPK", true);
 	}
 
 	@Test
@@ -307,6 +336,8 @@ public class PasswordPolicyRelPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		PasswordPolicyRel passwordPolicyRel = _persistence.create(pk);
+
+		passwordPolicyRel.setMvccVersion(ServiceTestUtil.nextLong());
 
 		passwordPolicyRel.setPasswordPolicyId(ServiceTestUtil.nextLong());
 

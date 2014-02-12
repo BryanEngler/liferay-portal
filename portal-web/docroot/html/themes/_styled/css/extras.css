@@ -105,7 +105,7 @@
 }
 
 .dockbar-split .dockbar .navbar-inner .container .nav-collapse > .nav {
-	 > li > a {
+	> li > a {
 		@include text-shadow(none);
 
 		@include respond-to(phone) {
@@ -125,10 +125,6 @@
 
 			&.open a {
 				@include border-radius(4px);
-
-				@include respond-to(phone) {
-					@include border-radius(0);
-				}
 			}
 
 			> ul {
@@ -146,7 +142,7 @@
 
 .portlet-document-library, .portlet-dynamic-data-mapping {
 	.lfr-ddm-small-image-preview {
-		@include box-shadow(0 1px 3px #ccc);
+		@include box-shadow(0 1px 3px #CCC);
 	}
 }
 
@@ -182,6 +178,12 @@
 	@include border-radius(10px);
 }
 
+.portlet-language .portlet-body {
+	.current-language, .taglib-icon, .taglib-language-list-text {
+		@include border-radius(10px);
+	}
+}
+
 body > .lfr-menu-list ul, .active-area-proxy, .entry-display-style .entry-thumbnail, .lfr-api-results, .lfr-translation-manager, .lfr-translation-manager-translation, .lfr-upload-container .cancel-button .modify-pages .delete-tab, .portlet-image-gallery-display .image-thumbnail img, .rule-group-instance-container .rule-group-instance, .select-documents, .select-files, .taglib-ratings.stars:hover, .taglib-ratings.stars:hover .liferay-rating-vote, .tags-search-combobox .field-input-text {
 	@include border-radius(4px);
 }
@@ -206,6 +208,24 @@ body > .lfr-menu-list ul, .active-area-proxy, .entry-display-style .entry-thumbn
 .underlay-content {
 	@include border-bottom-left-radius(8px);
 	@include border-bottom-right-radius(8px);
+}
+
+.input-localized {
+	.lfr-input-localized-state {
+		@include border-radius(3px);
+	}
+
+	.lfr-input-localized .lfr-input-localized-state {
+		@include box-shadow(0 0 3px #DDD);
+
+		&.lfr-input-localized-state-error {
+			@include box-shadow(0 0 3px #FF0047);
+		}
+	}
+
+	.palette-item-selected .lfr-input-localized-state {
+		@include box-shadow(0 0 3px #27C1F2);
+	}
 }
 
 .lfr-add-panel {
@@ -279,7 +299,7 @@ body > .lfr-menu-list ul, .active-area-proxy, .entry-display-style .entry-thumbn
 }
 
 .lfr-api-service-search .field-input {
-	@include box-sizing("border-box");
+	@include box-sizing(border-box);
 }
 
 @include keyframes(progress-bar-stripes) {
@@ -358,7 +378,7 @@ body:first-of-type {
 		}
 	}
 
-	.portlet-content {
+	.portlet-borderless-container, .portlet-content {
 		&:hover {
 			.lfr-icon-actions {
 				@extend %portlet-action-bar-fx-hover;
@@ -376,6 +396,10 @@ body:first-of-type {
 
 			.taglib-text {
 				@extend %portlet-action-bar-fx-text;
+
+				@include respond-to(phone, tablet) {
+					max-width: 200px;
+				}
 			}
 		}
 	}

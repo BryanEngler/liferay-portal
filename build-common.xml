@@ -3,6 +3,7 @@
 <project name="build-common"
 	xmlns:antelope="antlib:ise.antelope.tasks"
 	xmlns:artifact="antlib:org.apache.maven.artifact.ant"
+	xmlns:sonar="antlib:org.sonar.ant"
 >
 	<dirname file="${ant.file.build-common}" property="project.dir" />
 
@@ -221,6 +222,10 @@
 	</antelope:stringutil>
 
 	<condition property="file.suffix.bat" value=".bat" else=".sh">
+		<contains string="${os.name}" substring="Windows" casesensitive="false" />
+	</condition>
+
+	<condition property="file.suffix.cmd" value=".cmd" else=".sh">
 		<contains string="${os.name}" substring="Windows" casesensitive="false" />
 	</condition>
 
@@ -522,6 +527,252 @@ Please set the environment variable ANT_OPTS to the recommended value of
 		</sequential>
 	</macrodef>
 
+	<macrodef name="check-fix-pack-requirements">
+		<attribute default="${app.server.dir}/patching-tool/patches" name="fix.pack.dir" />
+		<attribute name="fix.pack.file.name" />
+
+		<sequential>
+			<propertyregex
+				input="@{fix.pack.file.name}"
+				property="fix.pack.build.version"
+				regexp=".+(\d{4})\.zip"
+				replace="\1"
+			/>
+
+			<propertyregex
+				input="@{fix.pack.file.name}"
+				property="fix.pack.portal.version"
+				regexp=".+(\d)(\d)(\d\d)\.zip"
+				replace="\1.\2.\3"
+			/>
+
+			<property
+				name="fix.pack.temp.dir"
+				value="@{fix.pack.dir}/temp"
+			/>
+
+			<mkdir dir="${fix.pack.temp.dir}" />
+
+			<unzip
+				dest="${fix.pack.temp.dir}"
+				src="@{fix.pack.dir}/@{fix.pack.file.name}"
+			/>
+
+			<xmlproperty file="${fix.pack.temp.dir}/fixpack_documentation.xml" />
+
+			<delete dir="${fix.pack.temp.dir}" />
+
+			<antelope:stringutil property="fix.pack.requirements" string="${patch.requirements}">
+				<antelope:replace regex="!" replacement="" />
+				<antelope:replace regex="&gt;=" replacement="-" />
+			</antelope:stringutil>
+
+			<var name="patch.requirements" unset="true" />
+
+			<if>
+				<not>
+					<equals arg1="${fix.pack.requirements}" arg2="" />
+				</not>
+				<then>
+					<for list="${fix.pack.requirements}" param="fix.pack.requirement">
+						<sequential>
+							<propertyregex
+								input="@{fix.pack.requirement}"
+								property="fix.pack.requirement.type"
+								override="true"
+								regexp="-\d+"
+								replace=""
+							/>
+
+							<if>
+								<equals arg1="${fix.pack.requirement.type}" arg2="hotfix" />
+								<then>
+									<var
+										name="fix.pack.requirement.file.name"
+										value="liferay-@{fix.pack.requirement}-${fix.pack.build.version}.zip"
+									/>
+								</then>
+								<else>
+									<var
+										name="fix.pack.requirement.file.name"
+										value="liferay-fix-pack-@{fix.pack.requirement}-${fix.pack.build.version}.zip"
+									/>
+								</else>
+							</if>
+
+							<if>
+								<not>
+									<available file="@{fix.pack.dir}/${fix.pack.requirement.file.name}" />
+								</not>
+								<then>
+									<get
+										dest="@{fix.pack.dir}"
+										src="http://mirrors/files.liferay.com/private/ee/fix-packs/${fix.pack.portal.version}/${fix.pack.requirement.type}/${fix.pack.requirement.file.name}"
+									/>
+
+									<check-fix-pack-requirements
+										fix.pack.dir="@{fix.pack.dir}"
+										fix.pack.file.name="${fix.pack.requirement.file.name}"
+									/>
+								</then>
+							</if>
+						</sequential>
+					</for>
+				</then>
+			</if>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="execute">
+		<attribute default="." name="dir" />
+
+		<text name="commands" />
+
+		<sequential>
+			<propertyregex
+				input="@{commands}"
+				override="true"
+				property="commands.trimmed"
+				regexp="\n(?!\w|\t)|\t"
+				replace=""
+			/>
+
+			<for delimiter="${line.separator}" list="${commands.trimmed}" param="command">
+				<sequential>
+					<propertyregex
+						input="@{command}"
+						override="true"
+						property="command.executable"
+						regexp="(.+?) .+"
+						replace="\1"
+					/>
+
+					<propertyregex
+						input="@{command}"
+						override="true"
+						property="command.arg.line"
+						regexp=".+? (.+)"
+						replace="\1"
+					/>
+
+					<if>
+						<contains string="${command.arg.line}" substring=" > " />
+						<then>
+							<propertyregex
+								input="${command.arg.line}"
+								override="true"
+								property="command.arg.line"
+								regexp="(.+) > .+"
+								replace="\1"
+							/>
+
+							<propertyregex
+								input="@{command}"
+								override="true"
+								property="command.output"
+								regexp=".+ > (.+)"
+								replace="\1"
+							/>
+
+							<if>
+								<os family="unix" />
+								<then>
+									<if>
+										<contains string="${command.executable}" substring=".sh" />
+										<then>
+											<exec dir="@{dir}" executable="/bin/bash" output="${command.output}">
+												<arg line="${command.executable} ${command.arg.line}" />
+											</exec>
+										</then>
+										<else>
+											<exec dir="@{dir}" executable="${command.executable}" output="${command.output}">
+												<arg line="${command.arg.line}" />
+											</exec>
+										</else>
+									</if>
+								</then>
+								<else>
+									<exec dir="@{dir}" executable="cmd.exe" output="${command.output}">
+										<arg line="/c ${command.executable} ${command.arg.line}" />
+									</exec>
+								</else>
+							</if>
+						</then>
+						<elseif>
+							<contains string="${command.arg.line}" substring=" >> " />
+							<then>
+								<propertyregex
+									input="${command.arg.line}"
+									override="true"
+									property="command.arg.line"
+									regexp="(.+) >> .+"
+									replace="\1"
+								/>
+
+								<propertyregex
+									input="@{command}"
+									override="true"
+									property="command.output"
+									regexp=".+ >> (.+)"
+									replace="\1"
+								/>
+
+								<if>
+									<os family="unix" />
+									<then>
+										<if>
+											<contains string="${command.executable}" substring=".sh" />
+											<then>
+												<exec append="true" dir="@{dir}" executable="/bin/bash" output="${command.output}">
+													<arg line="${command.executable} ${command.arg.line}" />
+												</exec>
+											</then>
+											<else>
+												<exec append="true" dir="@{dir}" executable="${command.executable}" output="${command.output}">
+													<arg line="${command.arg.line}" />
+												</exec>
+											</else>
+										</if>
+									</then>
+									<else>
+										<exec append="true" dir="@{dir}" executable="cmd.exe" output="${command.output}">
+											<arg line="/c ${command.executable} ${command.arg.line}" />
+										</exec>
+									</else>
+								</if>
+							</then>
+						</elseif>
+						<else>
+							<if>
+								<os family="unix" />
+								<then>
+									<if>
+										<contains string="${command.executable}" substring=".sh" />
+										<then>
+											<exec dir="@{dir}" executable="/bin/bash">
+												<arg line="${command.executable} ${command.arg.line}" />
+											</exec>
+										</then>
+										<else>
+											<exec dir="@{dir}" executable="${command.executable}">
+												<arg line="${command.arg.line}" />
+											</exec>
+										</else>
+									</if>
+								</then>
+								<else>
+									<exec dir="@{dir}" executable="cmd.exe">
+										<arg line="/c @{command}" />
+									</exec>
+								</else>
+							</if>
+						</else>
+					</if>
+				</sequential>
+			</for>
+		</sequential>
+	</macrodef>
+
 	<macrodef name="manifest-helper">
 		<attribute name="analyze" default="false" />
 
@@ -730,52 +981,78 @@ Please set the environment variable ANT_OPTS to the recommended value of
 			</fileset>
 		</cobertura-merge>
 
-		<cobertura-report
-			datafile="${sonar.cobertura.reportPath}"
-			destdir="${sonar.cobertura.report.folder}"
-			format="${junit.cobertura.report.format}"
-		>
-			<fileset dir="${project.dir}/portal-impl/src">
-				<include name="**/*.java" />
-			</fileset>
-			<fileset dir="${project.dir}/portal-service/src">
-				<include name="**/*.java" />
-			</fileset>
-			<fileset dir="${project.dir}/util-java/src">
-				<include name="**/*.java" />
-			</fileset>
-			<fileset dir="${project.dir}/util-taglib/src">
-				<include name="**/*.java" />
-			</fileset>
-		</cobertura-report>
+		<for list="${sonar.modules}" delimiter="," param="sonar.module">
+			<sequential>
+				<if>
+					<available file="@{sonar.module}/${sonar.cobertura.itReportPath}/cobertura.ser" />
+					<then>
+						<cobertura-report
+							datafile="@{sonar.module}/${sonar.cobertura.itReportPath}/cobertura.ser"
+							destdir="@{sonar.module}/${sonar.cobertura.itReportPath}"
+							format="${junit.cobertura.report.format}"
+						>
+							<fileset dir="@{sonar.module}/src">
+								<include name="**/*.java" />
+							</fileset>
+						</cobertura-report>
+					</then>
+				</if>
 
-		<copy todir="${sonar.surefire.reportsPath}" failonerror="false">
-			<fileset dir="${project.dir}/portal-impl/test-results">
-				<include name="**/*.xml" />
-			</fileset>
-			<fileset dir="${project.dir}/portal-service/test-results">
-				<include name="**/*.xml" />
-			</fileset>
-			<fileset dir="${project.dir}/util-java/test-results">
-				<include name="**/*.xml" />
-			</fileset>
-			<fileset dir="${project.dir}/util-taglib/test-results">
-				<include name="**/*.xml" />
-			</fileset>
-		</copy>
+				<if>
+					<available file="@{sonar.module}/${sonar.cobertura.reportPath}/cobertura.ser" />
+					<then>
+						<cobertura-report
+							datafile="@{sonar.module}/${sonar.cobertura.reportPath}/cobertura.ser"
+							destdir="@{sonar.module}/${sonar.cobertura.reportPath}"
+							format="${junit.cobertura.report.format}"
+						>
+							<fileset dir="@{sonar.module}/src">
+								<include name="**/*.java" />
+							</fileset>
+						</cobertura-report>
+					</then>
+				</if>
+
+				<if>
+					<available file="@{sonar.module}/test-results/integration" type="dir" />
+					<then>
+						<copy todir="@{sonar.module}/test-results">
+							<fileset dir="@{sonar.module}/test-results/integration">
+								<include name="TEST*.xml" />
+								<size value="0" when="more" />
+							</fileset>
+							<globmapper from="TEST*" to="TEST-integration*" />
+						</copy>
+					</then>
+				</if>
+
+				<if>
+					<available file="@{sonar.module}/test-results/unit" type="dir" />
+					<then>
+						<copy todir="@{sonar.module}/test-results">
+							<fileset dir="@{sonar.module}/test-results/unit">
+								<include name="TEST*.xml" />
+								<size value="0" when="more" />
+							</fileset>
+							<globmapper from="TEST*" to="TEST-unit*" />
+						</copy>
+					</then>
+				</if>
+			</sequential>
+		</for>
 
 		<taskdef resource="org/sonar/ant/antlib.xml" uri="antlib:org.sonar.ant">
 			<classpath path="lib/development/sonar-ant-task.jar" />
 		</taskdef>
 
-		<sonar:sonar
-			key="com.liferay:liferay-portal"
-			version="0.1-SNAPSHOT"
-			xmlns:sonar="antlib:org.sonar.ant"
-		/>
+		<sonar:sonar />
 
-		<delete dir="${sonar.cobertura.report.folder}" />
-		<delete dir="${sonar.surefire.reportsPath}" />
+		<for list="${sonar.modules}" delimiter="," param="sonar.module">
+			<sequential>
+				<delete dir="@{sonar.module}/${sonar.cobertura.report.folder}" />
+				<delete dir="@{sonar.module}/${sonar.junit.reportsPath}" />
+			</sequential>
+		</for>
 	</target>
 
 	<target name="test">
@@ -999,7 +1276,7 @@ Please set the environment variable ANT_OPTS to the recommended value of
 						<equals arg1="${test.with.security.count}" arg2="0" />
 					</not>
 					<then>
-						<junit dir="${project.dir}" fork="on" forkmode="${junit.forkmode}" haltonfailure="${junit.halt.on.failure}" outputtoformatters="false" printsummary="on" showoutput="true">
+						<junit dir="${project.dir}" fork="on" forkmode="once" haltonfailure="${junit.halt.on.failure}" outputtoformatters="false" printsummary="on" showoutput="true">
 							<sysproperty key="junit.aspectj.dump" file="woven-classes" />
 							<sysproperty key="junit.cobertura.agent" value="${junit.cobertura.agent}" />
 							<sysproperty key="junit.code.coverage" value="${junit.code.coverage}" />

@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Region;
 import com.liferay.portal.model.impl.RegionModelImpl;
@@ -111,6 +112,8 @@ public class RegionPersistenceTest {
 
 		Region newRegion = _persistence.create(pk);
 
+		newRegion.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newRegion.setCountryId(ServiceTestUtil.nextLong());
 
 		newRegion.setRegionCode(ServiceTestUtil.randomString());
@@ -123,6 +126,8 @@ public class RegionPersistenceTest {
 
 		Region existingRegion = _persistence.findByPrimaryKey(newRegion.getPrimaryKey());
 
+		Assert.assertEquals(existingRegion.getMvccVersion(),
+			newRegion.getMvccVersion());
 		Assert.assertEquals(existingRegion.getRegionId(),
 			newRegion.getRegionId());
 		Assert.assertEquals(existingRegion.getCountryId(),
@@ -131,6 +136,57 @@ public class RegionPersistenceTest {
 			newRegion.getRegionCode());
 		Assert.assertEquals(existingRegion.getName(), newRegion.getName());
 		Assert.assertEquals(existingRegion.getActive(), newRegion.getActive());
+	}
+
+	@Test
+	public void testCountByCountryId() {
+		try {
+			_persistence.countByCountryId(ServiceTestUtil.nextLong());
+
+			_persistence.countByCountryId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByActive() {
+		try {
+			_persistence.countByActive(ServiceTestUtil.randomBoolean());
+
+			_persistence.countByActive(ServiceTestUtil.randomBoolean());
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_R() {
+		try {
+			_persistence.countByC_R(ServiceTestUtil.nextLong(), StringPool.BLANK);
+
+			_persistence.countByC_R(0L, StringPool.NULL);
+
+			_persistence.countByC_R(0L, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_A() {
+		try {
+			_persistence.countByC_A(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.randomBoolean());
+
+			_persistence.countByC_A(0L, ServiceTestUtil.randomBoolean());
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -167,8 +223,9 @@ public class RegionPersistenceTest {
 	}
 
 	protected OrderByComparator getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("Region", "regionId", true,
-			"countryId", true, "regionCode", true, "name", true, "active", true);
+		return OrderByComparatorFactoryUtil.create("Region", "mvccVersion",
+			true, "regionId", true, "countryId", true, "regionCode", true,
+			"name", true, "active", true);
 	}
 
 	@Test
@@ -284,6 +341,8 @@ public class RegionPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		Region region = _persistence.create(pk);
+
+		region.setMvccVersion(ServiceTestUtil.nextLong());
 
 		region.setCountryId(ServiceTestUtil.nextLong());
 

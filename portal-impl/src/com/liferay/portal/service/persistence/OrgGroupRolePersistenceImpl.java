@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnmodifiableList;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.model.OrgGroupRole;
 import com.liferay.portal.model.impl.OrgGroupRoleImpl;
@@ -1108,7 +1109,7 @@ public class OrgGroupRolePersistenceImpl extends BasePersistenceImpl<OrgGroupRol
 			CacheRegistryUtil.clear(OrgGroupRoleImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(OrgGroupRoleImpl.class.getName());
+		EntityCacheUtil.clearCache(OrgGroupRoleImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -1320,7 +1321,8 @@ public class OrgGroupRolePersistenceImpl extends BasePersistenceImpl<OrgGroupRol
 		}
 
 		EntityCacheUtil.putResult(OrgGroupRoleModelImpl.ENTITY_CACHE_ENABLED,
-			OrgGroupRoleImpl.class, orgGroupRole.getPrimaryKey(), orgGroupRole);
+			OrgGroupRoleImpl.class, orgGroupRole.getPrimaryKey(), orgGroupRole,
+			false);
 
 		orgGroupRole.resetOriginalValues();
 
@@ -1337,6 +1339,7 @@ public class OrgGroupRolePersistenceImpl extends BasePersistenceImpl<OrgGroupRol
 		orgGroupRoleImpl.setNew(orgGroupRole.isNew());
 		orgGroupRoleImpl.setPrimaryKey(orgGroupRole.getPrimaryKey());
 
+		orgGroupRoleImpl.setMvccVersion(orgGroupRole.getMvccVersion());
 		orgGroupRoleImpl.setOrganizationId(orgGroupRole.getOrganizationId());
 		orgGroupRoleImpl.setGroupId(orgGroupRole.getGroupId());
 		orgGroupRoleImpl.setRoleId(orgGroupRole.getRoleId());
@@ -1670,10 +1673,22 @@ public class OrgGroupRolePersistenceImpl extends BasePersistenceImpl<OrgGroupRol
 			}
 		};
 
-	private static CacheModel<OrgGroupRole> _nullOrgGroupRoleCacheModel = new CacheModel<OrgGroupRole>() {
-			@Override
-			public OrgGroupRole toEntityModel() {
-				return _nullOrgGroupRole;
-			}
-		};
+	private static CacheModel<OrgGroupRole> _nullOrgGroupRoleCacheModel = new NullCacheModel();
+
+	private static class NullCacheModel implements CacheModel<OrgGroupRole>,
+		MVCCModel {
+		@Override
+		public long getMvccVersion() {
+			return 0;
+		}
+
+		@Override
+		public void setMvccVersion(long mvccVersion) {
+		}
+
+		@Override
+		public OrgGroupRole toEntityModel() {
+			return _nullOrgGroupRole;
+		}
+	}
 }

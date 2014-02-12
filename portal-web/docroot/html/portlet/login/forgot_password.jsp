@@ -114,10 +114,10 @@ if (reminderAttempts == null) {
 					%>
 
 					<div class="alert alert-info">
-						<%= LanguageUtil.format(pageContext, "a-new-password-will-be-sent-to-x-if-you-can-correctly-answer-the-following-question", login) %>
+						<%= LanguageUtil.format(pageContext, "a-new-password-will-be-sent-to-x-if-you-can-correctly-answer-the-following-question", login, false) %>
 					</div>
 
-					<aui:input autoFocus="<%= true %>" label="<%= HtmlUtil.escape(user2.getReminderQueryQuestion()) %>" name="answer" type="text" />
+					<aui:input autoFocus="<%= true %>" label="<%= HtmlUtil.escape(LanguageUtil.get(pageContext, user2.getReminderQueryQuestion())) %>" name="answer" type="text" />
 				</c:if>
 
 				<c:choose>

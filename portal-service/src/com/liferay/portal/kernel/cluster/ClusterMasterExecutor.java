@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.cluster;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.MethodHandler;
 
@@ -22,12 +24,15 @@ import java.util.concurrent.Future;
 /**
  * @author Michael C. Han
  */
+@ProviderType
 public interface ClusterMasterExecutor {
 
 	public <T> Future<T> executeOnMaster(MethodHandler methodHandler)
 		throws SystemException;
 
 	public void initialize();
+
+	public boolean isEnabled();
 
 	public boolean isMaster();
 

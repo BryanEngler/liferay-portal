@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.ListType;
+import com.liferay.portal.model.MVCCModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -31,12 +32,25 @@ import java.io.ObjectOutput;
  * @see ListType
  * @generated
  */
-public class ListTypeCacheModel implements CacheModel<ListType>, Externalizable {
+public class ListTypeCacheModel implements CacheModel<ListType>, Externalizable,
+	MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(7);
+		StringBundler sb = new StringBundler(9);
 
-		sb.append("{listTypeId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", listTypeId=");
 		sb.append(listTypeId);
 		sb.append(", name=");
 		sb.append(name);
@@ -51,6 +65,7 @@ public class ListTypeCacheModel implements CacheModel<ListType>, Externalizable 
 	public ListType toEntityModel() {
 		ListTypeImpl listTypeImpl = new ListTypeImpl();
 
+		listTypeImpl.setMvccVersion(mvccVersion);
 		listTypeImpl.setListTypeId(listTypeId);
 
 		if (name == null) {
@@ -74,6 +89,7 @@ public class ListTypeCacheModel implements CacheModel<ListType>, Externalizable 
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		listTypeId = objectInput.readInt();
 		name = objectInput.readUTF();
 		type = objectInput.readUTF();
@@ -82,6 +98,7 @@ public class ListTypeCacheModel implements CacheModel<ListType>, Externalizable 
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeInt(listTypeId);
 
 		if (name == null) {
@@ -99,6 +116,7 @@ public class ListTypeCacheModel implements CacheModel<ListType>, Externalizable 
 		}
 	}
 
+	public long mvccVersion;
 	public int listTypeId;
 	public String name;
 	public String type;

@@ -17,6 +17,7 @@ package com.liferay.portal.model.impl;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.Repository;
 
 import java.io.Externalizable;
@@ -34,12 +35,24 @@ import java.util.Date;
  * @generated
  */
 public class RepositoryCacheModel implements CacheModel<Repository>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(29);
+		StringBundler sb = new StringBundler(31);
 
-		sb.append("{uuid=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", uuid=");
 		sb.append(uuid);
 		sb.append(", repositoryId=");
 		sb.append(repositoryId);
@@ -75,6 +88,8 @@ public class RepositoryCacheModel implements CacheModel<Repository>,
 	@Override
 	public Repository toEntityModel() {
 		RepositoryImpl repositoryImpl = new RepositoryImpl();
+
+		repositoryImpl.setMvccVersion(mvccVersion);
 
 		if (uuid == null) {
 			repositoryImpl.setUuid(StringPool.BLANK);
@@ -148,6 +163,7 @@ public class RepositoryCacheModel implements CacheModel<Repository>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		uuid = objectInput.readUTF();
 		repositoryId = objectInput.readLong();
 		groupId = objectInput.readLong();
@@ -167,6 +183,8 @@ public class RepositoryCacheModel implements CacheModel<Repository>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
+
 		if (uuid == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
@@ -221,6 +239,7 @@ public class RepositoryCacheModel implements CacheModel<Repository>,
 		objectOutput.writeLong(dlFolderId);
 	}
 
+	public long mvccVersion;
 	public String uuid;
 	public long repositoryId;
 	public long groupId;

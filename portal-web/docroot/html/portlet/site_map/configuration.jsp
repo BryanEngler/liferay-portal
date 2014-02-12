@@ -17,60 +17,31 @@
 <%@ include file="/html/portlet/site_map/init.jsp" %>
 
 <%
-String redirect = ParamUtil.getString(request, "redirect");
-
-LayoutLister layoutLister = new LayoutLister();
-
 String rootNodeName = StringPool.BLANK;
-LayoutView layoutView = layoutLister.getLayoutView(layout.getGroupId(), layout.isPrivateLayout(), rootNodeName, locale);
 
-List layoutList = layoutView.getList();
+List<LayoutDescription> layoutDescriptions = LayoutListUtil.getLayoutDescriptions(layout.getGroupId(), layout.isPrivateLayout(), rootNodeName, locale);
 %>
 
-<liferay-portlet:actionURL portletConfiguration="true" var="configurationURL" />
+<liferay-portlet:actionURL portletConfiguration="true" var="configurationActionURL" />
 
-<aui:form action="<%= configurationURL %>" method="post" name="fm">
+<liferay-portlet:renderURL portletConfiguration="true" var="configurationRenderURL" />
+
+<aui:form action="<%= configurationActionURL %>" method="post" name="fm">
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
-	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
+	<aui:input name="redirect" type="hidden" value="<%= configurationRenderURL %>" />
 
 	<aui:fieldset>
 		<aui:select label="root-layout" name="preferences--rootLayoutUuid--">
 			<aui:option value="" />
 
 			<%
-			for (int i = 0; i < layoutList.size(); i++) {
+			for (LayoutDescription layoutDescription : layoutDescriptions) {
+				Layout layoutDescriptionLayout = LayoutLocalServiceUtil.fetchLayout(layoutDescription.getPlid());
 
-				// id | parentId | ls | obj id | name | img | depth
-
-				String layoutDesc = (String)layoutList.get(i);
-
-				String[] nodeValues = StringUtil.split(layoutDesc, '|');
-
-				long objId = GetterUtil.getLong(nodeValues[3]);
-				String name = nodeValues[4];
-
-				int depth = 0;
-
-				if (i != 0) {
-					depth = GetterUtil.getInteger(nodeValues[6]);
-				}
-
-				for (int j = 0; j < depth; j++) {
-					name = "-&nbsp;" + name;
-				}
-
-				Layout curRootLayout = null;
-
-				try {
-					curRootLayout = LayoutLocalServiceUtil.getLayout(objId);
-				}
-				catch (Exception e) {
-				}
-
-				if (curRootLayout != null) {
+				if (layoutDescriptionLayout != null) {
 			%>
 
-				<aui:option label="<%= name %>" selected="<%= curRootLayout.getUuid().equals(rootLayoutUuid) %>" value="<%= curRootLayout.getUuid() %>" />
+				<aui:option label="<%= layoutDescription.getDisplayName() %>" selected="<%= layoutDescriptionLayout.getUuid().equals(rootLayoutUuid) %>" value="<%= layoutDescriptionLayout.getUuid() %>" />
 
 			<%
 				}

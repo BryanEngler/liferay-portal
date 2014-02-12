@@ -17,6 +17,7 @@ package com.liferay.portal.model.impl;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.ResourceAction;
 
 import java.io.Externalizable;
@@ -32,12 +33,24 @@ import java.io.ObjectOutput;
  * @generated
  */
 public class ResourceActionCacheModel implements CacheModel<ResourceAction>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(9);
+		StringBundler sb = new StringBundler(11);
 
-		sb.append("{resourceActionId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", resourceActionId=");
 		sb.append(resourceActionId);
 		sb.append(", name=");
 		sb.append(name);
@@ -54,6 +67,7 @@ public class ResourceActionCacheModel implements CacheModel<ResourceAction>,
 	public ResourceAction toEntityModel() {
 		ResourceActionImpl resourceActionImpl = new ResourceActionImpl();
 
+		resourceActionImpl.setMvccVersion(mvccVersion);
 		resourceActionImpl.setResourceActionId(resourceActionId);
 
 		if (name == null) {
@@ -79,6 +93,7 @@ public class ResourceActionCacheModel implements CacheModel<ResourceAction>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		resourceActionId = objectInput.readLong();
 		name = objectInput.readUTF();
 		actionId = objectInput.readUTF();
@@ -88,6 +103,7 @@ public class ResourceActionCacheModel implements CacheModel<ResourceAction>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(resourceActionId);
 
 		if (name == null) {
@@ -107,6 +123,7 @@ public class ResourceActionCacheModel implements CacheModel<ResourceAction>,
 		objectOutput.writeLong(bitwiseValue);
 	}
 
+	public long mvccVersion;
 	public long resourceActionId;
 	public String name;
 	public String actionId;

@@ -39,6 +39,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.Group;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.model.impl.GroupImpl;
 import com.liferay.portal.model.impl.GroupModelImpl;
@@ -7248,7 +7249,7 @@ public class GroupPersistenceImpl extends BasePersistenceImpl<Group>
 			CacheRegistryUtil.clear(GroupImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(GroupImpl.class.getName());
+		EntityCacheUtil.clearCache(GroupImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -7891,7 +7892,7 @@ public class GroupPersistenceImpl extends BasePersistenceImpl<Group>
 		}
 
 		EntityCacheUtil.putResult(GroupModelImpl.ENTITY_CACHE_ENABLED,
-			GroupImpl.class, group.getPrimaryKey(), group);
+			GroupImpl.class, group.getPrimaryKey(), group, false);
 
 		clearUniqueFindersCache(group);
 		cacheUniqueFindersCache(group);
@@ -7911,6 +7912,7 @@ public class GroupPersistenceImpl extends BasePersistenceImpl<Group>
 		groupImpl.setNew(group.isNew());
 		groupImpl.setPrimaryKey(group.getPrimaryKey());
 
+		groupImpl.setMvccVersion(group.getMvccVersion());
 		groupImpl.setUuid(group.getUuid());
 		groupImpl.setGroupId(group.getGroupId());
 		groupImpl.setCompanyId(group.getCompanyId());
@@ -8490,9 +8492,6 @@ public class GroupPersistenceImpl extends BasePersistenceImpl<Group>
 		catch (Exception e) {
 			throw processException(e);
 		}
-		finally {
-			FinderCacheUtil.clearCache(GroupModelImpl.MAPPING_TABLE_GROUPS_ORGS_NAME);
-		}
 	}
 
 	/**
@@ -8762,9 +8761,6 @@ public class GroupPersistenceImpl extends BasePersistenceImpl<Group>
 		}
 		catch (Exception e) {
 			throw processException(e);
-		}
-		finally {
-			FinderCacheUtil.clearCache(GroupModelImpl.MAPPING_TABLE_GROUPS_ROLES_NAME);
 		}
 	}
 
@@ -9050,9 +9046,6 @@ public class GroupPersistenceImpl extends BasePersistenceImpl<Group>
 		catch (Exception e) {
 			throw processException(e);
 		}
-		finally {
-			FinderCacheUtil.clearCache(GroupModelImpl.MAPPING_TABLE_GROUPS_USERGROUPS_NAME);
-		}
 	}
 
 	/**
@@ -9323,9 +9316,6 @@ public class GroupPersistenceImpl extends BasePersistenceImpl<Group>
 		catch (Exception e) {
 			throw processException(e);
 		}
-		finally {
-			FinderCacheUtil.clearCache(GroupModelImpl.MAPPING_TABLE_USERS_GROUPS_NAME);
-		}
 	}
 
 	@Override
@@ -9413,10 +9403,21 @@ public class GroupPersistenceImpl extends BasePersistenceImpl<Group>
 			}
 		};
 
-	private static CacheModel<Group> _nullGroupCacheModel = new CacheModel<Group>() {
-			@Override
-			public Group toEntityModel() {
-				return _nullGroup;
-			}
-		};
+	private static CacheModel<Group> _nullGroupCacheModel = new NullCacheModel();
+
+	private static class NullCacheModel implements CacheModel<Group>, MVCCModel {
+		@Override
+		public long getMvccVersion() {
+			return 0;
+		}
+
+		@Override
+		public void setMvccVersion(long mvccVersion) {
+		}
+
+		@Override
+		public Group toEntityModel() {
+			return _nullGroup;
+		}
+	}
 }

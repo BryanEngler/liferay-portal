@@ -14,6 +14,8 @@
 
 package net.sourceforge.cobertura.instrument;
 
+import com.liferay.portal.kernel.util.ArrayUtil;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -54,13 +56,19 @@ public class InstrumentationAgent {
 
 				_assertClassDataCoverage(clazz, classData);
 
-				Class<?>[] declaredClasses = clazz.getDeclaredClasses();
+				if (includeInnerClasses) {
+					Class<?>[] declaredClasses = clazz.getDeclaredClasses();
 
-				for (Class<?> declaredClass : declaredClasses) {
-					classData = projectData.getClassData(
-						declaredClass.getName());
+					for (Class<?> declaredClass : declaredClasses) {
+						if (ArrayUtil.contains(classes, declaredClass)) {
+							continue;
+						}
 
-					_assertClassDataCoverage(declaredClass, classData);
+						classData = projectData.getClassData(
+							declaredClass.getName());
+
+						_assertClassDataCoverage(declaredClass, classData);
+					}
 				}
 			}
 		}
@@ -74,35 +82,34 @@ public class InstrumentationAgent {
 
 			_coberturaClassFileTransformer = null;
 
-			if (_originalClassDefinitions == null) {
-				return;
-			}
+			if (_originalClassDefinitions != null) {
+				try {
+					List<ClassDefinition> classDefinitions =
+						new ArrayList<ClassDefinition>(
+							_originalClassDefinitions.size());
 
-			try {
-				List<ClassDefinition> classDefinitions =
-					new ArrayList<ClassDefinition>(
-						_originalClassDefinitions.size());
+					for (int i = 0; i < _originalClassDefinitions.size(); i++) {
+						OriginalClassDefinition originalClassDefinition =
+							_originalClassDefinitions.get(i);
 
-				for (int i = 0; i < _originalClassDefinitions.size(); i++) {
-					OriginalClassDefinition originalClassDefinition =
-						_originalClassDefinitions.get(i);
+						ClassDefinition classDefinition =
+							originalClassDefinition.toClassDefinition();
 
-					ClassDefinition classDefinition =
-						originalClassDefinition.toClassDefinition();
-
-					if (classDefinition != null) {
-						classDefinitions.add(classDefinition);
+						if (classDefinition != null) {
+							classDefinitions.add(classDefinition);
+						}
 					}
+
+					_originalClassDefinitions = null;
+
+					_instrumentation.redefineClasses(
+						classDefinitions.toArray(
+							new ClassDefinition[classDefinitions.size()]));
 				}
-
-				_originalClassDefinitions = null;
-
-				_instrumentation.redefineClasses(
-					classDefinitions.toArray(
-						new ClassDefinition[classDefinitions.size()]));
-			}
-			catch (Exception e) {
-				throw new RuntimeException("Unable to uninstrument classes", e);
+				catch (Exception e) {
+					throw new RuntimeException(
+						"Unable to uninstrument classes", e);
+				}
 			}
 		}
 	}

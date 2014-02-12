@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.impl.GroupModelImpl;
@@ -113,6 +114,8 @@ public class GroupPersistenceTest {
 
 		Group newGroup = _persistence.create(pk);
 
+		newGroup.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newGroup.setUuid(ServiceTestUtil.randomString());
 
 		newGroup.setCompanyId(ServiceTestUtil.nextLong());
@@ -153,6 +156,8 @@ public class GroupPersistenceTest {
 
 		Group existingGroup = _persistence.findByPrimaryKey(newGroup.getPrimaryKey());
 
+		Assert.assertEquals(existingGroup.getMvccVersion(),
+			newGroup.getMvccVersion());
 		Assert.assertEquals(existingGroup.getUuid(), newGroup.getUuid());
 		Assert.assertEquals(existingGroup.getGroupId(), newGroup.getGroupId());
 		Assert.assertEquals(existingGroup.getCompanyId(),
@@ -183,6 +188,237 @@ public class GroupPersistenceTest {
 		Assert.assertEquals(existingGroup.getRemoteStagingGroupCount(),
 			newGroup.getRemoteStagingGroupCount());
 		Assert.assertEquals(existingGroup.getActive(), newGroup.getActive());
+	}
+
+	@Test
+	public void testCountByUuid() {
+		try {
+			_persistence.countByUuid(StringPool.BLANK);
+
+			_persistence.countByUuid(StringPool.NULL);
+
+			_persistence.countByUuid((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByUUID_G() {
+		try {
+			_persistence.countByUUID_G(StringPool.BLANK,
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByUUID_G(StringPool.NULL, 0L);
+
+			_persistence.countByUUID_G((String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByUuid_C() {
+		try {
+			_persistence.countByUuid_C(StringPool.BLANK,
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByUuid_C(StringPool.NULL, 0L);
+
+			_persistence.countByUuid_C((String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByCompanyId() {
+		try {
+			_persistence.countByCompanyId(ServiceTestUtil.nextLong());
+
+			_persistence.countByCompanyId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByLiveGroupId() {
+		try {
+			_persistence.countByLiveGroupId(ServiceTestUtil.nextLong());
+
+			_persistence.countByLiveGroupId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_C() {
+		try {
+			_persistence.countByC_C(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByC_C(0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_P() {
+		try {
+			_persistence.countByC_P(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByC_P(0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_N() {
+		try {
+			_persistence.countByC_N(ServiceTestUtil.nextLong(), StringPool.BLANK);
+
+			_persistence.countByC_N(0L, StringPool.NULL);
+
+			_persistence.countByC_N(0L, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_F() {
+		try {
+			_persistence.countByC_F(ServiceTestUtil.nextLong(), StringPool.BLANK);
+
+			_persistence.countByC_F(0L, StringPool.NULL);
+
+			_persistence.countByC_F(0L, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_S() {
+		try {
+			_persistence.countByC_S(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.randomBoolean());
+
+			_persistence.countByC_S(0L, ServiceTestUtil.randomBoolean());
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByT_A() {
+		try {
+			_persistence.countByT_A(ServiceTestUtil.nextInt(),
+				ServiceTestUtil.randomBoolean());
+
+			_persistence.countByT_A(0, ServiceTestUtil.randomBoolean());
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByG_C_P() {
+		try {
+			_persistence.countByG_C_P(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), ServiceTestUtil.nextLong());
+
+			_persistence.countByG_C_P(0L, 0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_C_C() {
+		try {
+			_persistence.countByC_C_C(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), ServiceTestUtil.nextLong());
+
+			_persistence.countByC_C_C(0L, 0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_C_P() {
+		try {
+			_persistence.countByC_C_P(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), ServiceTestUtil.nextLong());
+
+			_persistence.countByC_C_P(0L, 0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_P_S() {
+		try {
+			_persistence.countByC_P_S(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), ServiceTestUtil.randomBoolean());
+
+			_persistence.countByC_P_S(0L, 0L, ServiceTestUtil.randomBoolean());
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_L_N() {
+		try {
+			_persistence.countByC_L_N(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), StringPool.BLANK);
+
+			_persistence.countByC_L_N(0L, 0L, StringPool.NULL);
+
+			_persistence.countByC_L_N(0L, 0L, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_C_L_N() {
+		try {
+			_persistence.countByC_C_L_N(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), ServiceTestUtil.nextLong(),
+				StringPool.BLANK);
+
+			_persistence.countByC_C_L_N(0L, 0L, 0L, StringPool.NULL);
+
+			_persistence.countByC_C_L_N(0L, 0L, 0L, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -219,13 +455,14 @@ public class GroupPersistenceTest {
 	}
 
 	protected OrderByComparator getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("Group_", "uuid", true,
-			"groupId", true, "companyId", true, "creatorUserId", true,
-			"classNameId", true, "classPK", true, "parentGroupId", true,
-			"liveGroupId", true, "treePath", true, "name", true, "description",
-			true, "type", true, "typeSettings", true, "manualMembership", true,
-			"membershipRestriction", true, "friendlyURL", true, "site", true,
-			"remoteStagingGroupCount", true, "active", true);
+		return OrderByComparatorFactoryUtil.create("Group_", "mvccVersion",
+			true, "uuid", true, "groupId", true, "companyId", true,
+			"creatorUserId", true, "classNameId", true, "classPK", true,
+			"parentGroupId", true, "liveGroupId", true, "treePath", true,
+			"name", true, "description", true, "type", true, "typeSettings",
+			true, "manualMembership", true, "membershipRestriction", true,
+			"friendlyURL", true, "site", true, "remoteStagingGroupCount", true,
+			"active", true);
 	}
 
 	@Test
@@ -397,6 +634,8 @@ public class GroupPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		Group group = _persistence.create(pk);
+
+		group.setMvccVersion(ServiceTestUtil.nextLong());
 
 		group.setUuid(ServiceTestUtil.randomString());
 

@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnmodifiableList;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.model.ResourceBlockPermission;
 import com.liferay.portal.model.impl.ResourceBlockPermissionImpl;
@@ -1376,7 +1377,7 @@ public class ResourceBlockPermissionPersistenceImpl extends BasePersistenceImpl<
 			CacheRegistryUtil.clear(ResourceBlockPermissionImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(ResourceBlockPermissionImpl.class.getName());
+		EntityCacheUtil.clearCache(ResourceBlockPermissionImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -1656,7 +1657,8 @@ public class ResourceBlockPermissionPersistenceImpl extends BasePersistenceImpl<
 
 		EntityCacheUtil.putResult(ResourceBlockPermissionModelImpl.ENTITY_CACHE_ENABLED,
 			ResourceBlockPermissionImpl.class,
-			resourceBlockPermission.getPrimaryKey(), resourceBlockPermission);
+			resourceBlockPermission.getPrimaryKey(), resourceBlockPermission,
+			false);
 
 		clearUniqueFindersCache(resourceBlockPermission);
 		cacheUniqueFindersCache(resourceBlockPermission);
@@ -1677,6 +1679,7 @@ public class ResourceBlockPermissionPersistenceImpl extends BasePersistenceImpl<
 		resourceBlockPermissionImpl.setNew(resourceBlockPermission.isNew());
 		resourceBlockPermissionImpl.setPrimaryKey(resourceBlockPermission.getPrimaryKey());
 
+		resourceBlockPermissionImpl.setMvccVersion(resourceBlockPermission.getMvccVersion());
 		resourceBlockPermissionImpl.setResourceBlockPermissionId(resourceBlockPermission.getResourceBlockPermissionId());
 		resourceBlockPermissionImpl.setResourceBlockId(resourceBlockPermission.getResourceBlockId());
 		resourceBlockPermissionImpl.setRoleId(resourceBlockPermission.getRoleId());
@@ -2014,10 +2017,22 @@ public class ResourceBlockPermissionPersistenceImpl extends BasePersistenceImpl<
 		};
 
 	private static CacheModel<ResourceBlockPermission> _nullResourceBlockPermissionCacheModel =
-		new CacheModel<ResourceBlockPermission>() {
-			@Override
-			public ResourceBlockPermission toEntityModel() {
-				return _nullResourceBlockPermission;
-			}
-		};
+		new NullCacheModel();
+
+	private static class NullCacheModel implements CacheModel<ResourceBlockPermission>,
+		MVCCModel {
+		@Override
+		public long getMvccVersion() {
+			return 0;
+		}
+
+		@Override
+		public void setMvccVersion(long mvccVersion) {
+		}
+
+		@Override
+		public ResourceBlockPermission toEntityModel() {
+			return _nullResourceBlockPermission;
+		}
+	}
 }

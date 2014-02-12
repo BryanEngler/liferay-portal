@@ -26,8 +26,6 @@ import com.thoughtworks.selenium.Selenium;
 
 import java.lang.reflect.Field;
 
-import java.util.Map;
-
 /**
  * @author Brian Wing Shun Chan
  */
@@ -39,9 +37,26 @@ public abstract class BaseSeleniumImpl
 
 		_projectDir = projectDir;
 
+		if (OSDetector.isWindows()) {
+			_dependenciesDir = StringUtil.replace(_dependenciesDir, "//", "\\");
+
+			_outputDir = StringUtil.replace(_outputDir, "//", "\\");
+
+			_projectDir = StringUtil.replace(_projectDir, "//", "\\");
+
+			_sikuliImagesDir = StringUtil.replace(_sikuliImagesDir, "//", "\\");
+			_sikuliImagesDir = StringUtil.replace(
+				_sikuliImagesDir, "linux", "windows");
+		}
+
 		initCommandProcessor();
 
 		selenium.start();
+	}
+
+	@Override
+	public void antCommand(String fileName, String target) throws Exception {
+		LiferaySeleniumHelper.antCommand(this, fileName, target);
 	}
 
 	@Override
@@ -83,6 +98,15 @@ public abstract class BaseSeleniumImpl
 
 	@Override
 	public void assertJavaScriptErrors() throws Exception {
+	}
+
+	@Override
+	public void assertLiferayErrors() throws Exception {
+		if (!TestPropsValues.TEST_ASSERT_LIFERAY_ERRORS) {
+			return;
+		}
+
+		LiferaySeleniumHelper.assertLiferayErrors();
 	}
 
 	@Override
@@ -189,6 +213,11 @@ public abstract class BaseSeleniumImpl
 	}
 
 	@Override
+	public void clickImageElement(String image) throws Exception {
+		LiferaySeleniumHelper.clickImageElement(this, image);
+	}
+
+	@Override
 	public void connectToEmailAccount(String emailAddress, String emailPassword)
 		throws Exception {
 
@@ -269,6 +298,11 @@ public abstract class BaseSeleniumImpl
 	}
 
 	@Override
+	public String getOutputDir() {
+		return _outputDir;
+	}
+
+	@Override
 	public String getPrimaryTestSuiteName() {
 		return _primaryTestSuiteName;
 	}
@@ -276,6 +310,11 @@ public abstract class BaseSeleniumImpl
 	@Override
 	public String getProjectDir() {
 		return _projectDir;
+	}
+
+	@Override
+	public String getSikuliImagesDir() {
+		return _sikuliImagesDir;
 	}
 
 	@Override
@@ -419,25 +458,11 @@ public abstract class BaseSeleniumImpl
 
 	@Override
 	public void saveScreenshot(String fileName) throws Exception {
-		if (_screenshotFileName.equals(fileName)) {
-			_screenshotCount++;
-		}
-		else {
-			_screenshotCount = 0;
-
-			_screenshotFileName = fileName;
+		if (!TestPropsValues.SAVE_SCREENSHOT) {
+			return;
 		}
 
-		String screenshotDir = TestPropsValues.OUTPUT_DIR + _screenshotFileName;
-
-		if (!FileUtil.exists(screenshotDir)) {
-			FileUtil.mkdirs(screenshotDir);
-		}
-
-		captureEntirePageScreenshot(
-			screenshotDir + "/" + _screenshotFileName + _screenshotCount +
-				".jpg",
-			"");
+		LiferaySeleniumHelper.saveScreenshot(this, fileName);
 	}
 
 	@Override
@@ -485,8 +510,11 @@ public abstract class BaseSeleniumImpl
 	}
 
 	@Override
-	public void sendLogger(
-		String id, String status, Map<String, String> context) {
+	public void sendTestCaseCommandLogger(String command) {
+	}
+
+	@Override
+	public void sendTestCaseHeaderLogger(String command) {
 	}
 
 	@Override
@@ -530,21 +558,18 @@ public abstract class BaseSeleniumImpl
 	}
 
 	@Override
+	public void typeImageElement(String image, String value) throws Exception {
+		LiferaySeleniumHelper.typeImageElement(this, image, value);
+	}
+
+	@Override
 	public void typeKeys(String locator, String value) {
 		sendKeys(locator, value);
 	}
 
 	@Override
 	public void uploadCommonFile(String location, String value) {
-		String dependenciesDir =
-			"portal-web//test//functional//com//liferay//portalweb//" +
-				"dependencies//";
-
-		if (OSDetector.isWindows()) {
-			dependenciesDir = StringUtil.replace(dependenciesDir, "//", "\\");
-		}
-
-		super.type(location, _projectDir + dependenciesDir + value);
+		super.type(location, _projectDir + _dependenciesDir + value);
 	}
 
 	@Override
@@ -723,10 +748,12 @@ public abstract class BaseSeleniumImpl
 
 	private String _clipBoard = "";
 	private CommandProcessor _commandProcessor;
+	private String _dependenciesDir =
+		"portal-web//test//functional//com//liferay//portalweb//dependencies//";
+	private String _outputDir = TestPropsValues.OUTPUT_DIR;
 	private String _primaryTestSuiteName;
 	private String _projectDir;
-	private int _screenshotCount = 0;
-	private String _screenshotFileName = "";
+	private String _sikuliImagesDir = _dependenciesDir + "sikuli//linux//";
 	private String _timeout = "90000";
 
 }

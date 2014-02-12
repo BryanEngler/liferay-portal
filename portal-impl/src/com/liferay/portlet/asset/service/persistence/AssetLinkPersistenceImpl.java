@@ -2946,7 +2946,7 @@ public class AssetLinkPersistenceImpl extends BasePersistenceImpl<AssetLink>
 			CacheRegistryUtil.clear(AssetLinkImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(AssetLinkImpl.class.getName());
+		EntityCacheUtil.clearCache(AssetLinkImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -3279,7 +3279,7 @@ public class AssetLinkPersistenceImpl extends BasePersistenceImpl<AssetLink>
 		}
 
 		EntityCacheUtil.putResult(AssetLinkModelImpl.ENTITY_CACHE_ENABLED,
-			AssetLinkImpl.class, assetLink.getPrimaryKey(), assetLink);
+			AssetLinkImpl.class, assetLink.getPrimaryKey(), assetLink, false);
 
 		clearUniqueFindersCache(assetLink);
 		cacheUniqueFindersCache(assetLink);

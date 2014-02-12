@@ -84,14 +84,14 @@ if (showLinkTitle) {
 			</c:choose>
 
 			<div class="entry-thumbnail" style="<%= thumbnailDivStyle %>">
-				<img alt="" border="no" class="img-polaroid" src="<%= thumbnailSrc %>" style="<%= thumbnailStyle %>" />
+				<img alt="" border="no" src="<%= HtmlUtil.escapeAttribute(thumbnailSrc) %>" style="<%= thumbnailStyle %>" />
 
 				<c:if test="<%= shortcut %>">
-					<img alt="<liferay-ui:message key="shortcut" />" class="shortcut-icon img-polaroid" src="<%= themeDisplay.getPathThemeImages() %>/file_system/large/overlay_link.png" />
+					<img alt="<liferay-ui:message key="shortcut" />" class="shortcut-icon" src="<%= themeDisplay.getPathThemeImages() %>/file_system/large/overlay_link.png" />
 				</c:if>
 
 				<c:if test="<%= locked %>">
-					<img alt="<liferay-ui:message key="locked" />" class="locked-icon img-polaroid" src="<%= themeDisplay.getPathThemeImages() %>/file_system/large/overlay_lock.png" />
+					<img alt="<liferay-ui:message key="locked" />" class="locked-icon" src="<%= themeDisplay.getPathThemeImages() %>/file_system/large/overlay_lock.png" />
 				</c:if>
 
 				<c:if test="<%= !folder && ((status != WorkflowConstants.STATUS_ANY) && (status != WorkflowConstants.STATUS_APPROVED)) %>">
@@ -129,14 +129,14 @@ if (showLinkTitle) {
 			</c:choose>
 
 			<div class="entry-thumbnail" style="<%= thumbnailDivStyle %>">
-				<img alt="" border="no" class="img-polaroid" src="<%= thumbnailSrc %>" style="<%= thumbnailStyle %>" />
+				<img alt="" border="no" class="img-polaroid" src="<%= HtmlUtil.escapeAttribute(thumbnailSrc) %>" style="<%= thumbnailStyle %>" />
 
 				<c:if test="<%= shortcut %>">
-					<img alt="<liferay-ui:message key="shortcut" />" class="shortcut-icon img-polaroid" src="<%= themeDisplay.getPathThemeImages() %>/file_system/large/overlay_link.png" />
+					<img alt="<liferay-ui:message key="shortcut" />" class="shortcut-icon" src="<%= themeDisplay.getPathThemeImages() %>/file_system/large/overlay_link.png" />
 				</c:if>
 
 				<c:if test="<%= locked %>">
-					<img alt="<liferay-ui:message key="locked" />" class="locked-icon img-polaroid" src="<%= themeDisplay.getPathThemeImages() %>/file_system/large/overlay_lock.png" />
+					<img alt="<liferay-ui:message key="locked" />" class="locked-icon" src="<%= themeDisplay.getPathThemeImages() %>/file_system/large/overlay_lock.png" />
 				</c:if>
 
 				<c:if test="<%= !folder && (status != WorkflowConstants.STATUS_ANY) && (status != WorkflowConstants.STATUS_APPROVED) %>">
@@ -229,7 +229,7 @@ if (showLinkTitle) {
 							</c:choose>
 
 							<dd class="entry-author">
-								<liferay-ui:message arguments="<%= new String[] {LanguageUtil.getTimeDescription(locale, System.currentTimeMillis() - modifiedDate.getTime(), true), author} %>" key="x-ago-by-x" />
+								<liferay-ui:message arguments="<%= new String[] {LanguageUtil.getTimeDescription(locale, System.currentTimeMillis() - modifiedDate.getTime(), true), HtmlUtil.escape(author)} %>" key="x-ago-by-x" translateArguments="<%= false %>" />
 							</dd>
 						</c:if>
 
@@ -342,7 +342,7 @@ if (showLinkTitle) {
 				label="<%= true %>"
 				linkCssClass="entry-link"
 				localizeMessage="<%= false %>"
-				message="<%= title %>"
+				message="<%= HtmlUtil.escape(title) %>"
 				method="get"
 				src="<%= thumbnailSrc %>"
 				url="<%= url %>"

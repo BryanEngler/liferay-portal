@@ -128,7 +128,7 @@ public class CounterPersistenceImpl extends BasePersistenceImpl<Counter>
 			CacheRegistryUtil.clear(CounterImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(CounterImpl.class.getName());
+		EntityCacheUtil.clearCache(CounterImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -299,7 +299,7 @@ public class CounterPersistenceImpl extends BasePersistenceImpl<Counter>
 		}
 
 		EntityCacheUtil.putResult(CounterModelImpl.ENTITY_CACHE_ENABLED,
-			CounterImpl.class, counter.getPrimaryKey(), counter);
+			CounterImpl.class, counter.getPrimaryKey(), counter, false);
 
 		counter.resetOriginalValues();
 

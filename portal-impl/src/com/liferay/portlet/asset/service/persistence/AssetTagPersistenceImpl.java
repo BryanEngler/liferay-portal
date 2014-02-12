@@ -613,7 +613,7 @@ public class AssetTagPersistenceImpl extends BasePersistenceImpl<AssetTag>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, AssetTagImpl.class);
@@ -787,7 +787,7 @@ public class AssetTagPersistenceImpl extends BasePersistenceImpl<AssetTag>
 				AssetTag.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -916,7 +916,7 @@ public class AssetTagPersistenceImpl extends BasePersistenceImpl<AssetTag>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -1260,7 +1260,7 @@ public class AssetTagPersistenceImpl extends BasePersistenceImpl<AssetTag>
 			CacheRegistryUtil.clear(AssetTagImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(AssetTagImpl.class.getName());
+		EntityCacheUtil.clearCache(AssetTagImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -1507,7 +1507,7 @@ public class AssetTagPersistenceImpl extends BasePersistenceImpl<AssetTag>
 		}
 
 		EntityCacheUtil.putResult(AssetTagModelImpl.ENTITY_CACHE_ENABLED,
-			AssetTagImpl.class, assetTag.getPrimaryKey(), assetTag);
+			AssetTagImpl.class, assetTag.getPrimaryKey(), assetTag, false);
 
 		clearUniqueFindersCache(assetTag);
 		cacheUniqueFindersCache(assetTag);
@@ -2095,9 +2095,6 @@ public class AssetTagPersistenceImpl extends BasePersistenceImpl<AssetTag>
 		}
 		catch (Exception e) {
 			throw processException(e);
-		}
-		finally {
-			FinderCacheUtil.clearCache(AssetTagModelImpl.MAPPING_TABLE_ASSETENTRIES_ASSETTAGS_NAME);
 		}
 	}
 

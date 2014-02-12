@@ -266,8 +266,14 @@ public class AssetPublisherImpl implements AssetPublisher {
 		for (String customUserAttributeName : customUserAttributeNames) {
 			ExpandoBridge userCustomAttributes = user.getExpandoBridge();
 
-			Serializable userCustomFieldValue =
-				userCustomAttributes.getAttribute(customUserAttributeName);
+			Serializable userCustomFieldValue = null;
+
+			try {
+				userCustomFieldValue = userCustomAttributes.getAttribute(
+					customUserAttributeName);
+			}
+			catch (Exception e) {
+			}
 
 			if (userCustomFieldValue == null) {
 				continue;
@@ -554,7 +560,7 @@ public class AssetPublisherImpl implements AssetPublisher {
 
 	/**
 	 * @deprecated As of 7.0.0, replaced by {@link
-	 *             AssetPublisherImpl#getAssetEntries( PortletRequest,
+	 *             AssetPublisherImpl#getAssetEntries(PortletRequest,
 	 *             PortletPreferences, PermissionChecker, long[], long[],
 	 *             String[], boolean , boolean)}
 	 */
@@ -577,7 +583,7 @@ public class AssetPublisherImpl implements AssetPublisher {
 
 	/**
 	 * @deprecated As of 7.0.0, replaced by {@link
-	 *             AssetPublisherImpl#getAssetEntries( PortletRequest,
+	 *             AssetPublisherImpl#getAssetEntries(PortletRequest,
 	 *             PortletPreferences, PermissionChecker, long[], boolean,
 	 *             boolean)}
 	 */

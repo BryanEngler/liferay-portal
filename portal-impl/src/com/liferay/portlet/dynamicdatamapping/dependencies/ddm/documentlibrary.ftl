@@ -1,13 +1,5 @@
 <#include "../init.ftl">
 
-<#assign groupLocalService = serviceLocator.findService("com.liferay.portal.service.GroupLocalService")>
-
-<#assign controlPanelGroup = groupLocalService.getGroup(themeDisplay.getCompanyId(), "Control Panel")>
-
-<#assign layoutLocalService = serviceLocator.findService("com.liferay.portal.service.LayoutLocalService")>
-
-<#assign controlPanelPlid = layoutLocalService.getDefaultPlid(controlPanelGroup.getGroupId(), true)>
-
 <#if !(fields?? && fields.get(fieldName)??) && (fieldRawValue == "")>
 	<#assign fieldRawValue = predefinedValue>
 </#if>
@@ -25,7 +17,7 @@
 </#if>
 
 <@aui["field-wrapper"] data=data>
-	<@aui.input inlineField=true label=escape(label) name="${namespacedFieldName}Title" readonly="readonly" type="text" value=fileEntryTitle>
+	<@aui.input helpMessage=escape(fieldStructure.tip) inlineField=true label=escape(label) name="${namespacedFieldName}Title" readonly="readonly" type="text" value=fileEntryTitle>
 		<#if required>
 			<@aui.validator name="required" />
 		</#if>
@@ -38,6 +30,8 @@
 	</@>
 
 	<@aui.input name=namespacedFieldName type="hidden" value=fieldRawValue />
+
+	${fieldStructure.children}
 </@>
 
 <@aui.script>
@@ -87,15 +81,12 @@
 		namespacedField.on(
 			'click',
 			function(event) {
-				var portletURL = Liferay.PortletURL.createURL('${portletURLFactory.create(request, "166", themeDisplay.getPlid(), "RENDER_PHASE")}');
+				var portletURL = Liferay.PortletURL.createURL('${themeDisplay.getURLControlPanel()}');
 
+				portletURL.setDoAsGroupId(${scopeGroupId?c});
 				portletURL.setParameter('groupId', ${scopeGroupId?c});
 				portletURL.setParameter('struts_action', '/dynamic_data_mapping/select_document_library');
-
-				portletURL.setPlid(${controlPanelPlid?c});
-
 				portletURL.setPortletId('166');
-
 				portletURL.setWindowState('pop_up');
 
 				Liferay.Util.openWindow(

@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.notifications.UserNotificationDefinition;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexable;
@@ -235,7 +236,17 @@ public class BookmarksEntryLocalServiceImpl
 			long groupId, long folderId, int status, int start, int end)
 		throws SystemException {
 
-		return getEntries(groupId, folderId, start, end, null);
+		return getEntries(groupId, folderId, status, start, end, null);
+	}
+
+	@Override
+	public List<BookmarksEntry> getEntries(
+			long groupId, long folderId, int status, int start, int end,
+			OrderByComparator orderByComparator)
+		throws SystemException {
+
+		return bookmarksEntryPersistence.findByG_F_S(
+			groupId, folderId, status, start, end, orderByComparator);
 	}
 
 	@Override
@@ -244,7 +255,7 @@ public class BookmarksEntryLocalServiceImpl
 			OrderByComparator orderByComparator)
 		throws SystemException {
 
-		return bookmarksEntryPersistence.findByG_F_S(
+		return getEntries(
 			groupId, folderId, WorkflowConstants.STATUS_APPROVED, start, end,
 			orderByComparator);
 	}
@@ -694,7 +705,7 @@ public class BookmarksEntryLocalServiceImpl
 
 		String layoutFullURL = serviceContext.getLayoutFullURL();
 
-		if (Validator.isNull(layoutFullURL)) {
+		if (!entry.isApproved() || Validator.isNull(layoutFullURL)) {
 			return;
 		}
 
@@ -760,6 +771,7 @@ public class BookmarksEntryLocalServiceImpl
 
 		SubscriptionSender subscriptionSender = new SubscriptionSender();
 
+		subscriptionSender.setClassPK(entry.getEntryId());
 		subscriptionSender.setCompanyId(entry.getCompanyId());
 		subscriptionSender.setContextAttributes(
 			"[$BOOKMARKS_ENTRY_STATUS_BY_USER_NAME$]", statusByUserName,
@@ -770,6 +782,17 @@ public class BookmarksEntryLocalServiceImpl
 		subscriptionSender.setLocalizedBodyMap(localizedBodyMap);
 		subscriptionSender.setLocalizedSubjectMap(localizedSubjectMap);
 		subscriptionSender.setMailId("bookmarks_entry", entry.getEntryId());
+
+		int notificationType =
+			UserNotificationDefinition.NOTIFICATION_TYPE_ADD_ENTRY;
+
+		if (serviceContext.isCommandUpdate()) {
+			notificationType =
+				UserNotificationDefinition.NOTIFICATION_TYPE_UPDATE_ENTRY;
+		}
+
+		subscriptionSender.setNotificationType(notificationType);
+
 		subscriptionSender.setPortletId(PortletKeys.BOOKMARKS);
 		subscriptionSender.setReplyToAddress(fromAddress);
 		subscriptionSender.setScopeGroupId(entry.getGroupId());

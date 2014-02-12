@@ -2004,7 +2004,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 			CacheRegistryUtil.clear(MDRActionImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(MDRActionImpl.class.getName());
+		EntityCacheUtil.clearCache(MDRActionImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -2301,7 +2301,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 		}
 
 		EntityCacheUtil.putResult(MDRActionModelImpl.ENTITY_CACHE_ENABLED,
-			MDRActionImpl.class, mdrAction.getPrimaryKey(), mdrAction);
+			MDRActionImpl.class, mdrAction.getPrimaryKey(), mdrAction, false);
 
 		clearUniqueFindersCache(mdrAction);
 		cacheUniqueFindersCache(mdrAction);

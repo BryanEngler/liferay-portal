@@ -17,6 +17,7 @@ package com.liferay.portal.model.impl;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.WorkflowInstanceLink;
 
 import java.io.Externalizable;
@@ -34,12 +35,24 @@ import java.util.Date;
  * @generated
  */
 public class WorkflowInstanceLinkCacheModel implements CacheModel<WorkflowInstanceLink>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(23);
 
-		sb.append("{workflowInstanceLinkId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", workflowInstanceLinkId=");
 		sb.append(workflowInstanceLinkId);
 		sb.append(", groupId=");
 		sb.append(groupId);
@@ -68,6 +81,7 @@ public class WorkflowInstanceLinkCacheModel implements CacheModel<WorkflowInstan
 	public WorkflowInstanceLink toEntityModel() {
 		WorkflowInstanceLinkImpl workflowInstanceLinkImpl = new WorkflowInstanceLinkImpl();
 
+		workflowInstanceLinkImpl.setMvccVersion(mvccVersion);
 		workflowInstanceLinkImpl.setWorkflowInstanceLinkId(workflowInstanceLinkId);
 		workflowInstanceLinkImpl.setGroupId(groupId);
 		workflowInstanceLinkImpl.setCompanyId(companyId);
@@ -105,6 +119,7 @@ public class WorkflowInstanceLinkCacheModel implements CacheModel<WorkflowInstan
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		workflowInstanceLinkId = objectInput.readLong();
 		groupId = objectInput.readLong();
 		companyId = objectInput.readLong();
@@ -120,6 +135,7 @@ public class WorkflowInstanceLinkCacheModel implements CacheModel<WorkflowInstan
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(workflowInstanceLinkId);
 		objectOutput.writeLong(groupId);
 		objectOutput.writeLong(companyId);
@@ -139,6 +155,7 @@ public class WorkflowInstanceLinkCacheModel implements CacheModel<WorkflowInstan
 		objectOutput.writeLong(workflowInstanceId);
 	}
 
+	public long mvccVersion;
 	public long workflowInstanceLinkId;
 	public long groupId;
 	public long companyId;

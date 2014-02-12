@@ -939,7 +939,7 @@ public class WikiPageResourcePersistenceImpl extends BasePersistenceImpl<WikiPag
 			CacheRegistryUtil.clear(WikiPageResourceImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(WikiPageResourceImpl.class.getName());
+		EntityCacheUtil.clearCache(WikiPageResourceImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -1200,7 +1200,7 @@ public class WikiPageResourcePersistenceImpl extends BasePersistenceImpl<WikiPag
 
 		EntityCacheUtil.putResult(WikiPageResourceModelImpl.ENTITY_CACHE_ENABLED,
 			WikiPageResourceImpl.class, wikiPageResource.getPrimaryKey(),
-			wikiPageResource);
+			wikiPageResource, false);
 
 		clearUniqueFindersCache(wikiPageResource);
 		cacheUniqueFindersCache(wikiPageResource);

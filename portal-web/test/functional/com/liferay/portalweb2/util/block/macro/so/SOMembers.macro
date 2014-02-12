@@ -1,23 +1,4 @@
 <definition>
-	<command name="inviteMember">
-		<execute action="SOMembers#assertClick" locator-key1="INVITE_BUTTON" value1="Invite members to this site." />
-
-		<execute action="SOMembersInvite#type" locator-key1="FIND_MEMBERS_SEARCH_FIELD" value1="${userName}" />
-		<execute action="SOMembersInvite#assertTextEquals" locator-key1="FIND_MEMBERS_USER" value1="${userName}" />
-		<execute action="SOMembersInvite#click" locator-key1="FIND_MEMBERS_USER" />
-		<execute action="SOMembersInvite#assertTextEquals" locator-key1="MEMBERS_INVITE_LIST" value1="${userName}${userEmailAddress}" />
-
-		<if>
-			<isset var="siteRoleInvite" />
-			<then>
-				<execute action="SOMembersInvite#select" locator-key1="INVITE_TO_ROLE_SELECT" value1="${siteRoleInvite}" />
-			</then>
-		</if>
-
-		<execute action="SOMembersInvite#assertClick" locator-key1="SEND_INVITATIONS_BUTTON" value1="Send Invitations"  />
-		<execute action="SOMembersInvite#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request processed successfully."  />
-	</command>
-
 	<command name="confirmMemberInvite">
 		<execute action="SOUserBar#click" locator-key1="DASHBOARD" />
 		<execute action="SOUserBar#assertTextEquals" locator-key1="NOTIFICATION_MENU_COUNT" value1="1" />
@@ -40,12 +21,31 @@
 		<execute action="SOUserBar#assertTextEquals" locator-key1="NOTIFICATION_MENU_COUNT" value1="0" />
 	</command>
 
+	<command name="inviteMember">
+		<execute action="SOMembers#assertClick" locator-key1="INVITE_BUTTON" value1="Invite members to this site." />
+
+		<execute action="SOMembersInvite#type" locator-key1="FIND_MEMBERS_SEARCH_FIELD" value1="${userName}" />
+		<execute action="SOMembersInvite#assertTextEquals" locator-key1="FIND_MEMBERS_USER" value1="${userName}" />
+		<execute action="SOMembersInvite#click" locator-key1="FIND_MEMBERS_USER" />
+		<execute action="SOMembersInvite#assertTextEquals" locator-key1="MEMBERS_INVITE_LIST" value1="${userName}${userEmailAddress}" />
+
+		<if>
+			<isset var="siteRoleInvite" />
+			<then>
+				<execute action="SOMembersInvite#select" locator-key1="INVITE_TO_ROLE_SELECT" value1="${siteRoleInvite}" />
+			</then>
+		</if>
+
+		<execute action="SOMembersInvite#assertClick" locator-key1="SEND_INVITATIONS_BUTTON" value1="Send Invitations"  />
+		<execute action="SOMembersInvite#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request processed successfully."  />
+	</command>
+
 	<command name="viewConfirmMemberInvite">
 		<var name="key_siteName" value="${siteName}" />
 
 		<execute action="SOUserBar#click" locator-key1="DASHBOARD" />
 		<execute action="SOUserBar#click" locator-key1="GO_TO" />
-		<execute action="SOUserBar#select" locator-key1="GO_TO_SITE_CATEGORY_SELECT" value1="My Sites" />		
+		<execute action="SOUserBar#select" locator-key1="GO_TO_SITE_CATEGORY_SELECT" value1="My Sites" />
 		<execute action="SOUserBar#assertTextNotEquals" locator-key1="GO_TO_SITE_LIST" value1="Liferay" />
 		<execute action="SOUserBar#click" locator-key1="GO_TO" />
 		<execute action="SOUserBar#type" locator-key1="GO_TO_SEARCH_FIELD" value1="${siteName}" />
@@ -77,18 +77,18 @@
 				<if>
 					<condition action="SOUserBar#isElementNotPresent" locator-key1="VISIBLE_PAGE_CONTROLS" />
 					<then>
-						<execute action="SOUserBar#click" locator-key1="TOGGLE_DOCKBAR" />	
+						<execute action="SOUserBar#click" locator-key1="TOGGLE_DOCKBAR" />
 					</then>
 				</if>
 
-                <if>
+				<if>
 					<condition action="SOUserBar#isElementPresent" locator-key1="EDIT_CONTROLS_NOT_FLAGGED" />
 					<then>
 						<execute action="Dockbar#mouseOver" locator-key1="EDIT_CONTROLS" />
-						<execute action="Dockbar#assertClick" locator-key1="EDIT_CONTROLS" value1="Edit Controls" />
+						<execute action="Dockbar#click" locator-key1="EDIT_CONTROLS" />
 					</then>
-                </if>
-		
+				</if>
+
 				<execute action="SOSiteHome#assertElementPresent" locator-key1="ANNOUNCEMENTS_OPTIONS" />
 				<execute action="SOSiteHome#assertElementPresent" locator-key1="ANNOUNCEMENTS_CLOSE" />
 				<execute action="SOSiteHome#assertElementPresent" locator-key1="ACTIVITIES_OPTIONS" />
@@ -141,7 +141,7 @@
 
 		<execute action="SOUserBar#click" locator-key1="DASHBOARD" />
 		<execute action="SOUserBar#click" locator-key1="GO_TO" />
-		<execute action="SOUserBar#select" locator-key1="GO_TO_SITE_CATEGORY_SELECT" value1="My Sites" />		
+		<execute action="SOUserBar#select" locator-key1="GO_TO_SITE_CATEGORY_SELECT" value1="My Sites" />
 		<execute action="SOUserBar#assertTextNotEquals" locator-key1="GO_TO_SITE_LIST" value1="Liferay" />
 		<execute action="SOUserBar#click" locator-key1="GO_TO" />
 		<execute action="SOUserBar#type" locator-key1="GO_TO_SEARCH_FIELD" value1="${siteName}" />

@@ -202,6 +202,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 	public static final String ORGANIZATION_NAME_SUFFIX = " LFR_ORGANIZATION";
 
+	public static final String ORGANIZATION_STAGING_SUFFIX = " (Staging)";
+
 	/**
 	 * Constructs a group local service.
 	 */
@@ -273,7 +275,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		long groupClassNameId = classNameLocalService.getClassNameId(
 			Group.class);
 
-		if (((classNameId <= 0) || className.equals(Group.class.getName())) ||
+		if ((classNameId <= 0) || className.equals(Group.class.getName()) ||
 			(className.equals(Company.class.getName()) && staging)) {
 
 			className = Group.class.getName();
@@ -302,7 +304,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 			friendlyURL);
 
 		if (staging) {
-			name = name.concat(" (Staging)");
+			name = name.concat(ORGANIZATION_STAGING_SUFFIX);
 			friendlyURL = getFriendlyURL(friendlyURL.concat("-staging"));
 		}
 
@@ -823,6 +825,9 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 			teamLocalService.deleteTeams(group.getGroupId());
 
 			// Staging
+
+			exportImportConfigurationLocalService.
+				deleteExportImportConfigurations(group.getGroupId());
 
 			unscheduleStaging(group);
 
@@ -3799,7 +3804,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 				group.getDescription(), descriptions);
 
 			if ((andOperator && (!containsName || !containsDescription)) ||
-				(!andOperator && (!containsName && !containsDescription))) {
+				(!andOperator && !containsName && !containsDescription)) {
 
 				iterator.remove();
 

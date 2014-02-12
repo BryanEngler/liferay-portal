@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.ClassName;
+import com.liferay.portal.model.MVCCModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -32,12 +33,24 @@ import java.io.ObjectOutput;
  * @generated
  */
 public class ClassNameCacheModel implements CacheModel<ClassName>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(5);
+		StringBundler sb = new StringBundler(7);
 
-		sb.append("{classNameId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", classNameId=");
 		sb.append(classNameId);
 		sb.append(", value=");
 		sb.append(value);
@@ -50,6 +63,7 @@ public class ClassNameCacheModel implements CacheModel<ClassName>,
 	public ClassName toEntityModel() {
 		ClassNameImpl classNameImpl = new ClassNameImpl();
 
+		classNameImpl.setMvccVersion(mvccVersion);
 		classNameImpl.setClassNameId(classNameId);
 
 		if (value == null) {
@@ -66,6 +80,7 @@ public class ClassNameCacheModel implements CacheModel<ClassName>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		classNameId = objectInput.readLong();
 		value = objectInput.readUTF();
 	}
@@ -73,6 +88,7 @@ public class ClassNameCacheModel implements CacheModel<ClassName>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(classNameId);
 
 		if (value == null) {
@@ -83,6 +99,7 @@ public class ClassNameCacheModel implements CacheModel<ClassName>,
 		}
 	}
 
+	public long mvccVersion;
 	public long classNameId;
 	public String value;
 }

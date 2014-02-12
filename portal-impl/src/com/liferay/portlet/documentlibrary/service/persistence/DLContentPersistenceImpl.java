@@ -2230,7 +2230,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 			CacheRegistryUtil.clear(DLContentImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(DLContentImpl.class.getName());
+		EntityCacheUtil.clearCache(DLContentImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -2515,7 +2515,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 		}
 
 		EntityCacheUtil.putResult(DLContentModelImpl.ENTITY_CACHE_ENABLED,
-			DLContentImpl.class, dlContent.getPrimaryKey(), dlContent);
+			DLContentImpl.class, dlContent.getPrimaryKey(), dlContent, false);
 
 		clearUniqueFindersCache(dlContent);
 		cacheUniqueFindersCache(dlContent);

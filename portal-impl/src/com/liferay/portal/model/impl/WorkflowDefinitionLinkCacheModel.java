@@ -17,6 +17,7 @@ package com.liferay.portal.model.impl;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.WorkflowDefinitionLink;
 
 import java.io.Externalizable;
@@ -34,12 +35,24 @@ import java.util.Date;
  * @generated
  */
 public class WorkflowDefinitionLinkCacheModel implements CacheModel<WorkflowDefinitionLink>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(27);
 
-		sb.append("{workflowDefinitionLinkId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", workflowDefinitionLinkId=");
 		sb.append(workflowDefinitionLinkId);
 		sb.append(", groupId=");
 		sb.append(groupId);
@@ -72,6 +85,7 @@ public class WorkflowDefinitionLinkCacheModel implements CacheModel<WorkflowDefi
 	public WorkflowDefinitionLink toEntityModel() {
 		WorkflowDefinitionLinkImpl workflowDefinitionLinkImpl = new WorkflowDefinitionLinkImpl();
 
+		workflowDefinitionLinkImpl.setMvccVersion(mvccVersion);
 		workflowDefinitionLinkImpl.setWorkflowDefinitionLinkId(workflowDefinitionLinkId);
 		workflowDefinitionLinkImpl.setGroupId(groupId);
 		workflowDefinitionLinkImpl.setCompanyId(companyId);
@@ -118,6 +132,7 @@ public class WorkflowDefinitionLinkCacheModel implements CacheModel<WorkflowDefi
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		workflowDefinitionLinkId = objectInput.readLong();
 		groupId = objectInput.readLong();
 		companyId = objectInput.readLong();
@@ -135,6 +150,7 @@ public class WorkflowDefinitionLinkCacheModel implements CacheModel<WorkflowDefi
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(workflowDefinitionLinkId);
 		objectOutput.writeLong(groupId);
 		objectOutput.writeLong(companyId);
@@ -163,6 +179,7 @@ public class WorkflowDefinitionLinkCacheModel implements CacheModel<WorkflowDefi
 		objectOutput.writeInt(workflowDefinitionVersion);
 	}
 
+	public long mvccVersion;
 	public long workflowDefinitionLinkId;
 	public long groupId;
 	public long companyId;

@@ -29,7 +29,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
-import com.liferay.portal.kernel.util.CalendarUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.InstanceFactory;
@@ -53,6 +52,8 @@ import com.liferay.portlet.blogs.model.impl.BlogsEntryImpl;
 import com.liferay.portlet.blogs.model.impl.BlogsEntryModelImpl;
 
 import java.io.Serializable;
+
+import java.sql.Timestamp;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1988,7 +1989,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, BlogsEntryImpl.class);
@@ -2162,7 +2163,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				BlogsEntry.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -2291,7 +2292,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -3479,7 +3480,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				qPos.add(companyId);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				if (!pagination) {
@@ -3775,7 +3776,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		qPos.add(companyId);
 
 		if (bindDisplayDate) {
-			qPos.add(CalendarUtil.getTimestamp(displayDate));
+			qPos.add(new Timestamp(displayDate.getTime()));
 		}
 
 		if (orderByComparator != null) {
@@ -3862,7 +3863,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				qPos.add(companyId);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				count = (Long)q.uniqueResult();
@@ -5332,7 +5333,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				qPos.add(groupId);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				if (!pagination) {
@@ -5628,7 +5629,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		qPos.add(groupId);
 
 		if (bindDisplayDate) {
-			qPos.add(CalendarUtil.getTimestamp(displayDate));
+			qPos.add(new Timestamp(displayDate.getTime()));
 		}
 
 		if (orderByComparator != null) {
@@ -5770,7 +5771,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, BlogsEntryImpl.class);
@@ -5784,7 +5785,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 			qPos.add(groupId);
 
 			if (bindDisplayDate) {
-				qPos.add(CalendarUtil.getTimestamp(displayDate));
+				qPos.add(new Timestamp(displayDate.getTime()));
 			}
 
 			return (List<BlogsEntry>)QueryUtil.list(q, getDialect(), start, end);
@@ -5961,7 +5962,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				BlogsEntry.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -5978,7 +5979,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		qPos.add(groupId);
 
 		if (bindDisplayDate) {
-			qPos.add(CalendarUtil.getTimestamp(displayDate));
+			qPos.add(new Timestamp(displayDate.getTime()));
 		}
 
 		if (orderByComparator != null) {
@@ -6065,7 +6066,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				qPos.add(groupId);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				count = (Long)q.uniqueResult();
@@ -6126,7 +6127,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -6136,7 +6137,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 			qPos.add(groupId);
 
 			if (bindDisplayDate) {
-				qPos.add(CalendarUtil.getTimestamp(displayDate));
+				qPos.add(new Timestamp(displayDate.getTime()));
 			}
 
 			Long count = (Long)q.uniqueResult();
@@ -6697,7 +6698,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, BlogsEntryImpl.class);
@@ -6877,7 +6878,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				BlogsEntry.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -7020,7 +7021,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -7608,7 +7609,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, BlogsEntryImpl.class);
@@ -7788,7 +7789,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				BlogsEntry.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -7929,7 +7930,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -8095,7 +8096,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				QueryPos qPos = QueryPos.getInstance(q);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				qPos.add(status);
@@ -8391,7 +8392,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		QueryPos qPos = QueryPos.getInstance(q);
 
 		if (bindDisplayDate) {
-			qPos.add(CalendarUtil.getTimestamp(displayDate));
+			qPos.add(new Timestamp(displayDate.getTime()));
 		}
 
 		qPos.add(status);
@@ -8478,7 +8479,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				QueryPos qPos = QueryPos.getInstance(q);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				qPos.add(status);
@@ -9780,7 +9781,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				qPos.add(companyId);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				qPos.add(status);
@@ -10094,7 +10095,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		qPos.add(companyId);
 
 		if (bindDisplayDate) {
-			qPos.add(CalendarUtil.getTimestamp(displayDate));
+			qPos.add(new Timestamp(displayDate.getTime()));
 		}
 
 		qPos.add(status);
@@ -10187,7 +10188,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				qPos.add(companyId);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				qPos.add(status);
@@ -10366,7 +10367,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				qPos.add(companyId);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				qPos.add(status);
@@ -10679,7 +10680,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		qPos.add(companyId);
 
 		if (bindDisplayDate) {
-			qPos.add(CalendarUtil.getTimestamp(displayDate));
+			qPos.add(new Timestamp(displayDate.getTime()));
 		}
 
 		qPos.add(status);
@@ -10772,7 +10773,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				qPos.add(companyId);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				qPos.add(status);
@@ -10951,7 +10952,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				qPos.add(userId);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				if (!pagination) {
@@ -11264,7 +11265,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		qPos.add(userId);
 
 		if (bindDisplayDate) {
-			qPos.add(CalendarUtil.getTimestamp(displayDate));
+			qPos.add(new Timestamp(displayDate.getTime()));
 		}
 
 		if (orderByComparator != null) {
@@ -11412,7 +11413,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, BlogsEntryImpl.class);
@@ -11428,7 +11429,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 			qPos.add(userId);
 
 			if (bindDisplayDate) {
-				qPos.add(CalendarUtil.getTimestamp(displayDate));
+				qPos.add(new Timestamp(displayDate.getTime()));
 			}
 
 			return (List<BlogsEntry>)QueryUtil.list(q, getDialect(), start, end);
@@ -11609,7 +11610,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				BlogsEntry.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -11628,7 +11629,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		qPos.add(userId);
 
 		if (bindDisplayDate) {
-			qPos.add(CalendarUtil.getTimestamp(displayDate));
+			qPos.add(new Timestamp(displayDate.getTime()));
 		}
 
 		if (orderByComparator != null) {
@@ -11721,7 +11722,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				qPos.add(userId);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				count = (Long)q.uniqueResult();
@@ -11785,7 +11786,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -11797,7 +11798,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 			qPos.add(userId);
 
 			if (bindDisplayDate) {
-				qPos.add(CalendarUtil.getTimestamp(displayDate));
+				qPos.add(new Timestamp(displayDate.getTime()));
 			}
 
 			Long count = (Long)q.uniqueResult();
@@ -12400,7 +12401,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, BlogsEntryImpl.class);
@@ -12586,7 +12587,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				BlogsEntry.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -12740,7 +12741,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -13369,7 +13370,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, BlogsEntryImpl.class);
@@ -13555,7 +13556,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				BlogsEntry.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -13709,7 +13710,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -13892,7 +13893,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				qPos.add(groupId);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				qPos.add(status);
@@ -14206,7 +14207,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		qPos.add(groupId);
 
 		if (bindDisplayDate) {
-			qPos.add(CalendarUtil.getTimestamp(displayDate));
+			qPos.add(new Timestamp(displayDate.getTime()));
 		}
 
 		qPos.add(status);
@@ -14357,7 +14358,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, BlogsEntryImpl.class);
@@ -14371,7 +14372,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 			qPos.add(groupId);
 
 			if (bindDisplayDate) {
-				qPos.add(CalendarUtil.getTimestamp(displayDate));
+				qPos.add(new Timestamp(displayDate.getTime()));
 			}
 
 			qPos.add(status);
@@ -14554,7 +14555,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				BlogsEntry.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -14571,7 +14572,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		qPos.add(groupId);
 
 		if (bindDisplayDate) {
-			qPos.add(CalendarUtil.getTimestamp(displayDate));
+			qPos.add(new Timestamp(displayDate.getTime()));
 		}
 
 		qPos.add(status);
@@ -14664,7 +14665,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				qPos.add(groupId);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				qPos.add(status);
@@ -14730,7 +14731,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -14740,7 +14741,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 			qPos.add(groupId);
 
 			if (bindDisplayDate) {
-				qPos.add(CalendarUtil.getTimestamp(displayDate));
+				qPos.add(new Timestamp(displayDate.getTime()));
 			}
 
 			qPos.add(status);
@@ -14914,7 +14915,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				qPos.add(groupId);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				qPos.add(status);
@@ -15227,7 +15228,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		qPos.add(groupId);
 
 		if (bindDisplayDate) {
-			qPos.add(CalendarUtil.getTimestamp(displayDate));
+			qPos.add(new Timestamp(displayDate.getTime()));
 		}
 
 		qPos.add(status);
@@ -15377,7 +15378,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, BlogsEntryImpl.class);
@@ -15391,7 +15392,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 			qPos.add(groupId);
 
 			if (bindDisplayDate) {
-				qPos.add(CalendarUtil.getTimestamp(displayDate));
+				qPos.add(new Timestamp(displayDate.getTime()));
 			}
 
 			qPos.add(status);
@@ -15574,7 +15575,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				BlogsEntry.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -15591,7 +15592,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		qPos.add(groupId);
 
 		if (bindDisplayDate) {
-			qPos.add(CalendarUtil.getTimestamp(displayDate));
+			qPos.add(new Timestamp(displayDate.getTime()));
 		}
 
 		qPos.add(status);
@@ -15684,7 +15685,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				qPos.add(groupId);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				qPos.add(status);
@@ -15750,7 +15751,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -15760,7 +15761,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 			qPos.add(groupId);
 
 			if (bindDisplayDate) {
-				qPos.add(CalendarUtil.getTimestamp(displayDate));
+				qPos.add(new Timestamp(displayDate.getTime()));
 			}
 
 			qPos.add(status);
@@ -15946,7 +15947,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				qPos.add(userId);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				qPos.add(status);
@@ -16277,7 +16278,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		qPos.add(userId);
 
 		if (bindDisplayDate) {
-			qPos.add(CalendarUtil.getTimestamp(displayDate));
+			qPos.add(new Timestamp(displayDate.getTime()));
 		}
 
 		qPos.add(status);
@@ -16433,7 +16434,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, BlogsEntryImpl.class);
@@ -16449,7 +16450,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 			qPos.add(userId);
 
 			if (bindDisplayDate) {
-				qPos.add(CalendarUtil.getTimestamp(displayDate));
+				qPos.add(new Timestamp(displayDate.getTime()));
 			}
 
 			qPos.add(status);
@@ -16637,7 +16638,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				BlogsEntry.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -16656,7 +16657,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		qPos.add(userId);
 
 		if (bindDisplayDate) {
-			qPos.add(CalendarUtil.getTimestamp(displayDate));
+			qPos.add(new Timestamp(displayDate.getTime()));
 		}
 
 		qPos.add(status);
@@ -16755,7 +16756,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				qPos.add(userId);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				qPos.add(status);
@@ -16824,7 +16825,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -16836,7 +16837,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 			qPos.add(userId);
 
 			if (bindDisplayDate) {
-				qPos.add(CalendarUtil.getTimestamp(displayDate));
+				qPos.add(new Timestamp(displayDate.getTime()));
 			}
 
 			qPos.add(status);
@@ -17023,7 +17024,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				qPos.add(userId);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				qPos.add(status);
@@ -17352,7 +17353,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		qPos.add(userId);
 
 		if (bindDisplayDate) {
-			qPos.add(CalendarUtil.getTimestamp(displayDate));
+			qPos.add(new Timestamp(displayDate.getTime()));
 		}
 
 		qPos.add(status);
@@ -17508,7 +17509,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, BlogsEntryImpl.class);
@@ -17524,7 +17525,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 			qPos.add(userId);
 
 			if (bindDisplayDate) {
-				qPos.add(CalendarUtil.getTimestamp(displayDate));
+				qPos.add(new Timestamp(displayDate.getTime()));
 			}
 
 			qPos.add(status);
@@ -17712,7 +17713,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				BlogsEntry.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -17731,7 +17732,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		qPos.add(userId);
 
 		if (bindDisplayDate) {
-			qPos.add(CalendarUtil.getTimestamp(displayDate));
+			qPos.add(new Timestamp(displayDate.getTime()));
 		}
 
 		qPos.add(status);
@@ -17830,7 +17831,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 				qPos.add(userId);
 
 				if (bindDisplayDate) {
-					qPos.add(CalendarUtil.getTimestamp(displayDate));
+					qPos.add(new Timestamp(displayDate.getTime()));
 				}
 
 				qPos.add(status);
@@ -17899,7 +17900,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -17911,7 +17912,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 			qPos.add(userId);
 
 			if (bindDisplayDate) {
-				qPos.add(CalendarUtil.getTimestamp(displayDate));
+				qPos.add(new Timestamp(displayDate.getTime()));
 			}
 
 			qPos.add(status);
@@ -17991,7 +17992,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 			CacheRegistryUtil.clear(BlogsEntryImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(BlogsEntryImpl.class.getName());
+		EntityCacheUtil.clearCache(BlogsEntryImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -18484,7 +18485,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		}
 
 		EntityCacheUtil.putResult(BlogsEntryModelImpl.ENTITY_CACHE_ENABLED,
-			BlogsEntryImpl.class, blogsEntry.getPrimaryKey(), blogsEntry);
+			BlogsEntryImpl.class, blogsEntry.getPrimaryKey(), blogsEntry, false);
 
 		clearUniqueFindersCache(blogsEntry);
 		cacheUniqueFindersCache(blogsEntry);

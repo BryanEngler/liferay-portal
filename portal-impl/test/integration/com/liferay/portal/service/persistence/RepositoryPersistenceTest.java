@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Repository;
@@ -114,6 +115,8 @@ public class RepositoryPersistenceTest {
 
 		Repository newRepository = _persistence.create(pk);
 
+		newRepository.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newRepository.setUuid(ServiceTestUtil.randomString());
 
 		newRepository.setGroupId(ServiceTestUtil.nextLong());
@@ -144,6 +147,8 @@ public class RepositoryPersistenceTest {
 
 		Repository existingRepository = _persistence.findByPrimaryKey(newRepository.getPrimaryKey());
 
+		Assert.assertEquals(existingRepository.getMvccVersion(),
+			newRepository.getMvccVersion());
 		Assert.assertEquals(existingRepository.getUuid(),
 			newRepository.getUuid());
 		Assert.assertEquals(existingRepository.getRepositoryId(),
@@ -174,6 +179,77 @@ public class RepositoryPersistenceTest {
 			newRepository.getTypeSettings());
 		Assert.assertEquals(existingRepository.getDlFolderId(),
 			newRepository.getDlFolderId());
+	}
+
+	@Test
+	public void testCountByUuid() {
+		try {
+			_persistence.countByUuid(StringPool.BLANK);
+
+			_persistence.countByUuid(StringPool.NULL);
+
+			_persistence.countByUuid((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByUUID_G() {
+		try {
+			_persistence.countByUUID_G(StringPool.BLANK,
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByUUID_G(StringPool.NULL, 0L);
+
+			_persistence.countByUUID_G((String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByUuid_C() {
+		try {
+			_persistence.countByUuid_C(StringPool.BLANK,
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByUuid_C(StringPool.NULL, 0L);
+
+			_persistence.countByUuid_C((String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByGroupId() {
+		try {
+			_persistence.countByGroupId(ServiceTestUtil.nextLong());
+
+			_persistence.countByGroupId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByG_N_P() {
+		try {
+			_persistence.countByG_N_P(ServiceTestUtil.nextLong(),
+				StringPool.BLANK, StringPool.BLANK);
+
+			_persistence.countByG_N_P(0L, StringPool.NULL, StringPool.NULL);
+
+			_persistence.countByG_N_P(0L, (String)null, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -211,11 +287,12 @@ public class RepositoryPersistenceTest {
 	}
 
 	protected OrderByComparator getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("Repository", "uuid", true,
-			"repositoryId", true, "groupId", true, "companyId", true, "userId",
-			true, "userName", true, "createDate", true, "modifiedDate", true,
-			"classNameId", true, "name", true, "description", true,
-			"portletId", true, "typeSettings", true, "dlFolderId", true);
+		return OrderByComparatorFactoryUtil.create("Repository", "mvccVersion",
+			true, "uuid", true, "repositoryId", true, "groupId", true,
+			"companyId", true, "userId", true, "userName", true, "createDate",
+			true, "modifiedDate", true, "classNameId", true, "name", true,
+			"description", true, "portletId", true, "typeSettings", true,
+			"dlFolderId", true);
 	}
 
 	@Test
@@ -362,6 +439,8 @@ public class RepositoryPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		Repository repository = _persistence.create(pk);
+
+		repository.setMvccVersion(ServiceTestUtil.nextLong());
 
 		repository.setUuid(ServiceTestUtil.randomString());
 

@@ -15,6 +15,8 @@ $dockbarOpenGradientStart: #0EA6F9;
 /* ---------- Base styles ---------- */
 
 .aui {
+	background-color: transparent;
+
 	.separator {
 		border-color: #BFBFBF transparent #FFF;
 		border-style: solid;
@@ -104,7 +106,6 @@ $dockbarOpenGradientStart: #0EA6F9;
 				> li {
 					> a {
 						margin: 0 5px 0 0;
-						padding: 6px 10px;
 
 						&:hover {
 							background-color: #2FA4F5;
@@ -188,7 +189,6 @@ $dockbarOpenGradientStart: #0EA6F9;
 					}
 
 					&.nav-account-controls-notice {
-						margin-top: 10px;
 						top: 50px;
 					}
 				}
@@ -253,6 +253,16 @@ $dockbarOpenGradientStart: #0EA6F9;
 
 				> li {
 					background: transparent;
+
+					a {
+						background-color: #2496E5;
+						color: #FFF;
+						padding: 2px 20px;
+
+						&:hover {
+							background-color: #2FA4F5;
+						}
+					}
 				}
 			}
 		}
@@ -293,6 +303,10 @@ $dockbarOpenGradientStart: #0EA6F9;
 					> a {
 						background-color: #A3A3A3;
 						color: #FFF;
+
+						@include respond-to(phone, tablet) {
+							background-color: #2FA4F5;
+						}
 					}
 				}
 
@@ -303,6 +317,12 @@ $dockbarOpenGradientStart: #0EA6F9;
 
 			> li > a {
 				padding: 4px 15px 5px;
+
+				@include respond-to(phone, tablet) {
+					&:focus, &:hover {
+						background-color: #2FA4F5;
+					}
+				}
 			}
 
 			.dropdown-menu {
@@ -398,18 +418,16 @@ $dockbarOpenGradientStart: #0EA6F9;
 		background-color: #A9A9A9;
 	}
 
-	.portlet-borderless-bar .portlet-options {
-		.dropdown-toggle {
-			background-image: url(../images/portlet/options_borderless.png);
-		}
-	}
-
 	.signed-in.controls-visible .portlet-title {
 		padding-right: 80px;
 	}
 
-	.portlet-asset-publisher .asset-content, .portlet-asset-publisher .asset-summary, .portlet-asset-publisher .asset-title, .portlet-asset-publisher .header-title, .portlet-asset-publisher li.title-list, .portlet-blogs .entry-body, .portlet-blogs .entry-title, .portlet-blogs .header-title, .portlet-journal-content .journal-content-article, .portlet-message-boards .header-title, .portlet-message-boards .thread-body {
+	.portlet-asset-publisher .asset-title, .portlet-asset-publisher .header-title, .portlet-asset-publisher li.title-list, .portlet-blogs .entry-title, .portlet-blogs .header-title, .portlet-message-boards .header-title {
 		@include hyphenation;
+	}
+
+	.portlet-asset-publisher .asset-content, .portlet-asset-publisher .asset-summary, .portlet-blogs .entry-body, .portlet-journal-content .journal-content-article, .portlet-message-boards .thread-body {
+		word-wrap: break-word;
 	}
 
 	.portlet-icons {
@@ -602,7 +620,7 @@ $dockbarOpenGradientStart: #0EA6F9;
 		@include border-radius(0 0 3px 3px);
 	}
 
-	.portlet-content {
+	.portlet-borderless-container, .portlet-content {
 		.lfr-icon-actions {
 			@extend %portlet-action-bar-custom;
 		}

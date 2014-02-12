@@ -1976,7 +1976,7 @@ public class WikiNodePersistenceImpl extends BasePersistenceImpl<WikiNode>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, WikiNodeImpl.class);
@@ -2150,7 +2150,7 @@ public class WikiNodePersistenceImpl extends BasePersistenceImpl<WikiNode>
 				WikiNode.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -2279,7 +2279,7 @@ public class WikiNodePersistenceImpl extends BasePersistenceImpl<WikiNode>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -3611,7 +3611,7 @@ public class WikiNodePersistenceImpl extends BasePersistenceImpl<WikiNode>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			if (getDB().isSupportsInlineDistinct()) {
 				q.addEntity(_FILTER_ENTITY_ALIAS, WikiNodeImpl.class);
@@ -3791,7 +3791,7 @@ public class WikiNodePersistenceImpl extends BasePersistenceImpl<WikiNode>
 				WikiNode.class.getName(),
 				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
 
-		SQLQuery q = session.createSQLQuery(sql);
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 		q.setFirstResult(0);
 		q.setMaxResults(2);
@@ -3932,7 +3932,7 @@ public class WikiNodePersistenceImpl extends BasePersistenceImpl<WikiNode>
 		try {
 			session = openSession();
 
-			SQLQuery q = session.createSQLQuery(sql);
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME,
 				com.liferay.portal.kernel.dao.orm.Type.LONG);
@@ -4539,7 +4539,7 @@ public class WikiNodePersistenceImpl extends BasePersistenceImpl<WikiNode>
 			CacheRegistryUtil.clear(WikiNodeImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(WikiNodeImpl.class.getName());
+		EntityCacheUtil.clearCache(WikiNodeImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -4925,7 +4925,7 @@ public class WikiNodePersistenceImpl extends BasePersistenceImpl<WikiNode>
 		}
 
 		EntityCacheUtil.putResult(WikiNodeModelImpl.ENTITY_CACHE_ENABLED,
-			WikiNodeImpl.class, wikiNode.getPrimaryKey(), wikiNode);
+			WikiNodeImpl.class, wikiNode.getPrimaryKey(), wikiNode, false);
 
 		clearUniqueFindersCache(wikiNode);
 		cacheUniqueFindersCache(wikiNode);

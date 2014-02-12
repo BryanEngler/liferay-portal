@@ -30,6 +30,7 @@ import com.liferay.portal.test.MainServletExecutionTestListener;
 import com.liferay.portal.test.Sync;
 import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
 import com.liferay.portal.util.PropsValues;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
@@ -180,8 +181,22 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	}
 
 	@Override
+	protected boolean isCheckBaseModelPermission() {
+		return PropsValues.JOURNAL_ARTICLE_VIEW_PERMISSION_CHECK_ENABLED;
+	}
+
+	@Override
 	protected boolean isExpirableAllVersions() {
 		return PropsValues.JOURNAL_ARTICLE_EXPIRE_ALL_VERSIONS;
+	}
+
+	@Override
+	protected void moveBaseModelToTrash(long primaryKey) throws Exception {
+		JournalArticle article = JournalArticleLocalServiceUtil.getArticle(
+			primaryKey);
+
+		JournalArticleLocalServiceUtil.moveArticleToTrash(
+			TestPropsValues.getUserId(), article);
 	}
 
 	@Override

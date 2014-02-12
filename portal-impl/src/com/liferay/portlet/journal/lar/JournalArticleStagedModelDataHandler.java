@@ -140,6 +140,8 @@ public class JournalArticleStagedModelDataHandler
 
 		referenceAttributes.put("article-resource-uuid", articleResourceUuid);
 
+		referenceAttributes.put("article-id", article.getArticleId());
+
 		long defaultUserId = 0;
 
 		try {
@@ -200,6 +202,38 @@ public class JournalArticleStagedModelDataHandler
 		long articleId = GetterUtil.getLong(element.attributeValue("class-pk"));
 
 		articleIds.put(articleId, existingArticle.getId());
+	}
+
+	@Override
+	public boolean validateReference(
+		PortletDataContext portletDataContext, Element referenceElement) {
+
+		String articleResourceUuid = referenceElement.attributeValue(
+			"article-resource-uuid");
+		String articleArticleId = referenceElement.attributeValue("article-id");
+		boolean preloaded = GetterUtil.getBoolean(
+			referenceElement.attributeValue("preloaded"));
+
+		try {
+			JournalArticle existingArticle = fetchExistingArticle(
+				articleResourceUuid, portletDataContext.getScopeGroupId(),
+				articleArticleId, null, 0.0, preloaded);
+
+			if (existingArticle == null) {
+				existingArticle = fetchExistingArticle(
+					articleResourceUuid, portletDataContext.getCompanyGroupId(),
+					articleArticleId, null, 0.0, preloaded);
+			}
+
+			if (existingArticle == null) {
+				return false;
+			}
+
+			return true;
+		}
+		catch (Exception e) {
+			return false;
+		}
 	}
 
 	@Override
@@ -754,18 +788,16 @@ public class JournalArticleStagedModelDataHandler
 		JournalArticle existingArticle = null;
 
 		if (existingArticleResource != null) {
-			existingArticle =
-				JournalArticleLocalServiceUtil.fetchLatestArticle(
-					existingArticleResource.getResourcePrimKey(),
-					WorkflowConstants.STATUS_ANY, false);
+			existingArticle = JournalArticleLocalServiceUtil.fetchLatestArticle(
+				existingArticleResource.getResourcePrimKey(),
+				WorkflowConstants.STATUS_ANY, false);
 		}
 
 		if ((existingArticle == null) && Validator.isNotNull(newArticleId) &&
 			(version > 0.0)) {
 
-			existingArticle =
-				JournalArticleLocalServiceUtil.fetchArticle(
-					groupId, newArticleId, version);
+			existingArticle = JournalArticleLocalServiceUtil.fetchArticle(
+				groupId, newArticleId, version);
 		}
 
 		return existingArticle;
@@ -785,22 +817,6 @@ public class JournalArticleStagedModelDataHandler
 			articleDefaultLocale, articleAvailableLocales);
 
 		article.prepareLocalizedFieldsForImport(defaultImportLocale);
-	}
-
-	@Override
-	protected boolean validateMissingReference(
-			String uuid, long companyId, long groupId)
-		throws Exception {
-
-		JournalArticle article =
-			JournalArticleLocalServiceUtil.fetchJournalArticleByUuidAndGroupId(
-				uuid, groupId);
-
-		if (article == null) {
-			return false;
-		}
-
-		return true;
 	}
 
 }

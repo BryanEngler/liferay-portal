@@ -348,12 +348,12 @@ public class StringUtil {
 
 	/**
 	 * Returns <code>true</code> if the string ends with the specified
-	 * character.
+	 * character, ignoring case.
 	 *
 	 * @param  s the string in which to search
 	 * @param  end the character to search for at the end of the string
 	 * @return <code>true</code> if the string ends with the specified
-	 *         character; <code>false</code> otherwise
+	 *         character, ignoring case; <code>false</code> otherwise
 	 */
 	public static boolean endsWith(String s, char end) {
 		return endsWith(s, (new Character(end)).toString());
@@ -361,12 +361,12 @@ public class StringUtil {
 
 	/**
 	 * Returns <code>true</code> if the string ends with the string
-	 * <code>end</code>.
+	 * <code>end</code>, ignoring case.
 	 *
 	 * @param  s the string in which to search
 	 * @param  end the string to check for at the end of the string
 	 * @return <code>true</code> if the string ends with the string
-	 *         <code>end</code>; <code>false</code> otherwise
+	 *         <code>end</code>, ignoring case; <code>false</code> otherwise
 	 */
 	public static boolean endsWith(String s, String end) {
 		if ((s == null) || (end == null)) {
@@ -387,6 +387,14 @@ public class StringUtil {
 		}
 	}
 
+	/**
+	 * Returns <code>true</code> if the strings are equal, ignoring case.
+	 *
+	 * @param  s1 the first string to compare
+	 * @param  s2 the second string to compare
+	 * @return <code>true</code> if the strings are equal, ignoring case;
+	 *         <code>false</code> otherwise
+	 */
 	public static boolean equalsIgnoreCase(String s1, String s2) {
 		if (s1 == s2) {
 			return true;
@@ -618,6 +626,14 @@ public class StringUtil {
 		}
 	}
 
+	/**
+	 * Returns the substring of all leading digits of string <code>s</code>, or
+	 * an empty string if it has no leading digits.
+	 *
+	 * @param  s the string from which to extract the substring
+	 * @return the substring of all leading digits of string <code>s</code>, or
+	 *         an empty string if it has no leading digits
+	 */
 	public static String extractLeadingDigits(String s) {
 		if (s == null) {
 			return StringPool.BLANK;
@@ -664,11 +680,33 @@ public class StringUtil {
 		return _highlight(s, pattern, highlight1, highlight2);
 	}
 
+	/**
+	 * Returns the string <code>s</code> with any of the query terms found
+	 * within it highlighted with HTML.
+	 *
+	 * @param  s the string to search (optionally <code>null</code>)
+	 * @param  queryTerms the terms to search for in the string (optionally
+	 *         <code>null</code>)
+	 * @return the string <code>s</code> with any of the query terms found
+	 *         within it highlighted with HTML
+	 */
 	public static String highlight(String s, String[] queryTerms) {
 		return highlight(
 			s, queryTerms, "<span class=\"highlight\">", "</span>");
 	}
 
+	/**
+	 * Returns the string <code>s</code> with any of the query terms found
+	 * within it highlighted with the syntax highlighting tags.
+	 *
+	 * @param  s the string to search (optionally <code>null</code>)
+	 * @param  queryTerms the terms to search for in the string (optionally
+	 *         <code>null</code>)
+	 * @param  highlight1 the beginning highlight tag
+	 * @param  highlight2 the ending highlight tag
+	 * @return the string <code>s</code> with any of the query terms found
+	 *         within it highlighted with the syntax highlighting tags
+	 */
 	public static String highlight(
 		String s, String[] queryTerms, String highlight1, String highlight2) {
 
@@ -1054,6 +1092,15 @@ public class StringUtil {
 		return prefix.concat(insert).concat(postfix);
 	}
 
+	/**
+	 * Returns <code>true</code> if all the characters in string <code>s</code>
+	 * are lower case, ignoring any non-alphabetic characters.
+	 *
+	 * @param  s the string in which to search
+	 * @return <code>true</code> if all the characters in string <code>s</code>
+	 *         are lower case, ignoring any non-alphabetic characters;
+	 *         <code>false</code> otherwise
+	 */
 	public static boolean isLowerCase(String s) {
 		if (s == null) {
 			return false;
@@ -1082,6 +1129,15 @@ public class StringUtil {
 		return true;
 	}
 
+	/**
+	 * Returns <code>true</code> if all the characters in string <code>s</code>
+	 * are upper case, ignoring any non-alphabetic characters.
+	 *
+	 * @param  s the string in which to search
+	 * @return <code>true</code> if all the characters in string <code>s</code>
+	 *         are upper case, ignoring any non-alphabetic characters;
+	 *         <code>false</code> otherwise
+	 */
 	public static boolean isUpperCase(String s) {
 		if (s == null) {
 			return false;
@@ -1447,12 +1503,7 @@ public class StringUtil {
 	 * @see    String#toLowerCase()
 	 */
 	public static String lowerCase(String s) {
-		if (s == null) {
-			return null;
-		}
-		else {
-			return toLowerCase(s);
-		}
+		return toLowerCase(s);
 	}
 
 	public static void lowerCase(String... array) {
@@ -1971,6 +2022,11 @@ public class StringUtil {
 		return quote.concat(s).concat(quote);
 	}
 
+	/**
+	 * Returns a randomized string of four lower case, alphabetic characters.
+	 *
+	 * @return a randomized string of four lower case, alphabetic characters
+	 */
 	public static String randomId() {
 		Random random = new Random();
 
@@ -1995,10 +2051,25 @@ public class StringUtil {
 		return RandomUtil.shuffle(s);
 	}
 
+	/**
+	 * Returns a randomized string of eight characters consisting of lower case
+	 * letters, upper case letters, and single-digit whole numbers.
+	 *
+	 * @return a randomized string of eight characters consisting of lower case
+	 *         letters, upper case letters, and single-digit whole numbers
+	 */
 	public static String randomString() {
 		return randomString(8);
 	}
 
+	/**
+	 * Returns a randomized string of the specified length consisting of lower
+	 * case letters, upper case letters, and single-digit whole numbers.
+	 *
+	 * @param  length the character length of the randomized string
+	 * @return a randomized string of the specified length consisting of lower
+	 *         case letters, upper case letters, and single-digit whole numbers
+	 */
 	public static String randomString(int length) {
 		Random random = new Random();
 
@@ -3722,6 +3793,28 @@ public class StringUtil {
 		return sb.toString();
 	}
 
+	/**
+	 * Returns a string representing the hexidecimal character code of the
+	 * integer.
+	 *
+	 * <p>
+	 * Example:
+	 * </p>
+	 *
+	 * <p>
+	 * <pre>
+	 * <code>
+	 * toHexString(10) returns "a"
+	 * toHexString(15) returns "f"
+	 * toHexString(10995) returns "2af3"
+	 * </code>
+	 * </pre>
+	 * </p>
+	 *
+	 * @param  i the integer to convert
+	 * @return a string representing the hexidecimal character code of the
+	 *         integer
+	 */
 	public static String toHexString(int i) {
 		char[] buffer = new char[8];
 
@@ -3737,6 +3830,26 @@ public class StringUtil {
 		return new String(buffer, index, 8 - index);
 	}
 
+	/**
+	 * Returns a string representing the hexidecimal character code of the long
+	 * integer.
+	 *
+	 * <p>
+	 * Example:
+	 * </p>
+	 *
+	 * <p>
+	 * <pre>
+	 * <code>
+	 * toHexString(12345678910L) returns "2dfdc1c3e"
+	 * </code>
+	 * </pre>
+	 * </p>
+	 *
+	 * @param  l the long integer to convert
+	 * @return a string representing the hexidecimal character code of the long
+	 *         integer
+	 */
 	public static String toHexString(long l) {
 		char[] buffer = new char[16];
 
@@ -3752,6 +3865,15 @@ public class StringUtil {
 		return new String(buffer, index, 16 - index);
 	}
 
+	/**
+	 * Returns a string representing the hexidecimal character code of the
+	 * <code>Integer</code> or <code>Long</code> object type. If the object is
+	 * not an instance of these types, the object's original value is returned.
+	 *
+	 * @param  obj the object to convert
+	 * @return a string representing the hexidecimal character code of the
+	 *         object
+	 */
 	public static String toHexString(Object obj) {
 		if (obj instanceof Integer) {
 			return toHexString(((Integer)obj).intValue());
@@ -3769,6 +3891,10 @@ public class StringUtil {
 	}
 
 	public static String toLowerCase(String s, Locale locale) {
+		if (s == null) {
+			return null;
+		}
+
 		StringBuilder sb = null;
 
 		for (int i = 0; i < s.length(); i++) {
@@ -3806,6 +3932,10 @@ public class StringUtil {
 	}
 
 	public static String toUpperCase(String s, Locale locale) {
+		if (s == null) {
+			return null;
+		}
+
 		StringBuilder sb = null;
 
 		for (int i = 0; i < s.length(); i++) {
@@ -4218,12 +4348,7 @@ public class StringUtil {
 	 * @see    String#toUpperCase()
 	 */
 	public static String upperCase(String s) {
-		if (s == null) {
-			return null;
-		}
-		else {
-			return toUpperCase(s);
-		}
+		return toUpperCase(s);
 	}
 
 	/**

@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Role;
@@ -114,6 +115,8 @@ public class RolePersistenceTest {
 
 		Role newRole = _persistence.create(pk);
 
+		newRole.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newRole.setUuid(ServiceTestUtil.randomString());
 
 		newRole.setCompanyId(ServiceTestUtil.nextLong());
@@ -144,6 +147,8 @@ public class RolePersistenceTest {
 
 		Role existingRole = _persistence.findByPrimaryKey(newRole.getPrimaryKey());
 
+		Assert.assertEquals(existingRole.getMvccVersion(),
+			newRole.getMvccVersion());
 		Assert.assertEquals(existingRole.getUuid(), newRole.getUuid());
 		Assert.assertEquals(existingRole.getRoleId(), newRole.getRoleId());
 		Assert.assertEquals(existingRole.getCompanyId(), newRole.getCompanyId());
@@ -163,6 +168,152 @@ public class RolePersistenceTest {
 			newRole.getDescription());
 		Assert.assertEquals(existingRole.getType(), newRole.getType());
 		Assert.assertEquals(existingRole.getSubtype(), newRole.getSubtype());
+	}
+
+	@Test
+	public void testCountByUuid() {
+		try {
+			_persistence.countByUuid(StringPool.BLANK);
+
+			_persistence.countByUuid(StringPool.NULL);
+
+			_persistence.countByUuid((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByUuid_C() {
+		try {
+			_persistence.countByUuid_C(StringPool.BLANK,
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByUuid_C(StringPool.NULL, 0L);
+
+			_persistence.countByUuid_C((String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByCompanyId() {
+		try {
+			_persistence.countByCompanyId(ServiceTestUtil.nextLong());
+
+			_persistence.countByCompanyId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByName() {
+		try {
+			_persistence.countByName(StringPool.BLANK);
+
+			_persistence.countByName(StringPool.NULL);
+
+			_persistence.countByName((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByType() {
+		try {
+			_persistence.countByType(ServiceTestUtil.nextInt());
+
+			_persistence.countByType(0);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountBySubtype() {
+		try {
+			_persistence.countBySubtype(StringPool.BLANK);
+
+			_persistence.countBySubtype(StringPool.NULL);
+
+			_persistence.countBySubtype((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_N() {
+		try {
+			_persistence.countByC_N(ServiceTestUtil.nextLong(), StringPool.BLANK);
+
+			_persistence.countByC_N(0L, StringPool.NULL);
+
+			_persistence.countByC_N(0L, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_T() {
+		try {
+			_persistence.countByC_T(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextInt());
+
+			_persistence.countByC_T(0L, 0);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_TArrayable() {
+		try {
+			_persistence.countByC_T(ServiceTestUtil.nextLong(),
+				new int[] { ServiceTestUtil.nextInt(), 0 });
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByT_S() {
+		try {
+			_persistence.countByT_S(ServiceTestUtil.nextInt(), StringPool.BLANK);
+
+			_persistence.countByT_S(0, StringPool.NULL);
+
+			_persistence.countByT_S(0, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_C_C() {
+		try {
+			_persistence.countByC_C_C(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), ServiceTestUtil.nextLong());
+
+			_persistence.countByC_C_C(0L, 0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -199,11 +350,11 @@ public class RolePersistenceTest {
 	}
 
 	protected OrderByComparator getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("Role_", "uuid", true,
-			"roleId", true, "companyId", true, "userId", true, "userName",
-			true, "createDate", true, "modifiedDate", true, "classNameId",
-			true, "classPK", true, "name", true, "title", true, "description",
-			true, "type", true, "subtype", true);
+		return OrderByComparatorFactoryUtil.create("Role_", "mvccVersion",
+			true, "uuid", true, "roleId", true, "companyId", true, "userId",
+			true, "userName", true, "createDate", true, "modifiedDate", true,
+			"classNameId", true, "classPK", true, "name", true, "title", true,
+			"description", true, "type", true, "subtype", true);
 	}
 
 	@Test
@@ -345,6 +496,8 @@ public class RolePersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		Role role = _persistence.create(pk);
+
+		role.setMvccVersion(ServiceTestUtil.nextLong());
 
 		role.setUuid(ServiceTestUtil.randomString());
 

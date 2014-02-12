@@ -355,6 +355,10 @@ public class BaseDeployer implements AutoDeployer, Deployer {
 			String jarName = jarFullName.substring(
 				jarFullName.lastIndexOf("/") + 1);
 
+			if (!FileUtil.exists(jarFullName)) {
+				DeployUtil.getResourcePath(jarName);
+			}
+
 			FileUtil.copyFile(
 				jarFullName, srcFile + "/WEB-INF/lib/" + jarName, false);
 		}
@@ -800,7 +804,12 @@ public class BaseDeployer implements AutoDeployer, Deployer {
 					WarTask.war(srcFile, deployDir, excludes, webXml);
 				}
 
-				DeleteTask.deleteDirectory(tempDir);
+				if (tempDir.isDirectory()) {
+					DeleteTask.deleteDirectory(tempDir);
+				}
+				else {
+					tempDir.delete();
+				}
 			}
 		}
 		else {
@@ -2028,7 +2037,8 @@ public class BaseDeployer implements AutoDeployer, Deployer {
 			String listenerClass = GetterUtil.getString(
 				listenerElement.elementText("listener-class"));
 
-			if (listenerClass.equals(
+			if (listenerClass.equals(PluginContextListener.class.getName()) ||
+				listenerClass.equals(
 					SecurePluginContextListener.class.getName())) {
 
 				continue;
@@ -2317,7 +2327,8 @@ public class BaseDeployer implements AutoDeployer, Deployer {
 			String listenerClass = GetterUtil.getString(
 				listenerElement.elementText("listener-class"));
 
-			if (listenerClass.equals(
+			if (listenerClass.equals(PluginContextListener.class.getName()) ||
+				listenerClass.equals(
 					SerializableSessionAttributeListener.class.getName()) ||
 				listenerClass.equals(
 					SecurePluginContextListener.class.getName())) {

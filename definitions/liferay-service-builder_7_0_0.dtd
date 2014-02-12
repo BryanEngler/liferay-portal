@@ -17,13 +17,21 @@ service-builder-import*)>
 <!--
 The package-path value specifies the package of the generated code.
 
+The auto-import-default-references value specifies whether or not to
+automatically default references. The default value is true.
+
 The auto-namespace-tables value specifies whether or not to automatically
 namespace tables. The default value is false for core services and true for
 plugin services.
+
+The mvcc-enabled value specifies whether or not to enable MVCC by default for
+entities to prevent lost updates. The default value is false.
 -->
 <!ATTLIST service-builder
 	package-path CDATA #REQUIRED
+	auto-import-default-references CDATA #IMPLIED
 	auto-namespace-tables CDATA #IMPLIED
+	mvcc-enabled CDATA #IMPLIED
 >
 
 <!--
@@ -107,7 +115,12 @@ entity. Set this to false if data in the table will be updated by other
 programs. The default value is true.
 
 The dynamic-update-enabled value specifies whether or not unmodified properties
-are excluded in the SQL update statement. The default value is false.
+are excluded in the SQL update statement. The default value is the value of the
+attribute mvcc-enabled.
+
+The mvcc-enabled value specifies whether or not to enable MVCC for this
+entity to prevent lost updates. The default value is based on the mvcc-enabled
+attribute in the service-builder element.
 
 The json-enabled value specifies whether or not the entity should be annotated
 for JSON serialization. By default, if the remote-service value is true, then
@@ -133,6 +146,7 @@ The deprecated value specifies whether the entity's services are deprecated.
 	cache-enabled CDATA #IMPLIED
 	dynamic-update-enabled CDATA #IMPLIED
 	json-enabled CDATA #IMPLIED
+	mvcc-enabled CDATA #IMPLIED
 	trash-enabled CDATA #IMPLIED
 	deprecated CDATA #IMPLIED
 >

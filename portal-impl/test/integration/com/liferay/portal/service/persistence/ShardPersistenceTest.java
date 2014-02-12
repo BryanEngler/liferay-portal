@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Shard;
 import com.liferay.portal.model.impl.ShardModelImpl;
@@ -113,6 +114,8 @@ public class ShardPersistenceTest {
 
 		Shard newShard = _persistence.create(pk);
 
+		newShard.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newShard.setClassNameId(ServiceTestUtil.nextLong());
 
 		newShard.setClassPK(ServiceTestUtil.nextLong());
@@ -123,11 +126,40 @@ public class ShardPersistenceTest {
 
 		Shard existingShard = _persistence.findByPrimaryKey(newShard.getPrimaryKey());
 
+		Assert.assertEquals(existingShard.getMvccVersion(),
+			newShard.getMvccVersion());
 		Assert.assertEquals(existingShard.getShardId(), newShard.getShardId());
 		Assert.assertEquals(existingShard.getClassNameId(),
 			newShard.getClassNameId());
 		Assert.assertEquals(existingShard.getClassPK(), newShard.getClassPK());
 		Assert.assertEquals(existingShard.getName(), newShard.getName());
+	}
+
+	@Test
+	public void testCountByName() {
+		try {
+			_persistence.countByName(StringPool.BLANK);
+
+			_persistence.countByName(StringPool.NULL);
+
+			_persistence.countByName((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_C() {
+		try {
+			_persistence.countByC_C(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByC_C(0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -164,8 +196,9 @@ public class ShardPersistenceTest {
 	}
 
 	protected OrderByComparator getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("Shard", "shardId", true,
-			"classNameId", true, "classPK", true, "name", true);
+		return OrderByComparatorFactoryUtil.create("Shard", "mvccVersion",
+			true, "shardId", true, "classNameId", true, "classPK", true,
+			"name", true);
 	}
 
 	@Test
@@ -303,6 +336,8 @@ public class ShardPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		Shard shard = _persistence.create(pk);
+
+		shard.setMvccVersion(ServiceTestUtil.nextLong());
 
 		shard.setClassNameId(ServiceTestUtil.nextLong());
 

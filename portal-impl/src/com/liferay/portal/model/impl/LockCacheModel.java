@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.Lock;
+import com.liferay.portal.model.MVCCModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -33,12 +34,25 @@ import java.util.Date;
  * @see Lock
  * @generated
  */
-public class LockCacheModel implements CacheModel<Lock>, Externalizable {
+public class LockCacheModel implements CacheModel<Lock>, Externalizable,
+	MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(23);
+		StringBundler sb = new StringBundler(25);
 
-		sb.append("{uuid=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", uuid=");
 		sb.append(uuid);
 		sb.append(", lockId=");
 		sb.append(lockId);
@@ -68,6 +82,8 @@ public class LockCacheModel implements CacheModel<Lock>, Externalizable {
 	@Override
 	public Lock toEntityModel() {
 		LockImpl lockImpl = new LockImpl();
+
+		lockImpl.setMvccVersion(mvccVersion);
 
 		if (uuid == null) {
 			lockImpl.setUuid(StringPool.BLANK);
@@ -131,6 +147,7 @@ public class LockCacheModel implements CacheModel<Lock>, Externalizable {
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		uuid = objectInput.readUTF();
 		lockId = objectInput.readLong();
 		companyId = objectInput.readLong();
@@ -147,6 +164,8 @@ public class LockCacheModel implements CacheModel<Lock>, Externalizable {
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
+
 		if (uuid == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
@@ -192,6 +211,7 @@ public class LockCacheModel implements CacheModel<Lock>, Externalizable {
 		objectOutput.writeLong(expirationDate);
 	}
 
+	public long mvccVersion;
 	public String uuid;
 	public long lockId;
 	public long companyId;

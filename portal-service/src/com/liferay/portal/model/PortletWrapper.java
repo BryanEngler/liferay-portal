@@ -50,6 +50,7 @@ public class PortletWrapper implements Portlet, ModelWrapper<Portlet> {
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
+		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("id", getId());
 		attributes.put("companyId", getCompanyId());
 		attributes.put("portletId", getPortletId());
@@ -61,6 +62,12 @@ public class PortletWrapper implements Portlet, ModelWrapper<Portlet> {
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
+		Long mvccVersion = (Long)attributes.get("mvccVersion");
+
+		if (mvccVersion != null) {
+			setMvccVersion(mvccVersion);
+		}
+
 		Long id = (Long)attributes.get("id");
 
 		if (id != null) {
@@ -110,6 +117,26 @@ public class PortletWrapper implements Portlet, ModelWrapper<Portlet> {
 	@Override
 	public void setPrimaryKey(long primaryKey) {
 		_portlet.setPrimaryKey(primaryKey);
+	}
+
+	/**
+	* Returns the mvcc version of this portlet.
+	*
+	* @return the mvcc version of this portlet
+	*/
+	@Override
+	public long getMvccVersion() {
+		return _portlet.getMvccVersion();
+	}
+
+	/**
+	* Sets the mvcc version of this portlet.
+	*
+	* @param mvccVersion the mvcc version of this portlet
+	*/
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		_portlet.setMvccVersion(mvccVersion);
 	}
 
 	/**
@@ -1862,6 +1889,46 @@ public class PortletWrapper implements Portlet, ModelWrapper<Portlet> {
 	@Override
 	public boolean hasAddPortletPermission(long userId) {
 		return _portlet.hasAddPortletPermission(userId);
+	}
+
+	@Override
+	public boolean hasFooterPortalCss() {
+		return _portlet.hasFooterPortalCss();
+	}
+
+	@Override
+	public boolean hasFooterPortalJavaScript() {
+		return _portlet.hasFooterPortalJavaScript();
+	}
+
+	@Override
+	public boolean hasFooterPortletCss() {
+		return _portlet.hasFooterPortletCss();
+	}
+
+	@Override
+	public boolean hasFooterPortletJavaScript() {
+		return _portlet.hasFooterPortletJavaScript();
+	}
+
+	@Override
+	public boolean hasHeaderPortalCss() {
+		return _portlet.hasHeaderPortalCss();
+	}
+
+	@Override
+	public boolean hasHeaderPortalJavaScript() {
+		return _portlet.hasHeaderPortalJavaScript();
+	}
+
+	@Override
+	public boolean hasHeaderPortletCss() {
+		return _portlet.hasHeaderPortletCss();
+	}
+
+	@Override
+	public boolean hasHeaderPortletJavaScript() {
+		return _portlet.hasHeaderPortletJavaScript();
 	}
 
 	/**

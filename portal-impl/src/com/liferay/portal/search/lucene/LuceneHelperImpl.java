@@ -41,10 +41,12 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchEngineUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.MethodHandler;
 import com.liferay.portal.kernel.util.MethodKey;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnsyncPrintWriterPool;
@@ -72,6 +74,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -673,14 +676,43 @@ public class LuceneHelperImpl implements LuceneHelper {
 		MessageBus messageBus = MessageBusUtil.getMessageBus();
 
 		for (String searchEngineId : SearchEngineUtil.getSearchEngineIds()) {
-			String searchReaderDestinationName =
+			String searchWriterDestinationName =
 				SearchEngineUtil.getSearchWriterDestinationName(searchEngineId);
 
-			Destination searchReaderDestination = messageBus.getDestination(
-				searchReaderDestinationName);
+			Destination searchWriteDestination = messageBus.getDestination(
+				searchWriterDestinationName);
 
-			if (searchReaderDestination != null) {
-				searchReaderDestination.close(true);
+			if (searchWriteDestination != null) {
+				ThreadPoolExecutor threadPoolExecutor =
+					PortalExecutorManagerUtil.getPortalExecutor(
+						searchWriterDestinationName);
+
+				int maxPoolSize = threadPoolExecutor.getMaxPoolSize();
+
+				CountDownLatch countDownLatch = new CountDownLatch(maxPoolSize);
+
+				ShutdownSyncJob shutdownSyncJob = new ShutdownSyncJob(
+					countDownLatch);
+
+				for (int i = 0; i < maxPoolSize; i++) {
+					threadPoolExecutor.submit(shutdownSyncJob);
+				}
+
+				try {
+					countDownLatch.await();
+				}
+				catch (InterruptedException ie) {
+					_log.error("Shutdown waiting interrupted", ie);
+				}
+
+				List<Runnable> runnables = threadPoolExecutor.shutdownNow();
+
+				if (_log.isDebugEnabled()) {
+					_log.debug(
+						"Cancelled appending indexing jobs: " + runnables);
+				}
+
+				searchWriteDestination.close(true);
 			}
 		}
 
@@ -754,6 +786,15 @@ public class LuceneHelperImpl implements LuceneHelper {
 		}
 
 		BooleanQuery.setMaxClauseCount(_LUCENE_BOOLEAN_QUERY_CLAUSE_MAX_SIZE);
+
+		if (StringUtil.equalsIgnoreCase(
+				Http.HTTPS, PropsValues.WEB_SERVER_PROTOCOL)) {
+
+			_protocol = Http.HTTPS;
+		}
+		else {
+			_protocol = Http.HTTP;
+		}
 	}
 
 	private ObjectValuePair<String, URL>
@@ -776,9 +817,22 @@ public class LuceneHelperImpl implements LuceneHelper {
 				_CLUSTER_LINK_NODE_BOOTUP_RESPONSE_TIMEOUT,
 				TimeUnit.MILLISECONDS);
 
-			String transientToken = (String)clusterNodeResponse.getResult();
-
 			ClusterNode clusterNode = clusterNodeResponse.getClusterNode();
+
+			int port = clusterNode.getPort();
+
+			if (port <= 0) {
+				StringBundler sb = new StringBundler(6);
+
+				sb.append("Invalid cluster node port ");
+				sb.append(port);
+				sb.append(". The port is set by the first request or ");
+				sb.append("configured in portal.properties by the properties ");
+				sb.append("\"portal.instance.http.port\" and ");
+				sb.append("\"portal.instance.https.port\".");
+
+				throw new Exception(sb.toString());
+			}
 
 			InetAddress inetAddress = clusterNode.getInetAddress();
 
@@ -791,8 +845,9 @@ public class LuceneHelperImpl implements LuceneHelper {
 			fileName = fileName.concat("lucene/dump");
 
 			URL url = new URL(
-				"http", inetAddress.getHostAddress(), clusterNode.getPort(),
-				fileName);
+				_protocol, inetAddress.getHostAddress(), port, fileName);
+
+			String transientToken = (String)clusterNodeResponse.getResult();
 
 			return new ObjectValuePair<String, URL>(transientToken, url);
 		}
@@ -927,7 +982,31 @@ public class LuceneHelperImpl implements LuceneHelper {
 		new ConcurrentHashMap<Long, IndexAccessor>();
 	private LoadIndexClusterEventListener _loadIndexClusterEventListener;
 	private ThreadPoolExecutor _luceneIndexThreadPoolExecutor;
+	private String _protocol;
 	private Version _version;
+
+	private static class ShutdownSyncJob implements Runnable {
+
+		public ShutdownSyncJob(CountDownLatch countDownLatch) {
+			_countDownLatch = countDownLatch;
+		}
+
+		@Override
+		public void run() {
+			_countDownLatch.countDown();
+
+			try {
+				synchronized (this) {
+					wait();
+				}
+			}
+			catch (InterruptedException ie) {
+			}
+		}
+
+		private final CountDownLatch _countDownLatch;
+
+	}
 
 	private class LoadIndexClusterEventListener
 		implements ClusterEventListener {

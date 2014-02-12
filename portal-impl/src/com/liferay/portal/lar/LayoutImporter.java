@@ -43,7 +43,6 @@ import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Constants;
-import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -78,6 +77,8 @@ import com.liferay.portal.service.ServiceContextThreadLocal;
 import com.liferay.portal.service.persistence.LayoutUtil;
 import com.liferay.portal.service.persistence.UserUtil;
 import com.liferay.portal.servlet.filters.cache.CacheUtil;
+import com.liferay.portlet.asset.model.AssetCategory;
+import com.liferay.portlet.asset.model.AssetVocabulary;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journalcontent.util.JournalContentUtil;
 import com.liferay.portlet.sites.util.Sites;
@@ -383,10 +384,22 @@ public class LayoutImporter {
 			}
 
 			if (existingLayoutSetPrototype == null) {
+				List<LayoutSet> layoutSets =
+					LayoutSetLocalServiceUtil.
+						getLayoutSetsByLayoutSetPrototypeUuid(
+							layoutSetPrototype.getUuid());
+
 				layoutSetPrototype.setUuid(importedLayoutSetPrototypeUuid);
 
 				LayoutSetPrototypeLocalServiceUtil.updateLayoutSetPrototype(
 					layoutSetPrototype);
+
+				for (LayoutSet curLayoutSet : layoutSets) {
+					curLayoutSet.setLayoutSetPrototypeUuid(
+						importedLayoutSetPrototypeUuid);
+
+					LayoutSetLocalServiceUtil.updateLayoutSet(curLayoutSet);
+				}
 			}
 		}
 		else if (larType.equals("layout-set-prototype")) {
@@ -411,17 +424,8 @@ public class LayoutImporter {
 				logoPath);
 
 			if (ArrayUtil.isNotEmpty(iconBytes)) {
-				File logo = null;
-
-				try {
-					logo = FileUtil.createTempFile(iconBytes);
-
-					LayoutSetLocalServiceUtil.updateLogo(
-						groupId, privateLayout, true, logo);
-				}
-				finally {
-					FileUtil.delete(logo);
-				}
+				LayoutSetLocalServiceUtil.updateLogo(
+					groupId, privateLayout, true, iconBytes);
 			}
 			else {
 				LayoutSetLocalServiceUtil.updateLogo(
@@ -462,7 +466,8 @@ public class LayoutImporter {
 			_permissionImporter.readPortletDataPermissions(portletDataContext);
 		}
 
-		_portletImporter.readAssetCategories(portletDataContext);
+		importAssetCategories(portletDataContext);
+
 		_portletImporter.readAssetTags(portletDataContext);
 		_portletImporter.readComments(portletDataContext);
 		_portletImporter.readExpandoTables(portletDataContext);
@@ -680,6 +685,8 @@ public class LayoutImporter {
 		long lastMergeTime = System.currentTimeMillis();
 
 		for (Layout layout : newLayouts) {
+			layout = LayoutLocalServiceUtil.getLayout(layout.getPlid());
+
 			boolean modifiedTypeSettingsProperties = false;
 
 			UnicodeProperties typeSettingsProperties =
@@ -725,6 +732,13 @@ public class LayoutImporter {
 				PortletDataHandlerKeys.
 					LAYOUTS_IMPORT_MODE_CREATED_FROM_PROTOTYPE)) {
 
+			// The layout set may be stale because LayoutUtil#update(layout)
+			// triggers LayoutSetPrototypeLayoutListener and that may have
+			// updated this layout set
+
+			layoutSet = LayoutSetLocalServiceUtil.getLayoutSet(
+				layoutSet.getLayoutSetId());
+
 			UnicodeProperties settingsProperties =
 				layoutSet.getSettingsProperties();
 
@@ -750,6 +764,31 @@ public class LayoutImporter {
 		}
 
 		zipReader.close();
+	}
+
+	protected void importAssetCategories(PortletDataContext portletDataContext)
+		throws Exception {
+
+		Element assetVocabulariesElement =
+			portletDataContext.getImportDataGroupElement(AssetVocabulary.class);
+
+		List<Element> assetVocabularyElements =
+			assetVocabulariesElement.elements();
+
+		for (Element assetVocabularyElement : assetVocabularyElements) {
+			StagedModelDataHandlerUtil.importStagedModel(
+				portletDataContext, assetVocabularyElement);
+		}
+
+		Element assetCategoriesElement =
+			portletDataContext.getImportDataGroupElement(AssetCategory.class);
+
+		List<Element> assetCategoryElements = assetCategoriesElement.elements();
+
+		for (Element assetCategoryElement : assetCategoryElements) {
+			StagedModelDataHandlerUtil.importStagedModel(
+				portletDataContext, assetCategoryElement);
+		}
 	}
 
 	protected void importLayout(

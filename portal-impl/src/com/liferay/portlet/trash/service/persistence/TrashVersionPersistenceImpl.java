@@ -1646,7 +1646,7 @@ public class TrashVersionPersistenceImpl extends BasePersistenceImpl<TrashVersio
 			CacheRegistryUtil.clear(TrashVersionImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(TrashVersionImpl.class.getName());
+		EntityCacheUtil.clearCache(TrashVersionImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -1959,7 +1959,8 @@ public class TrashVersionPersistenceImpl extends BasePersistenceImpl<TrashVersio
 		}
 
 		EntityCacheUtil.putResult(TrashVersionModelImpl.ENTITY_CACHE_ENABLED,
-			TrashVersionImpl.class, trashVersion.getPrimaryKey(), trashVersion);
+			TrashVersionImpl.class, trashVersion.getPrimaryKey(), trashVersion,
+			false);
 
 		clearUniqueFindersCache(trashVersion);
 		cacheUniqueFindersCache(trashVersion);

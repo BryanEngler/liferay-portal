@@ -209,6 +209,13 @@ public class ClpSerializer {
 
 				return throwable;
 			}
+			catch (ClassNotFoundException cnfe) {
+				if (_log.isInfoEnabled()) {
+					_log.info("Do not use reflection to translate throwable");
+				}
+
+				_useReflectionToTranslateThrowable = false;
+			}
 			catch (SecurityException se) {
 				if (_log.isInfoEnabled()) {
 					_log.info("Do not use reflection to translate throwable");
@@ -227,17 +234,9 @@ public class ClpSerializer {
 
 		String className = clazz.getName();
 
-		if (className.equals(PortalException.class.getName())) {
-			return new PortalException();
-		}
-
-		if (className.equals(SystemException.class.getName())) {
-			return new SystemException();
-		}
-
 		<#list exceptions as exception>
 			if (className.equals("${packagePath}.${exception}Exception")) {
-				return new ${packagePath}.${exception}Exception();
+				return new ${packagePath}.${exception}Exception(throwable.getMessage(), throwable.getCause());
 			}
 		</#list>
 

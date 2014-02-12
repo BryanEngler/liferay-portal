@@ -54,11 +54,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>INFO_MESSAGE</td>
-	<td>//div[contains(@class,'alert') and contains(@class,'alert-info')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>CONFIRMATION</td>
 	<td></td>
 	<td></td>
@@ -125,6 +120,11 @@
 <tr>
 	<td>ORGANIZATION_MENULIST_EDIT</td>
 	<td>//a[@role='menuitem' and contains(.,'Edit')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ORGANIZATION_MENULIST_MANAGE_SITE</td>
+	<td>//a[@role='menuitem' and contains(.,'Manage Site')]</td>
 	<td></td>
 </tr>
 <tr>

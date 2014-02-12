@@ -38,6 +38,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.LayoutFriendlyURL;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.model.impl.LayoutFriendlyURLImpl;
 import com.liferay.portal.model.impl.LayoutFriendlyURLModelImpl;
@@ -4825,7 +4826,7 @@ public class LayoutFriendlyURLPersistenceImpl extends BasePersistenceImpl<Layout
 			CacheRegistryUtil.clear(LayoutFriendlyURLImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(LayoutFriendlyURLImpl.class.getName());
+		EntityCacheUtil.clearCache(LayoutFriendlyURLImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -5295,7 +5296,7 @@ public class LayoutFriendlyURLPersistenceImpl extends BasePersistenceImpl<Layout
 
 		EntityCacheUtil.putResult(LayoutFriendlyURLModelImpl.ENTITY_CACHE_ENABLED,
 			LayoutFriendlyURLImpl.class, layoutFriendlyURL.getPrimaryKey(),
-			layoutFriendlyURL);
+			layoutFriendlyURL, false);
 
 		clearUniqueFindersCache(layoutFriendlyURL);
 		cacheUniqueFindersCache(layoutFriendlyURL);
@@ -5316,6 +5317,7 @@ public class LayoutFriendlyURLPersistenceImpl extends BasePersistenceImpl<Layout
 		layoutFriendlyURLImpl.setNew(layoutFriendlyURL.isNew());
 		layoutFriendlyURLImpl.setPrimaryKey(layoutFriendlyURL.getPrimaryKey());
 
+		layoutFriendlyURLImpl.setMvccVersion(layoutFriendlyURL.getMvccVersion());
 		layoutFriendlyURLImpl.setUuid(layoutFriendlyURL.getUuid());
 		layoutFriendlyURLImpl.setLayoutFriendlyURLId(layoutFriendlyURL.getLayoutFriendlyURLId());
 		layoutFriendlyURLImpl.setGroupId(layoutFriendlyURL.getGroupId());
@@ -5668,10 +5670,22 @@ public class LayoutFriendlyURLPersistenceImpl extends BasePersistenceImpl<Layout
 		};
 
 	private static CacheModel<LayoutFriendlyURL> _nullLayoutFriendlyURLCacheModel =
-		new CacheModel<LayoutFriendlyURL>() {
-			@Override
-			public LayoutFriendlyURL toEntityModel() {
-				return _nullLayoutFriendlyURL;
-			}
-		};
+		new NullCacheModel();
+
+	private static class NullCacheModel implements CacheModel<LayoutFriendlyURL>,
+		MVCCModel {
+		@Override
+		public long getMvccVersion() {
+			return 0;
+		}
+
+		@Override
+		public void setMvccVersion(long mvccVersion) {
+		}
+
+		@Override
+		public LayoutFriendlyURL toEntityModel() {
+			return _nullLayoutFriendlyURL;
+		}
+	}
 }

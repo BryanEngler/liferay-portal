@@ -16,6 +16,7 @@ package com.liferay.portal.model.impl;
 
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.UserGroupRole;
 
 import java.io.Externalizable;
@@ -31,12 +32,24 @@ import java.io.ObjectOutput;
  * @generated
  */
 public class UserGroupRoleCacheModel implements CacheModel<UserGroupRole>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(7);
+		StringBundler sb = new StringBundler(9);
 
-		sb.append("{userId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", userId=");
 		sb.append(userId);
 		sb.append(", groupId=");
 		sb.append(groupId);
@@ -51,6 +64,7 @@ public class UserGroupRoleCacheModel implements CacheModel<UserGroupRole>,
 	public UserGroupRole toEntityModel() {
 		UserGroupRoleImpl userGroupRoleImpl = new UserGroupRoleImpl();
 
+		userGroupRoleImpl.setMvccVersion(mvccVersion);
 		userGroupRoleImpl.setUserId(userId);
 		userGroupRoleImpl.setGroupId(groupId);
 		userGroupRoleImpl.setRoleId(roleId);
@@ -62,6 +76,7 @@ public class UserGroupRoleCacheModel implements CacheModel<UserGroupRole>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		userId = objectInput.readLong();
 		groupId = objectInput.readLong();
 		roleId = objectInput.readLong();
@@ -70,11 +85,13 @@ public class UserGroupRoleCacheModel implements CacheModel<UserGroupRole>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(userId);
 		objectOutput.writeLong(groupId);
 		objectOutput.writeLong(roleId);
 	}
 
+	public long mvccVersion;
 	public long userId;
 	public long groupId;
 	public long roleId;

@@ -17,6 +17,7 @@ package com.liferay.portal.model.impl;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.MembershipRequest;
 
 import java.io.Externalizable;
@@ -34,12 +35,24 @@ import java.util.Date;
  * @generated
  */
 public class MembershipRequestCacheModel implements CacheModel<MembershipRequest>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(23);
 
-		sb.append("{membershipRequestId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", membershipRequestId=");
 		sb.append(membershipRequestId);
 		sb.append(", groupId=");
 		sb.append(groupId);
@@ -68,6 +81,7 @@ public class MembershipRequestCacheModel implements CacheModel<MembershipRequest
 	public MembershipRequest toEntityModel() {
 		MembershipRequestImpl membershipRequestImpl = new MembershipRequestImpl();
 
+		membershipRequestImpl.setMvccVersion(mvccVersion);
 		membershipRequestImpl.setMembershipRequestId(membershipRequestId);
 		membershipRequestImpl.setGroupId(groupId);
 		membershipRequestImpl.setCompanyId(companyId);
@@ -111,6 +125,7 @@ public class MembershipRequestCacheModel implements CacheModel<MembershipRequest
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		membershipRequestId = objectInput.readLong();
 		groupId = objectInput.readLong();
 		companyId = objectInput.readLong();
@@ -126,6 +141,7 @@ public class MembershipRequestCacheModel implements CacheModel<MembershipRequest
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(membershipRequestId);
 		objectOutput.writeLong(groupId);
 		objectOutput.writeLong(companyId);
@@ -151,6 +167,7 @@ public class MembershipRequestCacheModel implements CacheModel<MembershipRequest
 		objectOutput.writeInt(statusId);
 	}
 
+	public long mvccVersion;
 	public long membershipRequestId;
 	public long groupId;
 	public long companyId;

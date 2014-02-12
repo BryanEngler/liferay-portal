@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.staging;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -46,6 +48,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author Raymond Augé
  */
+@ProviderType
 public class StagingUtil {
 
 	public static String buildRemoteURL(
@@ -470,6 +473,10 @@ public class StagingUtil {
 
 		getStaging().setRecentLayoutSetBranchId(
 			user, layoutSetId, layoutSetBranchId);
+	}
+
+	public static String stripProtocolFromRemoteAddress(String remoteAddress) {
+		return getStaging().stripProtocolFromRemoteAddress(remoteAddress);
 	}
 
 	public static void unlockGroup(long groupId) throws SystemException {

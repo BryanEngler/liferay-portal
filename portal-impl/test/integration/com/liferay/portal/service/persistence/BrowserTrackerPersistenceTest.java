@@ -112,6 +112,8 @@ public class BrowserTrackerPersistenceTest {
 
 		BrowserTracker newBrowserTracker = _persistence.create(pk);
 
+		newBrowserTracker.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newBrowserTracker.setUserId(ServiceTestUtil.nextLong());
 
 		newBrowserTracker.setBrowserKey(ServiceTestUtil.nextLong());
@@ -120,12 +122,26 @@ public class BrowserTrackerPersistenceTest {
 
 		BrowserTracker existingBrowserTracker = _persistence.findByPrimaryKey(newBrowserTracker.getPrimaryKey());
 
+		Assert.assertEquals(existingBrowserTracker.getMvccVersion(),
+			newBrowserTracker.getMvccVersion());
 		Assert.assertEquals(existingBrowserTracker.getBrowserTrackerId(),
 			newBrowserTracker.getBrowserTrackerId());
 		Assert.assertEquals(existingBrowserTracker.getUserId(),
 			newBrowserTracker.getUserId());
 		Assert.assertEquals(existingBrowserTracker.getBrowserKey(),
 			newBrowserTracker.getBrowserKey());
+	}
+
+	@Test
+	public void testCountByUserId() {
+		try {
+			_persistence.countByUserId(ServiceTestUtil.nextLong());
+
+			_persistence.countByUserId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -164,7 +180,8 @@ public class BrowserTrackerPersistenceTest {
 
 	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("BrowserTracker",
-			"browserTrackerId", true, "userId", true, "browserKey", true);
+			"mvccVersion", true, "browserTrackerId", true, "userId", true,
+			"browserKey", true);
 	}
 
 	@Test
@@ -299,6 +316,8 @@ public class BrowserTrackerPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		BrowserTracker browserTracker = _persistence.create(pk);
+
+		browserTracker.setMvccVersion(ServiceTestUtil.nextLong());
 
 		browserTracker.setUserId(ServiceTestUtil.nextLong());
 

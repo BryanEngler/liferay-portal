@@ -46,7 +46,7 @@ String toLanguageId = (String)request.getAttribute("edit_article.jsp-toLanguageI
 	long imageMaxSize = PrefsPropsUtil.getLong(PropsKeys.JOURNAL_IMAGE_SMALL_MAX_SIZE) / 1024;
 	%>
 
-	<liferay-ui:message arguments="<%= imageMaxSize %>" key="please-enter-a-small-image-with-a-valid-file-size-no-larger-than-x" />
+	<liferay-ui:message arguments="<%= imageMaxSize %>" key="please-enter-a-small-image-with-a-valid-file-size-no-larger-than-x" translateArguments="<%= false %>" />
 </liferay-ui:error>
 
 <aui:fieldset>
@@ -62,7 +62,7 @@ String toLanguageId = (String)request.getAttribute("edit_article.jsp-toLanguageI
 				<aui:row>
 					<c:if test="<%= smallImage && (article != null) %>">
 						<aui:col width="<%= 50 %>">
-							<img alt="<liferay-ui:message key="preview" />" class="lfr-journal-small-image-preview" src="<%= Validator.isNotNull(article.getSmallImageURL()) ? article.getSmallImageURL() : themeDisplay.getPathImage() + "/template?img_id=" + article.getSmallImageId() + "&t=" + WebServerServletTokenUtil.getToken(article.getSmallImageId()) %>" />
+							<img alt="<liferay-ui:message key="preview" />" class="lfr-journal-small-image-preview" src="<%= Validator.isNotNull(article.getSmallImageURL()) ? HtmlUtil.escapeAttribute(article.getSmallImageURL()) : themeDisplay.getPathImage() + "/template?img_id=" + article.getSmallImageId() + "&t=" + WebServerServletTokenUtil.getToken(article.getSmallImageId()) %>" />
 						</aui:col>
 					</c:if>
 

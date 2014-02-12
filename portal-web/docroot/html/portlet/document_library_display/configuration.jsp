@@ -23,8 +23,6 @@ if (portletResource.equals(PortletKeys.DOCUMENT_LIBRARY)) {
 	strutsAction = "/document_library";
 }
 
-String redirect = ParamUtil.getString(request, "redirect");
-
 try {
 	Folder rootFolder = DLAppLocalServiceUtil.getFolder(rootFolderId);
 
@@ -40,16 +38,18 @@ catch (NoSuchFolderException nsfe) {
 }
 %>
 
-<liferay-portlet:actionURL portletConfiguration="true" var="configurationURL" />
+<liferay-portlet:actionURL portletConfiguration="true" var="configurationActionURL" />
 
-<aui:form action="<%= configurationURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveConfiguration();" %>'>
+<liferay-portlet:renderURL portletConfiguration="true" var="configurationRenderURL" />
+
+<aui:form action="<%= configurationActionURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveConfiguration();" %>'>
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
-	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
+	<aui:input name="redirect" type="hidden" value="<%= configurationRenderURL %>" />
 	<aui:input name="preferences--rootFolderId--" type="hidden" value="<%= rootFolderId %>" />
 	<aui:input name="preferences--folderColumns--" type="hidden" />
 	<aui:input name="preferences--fileEntryColumns--" type="hidden" />
 
-	<liferay-ui:error key="rootFolderId" message="please-enter-a-valid-root-folder" />
+	<liferay-ui:error key="rootFolderIdInvalid" message="please-enter-a-valid-root-folder" />
 
 	<liferay-ui:panel-container extended="<%= true %>" id="documentLibrarySettingsPanelContainer" persistState="<%= true %>">
 		<liferay-ui:panel collapsible="<%= true %>" extended="<%= true %>" id="documentLibraryDisplay" persistState="<%= true %>" title="display-settings">

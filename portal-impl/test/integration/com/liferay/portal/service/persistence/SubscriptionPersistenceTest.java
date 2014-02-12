@@ -113,6 +113,8 @@ public class SubscriptionPersistenceTest {
 
 		Subscription newSubscription = _persistence.create(pk);
 
+		newSubscription.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newSubscription.setCompanyId(ServiceTestUtil.nextLong());
 
 		newSubscription.setUserId(ServiceTestUtil.nextLong());
@@ -133,6 +135,8 @@ public class SubscriptionPersistenceTest {
 
 		Subscription existingSubscription = _persistence.findByPrimaryKey(newSubscription.getPrimaryKey());
 
+		Assert.assertEquals(existingSubscription.getMvccVersion(),
+			newSubscription.getMvccVersion());
 		Assert.assertEquals(existingSubscription.getSubscriptionId(),
 			newSubscription.getSubscriptionId());
 		Assert.assertEquals(existingSubscription.getCompanyId(),
@@ -153,6 +157,70 @@ public class SubscriptionPersistenceTest {
 			newSubscription.getClassPK());
 		Assert.assertEquals(existingSubscription.getFrequency(),
 			newSubscription.getFrequency());
+	}
+
+	@Test
+	public void testCountByUserId() {
+		try {
+			_persistence.countByUserId(ServiceTestUtil.nextLong());
+
+			_persistence.countByUserId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByU_C() {
+		try {
+			_persistence.countByU_C(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByU_C(0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_C_C() {
+		try {
+			_persistence.countByC_C_C(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), ServiceTestUtil.nextLong());
+
+			_persistence.countByC_C_C(0L, 0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_U_C_C() {
+		try {
+			_persistence.countByC_U_C_C(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByC_U_C_C(0L, 0L, 0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_U_C_CArrayable() {
+		try {
+			_persistence.countByC_U_C_C(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), ServiceTestUtil.nextLong(),
+				new long[] { ServiceTestUtil.nextLong(), 0L });
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -191,9 +259,10 @@ public class SubscriptionPersistenceTest {
 
 	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("Subscription",
-			"subscriptionId", true, "companyId", true, "userId", true,
-			"userName", true, "createDate", true, "modifiedDate", true,
-			"classNameId", true, "classPK", true, "frequency", true);
+			"mvccVersion", true, "subscriptionId", true, "companyId", true,
+			"userId", true, "userName", true, "createDate", true,
+			"modifiedDate", true, "classNameId", true, "classPK", true,
+			"frequency", true);
 	}
 
 	@Test
@@ -334,6 +403,8 @@ public class SubscriptionPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		Subscription subscription = _persistence.create(pk);
+
+		subscription.setMvccVersion(ServiceTestUtil.nextLong());
 
 		subscription.setCompanyId(ServiceTestUtil.nextLong());
 

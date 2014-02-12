@@ -24,6 +24,10 @@
 			<execute function="Click#click" />
 		</case>
 
+		<case comparator="contains" locator1="Link to URL" >
+			<execute function="Click#clickAtNonLiferayNavigation" />
+		</case>
+
 		<case comparator="startsWith" locator1="//ul[@class='nav control-panel-bar-secondary nav-pills']//a[contains(.,">
 			<execute function="Click#clickAtAndWait" />
 		</case>
@@ -39,12 +43,6 @@
 		</case>
 	</command>
 
-	<command name="mouseOver">
-		<case comparator="startsWith" locator-key1="PAGE_">
-			<execute function="MouseOver#mouseOverClickNavigation" />
-		</case>
-	</command>
-
 	<command name="isElementPresent">
 		<case comparator="startsWith" locator-key1="CONTROL_PANEL_">
 			<execute function="IsElementPresent#isElementPresentCPNavigation" />
@@ -52,6 +50,16 @@
 
 		<case comparator="startsWith" locator-key1="PAGE_">
 			<execute function="IsElementPresent#isElementPresentClickNavigation" />
+		</case>
+	</command>
+
+	<command name="mouseOver">
+		<case comparator="startsWith" locator-key1="PAGE_">
+			<execute function="MouseOver#mouseOverClickNavigation" />
+		</case>
+
+		<case locator-key1="PAGE">
+			<execute function="MouseOver#mouseOverClickNavigation" />
 		</case>
 	</command>
 </definition>

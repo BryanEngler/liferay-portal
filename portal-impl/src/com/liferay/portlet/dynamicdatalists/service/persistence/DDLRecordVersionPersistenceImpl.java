@@ -1425,7 +1425,7 @@ public class DDLRecordVersionPersistenceImpl extends BasePersistenceImpl<DDLReco
 			CacheRegistryUtil.clear(DDLRecordVersionImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(DDLRecordVersionImpl.class.getName());
+		EntityCacheUtil.clearCache(DDLRecordVersionImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -1698,7 +1698,7 @@ public class DDLRecordVersionPersistenceImpl extends BasePersistenceImpl<DDLReco
 
 		EntityCacheUtil.putResult(DDLRecordVersionModelImpl.ENTITY_CACHE_ENABLED,
 			DDLRecordVersionImpl.class, ddlRecordVersion.getPrimaryKey(),
-			ddlRecordVersion);
+			ddlRecordVersion, false);
 
 		clearUniqueFindersCache(ddlRecordVersion);
 		cacheUniqueFindersCache(ddlRecordVersion);

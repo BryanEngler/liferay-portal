@@ -17,6 +17,7 @@ package com.liferay.portal.model.impl;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.ResourceBlock;
 
 import java.io.Externalizable;
@@ -32,12 +33,24 @@ import java.io.ObjectOutput;
  * @generated
  */
 public class ResourceBlockCacheModel implements CacheModel<ResourceBlock>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(13);
+		StringBundler sb = new StringBundler(15);
 
-		sb.append("{resourceBlockId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", resourceBlockId=");
 		sb.append(resourceBlockId);
 		sb.append(", companyId=");
 		sb.append(companyId);
@@ -58,6 +71,7 @@ public class ResourceBlockCacheModel implements CacheModel<ResourceBlock>,
 	public ResourceBlock toEntityModel() {
 		ResourceBlockImpl resourceBlockImpl = new ResourceBlockImpl();
 
+		resourceBlockImpl.setMvccVersion(mvccVersion);
 		resourceBlockImpl.setResourceBlockId(resourceBlockId);
 		resourceBlockImpl.setCompanyId(companyId);
 		resourceBlockImpl.setGroupId(groupId);
@@ -85,6 +99,7 @@ public class ResourceBlockCacheModel implements CacheModel<ResourceBlock>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		resourceBlockId = objectInput.readLong();
 		companyId = objectInput.readLong();
 		groupId = objectInput.readLong();
@@ -96,6 +111,7 @@ public class ResourceBlockCacheModel implements CacheModel<ResourceBlock>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(resourceBlockId);
 		objectOutput.writeLong(companyId);
 		objectOutput.writeLong(groupId);
@@ -117,6 +133,7 @@ public class ResourceBlockCacheModel implements CacheModel<ResourceBlock>,
 		objectOutput.writeLong(referenceCount);
 	}
 
+	public long mvccVersion;
 	public long resourceBlockId;
 	public long companyId;
 	public long groupId;

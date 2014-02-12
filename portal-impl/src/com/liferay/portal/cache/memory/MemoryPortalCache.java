@@ -21,9 +21,6 @@ import com.liferay.portal.kernel.concurrent.ConcurrentHashSet;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,24 +38,12 @@ public class MemoryPortalCache<K extends Serializable, V>
 		_map = new ConcurrentHashMap<K, V>(initialCapacity);
 	}
 
-	@Override
 	public void destroy() {
 		removeAll();
 
 		_cacheListeners = null;
 		_map = null;
 		_name = null;
-	}
-
-	@Override
-	public Collection<V> get(Collection<K> keys) {
-		List<V> values = new ArrayList<V>(keys.size());
-
-		for (K key : keys) {
-			values.add(get(key));
-		}
-
-		return values;
 	}
 
 	@Override
@@ -83,6 +68,16 @@ public class MemoryPortalCache<K extends Serializable, V>
 		V oldValue = _map.put(key, value);
 
 		notifyPutEvents(key, value, oldValue != null);
+	}
+
+	@Override
+	public void putQuiet(K key, V value) {
+		_map.put(key, value);
+	}
+
+	@Override
+	public void putQuiet(K key, V value, int timeToLive) {
+		_map.put(key, value);
 	}
 
 	@Override

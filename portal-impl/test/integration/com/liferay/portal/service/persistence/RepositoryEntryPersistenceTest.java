@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.RepositoryEntry;
@@ -114,6 +115,8 @@ public class RepositoryEntryPersistenceTest {
 
 		RepositoryEntry newRepositoryEntry = _persistence.create(pk);
 
+		newRepositoryEntry.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newRepositoryEntry.setUuid(ServiceTestUtil.randomString());
 
 		newRepositoryEntry.setGroupId(ServiceTestUtil.nextLong());
@@ -138,6 +141,8 @@ public class RepositoryEntryPersistenceTest {
 
 		RepositoryEntry existingRepositoryEntry = _persistence.findByPrimaryKey(newRepositoryEntry.getPrimaryKey());
 
+		Assert.assertEquals(existingRepositoryEntry.getMvccVersion(),
+			newRepositoryEntry.getMvccVersion());
 		Assert.assertEquals(existingRepositoryEntry.getUuid(),
 			newRepositoryEntry.getUuid());
 		Assert.assertEquals(existingRepositoryEntry.getRepositoryEntryId(),
@@ -162,6 +167,76 @@ public class RepositoryEntryPersistenceTest {
 			newRepositoryEntry.getMappedId());
 		Assert.assertEquals(existingRepositoryEntry.getManualCheckInRequired(),
 			newRepositoryEntry.getManualCheckInRequired());
+	}
+
+	@Test
+	public void testCountByUuid() {
+		try {
+			_persistence.countByUuid(StringPool.BLANK);
+
+			_persistence.countByUuid(StringPool.NULL);
+
+			_persistence.countByUuid((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByUUID_G() {
+		try {
+			_persistence.countByUUID_G(StringPool.BLANK,
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByUUID_G(StringPool.NULL, 0L);
+
+			_persistence.countByUUID_G((String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByUuid_C() {
+		try {
+			_persistence.countByUuid_C(StringPool.BLANK,
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByUuid_C(StringPool.NULL, 0L);
+
+			_persistence.countByUuid_C((String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByRepositoryId() {
+		try {
+			_persistence.countByRepositoryId(ServiceTestUtil.nextLong());
+
+			_persistence.countByRepositoryId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByR_M() {
+		try {
+			_persistence.countByR_M(ServiceTestUtil.nextLong(), StringPool.BLANK);
+
+			_persistence.countByR_M(0L, StringPool.NULL);
+
+			_persistence.countByR_M(0L, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -199,11 +274,11 @@ public class RepositoryEntryPersistenceTest {
 	}
 
 	protected OrderByComparator getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("RepositoryEntry", "uuid",
-			true, "repositoryEntryId", true, "groupId", true, "companyId",
-			true, "userId", true, "userName", true, "createDate", true,
-			"modifiedDate", true, "repositoryId", true, "mappedId", true,
-			"manualCheckInRequired", true);
+		return OrderByComparatorFactoryUtil.create("RepositoryEntry",
+			"mvccVersion", true, "uuid", true, "repositoryEntryId", true,
+			"groupId", true, "companyId", true, "userId", true, "userName",
+			true, "createDate", true, "modifiedDate", true, "repositoryId",
+			true, "mappedId", true, "manualCheckInRequired", true);
 	}
 
 	@Test
@@ -347,6 +422,8 @@ public class RepositoryEntryPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		RepositoryEntry repositoryEntry = _persistence.create(pk);
+
+		repositoryEntry.setMvccVersion(ServiceTestUtil.nextLong());
 
 		repositoryEntry.setUuid(ServiceTestUtil.randomString());
 

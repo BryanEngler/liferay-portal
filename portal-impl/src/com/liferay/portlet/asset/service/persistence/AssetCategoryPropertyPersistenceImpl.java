@@ -1976,7 +1976,7 @@ public class AssetCategoryPropertyPersistenceImpl extends BasePersistenceImpl<As
 			CacheRegistryUtil.clear(AssetCategoryPropertyImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(AssetCategoryPropertyImpl.class.getName());
+		EntityCacheUtil.clearCache(AssetCategoryPropertyImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -2279,7 +2279,7 @@ public class AssetCategoryPropertyPersistenceImpl extends BasePersistenceImpl<As
 
 		EntityCacheUtil.putResult(AssetCategoryPropertyModelImpl.ENTITY_CACHE_ENABLED,
 			AssetCategoryPropertyImpl.class,
-			assetCategoryProperty.getPrimaryKey(), assetCategoryProperty);
+			assetCategoryProperty.getPrimaryKey(), assetCategoryProperty, false);
 
 		clearUniqueFindersCache(assetCategoryProperty);
 		cacheUniqueFindersCache(assetCategoryProperty);

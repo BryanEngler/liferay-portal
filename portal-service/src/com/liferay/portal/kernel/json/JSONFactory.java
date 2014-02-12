@@ -14,11 +14,14 @@
 
 package com.liferay.portal.kernel.json;
 
+import aQute.bnd.annotation.ProviderType;
+
 import java.util.List;
 
 /**
  * @author Brian Wing Shun Chan
  */
+@ProviderType
 public interface JSONFactory {
 
 	public String convertJSONMLArrayToXML(String jsonml);
@@ -73,8 +76,6 @@ public interface JSONFactory {
 		Object object, JSONTransformer jsonTransformer, Class<?> clazz);
 
 	public String serialize(Object object);
-
-	public String serializeException(Exception exception);
 
 	public String serializeThrowable(Throwable throwable);
 

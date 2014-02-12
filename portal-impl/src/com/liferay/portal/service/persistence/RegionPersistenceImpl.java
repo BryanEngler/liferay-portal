@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnmodifiableList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.model.Region;
 import com.liferay.portal.model.impl.RegionImpl;
@@ -1899,7 +1900,7 @@ public class RegionPersistenceImpl extends BasePersistenceImpl<Region>
 			CacheRegistryUtil.clear(RegionImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(RegionImpl.class.getName());
+		EntityCacheUtil.clearCache(RegionImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -2181,7 +2182,7 @@ public class RegionPersistenceImpl extends BasePersistenceImpl<Region>
 		}
 
 		EntityCacheUtil.putResult(RegionModelImpl.ENTITY_CACHE_ENABLED,
-			RegionImpl.class, region.getPrimaryKey(), region);
+			RegionImpl.class, region.getPrimaryKey(), region, false);
 
 		clearUniqueFindersCache(region);
 		cacheUniqueFindersCache(region);
@@ -2201,6 +2202,7 @@ public class RegionPersistenceImpl extends BasePersistenceImpl<Region>
 		regionImpl.setNew(region.isNew());
 		regionImpl.setPrimaryKey(region.getPrimaryKey());
 
+		regionImpl.setMvccVersion(region.getMvccVersion());
 		regionImpl.setRegionId(region.getRegionId());
 		regionImpl.setCountryId(region.getCountryId());
 		regionImpl.setRegionCode(region.getRegionCode());
@@ -2541,10 +2543,22 @@ public class RegionPersistenceImpl extends BasePersistenceImpl<Region>
 			}
 		};
 
-	private static CacheModel<Region> _nullRegionCacheModel = new CacheModel<Region>() {
-			@Override
-			public Region toEntityModel() {
-				return _nullRegion;
-			}
-		};
+	private static CacheModel<Region> _nullRegionCacheModel = new NullCacheModel();
+
+	private static class NullCacheModel implements CacheModel<Region>,
+		MVCCModel {
+		@Override
+		public long getMvccVersion() {
+			return 0;
+		}
+
+		@Override
+		public void setMvccVersion(long mvccVersion) {
+		}
+
+		@Override
+		public Region toEntityModel() {
+			return _nullRegion;
+		}
+	}
 }

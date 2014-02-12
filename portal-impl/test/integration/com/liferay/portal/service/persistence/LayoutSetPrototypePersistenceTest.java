@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.model.LayoutSetPrototype;
 import com.liferay.portal.service.ServiceTestUtil;
@@ -111,6 +112,8 @@ public class LayoutSetPrototypePersistenceTest {
 
 		LayoutSetPrototype newLayoutSetPrototype = _persistence.create(pk);
 
+		newLayoutSetPrototype.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newLayoutSetPrototype.setUuid(ServiceTestUtil.randomString());
 
 		newLayoutSetPrototype.setCompanyId(ServiceTestUtil.nextLong());
@@ -135,6 +138,8 @@ public class LayoutSetPrototypePersistenceTest {
 
 		LayoutSetPrototype existingLayoutSetPrototype = _persistence.findByPrimaryKey(newLayoutSetPrototype.getPrimaryKey());
 
+		Assert.assertEquals(existingLayoutSetPrototype.getMvccVersion(),
+			newLayoutSetPrototype.getMvccVersion());
 		Assert.assertEquals(existingLayoutSetPrototype.getUuid(),
 			newLayoutSetPrototype.getUuid());
 		Assert.assertEquals(existingLayoutSetPrototype.getLayoutSetPrototypeId(),
@@ -159,6 +164,60 @@ public class LayoutSetPrototypePersistenceTest {
 			newLayoutSetPrototype.getSettings());
 		Assert.assertEquals(existingLayoutSetPrototype.getActive(),
 			newLayoutSetPrototype.getActive());
+	}
+
+	@Test
+	public void testCountByUuid() {
+		try {
+			_persistence.countByUuid(StringPool.BLANK);
+
+			_persistence.countByUuid(StringPool.NULL);
+
+			_persistence.countByUuid((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByUuid_C() {
+		try {
+			_persistence.countByUuid_C(StringPool.BLANK,
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByUuid_C(StringPool.NULL, 0L);
+
+			_persistence.countByUuid_C((String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByCompanyId() {
+		try {
+			_persistence.countByCompanyId(ServiceTestUtil.nextLong());
+
+			_persistence.countByCompanyId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_A() {
+		try {
+			_persistence.countByC_A(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.randomBoolean());
+
+			_persistence.countByC_A(0L, ServiceTestUtil.randomBoolean());
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -197,9 +256,9 @@ public class LayoutSetPrototypePersistenceTest {
 
 	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("LayoutSetPrototype",
-			"uuid", true, "layoutSetPrototypeId", true, "companyId", true,
-			"userId", true, "userName", true, "createDate", true,
-			"modifiedDate", true, "name", true, "description", true,
+			"mvccVersion", true, "uuid", true, "layoutSetPrototypeId", true,
+			"companyId", true, "userId", true, "userName", true, "createDate",
+			true, "modifiedDate", true, "name", true, "description", true,
 			"settings", true, "active", true);
 	}
 
@@ -321,6 +380,8 @@ public class LayoutSetPrototypePersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		LayoutSetPrototype layoutSetPrototype = _persistence.create(pk);
+
+		layoutSetPrototype.setMvccVersion(ServiceTestUtil.nextLong());
 
 		layoutSetPrototype.setUuid(ServiceTestUtil.randomString());
 

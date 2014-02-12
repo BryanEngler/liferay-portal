@@ -1,4 +1,4 @@
-<definition>
+<definition component-name="portal-workflow">
 	<property name="web.plugins.includes" value="kaleo-web" />
 
 	<var name="workflowAssetType" value="Web Content Article" />
@@ -63,8 +63,8 @@
 		</execute>
 
 		<execute macro="WebContent#viewCPStatus">
-			<var name="webContentTitle" value="${webContentTitle}" />
 			<var name="webContentStatus" value="Draft" />
+			<var name="webContentTitle" value="${webContentTitle}" />
 		</execute>
 	</command>
 
@@ -109,8 +109,8 @@
 		</execute>
 
 		<execute macro="WebContent#viewCPStatus">
-			<var name="webContentTitle" value="${webContentTitle}" />
 			<var name="webContentStatus" value="Draft" />
+			<var name="webContentTitle" value="${webContentTitle}" />
 		</execute>
 	</command>
 
@@ -143,8 +143,8 @@
 		</execute>
 
 		<execute macro="WebContent#viewCPStatus">
-			<var name="webContentTitle" value="${webContentTitle}" />
 			<var name="webContentStatus" value="Draft" />
+			<var name="webContentTitle" value="${webContentTitle}" />
 		</execute>
 	</command>
 
@@ -178,8 +178,8 @@
 		</execute>
 
 		<execute macro="WebContent#viewCPStatus">
-			<var name="webContentTitle" value="${webContentTitle}" />
 			<var name="webContentStatus" value="Draft" />
+			<var name="webContentTitle" value="${webContentTitle}" />
 		</execute>
 	</command>
 

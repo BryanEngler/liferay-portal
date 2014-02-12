@@ -2718,7 +2718,7 @@ public class PollsVotePersistenceImpl extends BasePersistenceImpl<PollsVote>
 			CacheRegistryUtil.clear(PollsVoteImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(PollsVoteImpl.class.getName());
+		EntityCacheUtil.clearCache(PollsVoteImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -3066,7 +3066,7 @@ public class PollsVotePersistenceImpl extends BasePersistenceImpl<PollsVote>
 		}
 
 		EntityCacheUtil.putResult(PollsVoteModelImpl.ENTITY_CACHE_ENABLED,
-			PollsVoteImpl.class, pollsVote.getPrimaryKey(), pollsVote);
+			PollsVoteImpl.class, pollsVote.getPrimaryKey(), pollsVote, false);
 
 		clearUniqueFindersCache(pollsVote);
 		cacheUniqueFindersCache(pollsVote);

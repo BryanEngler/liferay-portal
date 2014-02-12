@@ -30,7 +30,6 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
@@ -79,29 +78,6 @@ public class IntrabandPortalCacheTest {
 			_mockRegistrationReference,
 			getRegistrationReference(intrabandPortalCache));
 		Assert.assertSame(_mockIntraband, getIntraband(intrabandPortalCache));
-	}
-
-	@Test
-	public void testDestroy() {
-		IntrabandPortalCache<String, String> intrabandPortalCache =
-			new IntrabandPortalCache<String, String>(
-				_testName, _mockRegistrationReference);
-
-		intrabandPortalCache.destroy();
-
-		Datagram datagram = _mockIntraband.getDatagram();
-
-		Deserializer deserializer = new Deserializer(
-			datagram.getDataByteBuffer());
-
-		int actionTypeOrdinal = deserializer.readInt();
-
-		PortalCacheActionType portalCacheActionType =
-			PortalCacheActionType.values()[actionTypeOrdinal];
-
-		Assert.assertEquals(
-			PortalCacheActionType.DESTROY, portalCacheActionType);
-		Assert.assertEquals(_testName, deserializer.readString());
 	}
 
 	@Test
@@ -195,105 +171,6 @@ public class IntrabandPortalCacheTest {
 	}
 
 	@Test
-	public void testGetBulk() {
-
-		// Normal bulk get
-
-		final List<String> testKeys = Arrays.asList(
-			"testKey1", "testKey2", "testKey3");
-		final List<String> testValues = Arrays.asList(
-			"testValue1", "testValue2", "testValue3");
-
-		final AtomicReference<RuntimeException> runtimeExceptionReference =
-			new AtomicReference<RuntimeException>();
-
-		MockIntraband mockIntraband = new MockIntraband() {
-
-			@Override
-			protected void doSendDatagram(
-				RegistrationReference registrationReference,
-				Datagram datagram) {
-
-				RuntimeException runtimeException =
-					runtimeExceptionReference.get();
-
-				if (runtimeException != null) {
-					throw runtimeException;
-				}
-
-				Deserializer deserializer = new Deserializer(
-					datagram.getDataByteBuffer());
-
-				int actionTypeOrdinal = deserializer.readInt();
-
-				PortalCacheActionType[] portalCacheActionTypes =
-					PortalCacheActionType.values();
-
-				Assert.assertEquals(
-					PortalCacheActionType.GET_BULK,
-					portalCacheActionTypes[actionTypeOrdinal]);
-				Assert.assertEquals(_testName, deserializer.readString());
-
-				try {
-					Assert.assertEquals(testKeys, deserializer.readObject());
-				}
-				catch (ClassNotFoundException cnfe) {
-					Assert.fail();
-				}
-
-				super.doSendDatagram(registrationReference, datagram);
-
-				Serializer serializer = new Serializer();
-
-				serializer.writeObject((Serializable)testValues);
-
-				DatagramHelper.getCompletionHandler(datagram).replied(
-					null,
-					Datagram.createResponseDatagram(
-						datagram, serializer.toByteBuffer()));
-			}
-
-		};
-
-		IntrabandPortalCache<String, String> intrabandPortalCache =
-			new IntrabandPortalCache<String, String>(
-				_testName, new MockRegistrationReference(mockIntraband));
-
-		Assert.assertEquals(testValues, intrabandPortalCache.get(testKeys));
-
-		// Unable to bulk get, with log
-
-		List<LogRecord> logRecords = JDKLoggerTestUtil.configureJDKLogger(
-			IntrabandPortalCache.class.getName(), Level.WARNING);
-
-		RuntimeException runtimeException = new RuntimeException();
-
-		runtimeExceptionReference.set(runtimeException);
-
-		Assert.assertEquals(
-			Arrays.asList(null, null, null),
-			intrabandPortalCache.get(testKeys));
-		Assert.assertEquals(1, logRecords.size());
-
-		LogRecord logRecord = logRecords.get(0);
-
-		Assert.assertEquals(
-			"Unable to bulk get, coverting to cache miss",
-			logRecord.getMessage());
-		Assert.assertSame(runtimeException, logRecord.getThrown());
-
-		// Unable to bulk get, without log
-
-		logRecords = JDKLoggerTestUtil.configureJDKLogger(
-			IntrabandPortalCache.class.getName(), Level.OFF);
-
-		Assert.assertEquals(
-			Arrays.asList(null, null, null),
-			intrabandPortalCache.get(testKeys));
-		Assert.assertTrue(logRecords.isEmpty());
-	}
-
-	@Test
 	public void testPut() throws Exception {
 		String testKey = "testKey";
 		String testValue = "testValue";
@@ -324,6 +201,70 @@ public class IntrabandPortalCacheTest {
 		Assert.assertEquals(_testName, deserializer.readString());
 		Assert.assertEquals(testKey, deserializer.readObject());
 		Assert.assertEquals(testValue, deserializer.readObject());
+	}
+
+	@Test
+	public void testPutQuiet() throws Exception {
+		String testKey = "testKey";
+		String testValue = "testValue";
+
+		IntrabandPortalCache<String, String> intrabandPortalCache =
+			new IntrabandPortalCache<String, String>(
+				_testName, _mockRegistrationReference);
+
+		Method bridgePutQuietMethod = ReflectionUtil.getBridgeMethod(
+			IntrabandPortalCache.class, "putQuiet", Serializable.class,
+			Object.class);
+
+		bridgePutQuietMethod.invoke(intrabandPortalCache, testKey, testValue);
+
+		Datagram datagram = _mockIntraband.getDatagram();
+
+		Deserializer deserializer = new Deserializer(
+			datagram.getDataByteBuffer());
+
+		int actionTypeOrdinal = deserializer.readInt();
+
+		PortalCacheActionType[] portalCacheActionTypes =
+			PortalCacheActionType.values();
+
+		Assert.assertEquals(
+			PortalCacheActionType.PUT_QUIET,
+			portalCacheActionTypes[actionTypeOrdinal]);
+		Assert.assertEquals(_testName, deserializer.readString());
+		Assert.assertEquals(testKey, deserializer.readObject());
+		Assert.assertEquals(testValue, deserializer.readObject());
+	}
+
+	@Test
+	public void testPutQuietTTL() throws Exception {
+		String testKey = "testKey";
+		String testValue = "testValue";
+		int testTTL = 100;
+
+		IntrabandPortalCache<String, String> intrabandPortalCache =
+			new IntrabandPortalCache<String, String>(
+				_testName, _mockRegistrationReference);
+
+		intrabandPortalCache.putQuiet(testKey, testValue, testTTL);
+
+		Datagram datagram = _mockIntraband.getDatagram();
+
+		Deserializer deserializer = new Deserializer(
+			datagram.getDataByteBuffer());
+
+		int actionTypeOrdinal = deserializer.readInt();
+
+		PortalCacheActionType[] portalCacheActionTypes =
+			PortalCacheActionType.values();
+
+		Assert.assertEquals(
+			PortalCacheActionType.PUT_QUIET_TTL,
+			portalCacheActionTypes[actionTypeOrdinal]);
+		Assert.assertEquals(_testName, deserializer.readString());
+		Assert.assertEquals(testKey, deserializer.readObject());
+		Assert.assertEquals(testValue, deserializer.readObject());
+		Assert.assertEquals(testTTL, deserializer.readInt());
 	}
 
 	@Test

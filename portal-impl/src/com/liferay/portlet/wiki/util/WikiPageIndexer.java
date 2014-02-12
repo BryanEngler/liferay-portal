@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.search.BaseIndexer;
@@ -87,7 +86,14 @@ public class WikiPageIndexer extends BaseIndexer {
 			classPK = message.getClassPK();
 		}
 
-		WikiPage page = WikiPageLocalServiceUtil.getPage(classPK);
+		WikiPage page = null;
+
+		try {
+			page = WikiPageLocalServiceUtil.getPage(classPK);
+		}
+		catch (Exception e) {
+			return;
+		}
 
 		document.addKeyword(Field.NODE_ID, page.getNodeId());
 	}
@@ -112,6 +118,13 @@ public class WikiPageIndexer extends BaseIndexer {
 
 		return WikiPagePermission.contains(
 			permissionChecker, page, ActionKeys.VIEW);
+	}
+
+	@Override
+	public boolean isVisible(long classPK, int status) throws Exception {
+		WikiPage page = WikiPageLocalServiceUtil.getPage(classPK);
+
+		return isVisible(page.getStatus(), status);
 	}
 
 	@Override
@@ -144,10 +157,6 @@ public class WikiPageIndexer extends BaseIndexer {
 
 	@Override
 	protected void doDelete(Object obj) throws Exception {
-		SearchContext searchContext = new SearchContext();
-
-		searchContext.setSearchEngineId(getSearchEngineId());
-
 		if (obj instanceof Object[]) {
 			Object[] array = (Object[])obj;
 
@@ -165,6 +174,11 @@ public class WikiPageIndexer extends BaseIndexer {
 		else if (obj instanceof WikiNode) {
 			WikiNode node = (WikiNode)obj;
 
+			SearchContext searchContext = new SearchContext();
+
+			searchContext.setCompanyId(node.getCompanyId());
+			searchContext.setSearchEngineId(getSearchEngineId());
+
 			BooleanQuery booleanQuery = BooleanQueryFactoryUtil.create(
 				searchContext);
 
@@ -172,9 +186,7 @@ public class WikiPageIndexer extends BaseIndexer {
 
 			booleanQuery.addRequiredTerm("nodeId", node.getNodeId());
 
-			Hits hits = SearchEngineUtil.search(
-				getSearchEngineId(), node.getCompanyId(), booleanQuery,
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+			Hits hits = SearchEngineUtil.search(searchContext, booleanQuery);
 
 			for (int i = 0; i < hits.getLength(); i++) {
 				Document document = hits.doc(i);

@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.NullSafeStringComparator;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -44,6 +45,7 @@ import java.io.Serializable;
 import java.sql.Connection;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -514,6 +516,9 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 	}
 
 	protected static final Object[] FINDER_ARGS_EMPTY = new Object[0];
+
+	protected static final Comparator<String> NULL_SAFE_STRING_COMPARATOR =
+		new NullSafeStringComparator();
 
 	protected static final String ORDER_BY_ASC = " ASC";
 

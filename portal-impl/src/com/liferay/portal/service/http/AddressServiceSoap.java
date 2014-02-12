@@ -65,7 +65,7 @@ import java.rmi.RemoteException;
 @ProviderType
 public class AddressServiceSoap {
 	/**
-	* @deprecated As of 6.2.0, replaced by {@link #addAddress( String, long,
+	* @deprecated As of 6.2.0, replaced by {@link #addAddress(String, long,
 	String, String, String, String, String, long, long, int,
 	boolean, boolean, ServiceContext)}
 	*/

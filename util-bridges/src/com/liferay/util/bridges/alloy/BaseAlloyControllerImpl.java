@@ -125,6 +125,14 @@ public abstract class BaseAlloyControllerImpl implements AlloyController {
 
 	@Override
 	public void execute() throws Exception {
+		Method method = getMethod(actionPath);
+
+		if (method == null) {
+			if (log.isDebugEnabled()) {
+				log.debug("No method found for action " + actionPath);
+			}
+		}
+
 		if (permissioned &&
 			!AlloyPermission.contains(
 				themeDisplay.getPermissionChecker(),
@@ -133,14 +141,8 @@ public abstract class BaseAlloyControllerImpl implements AlloyController {
 
 			renderError(
 				"you-do-not-have-permission-to-access-the-requested-resource");
-		}
 
-		Method method = getMethod(actionPath);
-
-		if (method == null) {
-			if (log.isDebugEnabled()) {
-				log.debug("No method found for action " + actionPath);
-			}
+			method = null;
 		}
 
 		if (lifecycle.equals(PortletRequest.ACTION_PHASE)) {
@@ -216,7 +218,16 @@ public abstract class BaseAlloyControllerImpl implements AlloyController {
 		if (baseModel instanceof PersistedModel) {
 			PersistedModel persistedModel = (PersistedModel)baseModel;
 
-			persistedModel.persist();
+			try {
+				persistedModel.persist();
+			}
+			catch (Exception e) {
+				log.error(e, e);
+
+				renderError("an-unexpected-system-error-occurred");
+
+				return;
+			}
 		}
 
 		if ((indexer != null) &&
@@ -774,11 +785,14 @@ public abstract class BaseAlloyControllerImpl implements AlloyController {
 
 		Class<?> indexerClass = Class.forName(indexerClassName);
 
-		try {
-			indexerClass.getField(Field.GROUP_ID);
-		}
-		catch (Exception e) {
+		if (!GroupedModel.class.isAssignableFrom(indexerClass)) {
 			searchContext.setGroupIds(null);
+		}
+		else if (searchContext.getAttribute(Field.GROUP_ID) != null) {
+			long groupId = GetterUtil.getLong(
+				searchContext.getAttribute(Field.GROUP_ID));
+
+			searchContext.setGroupIds(new long[] {groupId});
 		}
 
 		if (Validator.isNotNull(keywords)) {

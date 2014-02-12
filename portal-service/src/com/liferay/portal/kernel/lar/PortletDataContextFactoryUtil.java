@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.lar;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.zip.ZipReader;
 import com.liferay.portal.kernel.zip.ZipWriter;
@@ -25,6 +27,7 @@ import java.util.Map;
 /**
  * @author Mate Thurzo
  */
+@ProviderType
 public class PortletDataContextFactoryUtil {
 
 	public static PortletDataContext clonePortletDataContext(
@@ -50,6 +53,14 @@ public class PortletDataContextFactoryUtil {
 
 		return getPortletDataContextFactory().createImportPortletDataContext(
 			companyId, groupId, parameterMap, userIdStrategy, zipReader);
+	}
+
+	public static PortletDataContext createPreparePortletDataContext(
+			long companyId, long groupId, Date startDate, Date endDate)
+		throws PortletDataException {
+
+		return getPortletDataContextFactory().createPreparePortletDataContext(
+			companyId, groupId, startDate, endDate);
 	}
 
 	public static PortletDataContext createPreparePortletDataContext(

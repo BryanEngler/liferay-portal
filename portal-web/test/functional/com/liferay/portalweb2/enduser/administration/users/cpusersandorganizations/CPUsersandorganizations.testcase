@@ -1,4 +1,4 @@
-<definition>
+<definition component-name="portal-administration">
 	<set-up>
 		<execute macro="User#firstLoginPG" />
 	</set-up>
@@ -12,6 +12,60 @@
 
 		<execute macro="Organization#tearDownCP" />
 	</tear-down>
+
+	<command name="ActivateUserActions" priority="3">
+		<var name="userEmailAddress" value="userea@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#editPasswordCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#deactivateCP">
+			<var name="deactivateType" value="Actions" />
+			<var name="userFirstName" value="${userFirstName}" />
+		</execute>
+
+		<execute macro="User#activateCP">
+			<var name="userFirstName" value="${userFirstName}" />
+		</execute>
+
+		<execute macro="User#logoutPG" />
+
+		<execute macro="User#loginUserPG">
+			<var name="password" value="test" />
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+		</execute>
+
+		<execute macro="User#logoutPG" />
+
+		<execute macro="User#loginPG">
+			<var name="password" value="test" />
+			<var name="userEmailAddress" value="test@liferay.com" />
+		</execute>
+	</command>
 
 	<command name="AddMember" priority="5">
 		<var name="orgName" value="Organization Name" />
@@ -253,13 +307,14 @@
 		</execute>
 	</command>
 
-	<command name="AddOrganizationTeam" priority="5">
+	<command name="AddOrganizationSitePrivatePage" priority="3">
 		<var name="orgName" value="Organization Name" />
 		<var name="orgType" value="Regular Organization" />
-		<var name="siteName" value="${orgName}" />
-		<var name="siteScopeName" value="Organization Name" />
-		<var name="teamName" value="Site Team Name" />
-		<var name="teamDescription" value="Site Team Description" />
+		<var name="siteMember" value="Organization" />
+		<var name="siteName" value="Organization Name" />
+		<var name="sitePageName" value="Private Page" />
+		<var name="sitePagePrivacy" value="Private" />
+		<var name="sitePageURL" value="http://localhost:8080/group/organization-name/private-page" />
 
 		<execute macro="Page#gotoCP">
 			<var name="portletName" value="Users and Organizations" />
@@ -278,24 +333,114 @@
 			<var name="orgName" value="${orgName}" />
 		</execute>
 
-		<execute macro="Page#gotoConfigurationCP">
-			<var name="siteScopeName" value="Organization Name" />
-			<var name="portletName" value="Site Settings" />
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Sites" />
 		</execute>
 
-		<execute macro="Organization#allowMembershipManagementCP">
+		<execute macro="SitePage#addCP">
+			<var name="siteName" value="${siteName}" />
+			<var name="sitePageName" value="${sitePageName}" />
+			<var name="sitePagePrivacy" value="${sitePagePrivacy}" />
+		</execute>
+
+		<execute macro="SitePage#viewPG">
+			<var name="pageAccess" value="Private" />
+			<var name="pageName" value="${sitePageName}" />
+			<var name="siteName" value="${siteName}" />
+			<var name="sitePageName" value="${sitePageName}" />
+			<var name="sitePageURL" value="${sitePageURL}" />
+			<var name="siteURL" value="true" />
+		</execute>
+	</command>
+
+	<command name="AddOrganizationSitePublicPage" priority="3">
+		<var name="orgName" value="Organization Name" />
+		<var name="orgType" value="Regular Organization" />
+		<var name="siteMember" value="Organization" />
+		<var name="siteName" value="Organization Name" />
+		<var name="sitePageName" value="Public Page" />
+		<var name="sitePagePrivacy" value="Public" />
+		<var name="sitePageURL" value="http://localhost:8080/web/organization-name/public-page" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="Organization#addCP">
+			<var name="orgName" value="${orgName}" />
+			<var name="orgType" value="${orgType}" />
+		</execute>
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="Organization#addSiteCP">
+			<var name="orgName" value="${orgName}" />
+		</execute>
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Sites" />
+		</execute>
+
+		<execute macro="SitePage#addCP">
+			<var name="siteName" value="${siteName}" />
+			<var name="sitePageName" value="${sitePageName}" />
+			<var name="sitePagePrivacy" value="${sitePagePrivacy}" />
+		</execute>
+
+		<execute macro="SitePage#viewPG">
+			<var name="pageName" value="${sitePageName}" />
+			<var name="siteName" value="${siteName}" />
+			<var name="sitePageName" value="${sitePageName}" />
+			<var name="sitePageURL" value="${sitePageURL}" />
+			<var name="siteURL" value="true" />
+		</execute>
+	</command>
+
+	<command name="AddOrganizationTeam" priority="5">
+		<var name="orgName" value="Organization Name" />
+		<var name="orgType" value="Regular Organization" />
+		<var name="siteName" value="${orgName}" />
+		<var name="siteScopeName" value="Organization Name" />
+		<var name="teamDescription" value="Site Team Description" />
+		<var name="teamName" value="Site Team Name" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="Organization#addCP">
+			<var name="orgName" value="${orgName}" />
+			<var name="orgType" value="${orgType}" />
+		</execute>
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="Organization#addSiteCP">
+			<var name="orgName" value="${orgName}" />
+		</execute>
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="Organization#manageMembershipOptionsInSites">
+			<var name="allowManualMembershipManagement" value="true" />
 			<var name="orgName" value="${orgName}" />
 		</execute>
 
 		<execute macro="Page#gotoUsersCP">
-			<var name="siteScopeName" value="Organization Name" />
 			<var name="portletName" value="Site Teams" />
+			<var name="siteScopeName" value="Organization Name" />
 		</execute>
 
 		<execute macro="Team#addCP">
 			<var name="siteName" value="${siteName}" />
-			<var name="teamName" value="${teamName}" />
 			<var name="teamDescription" value="${teamDescription}" />
+			<var name="teamName" value="${teamName}" />
 		</execute>
 	</command>
 
@@ -368,6 +513,34 @@
 		</execute>
 	</command>
 
+	<command name="AddUserDisplaySettings" priority="3">
+		<var name="displaySettingsGreeting" value="Welcome Selenium01!" />
+		<var name="userEmailAddress" value="userea@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#editUserDisplaySettingsCP">
+			<var name="displaySettingsGreeting" value="${displaySettingsGreeting}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+	</command>
+
 	<command name="AddUserEmailAddressAt" priority="4">
 		<var name="userEmailAddress" value="userea@@liferay.com" />
 		<var name="userFirstName" value="userfn" />
@@ -380,7 +553,7 @@
 
 		<execute macro="User#addCP">
 			<var name="userEmailAddress" value="${userEmailAddress}" />
-			<var name="userEmailAddressVariation" value="At" />
+			<var name="userEmailAddressVariation" value="Invalid" />
 			<var name="userFirstName" value="${userFirstName}" />
 			<var name="userLastName" value="${userLastName}" />
 			<var name="userScreenName" value="${userScreenName}" />
@@ -393,6 +566,154 @@
 		<execute macro="User#viewCP">
 			<var name="userEmailAddress" value="${userEmailAddress}" />
 			<var name="userEmailAddressVariation" value="At" />
+		</execute>
+	</command>
+
+	<command name="AddUserEmailAddressBackSlash" priority="3">
+		<var name="userEmailAddress" value="userea\@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userEmailAddressVariation" value="Invalid" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+	</command>
+
+	<command name="AddUserEmailAddressBackTick" priority="3">
+		<var name="userEmailAddress" value="userea`@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+	</command>
+
+	<command name="AddUserEmailAddressCaret" priority="3">
+		<var name="userEmailAddress" value="userea^@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+	</command>
+
+	<command name="AddUserEmailAddressCloseBracket" priority="3">
+		<var name="userEmailAddress" value="userea]@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userEmailAddressVariation" value="Invalid" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+	</command>
+
+	<command name="AddUserEmailAddressCloseCurlyBrace" priority="3">
+		<var name="userEmailAddress" value="userea}@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+	</command>
+
+	<command name="AddUserEmailAddressCloseParenthesis" priority="3">
+		<var name="userEmailAddress" value="userea)@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userEmailAddressVariation" value="Invalid" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+	</command>
+
+	<command name="AddUserEmailAddressColon" priority="3">
+		<var name="userEmailAddress" value="userea:@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userEmailAddressVariation" value="Invalid" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+	</command>
+
+	<command name="AddUserEmailAddressDash" priority="3">
+		<var name="userEmailAddress" value="userea-@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
 		</execute>
 	</command>
 
@@ -425,6 +746,118 @@
 		</execute>
 	</command>
 
+	<command name="AddUserEmailAddressGreaterThan" priority="3">
+		<var name="userEmailAddress" value="userea>@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userEmailAddressVariation" value="Invalid" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+	</command>
+
+	<command name="AddUserEmailAddressMinus" priority="3">
+		<var name="userEmailAddress" value="userea-@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+	</command>
+
+	<command name="AddUserEmailAddressNull" priority="3">
+		<var name="userEmailAddress" value="" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userEmailAddressVariation" value="Invalid" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+	</command>
+
+	<command name="AddUserEmailAddressOpenBracket" priority="3">
+		<var name="userEmailAddress" value="userea[@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userEmailAddressVariation" value="Invalid" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+	</command>
+
+	<command name="AddUserEmailAddressOpenCurlyBrace" priority="3">
+		<var name="userEmailAddress" value="userea{@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+	</command>
+
+	<command name="AddUserEmailAddressOpenParenthesis" priority="3">
+		<var name="userEmailAddress" value="userea(@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userEmailAddressVariation" value="Invalid" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+	</command>
+
 	<command name="AddUserEmailAddressPeriod" priority="4">
 		<var name="userEmailAddress" value="userea.@liferay.com" />
 		<var name="userFirstName" value="userfn" />
@@ -437,7 +870,7 @@
 
 		<execute macro="User#addCP">
 			<var name="userEmailAddress" value="${userEmailAddress}" />
-			<var name="userEmailAddressVariation" value="Period" />
+			<var name="userEmailAddressVariation" value="Invalid" />
 			<var name="userFirstName" value="${userFirstName}" />
 			<var name="userLastName" value="${userLastName}" />
 			<var name="userScreenName" value="${userScreenName}" />
@@ -450,6 +883,44 @@
 		<execute macro="User#viewCP">
 			<var name="userEmailAddress" value="${userEmailAddress}" />
 			<var name="userEmailAddressVariation" value="Period" />
+		</execute>
+	</command>
+
+	<command name="AddUserEmailAddressRoot" priority="3">
+		<var name="userEmailAddress" value="root@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userEmailAddressVariation" value="Root" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+	</command>
+
+	<command name="AddUserEmailAddressSemicolon" priority="3">
+		<var name="userEmailAddress" value="userea;@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userEmailAddressVariation" value="Invalid" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
 		</execute>
 	</command>
 
@@ -935,13 +1406,13 @@
 		<execute macro="User#logoutPG" />
 
 		<execute macro="User#loginUserInvalidPG">
-			<var name="userEmailAddress" value="${userEmailAddress}" />
 			<var name="password" value="test" />
+			<var name="userEmailAddress" value="${userEmailAddress}" />
 		</execute>
 
 		<execute macro="User#loginPG">
-			<var name="userEmailAddress" value="test@liferay.com" />
 			<var name="password" value="test" />
+			<var name="userEmailAddress" value="test@liferay.com" />
 		</execute>
 	</command>
 
@@ -983,47 +1454,13 @@
 		<execute macro="User#logoutPG" />
 
 		<execute macro="User#loginUserInvalidPG">
-			<var name="userEmailAddress" value="${userEmailAddress}" />
 			<var name="password" value="test" />
+			<var name="userEmailAddress" value="${userEmailAddress}" />
 		</execute>
 
 		<execute macro="User#loginPG">
-			<var name="userEmailAddress" value="test@liferay.com" />
 			<var name="password" value="test" />
-		</execute>
-	</command>
-
-	<command name="DeleteUser" priority="5">
-		<var name="userEmailAddress" value="userea@liferay.com" />
-		<var name="userFirstName" value="userfn" />
-		<var name="userLastName" value="userln" />
-		<var name="userScreenName" value="usersn" />
-
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="${userEmailAddress}" />
-			<var name="userFirstName" value="${userFirstName}" />
-			<var name="userLastName" value="${userLastName}" />
-			<var name="userScreenName" value="${userScreenName}" />
-		</execute>
-
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#deactivateCP">
-			<var name="userFirstName" value="${userFirstName}" />
-		</execute>
-
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#deleteCP">
-			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userEmailAddress" value="test@liferay.com" />
 		</execute>
 	</command>
 
@@ -1092,6 +1529,40 @@
 		</execute>
 	</command>
 
+	<command name="DeleteUser" priority="5">
+		<var name="userEmailAddress" value="userea@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#deactivateCP">
+			<var name="userFirstName" value="${userFirstName}" />
+		</execute>
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#deleteCP">
+			<var name="userFirstName" value="${userFirstName}" />
+		</execute>
+	</command>
+
 	<command name="EditOrganizationSite" priority="5">
 		<var name="orgName" value="Organization Name" />
 		<var name="orgNameEdit" value="Organization Name Edit" />
@@ -1143,6 +1614,66 @@
 		<execute macro="Organization#viewEditSiteCP">
 			<var name="orgNameEdit" value="${orgNameEdit}" />
 			<var name="orgType" value="${orgType}" />
+		</execute>
+	</command>
+
+	<command name="EditOrganizationSiteTeam" priority="3">
+		<var name="orgName" value="Organization Name" />
+		<var name="orgType" value="Regular Organization" />
+		<var name="siteName" value="${orgName}" />
+		<var name="siteScopeName" value="Organization Name" />
+		<var name="teamDescription" value="Site Team Description" />
+		<var name="teamDescriptionEdit" value="Site Team Description Edit" />
+		<var name="teamName" value="Site Team Name" />
+		<var name="teamNameEdit" value="Site Team Name Edit" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="Organization#addCP">
+			<var name="orgName" value="${orgName}" />
+			<var name="orgType" value="${orgType}" />
+		</execute>
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="Organization#addSiteCP">
+			<var name="orgName" value="${orgName}" />
+		</execute>
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="Organization#manageMembershipOptionsInSites">
+			<var name="allowManualMembershipManagement" value="true" />
+			<var name="orgName" value="${orgName}" />
+		</execute>
+
+		<execute macro="Page#gotoUsersCP">
+			<var name="portletName" value="Site Teams" />
+			<var name="siteScopeName" value="Organization Name" />
+		</execute>
+
+		<execute macro="Team#addCP">
+			<var name="siteName" value="${siteName}" />
+			<var name="teamDescription" value="${teamDescription}" />
+			<var name="teamName" value="${teamName}" />
+		</execute>
+
+		<execute macro="Team#editCP">
+			<var name="siteName" value="${siteName}" />
+			<var name="teamDescriptionEdit" value="${teamDescriptionEdit}" />
+			<var name="teamNameEdit" value="${teamNameEdit}" />
+		</execute>
+
+		<execute macro="Team#viewCP">
+			<var name="siteName" value="${siteName}" />
+			<var name="teamDescription" value="${teamDescriptionEdit}" />
+			<var name="teamName" value="${teamNameEdit}" />
 		</execute>
 	</command>
 
@@ -1228,6 +1759,46 @@
 		</execute>
 	</command>
 
+	<command name="LoginUser" priority="5">
+		<var name="userEmailAddress" value="userea@liferay.com" />
+		<var name="userFirstName" value="userfn" />
+		<var name="userLastName" value="userln" />
+		<var name="userScreenName" value="usersn" />
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userFirstName" value="${userFirstName}" />
+			<var name="userLastName" value="${userLastName}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#editPasswordCP">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userScreenName" value="${userScreenName}" />
+		</execute>
+
+		<execute macro="User#logoutPG" />
+
+		<execute macro="User#loginUserPG">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+		</execute>
+
+		<execute macro="User#logoutUserPG" />
+
+		<execute macro="User#loginPG">
+			<var name="password" value="test" />
+			<var name="userEmailAddress" value="test@liferay.com" />
+		</execute>
+	</command>
+
 	<command name="RemoveMember" priority="5">
 		<var name="orgName" value="Organization Name" />
 		<var name="orgType" value="Regular Organization" />
@@ -1284,46 +1855,6 @@
 		<execute macro="Organization#viewRemoveMemberCP">
 			<var name="orgName" value="${orgName}" />
 			<var name="userFirstName" value="${userFirstName}" />
-		</execute>
-	</command>
-
-	<command name="LoginUser" priority="5">
-		<var name="userEmailAddress" value="userea@liferay.com" />
-		<var name="userFirstName" value="userfn" />
-		<var name="userLastName" value="userln" />
-		<var name="userScreenName" value="usersn" />
-
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="${userEmailAddress}" />
-			<var name="userFirstName" value="${userFirstName}" />
-			<var name="userLastName" value="${userLastName}" />
-			<var name="userScreenName" value="${userScreenName}" />
-		</execute>
-
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="${userEmailAddress}" />
-			<var name="userScreenName" value="${userScreenName}" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="userEmailAddress" value="${userEmailAddress}" />
-		</execute>
-
-		<execute macro="User#logoutUserPG" />
-
-		<execute macro="User#loginPG">
-			<var name="userEmailAddress" value="test@liferay.com" />
-			<var name="password" value="test" />
 		</execute>
 	</command>
 
@@ -1496,7 +2027,7 @@
 		<var name="siteMember" value="Organization" />
 		<var name="siteName" value="Organization Name" />
 		<var name="sitePageName" value="Test Page" />
-		<var name="sitePageType" value="Public" />
+		<var name="sitePagePrivacy" value="Public" />
 
 		<execute macro="Page#addPG">
 			<var name="pageName" value="${pageName}" />

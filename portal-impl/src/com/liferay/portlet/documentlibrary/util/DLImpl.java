@@ -356,12 +356,12 @@ public class DLImpl implements DL {
 		sb.append(StringPool.SPACE);
 
 		for (Folder curFolder : folders) {
-			sb.append(StringPool.RAQUO);
+			sb.append(StringPool.RAQUO_CHAR);
 			sb.append(StringPool.SPACE);
 			sb.append(curFolder.getName());
 		}
 
-		sb.append(StringPool.RAQUO);
+		sb.append(StringPool.RAQUO_CHAR);
 		sb.append(StringPool.SPACE);
 		sb.append(folder.getName());
 
@@ -787,7 +787,7 @@ public class DLImpl implements DL {
 		sb.append(HttpUtil.encodeURL(HtmlUtil.unescape(title)));
 
 		sb.append(StringPool.SLASH);
-		sb.append(fileEntry.getUuid());
+		sb.append(HttpUtil.encodeURL(fileEntry.getUuid()));
 
 		if (appendVersion) {
 			sb.append("?version=");

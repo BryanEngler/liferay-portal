@@ -280,7 +280,7 @@ that may or may not be enforced with a unique index at the database level. Case
 
 				QueryPos qPos = QueryPos.getInstance(q);
 
-				<#include "persistence_impl_finder_qpos.ftl">
+				<@finderQPos />
 
 				if (!pagination) {
 					list = (List<${entity.name}>)QueryUtil.list(q, getDialect(), start, end, false);
@@ -568,7 +568,7 @@ that may or may not be enforced with a unique index at the database level. Case
 
 			QueryPos qPos = QueryPos.getInstance(q);
 
-			<#include "persistence_impl_finder_qpos.ftl">
+			<@finderQPos />
 
 			if (orderByComparator != null) {
 				Object[] values = orderByComparator.getOrderByConditionValues(${entity.varName});
@@ -700,7 +700,7 @@ that may or may not be enforced with a unique index at the database level. Case
 
 					QueryPos qPos = QueryPos.getInstance(q);
 
-					<#include "persistence_impl_finder_qpos.ftl">
+					<@finderQPos />
 
 					return (List<${entity.name}>)QueryUtil.list(q, getDialect(), start, end);
 				}
@@ -761,7 +761,7 @@ that may or may not be enforced with a unique index at the database level. Case
 				try {
 					session = openSession();
 
-					SQLQuery q = session.createSQLQuery(sql);
+					SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 					if (getDB().isSupportsInlineDistinct()) {
 						q.addEntity(_FILTER_ENTITY_ALIAS, ${entity.name}Impl.class);
@@ -772,7 +772,7 @@ that may or may not be enforced with a unique index at the database level. Case
 
 					QueryPos qPos = QueryPos.getInstance(q);
 
-					<#include "persistence_impl_finder_qpos.ftl">
+					<@finderQPos />
 
 					return (List<${entity.name}>)QueryUtil.list(q, getDialect(), start, end);
 				}
@@ -878,7 +878,7 @@ that may or may not be enforced with a unique index at the database level. Case
 
 					QueryPos qPos = QueryPos.getInstance(q);
 
-					<#include "persistence_impl_finder_qpos.ftl">
+					<@finderQPos />
 
 					if (orderByComparator != null) {
 						Object[] values = orderByComparator.getOrderByConditionValues(${entity.varName});
@@ -1001,7 +1001,7 @@ that may or may not be enforced with a unique index at the database level. Case
 
 					String sql = InlineSQLHelperUtil.replacePermissionCheck(query.toString(), ${entity.name}.class.getName(), _FILTER_ENTITY_TABLE_FILTER_PK_COLUMN<#if finder.hasColumn("groupId")>, groupId</#if>);
 
-					SQLQuery q = session.createSQLQuery(sql);
+					SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 					q.setFirstResult(0);
 					q.setMaxResults(2);
@@ -1015,7 +1015,7 @@ that may or may not be enforced with a unique index at the database level. Case
 
 					QueryPos qPos = QueryPos.getInstance(q);
 
-					<#include "persistence_impl_finder_qpos.ftl">
+					<@finderQPos />
 
 					if (orderByComparator != null) {
 						Object[] values = orderByComparator.getOrderByConditionValues(${entity.varName});
@@ -1178,6 +1178,22 @@ that may or may not be enforced with a unique index at the database level. Case
 					start, end, orderByComparator);
 				}
 
+				<#list finderColsList as finderCol>
+					<#if finderCol.hasArrayableOperator()>
+						if (${finderCol.names} == null) {
+							${finderCol.names} = new ${finderCol.type}[0];
+						}
+						else {
+							${finderCol.names} =
+								<#if finderCol.type == "String">
+									ArrayUtil.distinct(${finderCol.names}, NULL_SAFE_STRING_COMPARATOR);
+								<#else>
+									ArrayUtil.unique(${finderCol.names});
+								</#if>
+						}
+					</#if>
+				</#list>
+
 				<#if entity.isPermissionedModel()>
 					<#include "persistence_impl_find_by_arrayable_query.ftl">
 
@@ -1198,9 +1214,13 @@ that may or may not be enforced with a unique index at the database level. Case
 
 						Query q = session.createQuery(sql);
 
-						QueryPos qPos = QueryPos.getInstance(q);
+						<#if bindParameter(finderColsList)>
+							QueryPos qPos = QueryPos.getInstance(q);
+						</#if>
 
-						<#include "persistence_impl_finder_arrayable_qpos.ftl">
+						<@finderQPos
+							_arrayable=true
+						/>
 
 						return (List<${entity.name}>)QueryUtil.list(q, getDialect(), start, end);
 					}
@@ -1262,7 +1282,7 @@ that may or may not be enforced with a unique index at the database level. Case
 					try {
 						session = openSession();
 
-						SQLQuery q = session.createSQLQuery(sql);
+						SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
 						if (getDB().isSupportsInlineDistinct()) {
 							q.addEntity(_FILTER_ENTITY_ALIAS, ${entity.name}Impl.class);
@@ -1271,9 +1291,13 @@ that may or may not be enforced with a unique index at the database level. Case
 							q.addEntity(_FILTER_ENTITY_TABLE, ${entity.name}Impl.class);
 						}
 
-						QueryPos qPos = QueryPos.getInstance(q);
+						<#if bindParameter(finderColsList)>
+							QueryPos qPos = QueryPos.getInstance(q);
+						</#if>
 
-						<#include "persistence_impl_finder_arrayable_qpos.ftl">
+						<@finderQPos
+							_arrayable=true
+						/>
 
 						return (List<${entity.name}>)QueryUtil.list(q, getDialect(), start, end);
 					}
@@ -1430,6 +1454,22 @@ that may or may not be enforced with a unique index at the database level. Case
 		</#list>
 
 		int start, int end, OrderByComparator orderByComparator) throws SystemException {
+			<#list finderColsList as finderCol>
+				<#if finderCol.hasArrayableOperator()>
+					if (${finderCol.names} == null) {
+						${finderCol.names} = new ${finderCol.type}[0];
+					}
+					else {
+						${finderCol.names} =
+							<#if finderCol.type == "String">
+								ArrayUtil.distinct(${finderCol.names}, NULL_SAFE_STRING_COMPARATOR);
+							<#else>
+								ArrayUtil.unique(${finderCol.names});
+							</#if>
+					}
+				</#if>
+			</#list>
+
 			if (
 			<#assign firstCol = true>
 			<#list finderColsList as finderCol>
@@ -1440,7 +1480,7 @@ that may or may not be enforced with a unique index at the database level. Case
 						&&
 					</#if>
 
-					(${finderCol.names} != null) && (${finderCol.names}.length == 1)
+					${finderCol.names}.length == 1
 				</#if>
 			</#list>
 			) {
@@ -1559,9 +1599,13 @@ that may or may not be enforced with a unique index at the database level. Case
 
 					Query q = session.createQuery(sql);
 
-					QueryPos qPos = QueryPos.getInstance(q);
+					<#if bindParameter(finderColsList)>
+						QueryPos qPos = QueryPos.getInstance(q);
+					</#if>
 
-					<#include "persistence_impl_finder_arrayable_qpos.ftl">
+					<@finderQPos
+						_arrayable=true
+					/>
 
 					if (!pagination) {
 						list = (List<${entity.name}>)QueryUtil.list(q, getDialect(), start, end, false);
@@ -1763,7 +1807,7 @@ that may or may not be enforced with a unique index at the database level. Case
 
 				QueryPos qPos = QueryPos.getInstance(q);
 
-				<#include "persistence_impl_finder_qpos.ftl">
+				<@finderQPos />
 
 				List<${entity.name}> list = q.list();
 

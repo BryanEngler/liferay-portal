@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.lar.ExportImportDateUtil;
 import com.liferay.portal.kernel.lar.ExportImportHelperUtil;
 import com.liferay.portal.kernel.lar.MissingReference;
 import com.liferay.portal.kernel.lar.MissingReferences;
@@ -43,6 +44,8 @@ import com.liferay.portal.kernel.lar.PortletDataHandlerKeys;
 import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.lar.UserIdStrategy;
+import com.liferay.portal.kernel.lar.exportimportconfiguration.ExportImportConfigurationConstants;
+import com.liferay.portal.kernel.lar.exportimportconfiguration.ExportImportConfigurationSettingsMapFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.DestinationNames;
@@ -67,6 +70,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Tuple;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowTask;
 import com.liferay.portal.kernel.workflow.WorkflowTaskManagerUtil;
@@ -75,8 +79,7 @@ import com.liferay.portal.lar.backgroundtask.BackgroundTaskContextMapFactory;
 import com.liferay.portal.lar.backgroundtask.LayoutRemoteStagingBackgroundTaskExecutor;
 import com.liferay.portal.lar.backgroundtask.LayoutStagingBackgroundTaskExecutor;
 import com.liferay.portal.lar.backgroundtask.PortletStagingBackgroundTaskExecutor;
-import com.liferay.portal.messaging.LayoutsLocalPublisherRequest;
-import com.liferay.portal.messaging.LayoutsRemotePublisherRequest;
+import com.liferay.portal.model.ExportImportConfiguration;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.GroupConstants;
 import com.liferay.portal.model.Layout;
@@ -98,6 +101,7 @@ import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.security.permission.PermissionThreadLocal;
 import com.liferay.portal.security.permission.ResourceActionsUtil;
 import com.liferay.portal.service.BackgroundTaskLocalServiceUtil;
+import com.liferay.portal.service.ExportImportConfigurationLocalServiceUtil;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.LayoutBranchLocalServiceUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
@@ -312,9 +316,9 @@ public class StagingImpl implements Staging {
 		Map<String, String[]> parameterMap = getStagingParameters(
 			portletRequest);
 
-		DateRange dateRange = ExportImportHelperUtil.getDateRange(
+		DateRange dateRange = ExportImportDateUtil.getDateRange(
 			portletRequest, sourceGroupId, false, sourcePlid, portletId,
-			"fromLastPublishDate");
+			ExportImportDateUtil.RANGE_FROM_LAST_PUBLISH_DATE);
 
 		Map<String, Serializable> taskContextMap =
 			BackgroundTaskContextMapFactory.buildTaskContextMap(
@@ -597,7 +601,7 @@ public class StagingImpl implements Staging {
 						locale,
 						"the-referenced-theme-x-is-not-deployed-in-the-" +
 							"current-environment",
-						missingReference.getClassPK()));
+						missingReference.getClassPK(), false));
 			}
 			else if (referrers.size() == 1) {
 				Set<Map.Entry<String, String>> referrerDisplayNames =
@@ -624,14 +628,14 @@ public class StagingImpl implements Staging {
 							ResourceActionsUtil.getModelResource(
 								locale, referrerClassName),
 							referrerDisplayName
-						}
-					));
+						}, false));
 			}
 			else {
 				errorMessageJSONObject.put(
 					"info",
 					LanguageUtil.format(
-						locale, "referenced-by-x-elements", referrers.size()));
+						locale, "referenced-by-x-elements", referrers.size(),
+						true));
 			}
 
 			errorMessageJSONObject.put("name", missingReferenceDisplayName);
@@ -667,7 +671,7 @@ public class StagingImpl implements Staging {
 			errorMessage = LanguageUtil.format(
 				locale,
 				"document-names-must-end-with-one-of-the-following-extensions",
-				".lar");
+				".lar", false);
 			errorType = ServletResponseConstants.SC_FILE_EXTENSION_EXCEPTION;
 		}
 		else if (e instanceof FileNameException) {
@@ -695,7 +699,7 @@ public class StagingImpl implements Staging {
 			errorMessage = LanguageUtil.format(
 				locale,
 				"please-enter-a-file-with-a-valid-file-size-no-larger-than-x",
-				fileMaxSize/1024);
+				fileMaxSize/1024, false);
 			errorType = ServletResponseConstants.SC_FILE_SIZE_EXCEPTION;
 		}
 		else if (e instanceof LARTypeException) {
@@ -770,7 +774,8 @@ public class StagingImpl implements Staging {
 					StringUtil.merge(
 						le.getTargetAvailableLocales(),
 						StringPool.COMMA_AND_SPACE)
-				});
+				}, false);
+
 			errorType = ServletResponseConstants.SC_FILE_CUSTOM_EXCEPTION;
 		}
 		else if (e instanceof MissingReferenceException) {
@@ -833,8 +838,7 @@ public class StagingImpl implements Staging {
 						ResourceActionsUtil.getModelResource(
 							locale, referrerClassName),
 						referrerDisplayName
-					}
-				);
+					}, false);
 			}
 			else if (pde.getType() == PortletDataException.MISSING_DEPENDENCY) {
 				errorMessage = LanguageUtil.format(
@@ -845,8 +849,7 @@ public class StagingImpl implements Staging {
 						ResourceActionsUtil.getModelResource(
 							locale, referrerClassName),
 						referrerDisplayName
-					}
-				);
+					}, false);
 			}
 			else if (pde.getType() == PortletDataException.STATUS_IN_TRASH) {
 				errorMessage = LanguageUtil.format(
@@ -857,8 +860,7 @@ public class StagingImpl implements Staging {
 						ResourceActionsUtil.getModelResource(
 							locale, referrerClassName),
 						referrerDisplayName
-					}
-				);
+					}, false);
 			}
 			else if (pde.getType() == PortletDataException.STATUS_UNAVAILABLE) {
 				errorMessage = LanguageUtil.format(
@@ -869,8 +871,7 @@ public class StagingImpl implements Staging {
 						ResourceActionsUtil.getModelResource(
 							locale, referrerClassName),
 						referrerDisplayName
-					}
-				);
+					}, false);
 			}
 			else {
 				errorMessage = e.getLocalizedMessage();
@@ -1240,7 +1241,8 @@ public class StagingImpl implements Staging {
 						"the-original-x-does-not-exist-in-the-current-" +
 							"environment",
 						ResourceActionsUtil.getModelResource(
-							locale, missingReference.getClassName())));
+							locale, missingReference.getClassName()
+						), false));
 			}
 
 			errorMessageJSONObject.put("size", referrers.size());
@@ -1649,6 +1651,20 @@ public class StagingImpl implements Staging {
 	}
 
 	@Override
+	public String stripProtocolFromRemoteAddress(String remoteAddress) {
+		if (remoteAddress.startsWith(Http.HTTP_WITH_SLASH)) {
+			remoteAddress = remoteAddress.substring(
+				Http.HTTP_WITH_SLASH.length());
+		}
+		else if (remoteAddress.startsWith(Http.HTTPS_WITH_SLASH)) {
+			remoteAddress = remoteAddress.substring(
+				Http.HTTPS_WITH_SLASH.length());
+		}
+
+		return remoteAddress;
+	}
+
+	@Override
 	public void unlockGroup(long groupId) throws SystemException {
 		if (!PropsValues.STAGING_LOCK_ENABLED) {
 			return;
@@ -1999,9 +2015,11 @@ public class StagingImpl implements Staging {
 
 		String description = LanguageUtil.format(
 			PortalUtil.getSiteDefaultLocale(groupId), masterBranchDescription,
-			groupName);
+			groupName, false);
 
 		try {
+			serviceContext.setWorkflowAction(WorkflowConstants.STATUS_APPROVED);
+
 			LayoutSetBranch layoutSetBranch =
 				LayoutSetBranchLocalServiceUtil.addLayoutSetBranch(
 					userId, groupId, privateLayout,
@@ -2214,9 +2232,9 @@ public class StagingImpl implements Staging {
 			layoutIdMap = ExportImportHelperUtil.getLayoutIdMap(portletRequest);
 		}
 
-		DateRange dateRange = ExportImportHelperUtil.getDateRange(
+		DateRange dateRange = ExportImportDateUtil.getDateRange(
 			portletRequest, sourceGroupId, privateLayout, 0, null,
-			"fromLastPublishDate");
+			ExportImportDateUtil.RANGE_FROM_LAST_PUBLISH_DATE);
 
 		if (schedule) {
 			String groupName = getSchedulerGroupName(
@@ -2225,7 +2243,7 @@ public class StagingImpl implements Staging {
 			int recurrenceType = ParamUtil.getInteger(
 				portletRequest, "recurrenceType");
 
-			Calendar startCalendar = ExportImportHelperUtil.getCalendar(
+			Calendar startCalendar = ExportImportDateUtil.getCalendar(
 				portletRequest, "schedulerStartDate", true);
 
 			String cronText = SchedulerEngineHelperUtil.getCronText(
@@ -2237,7 +2255,7 @@ public class StagingImpl implements Staging {
 				portletRequest, "endDateType");
 
 			if (endDateType == 1) {
-				Calendar endCalendar = ExportImportHelperUtil.getCalendar(
+				Calendar endCalendar = ExportImportDateUtil.getCalendar(
 					portletRequest, "schedulerEndDate", true);
 
 				schedulerEndDate = endCalendar.getTime();
@@ -2257,13 +2275,8 @@ public class StagingImpl implements Staging {
 
 			messageStatus.startTimer();
 
-			String command =
-				LayoutsLocalPublisherRequest.COMMAND_SELECTED_PAGES;
-
 			try {
 				if (scope.equals("all-pages")) {
-					command = LayoutsLocalPublisherRequest.COMMAND_ALL_PAGES;
-
 					publishLayouts(
 						themeDisplay.getUserId(), sourceGroupId, targetGroupId,
 						privateLayout, parameterMap, dateRange.getStartDate(),
@@ -2284,13 +2297,24 @@ public class StagingImpl implements Staging {
 			finally {
 				messageStatus.stopTimer();
 
-				LayoutsLocalPublisherRequest publisherRequest =
-					new LayoutsLocalPublisherRequest(
-						command, themeDisplay.getUserId(), sourceGroupId,
-						targetGroupId, privateLayout, layoutIdMap, parameterMap,
-						dateRange.getStartDate(), dateRange.getEndDate());
+				Map<String, Serializable> settingsMap =
+					ExportImportConfigurationSettingsMapFactory.
+						buildSettingsMap(
+							themeDisplay.getUserId(), sourceGroupId,
+							targetGroupId, privateLayout, layoutIdMap,
+							parameterMap, dateRange.getStartDate(),
+							dateRange.getEndDate());
 
-				messageStatus.setPayload(publisherRequest);
+				ExportImportConfiguration exportImportConfiguration =
+					ExportImportConfigurationLocalServiceUtil.
+						addExportImportConfiguration(
+							themeDisplay.getUserId(), sourceGroupId,
+							PortalUUIDUtil.generate(), StringPool.BLANK,
+							ExportImportConfigurationConstants.
+								TYPE_PUBLISH_LAYOUT_LOCAL,
+							settingsMap, new ServiceContext());
+
+				messageStatus.setPayload(exportImportConfiguration);
 
 				MessageBusUtil.sendMessage(
 					DestinationNames.MESSAGE_BUS_MESSAGE_STATUS, messageStatus);
@@ -2367,9 +2391,9 @@ public class StagingImpl implements Staging {
 			remoteAddress, remotePort, remotePathContext, secureConnection,
 			remoteGroupId);
 
-		DateRange dateRange = ExportImportHelperUtil.getDateRange(
+		DateRange dateRange = ExportImportDateUtil.getDateRange(
 			portletRequest, groupId, privateLayout, 0, null,
-			"fromLastPublishDate");
+			ExportImportDateUtil.RANGE_FROM_LAST_PUBLISH_DATE);
 
 		if (schedule) {
 			String groupName = getSchedulerGroupName(
@@ -2378,7 +2402,7 @@ public class StagingImpl implements Staging {
 			int recurrenceType = ParamUtil.getInteger(
 				portletRequest, "recurrenceType");
 
-			Calendar startCalendar = ExportImportHelperUtil.getCalendar(
+			Calendar startCalendar = ExportImportDateUtil.getCalendar(
 				portletRequest, "schedulerStartDate", true);
 
 			String cronText = SchedulerEngineHelperUtil.getCronText(
@@ -2390,7 +2414,7 @@ public class StagingImpl implements Staging {
 				portletRequest, "endDateType");
 
 			if (endDateType == 1) {
-				Calendar endCalendar = ExportImportHelperUtil.getCalendar(
+				Calendar endCalendar = ExportImportDateUtil.getCalendar(
 					portletRequest, "schedulerEndDate", true);
 
 				schedulerEndDate = endCalendar.getTime();
@@ -2426,15 +2450,25 @@ public class StagingImpl implements Staging {
 			finally {
 				messageStatus.stopTimer();
 
-				LayoutsRemotePublisherRequest publisherRequest =
-					new LayoutsRemotePublisherRequest(
-						themeDisplay.getUserId(), groupId, privateLayout,
-						layoutIdMap, parameterMap, remoteAddress, remotePort,
-						remotePathContext, secureConnection, remoteGroupId,
-						remotePrivateLayout, dateRange.getStartDate(),
-						dateRange.getEndDate());
+				Map<String, Serializable> settingsMap =
+					ExportImportConfigurationSettingsMapFactory.
+						buildSettingsMap(
+							themeDisplay.getUserId(), groupId, privateLayout,
+							layoutIdMap, parameterMap, remoteAddress,
+							remotePort, remotePathContext, secureConnection,
+							remoteGroupId, remotePrivateLayout,
+							dateRange.getStartDate(), dateRange.getEndDate());
 
-				messageStatus.setPayload(publisherRequest);
+				ExportImportConfiguration exportImportConfiguration =
+					ExportImportConfigurationLocalServiceUtil.
+						addExportImportConfiguration(
+							themeDisplay.getUserId(), groupId,
+							PortalUUIDUtil.generate(), StringPool.BLANK,
+							ExportImportConfigurationConstants.
+								TYPE_PUBLISH_LAYOUT_REMOTE,
+							settingsMap, new ServiceContext());
+
+				messageStatus.setPayload(exportImportConfiguration);
 
 				MessageBusUtil.sendMessage(
 					DestinationNames.MESSAGE_BUS_MESSAGE_STATUS, messageStatus);
@@ -2491,19 +2525,6 @@ public class StagingImpl implements Staging {
 			Staging.class.getName(),
 			getRecentLayoutBranchIdKey(layoutSetBranchId, plid),
 			String.valueOf(layoutBranchId));
-	}
-
-	protected String stripProtocolFromRemoteAddress(String remoteAddress) {
-		if (remoteAddress.startsWith(Http.HTTP_WITH_SLASH)) {
-			remoteAddress = remoteAddress.substring(
-				Http.HTTP_WITH_SLASH.length());
-		}
-		else if (remoteAddress.startsWith(Http.HTTPS_WITH_SLASH)) {
-			remoteAddress = remoteAddress.substring(
-				Http.HTTPS_WITH_SLASH.length());
-		}
-
-		return remoteAddress;
 	}
 
 	protected void updateGroupTypeSettingsProperties(

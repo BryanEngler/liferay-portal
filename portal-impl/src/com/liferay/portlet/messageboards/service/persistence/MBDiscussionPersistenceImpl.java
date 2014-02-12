@@ -2446,7 +2446,7 @@ public class MBDiscussionPersistenceImpl extends BasePersistenceImpl<MBDiscussio
 			CacheRegistryUtil.clear(MBDiscussionImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(MBDiscussionImpl.class.getName());
+		EntityCacheUtil.clearCache(MBDiscussionImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -2814,7 +2814,8 @@ public class MBDiscussionPersistenceImpl extends BasePersistenceImpl<MBDiscussio
 		}
 
 		EntityCacheUtil.putResult(MBDiscussionModelImpl.ENTITY_CACHE_ENABLED,
-			MBDiscussionImpl.class, mbDiscussion.getPrimaryKey(), mbDiscussion);
+			MBDiscussionImpl.class, mbDiscussion.getPrimaryKey(), mbDiscussion,
+			false);
 
 		clearUniqueFindersCache(mbDiscussion);
 		cacheUniqueFindersCache(mbDiscussion);

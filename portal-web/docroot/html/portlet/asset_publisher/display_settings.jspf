@@ -35,17 +35,19 @@
 		/>
 	</div>
 
-	<aui:select cssClass="hidden-field abstract-length" helpMessage="abstract-length-key-help" name="preferences--abstractLength--">
-		<aui:option label="100" selected="<%= assetPublisherDisplayContext.getAbstractLength() == 100 %>" />
-		<aui:option label="200" selected="<%= assetPublisherDisplayContext.getAbstractLength() == 200 %>" />
-		<aui:option label="300" selected="<%= assetPublisherDisplayContext.getAbstractLength() == 300 %>" />
-		<aui:option label="400" selected="<%= assetPublisherDisplayContext.getAbstractLength() == 400 %>" />
-		<aui:option label="500" selected="<%= assetPublisherDisplayContext.getAbstractLength() == 500 %>" />
+	<aui:select cssClass="hidden-field abstract-length" helpMessage="abstract-length-key-help" name="preferences--abstractLength--" value="<%= assetPublisherDisplayContext.getAbstractLength() %>">
+		<aui:option label="100" />
+		<aui:option label="200" />
+		<aui:option label="300" />
+		<aui:option label="400" />
+		<aui:option label="500" />
 	</aui:select>
 
 	<aui:input cssClass="hidden-field show-asset-title" name="preferences--showAssetTitle--" type="checkbox" value="<%= assetPublisherDisplayContext.isShowAssetTitle() %>" />
 
 	<aui:input cssClass="hidden-field show-context-link" name="preferences--showContextLink--" type="checkbox" value="<%= assetPublisherDisplayContext.isShowContextLink() %>" />
+
+	<aui:input cssClass="hidden-field show-extra-info" name="preferences--showExtraInfo--" type="checkbox" value="<%= assetPublisherDisplayContext.isShowExtraInfo() %>" />
 
 	<aui:select cssClass="hidden-field asset-link-behavior" name="preferences--assetLinkBehavior--">
 		<aui:option label="show-full-content" selected="<%= assetPublisherDisplayContext.isAssetLinkBehaviorShowFullContent() %>" value="showFullContent" />
@@ -81,11 +83,11 @@
 	</c:if>
 
 	<%
-	String helpMessage1 = "<em>" + LanguageUtil.format(pageContext, "content-related-to-x", StringPool.DOUBLE_PERIOD) + "</em>";
-	String helpMessage2 = "<em>" + LanguageUtil.format(pageContext, "content-with-tag-x", StringPool.DOUBLE_PERIOD) + "</em>";
+	String helpMessage1 = "<em>" + LanguageUtil.format(pageContext, "content-related-to-x", StringPool.DOUBLE_PERIOD, false) + "</em>";
+	String helpMessage2 = "<em>" + LanguageUtil.format(pageContext, "content-with-tag-x", StringPool.DOUBLE_PERIOD, false) + "</em>";
 	%>
 
-	<aui:input helpMessage='<%= LanguageUtil.format(pageContext, "such-as-x-or-x", new Object[] {helpMessage1, helpMessage2}) %>' name="preferences--showMetadataDescriptions--" type="checkbox" value="<%= assetPublisherDisplayContext.isShowMetadataDescriptions() %>" />
+	<aui:input helpMessage='<%= LanguageUtil.format(pageContext, "such-as-x-or-x", new Object[] {helpMessage1, helpMessage2}, false) %>' name="preferences--showMetadataDescriptions--" type="checkbox" value="<%= assetPublisherDisplayContext.isShowMetadataDescriptions() %>" />
 
 	<aui:input name="preferences--showAvailableLocales--" type="checkbox" value="<%= assetPublisherDisplayContext.isShowAvailableLocales() %>" />
 
@@ -213,6 +215,7 @@
 			if (displayStyle == 'full-content') {
 				var showAssetTitle = A.one('.show-asset-title');
 				var showContextLink = A.one('.show-context-link');
+				var showExtraInfo = A.one('.show-extra-info');
 
 				if (showAssetTitle) {
 					showAssetTitle.get('parentNode').show();
@@ -220,6 +223,10 @@
 
 				if (showContextLink) {
 					showContextLink.get('parentNode').show();
+				}
+
+				if (showExtraInfo) {
+					showExtraInfo.get('parentNode').show();
 				}
 			}
 			else {

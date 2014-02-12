@@ -17,6 +17,7 @@ package com.liferay.portal.model.impl;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.ServiceComponent;
 
 import java.io.Externalizable;
@@ -32,12 +33,24 @@ import java.io.ObjectOutput;
  * @generated
  */
 public class ServiceComponentCacheModel implements CacheModel<ServiceComponent>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(11);
+		StringBundler sb = new StringBundler(13);
 
-		sb.append("{serviceComponentId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", serviceComponentId=");
 		sb.append(serviceComponentId);
 		sb.append(", buildNamespace=");
 		sb.append(buildNamespace);
@@ -56,6 +69,7 @@ public class ServiceComponentCacheModel implements CacheModel<ServiceComponent>,
 	public ServiceComponent toEntityModel() {
 		ServiceComponentImpl serviceComponentImpl = new ServiceComponentImpl();
 
+		serviceComponentImpl.setMvccVersion(mvccVersion);
 		serviceComponentImpl.setServiceComponentId(serviceComponentId);
 
 		if (buildNamespace == null) {
@@ -82,6 +96,7 @@ public class ServiceComponentCacheModel implements CacheModel<ServiceComponent>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		serviceComponentId = objectInput.readLong();
 		buildNamespace = objectInput.readUTF();
 		buildNumber = objectInput.readLong();
@@ -92,6 +107,7 @@ public class ServiceComponentCacheModel implements CacheModel<ServiceComponent>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(serviceComponentId);
 
 		if (buildNamespace == null) {
@@ -112,6 +128,7 @@ public class ServiceComponentCacheModel implements CacheModel<ServiceComponent>,
 		}
 	}
 
+	public long mvccVersion;
 	public long serviceComponentId;
 	public String buildNamespace;
 	public long buildNumber;

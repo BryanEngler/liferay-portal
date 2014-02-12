@@ -174,7 +174,7 @@ portletURL.setParameter("tabs3", "current-and-previous");
 						<c:if test="<%= !portletDataHandler.isDisplayPortlet() %>">
 
 							<%
-							DateRange dateRange = ExportImportHelperUtil.getDateRange(renderRequest, themeDisplay.getScopeGroupId(), false, exportableLayout.getPlid(), selPortlet.getPortletId(), "fromLastPublishDate");
+							DateRange dateRange = ExportImportDateUtil.getDateRange(renderRequest, themeDisplay.getScopeGroupId(), false, exportableLayout.getPlid(), selPortlet.getPortletId(), ExportImportDateUtil.RANGE_FROM_LAST_PUBLISH_DATE);
 
 							Date startDate = dateRange.getStartDate();
 							Date endDate = dateRange.getEndDate();
@@ -288,10 +288,10 @@ portletURL.setParameter("tabs3", "current-and-previous");
 													<ul class="hide unstyled" id="<portlet:namespace />rangeLastInputs">
 														<li>
 															<aui:select cssClass="relative-range" label="" name="last">
-																<aui:option label='<%= LanguageUtil.format(pageContext, "x-hours", "12") %>' value="12" />
-																<aui:option label='<%= LanguageUtil.format(pageContext, "x-hours", "24") %>' value="24" />
-																<aui:option label='<%= LanguageUtil.format(pageContext, "x-hours", "48") %>' value="48" />
-																<aui:option label='<%= LanguageUtil.format(pageContext, "x-days", "7") %>' value="168" />
+																<aui:option label='<%= LanguageUtil.format(pageContext, "x-hours", "12", false) %>' value="12" />
+																<aui:option label='<%= LanguageUtil.format(pageContext, "x-hours", "24", false) %>' value="24" />
+																<aui:option label='<%= LanguageUtil.format(pageContext, "x-hours", "48", false) %>' value="48" />
+																<aui:option label='<%= LanguageUtil.format(pageContext, "x-days", "7", false) %>' value="168" />
 															</aui:select>
 														</li>
 													</ul>

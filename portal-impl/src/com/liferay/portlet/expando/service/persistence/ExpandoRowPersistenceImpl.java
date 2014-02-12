@@ -1341,7 +1341,7 @@ public class ExpandoRowPersistenceImpl extends BasePersistenceImpl<ExpandoRow>
 			CacheRegistryUtil.clear(ExpandoRowImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(ExpandoRowImpl.class.getName());
+		EntityCacheUtil.clearCache(ExpandoRowImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -1606,7 +1606,7 @@ public class ExpandoRowPersistenceImpl extends BasePersistenceImpl<ExpandoRow>
 		}
 
 		EntityCacheUtil.putResult(ExpandoRowModelImpl.ENTITY_CACHE_ENABLED,
-			ExpandoRowImpl.class, expandoRow.getPrimaryKey(), expandoRow);
+			ExpandoRowImpl.class, expandoRow.getPrimaryKey(), expandoRow, false);
 
 		clearUniqueFindersCache(expandoRow);
 		cacheUniqueFindersCache(expandoRow);

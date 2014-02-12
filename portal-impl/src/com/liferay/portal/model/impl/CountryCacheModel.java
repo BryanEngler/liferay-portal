@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.Country;
+import com.liferay.portal.model.MVCCModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -31,12 +32,25 @@ import java.io.ObjectOutput;
  * @see Country
  * @generated
  */
-public class CountryCacheModel implements CacheModel<Country>, Externalizable {
+public class CountryCacheModel implements CacheModel<Country>, Externalizable,
+	MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(17);
+		StringBundler sb = new StringBundler(19);
 
-		sb.append("{countryId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", countryId=");
 		sb.append(countryId);
 		sb.append(", name=");
 		sb.append(name);
@@ -61,6 +75,7 @@ public class CountryCacheModel implements CacheModel<Country>, Externalizable {
 	public Country toEntityModel() {
 		CountryImpl countryImpl = new CountryImpl();
 
+		countryImpl.setMvccVersion(mvccVersion);
 		countryImpl.setCountryId(countryId);
 
 		if (name == null) {
@@ -108,6 +123,7 @@ public class CountryCacheModel implements CacheModel<Country>, Externalizable {
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		countryId = objectInput.readLong();
 		name = objectInput.readUTF();
 		a2 = objectInput.readUTF();
@@ -121,6 +137,7 @@ public class CountryCacheModel implements CacheModel<Country>, Externalizable {
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(countryId);
 
 		if (name == null) {
@@ -162,6 +179,7 @@ public class CountryCacheModel implements CacheModel<Country>, Externalizable {
 		objectOutput.writeBoolean(active);
 	}
 
+	public long mvccVersion;
 	public long countryId;
 	public String name;
 	public String a2;

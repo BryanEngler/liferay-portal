@@ -1,4 +1,10 @@
 <definition>
+	<command name="assertChecked">
+		<case locator-key1="ADD_PAGE_TYPE_PANEL_CHECKBOX_INPUT">
+			<execute function="AssertChecked#waitForElementPresentAssertChecked" />
+		</case>
+	</command>
+
 	<command name="assertClick">
 		<case locator-key1="ADD">
 			<execute function="AssertClick#assertTextClickAtClickSidebar" />
@@ -65,7 +71,7 @@
 		</case>
 
 		<case locator-key1="USER_SIGN_OUT">
-			<execute function="Click#textClickAtAndWait" value1="Sign Out" />
+			<execute function="Click#clickAtAndWait" />
 		</case>
 
 		<case comparator="startsWith" locator1="//span[@data-title='">
@@ -75,6 +81,10 @@
 
 	<command name="isElementNotPresent">
 		<case comparator="startsWith" locator1="//div[@id='_145_">
+			<execute function="IsElementNotPresent#isNotVisible" />
+		</case>
+
+		<case locator-key1="EDIT_NAME_FIELD">
 			<execute function="IsElementNotPresent#isNotVisible" />
 		</case>
 	</command>

@@ -155,7 +155,7 @@ if (!inlineEdit) {
 
 		<c:if test="<%= Validator.isNotNull(onBlurMethod) %>">
 			onBlurCallback: function() {
-				<%= HtmlUtil.escapeJS(onBlurMethod) %>(CKEDITOR.instances['<%= name %>']);
+				window['<%= HtmlUtil.escapeJS(onBlurMethod) %>'](CKEDITOR.instances['<%= name %>']);
 			},
 		</c:if>
 
@@ -165,7 +165,7 @@ if (!inlineEdit) {
 				var dirty = ckEditor.checkDirty();
 
 				if (dirty) {
-					<%= HtmlUtil.escapeJS(onChangeMethod) %>(window['<%= name %>'].getText());
+					window['<%= HtmlUtil.escapeJS(onChangeMethod) %>'](window['<%= name %>'].getText());
 
 					ckEditor.resetDirty();
 				}
@@ -174,7 +174,7 @@ if (!inlineEdit) {
 
 		<c:if test="<%= Validator.isNotNull(onFocusMethod) %>">
 			onFocusCallback: function() {
-				<%= HtmlUtil.escapeJS(onFocusMethod) %>(CKEDITOR.instances['<%= name %>']);
+				window['<%= HtmlUtil.escapeJS(onFocusMethod) %>'](CKEDITOR.instances['<%= name %>']);
 			},
 		</c:if>
 
@@ -187,12 +187,12 @@ if (!inlineEdit) {
 <%
 String textareaName = name;
 
-String modules = StringPool.BLANK;
+String modules = "aui-node-base";
 
 if (inlineEdit && (inlineEditSaveURL != null)) {
 	textareaName = name + "_original";
 
-	modules = "inline-editor-ckeditor";
+	modules += ",inline-editor-ckeditor";
 }
 %>
 
@@ -224,21 +224,31 @@ if (inlineEdit && (inlineEditSaveURL != null)) {
 		function initData() {
 			<c:if test="<%= Validator.isNotNull(initMethod) && !(inlineEdit && (inlineEditSaveURL != null)) %>">
 				ckEditor.setData(
-					<%= HtmlUtil.escapeJS(namespace + initMethod) %>(),
+					window['<%= HtmlUtil.escapeJS(namespace + initMethod) %>'](),
 					function() {
 						ckEditor.resetDirty();
 					}
 				);
 			</c:if>
+
+			var iframe = A.one('#cke_<%= name %> iframe');
+
+			if (iframe) {
+				var iframeWin = iframe.getDOM().contentWindow;
+
+				if (iframeWin) {
+					var iframeDoc = iframeWin.document.documentElement;
+
+					A.one(iframeDoc).addClass('aui');
+				}
+			}
 		}
 
 		<%
 		StringBundler sb = new StringBundler(10);
 
 		sb.append(mainPath);
-		sb.append("/portal/fckeditor?p_l_id=");
-		sb.append(plid);
-		sb.append("&p_p_id=");
+		sb.append("/portal/fckeditor?p_p_id=");
 		sb.append(HttpUtil.encodeURL(portletId));
 		sb.append("&doAsUserId=");
 		sb.append(HttpUtil.encodeURL(doAsUserId));
@@ -260,7 +270,7 @@ if (inlineEdit && (inlineEditSaveURL != null)) {
 
 			'<%= name %>',
 			{
-				customConfig: '<%= PortalUtil.getPathContext() %>/html/js/editor/ckeditor/<%= HtmlUtil.escapeJS(ckEditorConfigFileName) %>?p_l_id=<%= plid %>&p_p_id=<%= HttpUtil.encodeURL(portletId) %>&p_main_path=<%= HttpUtil.encodeURL(mainPath) %>&doAsUserId=<%= HttpUtil.encodeURL(doAsUserId) %>&doAsGroupId=<%= HttpUtil.encodeURL(String.valueOf(doAsGroupId)) %>&contentsLanguageId=<%= HttpUtil.encodeURL(Validator.isNotNull(contentsLanguageId) ? contentsLanguageId : LocaleUtil.toLanguageId(locale)) %>&cssPath=<%= HttpUtil.encodeURL(themeDisplay.getPathThemeCss()) %>&cssClasses=<%= HttpUtil.encodeURL(cssClasses) %>&imagesPath=<%= HttpUtil.encodeURL(themeDisplay.getPathThemeImages()) %>&languageId=<%= HttpUtil.encodeURL(LocaleUtil.toLanguageId(locale)) %>&resizable=<%= resizable %>&inlineEdit=<%= inlineEdit %><%= configParams %>',
+				customConfig: '<%= PortalUtil.getPathContext() %>/html/js/editor/ckeditor/<%= HtmlUtil.escapeJS(ckEditorConfigFileName) %>?p_p_id=<%= HttpUtil.encodeURL(portletId) %>&p_main_path=<%= HttpUtil.encodeURL(mainPath) %>&contentsLanguageId=<%= HttpUtil.encodeURL(Validator.isNotNull(contentsLanguageId) ? contentsLanguageId : LocaleUtil.toLanguageId(locale)) %>&cssClasses=<%= HttpUtil.encodeURL(cssClasses) %>&cssPath=<%= HttpUtil.encodeURL(themeDisplay.getPathThemeCss()) %>&doAsGroupId=<%= HttpUtil.encodeURL(String.valueOf(doAsGroupId)) %>&doAsUserId=<%= HttpUtil.encodeURL(doAsUserId) %>&imagesPath=<%= HttpUtil.encodeURL(themeDisplay.getPathThemeImages()) %>&inlineEdit=<%= inlineEdit %><%= configParams %>&languageId=<%= HttpUtil.encodeURL(LocaleUtil.toLanguageId(locale)) %>&name=<%= name %>&resizable=<%= resizable %>',
 				filebrowserBrowseUrl: '<%= PortalUtil.getPathContext() %>/html/js/editor/ckeditor/editor/filemanager/browser/liferay/browser.html?Connector=<%= connectorURL %><%= fileBrowserParams %>',
 				filebrowserUploadUrl: null,
 				toolbar: getToolbarSet('<%= TextFormatter.format(HtmlUtil.escapeJS(toolbarSet), TextFormatter.M) %>')

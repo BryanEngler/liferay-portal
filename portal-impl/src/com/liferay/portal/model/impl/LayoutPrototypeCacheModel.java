@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.LayoutPrototype;
+import com.liferay.portal.model.MVCCModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -34,12 +35,24 @@ import java.util.Date;
  * @generated
  */
 public class LayoutPrototypeCacheModel implements CacheModel<LayoutPrototype>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(23);
+		StringBundler sb = new StringBundler(25);
 
-		sb.append("{uuid=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", uuid=");
 		sb.append(uuid);
 		sb.append(", layoutPrototypeId=");
 		sb.append(layoutPrototypeId);
@@ -69,6 +82,8 @@ public class LayoutPrototypeCacheModel implements CacheModel<LayoutPrototype>,
 	@Override
 	public LayoutPrototype toEntityModel() {
 		LayoutPrototypeImpl layoutPrototypeImpl = new LayoutPrototypeImpl();
+
+		layoutPrototypeImpl.setMvccVersion(mvccVersion);
 
 		if (uuid == null) {
 			layoutPrototypeImpl.setUuid(StringPool.BLANK);
@@ -132,6 +147,7 @@ public class LayoutPrototypeCacheModel implements CacheModel<LayoutPrototype>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		uuid = objectInput.readUTF();
 		layoutPrototypeId = objectInput.readLong();
 		companyId = objectInput.readLong();
@@ -148,6 +164,8 @@ public class LayoutPrototypeCacheModel implements CacheModel<LayoutPrototype>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
+
 		if (uuid == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
@@ -193,6 +211,7 @@ public class LayoutPrototypeCacheModel implements CacheModel<LayoutPrototype>,
 		objectOutput.writeBoolean(active);
 	}
 
+	public long mvccVersion;
 	public String uuid;
 	public long layoutPrototypeId;
 	public long companyId;

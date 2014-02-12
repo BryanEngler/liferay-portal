@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.UserGroup;
@@ -114,6 +115,8 @@ public class UserGroupPersistenceTest {
 
 		UserGroup newUserGroup = _persistence.create(pk);
 
+		newUserGroup.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newUserGroup.setUuid(ServiceTestUtil.randomString());
 
 		newUserGroup.setCompanyId(ServiceTestUtil.nextLong());
@@ -138,6 +141,8 @@ public class UserGroupPersistenceTest {
 
 		UserGroup existingUserGroup = _persistence.findByPrimaryKey(newUserGroup.getPrimaryKey());
 
+		Assert.assertEquals(existingUserGroup.getMvccVersion(),
+			newUserGroup.getMvccVersion());
 		Assert.assertEquals(existingUserGroup.getUuid(), newUserGroup.getUuid());
 		Assert.assertEquals(existingUserGroup.getUserGroupId(),
 			newUserGroup.getUserGroupId());
@@ -160,6 +165,74 @@ public class UserGroupPersistenceTest {
 			newUserGroup.getDescription());
 		Assert.assertEquals(existingUserGroup.getAddedByLDAPImport(),
 			newUserGroup.getAddedByLDAPImport());
+	}
+
+	@Test
+	public void testCountByUuid() {
+		try {
+			_persistence.countByUuid(StringPool.BLANK);
+
+			_persistence.countByUuid(StringPool.NULL);
+
+			_persistence.countByUuid((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByUuid_C() {
+		try {
+			_persistence.countByUuid_C(StringPool.BLANK,
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByUuid_C(StringPool.NULL, 0L);
+
+			_persistence.countByUuid_C((String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByCompanyId() {
+		try {
+			_persistence.countByCompanyId(ServiceTestUtil.nextLong());
+
+			_persistence.countByCompanyId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_P() {
+		try {
+			_persistence.countByC_P(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByC_P(0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_N() {
+		try {
+			_persistence.countByC_N(ServiceTestUtil.nextLong(), StringPool.BLANK);
+
+			_persistence.countByC_N(0L, StringPool.NULL);
+
+			_persistence.countByC_N(0L, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -196,11 +269,11 @@ public class UserGroupPersistenceTest {
 	}
 
 	protected OrderByComparator getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("UserGroup", "uuid", true,
-			"userGroupId", true, "companyId", true, "userId", true, "userName",
-			true, "createDate", true, "modifiedDate", true,
-			"parentUserGroupId", true, "name", true, "description", true,
-			"addedByLDAPImport", true);
+		return OrderByComparatorFactoryUtil.create("UserGroup", "mvccVersion",
+			true, "uuid", true, "userGroupId", true, "companyId", true,
+			"userId", true, "userName", true, "createDate", true,
+			"modifiedDate", true, "parentUserGroupId", true, "name", true,
+			"description", true, "addedByLDAPImport", true);
 	}
 
 	@Test
@@ -336,6 +409,8 @@ public class UserGroupPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		UserGroup userGroup = _persistence.create(pk);
+
+		userGroup.setMvccVersion(ServiceTestUtil.nextLong());
 
 		userGroup.setUuid(ServiceTestUtil.randomString());
 

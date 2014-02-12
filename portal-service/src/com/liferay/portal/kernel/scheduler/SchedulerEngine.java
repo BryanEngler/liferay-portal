@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.scheduler;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.proxy.MessagingProxy;
 import com.liferay.portal.kernel.messaging.proxy.ProxyMode;
@@ -30,9 +32,8 @@ import java.util.List;
  * @author Shuyang Zhou
  * @author Tina Tian
  */
+@ProviderType
 public interface SchedulerEngine {
-
-	public static final String AUDIT_ACTION = "AUDIT_ACTION";
 
 	public static final String DESCRIPTION = "DESCRIPTION";
 
@@ -77,6 +78,8 @@ public interface SchedulerEngine {
 	public static final String PREVIOUS_FIRE_TIME = "PREVIOUS_FIRE_TIME";
 
 	public static final String RECEIVER_KEY = "RECEIVER_KEY";
+
+	public static final String SCHEDULER = "SCHEDULER";
 
 	public static final String SCRIPT = "SCRIPT";
 

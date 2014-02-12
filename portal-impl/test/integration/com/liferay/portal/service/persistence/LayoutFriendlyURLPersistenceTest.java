@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.LayoutFriendlyURL;
@@ -114,6 +115,8 @@ public class LayoutFriendlyURLPersistenceTest {
 
 		LayoutFriendlyURL newLayoutFriendlyURL = _persistence.create(pk);
 
+		newLayoutFriendlyURL.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newLayoutFriendlyURL.setUuid(ServiceTestUtil.randomString());
 
 		newLayoutFriendlyURL.setGroupId(ServiceTestUtil.nextLong());
@@ -140,6 +143,8 @@ public class LayoutFriendlyURLPersistenceTest {
 
 		LayoutFriendlyURL existingLayoutFriendlyURL = _persistence.findByPrimaryKey(newLayoutFriendlyURL.getPrimaryKey());
 
+		Assert.assertEquals(existingLayoutFriendlyURL.getMvccVersion(),
+			newLayoutFriendlyURL.getMvccVersion());
 		Assert.assertEquals(existingLayoutFriendlyURL.getUuid(),
 			newLayoutFriendlyURL.getUuid());
 		Assert.assertEquals(existingLayoutFriendlyURL.getLayoutFriendlyURLId(),
@@ -166,6 +171,149 @@ public class LayoutFriendlyURLPersistenceTest {
 			newLayoutFriendlyURL.getFriendlyURL());
 		Assert.assertEquals(existingLayoutFriendlyURL.getLanguageId(),
 			newLayoutFriendlyURL.getLanguageId());
+	}
+
+	@Test
+	public void testCountByUuid() {
+		try {
+			_persistence.countByUuid(StringPool.BLANK);
+
+			_persistence.countByUuid(StringPool.NULL);
+
+			_persistence.countByUuid((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByUUID_G() {
+		try {
+			_persistence.countByUUID_G(StringPool.BLANK,
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByUUID_G(StringPool.NULL, 0L);
+
+			_persistence.countByUUID_G((String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByUuid_C() {
+		try {
+			_persistence.countByUuid_C(StringPool.BLANK,
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByUuid_C(StringPool.NULL, 0L);
+
+			_persistence.countByUuid_C((String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByGroupId() {
+		try {
+			_persistence.countByGroupId(ServiceTestUtil.nextLong());
+
+			_persistence.countByGroupId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByCompanyId() {
+		try {
+			_persistence.countByCompanyId(ServiceTestUtil.nextLong());
+
+			_persistence.countByCompanyId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByPlid() {
+		try {
+			_persistence.countByPlid(ServiceTestUtil.nextLong());
+
+			_persistence.countByPlid(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByP_F() {
+		try {
+			_persistence.countByP_F(ServiceTestUtil.nextLong(), StringPool.BLANK);
+
+			_persistence.countByP_F(0L, StringPool.NULL);
+
+			_persistence.countByP_F(0L, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByP_L() {
+		try {
+			_persistence.countByP_L(ServiceTestUtil.nextLong(), StringPool.BLANK);
+
+			_persistence.countByP_L(0L, StringPool.NULL);
+
+			_persistence.countByP_L(0L, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByG_P_F() {
+		try {
+			_persistence.countByG_P_F(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.randomBoolean(), StringPool.BLANK);
+
+			_persistence.countByG_P_F(0L, ServiceTestUtil.randomBoolean(),
+				StringPool.NULL);
+
+			_persistence.countByG_P_F(0L, ServiceTestUtil.randomBoolean(),
+				(String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByG_P_F_L() {
+		try {
+			_persistence.countByG_P_F_L(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.randomBoolean(), StringPool.BLANK,
+				StringPool.BLANK);
+
+			_persistence.countByG_P_F_L(0L, ServiceTestUtil.randomBoolean(),
+				StringPool.NULL, StringPool.NULL);
+
+			_persistence.countByG_P_F_L(0L, ServiceTestUtil.randomBoolean(),
+				(String)null, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -203,11 +351,11 @@ public class LayoutFriendlyURLPersistenceTest {
 	}
 
 	protected OrderByComparator getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("LayoutFriendlyURL", "uuid",
-			true, "layoutFriendlyURLId", true, "groupId", true, "companyId",
-			true, "userId", true, "userName", true, "createDate", true,
-			"modifiedDate", true, "plid", true, "privateLayout", true,
-			"friendlyURL", true, "languageId", true);
+		return OrderByComparatorFactoryUtil.create("LayoutFriendlyURL",
+			"mvccVersion", true, "uuid", true, "layoutFriendlyURLId", true,
+			"groupId", true, "companyId", true, "userId", true, "userName",
+			true, "createDate", true, "modifiedDate", true, "plid", true,
+			"privateLayout", true, "friendlyURL", true, "languageId", true);
 	}
 
 	@Test
@@ -363,6 +511,8 @@ public class LayoutFriendlyURLPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		LayoutFriendlyURL layoutFriendlyURL = _persistence.create(pk);
+
+		layoutFriendlyURL.setMvccVersion(ServiceTestUtil.nextLong());
 
 		layoutFriendlyURL.setUuid(ServiceTestUtil.randomString());
 

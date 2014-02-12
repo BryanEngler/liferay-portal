@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ResourceBlock;
 import com.liferay.portal.model.impl.ResourceBlockModelImpl;
@@ -113,6 +114,8 @@ public class ResourceBlockPersistenceTest {
 
 		ResourceBlock newResourceBlock = _persistence.create(pk);
 
+		newResourceBlock.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newResourceBlock.setCompanyId(ServiceTestUtil.nextLong());
 
 		newResourceBlock.setGroupId(ServiceTestUtil.nextLong());
@@ -127,6 +130,8 @@ public class ResourceBlockPersistenceTest {
 
 		ResourceBlock existingResourceBlock = _persistence.findByPrimaryKey(newResourceBlock.getPrimaryKey());
 
+		Assert.assertEquals(existingResourceBlock.getMvccVersion(),
+			newResourceBlock.getMvccVersion());
 		Assert.assertEquals(existingResourceBlock.getResourceBlockId(),
 			newResourceBlock.getResourceBlockId());
 		Assert.assertEquals(existingResourceBlock.getCompanyId(),
@@ -139,6 +144,50 @@ public class ResourceBlockPersistenceTest {
 			newResourceBlock.getPermissionsHash());
 		Assert.assertEquals(existingResourceBlock.getReferenceCount(),
 			newResourceBlock.getReferenceCount());
+	}
+
+	@Test
+	public void testCountByC_N() {
+		try {
+			_persistence.countByC_N(ServiceTestUtil.nextLong(), StringPool.BLANK);
+
+			_persistence.countByC_N(0L, StringPool.NULL);
+
+			_persistence.countByC_N(0L, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_G_N() {
+		try {
+			_persistence.countByC_G_N(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), StringPool.BLANK);
+
+			_persistence.countByC_G_N(0L, 0L, StringPool.NULL);
+
+			_persistence.countByC_G_N(0L, 0L, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByC_G_N_P() {
+		try {
+			_persistence.countByC_G_N_P(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong(), StringPool.BLANK, StringPool.BLANK);
+
+			_persistence.countByC_G_N_P(0L, 0L, StringPool.NULL, StringPool.NULL);
+
+			_persistence.countByC_G_N_P(0L, 0L, (String)null, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -177,8 +226,9 @@ public class ResourceBlockPersistenceTest {
 
 	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("ResourceBlock",
-			"resourceBlockId", true, "companyId", true, "groupId", true,
-			"name", true, "permissionsHash", true, "referenceCount", true);
+			"mvccVersion", true, "resourceBlockId", true, "companyId", true,
+			"groupId", true, "name", true, "permissionsHash", true,
+			"referenceCount", true);
 	}
 
 	@Test
@@ -321,6 +371,8 @@ public class ResourceBlockPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		ResourceBlock resourceBlock = _persistence.create(pk);
+
+		resourceBlock.setMvccVersion(ServiceTestUtil.nextLong());
 
 		resourceBlock.setCompanyId(ServiceTestUtil.nextLong());
 

@@ -2237,7 +2237,7 @@ public class MBMailingListPersistenceImpl extends BasePersistenceImpl<MBMailingL
 			CacheRegistryUtil.clear(MBMailingListImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(MBMailingListImpl.class.getName());
+		EntityCacheUtil.clearCache(MBMailingListImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -2575,7 +2575,7 @@ public class MBMailingListPersistenceImpl extends BasePersistenceImpl<MBMailingL
 
 		EntityCacheUtil.putResult(MBMailingListModelImpl.ENTITY_CACHE_ENABLED,
 			MBMailingListImpl.class, mbMailingList.getPrimaryKey(),
-			mbMailingList);
+			mbMailingList, false);
 
 		clearUniqueFindersCache(mbMailingList);
 		cacheUniqueFindersCache(mbMailingList);

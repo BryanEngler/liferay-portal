@@ -15,7 +15,7 @@ ${seleniumBuilderFileUtil.getVariableName(action?substring(0, x))}Action.${actio
 		<#if actionElement.attributeValue("locator${i}")??>
 			<#assign actionLocator = actionElement.attributeValue("locator${i}")>
 
-			RuntimeVariables.evaluateVariable("${actionLocator}", commandScopeVariables)
+			RuntimeVariables.evaluateVariable("${actionLocator}", ${variableContext})
 		<#else>
 			null
 		</#if>
@@ -25,7 +25,7 @@ ${seleniumBuilderFileUtil.getVariableName(action?substring(0, x))}Action.${actio
 		<#if actionElement.attributeValue("locator-key${i}")??>
 			<#assign actionLocatorKey = actionElement.attributeValue("locator-key${i}")>
 
-			RuntimeVariables.evaluateVariable("${actionLocatorKey}", commandScopeVariables)
+			RuntimeVariables.evaluateVariable("${actionLocatorKey}", ${variableContext})
 		<#else>
 			""
 		</#if>
@@ -35,7 +35,7 @@ ${seleniumBuilderFileUtil.getVariableName(action?substring(0, x))}Action.${actio
 		<#if actionElement.attributeValue("value${i}")??>
 			<#assign actionValue = actionElement.attributeValue("value${i}")>
 
-			RuntimeVariables.evaluateVariable("${seleniumBuilderFileUtil.escapeJava(actionValue)}", commandScopeVariables)
+			RuntimeVariables.evaluateVariable("${seleniumBuilderFileUtil.escapeJava(actionValue)}", ${variableContext})
 		<#else>
 			""
 		</#if>
@@ -44,20 +44,22 @@ ${seleniumBuilderFileUtil.getVariableName(action?substring(0, x))}Action.${actio
 			,
 		</#if>
 	</#list>
-, commandScopeVariables)
+, ${variableContext})
 
 <#if actionElement.getName() == "execute">
 	;
 
 	<#if
 		(actionNextElement??) &&
-		(actionElement != actionNextElement) &&
-		(actionElement.getName() == "execute") &&
-		(actionNextElement.attributeValue("action")??)
+		(!action?contains("#is"))
 	>
-		<#assign actionNext = actionNextElement.attributeValue("action")>
+		<#if actionNextElement.attributeValue("action")??>
+			<#assign actionNext = actionNextElement.attributeValue("action")>
+		</#if>
 
-		<#if !actionNext?ends_with("#confirm")>
+		<#if (!actionNext??) ||
+			 ((actionNext??) && (!actionNext?ends_with("#confirm")))>
+
 			<#if testCaseName??>
 				selenium
 			<#else>
@@ -65,6 +67,14 @@ ${seleniumBuilderFileUtil.getVariableName(action?substring(0, x))}Action.${actio
 			</#if>
 
 			.assertJavaScriptErrors();
+
+			<#if testCaseName??>
+				selenium
+			<#else>
+				liferaySelenium
+			</#if>
+
+			.assertLiferayErrors();
 		</#if>
 	</#if>
 </#if>

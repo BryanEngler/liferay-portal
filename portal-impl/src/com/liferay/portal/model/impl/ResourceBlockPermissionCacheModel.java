@@ -16,6 +16,7 @@ package com.liferay.portal.model.impl;
 
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.ResourceBlockPermission;
 
 import java.io.Externalizable;
@@ -31,12 +32,24 @@ import java.io.ObjectOutput;
  * @generated
  */
 public class ResourceBlockPermissionCacheModel implements CacheModel<ResourceBlockPermission>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(9);
+		StringBundler sb = new StringBundler(11);
 
-		sb.append("{resourceBlockPermissionId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", resourceBlockPermissionId=");
 		sb.append(resourceBlockPermissionId);
 		sb.append(", resourceBlockId=");
 		sb.append(resourceBlockId);
@@ -53,6 +66,7 @@ public class ResourceBlockPermissionCacheModel implements CacheModel<ResourceBlo
 	public ResourceBlockPermission toEntityModel() {
 		ResourceBlockPermissionImpl resourceBlockPermissionImpl = new ResourceBlockPermissionImpl();
 
+		resourceBlockPermissionImpl.setMvccVersion(mvccVersion);
 		resourceBlockPermissionImpl.setResourceBlockPermissionId(resourceBlockPermissionId);
 		resourceBlockPermissionImpl.setResourceBlockId(resourceBlockId);
 		resourceBlockPermissionImpl.setRoleId(roleId);
@@ -65,6 +79,7 @@ public class ResourceBlockPermissionCacheModel implements CacheModel<ResourceBlo
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		resourceBlockPermissionId = objectInput.readLong();
 		resourceBlockId = objectInput.readLong();
 		roleId = objectInput.readLong();
@@ -74,12 +89,14 @@ public class ResourceBlockPermissionCacheModel implements CacheModel<ResourceBlo
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(resourceBlockPermissionId);
 		objectOutput.writeLong(resourceBlockId);
 		objectOutput.writeLong(roleId);
 		objectOutput.writeLong(actionIds);
 	}
 
+	public long mvccVersion;
 	public long resourceBlockPermissionId;
 	public long resourceBlockId;
 	public long roleId;

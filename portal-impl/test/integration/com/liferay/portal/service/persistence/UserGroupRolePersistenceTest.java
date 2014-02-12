@@ -109,16 +109,82 @@ public class UserGroupRolePersistenceTest {
 
 		UserGroupRole newUserGroupRole = _persistence.create(pk);
 
+		newUserGroupRole.setMvccVersion(ServiceTestUtil.nextLong());
+
 		_persistence.update(newUserGroupRole);
 
 		UserGroupRole existingUserGroupRole = _persistence.findByPrimaryKey(newUserGroupRole.getPrimaryKey());
 
+		Assert.assertEquals(existingUserGroupRole.getMvccVersion(),
+			newUserGroupRole.getMvccVersion());
 		Assert.assertEquals(existingUserGroupRole.getUserId(),
 			newUserGroupRole.getUserId());
 		Assert.assertEquals(existingUserGroupRole.getGroupId(),
 			newUserGroupRole.getGroupId());
 		Assert.assertEquals(existingUserGroupRole.getRoleId(),
 			newUserGroupRole.getRoleId());
+	}
+
+	@Test
+	public void testCountByUserId() {
+		try {
+			_persistence.countByUserId(ServiceTestUtil.nextLong());
+
+			_persistence.countByUserId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByGroupId() {
+		try {
+			_persistence.countByGroupId(ServiceTestUtil.nextLong());
+
+			_persistence.countByGroupId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByRoleId() {
+		try {
+			_persistence.countByRoleId(ServiceTestUtil.nextLong());
+
+			_persistence.countByRoleId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByU_G() {
+		try {
+			_persistence.countByU_G(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByU_G(0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByG_R() {
+		try {
+			_persistence.countByG_R(ServiceTestUtil.nextLong(),
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByG_R(0L, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -269,6 +335,8 @@ public class UserGroupRolePersistenceTest {
 				ServiceTestUtil.nextLong(), ServiceTestUtil.nextLong());
 
 		UserGroupRole userGroupRole = _persistence.create(pk);
+
+		userGroupRole.setMvccVersion(ServiceTestUtil.nextLong());
 
 		_persistence.update(userGroupRole);
 

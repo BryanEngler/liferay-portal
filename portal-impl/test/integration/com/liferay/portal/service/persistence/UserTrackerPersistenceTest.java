@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.model.UserTracker;
 import com.liferay.portal.service.ServiceTestUtil;
@@ -111,6 +112,8 @@ public class UserTrackerPersistenceTest {
 
 		UserTracker newUserTracker = _persistence.create(pk);
 
+		newUserTracker.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newUserTracker.setCompanyId(ServiceTestUtil.nextLong());
 
 		newUserTracker.setUserId(ServiceTestUtil.nextLong());
@@ -129,6 +132,8 @@ public class UserTrackerPersistenceTest {
 
 		UserTracker existingUserTracker = _persistence.findByPrimaryKey(newUserTracker.getPrimaryKey());
 
+		Assert.assertEquals(existingUserTracker.getMvccVersion(),
+			newUserTracker.getMvccVersion());
 		Assert.assertEquals(existingUserTracker.getUserTrackerId(),
 			newUserTracker.getUserTrackerId());
 		Assert.assertEquals(existingUserTracker.getCompanyId(),
@@ -146,6 +151,44 @@ public class UserTrackerPersistenceTest {
 			newUserTracker.getRemoteHost());
 		Assert.assertEquals(existingUserTracker.getUserAgent(),
 			newUserTracker.getUserAgent());
+	}
+
+	@Test
+	public void testCountByCompanyId() {
+		try {
+			_persistence.countByCompanyId(ServiceTestUtil.nextLong());
+
+			_persistence.countByCompanyId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByUserId() {
+		try {
+			_persistence.countByUserId(ServiceTestUtil.nextLong());
+
+			_persistence.countByUserId(0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountBySessionId() {
+		try {
+			_persistence.countBySessionId(StringPool.BLANK);
+
+			_persistence.countBySessionId(StringPool.NULL);
+
+			_persistence.countBySessionId((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -184,9 +227,9 @@ public class UserTrackerPersistenceTest {
 
 	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("UserTracker",
-			"userTrackerId", true, "companyId", true, "userId", true,
-			"modifiedDate", true, "sessionId", true, "remoteAddr", true,
-			"remoteHost", true, "userAgent", true);
+			"mvccVersion", true, "userTrackerId", true, "companyId", true,
+			"userId", true, "modifiedDate", true, "sessionId", true,
+			"remoteAddr", true, "remoteHost", true, "userAgent", true);
 	}
 
 	@Test
@@ -305,6 +348,8 @@ public class UserTrackerPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		UserTracker userTracker = _persistence.create(pk);
+
+		userTracker.setMvccVersion(ServiceTestUtil.nextLong());
 
 		userTracker.setCompanyId(ServiceTestUtil.nextLong());
 

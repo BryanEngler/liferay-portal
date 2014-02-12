@@ -98,7 +98,7 @@
 		<if>
 			<equals arg1="${assignToMeKey}" arg2="ASSIGN_TO_ME" />
 			<then>
-		 		<execute action="CPMyworkflowtasksTask#assertClick" locator-key1="ASSIGN_TO_ME" value1="Assign to Me" />
+				<execute action="CPMyworkflowtasksTask#assertClick" locator-key1="ASSIGN_TO_ME" value1="Assign to Me" />
 			</then>
 			<else>
 				<execute action="CPMyworkflowtasksTask#assertClick" locator-key1="MENU_ASSIGN_TO_ME" value1="Assign to Me" />
@@ -320,6 +320,17 @@
 		<execute action="CPMyworkflowtasks#assertTextEquals" locator-key1="ASSIGNED_TO_MY_ROLES_TABLE_ASSET_TYPE" value1="${workflowAssetType}" />
 		<execute action="CPMyworkflowtasks#assertElementPresent" locator-key1="ASSIGNED_TO_MY_ROLES_TABLE_LAST_ACTIVITY_DATE" />
 		<execute action="CPMyworkflowtasks#assertElementPresent" locator-key1="ASSIGNED_TO_MY_ROLES_TABLE_DUE_DATE" />
+		<execute action="CPMyworkflowtasks#assertElementPresent" locator-key1="ASSIGNED_TO_MY_ROLES_TABLE_ACTIONS" />
+	</command>
+
+	<command name="viewCompletedTasksCP">
+		<execute action="CPMyworkflowtasks#assertClick" locator-key1="NAVIGATION_COMPLETED" value1="Completed" />
+
+		<var name="key_workflowAssetTitle" value="${workflowAssetTitle}" />
+
+		<execute action="CPMyworkflowtasks#assertTextEquals" locator-key1="COMPLETED_TABLE_TASK" value1="${workflowTask}" />
+		<execute action="CPMyworkflowtasks#assertTextEquals" locator-key1="COMPLETED_TABLE_ASSET_TITLE" value1="${workflowAssetTitle}" />
+		<execute action="CPMyworkflowtasks#assertTextEquals" locator-key1="COMPLETED_TABLE_ASSET_TYPE" value1="${workflowAssetType}" />
 	</command>
 
 	<command name="viewDefaultMySubmissionsCP">

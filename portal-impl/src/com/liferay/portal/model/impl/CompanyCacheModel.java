@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.Company;
+import com.liferay.portal.model.MVCCModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -31,12 +32,25 @@ import java.io.ObjectOutput;
  * @see Company
  * @generated
  */
-public class CompanyCacheModel implements CacheModel<Company>, Externalizable {
+public class CompanyCacheModel implements CacheModel<Company>, Externalizable,
+	MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(23);
 
-		sb.append("{companyId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", companyId=");
 		sb.append(companyId);
 		sb.append(", accountId=");
 		sb.append(accountId);
@@ -65,6 +79,7 @@ public class CompanyCacheModel implements CacheModel<Company>, Externalizable {
 	public Company toEntityModel() {
 		CompanyImpl companyImpl = new CompanyImpl();
 
+		companyImpl.setMvccVersion(mvccVersion);
 		companyImpl.setCompanyId(companyId);
 		companyImpl.setAccountId(accountId);
 
@@ -113,6 +128,7 @@ public class CompanyCacheModel implements CacheModel<Company>, Externalizable {
 	@Override
 	public void readExternal(ObjectInput objectInput)
 		throws ClassNotFoundException, IOException {
+		mvccVersion = objectInput.readLong();
 		companyId = objectInput.readLong();
 		accountId = objectInput.readLong();
 		webId = objectInput.readUTF();
@@ -131,6 +147,7 @@ public class CompanyCacheModel implements CacheModel<Company>, Externalizable {
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(companyId);
 		objectOutput.writeLong(accountId);
 
@@ -171,6 +188,7 @@ public class CompanyCacheModel implements CacheModel<Company>, Externalizable {
 		objectOutput.writeObject(_virtualHostname);
 	}
 
+	public long mvccVersion;
 	public long companyId;
 	public long accountId;
 	public String webId;

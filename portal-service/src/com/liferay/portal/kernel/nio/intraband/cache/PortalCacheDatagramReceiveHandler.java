@@ -28,8 +28,6 @@ import java.io.Serializable;
 
 import java.net.URL;
 
-import java.util.Collection;
-
 /**
  * @author Shuyang Zhou
  */
@@ -51,37 +49,25 @@ public class PortalCacheDatagramReceiveHandler
 			IntrabandPortalCacheManager.getPortalCacheManager();
 
 		switch (portalCacheActionType) {
-			case DESTROY:
-				PortalCache<Serializable, Serializable> portalCache =
-					portalCacheManager.getCache(deserializer.readString());
+			case CLEAR_ALL:
+				portalCacheManager.clearAll();
 
-				portalCache.destroy();
+				break;
+
+			case DESTROY:
+				portalCacheManager.destroy();
 
 				break;
 
 			case GET:
-				portalCache = portalCacheManager.getCache(
-					deserializer.readString());
+				PortalCache<Serializable, Serializable> portalCache =
+					portalCacheManager.getCache(deserializer.readString());
 
 				Serializable key = deserializer.readObject();
 
 				Serializable value = portalCache.get(key);
 
 				_sendResponse(registrationReference, datagram, value);
-
-				break;
-
-			case GET_BULK:
-				portalCache = portalCacheManager.getCache(
-					deserializer.readString());
-
-				Collection<Serializable> keys =
-					(Collection<Serializable>)deserializer.readObject();
-
-				Collection<Serializable> values = portalCache.get(keys);
-
-				_sendResponse(
-					registrationReference, datagram, (Serializable)values);
 
 				break;
 
@@ -96,13 +82,36 @@ public class PortalCacheDatagramReceiveHandler
 
 				break;
 
-			case PUT_TTL:
+			case PUT_QUIET:
+				portalCache = portalCacheManager.getCache(
+					deserializer.readString());
+
+				key = deserializer.readObject();
+				value = deserializer.readObject();
+
+				portalCache.putQuiet(key, value);
+
+				break;
+
+			case PUT_QUIET_TTL:
 				portalCache = portalCacheManager.getCache(
 					deserializer.readString());
 
 				key = deserializer.readObject();
 				value = deserializer.readObject();
 				int ttl = deserializer.readInt();
+
+				portalCache.putQuiet(key, value, ttl);
+
+				break;
+
+			case PUT_TTL:
+				portalCache = portalCacheManager.getCache(
+					deserializer.readString());
+
+				key = deserializer.readObject();
+				value = deserializer.readObject();
+				ttl = deserializer.readInt();
 
 				portalCache.put(key, value, ttl);
 
@@ -129,6 +138,11 @@ public class PortalCacheDatagramReceiveHandler
 					deserializer.readString());
 
 				portalCache.removeAll();
+
+				break;
+
+			case REMOVE_CACHE:
+				portalCacheManager.removeCache(deserializer.readString());
 
 				break;
 

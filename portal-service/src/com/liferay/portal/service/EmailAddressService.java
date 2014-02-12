@@ -62,7 +62,7 @@ public interface EmailAddressService extends BaseService {
 	public void setBeanIdentifier(java.lang.String beanIdentifier);
 
 	/**
-	* @deprecated As of 6.2.0, replaced by {@link #addEmailAddress( String,
+	* @deprecated As of 6.2.0, replaced by {@link #addEmailAddress(String,
 	long, String, int, boolean, ServiceContext)}
 	*/
 	@Deprecated

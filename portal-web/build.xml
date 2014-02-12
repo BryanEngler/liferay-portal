@@ -54,7 +54,15 @@
 
 		<property name="alloy.version" value="2.0.0" />
 
-		<property name="alloy.file" value="alloy-${alloy.version}.zip" />
+		<path id="alloy.zip.path">
+			<fileset dir="third-party">
+				<include name="alloy-${alloy.version}*.zip" />
+			</fileset>
+		</path>
+
+		<property name="alloy.zip.path" refid="alloy.zip.path" />
+
+		<basename file="${alloy.zip.path}" property="alloy.file" />
 
 		<if>
 			<not>
@@ -76,7 +84,7 @@
 
 				<!-- CSS -->
 
-				<property name="alloy.build.dir" value="docroot/html/ALLOY_ZIP/alloy-${alloy.version}/build" />
+				<property name="alloy.build.dir" value="docroot/html/ALLOY_ZIP/build" />
 				<property name="alloy.temp.dir" value="docroot/html/ALLOY_ZIP/temp" />
 
 				<concat destfile="${alloy.temp.dir}/aui_deprecated.css">
@@ -418,6 +426,7 @@
 			fork="true"
 			newenvironment="true"
 		>
+			<jvmarg value="-Xmx1024m" />
 			<jvmarg value="-Dliferay.lib.portal.dir=${basedir}/../lib/portal" />
 			<arg value="sass.dir.0=/html/css" />
 			<arg value="sass.dir.1=/html/portlet" />
@@ -597,7 +606,12 @@
 
 				<replace file="docroot/html/js/editor/fckeditor/editor/filemanager/browser/liferay/frmfolders.html">
 					<replacetoken><![CDATA[oListManager.AddItem( sFolderName, sCurrentFolderPath + sFolderName + '/' ) ;]]></replacetoken>
-					<replacevalue><![CDATA[oListManager.AddItem( sFolderName, sCurrentFolderPath.replace( /'/g, '\\\'') + sFolderName + '/' ) ;]]></replacevalue>
+					<replacevalue><![CDATA[oListManager.AddItem( escapeHTML( sFolderName ), sCurrentFolderPath.replace( /'/g, '\\\'') + sFolderName + '/' ) ;]]></replacevalue>
+				</replace>
+
+				<replace file="docroot/html/js/editor/fckeditor/editor/filemanager/browser/liferay/frmfolders.html">
+					<replacetoken><![CDATA[window.parent.frames['frmActualFolder'].SetCurrentFolder( oConnector.ResourceType, folderPath ) ;]]></replacetoken>
+					<replacevalue><![CDATA[window.parent.frames['frmActualFolder'].SetCurrentFolder( oConnector.ResourceType, escapeHTML( folderPath ) ) ;]]></replacevalue>
 				</replace>
 
 				<!-- frmresourceslist.html -->
@@ -627,6 +641,11 @@
 					replace="\1var sFileDesc = oNode.attributes.getNamedItem('desc').value ;\2\1var sFileErrorMessageNamedItem = oNode.attributes.getNamedItem('errorMessage');\2\1var sFileErrorMessage = null;\2\1 if (sFileErrorMessageNamedItem) {sFileErrorMessage = sFileErrorMessageNamedItem.value;}\2\1var sFileUrl = oNode.attributes.getNamedItem('url').value ;\2\2\1oHtml.Append( oListManager.GetFileRowHtml( sFileDesc, sFileUrl, sFileSize, sFileErrorMessage ) ) ;"
 					flags="s"
 				/>
+
+				<replace file="docroot/html/js/editor/fckeditor/editor/filemanager/browser/liferay/frmresourceslist.html">
+					<replacetoken><![CDATA[oHtml.Append( oListManager.GetFolderRowHtml( sFolderName, sCurrentFolderPath + sFolderName + "/" ) ) ;]]></replacetoken>
+					<replacevalue><![CDATA[oHtml.Append( oListManager.GetFolderRowHtml( escapeHTML( sFolderName ), sCurrentFolderPath + sFolderName + "/" ) ) ;]]></replacevalue>
+				</replace>
 
 				<!-- frmresourcetype.html -->
 
@@ -738,6 +757,34 @@
 					<replacetoken><![CDATA[<html>]]></replacetoken>
 					<replacevalue><![CDATA[<html xmlns="http://www.w3.org/1999/xhtml">]]></replacevalue>
 				</replace>
+
+				<!-- common.js -->
+
+				<echo file="docroot/html/js/editor/fckeditor/editor/filemanager/browser/liferay/js/common.js" append="true">
+					<![CDATA[
+					var escapeHTML = (function() {
+						var	tagsToReplace = {
+							'&': '&amp;',
+							'<': '&lt;',
+							'>': '&gt;',
+							'"': '&#034;',
+							'\'': '&#039;',
+							'/': '&#047;',
+							'`': '&#096;'
+						};
+
+						var replaceTag = function(tag) {
+							return tagsToReplace[tag] || tag;
+						};
+
+						var regexp = /[&<>"'/`]/g;
+
+						return function(str) {
+							return str.replace(regexp, replaceTag);
+						};
+					})();
+					]]>
+				</echo>
 
 				<!-- EOL -->
 

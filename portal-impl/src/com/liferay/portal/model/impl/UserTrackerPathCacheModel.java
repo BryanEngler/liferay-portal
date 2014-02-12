@@ -17,6 +17,7 @@ package com.liferay.portal.model.impl;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.UserTrackerPath;
 
 import java.io.Externalizable;
@@ -34,12 +35,24 @@ import java.util.Date;
  * @generated
  */
 public class UserTrackerPathCacheModel implements CacheModel<UserTrackerPath>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(9);
+		StringBundler sb = new StringBundler(11);
 
-		sb.append("{userTrackerPathId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", userTrackerPathId=");
 		sb.append(userTrackerPathId);
 		sb.append(", userTrackerId=");
 		sb.append(userTrackerId);
@@ -56,6 +69,7 @@ public class UserTrackerPathCacheModel implements CacheModel<UserTrackerPath>,
 	public UserTrackerPath toEntityModel() {
 		UserTrackerPathImpl userTrackerPathImpl = new UserTrackerPathImpl();
 
+		userTrackerPathImpl.setMvccVersion(mvccVersion);
 		userTrackerPathImpl.setUserTrackerPathId(userTrackerPathId);
 		userTrackerPathImpl.setUserTrackerId(userTrackerId);
 
@@ -80,6 +94,7 @@ public class UserTrackerPathCacheModel implements CacheModel<UserTrackerPath>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		userTrackerPathId = objectInput.readLong();
 		userTrackerId = objectInput.readLong();
 		path = objectInput.readUTF();
@@ -89,6 +104,7 @@ public class UserTrackerPathCacheModel implements CacheModel<UserTrackerPath>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(userTrackerPathId);
 		objectOutput.writeLong(userTrackerId);
 
@@ -102,6 +118,7 @@ public class UserTrackerPathCacheModel implements CacheModel<UserTrackerPath>,
 		objectOutput.writeLong(pathDate);
 	}
 
+	public long mvccVersion;
 	public long userTrackerPathId;
 	public long userTrackerId;
 	public String path;

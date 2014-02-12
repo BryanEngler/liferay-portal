@@ -1962,7 +1962,7 @@ public class AssetTagPropertyPersistenceImpl extends BasePersistenceImpl<AssetTa
 			CacheRegistryUtil.clear(AssetTagPropertyImpl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(AssetTagPropertyImpl.class.getName());
+		EntityCacheUtil.clearCache(AssetTagPropertyImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -2252,7 +2252,7 @@ public class AssetTagPropertyPersistenceImpl extends BasePersistenceImpl<AssetTa
 
 		EntityCacheUtil.putResult(AssetTagPropertyModelImpl.ENTITY_CACHE_ENABLED,
 			AssetTagPropertyImpl.class, assetTagProperty.getPrimaryKey(),
-			assetTagProperty);
+			assetTagProperty, false);
 
 		clearUniqueFindersCache(assetTagProperty);
 		cacheUniqueFindersCache(assetTagProperty);

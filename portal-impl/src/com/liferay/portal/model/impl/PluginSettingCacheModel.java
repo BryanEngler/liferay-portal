@@ -17,6 +17,7 @@ package com.liferay.portal.model.impl;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.PluginSetting;
 
 import java.io.Externalizable;
@@ -32,12 +33,24 @@ import java.io.ObjectOutput;
  * @generated
  */
 public class PluginSettingCacheModel implements CacheModel<PluginSetting>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(13);
+		StringBundler sb = new StringBundler(15);
 
-		sb.append("{pluginSettingId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", pluginSettingId=");
 		sb.append(pluginSettingId);
 		sb.append(", companyId=");
 		sb.append(companyId);
@@ -58,6 +71,7 @@ public class PluginSettingCacheModel implements CacheModel<PluginSetting>,
 	public PluginSetting toEntityModel() {
 		PluginSettingImpl pluginSettingImpl = new PluginSettingImpl();
 
+		pluginSettingImpl.setMvccVersion(mvccVersion);
 		pluginSettingImpl.setPluginSettingId(pluginSettingId);
 		pluginSettingImpl.setCompanyId(companyId);
 
@@ -91,6 +105,7 @@ public class PluginSettingCacheModel implements CacheModel<PluginSetting>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		pluginSettingId = objectInput.readLong();
 		companyId = objectInput.readLong();
 		pluginId = objectInput.readUTF();
@@ -102,6 +117,7 @@ public class PluginSettingCacheModel implements CacheModel<PluginSetting>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(pluginSettingId);
 		objectOutput.writeLong(companyId);
 
@@ -129,6 +145,7 @@ public class PluginSettingCacheModel implements CacheModel<PluginSetting>,
 		objectOutput.writeBoolean(active);
 	}
 
+	public long mvccVersion;
 	public long pluginSettingId;
 	public long companyId;
 	public String pluginId;

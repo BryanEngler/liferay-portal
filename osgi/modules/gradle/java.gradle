@@ -1,0 +1,41 @@
+allprojects {
+	repositories {
+		mavenCentral()
+	}
+}
+
+subprojects {
+	apply from: "../../gradle/baseline.gradle"
+	apply plugin: "java"
+	apply plugin: "osgi"
+
+	ext.liferayProjectDir = "${rootDir}/../../.."
+
+	dependencies {
+		compile files(["${liferayProjectDir}/portal-service/classes"])
+		compile files(["${liferayProjectDir}/util-java/classes"])
+
+		compile fileTree(
+			dir:"${liferayProjectDir}/lib/development",
+			includes: ["**/*.jar"]
+		)
+
+		compile fileTree(
+			dir:"${liferayProjectDir}/lib/global",
+			includes: ["**/*.jar"]
+		)
+
+		compile fileTree(
+			dir:"${liferayProjectDir}/lib/portal",
+			includes: ["**/*.jar"]
+		)
+	}
+
+	jar {
+		actions = []
+
+		doLast {
+			tasks.baseline.execute()
+		}
+	}
+}

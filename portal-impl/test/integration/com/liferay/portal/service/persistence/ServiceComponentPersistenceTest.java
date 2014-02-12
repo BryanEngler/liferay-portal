@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ServiceComponent;
 import com.liferay.portal.model.impl.ServiceComponentModelImpl;
@@ -113,6 +114,8 @@ public class ServiceComponentPersistenceTest {
 
 		ServiceComponent newServiceComponent = _persistence.create(pk);
 
+		newServiceComponent.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newServiceComponent.setBuildNamespace(ServiceTestUtil.randomString());
 
 		newServiceComponent.setBuildNumber(ServiceTestUtil.nextLong());
@@ -125,6 +128,8 @@ public class ServiceComponentPersistenceTest {
 
 		ServiceComponent existingServiceComponent = _persistence.findByPrimaryKey(newServiceComponent.getPrimaryKey());
 
+		Assert.assertEquals(existingServiceComponent.getMvccVersion(),
+			newServiceComponent.getMvccVersion());
 		Assert.assertEquals(existingServiceComponent.getServiceComponentId(),
 			newServiceComponent.getServiceComponentId());
 		Assert.assertEquals(existingServiceComponent.getBuildNamespace(),
@@ -135,6 +140,35 @@ public class ServiceComponentPersistenceTest {
 			newServiceComponent.getBuildDate());
 		Assert.assertEquals(existingServiceComponent.getData(),
 			newServiceComponent.getData());
+	}
+
+	@Test
+	public void testCountByBuildNamespace() {
+		try {
+			_persistence.countByBuildNamespace(StringPool.BLANK);
+
+			_persistence.countByBuildNamespace(StringPool.NULL);
+
+			_persistence.countByBuildNamespace((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByBNS_BNU() {
+		try {
+			_persistence.countByBNS_BNU(StringPool.BLANK,
+				ServiceTestUtil.nextLong());
+
+			_persistence.countByBNS_BNU(StringPool.NULL, 0L);
+
+			_persistence.countByBNS_BNU((String)null, 0L);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -173,8 +207,8 @@ public class ServiceComponentPersistenceTest {
 
 	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("ServiceComponent",
-			"serviceComponentId", true, "buildNamespace", true, "buildNumber",
-			true, "buildDate", true, "data", true);
+			"mvccVersion", true, "serviceComponentId", true, "buildNamespace",
+			true, "buildNumber", true, "buildDate", true, "data", true);
 	}
 
 	@Test
@@ -312,6 +346,8 @@ public class ServiceComponentPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		ServiceComponent serviceComponent = _persistence.create(pk);
+
+		serviceComponent.setMvccVersion(ServiceTestUtil.nextLong());
 
 		serviceComponent.setBuildNamespace(ServiceTestUtil.randomString());
 

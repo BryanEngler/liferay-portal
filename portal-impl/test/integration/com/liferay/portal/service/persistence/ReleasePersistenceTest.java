@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Release;
@@ -114,6 +115,8 @@ public class ReleasePersistenceTest {
 
 		Release newRelease = _persistence.create(pk);
 
+		newRelease.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newRelease.setCreateDate(ServiceTestUtil.nextDate());
 
 		newRelease.setModifiedDate(ServiceTestUtil.nextDate());
@@ -134,6 +137,8 @@ public class ReleasePersistenceTest {
 
 		Release existingRelease = _persistence.findByPrimaryKey(newRelease.getPrimaryKey());
 
+		Assert.assertEquals(existingRelease.getMvccVersion(),
+			newRelease.getMvccVersion());
 		Assert.assertEquals(existingRelease.getReleaseId(),
 			newRelease.getReleaseId());
 		Assert.assertEquals(Time.getShortTimestamp(
@@ -154,6 +159,20 @@ public class ReleasePersistenceTest {
 		Assert.assertEquals(existingRelease.getState(), newRelease.getState());
 		Assert.assertEquals(existingRelease.getTestString(),
 			newRelease.getTestString());
+	}
+
+	@Test
+	public void testCountByServletContextName() {
+		try {
+			_persistence.countByServletContextName(StringPool.BLANK);
+
+			_persistence.countByServletContextName(StringPool.NULL);
+
+			_persistence.countByServletContextName((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -190,8 +209,8 @@ public class ReleasePersistenceTest {
 	}
 
 	protected OrderByComparator getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("Release_", "releaseId",
-			true, "createDate", true, "modifiedDate", true,
+		return OrderByComparatorFactoryUtil.create("Release_", "mvccVersion",
+			true, "releaseId", true, "createDate", true, "modifiedDate", true,
 			"servletContextName", true, "buildNumber", true, "buildDate", true,
 			"verified", true, "state", true, "testString", true);
 	}
@@ -327,6 +346,8 @@ public class ReleasePersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		Release release = _persistence.create(pk);
+
+		release.setMvccVersion(ServiceTestUtil.nextLong());
 
 		release.setCreateDate(ServiceTestUtil.nextDate());
 

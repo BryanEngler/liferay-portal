@@ -17,6 +17,7 @@ package com.liferay.portal.model.impl;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.PortalPreferences;
 
 import java.io.Externalizable;
@@ -32,12 +33,24 @@ import java.io.ObjectOutput;
  * @generated
  */
 public class PortalPreferencesCacheModel implements CacheModel<PortalPreferences>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(9);
+		StringBundler sb = new StringBundler(11);
 
-		sb.append("{portalPreferencesId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", portalPreferencesId=");
 		sb.append(portalPreferencesId);
 		sb.append(", ownerId=");
 		sb.append(ownerId);
@@ -54,6 +67,7 @@ public class PortalPreferencesCacheModel implements CacheModel<PortalPreferences
 	public PortalPreferences toEntityModel() {
 		PortalPreferencesImpl portalPreferencesImpl = new PortalPreferencesImpl();
 
+		portalPreferencesImpl.setMvccVersion(mvccVersion);
 		portalPreferencesImpl.setPortalPreferencesId(portalPreferencesId);
 		portalPreferencesImpl.setOwnerId(ownerId);
 		portalPreferencesImpl.setOwnerType(ownerType);
@@ -72,6 +86,7 @@ public class PortalPreferencesCacheModel implements CacheModel<PortalPreferences
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		portalPreferencesId = objectInput.readLong();
 		ownerId = objectInput.readLong();
 		ownerType = objectInput.readInt();
@@ -81,6 +96,7 @@ public class PortalPreferencesCacheModel implements CacheModel<PortalPreferences
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(portalPreferencesId);
 		objectOutput.writeLong(ownerId);
 		objectOutput.writeInt(ownerType);
@@ -93,6 +109,7 @@ public class PortalPreferencesCacheModel implements CacheModel<PortalPreferences
 		}
 	}
 
+	public long mvccVersion;
 	public long portalPreferencesId;
 	public long ownerId;
 	public int ownerType;

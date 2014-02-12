@@ -27,7 +27,9 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.lar.ExportImportThreadLocal;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.notifications.UserNotificationDefinition;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
+import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexable;
@@ -36,6 +38,7 @@ import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.systemevent.SystemEventHierarchyEntryThreadLocal;
@@ -56,6 +59,7 @@ import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
@@ -333,6 +337,8 @@ public class JournalArticleLocalServiceImpl
 			articleId = String.valueOf(counterLocalService.increment());
 		}
 
+		serviceContext.setAttribute("articleId", articleId);
+
 		long id = counterLocalService.increment();
 
 		long resourcePrimKey =
@@ -453,10 +459,17 @@ public class JournalArticleLocalServiceImpl
 		PortletPreferences preferences =
 			ServiceContextUtil.getPortletPreferences(serviceContext);
 
+		articleURL =
+			updateArticleURL(
+				articleURL, article.getGroupId(), article.getArticleId(),
+					article.getVersion());
+
 		sendEmail(
 			article, articleURL, preferences, "requested", serviceContext);
 
 		// Workflow
+
+		serviceContext.setAttribute("articleURL", articleURL);
 
 		if (classNameId == JournalArticleConstants.CLASSNAME_ID_DEFAULT) {
 			WorkflowHandlerRegistryUtil.startWorkflowInstance(
@@ -856,7 +869,18 @@ public class JournalArticleLocalServiceImpl
 		String[] assetTagNames = assetTagLocalService.getTagNames(
 			JournalArticle.class.getName(), oldArticle.getResourcePrimKey());
 
-		updateAsset(userId, newArticle, assetCategoryIds, assetTagNames, null);
+		AssetEntry oldAssetEntry = assetEntryLocalService.getEntry(
+			JournalArticle.class.getName(), oldArticle.getResourcePrimKey());
+
+		List<AssetLink> assetLinks = assetLinkLocalService.getDirectLinks(
+			oldAssetEntry.getEntryId());
+
+		long[] assetLinkEntryIds = StringUtil.split(
+			ListUtil.toString(assetLinks, AssetLink.ENTRY_ID2_ACCESSOR), 0L);
+
+		updateAsset(
+			userId, newArticle, assetCategoryIds, assetTagNames,
+			assetLinkEntryIds);
 
 		return newArticle;
 	}
@@ -894,8 +918,7 @@ public class JournalArticleLocalServiceImpl
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	@SystemEvent(
-		action = SystemEventConstants.ACTION_SKIP, send = false)
+	@SystemEvent(action = SystemEventConstants.ACTION_SKIP, send = false)
 	public JournalArticle deleteArticle(
 			JournalArticle article, String articleURL,
 			ServiceContext serviceContext)
@@ -918,6 +941,11 @@ public class JournalArticleLocalServiceImpl
 		if ((serviceContext != null) && Validator.isNotNull(articleURL)) {
 			PortletPreferences preferences =
 				ServiceContextUtil.getPortletPreferences(serviceContext);
+
+			articleURL =
+				updateArticleURL(
+					articleURL, article.getGroupId(), article.getArticleId(),
+						article.getVersion());
 
 			if ((preferences != null) && !article.isApproved() &&
 				isLatestVersion(
@@ -2656,7 +2684,7 @@ public class JournalArticleLocalServiceImpl
 			Date displayDate = article.getDisplayDate();
 			Date expirationDate = article.getExpirationDate();
 
-			if (((displayDate != null) && displayDate.before(now)) &&
+			if ((displayDate != null) && displayDate.before(now) &&
 				((expirationDate == null) || expirationDate.after(now)) ) {
 
 				return article;
@@ -4081,56 +4109,13 @@ public class JournalArticleLocalServiceImpl
 		throws SystemException {
 
 		try {
-			SearchContext searchContext = new SearchContext();
-
-			searchContext.setAndSearch(andSearch);
-
-			Map<String, Serializable> attributes =
-				new HashMap<String, Serializable>();
-
-			attributes.put(Field.CLASS_NAME_ID, classNameId);
-			attributes.put(Field.CONTENT, content);
-			attributes.put(Field.DESCRIPTION, description);
-			attributes.put(Field.STATUS, status);
-			attributes.put(Field.TITLE, title);
-			attributes.put(Field.TYPE, type);
-			attributes.put("articleId", articleId);
-			attributes.put("ddmStructureKey", ddmStructureKey);
-			attributes.put("ddmTemplateKey", ddmTemplateKey);
-			attributes.put("params", params);
-
-			searchContext.setAttributes(attributes);
-
-			searchContext.setCompanyId(companyId);
-			searchContext.setEnd(end);
-			searchContext.setFolderIds(folderIds);
-			searchContext.setGroupIds(new long[] {groupId});
-			searchContext.setIncludeDiscussions(
-				GetterUtil.getBoolean(params.get("includeDiscussions")));
-
-			if (params != null) {
-				String keywords = (String)params.remove("keywords");
-
-				if (Validator.isNotNull(keywords)) {
-					searchContext.setKeywords(keywords);
-				}
-			}
-
-			QueryConfig queryConfig = new QueryConfig();
-
-			queryConfig.setHighlightEnabled(false);
-			queryConfig.setScoreEnabled(false);
-
-			searchContext.setQueryConfig(queryConfig);
-
-			if (sort != null) {
-				searchContext.setSorts(sort);
-			}
-
-			searchContext.setStart(start);
-
 			Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(
 				JournalArticle.class);
+
+			SearchContext searchContext = buildSearchContext(
+				companyId, groupId, folderIds, classNameId, articleId, title,
+				description, content, type, status, ddmStructureKey,
+				ddmTemplateKey, params, andSearch, start, end, sort);
 
 			return indexer.search(searchContext);
 		}
@@ -4148,26 +4133,8 @@ public class JournalArticleLocalServiceImpl
 		Indexer indexer = IndexerRegistryUtil.getIndexer(
 			JournalArticle.class.getName());
 
-		SearchContext searchContext = new SearchContext();
-
-		searchContext.setAttribute(Field.STATUS, status);
-
-		searchContext.setAttribute("paginationType", "none");
-
-		if (creatorUserId > 0) {
-			searchContext.setAttribute(
-				Field.USER_ID, String.valueOf(creatorUserId));
-		}
-
-		Group group = groupLocalService.getGroup(groupId);
-
-		searchContext.setCompanyId(group.getCompanyId());
-
-		searchContext.setEnd(end);
-		searchContext.setGroupIds(new long[] {groupId});
-		searchContext.setSorts(new Sort(Field.MODIFIED_DATE, true));
-		searchContext.setStart(start);
-		searchContext.setUserId(userId);
+		SearchContext searchContext = buildSearchContext(
+			groupId, userId, creatorUserId, status, start, end);
 
 		return indexer.search(searchContext);
 	}
@@ -4383,6 +4350,72 @@ public class JournalArticleLocalServiceImpl
 			title, description, content, type, ddmStructureKeys,
 			ddmTemplateKeys, displayDateGT, displayDateLT, reviewDate,
 			andOperator, new QueryDefinition(status));
+	}
+
+	@Override
+	public BaseModelSearchResult<JournalArticle> searchJournalArticles(
+			long companyId, long groupId, List<Long> folderIds,
+			long classNameId, String ddmStructureKey, String ddmTemplateKey,
+			String keywords, LinkedHashMap<String, Object> params, int start,
+			int end, Sort sort)
+		throws PortalException, SystemException {
+
+		String articleId = null;
+		String title = null;
+		String description = null;
+		String content = null;
+		boolean andOperator = false;
+
+		if (Validator.isNotNull(keywords)) {
+			articleId = keywords;
+			title = keywords;
+			description = keywords;
+			content = keywords;
+		}
+		else {
+			andOperator = true;
+		}
+
+		String status = String.valueOf(WorkflowConstants.STATUS_ANY);
+
+		if (params != null) {
+			params.put("keywords", keywords);
+		}
+
+		return searchJournalArticles(
+			companyId, groupId, folderIds, classNameId, articleId, title,
+			description, content, null, status, ddmStructureKey, ddmTemplateKey,
+			params, andOperator, start, end, sort);
+	}
+
+	@Override
+	public BaseModelSearchResult<JournalArticle> searchJournalArticles(
+			long companyId, long groupId, List<Long> folderIds,
+			long classNameId, String articleId, String title,
+			String description, String content, String type, String status,
+			String ddmStructureKey, String ddmTemplateKey,
+			LinkedHashMap<String, Object> params, boolean andSearch, int start,
+			int end, Sort sort)
+		throws PortalException, SystemException {
+
+		SearchContext searchContext = buildSearchContext(
+			companyId, groupId, folderIds, classNameId, articleId, title,
+			description, content, type, status, ddmStructureKey, ddmTemplateKey,
+			params, andSearch, start, end, sort);
+
+		return searchJournalArticles(searchContext);
+	}
+
+	@Override
+	public BaseModelSearchResult<JournalArticle> searchJournalArticles(
+			long groupId, long userId, long creatorUserId, int status,
+			int start, int end)
+		throws PortalException, SystemException {
+
+		SearchContext searchContext = buildSearchContext(
+			groupId, userId, creatorUserId, status, start, end);
+
+		return searchJournalArticles(searchContext);
 	}
 
 	/**
@@ -4885,6 +4918,13 @@ public class JournalArticleLocalServiceImpl
 		if (serviceContext.getWorkflowAction() ==
 				WorkflowConstants.ACTION_PUBLISH) {
 
+			articleURL =
+				updateArticleURL(
+					articleURL, article.getGroupId(), article.getArticleId(),
+						article.getVersion());
+
+			serviceContext.setAttribute("articleURL", articleURL);
+
 			sendEmail(
 				article, articleURL, preferences, "requested", serviceContext);
 
@@ -5341,7 +5381,14 @@ public class JournalArticleLocalServiceImpl
 						article.getGroupId(), article.getArticleId(),
 						article.getDisplayDate(), article.getExpirationDate());
 
-					Date displayDate = dateInterval[0];
+					Date publishDate = dateInterval[0];
+
+					if ((oldStatus != WorkflowConstants.STATUS_APPROVED) &&
+						publishDate.before(now)) {
+
+						publishDate = now;
+					}
+
 					Date expirationDate = dateInterval[1];
 
 					if (neverExpire) {
@@ -5350,7 +5397,7 @@ public class JournalArticleLocalServiceImpl
 
 					assetEntryLocalService.updateEntry(
 						JournalArticle.class.getName(),
-						article.getResourcePrimKey(), displayDate,
+						article.getResourcePrimKey(), publishDate,
 						expirationDate, true);
 				}
 
@@ -5404,6 +5451,11 @@ public class JournalArticleLocalServiceImpl
 					PortletPreferences preferences =
 						ServiceContextUtil.getPortletPreferences(
 							serviceContext);
+
+					articleURL =
+						updateArticleURL(
+							articleURL, article.getGroupId(),
+								article.getArticleId(), article.getVersion());
 
 					sendEmail(
 						article, articleURL, preferences, msg, serviceContext);
@@ -5527,6 +5579,93 @@ public class JournalArticleLocalServiceImpl
 		}
 	}
 
+	protected SearchContext buildSearchContext(
+		long companyId, long groupId, List<Long> folderIds, long classNameId,
+		String articleId, String title, String description, String content,
+		String type, String status, String ddmStructureKey,
+		String ddmTemplateKey, LinkedHashMap<String, Object> params,
+		boolean andSearch, int start, int end, Sort sort) {
+
+		SearchContext searchContext = new SearchContext();
+
+		searchContext.setAndSearch(andSearch);
+
+		Map<String, Serializable> attributes =
+			new HashMap<String, Serializable>();
+
+		attributes.put(Field.CLASS_NAME_ID, classNameId);
+		attributes.put(Field.CONTENT, content);
+		attributes.put(Field.DESCRIPTION, description);
+		attributes.put(Field.STATUS, status);
+		attributes.put(Field.TITLE, title);
+		attributes.put(Field.TYPE, type);
+		attributes.put("articleId", articleId);
+		attributes.put("ddmStructureKey", ddmStructureKey);
+		attributes.put("ddmTemplateKey", ddmTemplateKey);
+		attributes.put("params", params);
+
+		searchContext.setAttributes(attributes);
+
+		searchContext.setCompanyId(companyId);
+		searchContext.setEnd(end);
+		searchContext.setFolderIds(folderIds);
+		searchContext.setGroupIds(new long[] {groupId});
+		searchContext.setIncludeDiscussions(
+			GetterUtil.getBoolean(params.get("includeDiscussions")));
+
+		if (params != null) {
+			String keywords = (String)params.remove("keywords");
+
+			if (Validator.isNotNull(keywords)) {
+				searchContext.setKeywords(keywords);
+			}
+		}
+
+		QueryConfig queryConfig = new QueryConfig();
+
+		queryConfig.setHighlightEnabled(false);
+		queryConfig.setScoreEnabled(false);
+
+		searchContext.setQueryConfig(queryConfig);
+
+		if (sort != null) {
+			searchContext.setSorts(sort);
+		}
+
+		searchContext.setStart(start);
+
+		return searchContext;
+	}
+
+	protected SearchContext buildSearchContext(
+			long groupId, long userId, long creatorUserId, int status,
+			int start, int end)
+		throws PortalException, SystemException {
+
+		SearchContext searchContext = new SearchContext();
+
+		searchContext.setAttribute(Field.STATUS, status);
+
+		searchContext.setAttribute("paginationType", "none");
+
+		if (creatorUserId > 0) {
+			searchContext.setAttribute(
+				Field.USER_ID, String.valueOf(creatorUserId));
+		}
+
+		Group group = groupLocalService.getGroup(groupId);
+
+		searchContext.setCompanyId(group.getCompanyId());
+
+		searchContext.setEnd(end);
+		searchContext.setGroupIds(new long[] {groupId});
+		searchContext.setSorts(new Sort(Field.MODIFIED_DATE, true));
+		searchContext.setStart(start);
+		searchContext.setUserId(userId);
+
+		return searchContext;
+	}
+
 	protected void checkArticlesByDisplayDate(Date displayDate)
 		throws PortalException, SystemException {
 
@@ -5550,7 +5689,7 @@ public class JournalArticleLocalServiceImpl
 
 			serviceContext.setScopeGroupId(article.getGroupId());
 
-			updateStatus(
+			journalArticleLocalService.updateStatus(
 				article.getUserId(), article, WorkflowConstants.STATUS_APPROVED,
 				null, new HashMap<String, Serializable>(), serviceContext);
 		}
@@ -6252,7 +6391,9 @@ public class JournalArticleLocalServiceImpl
 			JournalArticle article, ServiceContext serviceContext)
 		throws PortalException, SystemException {
 
-		if (!article.isApproved()) {
+		String layoutFullURL = serviceContext.getLayoutFullURL();
+
+		if (!article.isApproved() || Validator.isNull(layoutFullURL)) {
 			return;
 		}
 
@@ -6308,6 +6449,7 @@ public class JournalArticleLocalServiceImpl
 		SubscriptionSender subscriptionSender = new SubscriptionSender();
 
 		subscriptionSender.setBody(body);
+		subscriptionSender.setClassPK(article.getId());
 		subscriptionSender.setCompanyId(article.getCompanyId());
 		subscriptionSender.setContextAttributes(
 			"[$ARTICLE_ID$]", article.getArticleId(), "[$ARTICLE_TITLE$]",
@@ -6317,6 +6459,17 @@ public class JournalArticleLocalServiceImpl
 		subscriptionSender.setFrom(fromAddress, fromName);
 		subscriptionSender.setHtmlFormat(true);
 		subscriptionSender.setMailId("journal_article", article.getId());
+
+		int notificationType =
+			UserNotificationDefinition.NOTIFICATION_TYPE_ADD_ENTRY;
+
+		if (serviceContext.isCommandUpdate()) {
+			notificationType =
+				UserNotificationDefinition.NOTIFICATION_TYPE_UPDATE_ENTRY;
+		}
+
+		subscriptionSender.setNotificationType(notificationType);
+
 		subscriptionSender.setPortletId(PortletKeys.JOURNAL);
 		subscriptionSender.setReplyToAddress(fromAddress);
 		subscriptionSender.setScopeGroupId(article.getGroupId());
@@ -6363,6 +6516,29 @@ public class JournalArticleLocalServiceImpl
 		}
 	}
 
+	protected BaseModelSearchResult<JournalArticle> searchJournalArticles(
+			SearchContext searchContext)
+		throws PortalException, SystemException {
+
+		Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(
+			JournalArticle.class);
+
+		for (int i = 0; i < 10; i++) {
+			Hits hits = indexer.search(
+				searchContext, JournalUtil.SELECTED_FIELD_NAMES);
+
+			List<JournalArticle> articles = JournalUtil.getArticles(hits);
+
+			if (articles != null) {
+				return new BaseModelSearchResult<JournalArticle>(
+					articles, hits.getLength());
+			}
+		}
+
+		throw new SearchException(
+			"Unable to fix the search index after 10 attempts");
+	}
+
 	protected void sendEmail(
 			JournalArticle article, String articleURL,
 			PortletPreferences preferences, String emailType,
@@ -6395,10 +6571,6 @@ public class JournalArticleLocalServiceImpl
 			article.getCompanyId());
 
 		User user = userPersistence.findByPrimaryKey(article.getUserId());
-
-		articleURL +=
-			"&groupId=" + article.getGroupId() + "&articleId=" +
-				article.getArticleId() + "&version=" + article.getVersion();
 
 		String fromName = JournalUtil.getEmailFromName(
 			preferences, article.getCompanyId());
@@ -6465,6 +6637,22 @@ public class JournalArticleLocalServiceImpl
 		subscriptionSender.addRuntimeSubscribers(toAddress, toName);
 
 		subscriptionSender.flushNotificationsAsync();
+	}
+
+	protected String updateArticleURL(
+		String articleURL, long groupId, String articleId, double version) {
+
+		StringBundler sb = new StringBundler(7);
+
+		sb.append(articleURL);
+		sb.append("&_15_groupId=");
+		sb.append(groupId);
+		sb.append("&_15_articleId=");
+		sb.append(articleId);
+		sb.append("&_15_version=");
+		sb.append(version);
+
+		return sb.toString();
 	}
 
 	protected void updateDDMStructureXSD(

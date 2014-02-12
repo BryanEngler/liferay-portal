@@ -14,8 +14,11 @@
 
 package com.liferay.portlet.dynamicdatalists.util;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -34,7 +37,11 @@ import javax.servlet.http.HttpServletRequest;
  * @author Eduardo Lundgren
  * @author Marcellus Tavares
  */
+@ProviderType
 public interface DDL {
+
+	public static final String[] SELECTED_FIELD_NAMES =
+		{Field.COMPANY_ID, Field.ENTRY_CLASS_PK, Field.UID};
 
 	public JSONObject getRecordJSONObject(DDLRecord record) throws Exception;
 
@@ -63,10 +70,18 @@ public interface DDL {
 			RenderResponse renderResponse)
 		throws Exception;
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	public boolean isEditable(
 			HttpServletRequest request, String portletId, long groupId)
 		throws Exception;
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	public boolean isEditable(
 			PortletPreferences preferences, String portletId, long groupId)
 		throws Exception;

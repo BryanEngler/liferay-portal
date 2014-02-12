@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ResourceAction;
 import com.liferay.portal.model.impl.ResourceActionModelImpl;
@@ -113,6 +114,8 @@ public class ResourceActionPersistenceTest {
 
 		ResourceAction newResourceAction = _persistence.create(pk);
 
+		newResourceAction.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newResourceAction.setName(ServiceTestUtil.randomString());
 
 		newResourceAction.setActionId(ServiceTestUtil.randomString());
@@ -123,6 +126,8 @@ public class ResourceActionPersistenceTest {
 
 		ResourceAction existingResourceAction = _persistence.findByPrimaryKey(newResourceAction.getPrimaryKey());
 
+		Assert.assertEquals(existingResourceAction.getMvccVersion(),
+			newResourceAction.getMvccVersion());
 		Assert.assertEquals(existingResourceAction.getResourceActionId(),
 			newResourceAction.getResourceActionId());
 		Assert.assertEquals(existingResourceAction.getName(),
@@ -131,6 +136,34 @@ public class ResourceActionPersistenceTest {
 			newResourceAction.getActionId());
 		Assert.assertEquals(existingResourceAction.getBitwiseValue(),
 			newResourceAction.getBitwiseValue());
+	}
+
+	@Test
+	public void testCountByName() {
+		try {
+			_persistence.countByName(StringPool.BLANK);
+
+			_persistence.countByName(StringPool.NULL);
+
+			_persistence.countByName((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCountByN_A() {
+		try {
+			_persistence.countByN_A(StringPool.BLANK, StringPool.BLANK);
+
+			_persistence.countByN_A(StringPool.NULL, StringPool.NULL);
+
+			_persistence.countByN_A((String)null, (String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -169,8 +202,8 @@ public class ResourceActionPersistenceTest {
 
 	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("ResourceAction",
-			"resourceActionId", true, "name", true, "actionId", true,
-			"bitwiseValue", true);
+			"mvccVersion", true, "resourceActionId", true, "name", true,
+			"actionId", true, "bitwiseValue", true);
 	}
 
 	@Test
@@ -309,6 +342,8 @@ public class ResourceActionPersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		ResourceAction resourceAction = _persistence.create(pk);
+
+		resourceAction.setMvccVersion(ServiceTestUtil.nextLong());
 
 		resourceAction.setName(ServiceTestUtil.randomString());
 

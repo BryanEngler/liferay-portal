@@ -17,6 +17,7 @@ package com.liferay.portal.model.impl;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.Subscription;
 
 import java.io.Externalizable;
@@ -34,12 +35,24 @@ import java.util.Date;
  * @generated
  */
 public class SubscriptionCacheModel implements CacheModel<Subscription>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(19);
+		StringBundler sb = new StringBundler(21);
 
-		sb.append("{subscriptionId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", subscriptionId=");
 		sb.append(subscriptionId);
 		sb.append(", companyId=");
 		sb.append(companyId);
@@ -66,6 +79,7 @@ public class SubscriptionCacheModel implements CacheModel<Subscription>,
 	public Subscription toEntityModel() {
 		SubscriptionImpl subscriptionImpl = new SubscriptionImpl();
 
+		subscriptionImpl.setMvccVersion(mvccVersion);
 		subscriptionImpl.setSubscriptionId(subscriptionId);
 		subscriptionImpl.setCompanyId(companyId);
 		subscriptionImpl.setUserId(userId);
@@ -108,6 +122,7 @@ public class SubscriptionCacheModel implements CacheModel<Subscription>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		subscriptionId = objectInput.readLong();
 		companyId = objectInput.readLong();
 		userId = objectInput.readLong();
@@ -122,6 +137,7 @@ public class SubscriptionCacheModel implements CacheModel<Subscription>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(subscriptionId);
 		objectOutput.writeLong(companyId);
 		objectOutput.writeLong(userId);
@@ -146,6 +162,7 @@ public class SubscriptionCacheModel implements CacheModel<Subscription>,
 		}
 	}
 
+	public long mvccVersion;
 	public long subscriptionId;
 	public long companyId;
 	public long userId;

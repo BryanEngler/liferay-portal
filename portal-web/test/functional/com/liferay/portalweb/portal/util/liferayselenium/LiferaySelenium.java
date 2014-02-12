@@ -16,12 +16,12 @@ package com.liferay.portalweb.portal.util.liferayselenium;
 
 import com.thoughtworks.selenium.Selenium;
 
-import java.util.Map;
-
 /**
  * @author Brian Wing Shun Chan
  */
 public interface LiferaySelenium extends Selenium {
+
+	public void antCommand(String fileName, String target) throws Exception;
 
 	public void assertAlert(String pattern) throws Exception;
 
@@ -40,6 +40,8 @@ public interface LiferaySelenium extends Selenium {
 		throws Exception;
 
 	public void assertJavaScriptErrors() throws Exception;
+
+	public void assertLiferayErrors() throws Exception;
 
 	public void assertLocation(String pattern);
 
@@ -81,6 +83,8 @@ public interface LiferaySelenium extends Selenium {
 
 	public void clickAtAndWait(String locator, String coordString);
 
+	public void clickImageElement(String image) throws Exception;
+
 	public void connectToEmailAccount(String emailAddress, String emailPassword)
 		throws Exception;
 
@@ -112,9 +116,13 @@ public interface LiferaySelenium extends Selenium {
 
 	public String getNumberIncrement(String value);
 
+	public String getOutputDir();
+
 	public String getPrimaryTestSuiteName();
 
 	public String getProjectDir();
+
+	public String getSikuliImagesDir();
 
 	public void goBackAndWait();
 
@@ -177,8 +185,9 @@ public interface LiferaySelenium extends Selenium {
 
 	public void sendLogger(String id, String status);
 
-	public void sendLogger(
-		String id, String status, Map<String, String> context);
+	public void sendTestCaseCommandLogger(String command);
+
+	public void sendTestCaseHeaderLogger(String command);
 
 	public void setDefaultTimeout();
 
@@ -193,6 +202,8 @@ public interface LiferaySelenium extends Selenium {
 	public void stopLogger();
 
 	public void typeFrame(String locator, String value);
+
+	public void typeImageElement(String image, String value) throws Exception;
 
 	public void uploadCommonFile(String locator, String value);
 

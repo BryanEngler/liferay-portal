@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ClassName;
 import com.liferay.portal.model.impl.ClassNameModelImpl;
@@ -113,16 +114,34 @@ public class ClassNamePersistenceTest {
 
 		ClassName newClassName = _persistence.create(pk);
 
+		newClassName.setMvccVersion(ServiceTestUtil.nextLong());
+
 		newClassName.setValue(ServiceTestUtil.randomString());
 
 		_persistence.update(newClassName);
 
 		ClassName existingClassName = _persistence.findByPrimaryKey(newClassName.getPrimaryKey());
 
+		Assert.assertEquals(existingClassName.getMvccVersion(),
+			newClassName.getMvccVersion());
 		Assert.assertEquals(existingClassName.getClassNameId(),
 			newClassName.getClassNameId());
 		Assert.assertEquals(existingClassName.getValue(),
 			newClassName.getValue());
+	}
+
+	@Test
+	public void testCountByValue() {
+		try {
+			_persistence.countByValue(StringPool.BLANK);
+
+			_persistence.countByValue(StringPool.NULL);
+
+			_persistence.countByValue((String)null);
+		}
+		catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -159,8 +178,8 @@ public class ClassNamePersistenceTest {
 	}
 
 	protected OrderByComparator getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("ClassName_", "classNameId",
-			true, "value", true);
+		return OrderByComparatorFactoryUtil.create("ClassName_", "mvccVersion",
+			true, "classNameId", true, "value", true);
 	}
 
 	@Test
@@ -294,6 +313,8 @@ public class ClassNamePersistenceTest {
 		long pk = ServiceTestUtil.nextLong();
 
 		ClassName className = _persistence.create(pk);
+
+		className.setMvccVersion(ServiceTestUtil.nextLong());
 
 		className.setValue(ServiceTestUtil.randomString());
 

@@ -74,6 +74,11 @@ public interface Indexer {
 
 	public boolean isStagingAware();
 
+	public boolean isVisible(long classPK, int status) throws Exception;
+
+	public boolean isVisibleRelatedEntry(long classPK, int status)
+		throws Exception;
+
 	public void postProcessContextQuery(
 			BooleanQuery contextQuery, SearchContext searchContext)
 		throws Exception;
@@ -95,6 +100,10 @@ public interface Indexer {
 		throws SearchException;
 
 	public Hits search(SearchContext searchContext) throws SearchException;
+
+	public Hits search(
+			SearchContext searchContext, String... selectedFieldNames)
+		throws SearchException;
 
 	public void unregisterIndexerPostProcessor(
 		IndexerPostProcessor indexerPostProcessor);

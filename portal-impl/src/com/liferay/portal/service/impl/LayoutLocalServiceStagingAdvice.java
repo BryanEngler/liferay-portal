@@ -295,7 +295,7 @@ public class LayoutLocalServiceStagingAdvice implements MethodInterceptor {
 			layoutRevision, iconImage, iconBytes, "iconImageId", 0, 0, 0);
 
 		boolean layoutPrototypeLinkEnabled = ParamUtil.getBoolean(
-			serviceContext, "layoutPrototypeLinkEnabled", true);
+			serviceContext, "layoutPrototypeLinkEnabled");
 
 		originalLayout.setLayoutPrototypeLinkEnabled(
 			layoutPrototypeLinkEnabled);

@@ -108,11 +108,11 @@ if (Validator.isNotNull(keywords)) {
 		if (Validator.isNotNull(searchTerms.getKeywords())) {
 			Sort sort = SortFactoryUtil.getSort(TrashEntry.class, searchContainer.getOrderByCol(), searchContainer.getOrderByType());
 
-			Hits hits = TrashEntryLocalServiceUtil.search(company.getCompanyId(), groupId, user.getUserId(), searchTerms.getKeywords(), searchContainer.getStart(), searchContainer.getEnd(), sort);
+			BaseModelSearchResult<TrashEntry> baseModelSearchResult = TrashEntryLocalServiceUtil.searchTrashEntries(company.getCompanyId(), groupId, user.getUserId(), searchTerms.getKeywords(), searchContainer.getStart(), searchContainer.getEnd(), sort);
 
-			searchContainer.setTotal(hits.getLength());
+			searchContainer.setTotal(baseModelSearchResult.getLength());
 
-			results = TrashUtil.getEntries(hits);
+			results = baseModelSearchResult.getBaseModels();
 		}
 		else {
 			TrashEntryList trashEntryList = TrashEntryServiceUtil.getEntries(groupId, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
@@ -127,7 +127,7 @@ if (Validator.isNotNull(keywords)) {
 		searchContainer.setResults(results);
 
 		if ((searchContainer.getTotal() == 0) && Validator.isNotNull(searchTerms.getKeywords())) {
-			searchContainer.setEmptyResultsMessage(LanguageUtil.format(pageContext, "no-entries-were-found-that-matched-the-keywords-x", "<strong>" + HtmlUtil.escape(searchTerms.getKeywords()) + "</strong>"));
+			searchContainer.setEmptyResultsMessage(LanguageUtil.format(pageContext, "no-entries-were-found-that-matched-the-keywords-x", "<strong>" + HtmlUtil.escape(searchTerms.getKeywords()) + "</strong>", false));
 		}
 		%>
 
@@ -208,14 +208,14 @@ if (Validator.isNotNull(keywords)) {
 				<liferay-util:buffer var="rootEntryIcon">
 					<liferay-ui:icon
 						label="<%= true %>"
-						message="<%= rootTrashRenderer.getTitle(locale) %>"
+						message="<%= HtmlUtil.escape(rootTrashRenderer.getTitle(locale)) %>"
 						method="get"
 						src="<%= rootTrashRenderer.getIconPath(renderRequest) %>"
 						url="<%= viewRootContentURLString %>"
 					/>
 				</liferay-util:buffer>
 
-				<span class="trash-root-entry">(<liferay-ui:message arguments="<%= rootEntryIcon %>" key="<%= rootTrashHandler.getDeleteMessage() %>" />)</span>
+				<span class="trash-root-entry">(<liferay-ui:message arguments="<%= rootEntryIcon %>" key="<%= rootTrashHandler.getDeleteMessage() %>" translateArguments="<%= false %>" />)</span>
 			</c:if>
 		</liferay-ui:search-container-column-text>
 

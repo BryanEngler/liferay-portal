@@ -50,11 +50,13 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
+import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.spring.aop.Skip;
 import com.liferay.portal.kernel.transaction.Propagation;
@@ -127,6 +129,7 @@ import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.util.SubscriptionSender;
 import com.liferay.portlet.messageboards.model.MBMessage;
+import com.liferay.portlet.usersadmin.util.UsersAdmin;
 import com.liferay.portlet.usersadmin.util.UsersAdminUtil;
 import com.liferay.util.Encryptor;
 import com.liferay.util.EncryptorException;
@@ -3105,10 +3108,20 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			params.put("keywords", keywords);
 		}
 
-		return search(
-			companyId, firstName, middleName, lastName, fullName, screenName,
-			emailAddress, street, city, zip, region, country, status, params,
-			andOperator, start, end, sort);
+		try {
+			Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(
+				User.class);
+
+			SearchContext searchContext = buildSearchContext(
+				companyId, firstName, middleName, lastName, fullName,
+				screenName, emailAddress, street, city, zip, region, country,
+				status, params, andOperator, start, end, sort);
+
+			return indexer.search(searchContext);
+		}
+		catch (Exception e) {
+			throw new SystemException(e);
+		}
 	}
 
 	/**
@@ -3211,10 +3224,20 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			int end, Sort sort)
 		throws SystemException {
 
-		return search(
-			companyId, firstName, middleName, lastName, null, screenName,
-			emailAddress, null, null, null, null, null, status, params,
-			andSearch, start, end, sort);
+		try {
+			Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(
+				User.class);
+
+			SearchContext searchContext = buildSearchContext(
+				companyId, firstName, middleName, lastName, null, screenName,
+				emailAddress, null, null, null, null, null, status, params,
+				andSearch, start, end, sort);
+
+			return indexer.search(searchContext);
+		}
+		catch (Exception e) {
+			throw new SystemException(e);
+		}
 	}
 
 	/**
@@ -3272,6 +3295,70 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		return userFinder.countByC_FN_MN_LN_SN_EA_S(
 			companyId, firstName, middleName, lastName, screenName,
 			emailAddress, status, params, andSearch);
+	}
+
+	@Override
+	public BaseModelSearchResult<User> searchUsers(
+			long companyId, String keywords, int status,
+			LinkedHashMap<String, Object> params, int start, int end, Sort sort)
+		throws PortalException, SystemException {
+
+		String firstName = null;
+		String middleName = null;
+		String lastName = null;
+		String fullName = null;
+		String screenName = null;
+		String emailAddress = null;
+		String street = null;
+		String city = null;
+		String zip = null;
+		String region = null;
+		String country = null;
+		boolean andOperator = false;
+
+		if (Validator.isNotNull(keywords)) {
+			firstName = keywords;
+			middleName = keywords;
+			lastName = keywords;
+			fullName = keywords;
+			screenName = keywords;
+			emailAddress = keywords;
+			street = keywords;
+			city = keywords;
+			zip = keywords;
+			region = keywords;
+			country = keywords;
+		}
+		else {
+			andOperator = true;
+		}
+
+		if (params != null) {
+			params.put("keywords", keywords);
+		}
+
+		SearchContext searchContext = buildSearchContext(
+			companyId, firstName, middleName, lastName, fullName, screenName,
+			emailAddress, street, city, zip, region, country, status, params,
+			andOperator, start, end, sort);
+
+		return searchUsers(searchContext);
+	}
+
+	@Override
+	public BaseModelSearchResult<User> searchUsers(
+			long companyId, String firstName, String middleName,
+			String lastName, String screenName, String emailAddress, int status,
+			LinkedHashMap<String, Object> params, boolean andSearch, int start,
+			int end, Sort sort)
+		throws PortalException, SystemException {
+
+		SearchContext searchContext = buildSearchContext(
+			companyId, firstName, middleName, lastName, null, screenName,
+			emailAddress, null, null, null, null, null, status, params,
+			andSearch, start, end, sort);
+
+		return searchUsers(searchContext);
 	}
 
 	/**
@@ -4538,7 +4625,11 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		user.setPasswordUnencrypted(password1);
 		user.setPasswordEncrypted(true);
 		user.setPasswordReset(passwordReset);
-		user.setPasswordModifiedDate(new Date());
+
+		if (!silentUpdate || (user.getPasswordModifiedDate() == null)) {
+			user.setPasswordModifiedDate(new Date());
+		}
+
 		user.setDigest(StringPool.BLANK);
 		user.setGraceLoginCount(0);
 
@@ -5595,6 +5686,63 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		return authResult;
 	}
 
+	protected SearchContext buildSearchContext(
+		long companyId, String firstName, String middleName, String lastName,
+		String fullName, String screenName, String emailAddress, String street,
+		String city, String zip, String region, String country, int status,
+		LinkedHashMap<String, Object> params, boolean andSearch, int start,
+		int end, Sort sort) {
+
+		SearchContext searchContext = new SearchContext();
+
+		searchContext.setAndSearch(andSearch);
+
+		Map<String, Serializable> attributes =
+			new HashMap<String, Serializable>();
+
+		attributes.put("city", city);
+		attributes.put("country", country);
+		attributes.put("emailAddress", emailAddress);
+		attributes.put("firstName", firstName);
+		attributes.put("fullName", fullName);
+		attributes.put("lastName", lastName);
+		attributes.put("middleName", middleName);
+		attributes.put("params", params);
+		attributes.put("region", region);
+		attributes.put("screenName", screenName);
+		attributes.put("street", street);
+		attributes.put("status", status);
+		attributes.put("zip", zip);
+
+		searchContext.setAttributes(attributes);
+
+		searchContext.setCompanyId(companyId);
+		searchContext.setEnd(end);
+
+		if (params != null) {
+			String keywords = (String)params.remove("keywords");
+
+			if (Validator.isNotNull(keywords)) {
+				searchContext.setKeywords(keywords);
+			}
+		}
+
+		QueryConfig queryConfig = new QueryConfig();
+
+		queryConfig.setHighlightEnabled(false);
+		queryConfig.setScoreEnabled(false);
+
+		searchContext.setQueryConfig(queryConfig);
+
+		if (sort != null) {
+			searchContext.setSorts(sort);
+		}
+
+		searchContext.setStart(start);
+
+		return searchContext;
+	}
+
 	protected Date getBirthday(
 			int birthdayMonth, int birthdayDay, int birthdayYear)
 		throws PortalException {
@@ -5647,71 +5795,25 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		TransactionCommitCallbackRegistryUtil.registerCallback(callable);
 	}
 
-	protected Hits search(
-			long companyId, String firstName, String middleName,
-			String lastName, String fullName, String screenName,
-			String emailAddress, String street, String city, String zip,
-			String region, String country, int status,
-			LinkedHashMap<String, Object> params, boolean andSearch, int start,
-			int end, Sort sort)
-		throws SystemException {
+	protected BaseModelSearchResult<User> searchUsers(
+			SearchContext searchContext)
+		throws PortalException, SystemException {
 
-		try {
-			SearchContext searchContext = new SearchContext();
+		Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(User.class);
 
-			searchContext.setAndSearch(andSearch);
+		for (int i = 0; i < 10; i++) {
+			Hits hits = indexer.search(
+				searchContext, UsersAdmin.USER_SELECTED_FIELD_NAMES);
 
-			Map<String, Serializable> attributes =
-				new HashMap<String, Serializable>();
+			List<User> users = UsersAdminUtil.getUsers(hits);
 
-			attributes.put("city", city);
-			attributes.put("country", country);
-			attributes.put("emailAddress", emailAddress);
-			attributes.put("firstName", firstName);
-			attributes.put("fullName", fullName);
-			attributes.put("lastName", lastName);
-			attributes.put("middleName", middleName);
-			attributes.put("params", params);
-			attributes.put("region", region);
-			attributes.put("screenName", screenName);
-			attributes.put("street", street);
-			attributes.put("status", status);
-			attributes.put("zip", zip);
-
-			searchContext.setAttributes(attributes);
-
-			searchContext.setCompanyId(companyId);
-			searchContext.setEnd(end);
-
-			if (params != null) {
-				String keywords = (String)params.remove("keywords");
-
-				if (Validator.isNotNull(keywords)) {
-					searchContext.setKeywords(keywords);
-				}
+			if (users != null) {
+				return new BaseModelSearchResult<User>(users, hits.getLength());
 			}
-
-			QueryConfig queryConfig = new QueryConfig();
-
-			queryConfig.setHighlightEnabled(false);
-			queryConfig.setScoreEnabled(false);
-
-			searchContext.setQueryConfig(queryConfig);
-
-			if (sort != null) {
-				searchContext.setSorts(sort);
-			}
-
-			searchContext.setStart(start);
-
-			Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(
-				User.class);
-
-			return indexer.search(searchContext);
 		}
-		catch (Exception e) {
-			throw new SystemException(e);
-		}
+
+		throw new SearchException(
+			"Unable to fix the search index after 10 attempts");
 	}
 
 	protected void sendEmail(

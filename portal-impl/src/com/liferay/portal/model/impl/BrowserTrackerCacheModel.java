@@ -17,6 +17,7 @@ package com.liferay.portal.model.impl;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.model.BrowserTracker;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.MVCCModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -31,12 +32,24 @@ import java.io.ObjectOutput;
  * @generated
  */
 public class BrowserTrackerCacheModel implements CacheModel<BrowserTracker>,
-	Externalizable {
+	Externalizable, MVCCModel {
+	@Override
+	public long getMvccVersion() {
+		return mvccVersion;
+	}
+
+	@Override
+	public void setMvccVersion(long mvccVersion) {
+		this.mvccVersion = mvccVersion;
+	}
+
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(7);
+		StringBundler sb = new StringBundler(9);
 
-		sb.append("{browserTrackerId=");
+		sb.append("{mvccVersion=");
+		sb.append(mvccVersion);
+		sb.append(", browserTrackerId=");
 		sb.append(browserTrackerId);
 		sb.append(", userId=");
 		sb.append(userId);
@@ -51,6 +64,7 @@ public class BrowserTrackerCacheModel implements CacheModel<BrowserTracker>,
 	public BrowserTracker toEntityModel() {
 		BrowserTrackerImpl browserTrackerImpl = new BrowserTrackerImpl();
 
+		browserTrackerImpl.setMvccVersion(mvccVersion);
 		browserTrackerImpl.setBrowserTrackerId(browserTrackerId);
 		browserTrackerImpl.setUserId(userId);
 		browserTrackerImpl.setBrowserKey(browserKey);
@@ -62,6 +76,7 @@ public class BrowserTrackerCacheModel implements CacheModel<BrowserTracker>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		mvccVersion = objectInput.readLong();
 		browserTrackerId = objectInput.readLong();
 		userId = objectInput.readLong();
 		browserKey = objectInput.readLong();
@@ -70,11 +85,13 @@ public class BrowserTrackerCacheModel implements CacheModel<BrowserTracker>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
+		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(browserTrackerId);
 		objectOutput.writeLong(userId);
 		objectOutput.writeLong(browserKey);
 	}
 
+	public long mvccVersion;
 	public long browserTrackerId;
 	public long userId;
 	public long browserKey;

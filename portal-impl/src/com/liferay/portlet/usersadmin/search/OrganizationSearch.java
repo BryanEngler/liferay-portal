@@ -91,6 +91,8 @@ public class OrganizationSearch extends SearchContainer<Organization> {
 		iteratorURL.setParameter(
 			OrganizationDisplayTerms.STREET, displayTerms.getStreet());
 		iteratorURL.setParameter(
+			OrganizationDisplayTerms.TYPE, displayTerms.getType());
+		iteratorURL.setParameter(
 			OrganizationDisplayTerms.ZIP, displayTerms.getZip());
 
 		try {

@@ -153,7 +153,7 @@ public class DLFileEntryLocalServiceImpl
 		throws PortalException, SystemException {
 
 		if (Validator.isNull(title)) {
-			if (size == 0) {
+			if (Validator.isNull(sourceFileName)) {
 				throw new FileNameException();
 			}
 			else {
@@ -245,12 +245,8 @@ public class DLFileEntryLocalServiceImpl
 		// Folder
 
 		if (folderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
-			DLFolder dlFolder = dlFolderPersistence.findByPrimaryKey(
-				dlFileEntry.getFolderId());
-
-			dlFolder.setLastPostDate(dlFileEntry.getModifiedDate());
-
-			dlFolderPersistence.update(dlFolder);
+			dlFolderLocalService.updateLastPostDate(
+				dlFileEntry.getFolderId(), dlFileEntry.getModifiedDate());
 		}
 
 		// File
@@ -390,12 +386,9 @@ public class DLFileEntryLocalServiceImpl
 			if (dlFileEntry.getFolderId() !=
 					DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 
-				DLFolder dlFolder = dlFolderPersistence.findByPrimaryKey(
-					dlFileEntry.getFolderId());
-
-				dlFolder.setLastPostDate(latestDLFileVersion.getModifiedDate());
-
-				dlFolderPersistence.update(dlFolder);
+				dlFolderLocalService.updateLastPostDate(
+					dlFileEntry.getFolderId(),
+					latestDLFileVersion.getModifiedDate());
 			}
 
 			// File
@@ -842,6 +835,11 @@ public class DLFileEntryLocalServiceImpl
 			dlFileVersionPersistence.remove(dlFileVersion);
 
 			expandoRowLocalService.deleteRows(dlFileVersion.getFileVersionId());
+
+			workflowInstanceLinkLocalService.deleteWorkflowInstanceLinks(
+				dlFileVersion.getCompanyId(), dlFileVersion.getGroupId(),
+				DLFileEntryConstants.getClassName(),
+				dlFileVersion.getFileVersionId());
 
 			dlFileEntry = dlFileEntryPersistence.findByPrimaryKey(fileEntryId);
 
@@ -2274,12 +2272,9 @@ public class DLFileEntryLocalServiceImpl
 				(dlFileEntry.getFolderId() !=
 					DLFolderConstants.DEFAULT_PARENT_FOLDER_ID)) {
 
-				DLFolder dlFolder = dlFolderPersistence.findByPrimaryKey(
-					dlFileEntry.getFolderId());
-
-				dlFolder.setLastPostDate(serviceContext.getModifiedDate(now));
-
-				dlFolderPersistence.update(dlFolder);
+				dlFolderLocalService.updateLastPostDate(
+					dlFileEntry.getFolderId(),
+					serviceContext.getModifiedDate(now));
 			}
 
 			// App helper
