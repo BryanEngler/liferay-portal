@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.portlet;
 
+import com.liferay.portal.kernel.util.AutoResetThreadLocal;
+
 import java.util.Map;
 
 /**
@@ -25,11 +27,34 @@ public class FriendlyURLMapperThreadLocal {
 		return _prpIdentifiers.get();
 	}
 
+	public static long getUserId() {
+		return _userId.get();
+	}
+
+	public static boolean hasCustomlayout() {
+		return _hasCustomLayout.get();
+	}
+
+	public static void setCustomLayout(boolean customLayout) {
+		_hasCustomLayout.set(customLayout);
+	}
+
 	public static void setPRPIdentifiers(Map<String, String> prpIdentifiers) {
 		_prpIdentifiers.set(prpIdentifiers);
 	}
 
+	public static void setUserId(long userId) {
+		_userId.set(userId);
+	}
+
+	private static final ThreadLocal<Boolean> _hasCustomLayout =
+		new AutoResetThreadLocal<>(
+			FriendlyURLMapperThreadLocal.class + "._hasCustomLayout", false);
 	private static final ThreadLocal<Map<String, String>> _prpIdentifiers =
-		new ThreadLocal<>();
+		new AutoResetThreadLocal<>(
+			FriendlyURLMapperThreadLocal.class + "._prpIdentifiers");
+	private static final ThreadLocal<Long> _userId =
+		new AutoResetThreadLocal<>(
+			FriendlyURLMapperThreadLocal.class + "._userId", 0l);
 
 }

@@ -158,6 +158,14 @@ public class DefaultFriendlyURLMapper extends BaseFriendlyURLMapper {
 
 		String portletId = getPortletId(routeParameters);
 
+		long userId = FriendlyURLMapperThreadLocal.getUserId();
+
+		boolean customLayout = FriendlyURLMapperThreadLocal.hasCustomlayout();
+
+		if ((userId != 0) && customLayout) {
+			portletId = PortletConstants.assemblePortletId(portletId, userId);
+		}
+
 		if (Validator.isNull(portletId)) {
 			return;
 		}

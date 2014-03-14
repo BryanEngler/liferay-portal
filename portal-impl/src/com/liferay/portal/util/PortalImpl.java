@@ -4356,6 +4356,29 @@ public class PortalImpl implements Portal {
 
 				friendlyURL = url.substring(0, pos);
 
+				friendlyURL = StringUtil.replace(
+					friendlyURL, StringPool.DOUBLE_SLASH, StringPool.SLASH);
+
+				if (friendlyURL.endsWith(StringPool.SLASH)) {
+					friendlyURL = friendlyURL.substring(
+						0, friendlyURL.length() - 1);
+				}
+
+				Layout layout = LayoutLocalServiceUtil.getFriendlyURLLayout(
+					groupId, privateLayout, friendlyURL);
+
+				LayoutTypePortlet layoutTypePortlet =
+					(LayoutTypePortlet)layout.getLayoutType();
+
+				if (layoutTypePortlet.isCustomizable()) {
+					long userId = PortalUtil.getUserId(
+						(HttpServletRequest)requestContext.get("request"));
+
+					FriendlyURLMapperThreadLocal.setUserId(userId);
+
+					FriendlyURLMapperThreadLocal.setCustomLayout(true);
+				}
+
 				InheritableMap<String, String[]> actualParams =
 					new InheritableMap<>();
 
