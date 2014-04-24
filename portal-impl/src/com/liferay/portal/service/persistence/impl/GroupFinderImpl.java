@@ -356,6 +356,41 @@ public class GroupFinderImpl
 	}
 
 	@Override
+	public List<Group> findByLayouts(
+			long companyId, long parentGroupId, boolean site, int start,
+			int end, OrderByComparator obc)
+			throws SystemException {
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			String sql = CustomSQLUtil.get(FIND_BY_LAYOUTS);
+
+			sql = CustomSQLUtil.replaceOrderBy(sql, obc);
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addEntity("Group_", GroupImpl.class);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(companyId);
+			qPos.add(parentGroupId);
+			qPos.add(site);
+
+			return q.list(true);
+		}
+		catch (Exception e) {
+			throw new SystemException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	@Override
 	public List<Group> findByLiveGroups() throws SystemException {
 		Session session = null;
 

@@ -1570,6 +1570,40 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	}
 
 	/**
+	 * Returns a range of all groups that are children of the parent group and
+	 * that have at least one layout.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end -
+	 * start</code> instances. <code>start</code> and <code>end</code> are not
+	 * primary keys, they are indexes in the result set. Thus, <code>0</code>
+	 * refers to the first result in the set. Setting both <code>start</code>
+	 * and <code>end</code> to {@link
+	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	 * result set.
+	 * </p>
+	 *
+	 * @param  companyId the primary key of the company
+	 * @param  parentGroupId the primary key of the parent group
+	 * @param  site whether the group is to be associated with a main site
+	 * @param  start the lower bound of the range of groups to return
+	 * @param  end the upper bound of the range of groups to return (not
+	 *         inclusive)
+	 * @param obc the comparator to order the groups
+	 * @return the range of matching groups
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public List<Group> getLayoutsGroups(
+			long companyId, long parentGroupId, boolean site, int start,
+			int end, OrderByComparator obc)
+			throws SystemException {
+
+		return groupFinder.findByLayouts(
+				companyId, parentGroupId, site, start, end, obc);
+	}
+
+	/**
 	 * Returns the number of groups that are children or the parent group and
 	 * that have at least one layout
 	 *
