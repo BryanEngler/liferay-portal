@@ -359,7 +359,7 @@ public class GroupFinderImpl
 	public List<Group> findByLayouts(
 			long companyId, long parentGroupId, boolean site, int start,
 			int end, OrderByComparator obc)
-			throws SystemException {
+		throws SystemException {
 
 		Session session = null;
 
