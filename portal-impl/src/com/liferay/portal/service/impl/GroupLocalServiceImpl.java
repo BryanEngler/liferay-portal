@@ -1597,10 +1597,10 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	public List<Group> getLayoutsGroups(
 			long companyId, long parentGroupId, boolean site, int start,
 			int end, OrderByComparator obc)
-			throws SystemException {
+		throws SystemException {
 
 		return groupFinder.findByLayouts(
-				companyId, parentGroupId, site, start, end, obc);
+			companyId, parentGroupId, site, start, end, obc);
 	}
 
 	/**
