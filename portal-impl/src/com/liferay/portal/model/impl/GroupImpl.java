@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.staging.StagingUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -136,6 +137,14 @@ public class GroupImpl extends GroupBaseImpl {
 
 		return GroupLocalServiceUtil.getLayoutsGroups(
 			getCompanyId(), getGroupId(), site, start, end);
+	}
+
+	@Override
+	public List<Group> getChildrenWithLayouts(boolean site, int start, int end, OrderByComparator obc)
+			throws SystemException {
+
+		return GroupLocalServiceUtil.getLayoutsGroups(
+				getCompanyId(), getGroupId(), site, start, end, obc);
 	}
 
 	@Override
