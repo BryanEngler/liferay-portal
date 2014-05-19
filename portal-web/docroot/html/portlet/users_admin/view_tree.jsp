@@ -242,141 +242,148 @@ if (organization != null) {
 					<aui:input name="deleteOrganizationIds" type="hidden" />
 					<aui:input name="status" type="hidden" value="<%= status %>" />
 
-					<c:if test="<%= showOrganizations %>">
-						<liferay-util:buffer var="organizationsPanelTitle">
-
-							<%
-							String organizationsTitle = null;
-
-							if (Validator.isNotNull(keywords)) {
-								organizationsTitle = LanguageUtil.get(pageContext, "organizations");
-							}
-							else if (organization == null) {
-								organizationsTitle = LanguageUtil.get(pageContext, filterManageableOrganizations ? "my-organizations" : "top-level-organizations");
-							}
-							else if (organizationsCount == 1) {
-								organizationsTitle = LanguageUtil.format(pageContext, "x-suborganization", String.valueOf(organizationsCount), false);
-							}
-							else {
-								organizationsTitle = LanguageUtil.format(pageContext, "x-suborganizations", String.valueOf(organizationsCount), false);
-							}
-							%>
-
-							<%= organizationsTitle %>
-
-						</liferay-util:buffer>
-
-						<liferay-ui:panel collapsible="<%= true %>" extended="<%= true %>" id="usersAdminOrganizationsPanel" persistState="<%= true %>" title="<%= organizationsPanelTitle %>">
-
-							<%
-							SearchContainer searchContainer = new OrganizationSearch(renderRequest, "cur1", currentURLObj);
-
-							RowChecker rowChecker = new RowChecker(renderResponse);
-
-							rowChecker.setRowIds("rowIdsOrganizationCheckbox");
-
-							searchContainer.setRowChecker(rowChecker);
-							%>
-
-							<liferay-ui:search-container
-								searchContainer="<%= searchContainer %>"
-								var="organizationSearchContainer"
-							>
+					<c:choose>
+						<c:when test="<%= showOrganizations %>">
+							<liferay-util:buffer var="organizationsPanelTitle">
 
 								<%
-								OrganizationSearchTerms searchTerms = (OrganizationSearchTerms)organizationSearchContainer.getSearchTerms();
+								String organizationsTitle = null;
 
-								long parentOrganizationId = _getParentOrganizationId(request, organization, filterManageableOrganizations);
-
-								if (organization != null) {
-									parentOrganizationId = organization.getOrganizationId();
+								if (Validator.isNotNull(keywords)) {
+									organizationsTitle = LanguageUtil.get(pageContext, "organizations");
 								}
-
-								List<Long> excludedOrganizationIds = new ArrayList<Long>();
-
-								excludedOrganizationIds.add(parentOrganizationId);
-
-								organizationParams.put("excludedOrganizationIds", excludedOrganizationIds);
+								else if (organization == null) {
+									organizationsTitle = LanguageUtil.get(pageContext, filterManageableOrganizations ? "my-organizations" : "top-level-organizations");
+								}
+								else if (organizationsCount == 1) {
+									organizationsTitle = LanguageUtil.format(pageContext, "x-suborganization", String.valueOf(organizationsCount), false);
+								}
+								else {
+									organizationsTitle = LanguageUtil.format(pageContext, "x-suborganizations", String.valueOf(organizationsCount), false);
+								}
 								%>
 
-								<liferay-ui:search-container-results>
-									<c:choose>
-										<c:when test="<%= !searchTerms.hasSearchTerms() && (parentOrganizationId <= 0) && (filterManageableOrganizations) %>">
+								<%= organizationsTitle %>
 
-											<%
-											total = organizations.size();
+							</liferay-util:buffer>
 
-											searchContainer.setTotal(total);
+							<liferay-ui:panel collapsible="<%= true %>" extended="<%= true %>" id="usersAdminOrganizationsPanel" persistState="<%= true %>" title="<%= organizationsPanelTitle %>">
 
-											results = ListUtil.subList(organizations, searchContainer.getStart(), searchContainer.getEnd());
+								<%
+								SearchContainer searchContainer = new OrganizationSearch(renderRequest, "cur1", currentURLObj);
 
-											searchContainer.setResults(results);
-											%>
+								RowChecker rowChecker = new RowChecker(renderResponse);
 
-										</c:when>
-										<c:otherwise>
+								rowChecker.setRowIds("rowIdsOrganizationCheckbox");
 
-											<%
-											if (searchTerms.hasSearchTerms()) {
-												if (filterManageableOrganizations) {
-													organizationParams.put("organizationsTree", organizations);
-												}
-												else if (parentOrganizationId > 0) {
-													List<Organization> organizationsTree = new ArrayList<Organization>();
+								searchContainer.setRowChecker(rowChecker);
+								%>
 
-													Organization parentOrganization = OrganizationLocalServiceUtil.getOrganization(parentOrganizationId);
-
-													organizationsTree.add(parentOrganization);
-
-													organizationParams.put("organizationsTree", organizationsTree);
-												}
-
-												parentOrganizationId = OrganizationConstants.ANY_PARENT_ORGANIZATION_ID;
-											}
-											%>
-
-											<c:choose>
-												<c:when test="<%= PropsValues.ORGANIZATIONS_INDEXER_ENABLED && PropsValues.ORGANIZATIONS_SEARCH_WITH_INDEX %>">
-													<%@ include file="/html/portlet/users_admin/organization_search_results_index.jspf" %>
-												</c:when>
-												<c:otherwise>
-													<%@ include file="/html/portlet/users_admin/organization_search_results_database.jspf" %>
-												</c:otherwise>
-											</c:choose>
-										</c:otherwise>
-									</c:choose>
-
-									<c:if test="<%= !results.isEmpty() %>">
-										<aui:button cssClass="delete-organizations" disabled="<%= true %>" name="delete" onClick='<%= renderResponse.getNamespace() + "deleteOrganizations();" %>' value="delete" />
-									</c:if>
-								</liferay-ui:search-container-results>
-
-								<liferay-ui:search-container-row
-									className="com.liferay.portal.model.Organization"
-									escapedModel="<%= true %>"
-									keyProperty="organizationId"
-									modelVar="curOrganization"
+								<liferay-ui:search-container
+									searchContainer="<%= searchContainer %>"
+									var="organizationSearchContainer"
 								>
-									<liferay-portlet:renderURL varImpl="rowURL">
-										<portlet:param name="struts_action" value="/users_admin/view" />
-										<portlet:param name="toolbarItem" value="<%= toolbarItem %>" />
-										<portlet:param name="organizationId" value="<%= String.valueOf(curOrganization.getOrganizationId()) %>" />
-										<portlet:param name="usersListView" value="<%= UserConstants.LIST_VIEW_TREE %>" />
-									</liferay-portlet:renderURL>
 
 									<%
-									if (!OrganizationPermissionUtil.contains(permissionChecker, curOrganization, ActionKeys.VIEW)) {
-										rowURL = null;
+									OrganizationSearchTerms searchTerms = (OrganizationSearchTerms)organizationSearchContainer.getSearchTerms();
+
+									long parentOrganizationId = _getParentOrganizationId(request, organization, filterManageableOrganizations);
+
+									if (organization != null) {
+										parentOrganizationId = organization.getOrganizationId();
 									}
+
+									List<Long> excludedOrganizationIds = new ArrayList<Long>();
+
+									excludedOrganizationIds.add(parentOrganizationId);
+
+									organizationParams.put("excludedOrganizationIds", excludedOrganizationIds);
 									%>
 
-									<%@ include file="/html/portlet/users_admin/organization/organization_columns.jspf" %>
-								</liferay-ui:search-container-row>
+									<liferay-ui:search-container-results>
+										<c:choose>
+											<c:when test="<%= !searchTerms.hasSearchTerms() && (parentOrganizationId <= 0) && (filterManageableOrganizations) %>">
 
-								<liferay-ui:search-iterator />
-							</liferay-ui:search-container>
-						</liferay-ui:panel>
-					</c:if>
+												<%
+												total = organizations.size();
+
+												searchContainer.setTotal(total);
+
+												results = ListUtil.subList(organizations, searchContainer.getStart(), searchContainer.getEnd());
+
+												searchContainer.setResults(results);
+												%>
+
+											</c:when>
+											<c:otherwise>
+
+												<%
+												if (searchTerms.hasSearchTerms()) {
+													if (filterManageableOrganizations) {
+														organizationParams.put("organizationsTree", organizations);
+													}
+													else if (parentOrganizationId > 0) {
+														List<Organization> organizationsTree = new ArrayList<Organization>();
+
+														Organization parentOrganization = OrganizationLocalServiceUtil.getOrganization(parentOrganizationId);
+
+														organizationsTree.add(parentOrganization);
+
+														organizationParams.put("organizationsTree", organizationsTree);
+													}
+
+													parentOrganizationId = OrganizationConstants.ANY_PARENT_ORGANIZATION_ID;
+												}
+												%>
+
+												<c:choose>
+													<c:when test="<%= PropsValues.ORGANIZATIONS_INDEXER_ENABLED && PropsValues.ORGANIZATIONS_SEARCH_WITH_INDEX %>">
+														<%@ include file="/html/portlet/users_admin/organization_search_results_index.jspf" %>
+													</c:when>
+													<c:otherwise>
+														<%@ include file="/html/portlet/users_admin/organization_search_results_database.jspf" %>
+													</c:otherwise>
+												</c:choose>
+											</c:otherwise>
+										</c:choose>
+
+										<c:if test="<%= !results.isEmpty() %>">
+											<aui:button cssClass="delete-organizations" disabled="<%= true %>" name="delete" onClick='<%= renderResponse.getNamespace() + "deleteOrganizations();" %>' value="delete" />
+										</c:if>
+									</liferay-ui:search-container-results>
+
+									<liferay-ui:search-container-row
+										className="com.liferay.portal.model.Organization"
+										escapedModel="<%= true %>"
+										keyProperty="organizationId"
+										modelVar="curOrganization"
+									>
+										<liferay-portlet:renderURL varImpl="rowURL">
+											<portlet:param name="struts_action" value="/users_admin/view" />
+											<portlet:param name="toolbarItem" value="<%= toolbarItem %>" />
+											<portlet:param name="organizationId" value="<%= String.valueOf(curOrganization.getOrganizationId()) %>" />
+											<portlet:param name="usersListView" value="<%= UserConstants.LIST_VIEW_TREE %>" />
+										</liferay-portlet:renderURL>
+
+										<%
+										if (!OrganizationPermissionUtil.contains(permissionChecker, curOrganization, ActionKeys.VIEW)) {
+											rowURL = null;
+										}
+										%>
+
+										<%@ include file="/html/portlet/users_admin/organization/organization_columns.jspf" %>
+									</liferay-ui:search-container-row>
+
+									<liferay-ui:search-iterator />
+								</liferay-ui:search-container>
+							</liferay-ui:panel>
+						</c:when>
+						<c:otherwise>
+							<div class="alert alert-info">
+								<liferay-ui:message key="no-organizations-were-found" />
+							</div>
+						</c:otherwise>
+					</c:choose>
 
 					<c:if test="<%= showUsers %>">
 						<liferay-util:buffer var="usersPanelTitle">
