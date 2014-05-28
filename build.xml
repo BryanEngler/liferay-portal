@@ -81,7 +81,10 @@
 
 			<propertyselector
 				casesensitive="false"
-				delimiter="," match="app\.(.+)\.dir"
+				delimiter=","
+				distinct="true"
+				match="app\.(server\.(geronimo|glassfish|jboss|jetty|jonas|resin|tcat|tcserver|tomcat|weblogic|websphere)).+\.dir"
+				override="true"
 				property="app.server.dir.property.list"
 				select="\1"
 			/>
@@ -393,8 +396,8 @@
 		<ant dir="util-taglib" target="compile" inheritAll="false" />
 
 		<ant dir="portal-impl" target="compile" inheritAll="false" />
-		<ant dir="portal-test" target="compile" inheritAll="false" />
 		<ant dir="portal-pacl" target="compile" inheritAll="false" />
+		<ant dir="portal-test" target="compile" inheritAll="false" />
 	</target>
 
 	<target name="compile-test">
@@ -444,6 +447,7 @@ ${app.server.tomcat.dir}, then run "ant -buildfile build-dist.xml unzip-tomcat".
 
 		<ant dir="portal-impl" target="deploy" inheritAll="false" />
 		<ant dir="portal-pacl" target="deploy" inheritAll="false" />
+		<ant dir="portal-test" target="deploy" inheritAll="false" />
 
 		<ant dir="portal-web" target="deploy" inheritAll="false" />
 
@@ -875,6 +879,7 @@ print AdminControl.invoke(appManager, 'startApplication', 'liferay-portal')
 
 		<ant dir="portal-impl" target="jar" inheritAll="false" />
 		<ant dir="portal-pacl" target="jar" inheritAll="false" />
+		<ant dir="portal-test" target="jar" inheritAll="false" />
 
 		<ant dir="portal-web" target="war" inheritAll="false" />
 

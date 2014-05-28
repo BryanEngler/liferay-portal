@@ -1,3 +1,7 @@
+Bundle-Name: Liferay Portal Registry API
 Bundle-Version: ${plugin.full.version}
-Export-Package: *
+Export-Package:\
+	com.liferay.registry,\
+	com.liferay.registry.collections,\
+	com.liferay.registry.util,\
 Include-Resource: classes

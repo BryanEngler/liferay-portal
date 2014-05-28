@@ -1,3 +1,4 @@
+Bundle-Name: Liferay Portal Spring Extender
 Bundle-Version: ${plugin.full.version}
 Fragment-Host: org.eclipse.gemini.blueprint.extender
 Import-Package:\
@@ -48,5 +49,4 @@ Import-Package:\
 	org.springframework.oxm.config,\
 	org.springframework.transaction.config,\
 	org.springframework.web.servlet.config
-Include-Resource:\
-	classes
+Include-Resource: classes

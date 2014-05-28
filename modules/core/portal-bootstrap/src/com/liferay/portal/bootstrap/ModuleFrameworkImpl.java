@@ -49,7 +49,7 @@ import com.liferay.portal.security.permission.PermissionThreadLocal;
 import com.liferay.portal.util.ClassLoaderUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.registry.RegistryUtil;
-import com.liferay.registry.impl.RegistryImpl;
+import com.liferay.registry.internal.RegistryImpl;
 
 import java.io.BufferedInputStream;
 import java.io.File;
