@@ -40,6 +40,12 @@ import org.elasticsearch.client.Client;
 public class ElasticsearchUpdateDocumentCommandImpl
 	implements ElasticsearchUpdateDocumentCommand {
 
+	public void setElasticsearchConnectionManager(
+		ElasticsearchConnectionManager elasticsearchConnectionManager) {
+
+		_elasticsearchConnectionManager = elasticsearchConnectionManager;
+	}
+
 	public void setElasticsearchDocumentFactory(
 		ElasticsearchDocumentFactory elasticsearchDocumentFactory) {
 
@@ -75,7 +81,7 @@ public class ElasticsearchUpdateDocumentCommandImpl
 		throws SearchException {
 
 		try {
-			Client client = getClient();
+			Client client = _elasticsearchConnectionManager.getClient();
 
 			BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
 
@@ -103,7 +109,7 @@ public class ElasticsearchUpdateDocumentCommandImpl
 			String documentType, SearchContext searchContext, Document document)
 		throws IOException {
 
-		Client client = getClient();
+		Client client = _elasticsearchConnectionManager.getClient();
 
 		UpdateRequestBuilder updateRequestBuilder = client.prepareUpdate(
 			String.valueOf(searchContext.getCompanyId()), documentType,
@@ -118,16 +124,10 @@ public class ElasticsearchUpdateDocumentCommandImpl
 		return updateRequestBuilder;
 	}
 
-	protected Client getClient() {
-		ElasticsearchConnectionManager elasticsearchConnectionManager =
-			ElasticsearchConnectionManager.getInstance();
-
-		return elasticsearchConnectionManager.getClient();
-	}
-
 	private static Log _log = LogFactoryUtil.getLog(
 		ElasticsearchUpdateDocumentCommandImpl.class);
 
+	private ElasticsearchConnectionManager _elasticsearchConnectionManager;
 	private ElasticsearchDocumentFactory _elasticsearchDocumentFactory;
 
 }
