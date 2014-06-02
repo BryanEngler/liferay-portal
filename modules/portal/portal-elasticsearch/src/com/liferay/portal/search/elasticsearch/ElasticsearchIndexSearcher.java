@@ -83,10 +83,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		stopWatch.start();
 
-		ElasticsearchConnectionManager elasticsearchConnectionManager =
-			ElasticsearchConnectionManager.getInstance();
-
-		Client client = elasticsearchConnectionManager.getClient();
+		Client client = _elasticsearchConnectionManager.getClient();
 
 		SearchRequestBuilder searchRequestBuilder = client.prepareSearch(
 			String.valueOf(searchContext.getCompanyId()));
@@ -134,6 +131,12 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		}
 
 		return hits;
+	}
+
+	public void setElasticsearchConnectionManager(
+		ElasticsearchConnectionManager elasticsearchConnectionManager) {
+
+		_elasticsearchConnectionManager = elasticsearchConnectionManager;
 	}
 
 	protected void addFacets(
@@ -410,6 +413,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	private static Log _log = LogFactoryUtil.getLog(
 		ElasticsearchIndexSearcher.class);
 
+	private ElasticsearchConnectionManager _elasticsearchConnectionManager;
 	private Pattern _pattern = Pattern.compile("<em>(.*?)</em>");
 
 }
