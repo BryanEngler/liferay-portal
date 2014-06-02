@@ -16,7 +16,6 @@ package com.liferay.portal.search.elasticsearch.connection;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.search.elasticsearch.util.PortletPropsValues;
 
 import org.apache.commons.lang.time.StopWatch;
 
@@ -44,8 +43,7 @@ public class EmbeddedElasticsearchConnection
 	protected Client createClient(ImmutableSettings.Builder builder) {
 		NodeBuilder nodeBuilder = NodeBuilder.nodeBuilder();
 
-		builder.loadFromClasspath(
-			PortletPropsValues.ELASTICSEARCH_EMBEDDED_CONFIG_LOCATION);
+		builder.loadFromClasspath(getConfigFileName());
 
 		nodeBuilder.settings(builder);
 

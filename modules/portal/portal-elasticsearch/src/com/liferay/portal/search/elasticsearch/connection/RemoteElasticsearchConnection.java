@@ -19,7 +19,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.search.elasticsearch.util.PortletPropsValues;
 
 import java.net.InetAddress;
 
@@ -47,8 +46,7 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 				"There must be at least one transport address");
 		}
 
-		builder.loadFromClasspath(
-			PortletPropsValues.ELASTICSEARCH_REMOTE_CONFIG_LOCATION);
+		builder.loadFromClasspath(getConfigFileName());
 
 		TransportClient transportClient = new TransportClient(builder);
 
