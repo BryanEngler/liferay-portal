@@ -17,7 +17,9 @@ package com.liferay.portal.search.elasticsearch.connection;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.search.elasticsearch.util.PortletPropsValues;
+
 import org.apache.commons.lang.time.StopWatch;
+
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.node.Node;
