@@ -5,14 +5,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd"
 >
-	<info module="elasticsearch-shared" organisation="com.liferay" />
+	<info module="${plugin.name}" organisation="com.liferay" />
 
 	<dependencies defaultconf="default">
 		<dependency name="elasticsearch" org="org.elasticsearch" rev="1.1.2" />
 		<dependency name="elasticsearch-analysis-icu" org="org.elasticsearch" rev="2.1.0" />
 		<dependency name="elasticsearch-analysis-kuromoji" org="org.elasticsearch" rev="2.1.0" />
 		<dependency name="elasticsearch-analysis-smartcn" org="org.elasticsearch" rev="2.1.0" />
-		<dependency org="com.ibm.icu" name="icu4j" rev="53.1" />
+		<dependency name="icu4j" org="com.ibm.icu" rev="53.1" />
 		<dependency name="lucene-analyzers-common" org="org.apache.lucene" rev="4.7.2" />
 		<dependency name="lucene-analyzers-icu" org="org.apache.lucene" rev="4.7.2" />
 		<dependency name="lucene-analyzers-kuromoji" org="org.apache.lucene" rev="4.7.2" />
