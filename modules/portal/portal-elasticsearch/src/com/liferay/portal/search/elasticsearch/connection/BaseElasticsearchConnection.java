@@ -100,9 +100,9 @@ public abstract class BaseElasticsearchConnection
 	private static Log _log = LogFactoryUtil.getLog(
 		BaseElasticsearchConnection.class);
 
-	private String _configFileName;
 	private Client _client;
 	private String _clusterName;
+	private String _configFileName;
 	private IndexFactory _indexFactory;
 
 }

@@ -39,9 +39,7 @@ public class FacetProcessorUtil {
 		facetProcessor.processFacet(searchRequestBuilder, facet);
 	}
 
-	public void setDefaultFacetProcessor(
-		FacetProcessor defaultFacetProcessor) {
-
+	public void setDefaultFacetProcessor(FacetProcessor defaultFacetProcessor) {
 		_defaultFacetProcessor = defaultFacetProcessor;
 	}
 
