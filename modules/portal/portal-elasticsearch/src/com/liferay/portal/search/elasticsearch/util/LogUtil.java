@@ -16,11 +16,12 @@ package com.liferay.portal.search.elasticsearch.util;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.search.elasticsearch.io.StringOutputStream;
+
+import java.io.IOException;
+
 import org.elasticsearch.action.ActionResponse;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.common.io.stream.OutputStreamStreamOutput;
-
-import java.io.IOException;
 
 /**
  * @author Michael C. Han

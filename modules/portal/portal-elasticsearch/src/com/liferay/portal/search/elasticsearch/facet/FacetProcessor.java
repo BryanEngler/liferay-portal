@@ -15,6 +15,7 @@
 package com.liferay.portal.search.elasticsearch.facet;
 
 import com.liferay.portal.kernel.search.facet.Facet;
+
 import org.elasticsearch.action.search.SearchRequestBuilder;
 
 /**

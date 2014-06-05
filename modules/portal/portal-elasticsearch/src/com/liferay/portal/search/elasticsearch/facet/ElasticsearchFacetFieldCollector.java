@@ -19,14 +19,15 @@ import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import org.elasticsearch.search.facet.Facet;
-import org.elasticsearch.search.facet.range.RangeFacet;
-import org.elasticsearch.search.facet.terms.TermsFacet;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.elasticsearch.search.facet.Facet;
+import org.elasticsearch.search.facet.range.RangeFacet;
+import org.elasticsearch.search.facet.terms.TermsFacet;
 
 /**
  * @author Michael C. Han

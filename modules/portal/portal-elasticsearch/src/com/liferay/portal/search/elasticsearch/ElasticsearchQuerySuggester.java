@@ -22,7 +22,15 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch.util.DocumentTypes;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.time.StopWatch;
+
 import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -33,12 +41,6 @@ import org.elasticsearch.search.suggest.Suggest;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.search.suggest.phrase.PhraseSuggestionBuilder;
 import org.elasticsearch.search.suggest.term.TermSuggestionBuilder;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Michael C. Han
@@ -67,7 +69,6 @@ public class ElasticsearchQuerySuggester extends BaseQuerySuggester {
 
 		Map<String, List<String>> suggestionsMap =
 			new HashMap<String, List<String>>();
-
 
 		for (Object entry : suggestion.getEntries()) {
 			Suggest.Suggestion.Entry<? extends Suggest.Suggestion.Entry.Option>

@@ -20,14 +20,16 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.elasticsearch.util.PortletPropsValues;
+
+import java.net.InetAddress;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-
-import java.net.InetAddress;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Michael C. Han
