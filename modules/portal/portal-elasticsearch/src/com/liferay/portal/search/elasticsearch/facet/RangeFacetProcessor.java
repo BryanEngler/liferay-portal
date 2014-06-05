@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.facet.RangeFacet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.util.StringPool;
+
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.search.facet.range.RangeFacetBuilder;
 

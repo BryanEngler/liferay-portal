@@ -26,13 +26,14 @@ import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectio
 import com.liferay.portal.search.elasticsearch.util.DocumentTypes;
 import com.liferay.portal.search.elasticsearch.util.LogUtil;
 import com.liferay.portal.util.PortletKeys;
+
+import java.util.Collection;
+import java.util.concurrent.Future;
+
 import org.elasticsearch.action.deletebyquery.DeleteByQueryRequestBuilder;
 import org.elasticsearch.action.deletebyquery.DeleteByQueryResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.QueryBuilders;
-
-import java.util.Collection;
-import java.util.concurrent.Future;
 
 /**
  * @author Michael C. Han

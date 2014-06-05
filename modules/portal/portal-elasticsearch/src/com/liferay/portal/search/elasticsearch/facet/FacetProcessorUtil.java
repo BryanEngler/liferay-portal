@@ -15,10 +15,11 @@
 package com.liferay.portal.search.elasticsearch.facet;
 
 import com.liferay.portal.kernel.search.facet.Facet;
-import org.elasticsearch.action.search.SearchRequestBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.elasticsearch.action.search.SearchRequestBuilder;
 
 /**
  * @author Michael C. Han

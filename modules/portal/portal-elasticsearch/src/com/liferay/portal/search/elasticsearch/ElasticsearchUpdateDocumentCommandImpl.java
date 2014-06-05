@@ -22,15 +22,17 @@ import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch.document.ElasticsearchDocumentFactory;
 import com.liferay.portal.search.elasticsearch.util.LogUtil;
+
+import java.io.IOException;
+
+import java.util.Collection;
+import java.util.concurrent.Future;
+
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.update.UpdateRequestBuilder;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.Client;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.concurrent.Future;
 
 /**
  * @author Michael C. Han

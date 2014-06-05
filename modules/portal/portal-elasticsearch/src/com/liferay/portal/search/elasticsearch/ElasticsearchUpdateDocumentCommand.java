@@ -26,12 +26,12 @@ import java.util.Collection;
 public interface ElasticsearchUpdateDocumentCommand {
 
 	public void updateDocument(
-		String documentType, SearchContext searchContext, Document document)
+			String documentType, SearchContext searchContext, Document document)
 		throws SearchException;
 
 	public void updateDocuments(
-		String documentType, SearchContext searchContext,
-		Collection<Document> documents)
+			String documentType, SearchContext searchContext,
+			Collection<Document> documents)
 		throws SearchException;
 
 }
