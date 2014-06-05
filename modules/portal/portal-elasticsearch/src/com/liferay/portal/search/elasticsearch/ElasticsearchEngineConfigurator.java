@@ -25,6 +25,7 @@ import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectio
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch.index.IndexFactory;
 import org.elasticsearch.client.AdminClient;
+import org.elasticsearch.client.Client;
 
 /**
  * @author Michael C. Han
@@ -41,7 +42,9 @@ public class ElasticsearchEngineConfigurator
 
 		elasticsearchConnection.initialize();
 
-		AdminClient adminClient = elasticsearchConnection.getClient().admin();
+		Client client = elasticsearchConnection.getClient();
+
+		AdminClient adminClient = client.admin();
 
 		try {
 			_indexFactory.createIndices(adminClient);
