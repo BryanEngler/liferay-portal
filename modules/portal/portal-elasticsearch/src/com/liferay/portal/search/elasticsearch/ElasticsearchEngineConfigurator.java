@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.search.SearchEngineUtil;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnection;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch.index.IndexFactory;
+
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.Client;
 
@@ -64,6 +65,28 @@ public class ElasticsearchEngineConfigurator
 		elasticsearchConnection.close();
 	}
 
+	public void setElasticsearchConnectionManager(
+		ElasticsearchConnectionManager elasticsearchConnectionManager) {
+
+		_elasticsearchConnectionManager = elasticsearchConnectionManager;
+	}
+
+	public void setIndexFactory(IndexFactory indexFactory) {
+		_indexFactory = indexFactory;
+	}
+
+	public void setIndexSearcher(IndexSearcher indexSearcher) {
+		_indexSearcher = indexSearcher;
+	}
+
+	public void setIndexWriter(IndexWriter indexWriter) {
+		_indexWriter = indexWriter;
+	}
+
+	public void setMessageBus(MessageBus messageBus) {
+		_messageBus = messageBus;
+	}
+
 	@Override
 	protected String getDefaultSearchEngineId() {
 		return SearchEngineUtil.SYSTEM_ENGINE_ID;
@@ -89,28 +112,6 @@ public class ElasticsearchEngineConfigurator
 		Class<?> clazz = getClass();
 
 		return clazz.getClassLoader();
-	}
-
-	public void setElasticsearchConnectionManager(
-		ElasticsearchConnectionManager elasticsearchConnectionManager) {
-
-		_elasticsearchConnectionManager = elasticsearchConnectionManager;
-	}
-
-	public void setIndexFactory(IndexFactory indexFactory) {
-		_indexFactory = indexFactory;
-	}
-
-	public void setIndexSearcher(IndexSearcher indexSearcher) {
-		_indexSearcher = indexSearcher;
-	}
-
-	public void setIndexWriter(IndexWriter indexWriter) {
-		_indexWriter = indexWriter;
-	}
-
-	public void setMessageBus(MessageBus messageBus) {
-		_messageBus = messageBus;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(

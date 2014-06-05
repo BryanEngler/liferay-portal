@@ -91,7 +91,9 @@ public class CompanyIndexFactory implements IndexFactory {
 		}
 	}
 
-	public void setCompanyLocalService(CompanyLocalService companyLocalService) {
+	public void setCompanyLocalService(
+		CompanyLocalService companyLocalService) {
+
 		_companyLocalService = companyLocalService;
 	}
 
