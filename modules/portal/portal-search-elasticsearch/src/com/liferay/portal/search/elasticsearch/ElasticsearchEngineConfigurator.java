@@ -14,8 +14,6 @@
 
 package com.liferay.portal.search.elasticsearch;
 
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.MessageBus;
 import com.liferay.portal.kernel.search.AbstractSearchEngineConfigurator;
 import com.liferay.portal.kernel.search.IndexSearcher;
@@ -113,9 +111,6 @@ public class ElasticsearchEngineConfigurator
 
 		return clazz.getClassLoader();
 	}
-
-	private static Log _log = LogFactoryUtil.getLog(
-		ElasticsearchEngineConfigurator.class);
 
 	private ElasticsearchConnectionManager _elasticsearchConnectionManager;
 	private IndexFactory _indexFactory;
