@@ -56,9 +56,9 @@ public class ElasticsearchEngineConfigurator
 		ClusterHealthRequestBuilder clusterHealthRequestBuilder =
 			clusterAdminClient.prepareHealth();
 
+		clusterHealthRequestBuilder.setTimeout(TimeValue.timeValueSeconds(30));
 		clusterHealthRequestBuilder.setWaitForGreenStatus();
 		clusterHealthRequestBuilder.setWaitForNodes(">1");
-		clusterHealthRequestBuilder.setTimeout(TimeValue.timeValueSeconds(30));
 
 		Future<ClusterHealthResponse> future =
 			clusterHealthRequestBuilder.execute();
@@ -77,7 +77,7 @@ public class ElasticsearchEngineConfigurator
 
 		if (clusterHealthStatus == ClusterHealthStatus.RED) {
 			throw new IllegalStateException(
-				"Elasticsearch cluster not properly initialized");
+				"Unable to initialize Elasticsearch cluster");
 		}
 	}
 

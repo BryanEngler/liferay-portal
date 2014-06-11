@@ -4,15 +4,6 @@
 
 	<!-- Elasticsearch engine adapter -->
 
-	<bean class="com.liferay.portal.search.elasticsearch.ElasticsearchSearchEngine" id="com.liferay.portal.search.elasticsearch.ElasticsearchEngineImpl">
-		<property name="clusteredWrite" value="false" />
-		<property name="elasticsearchConnectionManager" ref="com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectionManager" />
-		<property name="indexFactory" ref="com.liferay.portal.search.elasticsearch.index.IndexFactory" />
-		<property name="indexSearcher" ref="com.liferay.portal.search.elasticsearch.ElasticsearchIndexSearcher" />
-		<property name="indexWriter" ref="com.liferay.portal.search.elasticsearch.ElasticsearchIndexWriter" />
-		<property name="luceneBased" value="true" />
-		<property name="vendor" value="Elasticsearch" />
-	</bean>
 	<bean class="com.liferay.portal.search.elasticsearch.ElasticsearchIndexSearcher" id="com.liferay.portal.search.elasticsearch.ElasticsearchIndexSearcher">
 		<property name="elasticsearchConnectionManager" ref="com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectionManager" />
 		<property name="querySuggester">
@@ -25,6 +16,15 @@
 		<property name="elasticsearchConnectionManager" ref="com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectionManager" />
 		<property name="elasticsearchUpdateDocumentCommand" ref="com.liferay.portal.search.elasticsearch.ElasticsearchUpdateDocumentCommand" />
 		<property name="spellCheckIndexWriter" ref="com.liferay.portal.search.elasticsearch.ElasticsearchSpellCheckIndexWriter" />
+	</bean>
+	<bean class="com.liferay.portal.search.elasticsearch.ElasticsearchSearchEngine" id="com.liferay.portal.search.elasticsearch.ElasticsearchEngineImpl">
+		<property name="clusteredWrite" value="false" />
+		<property name="elasticsearchConnectionManager" ref="com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectionManager" />
+		<property name="indexFactory" ref="com.liferay.portal.search.elasticsearch.index.IndexFactory" />
+		<property name="indexSearcher" ref="com.liferay.portal.search.elasticsearch.ElasticsearchIndexSearcher" />
+		<property name="indexWriter" ref="com.liferay.portal.search.elasticsearch.ElasticsearchIndexWriter" />
+		<property name="luceneBased" value="true" />
+		<property name="vendor" value="Elasticsearch" />
 	</bean>
 	<bean class="com.liferay.portal.search.elasticsearch.ElasticsearchSpellCheckIndexWriter" id="com.liferay.portal.search.elasticsearch.ElasticsearchSpellCheckIndexWriter">
 		<property name="elasticsearchConnectionManager" ref="com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectionManager" />
