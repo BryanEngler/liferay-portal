@@ -43,7 +43,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 
 		if (clusterHealthResponse.getStatus() == ClusterHealthStatus.RED) {
 			throw new IllegalStateException(
-				"Elasticsearch cluster not initialized: " +
+				"Unable to initialize Elasticsearch cluster: " +
 					clusterHealthResponse);
 		}
 
