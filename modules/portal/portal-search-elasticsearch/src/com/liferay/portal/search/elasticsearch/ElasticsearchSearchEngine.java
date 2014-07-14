@@ -171,7 +171,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		_indexFactory = indexFactory;
 	}
 
-	private static final String _BACKUP_REPOSITORY_NAME = "backup_liferay";
+	private static final String _BACKUP_REPOSITORY_NAME = "liferay_backup";
 
 	private static Log _log = LogFactoryUtil.getLog(
 		ElasticsearchSearchEngine.class);
