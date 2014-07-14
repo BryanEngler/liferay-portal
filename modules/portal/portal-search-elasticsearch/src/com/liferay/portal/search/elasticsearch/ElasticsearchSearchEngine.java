@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BaseSearchEngine;
 import com.liferay.portal.kernel.search.SearchException;
-import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnection;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch.index.IndexFactory;
 import com.liferay.portal.search.elasticsearch.util.LogUtil;
@@ -33,8 +32,6 @@ import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotReq
 import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotResponse;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
-import org.elasticsearch.client.AdminClient;
-import org.elasticsearch.client.Client;
 import org.elasticsearch.client.ClusterAdminClient;
 
 /**
@@ -46,14 +43,8 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 	public synchronized String backup(long companyId, String backupName)
 		throws SearchException {
 
-		ElasticsearchConnection elasticsearchConnection =
-			_elasticsearchConnectionManager.getElasticsearchConnection();
-
-		Client client = elasticsearchConnection.getClient();
-
-		AdminClient adminClient = client.admin();
-
-		ClusterAdminClient clusterAdminClient = adminClient.cluster();
+		ClusterAdminClient clusterAdminClient =
+			_elasticsearchConnectionManager.getClusterAdminClient();
 
 		CreateSnapshotRequestBuilder createSnapshotRequestBuilder =
 			clusterAdminClient.prepareCreateSnapshot(
@@ -80,11 +71,8 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 	public void initialize(long companyId) {
 		super.initialize(companyId);
 
-		ElasticsearchConnection elasticsearchConnection =
-			_elasticsearchConnectionManager.getElasticsearchConnection();
-
 		ClusterHealthResponse clusterHealthResponse =
-			elasticsearchConnection.getClusterHealthResponse();
+			_elasticsearchConnectionManager.getClusterHealthResponse();
 
 		if (clusterHealthResponse.getStatus() == ClusterHealthStatus.RED) {
 			throw new IllegalStateException(
@@ -92,12 +80,9 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 					clusterHealthResponse);
 		}
 
-		Client client = elasticsearchConnection.getClient();
-
-		AdminClient adminClient = client.admin();
-
 		try {
-			_indexFactory.createIndices(adminClient, companyId);
+			_indexFactory.createIndices(
+				_elasticsearchConnectionManager.getAdminClient(), companyId);
 		}
 		catch (Exception e) {
 			throw new IllegalStateException(e);
@@ -108,14 +93,8 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 	public synchronized void removeBackup(long companyId, String backupName)
 		throws SearchException {
 
-		ElasticsearchConnection elasticsearchConnection =
-			_elasticsearchConnectionManager.getElasticsearchConnection();
-
-		Client client = elasticsearchConnection.getClient();
-
-		AdminClient adminClient = client.admin();
-
-		ClusterAdminClient clusterAdminClient = adminClient.cluster();
+		ClusterAdminClient clusterAdminClient =
+			_elasticsearchConnectionManager.getClusterAdminClient();
 
 		DeleteSnapshotRequestBuilder deleteSnapshotRequestBuilder =
 			clusterAdminClient.prepareDeleteSnapshot(
@@ -138,15 +117,9 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 	public void removeCompany(long companyId) {
 		super.removeCompany(companyId);
 
-		ElasticsearchConnection elasticsearchConnection =
-			_elasticsearchConnectionManager.getElasticsearchConnection();
-
-		Client client = elasticsearchConnection.getClient();
-
-		AdminClient adminClient = client.admin();
-
 		try {
-			_indexFactory.deleteIndices(adminClient, companyId);
+			_indexFactory.deleteIndices(
+				_elasticsearchConnectionManager.getAdminClient(), companyId);
 		}
 		catch (Exception e) {
 			if (_log.isWarnEnabled()) {
@@ -159,14 +132,8 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 	public synchronized void restore(long companyId, String backupName)
 		throws SearchException {
 
-		ElasticsearchConnection elasticsearchConnection =
-			_elasticsearchConnectionManager.getElasticsearchConnection();
-
-		Client client = elasticsearchConnection.getClient();
-
-		AdminClient adminClient = client.admin();
-
-		ClusterAdminClient clusterAdminClient = adminClient.cluster();
+		ClusterAdminClient clusterAdminClient =
+			_elasticsearchConnectionManager.getClusterAdminClient();
 
 		RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder =
 			clusterAdminClient.prepareRestoreSnapshot(
@@ -185,7 +152,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		}
 
 		ClusterHealthResponse clusterHealthResponse =
-			elasticsearchConnection.getClusterHealthResponse();
+			_elasticsearchConnectionManager.getClusterHealthResponse();
 
 		if (clusterHealthResponse.getStatus() == ClusterHealthStatus.RED) {
 			throw new IllegalStateException(
