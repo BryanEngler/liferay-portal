@@ -52,6 +52,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		Client client = elasticsearchConnection.getClient();
 
 		AdminClient adminClient = client.admin();
+
 		ClusterAdminClient clusterAdminClient = adminClient.cluster();
 
 		CreateSnapshotRequestBuilder createSnapshotRequestBuilder =
@@ -113,6 +114,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		Client client = elasticsearchConnection.getClient();
 
 		AdminClient adminClient = client.admin();
+
 		ClusterAdminClient clusterAdminClient = adminClient.cluster();
 
 		DeleteSnapshotRequestBuilder deleteSnapshotRequestBuilder =
@@ -163,6 +165,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		Client client = elasticsearchConnection.getClient();
 
 		AdminClient adminClient = client.admin();
+
 		ClusterAdminClient clusterAdminClient = adminClient.cluster();
 
 		RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder =
