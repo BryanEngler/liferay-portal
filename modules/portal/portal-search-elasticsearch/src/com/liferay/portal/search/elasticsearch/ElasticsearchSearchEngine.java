@@ -25,7 +25,6 @@ import com.liferay.portal.search.elasticsearch.util.LogUtil;
 
 import java.util.concurrent.Future;
 
-import com.opensymphony.oscache.util.StringUtil;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequestBuilder;
