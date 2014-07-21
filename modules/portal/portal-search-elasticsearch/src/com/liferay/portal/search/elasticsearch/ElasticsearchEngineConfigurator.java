@@ -59,7 +59,6 @@ public class ElasticsearchEngineConfigurator
 		_messageBus = messageBus;
 	}
 
-
 	@Override
 	protected Destination createSearchReaderDestination(
 		String searchReaderDestinationName) {
@@ -122,7 +121,6 @@ public class ElasticsearchEngineConfigurator
 	}
 
 	private ElasticsearchConnectionManager _elasticsearchConnectionManager;
-
 	private IndexSearcher _indexSearcher;
 	private IndexWriter _indexWriter;
 	private MessageBus _messageBus;
