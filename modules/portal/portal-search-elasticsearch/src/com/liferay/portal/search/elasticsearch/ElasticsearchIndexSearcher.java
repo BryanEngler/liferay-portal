@@ -101,6 +101,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		searchRequestBuilder.setQuery(queryBuilder);
 
 		searchRequestBuilder.setTypes(DocumentTypes.LIFERAY);
+
 		SearchRequest searchRequest = searchRequestBuilder.request();
 
 		ActionFuture<SearchResponse> future = client.search(searchRequest);
