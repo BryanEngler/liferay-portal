@@ -42,6 +42,7 @@ import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PropertiesParamUtil;
@@ -865,6 +866,14 @@ public class EditLayoutsAction extends PortletAction {
 		Layout layout = null;
 		UnicodeProperties layoutTypeSettingsProperties = null;
 		String oldFriendlyURL = StringPool.BLANK;
+
+		String name = nameMap.get(LocaleUtil.getSiteDefault());
+
+		if (Validator.isNull(name)) {
+			nameMap.put(
+				LocaleUtil.getSiteDefault(), ParamUtil.getString(
+					actionRequest, "name"));
+		}
 
 		if (cmd.equals(Constants.ADD)) {
 
