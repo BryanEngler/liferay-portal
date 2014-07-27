@@ -176,7 +176,7 @@ public class DefaultElasticsearchDocumentFactory
 			return value;
 		}
 		else {
-			Class numericClass = field.getNumericClass();
+			Class<?> numericClass = field.getNumericClass();
 
 			if (numericClass.equals(BigDecimal.class)) {
 				return new BigDecimal(value);
