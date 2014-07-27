@@ -187,17 +187,21 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		GetRepositoriesRequestBuilder getRepositoriesRequestBuilder =
 			clusterAdminClient.prepareGetRepositories(_BACKUP_REPOSITORY_NAME);
 
-		Future<GetRepositoriesResponse> future =
+		Future<GetRepositoriesResponse> getRepositoriesResponseFuture =
 			getRepositoriesRequestBuilder.execute();
 
-		GetRepositoriesResponse getRepositoriesResponse = future.get();
+		GetRepositoriesResponse getRepositoriesResponse =
+			getRepositoriesResponseFuture.get();
 
-		ImmutableList<RepositoryMetaData> repositoriesMetaData =
+		ImmutableList<RepositoryMetaData> repositoryMetaDatas =
 			getRepositoriesResponse.repositories();
 
-		if (repositoriesMetaData.size() > 0) {
+		if (!repositoryMetaDatas.isEmpty()) {
 			return;
 		}
+
+		PutRepositoryRequestBuilder putRepositoryRequestBuilder =
+			clusterAdminClient.preparePutRepository(_BACKUP_REPOSITORY_NAME);
 
 		ImmutableSettings.Builder builder = ImmutableSettings.settingsBuilder();
 
@@ -205,16 +209,15 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 
 		builder.put("location", location);
 
-		PutRepositoryRequestBuilder putRepositoryRequestBuilder =
-			clusterAdminClient.preparePutRepository(_BACKUP_REPOSITORY_NAME);
-
-		putRepositoryRequestBuilder.setType("fs");
 		putRepositoryRequestBuilder.setSettings(builder);
 
-		Future<PutRepositoryResponse> execute =
+		putRepositoryRequestBuilder.setType("fs");
+
+		Future<PutRepositoryResponse> putRepositoryResponseFuture =
 			putRepositoryRequestBuilder.execute();
 
-		PutRepositoryResponse putRepositoryResponse = execute.get();
+		PutRepositoryResponse putRepositoryResponse =
+			putRepositoryResponseFuture.get();
 
 		LogUtil.logActionResponse(_log, putRepositoryResponse);
 	}
