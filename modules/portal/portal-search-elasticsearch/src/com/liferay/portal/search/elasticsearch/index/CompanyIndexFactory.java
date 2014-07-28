@@ -52,7 +52,7 @@ public class CompanyIndexFactory implements IndexFactory {
 		CreateIndexRequestBuilder createIndexRequestBuilder =
 			indicesAdminClient.prepareCreate(String.valueOf(companyId));
 
-		if (Validator.isNotNull(_indexConfigFile)) {
+		if (Validator.isNotNull(_indexConfigFileName)) {
 			ImmutableSettings.Builder builder =
 				ImmutableSettings.settingsBuilder();
 
@@ -60,7 +60,7 @@ public class CompanyIndexFactory implements IndexFactory {
 
 			builder.classLoader(clazz.getClassLoader());
 
-			builder.loadFromClasspath(_indexConfigFile);
+			builder.loadFromClasspath(_indexConfigFileName);
 
 			createIndexRequestBuilder.setSettings(builder);
 		}
@@ -103,8 +103,8 @@ public class CompanyIndexFactory implements IndexFactory {
 		LogUtil.logActionResponse(_log, deleteIndexResponse);
 	}
 
-	public void setIndexConfigFile(String indexConfigFile) {
-		_indexConfigFile = indexConfigFile;
+	public void setIndexConfigFileName(String indexConfigFileName) {
+		_indexConfigFileName = indexConfigFileName;
 	}
 
 	public void setTypeMappings(Map<String, String> typeMappings) {
@@ -128,7 +128,7 @@ public class CompanyIndexFactory implements IndexFactory {
 
 	private static Log _log = LogFactoryUtil.getLog(CompanyIndexFactory.class);
 
-	private String _indexConfigFile;
+	private String _indexConfigFileName;
 	private Map<String, String> _typeMappings = new HashMap<String, String>();
 
 }
