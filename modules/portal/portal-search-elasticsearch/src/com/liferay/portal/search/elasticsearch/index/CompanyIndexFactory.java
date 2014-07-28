@@ -56,7 +56,9 @@ public class CompanyIndexFactory implements IndexFactory {
 			ImmutableSettings.Builder builder =
 				ImmutableSettings.settingsBuilder();
 
-			builder.classLoader(getClass().getClassLoader());
+			Class<?> clazz = getClass();
+
+			builder.classLoader(clazz.getClassLoader());
 
 			builder.loadFromClasspath(_indexConfigFile);
 
