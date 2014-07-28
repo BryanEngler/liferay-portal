@@ -16,6 +16,7 @@ package com.liferay.portlet.shopping.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -32,6 +33,7 @@ import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portlet.amazonrankings.model.AmazonRankings;
 import com.liferay.portlet.amazonrankings.util.AmazonRankingsUtil;
 import com.liferay.portlet.shopping.AmazonException;
+import com.liferay.portlet.shopping.DupilcateFieldNameException;
 import com.liferay.portlet.shopping.DuplicateItemSKUException;
 import com.liferay.portlet.shopping.ItemLargeImageNameException;
 import com.liferay.portlet.shopping.ItemLargeImageSizeException;
@@ -113,7 +115,7 @@ public class ShoppingItemLocalServiceImpl
 			user.getCompanyId(), 0, sku, name, smallImage, smallImageURL,
 			smallImageFile, smallImageBytes, mediumImage, mediumImageURL,
 			mediumImageFile, mediumImageBytes, largeImage, largeImageURL,
-			largeImageFile, largeImageBytes);
+			largeImageFile, largeImageBytes, itemFields);
 
 		long itemId = counterLocalService.increment();
 
@@ -491,7 +493,7 @@ public class ShoppingItemLocalServiceImpl
 			user.getCompanyId(), itemId, sku, name, smallImage, smallImageURL,
 			smallImageFile, smallImageBytes, mediumImage, mediumImageURL,
 			mediumImageFile, mediumImageBytes, largeImage, largeImageURL,
-			largeImageFile, largeImageBytes);
+			largeImageFile, largeImageBytes, itemFields);
 
 		item.setModifiedDate(new Date());
 		item.setCategoryId(categoryId);
@@ -815,7 +817,8 @@ public class ShoppingItemLocalServiceImpl
 			boolean smallImage, String smallImageURL, File smallImageFile,
 			byte[] smallImageBytes, boolean mediumImage, String mediumImageURL,
 			File mediumImageFile, byte[] mediumImageBytes, boolean largeImage,
-			String largeImageURL, File largeImageFile, byte[] largeImageBytes)
+			String largeImageURL, File largeImageFile, byte[] largeImageBytes,
+			List<ShoppingItemField> itemFields)
 		throws PortalException {
 
 		if (Validator.isNull(sku)) {
@@ -838,6 +841,18 @@ public class ShoppingItemLocalServiceImpl
 
 		if (Validator.isNull(name)) {
 			throw new ItemNameException();
+		}
+
+		List<String> fieldNames = new ArrayList<String>();
+
+		for (ShoppingItemField shoppingItemField : itemFields) {
+			if (fieldNames.contains(shoppingItemField.getName()))  {
+				throw new DupilcateFieldNameException(
+					shoppingItemField.getName());
+			}
+			else {
+				fieldNames.add(shoppingItemField.getName());
+			}
 		}
 
 		String[] imageExtensions = PrefsPropsUtil.getStringArray(

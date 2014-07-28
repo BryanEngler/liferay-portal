@@ -46,6 +46,7 @@ page import="com.liferay.portlet.shopping.CouponNameException" %><%@
 page import="com.liferay.portlet.shopping.CouponStartDateException" %><%@
 page import="com.liferay.portlet.shopping.DuplicateCouponCodeException" %><%@
 page import="com.liferay.portlet.shopping.DuplicateItemSKUException" %><%@
+page import="com.liferay.portlet.shopping.DupilcateFieldNameException" %><%@
 page import="com.liferay.portlet.shopping.ItemLargeImageNameException" %><%@
 page import="com.liferay.portlet.shopping.ItemLargeImageSizeException" %><%@
 page import="com.liferay.portlet.shopping.ItemMediumImageNameException" %><%@
