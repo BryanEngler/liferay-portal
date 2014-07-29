@@ -121,10 +121,29 @@ public class DefaultElasticsearchDocumentFactory
 					String sortableFieldName =
 						DocumentImpl.getSortableFieldName(localizedName);
 
-					addField(
-						xContentBuilder, field, sortableFieldName, value);
+					addField(xContentBuilder, field, sortableFieldName, value);
 				}
 			}
+		}
+	}
+
+	protected void addField(
+			XContentBuilder xContentBuilder, Field field, String fieldName,
+			String... values)
+		throws IOException {
+
+		xContentBuilder.field(fieldName);
+
+		if (field.isArray() || (values.length > 1)) {
+			xContentBuilder.startArray();
+		}
+
+		for (String value : values) {
+			xContentBuilder.value(translateValue(field, value));
+		}
+
+		if (field.isArray() || (values.length > 1)) {
+			xContentBuilder.endArray();
 		}
 	}
 
@@ -164,26 +183,6 @@ public class DefaultElasticsearchDocumentFactory
 		}
 		else {
 			xContentBuilder.endObject();
-		}
-	}
-
-	protected void addField(
-			XContentBuilder xContentBuilder, Field field, String fieldName,
-			String... values)
-		throws IOException {
-
-		xContentBuilder.field(fieldName);
-
-		if (field.isArray() || (values.length > 1)) {
-			xContentBuilder.startArray();
-		}
-
-		for (String value : values) {
-			xContentBuilder.value(translateValue(field, value));
-		}
-
-		if (field.isArray() || (values.length > 1)) {
-			xContentBuilder.endArray();
 		}
 	}
 
