@@ -1,106 +1,5 @@
 {
 	"_default_": {
-		"properties": {
-			"assetCategoryIds": {
-				"index": "not_analyzed",
-				"store": "yes",
-				"type": "string"
-			},
-			"assetTagIds": {
-				"index": "not_analyzed",
-				"store": "yes",
-				"type": "string"
-			},
-			"createDate": {
-				"index": "not_analyzed",
-				"type": "string"
-			},
-			"companyId": {
-				"index": "not_analyzed",
-				"store": "yes",
-				"type": "string"
-			},
-			"entryClassPK": {
-				"index": "not_analyzed",
-				"store": "yes",
-				"type": "string"
-			},
-			"entryClassName": {
-				"index": "not_analyzed",
-				"store": "yes",
-				"type": "string"
-			},
-			"expirationDate": {
-				"index": "not_analyzed",
-				"type": "string"
-			},
-			"groupId": {
-				"index": "not_analyzed",
-				"store": "yes",
-				"type": "string"
-			},
-			"modified": {
-				"index": "not_analyzed",
-				"type": "string"
-			},
-			"portletId": {
-				"index": "not_analyzed",
-				"store": "yes",
-				"type": "string"
-			},
-			"publishDate": {
-				"index": "not_analyzed",
-				"type": "string"
-			},
-			"removedDate": {
-				"index": "not_analyzed",
-				"type": "string"
-			},
-			"removedByUser": {
-				"index": "not_analyzed",
-				"type": "string"
-			},
-			"rootEntryClassName": {
-				"index": "not_analyzed",
-				"store": "yes",
-				"type": "string"
-			},
-			"rootEntryClassPK": {
-				"index": "not_analyzed",
-				"store": "yes",
-				"type": "string"
-			},
-			"scopeGroupId": {
-				"index": "not_analyzed",
-				"store": "yes",
-				"type": "string"
-			},
-			"status": {
-				"index": "not_analyzed",
-				"type": "string"
-			},
-			"type": {
-				"index": "not_analyzed",
-				"type": "string"
-			},
-			"uid": {
-				"index": "not_analyzed",
-				"store": "yes",
-				"type": "string"
-			},
-			"userId": {
-				"index": "not_analyzed",
-				"type": "string"
-			},
-			"userName": {
-				"index": "not_analyzed",
-				"type": "string"
-			},
-			"visible": {
-				"index": "not_analyzed",
-				"type": "string"
-			}
-		},
 		"dynamic_templates": [
 			{
 				"template__sortable": {
@@ -477,6 +376,107 @@
 					}
 				}
 			}
-		]
+		],
+		"properties": {
+			"assetCategoryIds": {
+				"index": "not_analyzed",
+				"store": "yes",
+				"type": "string"
+			},
+			"assetTagIds": {
+				"index": "not_analyzed",
+				"store": "yes",
+				"type": "string"
+			},
+			"createDate": {
+				"index": "not_analyzed",
+				"type": "string"
+			},
+			"companyId": {
+				"index": "not_analyzed",
+				"store": "yes",
+				"type": "string"
+			},
+			"entryClassPK": {
+				"index": "not_analyzed",
+				"store": "yes",
+				"type": "string"
+			},
+			"entryClassName": {
+				"index": "not_analyzed",
+				"store": "yes",
+				"type": "string"
+			},
+			"expirationDate": {
+				"index": "not_analyzed",
+				"type": "string"
+			},
+			"groupId": {
+				"index": "not_analyzed",
+				"store": "yes",
+				"type": "string"
+			},
+			"modified": {
+				"index": "not_analyzed",
+				"type": "string"
+			},
+			"portletId": {
+				"index": "not_analyzed",
+				"store": "yes",
+				"type": "string"
+			},
+			"publishDate": {
+				"index": "not_analyzed",
+				"type": "string"
+			},
+			"removedDate": {
+				"index": "not_analyzed",
+				"type": "string"
+			},
+			"removedByUser": {
+				"index": "not_analyzed",
+				"type": "string"
+			},
+			"rootEntryClassName": {
+				"index": "not_analyzed",
+				"store": "yes",
+				"type": "string"
+			},
+			"rootEntryClassPK": {
+				"index": "not_analyzed",
+				"store": "yes",
+				"type": "string"
+			},
+			"scopeGroupId": {
+				"index": "not_analyzed",
+				"store": "yes",
+				"type": "string"
+			},
+			"status": {
+				"index": "not_analyzed",
+				"type": "string"
+			},
+			"type": {
+				"index": "not_analyzed",
+				"type": "string"
+			},
+			"uid": {
+				"index": "not_analyzed",
+				"store": "yes",
+				"type": "string"
+			},
+			"userId": {
+				"index": "not_analyzed",
+				"type": "string"
+			},
+			"userName": {
+				"index": "not_analyzed",
+				"type": "string"
+			},
+			"visible": {
+				"index": "not_analyzed",
+				"type": "string"
+			}
+		}
 	}
 }
