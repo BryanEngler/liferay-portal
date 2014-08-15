@@ -1,11 +1,5 @@
 {
 	"KeywordQueryDocumentType": {
-		"properties": {
-			"priority": {
-				"index": "not_analyzed",
-				"type": "float"
-			}
-		},
 		"dynamic_templates": [
 			{
 				"template_": {
@@ -29,6 +23,12 @@
 					}
 				}
 			}
-		]
+		],
+		"properties": {
+			"priority": {
+				"index": "not_analyzed",
+				"type": "float"
+			}
+		}
 	}
 }
