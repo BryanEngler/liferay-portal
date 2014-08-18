@@ -418,11 +418,12 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		hits.setDocs(documents.toArray(new Document[documents.size()]));
 		hits.setLength((int)searchHits.getTotalHits());
+		hits.setQuery(query);
 		hits.setQueryTerms(queryTerms.toArray(new String[queryTerms.size()]));
 		hits.setScores(scores.toArray(new Float[scores.size()]));
 
-		hits.setQuery(query);
 		TimeValue timeValue = searchResponse.getTook();
+
 		hits.setSearchTime((float)timeValue.getSecondsFrac());
 
 		return hits;
