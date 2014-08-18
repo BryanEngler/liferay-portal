@@ -392,13 +392,13 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			searchHits = searchResponse.getHits();
 		}
 
+		updateFacetCollectors(searchContext, searchResponse);
+
 		Hits hits = new HitsImpl();
 
 		List<Document> documents = new ArrayList<Document>();
 		Set<String> queryTerms = new HashSet<String>();
 		List<Float> scores = new ArrayList<Float>();
-
-		updateFacetCollectors(searchContext, searchResponse);
 
 		if (searchHits.totalHits() > 0) {
 			SearchHit[] searchHitsArray = searchHits.getHits();
