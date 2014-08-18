@@ -336,8 +336,8 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		if (_log.isInfoEnabled()) {
 			_log.info(
-				"Searching " + queryBuilder.toString() + "." +
-					"The search engine used " + searchResponse.getTook());
+				"The search engine processed " + queryBuilder.toString() +
+					"in " + searchResponse.getTook());
 		}
 
 		return searchResponse;
