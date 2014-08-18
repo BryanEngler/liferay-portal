@@ -370,9 +370,11 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		SearchResponse searchResponse, SearchContext searchContext,
 		Query query) {
 
-		long total = searchResponse.getHits().getTotalHits();
+		SearchHits searchHits = searchResponse.getHits();
+
 		int[] startAndEnd = SearchPaginationUtil.calculateStartAndEnd(
-			searchContext.getStart(), searchContext.getEnd(), (int)total);
+			searchContext.getStart(), searchContext.getEnd(),
+			(int)searchHits.getTotalHits());
 
 		int start = startAndEnd[0];
 		int end = startAndEnd[1];
@@ -382,15 +384,15 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			((start != searchContext.getStart()) ||
 			 (end != searchContext.getEnd()))) {
 
-			searchContext.setStart(start);
 			searchContext.setEnd(end);
+			searchContext.setStart(start);
 
 			searchResponse = doSearch(searchContext, query);
+
+			searchHits = searchResponse.getHits();
 		}
 
 		Hits hits = new HitsImpl();
-
-		SearchHits searchHits = searchResponse.getHits();
 
 		List<Document> documents = new ArrayList<Document>();
 		Set<String> queryTerms = new HashSet<String>();
