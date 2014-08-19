@@ -146,9 +146,11 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 	@Override
 	public synchronized void restore(long companyId, String backupName)
 		throws SearchException {
+		
+		AdminClient adminClient =
+			_elasticsearchConnectionManager.getAdminClient();
 
-		IndicesAdminClient indicesAdminClient =
-			_elasticsearchConnectionManager.getAdminClient().indices();
+		IndicesAdminClient indicesAdminClient = adminClient.indices();
 
 		CloseIndexRequestBuilder closeIndexRequestBuilder =
 			indicesAdminClient.prepareClose(String.valueOf(companyId));
@@ -224,11 +226,10 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 				return;
 			}
 		}
-		catch (ExecutionException e) {
+		catch (ExecutionException ee) {
 			if (e.getCause() instanceof RepositoryMissingException) {
 				if (_log.isInfoEnabled()) {
-					_log.info(
-						"Repository not found, creating new repository", e);
+					_log.info("Creating a new backup repository", e);
 				}
 			}
 			else {
