@@ -146,7 +146,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 	@Override
 	public synchronized void restore(long companyId, String backupName)
 		throws SearchException {
-		
+
 		AdminClient adminClient =
 			_elasticsearchConnectionManager.getAdminClient();
 
