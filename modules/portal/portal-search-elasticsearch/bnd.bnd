@@ -16,4 +16,3 @@ Include-Resource:\
 	${replace;${libs};^;@lib/},\
 	classes,\
  	META-INF/services=src/META-INF/services
-Private-Package: com.liferay.portal.search.elasticsearch.*
