@@ -40,6 +40,7 @@ import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotR
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
 import org.elasticsearch.action.admin.indices.close.CloseIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.close.CloseIndexResponse;
+import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.client.IndicesAdminClient;
 import org.elasticsearch.cluster.metadata.RepositoryMetaData;
@@ -227,13 +228,13 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 			}
 		}
 		catch (ExecutionException ee) {
-			if (e.getCause() instanceof RepositoryMissingException) {
+			if (ee.getCause() instanceof RepositoryMissingException) {
 				if (_log.isInfoEnabled()) {
-					_log.info("Creating a new backup repository", e);
+					_log.info("Creating a new backup repository", ee);
 				}
 			}
 			else {
-				throw e;
+				throw ee;
 			}
 		}
 
