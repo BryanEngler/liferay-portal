@@ -90,11 +90,11 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		try {
 			int total = (int)searchCount(searchContext, query);
 
-			if ((searchContext.getStart() == QueryUtil.ALL_POS) &&
-				(searchContext.getEnd() == QueryUtil.ALL_POS)) {
+			if ((searchContext.getEnd() == QueryUtil.ALL_POS) &&
+				(searchContext.getStart() == QueryUtil.ALL_POS)) {
 
-				searchContext.setStart(0);
 				searchContext.setEnd(total);
+				searchContext.setStart(0);
 			}
 
 			int[] startAndEnd = SearchPaginationUtil.calculateStartAndEnd(
