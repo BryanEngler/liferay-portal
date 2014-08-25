@@ -65,8 +65,6 @@
 
 	<!-- Elasticsearch facet -->
 
-	<bean class="com.liferay.portal.search.elasticsearch.facet.DefaultFacetProcessor" id="com.liferay.portal.search.elasticsearch.facet.DefaultFacetProcessor" />
-	<bean class="com.liferay.portal.search.elasticsearch.facet.RangeFacetProcessor" id="com.liferay.portal.search.elasticsearch.facet.RangeFacetProcessor" />
 	<bean class="com.liferay.portal.search.elasticsearch.facet.CompositeFacetProcessor" id="com.liferay.portal.search.elasticsearch.facet.CompositeFacetProcessor">
 		<property name="defaultFacetProcessor" ref="com.liferay.portal.search.elasticsearch.facet.DefaultFacetProcessor" />
 		<property name="facetProcessors">
@@ -76,6 +74,8 @@
 			</map>
 		</property>
 	</bean>
+	<bean class="com.liferay.portal.search.elasticsearch.facet.DefaultFacetProcessor" id="com.liferay.portal.search.elasticsearch.facet.DefaultFacetProcessor" />
+	<bean class="com.liferay.portal.search.elasticsearch.facet.RangeFacetProcessor" id="com.liferay.portal.search.elasticsearch.facet.RangeFacetProcessor" />
 
 	<!-- References -->
 
