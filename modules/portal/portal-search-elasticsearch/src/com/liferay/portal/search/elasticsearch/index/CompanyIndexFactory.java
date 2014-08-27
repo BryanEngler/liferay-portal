@@ -136,7 +136,7 @@ public class CompanyIndexFactory implements IndexFactory {
 			if (key.startsWith(_PREFIX)) {
 				String value = MapUtil.getString(properties, key);
 
-				typeMappings.put(key.substring(_PREFIX_LENGHT), value);
+				typeMappings.put(key.substring(_PREFIX.length()), value);
 			}
 		}
 
@@ -159,8 +159,6 @@ public class CompanyIndexFactory implements IndexFactory {
 	}
 
 	private static final String _PREFIX = "typeMappings.";
-
-	private static final int _PREFIX_LENGHT = _PREFIX.length();
 
 	private static Log _log = LogFactoryUtil.getLog(CompanyIndexFactory.class);
 
