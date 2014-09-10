@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.upgrade.v7_0_0.util.AssetEntryTable;
@@ -57,7 +58,7 @@ public class UpgradeAsset extends UpgradeProcess {
 		updateAssetVocabularies();
 	}
 
-	protected long getDDMStructureId(String structureId) throws Exception {
+	/*protected long getDDMStructureId(String structureId) throws Exception {
 		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -81,7 +82,7 @@ public class UpgradeAsset extends UpgradeProcess {
 		finally {
 			DataAccess.cleanUp(con, ps, rs);
 		}
-	}
+	}*/
 
 	protected void updateAssetClassTypeId() throws Exception {
 		long classNameId = PortalUtil.getClassNameId(JournalArticle.class);
@@ -103,12 +104,15 @@ public class UpgradeAsset extends UpgradeProcess {
 				long resourcePrimKey = rs.getLong("resourcePrimKey");
 				String structureId = rs.getString("structureId");
 
-				long DDMStructureId = getDDMStructureId(structureId);
+				/*long DDMStructureId = getDDMStructureId(structureId);
 
 				runSQL(
 					"update AssetEntry set classTypeId = " +
 						DDMStructureId + " where classNameId = " +
-							classNameId + " and classPK = " + resourcePrimKey);
+							classNameId + " and classPK = " + resourcePrimKey);*/
+
+				runSQL(
+					"update AssetEntry set classTypeId = (select structureId from DDMStructure where structureKey = \"" + structureId + "\") where classNameId = " + classNameId + " and classPK = " + resourcePrimKey);
 			}
 		}
 		finally {
