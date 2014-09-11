@@ -262,8 +262,36 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		setVendor(MapUtil.getString(properties, "vendor"));
 	}
 
-	protected boolean hasBackupRepository(
-			ClusterAdminClient clusterAdminClient)
+	protected void createBackupRepository(ClusterAdminClient clusterAdminClient)
+		throws Exception {
+
+		if (hasBackupRepository(clusterAdminClient)) {
+			return;
+		}
+
+		PutRepositoryRequestBuilder putRepositoryRequestBuilder =
+			clusterAdminClient.preparePutRepository(_BACKUP_REPOSITORY_NAME);
+
+		ImmutableSettings.Builder builder = ImmutableSettings.settingsBuilder();
+
+		String location = SystemProperties.get("java.io.tmpdir") + "/es_backup";
+
+		builder.put("location", location);
+
+		putRepositoryRequestBuilder.setSettings(builder);
+
+		putRepositoryRequestBuilder.setType("fs");
+
+		Future<PutRepositoryResponse> putRepositoryResponseFuture =
+			putRepositoryRequestBuilder.execute();
+
+		PutRepositoryResponse putRepositoryResponse =
+			putRepositoryResponseFuture.get();
+
+		LogUtil.logActionResponse(_log, putRepositoryResponse);
+	}
+
+	protected boolean hasBackupRepository(ClusterAdminClient clusterAdminClient)
 		throws Exception {
 
 		GetRepositoriesRequestBuilder getRepositoriesRequestBuilder =
@@ -293,35 +321,6 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 				throw ee;
 			}
 		}
-	}
-
-	protected void createBackupRepository(ClusterAdminClient clusterAdminClient)
-		throws Exception {
-
-		if (hasBackupRepository(clusterAdminClient)) {
-			return;
-		}
-
-		PutRepositoryRequestBuilder putRepositoryRequestBuilder =
-			clusterAdminClient.preparePutRepository(_BACKUP_REPOSITORY_NAME);
-
-		ImmutableSettings.Builder builder = ImmutableSettings.settingsBuilder();
-
-		String location = SystemProperties.get("java.io.tmpdir") + "/es_backup";
-
-		builder.put("location", location);
-
-		putRepositoryRequestBuilder.setSettings(builder);
-
-		putRepositoryRequestBuilder.setType("fs");
-
-		Future<PutRepositoryResponse> putRepositoryResponseFuture =
-			putRepositoryRequestBuilder.execute();
-
-		PutRepositoryResponse putRepositoryResponse =
-			putRepositoryResponseFuture.get();
-
-		LogUtil.logActionResponse(_log, putRepositoryResponse);
 	}
 
 	private static final String _BACKUP_REPOSITORY_NAME = "liferay_backup";
