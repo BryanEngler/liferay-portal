@@ -130,7 +130,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 			_elasticsearchConnectionManager.getClusterAdminClient();
 
 		try {
-			if (!backupRepositoryExists(clusterAdminClient)) {
+			if (!hasBackupRepository(clusterAdminClient)) {
 				return;
 			}
 
@@ -262,7 +262,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		setVendor(MapUtil.getString(properties, "vendor"));
 	}
 
-	protected boolean backupRepositoryExists(
+	protected boolean hasBackupRepository(
 			ClusterAdminClient clusterAdminClient)
 		throws Exception {
 
@@ -302,7 +302,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 	protected void createBackupRepository(ClusterAdminClient clusterAdminClient)
 		throws Exception {
 
-		if (backupRepositoryExists(clusterAdminClient)) {
+		if (hasBackupRepository(clusterAdminClient)) {
 			return;
 		}
 
