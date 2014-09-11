@@ -287,10 +287,6 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		}
 		catch (ExecutionException ee) {
 			if (ee.getCause() instanceof RepositoryMissingException) {
-				if (_log.isInfoEnabled()) {
-					_log.info("Creating a new backup repository", ee);
-				}
-
 				return false;
 			}
 			else {
