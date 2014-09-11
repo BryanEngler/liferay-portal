@@ -94,6 +94,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		try {
 			int total = (int)searchCount(searchContext, query);
+
 			int start = searchContext.getStart();
 			int end = searchContext.getEnd();
 
