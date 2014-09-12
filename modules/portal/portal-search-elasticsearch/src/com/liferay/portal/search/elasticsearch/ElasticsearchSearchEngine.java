@@ -80,7 +80,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 
 		backupName = StringUtil.toLowerCase(backupName);
 
-		validateRepositoryName(backupName);
+		validateBackupName(backupName);
 
 		ClusterAdminClient clusterAdminClient =
 			_elasticsearchConnectionManager.getClusterAdminClient();
@@ -331,7 +331,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		}
 	}
 
-	protected void validateRepositoryName(String repositoryName)
+	protected void validateBackupName(String repositoryName)
 		throws SearchException {
 
 		if (Validator.isNull(repositoryName)) {
