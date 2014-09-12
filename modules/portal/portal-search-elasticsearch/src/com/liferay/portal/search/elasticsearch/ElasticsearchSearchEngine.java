@@ -339,17 +339,13 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 				"Backup name must not be an empty string");
 		}
 
-		if (StringUtil.contains(backupName, StringPool.TAB)) {
-			throw new SearchException("Backup name must not contain tabs");
-		}
-
-		if (StringUtil.contains(backupName, StringPool.SPACE)) {
-			throw new SearchException(
-				"Backup name must not contain spaces");
-		}
-
 		if (StringUtil.contains(backupName, StringPool.COMMA)) {
 			throw new SearchException("Backup name must not contain comma");
+		}
+
+		if (StringUtil.startsWith(backupName, StringPool.DASH)) {
+			throw new SearchException(
+				"Backup name must not start with dash");
 		}
 
 		if (StringUtil.contains(backupName, StringPool.POUND)) {
@@ -357,9 +353,13 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 				"Backup name must not contain hash sign");
 		}
 
-		if (StringUtil.startsWith(backupName, StringPool.DASH)) {
+		if (StringUtil.contains(backupName, StringPool.SPACE)) {
 			throw new SearchException(
-				"Backup name must not start with dash");
+				"Backup name must not contain spaces");
+		}
+
+		if (StringUtil.contains(backupName, StringPool.TAB)) {
+			throw new SearchException("Backup name must not contain tabs");
 		}
 
 		for (char c : backupName.toCharArray()) {
