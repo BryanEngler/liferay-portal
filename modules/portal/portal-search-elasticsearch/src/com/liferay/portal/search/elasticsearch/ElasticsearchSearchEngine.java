@@ -331,41 +331,41 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		}
 	}
 
-	protected void validateBackupName(String repositoryName)
+	protected void validateBackupName(String backupName)
 		throws SearchException {
 
-		if (Validator.isNull(repositoryName)) {
+		if (Validator.isNull(backupName)) {
 			throw new SearchException(
-				"Repository name must not be an empty string");
+				"Backup name must not be an empty string");
 		}
 
-		if (StringUtil.contains(repositoryName, StringPool.TAB)) {
-			throw new SearchException("Repository name must not contain tabs");
+		if (StringUtil.contains(backupName, StringPool.TAB)) {
+			throw new SearchException("Backup name must not contain tabs");
 		}
 
-		if (StringUtil.contains(repositoryName, StringPool.SPACE)) {
+		if (StringUtil.contains(backupName, StringPool.SPACE)) {
 			throw new SearchException(
-				"Repository name must not contain spaces");
+				"Backup name must not contain spaces");
 		}
 
-		if (StringUtil.contains(repositoryName, StringPool.COMMA)) {
-			throw new SearchException("Repository name must not contain comma");
+		if (StringUtil.contains(backupName, StringPool.COMMA)) {
+			throw new SearchException("Backup name must not contain comma");
 		}
 
-		if (StringUtil.contains(repositoryName, StringPool.POUND)) {
+		if (StringUtil.contains(backupName, StringPool.POUND)) {
 			throw new SearchException(
-				"Repository name must not contain hash sign");
+				"Backup name must not contain hash sign");
 		}
 
-		if (StringUtil.startsWith(repositoryName, StringPool.DASH)) {
+		if (StringUtil.startsWith(backupName, StringPool.DASH)) {
 			throw new SearchException(
-				"Repository name must not start with dash");
+				"Backup name must not start with dash");
 		}
 
-		for (char c : repositoryName.toCharArray()) {
+		for (char c : backupName.toCharArray()) {
 			if (Strings.INVALID_FILENAME_CHARS.contains(c)) {
 				throw new SearchException(
-					"Repository name must not contain invalid file name " +
+					"Backup name must not contain invalid file name " +
 						"characters");
 			}
 		}
