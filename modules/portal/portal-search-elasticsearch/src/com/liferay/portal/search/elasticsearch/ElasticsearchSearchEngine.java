@@ -344,18 +344,15 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		}
 
 		if (StringUtil.startsWith(backupName, StringPool.DASH)) {
-			throw new SearchException(
-				"Backup name must not start with dash");
+			throw new SearchException("Backup name must not start with dash");
 		}
 
 		if (StringUtil.contains(backupName, StringPool.POUND)) {
-			throw new SearchException(
-				"Backup name must not contain hash sign");
+			throw new SearchException("Backup name must not contain hash sign");
 		}
 
 		if (StringUtil.contains(backupName, StringPool.SPACE)) {
-			throw new SearchException(
-				"Backup name must not contain spaces");
+			throw new SearchException("Backup name must not contain spaces");
 		}
 
 		if (StringUtil.contains(backupName, StringPool.TAB)) {
