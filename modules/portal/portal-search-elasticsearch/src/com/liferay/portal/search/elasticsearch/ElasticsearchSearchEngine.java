@@ -78,6 +78,8 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 	public synchronized String backup(long companyId, String backupName)
 		throws SearchException {
 
+		backupName = StringUtil.toLowerCase(backupName);
+
 		validateRepositoryName(backupName);
 
 		ClusterAdminClient clusterAdminClient =
@@ -85,7 +87,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 
 		CreateSnapshotRequestBuilder createSnapshotRequestBuilder =
 			clusterAdminClient.prepareCreateSnapshot(
-				_BACKUP_REPOSITORY_NAME, StringUtil.toLowerCase(backupName));
+				_BACKUP_REPOSITORY_NAME, backupName);
 
 		createSnapshotRequestBuilder.setWaitForCompletion(true);
 
