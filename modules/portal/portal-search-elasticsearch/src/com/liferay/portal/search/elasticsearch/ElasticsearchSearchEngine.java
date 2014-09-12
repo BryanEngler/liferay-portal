@@ -348,7 +348,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		}
 
 		if (StringUtil.contains(backupName, StringPool.POUND)) {
-			throw new SearchException("Backup name must not contain hash sign");
+			throw new SearchException("Backup name must not contain pounds");
 		}
 
 		if (StringUtil.contains(backupName, StringPool.SPACE)) {
