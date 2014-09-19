@@ -236,14 +236,12 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 				searchRequestBuilder, queryConfig, highlightFieldName);
 		}
 
-		searchRequestBuilder.setHighlighterRequireFieldMatch(
-			queryConfig.isHighlightRequireFieldMatch());
-
-		searchRequestBuilder.setHighlighterPreTags(
-			SearchUtil.HIGHLIGHT_TAG_OPEN);
-
 		searchRequestBuilder.setHighlighterPostTags(
 			SearchUtil.HIGHLIGHT_TAG_CLOSE);
+		searchRequestBuilder.setHighlighterPreTags(
+			SearchUtil.HIGHLIGHT_TAG_OPEN);
+		searchRequestBuilder.setHighlighterRequireFieldMatch(
+			queryConfig.isHighlightRequireFieldMatch());
 	}
 
 	protected void addPagination(
