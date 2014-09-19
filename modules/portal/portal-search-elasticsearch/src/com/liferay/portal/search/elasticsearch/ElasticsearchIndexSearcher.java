@@ -301,7 +301,6 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		SearchUtil.addSnippet(document, queryTerms, snippet, snippetFieldName);
 	}
 
-
 	protected void addSnippets(
 		SearchHit hit, Document document, QueryConfig queryConfig,
 		Set<String> queryTerms) {
