@@ -13,17 +13,6 @@
 				}
 			},
 			{
-				"template_expando": {
-					"match": "expando__*",
-					"match_mapping_type": "string",
-					"mapping": {
-						"index": "not_analyzed",
-						"store": "true",
-						"type": "string"
-					}
-				}
-			},
-			{
 				"template_ddm": {
 					"match": "ddm__*",
 					"match_mapping_type": "string",
@@ -43,6 +32,17 @@
 						"index": "analyzed",
 						"store": "true",
 						"term_vector": "with_positions_offsets",
+						"type": "string"
+					}
+				}
+			},
+			{
+				"template_expando": {
+					"match": "expando__*",
+					"match_mapping_type": "string",
+					"mapping": {
+						"index": "not_analyzed",
+						"store": "true",
 						"type": "string"
 					}
 				}
