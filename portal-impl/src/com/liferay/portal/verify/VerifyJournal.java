@@ -172,8 +172,13 @@ public class VerifyJournal extends VerifyProcess {
 
 		Node node = dynamicContentElement.node(0);
 
-		node.setText(
-			dynamicContentElement.getStringValue() + StringPool.AT + groupId);
+		String nodeText = node.getText();
+
+		if (!nodeText.endsWith(StringPool.AT + groupId)) {
+			node.setText(
+				dynamicContentElement.getStringValue() + StringPool.AT +
+					groupId);
+		}
 	}
 
 	protected void updateURLTitle(
