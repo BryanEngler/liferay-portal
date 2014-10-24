@@ -75,7 +75,8 @@ public class VerifyJournal extends VerifyProcess {
 
 	@Override
 	protected void doVerify() throws Exception {
-		verifyContent();
+		verifyDocumentLibraryContent();
+		verifyLinkToLayoutContent();
 		verifyCreateDate();
 		updateFolderAssets();
 		verifyOracleNewLine();
@@ -208,7 +209,7 @@ public class VerifyJournal extends VerifyProcess {
 		}
 	}
 
-	protected void verifyContent() throws Exception {
+	protected void verifyDocumentLibraryContent() throws Exception {
 		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -217,9 +218,8 @@ public class VerifyJournal extends VerifyProcess {
 			con = DataAccess.getUpgradeOptimizedConnection();
 
 			ps = con.prepareStatement(
-				"select id_ from JournalArticle where (content like " +
-					"'%document_library%' or content like '%link_to_layout%')" +
-						" and DDMStructureKey != ''");
+				"select id_ from JournalArticle where content like " +
+					"'%document_library%' and DDMStructureKey != ''");
 
 			rs = ps.executeQuery();
 
@@ -234,6 +234,40 @@ public class VerifyJournal extends VerifyProcess {
 				Element rootElement = document.getRootElement();
 
 				updateDocumentLibraryElements(rootElement);
+
+				article.setContent(document.asXML());
+
+				JournalArticleLocalServiceUtil.updateJournalArticle(article);
+			}
+		}
+		finally {
+			DataAccess.cleanUp(con, ps, rs);
+		}
+	}
+
+	protected void verifyLinkToLayoutContent() throws Exception {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			ps = con.prepareStatement(
+				"select id_ from JournalArticle where content like " +
+					"'%link_to_layout%' and DDMStructureKey != ''");
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				long id = rs.getLong("id_");
+
+				JournalArticle article =
+					JournalArticleLocalServiceUtil.getArticle(id);
+
+				Document document = SAXReaderUtil.read(article.getContent());
+
+				Element rootElement = document.getRootElement();
 
 				updateLinkToLayoutElements(article.getGroupId(), rootElement);
 
