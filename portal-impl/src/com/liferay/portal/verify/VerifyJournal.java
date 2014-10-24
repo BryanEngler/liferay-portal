@@ -93,6 +93,12 @@ public class VerifyJournal extends VerifyProcess {
 			updateDocumentLibraryElements(dynamicElementElement);
 		}
 
+		String type = element.attributeValue("type");
+
+		if (type == null || !type.equals("document_library")) {
+			return;
+		}
+
 		Element dynamicContentElement = element.element("dynamic-content");
 
 		String path = dynamicContentElement.getStringValue();
@@ -153,6 +159,12 @@ public class VerifyJournal extends VerifyProcess {
 
 		for (Element dynamicElementElement : dynamicElementElements) {
 			updateLinkToLayoutElements(groupId, dynamicElementElement);
+		}
+
+		String type = element.attributeValue("type");
+
+		if (type == null || !type.equals("link_to_layout")) {
+			return;
 		}
 
 		Element dynamicContentElement = element.element("dynamic-content");
@@ -221,17 +233,9 @@ public class VerifyJournal extends VerifyProcess {
 
 				Element rootElement = document.getRootElement();
 
-				for (Element element : rootElement.elements()) {
-					String type = element.attributeValue("type");
+				updateDocumentLibraryElements(rootElement);
 
-					if (type.equals("document_library")) {
-						updateDocumentLibraryElements(element);
-					}
-					else if (type.equals("link_to_layout")) {
-						updateLinkToLayoutElements(
-							article.getGroupId(), element);
-					}
-				}
+				updateLinkToLayoutElements(article.getGroupId(), rootElement);
 
 				article.setContent(document.asXML());
 
