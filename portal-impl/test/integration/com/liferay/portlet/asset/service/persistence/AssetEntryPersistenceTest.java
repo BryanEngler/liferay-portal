@@ -20,7 +20,6 @@ import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
-import com.liferay.portal.kernel.test.AggregateTestRule;
 import com.liferay.portal.kernel.test.AssertUtils;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.util.IntegerWrapper;
@@ -62,8 +61,9 @@ import java.util.Set;
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 public class AssetEntryPersistenceTest {
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(PersistenceTestRule.INSTANCE,
-			new TransactionalTestRule(Propagation.REQUIRED));
+	public final PersistenceTestRule persistenceTestRule = PersistenceTestRule.INSTANCE;
+	@Rule
+	public final TransactionalTestRule transactionalTestRule = new TransactionalTestRule(Propagation.REQUIRED);
 
 	@After
 	public void tearDown() throws Exception {
@@ -131,6 +131,8 @@ public class AssetEntryPersistenceTest {
 
 		newAssetEntry.setVisible(RandomTestUtil.randomBoolean());
 
+		newAssetEntry.setListable(RandomTestUtil.randomBoolean());
+
 		newAssetEntry.setStartDate(RandomTestUtil.nextDate());
 
 		newAssetEntry.setEndDate(RandomTestUtil.nextDate());
@@ -189,6 +191,8 @@ public class AssetEntryPersistenceTest {
 			newAssetEntry.getClassTypeId());
 		Assert.assertEquals(existingAssetEntry.getVisible(),
 			newAssetEntry.getVisible());
+		Assert.assertEquals(existingAssetEntry.getListable(),
+			newAssetEntry.getListable());
 		Assert.assertEquals(Time.getShortTimestamp(
 				existingAssetEntry.getStartDate()),
 			Time.getShortTimestamp(newAssetEntry.getStartDate()));
@@ -361,11 +365,12 @@ public class AssetEntryPersistenceTest {
 			true, "groupId", true, "companyId", true, "userId", true,
 			"userName", true, "createDate", true, "modifiedDate", true,
 			"classNameId", true, "classPK", true, "classUuid", true,
-			"classTypeId", true, "visible", true, "startDate", true, "endDate",
-			true, "publishDate", true, "expirationDate", true, "mimeType",
-			true, "title", true, "description", true, "summary", true, "url",
-			true, "layoutUuid", true, "height", true, "width", true,
-			"priority", true, "viewCount", true);
+			"classTypeId", true, "visible", true, "listable", true,
+			"startDate", true, "endDate", true, "publishDate", true,
+			"expirationDate", true, "mimeType", true, "title", true,
+			"description", true, "summary", true, "url", true, "layoutUuid",
+			true, "height", true, "width", true, "priority", true, "viewCount",
+			true);
 	}
 
 	@Test
@@ -612,6 +617,8 @@ public class AssetEntryPersistenceTest {
 		assetEntry.setClassTypeId(RandomTestUtil.nextLong());
 
 		assetEntry.setVisible(RandomTestUtil.randomBoolean());
+
+		assetEntry.setListable(RandomTestUtil.randomBoolean());
 
 		assetEntry.setStartDate(RandomTestUtil.nextDate());
 
