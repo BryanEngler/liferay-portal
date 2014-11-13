@@ -20,15 +20,14 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.upgrade.v7_0_0.util.AssetEntryTable;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.asset.model.AssetCategoryConstants;
 import com.liferay.portlet.asset.util.AssetVocabularySettingsHelper;
 import com.liferay.portlet.journal.model.JournalArticle;
-import com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -130,26 +129,29 @@ public class UpgradeAsset extends UpgradeProcess {
 
 			con = DataAccess.getUpgradeOptimizedConnection();
 
-			ps = con.prepareStatement(
-				"select classPK from AssetEntry where classNameId = ?");
+			StringBundler sb = new StringBundler(9);
 
-			ps.setLong(1, classNameId);
+			sb.append("select JournalArticle.resourcePrimKey from (select ");
+			sb.append("JournalArticle.resourcePrimkey as primKey, ");
+			sb.append("max(JournalArticle.version) as maxVersion from ");
+			sb.append("JournalArticle group by ");
+			sb.append("JournalArticle.resourcePrimkey) temp_table inner join ");
+			sb.append("JournalArticle on (JournalArticle.indexable = 0) and ");
+			sb.append("(JournalArticle.status = 0) and ");
+			sb.append("(JournalArticle.resourcePrimkey = temp_table.primKey)");
+			sb.append(" and (JournalArticle.version = temp_table.maxVersion)");
+
+			ps = con.prepareStatement(sb.toString());
 
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
-				long classPK = rs.getLong("classPK");
+				long classPK = rs.getLong("resourcePrimKey");
 
-				JournalArticle article =
-					JournalArticleLocalServiceUtil.fetchLatestArticle(
-						classPK, WorkflowConstants.STATUS_APPROVED);
-
-				if (!article.isIndexable()) {
-					runSQL(
-						"update AssetEntry set listable = FALSE where " +
-							"classNameId = " + classNameId + " and classPK = " +
-								classPK);
-				}
+				runSQL(
+					"update AssetEntry set listable = FALSE where " +
+						"classNameId = " + classNameId + " and classPK = " +
+							classPK);
 			}
 		}
 		finally {
