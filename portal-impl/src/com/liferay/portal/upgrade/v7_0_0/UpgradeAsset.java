@@ -22,11 +22,13 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.upgrade.v7_0_0.util.AssetEntryTable;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.asset.model.AssetCategoryConstants;
 import com.liferay.portlet.asset.util.AssetVocabularySettingsHelper;
 import com.liferay.portlet.journal.model.JournalArticle;
+import com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -54,6 +56,7 @@ public class UpgradeAsset extends UpgradeProcess {
 		}
 
 		updateAssetClassTypeId();
+		updateAssetListable();
 		updateAssetVocabularies();
 	}
 
@@ -109,6 +112,44 @@ public class UpgradeAsset extends UpgradeProcess {
 					"update AssetEntry set classTypeId = " + ddmStructureId +
 						" where classNameId = " + classNameId +
 							" and classPK = " + resourcePrimKey);
+			}
+		}
+		finally {
+			DataAccess.cleanUp(con, ps, rs);
+		}
+	}
+
+	protected void updateAssetListable() throws Exception {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			long classNameId = PortalUtil.getClassNameId(
+				JournalArticle.class.getName());
+
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			ps = con.prepareStatement(
+				"select classPK from AssetEntry where classNameId = ?");
+
+			ps.setLong(1, classNameId);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				long classPK = rs.getLong("classPK");
+
+				JournalArticle article =
+					JournalArticleLocalServiceUtil.fetchLatestArticle(
+						classPK, WorkflowConstants.STATUS_APPROVED);
+
+				if (!article.isIndexable()) {
+					runSQL(
+						"update AssetEntry set listable = FALSE where " +
+							"classNameId = " + classNameId + " and classPK = " +
+								classPK);
+				}
 			}
 		}
 		finally {
