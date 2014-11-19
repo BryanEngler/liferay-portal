@@ -57,10 +57,10 @@ public class ElasticsearchConnectionManager {
 	}
 
 	public ClusterHealthResponse getClusterHealthResponse(
-		long timeout, int nodeCount) {
+		long timeout, int nodesCount) {
 
 		return _elasticsearchConnection.get().getClusterHealthResponse(
-			timeout, nodeCount);
+			timeout, nodesCount);
 	}
 
 	public ElasticsearchConnection getElasticsearchConnection() {

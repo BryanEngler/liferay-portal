@@ -29,7 +29,7 @@ public interface ElasticsearchConnection {
 	public Client getClient();
 
 	public ClusterHealthResponse getClusterHealthResponse(
-		long timeout, int nodeCount);
+		long timeout, int nodesCount);
 
 	public void initialize();
 
