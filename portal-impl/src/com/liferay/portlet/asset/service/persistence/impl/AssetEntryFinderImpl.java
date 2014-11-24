@@ -273,7 +273,7 @@ public class AssetEntryFinderImpl
 			sb.append("(RatingsStats.classPK = AssetEntry.classPK)");
 		}
 
-		sb.append("WHERE ");
+		sb.append("WHERE");
 
 		int whereIndex = sb.index();
 
