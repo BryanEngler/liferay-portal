@@ -30,7 +30,9 @@ import com.liferay.portal.kernel.cluster.ClusterExecutorUtil;
 import com.liferay.portal.kernel.cluster.ClusterLink;
 import com.liferay.portal.kernel.cluster.ClusterRequest;
 import com.liferay.portal.kernel.concurrent.ThreadPoolExecutor;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.shard.ShardUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.executor.PortalExecutorManagerUtil;
 import com.liferay.portal.kernel.image.GhostscriptUtil;
@@ -49,6 +51,8 @@ import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.MessageBus;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.messaging.proxy.MessageValuesThreadLocal;
+import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.scripting.ScriptingException;
 import com.liferay.portal.kernel.scripting.ScriptingHelperUtil;
 import com.liferay.portal.kernel.scripting.ScriptingUtil;
@@ -104,7 +108,11 @@ import com.liferay.portal.util.ShutdownUtil;
 import com.liferay.portal.util.WebKeys;
 import com.liferay.portlet.ActionResponseImpl;
 import com.liferay.portlet.admin.util.CleanUpPermissionsUtil;
+import com.liferay.portlet.documentlibrary.lar.FileEntryUtil;
+import com.liferay.portlet.documentlibrary.model.DLFileEntry;
+import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.util.DLPreviewableProcessor;
+import com.liferay.portlet.documentlibrary.util.ImageProcessorUtil;
 import com.liferay.util.log4j.Log4JUtil;
 
 import java.io.File;
@@ -187,6 +195,10 @@ public class EditServerAction extends PortletAction {
 		}
 		else if (cmd.equals("dlPreviews")) {
 			DLPreviewableProcessor.deleteFiles();
+
+			if (PropsValues.DL_FILE_ENTRY_THUMBNAILS_REGENERATE_ON_RESET) {
+				regenerateThumbnails();
+			}
 		}
 		else if (cmd.equals("gc")) {
 			gc();
@@ -374,6 +386,52 @@ public class EditServerAction extends PortletAction {
 		}
 
 		progressTracker.finish(actionRequest);
+	}
+
+	protected void regenerateThumbnails() throws PortalException {
+		ActionableDynamicQuery actionableDynamicQuery =
+			DLFileEntryLocalServiceUtil.getActionableDynamicQuery();
+
+		actionableDynamicQuery.setPerformActionMethod(
+			new ActionableDynamicQuery.PerformActionMethod() {
+
+				@Override
+				public void performAction(Object object)
+					throws PortalException {
+
+					DLFileEntry dlFileEntry = (DLFileEntry)object;
+
+					FileEntry fileEntry =
+						FileEntryUtil.fetchByPrimaryKey(
+							dlFileEntry.getFileEntryId());
+
+					FileVersion latestFileVersion =
+						fileEntry.getLatestFileVersion();
+
+					Set<String> imageMimeTypes =
+						ImageProcessorUtil.getImageMimeTypes();
+
+					if (imageMimeTypes.contains(
+							latestFileVersion.getMimeType())) {
+
+						try {
+							ImageProcessorUtil.generateImages(
+								null, latestFileVersion);
+						}
+						catch (Exception e) {
+							if (_log.isWarnEnabled()) {
+								_log.warn(
+									"Unable to generate thumbnails for " +
+										latestFileVersion.getFileVersionId(),
+									e);
+							}
+						}
+					}
+				}
+
+			});
+
+		actionableDynamicQuery.performActions();
 	}
 
 	protected void reindex(ActionRequest actionRequest) throws Exception {
