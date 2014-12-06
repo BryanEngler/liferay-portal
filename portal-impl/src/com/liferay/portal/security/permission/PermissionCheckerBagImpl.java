@@ -14,6 +14,7 @@
 
 package com.liferay.portal.security.permission;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.GroupConstants;
@@ -28,7 +29,9 @@ import com.liferay.portal.service.RoleLocalServiceUtil;
 import com.liferay.portal.service.UserGroupRoleLocalServiceUtil;
 import com.liferay.portal.service.permission.LayoutPrototypePermissionUtil;
 import com.liferay.portal.service.permission.LayoutSetPrototypePermissionUtil;
+import com.liferay.portal.util.PropsValues;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -176,6 +179,29 @@ public class PermissionCheckerBagImpl
 
 		if (userGroups.contains(group)) {
 			return true;
+		}
+
+		if (!PropsValues.ORGANIZATIONS_MEMBERSHIP_STRICT) {
+			List<Organization> userOrgs =
+				OrganizationLocalServiceUtil.getOrganizations(
+					permissionChecker.getUserId(), QueryUtil.ALL_POS,
+					QueryUtil.ALL_POS, null);
+
+			List<Organization> userAncestorOrgs =
+				new ArrayList<Organization>();
+
+			for (Organization userOrg : userOrgs) {
+				userAncestorOrgs.addAll(userOrg.getAncestors());
+			}
+
+			userOrgs.addAll(userAncestorOrgs);
+
+			List<Group> userOrgGroups =
+				GroupLocalServiceUtil.getOrganizationsRelatedGroups(userOrgs);
+
+			if (userOrgGroups.contains(group)) {
+				return true;
+			}
 		}
 
 		return false;

@@ -694,6 +694,20 @@ public class GroupServiceImpl extends GroupServiceBaseImpl {
 				organizationLocalService.getOrganizations(
 					userId, start, end, null);
 
+			if (!PropsValues.ORGANIZATIONS_MEMBERSHIP_STRICT) {
+				List<Organization> userAncestorOrgs =
+					new ArrayList<Organization>();
+
+				for (Organization userOrg : userOrgs) {
+					userAncestorOrgs.addAll(userOrg.getAncestors());
+				}
+
+				userOrgs.addAll(userAncestorOrgs);
+
+				userSiteGroups.addAll(
+					groupLocalService.getOrganizationsRelatedGroups(userOrgs));
+			}
+
 			for (Organization organization : userOrgs) {
 				if (!organization.hasPrivateLayouts() &&
 					!organization.hasPublicLayouts()) {

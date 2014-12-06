@@ -477,11 +477,12 @@ public class LayoutPermissionImpl
 			return false;
 		}
 
-		// Site layouts are only viewable by users who are members of the site
+		// Private site layouts are only viewable by users who are members of the site
 		// or by users who can update the site
 
 		if (group.isSite()) {
-			if (GroupPermissionUtil.contains(
+			if (permissionChecker.isGroupMember(group.getGroupId()) ||
+				GroupPermissionUtil.contains(
 					permissionChecker, group, ActionKeys.MANAGE_LAYOUTS) ||
 				GroupPermissionUtil.contains(
 					permissionChecker, group, ActionKeys.UPDATE)) {
@@ -489,9 +490,7 @@ public class LayoutPermissionImpl
 				return true;
 			}
 
-			if (layout.isPrivateLayout() &&
-				!permissionChecker.isGroupMember(group.getGroupId())) {
-
+			if (layout.isPrivateLayout()){
 				return false;
 			}
 		}
