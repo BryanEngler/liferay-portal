@@ -640,7 +640,7 @@ public class SecurityPortletContainerWrapper implements PortletContainer {
 		throws PortletContainerException {
 
 		String portletContent = null;
-
+//STOP
 		if (portlet.isShowPortletAccessDenied()) {
 			portletContent = "/html/portal/portlet_access_denied.jsp";
 		}

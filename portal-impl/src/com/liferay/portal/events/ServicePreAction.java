@@ -1750,9 +1750,9 @@ public class ServicePreAction extends Action {
 			 GroupPermissionUtil.contains(
 				 permissionChecker, group, ActionKeys.VIEW_STAGING);
 
-		if (hasAccessPermission(
+		if (hasAccessPermission( //here
 				permissionChecker, layout, doAsGroupId, controlPanelCategory,
-				false) ||
+				true) ||  //using false?
 			hasViewStagingPermission) {
 
 			hasViewLayoutPermission = true;
@@ -1766,7 +1766,7 @@ public class ServicePreAction extends Action {
 			if (!curLayout.isHidden() &&
 				(hasAccessPermission(
 					permissionChecker, curLayout, doAsGroupId,
-					controlPanelCategory, false) ||
+					controlPanelCategory, true) || //using false?
 				 hasViewStagingPermission)) {
 
 				if (accessibleLayouts.isEmpty() && !hasViewLayoutPermission) {
