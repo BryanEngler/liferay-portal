@@ -369,6 +369,22 @@
 				(Users_Orgs.userId = ?)
 		]]>
 	</sql>
+	<sql id="com.liferay.portal.service.persistence.GroupFinder.joinByGroupsOrgsTree">
+		<![CDATA[
+			INNER JOIN
+				Groups_Orgs ON
+					(Groups_Orgs.groupId = Group_.groupId)
+			INNER JOIN
+				Organization_ ON
+					(Groups_Orgs.organizationId = Organization_.organizationId)
+			INNER JOIN
+				Users_Orgs ON
+					(Organization_.treePath like ('%/' || CAST_TEXT(Users_Orgs.organizationId) || '/%'))
+			WHERE
+				(Group_.liveGroupId = 0) AND
+				(Users_Orgs.userId = ?)
+		]]>
+	</sql>
 	<sql id="com.liferay.portal.service.persistence.GroupFinder.joinByGroupsRoles">
 		<![CDATA[
 			INNER JOIN

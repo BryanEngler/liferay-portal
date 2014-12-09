@@ -38,6 +38,7 @@ import com.liferay.portal.service.ResourceBlockLocalServiceUtil;
 import com.liferay.portal.service.impl.GroupLocalServiceImpl;
 import com.liferay.portal.service.persistence.GroupFinder;
 import com.liferay.portal.service.persistence.GroupUtil;
+import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.util.comparator.GroupNameComparator;
 import com.liferay.util.dao.orm.CustomSQLUtil;
 
@@ -105,6 +106,9 @@ public class GroupFinderImpl
 
 	public static final String JOIN_BY_GROUPS_ORGS =
 		GroupFinder.class.getName() + ".joinByGroupsOrgs";
+
+	public static final String JOIN_BY_GROUPS_ORGS_TREE =
+		GroupFinder.class.getName() + ".joinByGroupsOrgsTree";
 
 	public static final String JOIN_BY_GROUPS_ROLES =
 		GroupFinder.class.getName() + ".joinByGroupsRoles";
@@ -198,7 +202,12 @@ public class GroupFinderImpl
 		LinkedHashMap<String, Object> params3 =
 			new LinkedHashMap<String, Object>();
 
-		params3.put("groupsOrgs", userId);
+		if (PropsValues.ORGANIZATIONS_MEMBERSHIP_STRICT) {
+			params3.put("groupsOrgs", userId);
+		}
+		else {
+			params3.put("groupsOrgsTree", userId);
+		}
 
 		LinkedHashMap<String, Object> params4 =
 			new LinkedHashMap<String, Object>();
@@ -268,7 +277,13 @@ public class GroupFinderImpl
 			params3 = new LinkedHashMap<String, Object>(params1);
 
 			params3.remove("usersGroups");
-			params3.put("groupsOrgs", userId);
+
+			if (PropsValues.ORGANIZATIONS_MEMBERSHIP_STRICT) {
+				params3.put("groupsOrgs", userId);
+			}
+			else {
+				params3.put("groupsOrgsTree", userId);
+			}
 
 			params4 = new LinkedHashMap<String, Object>(params1);
 
@@ -495,7 +510,13 @@ public class GroupFinderImpl
 			params3 = new LinkedHashMap<String, Object>(params1);
 
 			params3.remove("usersGroups");
-			params3.put("groupsOrgs", userId);
+
+			if (PropsValues.ORGANIZATIONS_MEMBERSHIP_STRICT) {
+				params3.put("groupsOrgs", userId);
+			}
+			else {
+				params3.put("groupsOrgsTree", userId);
+			}
 
 			params4 = new LinkedHashMap<String, Object>(params1);
 
@@ -729,7 +750,13 @@ public class GroupFinderImpl
 			params3 = new LinkedHashMap<String, Object>(params1);
 
 			params3.remove("usersGroups");
-			params3.put("groupsOrgs", userId);
+
+			if (PropsValues.ORGANIZATIONS_MEMBERSHIP_STRICT) {
+				params3.put("groupsOrgs", userId);
+			}
+			else {
+				params3.put("groupsOrgsTree", userId);
+			}
 
 			params4 = new LinkedHashMap<String, Object>(params1);
 
@@ -1366,6 +1393,9 @@ public class GroupFinderImpl
 		joinMap.put(
 			"groupsOrgs", _removeWhere(CustomSQLUtil.get(JOIN_BY_GROUPS_ORGS)));
 		joinMap.put(
+			"groupsOrgsTree",
+			_removeWhere(CustomSQLUtil.get(JOIN_BY_GROUPS_ORGS_TREE)));
+		joinMap.put(
 			"groupsRoles",
 			_removeWhere(CustomSQLUtil.get(JOIN_BY_GROUPS_ROLES)));
 		joinMap.put(
@@ -1416,6 +1446,9 @@ public class GroupFinderImpl
 		whereMap.put(
 			"groupsOrgs",
 			_getCondition(CustomSQLUtil.get(JOIN_BY_GROUPS_ORGS)));
+		whereMap.put(
+			"groupsOrgsTree",
+			_getCondition(CustomSQLUtil.get(JOIN_BY_GROUPS_ORGS_TREE)));
 		whereMap.put(
 			"groupsRoles",
 			_getCondition(CustomSQLUtil.get(JOIN_BY_GROUPS_ROLES)));
