@@ -406,7 +406,7 @@ public class DDMXMLImpl implements DDMXML {
 				String type = StringUtil.toLowerCase(
 					element.attributeValue("type"));
 
-				if (type.equals("option")) {
+				if (type.equals("option") || type.equals("text")) {
 					continue;
 				}
 
