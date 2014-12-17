@@ -403,6 +403,13 @@ public class DDMXMLImpl implements DDMXML {
 			}
 
 			if (elementNames.contains(name)) {
+				String type = StringUtil.toLowerCase(
+					element.attributeValue("type"));
+
+				if (type.equals("option")) {
+					continue;
+				}
+
 				throw new StructureDuplicateElementException();
 			}
 
