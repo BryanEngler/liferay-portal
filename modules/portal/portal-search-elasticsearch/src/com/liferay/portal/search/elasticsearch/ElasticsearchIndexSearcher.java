@@ -389,11 +389,11 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		Client client = _elasticsearchConnectionManager.getClient();
 
+		SearchRequestBuilder searchRequestBuilder = null;
+
 		QueryConfig queryConfig = query.getQueryConfig();
 
 		String[] selectedIndexNames = queryConfig.getSelectedIndexNames();
-
-		SearchRequestBuilder searchRequestBuilder = null;
 
 		if (ArrayUtil.isEmpty(selectedIndexNames)) {
 			searchRequestBuilder = client.prepareSearch(
@@ -445,11 +445,11 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	}
 
 	protected Document processSearchHit(
-		SearchHit hit, QueryConfig queryConfig) {
+		SearchHit searchHit, QueryConfig queryConfig) {
 
 		Document document = new DocumentImpl();
 
-		Map<String, SearchHitField> searchHitFields = hit.getFields();
+		Map<String, SearchHitField> searchHitFields = searchHit.getFields();
 
 		for (Map.Entry<String, SearchHitField> entry :
 				searchHitFields.entrySet()) {
