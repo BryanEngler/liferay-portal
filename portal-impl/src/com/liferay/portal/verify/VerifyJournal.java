@@ -660,15 +660,6 @@ public class VerifyJournal extends VerifyProcess {
 			DDMStructure structure, Map<String, String> newTemplateVariablesMap)
 		throws Exception {
 
-		class StringPeriodOccurrenceComparator
-			implements java.util.Comparator<String> {
-
-			public int compare(String s1, String s2) {
-				return StringUtils.countOccurrencesOf(s2, StringPool.PERIOD) -
-					StringUtils.countOccurrencesOf(s1, StringPool.PERIOD);
-			}
-		}
-
 		Set<String> originalTemplateVariablesSet =
 			newTemplateVariablesMap.keySet();
 
@@ -1122,5 +1113,15 @@ public class VerifyJournal extends VerifyProcess {
 
 	private static final Pattern _friendlyURLPattern = Pattern.compile(
 		"[^a-z0-9_-]");
+
+	private static class StringPeriodOccurrenceComparator
+		implements java.util.Comparator<String> {
+
+		public int compare(String s1, String s2) {
+			return StringUtils.countOccurrencesOf(s2, StringPool.PERIOD) -
+				StringUtils.countOccurrencesOf(s1, StringPool.PERIOD);
+		}
+
+	}
 
 }
