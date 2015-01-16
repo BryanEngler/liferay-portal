@@ -77,6 +77,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -95,8 +96,8 @@ public class VerifyJournal extends VerifyProcess {
 
 	public static final int NUM_OF_ARTICLES = 5;
 
-	protected List<String> addElementNames(
-			Element element, List<String> elementNames)
+	protected Set<String> addElementNames(
+			Element element, Set<String> elementNames)
 		throws StructureDefinitionException {
 
 		List<Element> dynamicElements = element.elements("dynamic-element");
@@ -107,10 +108,7 @@ public class VerifyJournal extends VerifyProcess {
 
 		String elementName = element.attributeValue("name");
 
-		if (!elementNames.contains(elementName)) {
-			elementNames.add(elementName);
-		}
-		else {
+		if (!elementNames.add(elementName)) {
 			throw new StructureDefinitionException();
 		}
 
@@ -140,7 +138,7 @@ public class VerifyJournal extends VerifyProcess {
 	protected boolean containsDuplicateNames(Document document)
 		throws Exception {
 
-		List<String> elementNames = new ArrayList<>();
+		Set<String> elementNames = new HashSet<>();
 
 		try {
 			addElementNames(document.getRootElement(), elementNames);
