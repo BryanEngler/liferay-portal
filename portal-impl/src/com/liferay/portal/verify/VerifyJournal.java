@@ -49,7 +49,6 @@ import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.NoSuchStructureException;
-import com.liferay.portlet.dynamicdatamapping.StructureDefinitionException;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
@@ -96,23 +95,24 @@ public class VerifyJournal extends VerifyProcess {
 
 	public static final int NUM_OF_ARTICLES = 5;
 
-	protected Set<String> addElementNames(
-			Element element, Set<String> elementNames)
-		throws StructureDefinitionException {
-
-		List<Element> dynamicElements = element.elements("dynamic-element");
-
-		for (Element dynamicElement : dynamicElements) {
-			elementNames = addElementNames(dynamicElement, elementNames);
-		}
+	protected boolean addElementNames(
+		Element element, Set<String> elementNames) {
 
 		String elementName = element.attributeValue("name");
 
 		if (!elementNames.add(elementName)) {
-			throw new StructureDefinitionException();
+			return false;
 		}
 
-		return elementNames;
+		List<Element> dynamicElements = element.elements("dynamic-element");
+
+		for (Element dynamicElement : dynamicElements) {
+			if (!addElementNames(dynamicElement, elementNames)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	protected List<String> addElementTemplateNames(
@@ -133,21 +133,6 @@ public class VerifyJournal extends VerifyProcess {
 		}
 
 		return elementTemplateNames;
-	}
-
-	protected boolean containsDuplicateNames(Document document)
-		throws Exception {
-
-		Set<String> elementNames = new HashSet<>();
-
-		try {
-			addElementNames(document.getRootElement(), elementNames);
-		}
-		catch (StructureDefinitionException sde) {
-			return true;
-		}
-
-		return false;
 	}
 
 	@Override
@@ -884,7 +869,9 @@ public class VerifyJournal extends VerifyProcess {
 							Document document = SAXReaderUtil.read(xml);
 
 							if (!structures.contains(structure) &&
-								containsDuplicateNames(document)) {
+								!addElementNames(
+									document.getRootElement(),
+									new HashSet<String>())) {
 
 								structures.add(structure);
 							}
