@@ -95,6 +95,48 @@ public class VerifyJournal extends VerifyProcess {
 
 	public static final int NUM_OF_ARTICLES = 5;
 
+	protected List<String> addElementNames(
+			Element element, List<String> elementNames)
+		throws StructureDefinitionException {
+
+		List<Element> dynamicElements = element.elements("dynamic-element");
+
+		for (Element dynamicElement : dynamicElements) {
+			elementNames = addElementNames(dynamicElement, elementNames);
+		}
+
+		String elementName = element.attributeValue("name");
+
+		if (!elementNames.contains(elementName)) {
+			elementNames.add(elementName);
+		}
+		else {
+			throw new StructureDefinitionException();
+		}
+
+		return elementNames;
+	}
+
+	protected List<String> addElementTemplateNames(
+		Element element, List<String> elementTemplateNames) {
+
+		List<Element> dynamicElements = element.elements("dynamic-element");
+
+		for (Element dynamicElement : dynamicElements) {
+			elementTemplateNames = addElementTemplateNames(
+				dynamicElement, elementTemplateNames);
+		}
+
+		String elementName = getElementTemplateName(element, StringPool.BLANK);
+
+		if (!elementName.equals(StringPool.NULL)) {
+			elementTemplateNames.add(
+				StringPool.DOLLAR + elementName + StringPool.PERIOD);
+		}
+
+		return elementTemplateNames;
+	}
+
 	protected boolean containsDuplicateNames(Document document)
 		throws Exception {
 
@@ -123,28 +165,6 @@ public class VerifyJournal extends VerifyProcess {
 		verifyURLTitle();
 	}
 
-	protected List<String> addElementNames(
-			Element element, List<String> elementNames)
-		throws StructureDefinitionException {
-
-		List<Element> dynamicElements = element.elements("dynamic-element");
-
-		for (Element dynamicElement : dynamicElements) {
-			elementNames = addElementNames(dynamicElement, elementNames);
-		}
-
-		String elementName = element.attributeValue("name");
-
-		if (!elementNames.contains(elementName)) {
-			elementNames.add(elementName);
-		}
-		else {
-			throw new StructureDefinitionException();
-		}
-
-		return elementNames;
-	}
-
 	protected String getElementTemplateName(
 		Element element, String parentElementTemplateNames) {
 
@@ -158,26 +178,6 @@ public class VerifyJournal extends VerifyProcess {
 		}
 
 		return parentElementTemplateNames + element.attributeValue("name");
-	}
-
-	protected List<String> addElementTemplateNames(
-		Element element, List<String> elementTemplateNames) {
-
-		List<Element> dynamicElements = element.elements("dynamic-element");
-
-		for (Element dynamicElement : dynamicElements) {
-			elementTemplateNames = addElementTemplateNames(
-				dynamicElement, elementTemplateNames);
-		}
-
-		String elementName = getElementTemplateName(element, StringPool.BLANK);
-
-		if (!elementName.equals(StringPool.NULL)) {
-			elementTemplateNames.add(
-				StringPool.DOLLAR + elementName + StringPool.PERIOD);
-		}
-
-		return elementTemplateNames;
 	}
 
 	protected String getFullStructureXML(DDMStructure structure, String xml)
