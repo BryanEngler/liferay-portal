@@ -101,7 +101,7 @@ public class VerifyJournal extends VerifyProcess {
 		List<String> elementNames = new ArrayList<>();
 
 		try {
-			getElementNames(document.getRootElement(), elementNames);
+			addElementNames(document.getRootElement(), elementNames);
 		}
 		catch (StructureDefinitionException sde) {
 			return true;
@@ -123,14 +123,14 @@ public class VerifyJournal extends VerifyProcess {
 		verifyURLTitle();
 	}
 
-	protected List<String> getElementNames(
+	protected List<String> addElementNames(
 			Element element, List<String> elementNames)
 		throws StructureDefinitionException {
 
 		List<Element> dynamicElements = element.elements("dynamic-element");
 
 		for (Element dynamicElement : dynamicElements) {
-			elementNames = getElementNames(dynamicElement, elementNames);
+			elementNames = addElementNames(dynamicElement, elementNames);
 		}
 
 		String elementName = element.attributeValue("name");
@@ -160,13 +160,13 @@ public class VerifyJournal extends VerifyProcess {
 		return parentElementTemplateNames + element.attributeValue("name");
 	}
 
-	protected List<String> getElementTemplateNames(
+	protected List<String> addElementTemplateNames(
 		Element element, List<String> elementTemplateNames) {
 
 		List<Element> dynamicElements = element.elements("dynamic-element");
 
 		for (Element dynamicElement : dynamicElements) {
-			elementTemplateNames = getElementTemplateNames(
+			elementTemplateNames = addElementTemplateNames(
 				dynamicElement, elementTemplateNames);
 		}
 
@@ -621,7 +621,7 @@ public class VerifyJournal extends VerifyProcess {
 
 		Element rootElement = document.getRootElement();
 
-		List<String> originalTemplateVariables = getElementTemplateNames(
+		List<String> originalTemplateVariables = addElementTemplateNames(
 			rootElement, new ArrayList<String>());
 
 		for (Element element : rootElement.elements()) {
@@ -632,7 +632,7 @@ public class VerifyJournal extends VerifyProcess {
 
 		DDMStructureLocalServiceUtil.updateDDMStructure(structure);
 
-		List<String> newTemplateVariables = getElementTemplateNames(
+		List<String> newTemplateVariables = addElementTemplateNames(
 			rootElement, new ArrayList<String>());
 
 		Map<String, String> newTemplateVariablesMap = new HashMap<>();
