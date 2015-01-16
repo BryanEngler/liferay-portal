@@ -74,6 +74,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -83,8 +84,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.portlet.PortletPreferences;
-
-import org.springframework.util.StringUtils;
 
 /**
  * @author Alexander Chow
@@ -96,7 +95,7 @@ public class VerifyJournal extends VerifyProcess {
 
 	public static final int NUM_OF_ARTICLES = 5;
 
-	protected Boolean containsDuplicateNames(Document document)
+	protected boolean containsDuplicateNames(Document document)
 		throws Exception {
 
 		List<String> elementNames = new ArrayList<>();
@@ -243,11 +242,9 @@ public class VerifyJournal extends VerifyProcess {
 				structure.getGroupId(), structure.getStructureKey());
 
 		for (JournalArticle article : articles) {
-			String xml = "<root>";
-
-			xml += getFullStructureXML(structure, StringPool.BLANK);
-
-			xml += "</root>";
+			String xml =
+				"<root>" + getFullStructureXML(structure, StringPool.BLANK) +
+					"</root>";
 
 			Document structureDocument = SAXReaderUtil.read(xml);
 
@@ -264,9 +261,9 @@ public class VerifyJournal extends VerifyProcess {
 			catch (ArticleContentException ace) {
 				if (JournalArticleLocalServiceUtil.isLatestVersion(
 						article.getGroupId(), article.getArticleId(),
-					article.getVersion())) {
+						article.getVersion())) {
 
-					StringBundler sb = new StringBundler(20);
+					StringBundler sb = new StringBundler(21);
 
 					sb.append("Article with articleId ");
 					sb.append(article.getArticleId());
@@ -274,17 +271,18 @@ public class VerifyJournal extends VerifyProcess {
 					sb.append(article.getVersion());
 					sb.append(" does not have content that matches its ");
 					sb.append("structure. This could have occurred if the ");
-					sb.append("article\'s structure was changed in 6.1 but ");
+					sb.append("article\'s structure was changed in 6.1, but ");
 					sb.append("the article was not published after that. If ");
 					sb.append("you just ran an upgrade from 6.1, we suggest ");
-					sb.append("you roll back the database to 6.1, publish the");
-					sb.append(" article, and run the upgrade again. This also");
-					sb.append(" could have occurred if you have published the");
-					sb.append(" article since upgrading to 6.2. If you have ");
-					sb.append("already upgraded and are only running the ");
-					sb.append("verify process on 6.2, we suggest you delete ");
-					sb.append("the versions that were published with corrupt");
-					sb.append(" data in 6.2. The structureId for 6.1 is ");
+					sb.append("you roll back the database to 6.1, publish ");
+					sb.append("the article, and run the upgrade again. This ");
+					sb.append("also could have occurred if you have ");
+					sb.append("published the article since upgrading to 6.2. ");
+					sb.append("If you have already upgraded and are only ");
+					sb.append("running the verify process on 6.2, we suggest ");
+					sb.append("you delete the versions that were published ");
+					sb.append("with corrupt data in 6.2. The structureId for ");
+					sb.append("6.1 is ");
 					sb.append(structure.getStructureKey());
 					sb.append(". The structureId for 6.2 is ");
 					sb.append(structure.getStructureId());
@@ -496,11 +494,10 @@ public class VerifyJournal extends VerifyProcess {
 			return;
 		}
 
-		String elementName = element.attributeValue("name");
+		String elementName =
+			element.attributeValue("name") + (random.nextInt(9000) + 1000);
 
-		String newElementName = elementName + (random.nextInt(9000) + 1000);
-
-		element.addAttribute("name", newElementName);
+		element.addAttribute("name", elementName);
 
 		List<Element> dynamicElements = element.elements("dynamic-element");
 
@@ -624,10 +621,8 @@ public class VerifyJournal extends VerifyProcess {
 
 		Element rootElement = document.getRootElement();
 
-		List<String> originalTemplateVariables = new ArrayList<>();
-
-		originalTemplateVariables = getElementTemplateNames(
-			rootElement, originalTemplateVariables);
+		List<String> originalTemplateVariables = getElementTemplateNames(
+			rootElement, new ArrayList<String>());
 
 		for (Element element : rootElement.elements()) {
 			updateElementNameAttributes(element, random);
@@ -637,10 +632,8 @@ public class VerifyJournal extends VerifyProcess {
 
 		DDMStructureLocalServiceUtil.updateDDMStructure(structure);
 
-		List<String> newTemplateVariables = new ArrayList<>();
-
-		newTemplateVariables = getElementTemplateNames(
-			rootElement, newTemplateVariables);
+		List<String> newTemplateVariables = getElementTemplateNames(
+			rootElement, new ArrayList<String>());
 
 		Map<String, String> newTemplateVariablesMap = new HashMap<>();
 
@@ -884,12 +877,11 @@ public class VerifyJournal extends VerifyProcess {
 								article.getDDMStructureKey());
 
 						if (structure != null) {
-							String xml = "<root>";
-
-							xml += getFullStructureXML(
-								structure, StringPool.BLANK);
-
-							xml += "</root>";
+							String xml =
+								"<root>" +
+									getFullStructureXML(
+										structure, StringPool.BLANK) +
+											"</root>";
 
 							Document document = SAXReaderUtil.read(xml);
 
@@ -1115,11 +1107,11 @@ public class VerifyJournal extends VerifyProcess {
 		"[^a-z0-9_-]");
 
 	private static class StringPeriodOccurrenceComparator
-		implements java.util.Comparator<String> {
+		implements Comparator<String> {
 
 		public int compare(String s1, String s2) {
-			return StringUtils.countOccurrencesOf(s2, StringPool.PERIOD) -
-				StringUtils.countOccurrencesOf(s1, StringPool.PERIOD);
+			return StringUtil.count(s2, StringPool.PERIOD) -
+				StringUtil.count(s1, StringPool.PERIOD);
 		}
 
 	}
