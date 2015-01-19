@@ -207,13 +207,31 @@ public class VerifyJournal extends VerifyProcess {
 		List<Element> structureDynamicElements = structureElement.elements(
 			"dynamic-element");
 
-		if (articleDynamicElements.size() != structureDynamicElements.size()) {
-			throw new ArticleContentException();
-		}
+		try {
+			int i = 0;
 
-		for (int i = 0; i < articleDynamicElements.size(); i++) {
-			updateArticleContentDynamicElementNameFields(
-				articleDynamicElements.get(i), structureDynamicElements.get(i));
+			for (int j = 0; j < articleDynamicElements.size(); j++) {
+				updateArticleContentDynamicElementNameFields(
+					articleDynamicElements.get(j),
+					structureDynamicElements.get(i));
+
+				while (((j + 1) < articleDynamicElements.size()) &&
+					   (Integer.valueOf(
+						articleDynamicElements.get(j + 1).attributeValue(
+						"index")) > 0)) {
+
+					j++;
+
+					updateArticleContentDynamicElementNameFields(
+						articleDynamicElements.get(j),
+						structureDynamicElements.get(i));
+				}
+
+				i++;
+			}
+		}
+		catch (IndexOutOfBoundsException ioobe) {
+			throw new ArticleContentException();
 		}
 	}
 
