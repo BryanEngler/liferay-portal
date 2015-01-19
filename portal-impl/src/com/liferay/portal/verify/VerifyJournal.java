@@ -187,8 +187,9 @@ public class VerifyJournal extends VerifyProcess {
 		return xml;
 	}
 
-	protected void updateArticleContentDynamicElementNameFields(
-			Element articleElement, Element structureElement)
+	protected boolean updateArticleContentDynamicElementNameFields(
+			Element articleElement, Element structureElement,
+			boolean updatedParentRepeatingField)
 		throws Exception {
 
 		String structureElementName = structureElement.attributeValue("name");
@@ -198,7 +199,7 @@ public class VerifyJournal extends VerifyProcess {
 		String type = structureElement.attributeValue("type");
 
 		if (Validator.isNotNull(type) && type.equals("select")) {
-			return;
+			return updatedParentRepeatingField;
 		}
 
 		List<Element> articleDynamicElements = articleElement.elements(
@@ -211,20 +212,33 @@ public class VerifyJournal extends VerifyProcess {
 			int i = 0;
 
 			for (int j = 0; j < articleDynamicElements.size(); j++) {
-				updateArticleContentDynamicElementNameFields(
-					articleDynamicElements.get(j),
-					structureDynamicElements.get(i));
+				Element structureDynamicElement = structureDynamicElements.get(
+					i);
+
+				updatedParentRepeatingField =
+					updateArticleContentDynamicElementNameFields(
+						articleDynamicElements.get(j), structureDynamicElement,
+						updatedParentRepeatingField);
 
 				while (((j + 1) < articleDynamicElements.size()) &&
 					   (Integer.valueOf(
 						articleDynamicElements.get(j + 1).attributeValue(
-						"index")) > 0)) {
+							"index")) > 0)) {
 
 					j++;
 
-					updateArticleContentDynamicElementNameFields(
-						articleDynamicElements.get(j),
-						structureDynamicElements.get(i));
+					updatedParentRepeatingField =
+						updateArticleContentDynamicElementNameFields(
+							articleDynamicElements.get(j),
+							structureDynamicElement,
+							updatedParentRepeatingField);
+
+					List<Element> childElements =
+						structureDynamicElement.elements("dynamic-element");
+
+					if (!childElements.isEmpty()) {
+						updatedParentRepeatingField = true;
+					}
 				}
 
 				i++;
@@ -233,6 +247,8 @@ public class VerifyJournal extends VerifyProcess {
 		catch (IndexOutOfBoundsException ioobe) {
 			throw new ArticleContentException();
 		}
+
+		return updatedParentRepeatingField;
 	}
 
 	protected void updateArticlesUsingStructure(DDMStructure structure)
@@ -255,9 +271,25 @@ public class VerifyJournal extends VerifyProcess {
 
 			Element articleRootElement = articleDocument.getRootElement();
 
+			boolean updatedParentRepeatingField;
+
 			try {
-				updateArticleContentDynamicElementNameFields(
-					articleRootElement, structureRootElement);
+				updatedParentRepeatingField =
+					updateArticleContentDynamicElementNameFields(
+						articleRootElement, structureRootElement, false);
+
+				if (updatedParentRepeatingField &&
+					JournalArticleLocalServiceUtil.isLatestVersion(
+						article.getGroupId(), article.getArticleId(),
+						article.getVersion())) {
+
+					if (_log.isInfoEnabled()) {
+						_log.info(
+							"Template for article with articleId " +
+								article.getArticleId() + " may need to be " +
+									"updated");
+					}
+				}
 			}
 			catch (ArticleContentException ace) {
 				if (JournalArticleLocalServiceUtil.isLatestVersion(
