@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -38,6 +39,7 @@ import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.service.ResourceLocalServiceUtil;
+import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalInstances;
 import com.liferay.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portlet.asset.model.AssetEntry;
@@ -59,11 +61,15 @@ import com.liferay.portlet.journal.service.JournalContentSearchLocalServiceUtil;
 import com.liferay.portlet.journal.service.JournalFolderLocalServiceUtil;
 import com.liferay.portlet.journal.util.comparator.ArticleVersionComparator;
 
+import java.io.Serializable;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -88,6 +94,7 @@ public class VerifyJournal extends VerifyProcess {
 		verifyFolderAssets();
 		verifyOracleNewLine();
 		verifyPermissions();
+		verifyStagedArticles();
 		verifyTree();
 		verifyURLTitle();
 	}
@@ -730,6 +737,110 @@ public class VerifyJournal extends VerifyProcess {
 			ResourceLocalServiceUtil.addResources(
 				article.getCompanyId(), 0, 0, JournalArticle.class.getName(),
 				article.getResourcePrimKey(), false, false, false);
+		}
+	}
+
+	protected void verifyStagedArticles() throws Exception {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			ps = con.prepareStatement(
+				"select groupId, liveGroupId from Group_ where liveGroupId " +
+					"!= 0");
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				long groupId = rs.getLong("groupId");
+				long liveGroupId = rs.getLong("liveGroupId");
+
+				List<JournalArticle> liveArticles =
+					JournalArticleLocalServiceUtil.getArticles(liveGroupId);
+
+				HashSet<JournalArticle> latestLiveArticles = new HashSet<>();
+
+				for (JournalArticle liveArticle : liveArticles) {
+					JournalArticle latestLiveArticle =
+						JournalArticleLocalServiceUtil.getLatestArticle(
+							liveArticle.getGroupId(),
+							liveArticle.getArticleId());
+
+					latestLiveArticles.add(latestLiveArticle);
+				}
+
+				for (JournalArticle latestLiveArticle : latestLiveArticles) {
+					JournalArticle latestStagedArticle =
+						JournalArticleLocalServiceUtil.getArticleByUrlTitle(
+							groupId, latestLiveArticle.getUrlTitle());
+
+					if (latestLiveArticle.getVersion() >
+							latestStagedArticle.getVersion()) {
+
+						JournalArticle latestStagedDraftArticle =
+							JournalArticleLocalServiceUtil.updateArticle(
+								latestStagedArticle.getUserId(),
+								latestStagedArticle.getGroupId(),
+								latestStagedArticle.getFolderId(),
+								latestStagedArticle.getArticleId(),
+								latestStagedArticle.getVersion(),
+								latestStagedArticle.getTitleMap(),
+								latestStagedArticle.getDescriptionMap(),
+								latestStagedArticle.getContent(),
+								latestStagedArticle.getLayoutUuid(),
+								new ServiceContext());
+
+						JournalArticleLocalServiceUtil.updateStatus(
+							latestStagedDraftArticle.getUserId(),
+							latestStagedDraftArticle.getId(),
+							WorkflowConstants.STATUS_DRAFT,
+							new HashMap<String, Serializable>(),
+							new ServiceContext());
+
+						JournalArticleLocalServiceUtil.updateContent(
+							latestStagedArticle.getGroupId(),
+							latestStagedArticle.getArticleId(),
+							latestStagedArticle.getVersion(),
+							latestLiveArticle.getContent());
+
+						JournalArticleLocalServiceUtil.updateContent(
+							latestLiveArticle.getGroupId(),
+							latestLiveArticle.getArticleId(),
+							latestStagedArticle.getVersion(),
+							latestLiveArticle.getContent());
+
+						Connection con2 = null;
+						PreparedStatement ps2 = null;
+
+						try {
+							con2 = DataAccess.getUpgradeOptimizedConnection();
+
+							StringBundler sb = new StringBundler(7);
+
+							sb.append("delete from JournalArticle where ");
+							sb.append("articleId = ");
+							sb.append(StringPool.QUOTE);
+							sb.append(latestLiveArticle.getArticleId());
+							sb.append(StringPool.QUOTE);
+							sb.append(" and version > ");
+							sb.append(latestStagedArticle.getVersion());
+
+							ps2 = con2.prepareStatement(sb.toString());
+
+							ps2.executeUpdate();
+						}
+						finally {
+							DataAccess.cleanUp(con2, ps2);
+						}
+					}
+				}
+			}
+		}
+		finally {
+			DataAccess.cleanUp(con, ps, rs);
 		}
 	}
 
