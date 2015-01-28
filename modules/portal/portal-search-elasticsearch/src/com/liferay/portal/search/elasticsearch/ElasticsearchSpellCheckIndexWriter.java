@@ -120,8 +120,8 @@ public class ElasticsearchSpellCheckIndexWriter
 
 		document.addKeyword(localizedName, keywords);
 
-		document.addKeyword(Field.ENTRY_CLASS_NAME, Document.class.getName());
 		document.addKeyword(Field.PRIORITY, String.valueOf(weight));
+		document.addKeyword(Field.SPELL_CHECK_WORD, true);
 		document.addKeyword(Field.UID, getUID(companyId, languageId, keywords));
 
 		return document;
