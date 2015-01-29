@@ -40,6 +40,9 @@ import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.liferay.portal.model.Group;
+import com.liferay.portal.model.GroupConstants;
+import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.ResourceLocalServiceUtil;
 import com.liferay.portal.util.PortalInstances;
 import com.liferay.portal.util.PortalUtil;
@@ -256,7 +259,7 @@ public class VerifyJournal extends VerifyProcess {
 
 		List<JournalArticle> articles =
 			JournalArticleLocalServiceUtil.getStructureArticles(
-				structure.getGroupId(), structure.getStructureKey());
+				new String[] {structure.getStructureKey()});
 
 		for (JournalArticle article : articles) {
 			String xml =
@@ -908,6 +911,20 @@ public class VerifyJournal extends VerifyProcess {
 								article.getGroupId(),
 								PortalUtil.getClassNameId(JournalArticle.class),
 								article.getDDMStructureKey());
+
+						if (structure == null) {
+							Group globalGroup =
+								GroupLocalServiceUtil.getFriendlyURLGroup(
+									article.getCompanyId(),
+									GroupConstants.GLOBAL_FRIENDLY_URL);
+
+							structure =
+								DDMStructureLocalServiceUtil.fetchStructure(
+									globalGroup.getGroupId(),
+									PortalUtil.getClassNameId(
+										JournalArticle.class),
+									article.getDDMStructureKey());
+						}
 
 						if (structure != null) {
 							String xml =
