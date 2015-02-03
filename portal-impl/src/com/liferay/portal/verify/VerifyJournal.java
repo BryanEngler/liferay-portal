@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Criterion;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
@@ -25,27 +26,39 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.SecureRandomUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.KeyValuePair;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Document;
+import com.liferay.portal.kernel.xml.DocumentException;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.liferay.portal.kernel.xml.XPath;
 import com.liferay.portal.service.ResourceLocalServiceUtil;
 import com.liferay.portal.util.PortalInstances;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portlet.asset.model.AssetEntry;
 import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.NoSuchStructureException;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
+import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMFieldsCounter;
+import com.liferay.portlet.journal.ArticleContentException;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.model.JournalArticleConstants;
 import com.liferay.portlet.journal.model.JournalArticleImage;
@@ -63,8 +76,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Set;
+import java.util.Stack;
 import java.util.regex.Pattern;
 
 import javax.portlet.PortletPreferences;
@@ -88,8 +107,202 @@ public class VerifyJournal extends VerifyProcess {
 		verifyFolderAssets();
 		verifyOracleNewLine();
 		verifyPermissions();
+		verifyStructures();
 		verifyTree();
 		verifyURLTitle();
+	}
+
+	protected Set<String> getDuplicateElementNames(Document document)
+		throws DocumentException, PortalException {
+
+		XPath xPathSelector = SAXReaderUtil.createXPath("//dynamic-element");
+
+		List<Node> nodes = xPathSelector.selectNodes(document);
+
+		Set<String> elementNames = new HashSet<>();
+		Set<String> duplicateElementNames = new HashSet<>();
+
+		for (Node node : nodes) {
+			Element element = (Element)node;
+
+			String name = StringUtil.toLowerCase(
+				element.attributeValue("name"));
+
+			if (elementNames.contains(name)) {
+				duplicateElementNames.add(name);
+			}
+
+			elementNames.add(name);
+		}
+
+		return duplicateElementNames;
+	}
+
+	protected Document getFullStructureDocument(DDMStructure ddmStructure)
+		throws DocumentException, PortalException {
+
+		Stack<DDMStructure> structures = new Stack<>();
+
+		structures.push(ddmStructure);
+
+		while (ddmStructure.getParentStructureId() != 0) {
+			structures.push(ddmStructure);
+
+			ddmStructure = DDMStructureLocalServiceUtil.getDDMStructure(
+				ddmStructure.getParentStructureId());
+		}
+
+		StringBundler sb = new StringBundler();
+
+		sb.append("<root>");
+
+		for (DDMStructure structure : structures) {
+			Document document = SAXReaderUtil.read(structure.getDefinition());
+
+			Element rootElement = document.getRootElement();
+
+			List<Element> dynamicElements = rootElement.elements(
+				"dynamic-element");
+
+			for (Element dynamicElement : dynamicElements) {
+				sb.append(dynamicElement.asXML());
+			}
+		}
+
+		sb.append("</root>");
+
+		return SAXReaderUtil.read(sb.toString());
+	}
+
+	protected void updateArticleUsingStructure(
+			JournalArticle article, Element articleElement,
+			DDMStructure structure, Element structureElement)
+		throws Exception {
+
+		String structureElementName = structureElement.attributeValue("name");
+
+		articleElement.addAttribute("name", structureElementName);
+
+		String type = structureElement.attributeValue("type");
+
+		if (Validator.isNotNull(type) && type.equals("select")) {
+			return;
+		}
+
+		Iterator<Element> structureDynamicElementIterator =
+			structureElement.elementIterator("dynamic-element");
+
+		List<Element> articleDynamicElements =
+			articleElement.elements("dynamic-element");
+
+		ListIterator<Element> articleDynamicElementIterator =
+			articleDynamicElements.listIterator();
+
+		while (articleDynamicElementIterator.hasNext() &&
+			structureDynamicElementIterator.hasNext()) {
+
+			Element articleDynamicElement =
+				articleDynamicElementIterator.next();
+
+			Element structureDynamicElement =
+				structureDynamicElementIterator.next();
+
+			updateArticleUsingStructure(
+				article, articleDynamicElement, structure,
+				structureDynamicElement);
+
+			while (articleDynamicElementIterator.hasNext()) {
+				articleDynamicElement = articleDynamicElementIterator.next();
+
+				int indexAttributeValue = GetterUtil.getInteger(
+					articleDynamicElement.attributeValue("index"));
+
+				if (indexAttributeValue > 0) {
+					updateArticleUsingStructure(
+						article, articleDynamicElement, structure,
+						structureDynamicElement);
+				}
+				else {
+					articleDynamicElementIterator.previous();
+
+					break;
+				}
+			}
+		}
+
+		if (articleDynamicElementIterator.hasNext() ||
+			structureDynamicElementIterator.hasNext()) {
+
+			StringBundler sb = new StringBundler(21);
+
+			sb.append("Article with articleId ");
+			sb.append(article.getArticleId());
+			sb.append(" and version ");
+			sb.append(article.getVersion());
+			sb.append(" does not have content that matches its ");
+			sb.append("structure. This could have occurred if the ");
+			sb.append("article's structure was changed in 6.1, but ");
+			sb.append("the article was not published after that. If ");
+			sb.append("you just ran an upgrade from 6.1, we suggest ");
+			sb.append("you roll back the database to 6.1, publish ");
+			sb.append("the article, and run the upgrade again. This ");
+			sb.append("also could have occurred if you have ");
+			sb.append("published the article since upgrading to 6.2. ");
+			sb.append("If you have already upgraded and are only ");
+			sb.append("running the verify process on 6.2, we suggest ");
+			sb.append("you delete the versions that were published ");
+			sb.append("with corrupt data in 6.2. The structureId for ");
+			sb.append("6.1 is ");
+			sb.append(structure.getStructureKey());
+			sb.append(". The structureId for 6.2 is ");
+			sb.append(structure.getStructureId());
+
+			throw new ArticleContentException(sb.toString());
+		}
+	}
+
+	protected void updateArticlesUsingStructure(
+			DDMStructure structure, Document structureDocument)
+		throws Exception {
+
+		List<JournalArticle> articles =
+			JournalArticleLocalServiceUtil.getStructureArticles(
+				new String[] {structure.getStructureKey()});
+
+		for (JournalArticle article : articles) {
+			boolean latestVersion =
+				JournalArticleLocalServiceUtil.isLatestVersion(
+					article.getGroupId(), article.getArticleId(),
+					article.getVersion());
+
+			boolean latestApprovedVersion =
+				JournalArticleLocalServiceUtil.isLatestVersion(
+					article.getGroupId(), article.getArticleId(),
+					article.getVersion(), WorkflowConstants.STATUS_APPROVED);
+
+			if (!latestVersion && !latestApprovedVersion) {
+				continue;
+			}
+
+			Element structureRootElement = structureDocument.getRootElement();
+
+			Document articleDocument = SAXReaderUtil.read(article.getContent());
+
+			Element articleRootElement = articleDocument.getRootElement();
+
+			try {
+				updateArticleUsingStructure(
+					article, articleRootElement, structure,
+					structureRootElement);
+
+				article.setContent(articleDocument.asXML());
+
+				JournalArticleLocalServiceUtil.updateJournalArticle(article);
+			}
+			catch (ArticleContentException ace) {
+				_log.error(ace);
+			}
+		}
 	}
 
 	protected void updateContentSearch(long groupId, String portletId)
@@ -282,6 +495,45 @@ public class VerifyJournal extends VerifyProcess {
 		}
 	}
 
+	protected void updateElementNameAttributes(
+		String oldPrefix, String newPrefix, Element element,
+		Set<String> duplicateElementNames,
+		List<KeyValuePair> newTemplateVariableNames) {
+
+		String type = element.attributeValue("type");
+
+		if (type.equals("option")) {
+			return;
+		}
+
+		String oldName = element.attributeValue("name");
+		String newName = oldName;
+
+		if (duplicateElementNames.contains(oldName)) {
+			int nextRandomId = (SecureRandomUtil.nextInt() % 9000) + 1000;
+
+			newName = oldName + nextRandomId;
+
+			element.addAttribute("name", newName);
+
+			KeyValuePair kvp = new KeyValuePair(
+				oldPrefix.concat(oldName), newPrefix.concat(newName));
+
+			newTemplateVariableNames.add(kvp);
+		}
+
+		oldPrefix = oldPrefix.concat(oldName).concat(StringPool.PERIOD);
+		newPrefix = newPrefix.concat(newName).concat(StringPool.PERIOD);
+
+		List<Element> dynamicElements = element.elements("dynamic-element");
+
+		for (Element dynamicElement : dynamicElements) {
+			updateElementNameAttributes(
+				oldPrefix, newPrefix, dynamicElement, duplicateElementNames,
+				newTemplateVariableNames);
+		}
+	}
+
 	protected void updateImageElement(Element element, String name, int index)
 		throws PortalException {
 
@@ -387,6 +639,60 @@ public class VerifyJournal extends VerifyProcess {
 			});
 
 		actionableDynamicQuery.performActions();
+	}
+
+	protected List<KeyValuePair> updateStructureNameAttributes(
+			DDMStructure structure, Set<String> duplicateElementNames)
+		throws Exception {
+
+		Document document = SAXReaderUtil.read(structure.getDefinition());
+
+		Element rootElement = document.getRootElement();
+
+		List<KeyValuePair> newTemplateVariableNames = new ArrayList<>();
+
+		for (Element element : rootElement.elements()) {
+			updateElementNameAttributes(
+				StringPool.DOLLAR, StringPool.DOLLAR, element,
+				duplicateElementNames, newTemplateVariableNames);
+		}
+
+		structure.setDefinition(document.asXML());
+
+		DDMStructureLocalServiceUtil.updateDDMStructure(structure);
+
+		return newTemplateVariableNames;
+	}
+
+	protected void updateTemplateVariables(
+			DDMStructure structure, List<KeyValuePair> newTemplateVariableNames)
+		throws Exception {
+
+		List<DDMTemplate> templates =
+			DDMTemplateLocalServiceUtil.getTemplatesByClassPK(
+				structure.getGroupId(), structure.getStructureId());
+
+		for (DDMTemplate template : templates) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Template " + template.getTemplateKey() + " may need to " +
+						"be updated, making a best effort at automatic fixing");
+			}
+
+			String script = template.getScript();
+
+			for (KeyValuePair kvp : newTemplateVariableNames) {
+				String oldTemplateVariableName = kvp.getKey();
+				String newTemplateVariableName = kvp.getValue();
+
+				script = StringUtil.replace(
+					script, oldTemplateVariableName, newTemplateVariableName);
+			}
+
+			template.setScript(script);
+
+			DDMTemplateLocalServiceUtil.updateDDMTemplate(template);
+		}
 	}
 
 	protected void updateURLTitle(
@@ -731,6 +1037,69 @@ public class VerifyJournal extends VerifyProcess {
 				article.getCompanyId(), 0, 0, JournalArticle.class.getName(),
 				article.getResourcePrimKey(), false, false, false);
 		}
+	}
+
+	protected void verifyStructures() throws Exception {
+		ActionableDynamicQuery actionableDynamicQuery =
+			DDMStructureLocalServiceUtil.getActionableDynamicQuery();
+
+		if (_log.isDebugEnabled()) {
+			long count = actionableDynamicQuery.performCount();
+
+			_log.debug(
+				"Processing " + count + " structures for invalid dynamic " +
+					"elements");
+		}
+
+		actionableDynamicQuery.setAddCriteriaMethod(
+			new ActionableDynamicQuery.AddCriteriaMethod() {
+
+				@Override
+				public void addCriteria(DynamicQuery dynamicQuery) {
+					Property classNameIdProperty = PropertyFactoryUtil.forName(
+						"classNameId");
+
+					Criterion classNameIdCriterion = classNameIdProperty.eq(
+						PortalUtil.getClassNameId(JournalArticle.class));
+
+					dynamicQuery.add(classNameIdCriterion);
+				}
+			}
+		);
+
+		actionableDynamicQuery.setPerformActionMethod(
+			new ActionableDynamicQuery.PerformActionMethod() {
+
+				@Override
+				public void performAction(Object object) {
+					DDMStructure structure = (DDMStructure)object;
+
+					try {
+						Document document = getFullStructureDocument(structure);
+
+						Set<String> duplicateElementNames =
+							getDuplicateElementNames(document);
+
+						if (duplicateElementNames.isEmpty()) {
+							return;
+						}
+
+						List<KeyValuePair> newTemplateVariableNames =
+							updateStructureNameAttributes(
+								structure, duplicateElementNames);
+
+						updateTemplateVariables(
+							structure, newTemplateVariableNames);
+
+						updateArticlesUsingStructure(structure, document);
+					}
+					catch (Exception e) {
+						_log.error(e, e);
+					}
+				}
+			});
+
+		actionableDynamicQuery.performActions();
 	}
 
 	protected void verifyTree() throws Exception {

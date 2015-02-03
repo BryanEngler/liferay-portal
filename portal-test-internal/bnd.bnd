@@ -1,0 +1,6 @@
+Bundle-Name: Liferay Portal Test Internal
+Bundle-SymbolicName: portal-test-internal
+Bundle-Version: 7.0.0
+Export-Package: *
+Import-Package: *;resolution:=optional
+Include-Resource: classes
