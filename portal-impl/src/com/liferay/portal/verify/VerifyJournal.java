@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.DocumentException;
@@ -58,6 +59,7 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMFieldsCounter;
+import com.liferay.portlet.journal.ArticleContentException;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.model.JournalArticleConstants;
 import com.liferay.portlet.journal.model.JournalArticleImage;
@@ -80,7 +82,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -356,6 +360,140 @@ public class VerifyJournal extends VerifyProcess {
 		Node node = dynamicContentElement.node(0);
 
 		node.setText(path + StringPool.SLASH + dlFileEntry.getUuid());
+	}
+
+	protected void updateDuplicateStructureFieldNameArticle(
+			JournalArticle article, Element articleElement,
+			DDMStructure structure, Element structureElement)
+		throws PortalException {
+
+		String structureElementName = structureElement.attributeValue("name");
+
+		articleElement.addAttribute("name", structureElementName);
+
+		String type = structureElement.attributeValue("type");
+
+		if (Validator.isNotNull(type) && type.equals("select")) {
+			return;
+		}
+
+		Iterator<Element> structureDynamicElementIterator =
+			structureElement.elementIterator("dynamic-element");
+
+		List<Element> articleDynamicElements = articleElement.elements(
+			"dynamic-element");
+
+		ListIterator<Element> articleDynamicElementIterator =
+			articleDynamicElements.listIterator();
+
+		while (articleDynamicElementIterator.hasNext() &&
+			   structureDynamicElementIterator.hasNext()) {
+
+			Element articleDynamicElement =
+				articleDynamicElementIterator.next();
+
+			Element structureDynamicElement =
+				structureDynamicElementIterator.next();
+
+			updateDuplicateStructureFieldNameArticle(
+				article, articleDynamicElement, structure,
+				structureDynamicElement);
+
+			while (articleDynamicElementIterator.hasNext()) {
+				articleDynamicElement = articleDynamicElementIterator.next();
+
+				int indexAttributeValue = GetterUtil.getInteger(
+					articleDynamicElement.attributeValue("index"));
+
+				if (indexAttributeValue > 0) {
+					updateDuplicateStructureFieldNameArticle(
+						article, articleDynamicElement, structure,
+						structureDynamicElement);
+				}
+				else {
+					articleDynamicElementIterator.previous();
+
+					break;
+				}
+			}
+		}
+
+		if (articleDynamicElementIterator.hasNext() ||
+			structureDynamicElementIterator.hasNext()) {
+
+			StringBundler sb = new StringBundler(21);
+
+			sb.append("Article with articleId ");
+			sb.append(article.getArticleId());
+			sb.append(" and version ");
+			sb.append(article.getVersion());
+			sb.append(" does not have content that matches its ");
+			sb.append("structure. This could have occurred if the ");
+			sb.append("article's structure was changed in 6.1, but ");
+			sb.append("the article was not published after that. If ");
+			sb.append("you just ran an upgrade from 6.1, we suggest ");
+			sb.append("you roll back the database to 6.1, publish ");
+			sb.append("the article, and run the upgrade again. This ");
+			sb.append("also could have occurred if you have ");
+			sb.append("published the article since upgrading to 6.2. ");
+			sb.append("If you have already upgraded and are only ");
+			sb.append("running the verify process on 6.2, we suggest ");
+			sb.append("you delete the versions that were published ");
+			sb.append("with corrupt data in 6.2. The structureId for ");
+			sb.append("6.1 is ");
+			sb.append(structure.getStructureKey());
+			sb.append(". The structureId for 6.2 is ");
+			sb.append(structure.getStructureId());
+
+			throw new ArticleContentException(sb.toString());
+		}
+	}
+
+	protected void updateDuplicateStructureFieldNameArticles(
+			DDMStructure structure)
+		throws DocumentException, PortalException {
+
+		List<JournalArticle> articles =
+			JournalArticleLocalServiceUtil.getStructureArticles(
+				new String[]{structure.getStructureKey()});
+
+		for (JournalArticle article : articles) {
+			boolean latestVersion =
+				JournalArticleLocalServiceUtil.isLatestVersion(
+					article.getGroupId(), article.getArticleId(),
+					article.getVersion());
+
+			boolean latestApprovedVersion =
+				JournalArticleLocalServiceUtil.isLatestVersion(
+					article.getGroupId(), article.getArticleId(),
+					article.getVersion(), WorkflowConstants.STATUS_APPROVED);
+
+			if (!latestVersion && !latestApprovedVersion) {
+				continue;
+			}
+
+			Document structureDocument = getCompleteStructureDefinition(
+				structure);
+
+			Element structureRootElement = structureDocument.getRootElement();
+
+			Document articleDocument = SAXReaderUtil.read(article.getContent());
+
+			Element articleRootElement = articleDocument.getRootElement();
+
+			try {
+				updateDuplicateStructureFieldNameArticle(
+					article, articleRootElement, structure,
+					structureRootElement);
+
+				article.setContent(articleDocument.asXML());
+
+				JournalArticleLocalServiceUtil.updateJournalArticle(article);
+			}
+			catch (ArticleContentException ace) {
+				_log.error(ace);
+			}
+		}
 	}
 
 	protected List<KeyValuePair> updateDuplicateStructureFieldNames(
@@ -954,6 +1092,8 @@ public class VerifyJournal extends VerifyProcess {
 
 			updateDuplicateStructureFieldNameTemplateVariables(
 				structure, newTemplateVariableNames);
+
+			updateDuplicateStructureFieldNameArticles(structure);
 		}
 	}
 
