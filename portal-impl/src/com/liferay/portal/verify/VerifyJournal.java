@@ -33,6 +33,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.KeyValuePair;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -53,7 +54,9 @@ import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.NoSuchStructureException;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
+import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMFieldsCounter;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.model.JournalArticleConstants;
@@ -73,9 +76,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.regex.Pattern;
@@ -179,6 +185,43 @@ public class VerifyJournal extends VerifyProcess {
 		}
 
 		return duplicateElementNames;
+	}
+
+	protected List<KeyValuePair> getNewTemplateVariableNames(
+			DDMStructure structure,
+			Map<Long, List<KeyValuePair>> problemStructureMap)
+		throws PortalException {
+
+		List<KeyValuePair> newTemplateVariableNames = new ArrayList<>();
+
+		newTemplateVariableNames.addAll(
+			problemStructureMap.get(structure.getStructureId()));
+
+		long ancestorStructureId = structure.getParentStructureId();
+
+		while (ancestorStructureId !=
+					DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID) {
+
+			List<KeyValuePair> ancestorNewTemplateVariableNames =
+				problemStructureMap.get(ancestorStructureId);
+
+			if (ancestorNewTemplateVariableNames == null) {
+				break;
+			}
+
+			newTemplateVariableNames.addAll(ancestorNewTemplateVariableNames);
+
+			DDMStructure ancestorStructure =
+				DDMStructureLocalServiceUtil.getStructure(ancestorStructureId);
+
+			ancestorStructureId = ancestorStructure.getParentStructureId();
+		}
+
+		Collections.sort(newTemplateVariableNames);
+
+		Collections.reverse(newTemplateVariableNames);
+
+		return newTemplateVariableNames;
 	}
 
 	protected void updateContentSearch(long groupId, String portletId)
@@ -378,6 +421,53 @@ public class VerifyJournal extends VerifyProcess {
 			updateDuplicateStructureFieldNames(
 				oldPrefix, newPrefix, dynamicElement, duplicateElementNames,
 				newTemplateVariableNames);
+		}
+	}
+
+	protected void updateDuplicateStructureFieldNameTemplateVariables(
+			DDMStructure structure, List<KeyValuePair> newTemplateVariableNames)
+		throws DocumentException, PortalException {
+
+		List<DDMTemplate> templates =
+			DDMTemplateLocalServiceUtil.getTemplatesByClassPK(
+				structure.getGroupId(), structure.getStructureId());
+
+		for (DDMTemplate template : templates) {
+			String script = template.getScript();
+
+			for (KeyValuePair kvp : newTemplateVariableNames) {
+				String oldTemplateVariableName = kvp.getKey();
+				String newTemplateVariableName = kvp.getValue();
+
+				script = StringUtil.replace(
+					script, oldTemplateVariableName, newTemplateVariableName);
+			}
+
+			template.setScript(script);
+
+			DDMTemplateLocalServiceUtil.updateDDMTemplate(template);
+		}
+
+		if (_log.isWarnEnabled()) {
+			StringBundler sb = new StringBundler(6 + (templates.size() * 2));
+
+			sb.append("Absolute references to field names in templates ");
+
+			for (DDMTemplate template : templates) {
+				sb.append(template.getTemplateKey());
+				sb.append(StringPool.COMMA);
+			}
+
+			sb.setIndex(sb.index() - 1);
+
+			sb.append(" in site ");
+			sb.append(structure.getGroupId());
+			sb.append(" were automatically updated due to duplicate field ");
+			sb.append("names not being allowed in Liferay 6.2, but relative ");
+			sb.append(" references will need to be manually updated by site");
+			sb.append("administrators after the verify process completes");
+
+			_log.warn(sb.toString());
 		}
 	}
 
@@ -791,7 +881,9 @@ public class VerifyJournal extends VerifyProcess {
 		}
 	}
 
-	protected void verifyDuplicateStructureFieldNames() throws PortalException {
+	protected void verifyDuplicateStructureFieldNames()
+		throws DocumentException, PortalException {
+
 		ActionableDynamicQuery actionableDynamicQuery =
 			DDMStructureLocalServiceUtil.getActionableDynamicQuery();
 
@@ -819,6 +911,9 @@ public class VerifyJournal extends VerifyProcess {
 			}
 		);
 
+		final Map<Long, List<KeyValuePair>> problemStructureMap =
+			new HashMap<>();
+
 		actionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.PerformActionMethod() {
 
@@ -840,12 +935,26 @@ public class VerifyJournal extends VerifyProcess {
 						List<KeyValuePair> templateVariableNames =
 							updateDuplicateStructureFieldNames(
 								structure, duplicateElementNames);
+
+						problemStructureMap.put(
+							structure.getStructureId(), templateVariableNames);
 					}
 					catch (Exception e) {
 						_log.error(e, e);
 					}
 				}
 			});
+
+		for (long structureId : problemStructureMap.keySet()) {
+			DDMStructure structure = DDMStructureLocalServiceUtil.getStructure(
+				structureId);
+
+			List<KeyValuePair> newTemplateVariableNames =
+				getNewTemplateVariableNames(structure, problemStructureMap);
+
+			updateDuplicateStructureFieldNameTemplateVariables(
+				structure, newTemplateVariableNames);
+		}
 	}
 
 	protected void verifyFolderAssets() throws Exception {
