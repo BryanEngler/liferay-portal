@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Criterion;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
@@ -25,26 +26,34 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.SecureRandomUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Document;
+import com.liferay.portal.kernel.xml.DocumentException;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.liferay.portal.kernel.xml.XPath;
 import com.liferay.portal.service.ResourceLocalServiceUtil;
 import com.liferay.portal.util.PortalInstances;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portlet.asset.model.AssetEntry;
 import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.NoSuchStructureException;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
+import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMFieldsCounter;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.model.JournalArticleConstants;
@@ -63,8 +72,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.Stack;
 import java.util.regex.Pattern;
 
 import javax.portlet.PortletPreferences;
@@ -85,11 +98,87 @@ public class VerifyJournal extends VerifyProcess {
 		verifyArticleContents();
 		verifyArticleStructures();
 		verifyContentSearch();
+		verifyDuplicateStructureFieldNames();
 		verifyFolderAssets();
 		verifyOracleNewLine();
 		verifyPermissions();
 		verifyTree();
 		verifyURLTitle();
+	}
+
+	protected Document getCompleteStructureDefinition(DDMStructure structure)
+		throws DocumentException, PortalException {
+
+		Document childDocument = SAXReaderUtil.read(structure.getDefinition());
+
+		long parentStructureId = structure.getParentStructureId();
+
+		if (parentStructureId ==
+				DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID) {
+
+			return childDocument;
+		}
+
+		Stack<Document> documents = new Stack<>();
+
+		documents.push(childDocument);
+
+		while (parentStructureId !=
+					DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID) {
+
+			DDMStructure parentStructure =
+				DDMStructureLocalServiceUtil.getStructure(parentStructureId);
+
+			Document parentDocument = SAXReaderUtil.read(
+				parentStructure.getDefinition());
+
+			documents.push(parentDocument);
+
+			parentStructureId = parentStructure.getParentStructureId();
+		}
+
+		Document mergedDocument = SAXReaderUtil.createDocument();
+
+		Element mergedRootElement = mergedDocument.getRootElement();
+
+		for (Document document : documents) {
+			Element rootElement = document.getRootElement();
+
+			List<Element> dynamicElements = rootElement.elements(
+				"dynamic-element");
+
+			for (Element dynamicElement : dynamicElements) {
+				mergedRootElement.add(dynamicElement.createCopy());
+			}
+		}
+
+		return mergedDocument;
+	}
+
+	protected Set<String> getDuplicateElementNames(Document document)
+		throws DocumentException, PortalException {
+
+		XPath xPathSelector = SAXReaderUtil.createXPath("//dynamic-element");
+
+		List<Node> nodes = xPathSelector.selectNodes(document);
+
+		Set<String> elementNames = new HashSet<>();
+		Set<String> duplicateElementNames = new HashSet<>();
+
+		for (Node node : nodes) {
+			Element element = (Element)node;
+
+			String name = StringUtil.toLowerCase(
+				element.attributeValue("name"));
+
+			if (elementNames.contains(name)) {
+				duplicateElementNames.add(name);
+			}
+
+			elementNames.add(name);
+		}
+
+		return duplicateElementNames;
 	}
 
 	protected void updateContentSearch(long groupId, String portletId)
@@ -224,6 +313,72 @@ public class VerifyJournal extends VerifyProcess {
 		Node node = dynamicContentElement.node(0);
 
 		node.setText(path + StringPool.SLASH + dlFileEntry.getUuid());
+	}
+
+	protected List<KeyValuePair> updateDuplicateStructureFieldNames(
+			DDMStructure structure, Set<String> duplicateElementNames)
+		throws DocumentException {
+
+		Document document = SAXReaderUtil.read(structure.getDefinition());
+
+		Element rootElement = document.getRootElement();
+
+		List<KeyValuePair> newTemplateVariableNames = new ArrayList<>();
+
+		for (Element element : rootElement.elements()) {
+			updateDuplicateStructureFieldNames(
+				StringPool.DOLLAR, StringPool.DOLLAR, element,
+				duplicateElementNames, newTemplateVariableNames);
+		}
+
+		structure.setDefinition(document.asXML());
+
+		DDMStructureLocalServiceUtil.updateDDMStructure(structure);
+
+		return newTemplateVariableNames;
+	}
+
+	protected void updateDuplicateStructureFieldNames(
+		String oldPrefix, String newPrefix, Element element,
+		Set<String> duplicateElementNames,
+		List<KeyValuePair> newTemplateVariableNames) {
+
+		String type = element.attributeValue("type");
+
+		if (type.equals("option")) {
+			return;
+		}
+
+		String oldName = element.attributeValue("name");
+		String newName = oldName;
+
+		if (duplicateElementNames.contains(oldName)) {
+			while (duplicateElementNames.contains(newName)) {
+				int nextRandomId = (SecureRandomUtil.nextInt() % 9000) + 1000;
+
+				newName = oldName + nextRandomId;
+			}
+
+			duplicateElementNames.add(newName);
+
+			element.addAttribute("name", newName);
+
+			KeyValuePair kvp = new KeyValuePair(
+				oldPrefix.concat(oldName), newPrefix.concat(newName));
+
+			newTemplateVariableNames.add(kvp);
+		}
+
+		oldPrefix = oldPrefix.concat(oldName).concat(StringPool.PERIOD);
+		newPrefix = newPrefix.concat(newName).concat(StringPool.PERIOD);
+
+		List<Element> dynamicElements = element.elements("dynamic-element");
+
+		for (Element dynamicElement : dynamicElements) {
+			updateDuplicateStructureFieldNames(
+				oldPrefix, newPrefix, dynamicElement, duplicateElementNames,
+				newTemplateVariableNames);
+		}
 	}
 
 	protected void updateDynamicElements(JournalArticle article)
@@ -634,6 +789,63 @@ public class VerifyJournal extends VerifyProcess {
 		finally {
 			DataAccess.cleanUp(con, ps, rs);
 		}
+	}
+
+	protected void verifyDuplicateStructureFieldNames() throws PortalException {
+		ActionableDynamicQuery actionableDynamicQuery =
+			DDMStructureLocalServiceUtil.getActionableDynamicQuery();
+
+		if (_log.isDebugEnabled()) {
+			long count = actionableDynamicQuery.performCount();
+
+			_log.debug(
+				"Processing " + count + " structures for duplicate field " +
+					"names");
+		}
+
+		actionableDynamicQuery.setAddCriteriaMethod(
+			new ActionableDynamicQuery.AddCriteriaMethod() {
+
+				@Override
+				public void addCriteria(DynamicQuery dynamicQuery) {
+					Property classNameIdProperty = PropertyFactoryUtil.forName(
+						"classNameId");
+
+					Criterion classNameIdCriterion = classNameIdProperty.eq(
+						PortalUtil.getClassNameId(JournalArticle.class));
+
+					dynamicQuery.add(classNameIdCriterion);
+				}
+			}
+		);
+
+		actionableDynamicQuery.setPerformActionMethod(
+			new ActionableDynamicQuery.PerformActionMethod() {
+
+				@Override
+				public void performAction(Object object) {
+					DDMStructure structure = (DDMStructure)object;
+
+					try {
+						Document document = getCompleteStructureDefinition(
+							structure);
+
+						Set<String> duplicateElementNames =
+							getDuplicateElementNames(document);
+
+						if (duplicateElementNames.isEmpty()) {
+							return;
+						}
+
+						List<KeyValuePair> templateVariableNames =
+							updateDuplicateStructureFieldNames(
+								structure, duplicateElementNames);
+					}
+					catch (Exception e) {
+						_log.error(e, e);
+					}
+				}
+			});
 	}
 
 	protected void verifyFolderAssets() throws Exception {
