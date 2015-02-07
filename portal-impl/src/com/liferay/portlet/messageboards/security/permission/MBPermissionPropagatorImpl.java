@@ -51,7 +51,6 @@ public class MBPermissionPropagatorImpl extends BasePermissionPropagator {
 		}
 		else if (className.equals(MBMessage.class.getName())) {
 			long messageId = GetterUtil.getLong(primKey);
-
 			MBMessage message = MBMessageLocalServiceUtil.getMessage(messageId);
 
 			if (message.isRoot()) {
@@ -59,10 +58,25 @@ public class MBPermissionPropagatorImpl extends BasePermissionPropagator {
 					actionRequest, className, messageId, message.getThreadId(),
 					roleIds);
 			}
+			else {
+				propagateMessageRolePermissions(
+					actionRequest, className, message.getRootMessageId(),
+					messageId, roleIds);
+			}
 		}
 		else if (className.equals("com.liferay.portlet.messageboards")) {
-			propagateMBRolePermissions(
-				actionRequest, className, primKey, roleIds);
+			MBMessage message = MBMessageLocalServiceUtil.fetchMBMessage(
+				GetterUtil.getLong(primKey));
+
+			if (message != null) {
+				propagateMBRolePermissions(
+					actionRequest, className, message.getGroupId(), roleIds,
+					message.getMessageId());
+			}
+			else {
+				propagateMBRolePermissions(
+					actionRequest, className, primKey, roleIds);
+			}
 		}
 	}
 
@@ -159,6 +173,15 @@ public class MBPermissionPropagatorImpl extends BasePermissionPropagator {
 				}
 			}
 		}
+	}
+
+	protected void propagateMBRolePermissions(
+			ActionRequest actionRequest, String className, long primaryKey,
+			long[] roleIds, long messageId)
+		throws PortalException {
+
+		propagateMessageRolePermissions(
+			actionRequest, className, primaryKey, messageId, roleIds);
 	}
 
 	protected void propagateMBRolePermissions(
