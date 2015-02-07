@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.upload.LiferayFileItemException;
 import com.liferay.portal.kernel.upload.UploadException;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -31,9 +32,14 @@ import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.model.Portlet;
+import com.liferay.portal.model.Role;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionChecker;
+import com.liferay.portal.security.permission.PermissionPropagator;
+import com.liferay.portal.service.PortletLocalServiceUtil;
+import com.liferay.portal.service.RoleLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.struts.PortletAction;
@@ -411,9 +417,13 @@ public class EditMessageAction extends PortletAction {
 					CaptchaUtil.check(actionRequest);
 				}
 
+				String propagateFrom;
+
 				if (threadId <= 0) {
 
 					// Post new thread
+
+					propagateFrom = "com.liferay.portlet.messageboards";
 
 					message = MBMessageServiceUtil.addMessage(
 						groupId, categoryId, subject, body,
@@ -429,10 +439,35 @@ public class EditMessageAction extends PortletAction {
 
 					// Post reply
 
+					propagateFrom = MBMessage.class.getName();
+
 					message = MBMessageServiceUtil.addMessage(
 						parentMessageId, subject, body,
 						mbSettings.getMessageFormat(), inputStreamOVPs,
 						anonymous, priority, allowPingbacks, serviceContext);
+				}
+
+				if (PropsValues.PERMISSIONS_PROPAGATION_ENABLED) {
+					List<Role> roles = RoleLocalServiceUtil.getRoles(
+						themeDisplay.getCompanyId());
+
+					long[] roleIds = {};
+
+					for (Role roleId : roles) {
+						roleIds = ArrayUtil.append(roleIds, roleId.getRoleId());
+					}
+
+					Portlet portlet = PortletLocalServiceUtil.getPortletById(
+						themeDisplay.getCompanyId(), themeDisplay.getPpid());
+
+					PermissionPropagator permissionPropagator =
+						portlet.getPermissionPropagatorInstance();
+
+					if (permissionPropagator != null) {
+						permissionPropagator.propagateRolePermissions(
+							actionRequest, propagateFrom,
+							String.valueOf(message.getMessageId()), roleIds);
+					}
 				}
 			}
 			else {
