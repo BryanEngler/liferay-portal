@@ -24,11 +24,11 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.upload.LiferayFileItemException;
 import com.liferay.portal.kernel.upload.UploadException;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -417,13 +417,9 @@ public class EditMessageAction extends PortletAction {
 					CaptchaUtil.check(actionRequest);
 				}
 
-				String propagateFrom;
-
 				if (threadId <= 0) {
 
 					// Post new thread
-
-					propagateFrom = "com.liferay.portlet.messageboards";
 
 					message = MBMessageServiceUtil.addMessage(
 						groupId, categoryId, subject, body,
@@ -439,8 +435,6 @@ public class EditMessageAction extends PortletAction {
 
 					// Post reply
 
-					propagateFrom = MBMessage.class.getName();
-
 					message = MBMessageServiceUtil.addMessage(
 						parentMessageId, subject, body,
 						mbSettings.getMessageFormat(), inputStreamOVPs,
@@ -451,10 +445,12 @@ public class EditMessageAction extends PortletAction {
 					List<Role> roles = RoleLocalServiceUtil.getRoles(
 						themeDisplay.getCompanyId());
 
-					long[] roleIds = {};
+					long[] roleIds = new long[roles.size()];
 
-					for (Role roleId : roles) {
-						roleIds = ArrayUtil.append(roleIds, roleId.getRoleId());
+					for (int i = 0; i < roles.size(); i++) {
+						Role role = roles.get(i);
+
+						roleIds[i] = role.getRoleId();
 					}
 
 					Portlet portlet = PortletLocalServiceUtil.getPortletById(
@@ -463,9 +459,18 @@ public class EditMessageAction extends PortletAction {
 					PermissionPropagator permissionPropagator =
 						portlet.getPermissionPropagatorInstance();
 
+					String className = StringPool.BLANK;
+
+					if (threadId <= 0) {
+						className = "com.liferay.portlet.messageboards";
+					}
+					else {
+						className = MBMessage.class.getName();
+					}
+
 					if (permissionPropagator != null) {
 						permissionPropagator.propagateRolePermissions(
-							actionRequest, propagateFrom,
+							actionRequest, className,
 							String.valueOf(message.getMessageId()), roleIds);
 					}
 				}
