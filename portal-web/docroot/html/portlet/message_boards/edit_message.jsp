@@ -320,7 +320,7 @@ else {
 			<aui:input helpMessage="to-allow-pingbacks,-please-also-ensure-the-entry's-guest-view-permission-is-enabled" label="allow-pingbacks" name="allowPingbacks" value="<%= allowPingbacks %>" />
 		</c:if>
 
-		<c:if test="<%= message == null %>">
+		<c:if test="<%= message == null && !PropsValues.PERMISSIONS_PROPAGATION_ENABLED %>">
 			<aui:field-wrapper label="permissions">
 				<liferay-ui:input-permissions
 					modelName="<%= MBMessage.class.getName() %>"
