@@ -51,6 +51,7 @@ public class MBPermissionPropagatorImpl extends BasePermissionPropagator {
 		}
 		else if (className.equals(MBMessage.class.getName())) {
 			long messageId = GetterUtil.getLong(primKey);
+
 			MBMessage message = MBMessageLocalServiceUtil.getMessage(messageId);
 
 			if (message.isRoot()) {
@@ -69,9 +70,9 @@ public class MBPermissionPropagatorImpl extends BasePermissionPropagator {
 				GetterUtil.getLong(primKey));
 
 			if (message != null) {
-				propagateMBRolePermissions(
-					actionRequest, className, message.getGroupId(), roleIds,
-					message.getMessageId());
+				propagateMessageRolePermissions(
+					actionRequest, className, message.getGroupId(),
+					message.getMessageId(), roleIds);
 			}
 			else {
 				propagateMBRolePermissions(
@@ -173,15 +174,6 @@ public class MBPermissionPropagatorImpl extends BasePermissionPropagator {
 				}
 			}
 		}
-	}
-
-	protected void propagateMBRolePermissions(
-			ActionRequest actionRequest, String className, long primaryKey,
-			long[] roleIds, long messageId)
-		throws PortalException {
-
-		propagateMessageRolePermissions(
-			actionRequest, className, primaryKey, messageId, roleIds);
 	}
 
 	protected void propagateMBRolePermissions(
