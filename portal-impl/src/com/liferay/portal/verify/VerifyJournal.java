@@ -82,7 +82,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -523,7 +522,7 @@ public class VerifyJournal extends VerifyProcess {
 		}
 	}
 
-	protected void updateElementNameAttributes(Element element, Random random) {
+	protected void updateElementNameAttributes(Element element) {
 		String type = element.attributeValue("type");
 
 		if (type.equals("option")) {
@@ -531,14 +530,14 @@ public class VerifyJournal extends VerifyProcess {
 		}
 
 		String elementName =
-			element.attributeValue("name") + (random.nextInt(9000) + 1000);
+			element.attributeValue("name") + "_" + _counter++;
 
 		element.addAttribute("name", elementName);
 
 		List<Element> dynamicElements = element.elements("dynamic-element");
 
 		for (Element dynamicElement : dynamicElements) {
-			updateElementNameAttributes(dynamicElement, random);
+			updateElementNameAttributes(dynamicElement);
 		}
 	}
 
@@ -650,7 +649,7 @@ public class VerifyJournal extends VerifyProcess {
 	}
 
 	protected Map<String, String> updateStructureNameAttributes(
-			DDMStructure structure, Random random)
+			DDMStructure structure)
 		throws Exception {
 
 		Document document = SAXReaderUtil.read(structure.getDefinition());
@@ -660,8 +659,10 @@ public class VerifyJournal extends VerifyProcess {
 		List<String> originalTemplateVariables = addElementTemplateNames(
 			rootElement, new ArrayList<String>());
 
+		_counter = 0;
+
 		for (Element element : rootElement.elements()) {
-			updateElementNameAttributes(element, random);
+			updateElementNameAttributes(element);
 		}
 
 		structure.setDefinition(document.asXML());
@@ -979,11 +980,9 @@ public class VerifyJournal extends VerifyProcess {
 
 		actionableDynamicQuery.performActions();
 
-		Random random = new Random();
-
 		for (DDMStructure structure : structures) {
 			Map<String, String> newTemplateVariablesMap =
-				updateStructureNameAttributes(structure, random);
+				updateStructureNameAttributes(structure);
 
 			updateTemplateVariables(structure, newTemplateVariablesMap);
 		}
@@ -1152,6 +1151,8 @@ public class VerifyJournal extends VerifyProcess {
 			DataAccess.cleanUp(con, ps, rs);
 		}
 	}
+
+	private int _counter;
 
 	private static final Log _log = LogFactoryUtil.getLog(VerifyJournal.class);
 
