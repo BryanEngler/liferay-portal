@@ -342,18 +342,33 @@ definePermissionsURL.setRefererPlid(plid);
 
 				//boolean disableAll = false;
 
+				Set<String> commonActions = new HashSet<String>();
+
 				if (PropsValues.PERMISSIONS_PROPAGATION_ENABLED && selResource.equals(MBMessage.class.getName())) {
 				/*	MBMessage message = MBMessageLocalServiceUtil.fetchMBMessage(GetterUtil.getLong(resourcePrimKey));
 
 					if ((message != null) && !message.isRoot()) {
 						disableAll = true;
 					}*/
+
+					Set<String> messageBoardActions = SetUtil.fromCollection(ResourceActionsUtil.getModelResourceActions("com.liferay.portlet.messageboards"));
+					Set<String> messageActions = SetUtil.fromCollection(ResourceActionsUtil.getModelResourceActions(MBMessage.class.getName()));
+
+					for (String action : messageActions) {
+						if (messageBoardActions.contains(action)) {
+							commonActions.add(action);
+						}
+					}
 				}
 
 				for (String action : actions) {
 					boolean checked = false;
 					boolean disabled = false;
 					String preselectedMsg = StringPool.BLANK;
+
+					if (PropsValues.PERMISSIONS_PROPAGATION_ENABLED && commonActions.contains(action)) {
+						disabled = true;
+					}
 
 					if (currentIndividualActions.contains(action)) {
 						checked = true;
