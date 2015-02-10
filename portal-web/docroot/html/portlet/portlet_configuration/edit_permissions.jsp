@@ -340,14 +340,14 @@ definePermissionsURL.setRefererPlid(plid);
 					guestUnsupportedActions.add(ActionKeys.VIEW);
 				}
 
-				boolean disableAll = false;
+				//boolean disableAll = false;
 
 				if (PropsValues.PERMISSIONS_PROPAGATION_ENABLED && selResource.equals(MBMessage.class.getName())) {
-					MBMessage message = MBMessageLocalServiceUtil.fetchMBMessage(GetterUtil.getLong(resourcePrimKey));
+				/*	MBMessage message = MBMessageLocalServiceUtil.fetchMBMessage(GetterUtil.getLong(resourcePrimKey));
 
 					if ((message != null) && !message.isRoot()) {
 						disableAll = true;
-					}
+					}*/
 				}
 
 				for (String action : actions) {
@@ -369,13 +369,15 @@ definePermissionsURL.setRefererPlid(plid);
 						preselectedMsg = "x-is-allowed-to-do-action-x-in-all-items-of-type-x-in-this-portal-instance";
 					}
 
-					if (disableAll) {
+					/*if (disableAll) {
 						disabled = true;
 					}
-					else if (name.equals(RoleConstants.GUEST) && guestUnsupportedActions.contains(action)) {
+					else */
+					if (name.equals(RoleConstants.GUEST) && guestUnsupportedActions.contains(action)) {
 						disabled = true;
 					}
-					else if (action.equals(ActionKeys.ACCESS_IN_CONTROL_PANEL)) {
+					//else
+					if (action.equals(ActionKeys.ACCESS_IN_CONTROL_PANEL)) {
 						disabled = true;
 					}
 				%>
