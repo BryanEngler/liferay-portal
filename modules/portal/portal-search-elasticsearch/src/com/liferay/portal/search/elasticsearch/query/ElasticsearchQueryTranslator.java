@@ -15,7 +15,6 @@
 package com.liferay.portal.search.elasticsearch.query;
 
 import com.liferay.portal.kernel.search.BooleanQuery;
-import com.liferay.portal.kernel.search.ParseException;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.QueryTranslator;
 import com.liferay.portal.kernel.search.QueryVisitor;
@@ -70,7 +69,7 @@ public class ElasticsearchQueryTranslator
 	}
 
 	@Override
-	public QueryBuilder translate(Query query) throws ParseException {
+	public QueryBuilder translate(Query query) {
 		QueryBuilder queryBuilder = query.accept(this);
 
 		if (queryBuilder == null) {
@@ -81,7 +80,7 @@ public class ElasticsearchQueryTranslator
 	}
 
 	@Override
-	public Object translateForSolr(Query query) throws ParseException {
+	public Object translateForSolr(Query query) {
 		throw new UnsupportedOperationException();
 	}
 
