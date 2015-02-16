@@ -59,9 +59,7 @@ public class TermQueryTranslatorImpl implements TermQueryTranslator {
 		String field, String value) {
 
 		value = StringUtil.replace(value, StringPool.PERCENT, StringPool.BLANK);
-
 		value = StringUtil.toLowerCase(value);
-
 		value = StringPool.STAR + value + StringPool.STAR;
 
 		return QueryBuilders.wildcardQuery(field, value);

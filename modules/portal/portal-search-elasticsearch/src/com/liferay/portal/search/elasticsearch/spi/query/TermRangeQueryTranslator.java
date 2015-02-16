@@ -23,6 +23,6 @@ import org.elasticsearch.index.query.QueryBuilder;
  */
 public interface TermRangeQueryTranslator {
 
-	QueryBuilder translate(TermRangeQuery termRangeQuery);
+	public QueryBuilder translate(TermRangeQuery termRangeQuery);
 
 }
