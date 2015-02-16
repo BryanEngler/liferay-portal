@@ -23,6 +23,6 @@ import org.elasticsearch.index.query.QueryBuilder;
  */
 public interface WildcardQueryTranslator {
 
-	QueryBuilder translate(WildcardQuery wildcardQuery);
+	public QueryBuilder translate(WildcardQuery wildcardQuery);
 
 }
