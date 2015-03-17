@@ -48,12 +48,15 @@ public class ElasticsearchConnectionManager {
 	}
 
 	public Client getClient() {
-		if (getElasticsearchConnection() == null) {
+		ElasticsearchConnection elasticsearchConnection =
+			getElasticsearchConnection();
+		
+		if (elasticsearchConnection == null) {
 			throw new IllegalStateException(
 				"Elasticsearch connection not initialized");
 		}
 
-		return getElasticsearchConnection().getClient();
+		return elasticsearchConnection.getClient();
 	}
 
 	public ClusterAdminClient getClusterAdminClient() {
@@ -65,7 +68,10 @@ public class ElasticsearchConnectionManager {
 	public ClusterHealthResponse getClusterHealthResponse(
 		long timeout, int nodesCount) {
 
-		return getElasticsearchConnection().getClusterHealthResponse(
+		ElasticsearchConnection elasticsearchConnection =
+			getElasticsearchConnection();
+
+		return elasticsearchConnection.getClusterHealthResponse(
 			timeout, nodesCount);
 	}
 
