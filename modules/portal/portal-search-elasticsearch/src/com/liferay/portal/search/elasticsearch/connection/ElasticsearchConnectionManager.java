@@ -50,7 +50,7 @@ public class ElasticsearchConnectionManager {
 	public Client getClient() {
 		ElasticsearchConnection elasticsearchConnection =
 			getElasticsearchConnection();
-		
+
 		if (elasticsearchConnection == null) {
 			throw new IllegalStateException(
 				"Elasticsearch connection not initialized");
