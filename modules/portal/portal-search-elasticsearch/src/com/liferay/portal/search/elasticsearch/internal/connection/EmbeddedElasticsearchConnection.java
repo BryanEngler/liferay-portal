@@ -106,7 +106,7 @@ public class EmbeddedElasticsearchConnection
 			_log.debug(
 				"Finished starting " +
 					elasticsearchConfiguration.clusterName() + " in " +
-					stopWatch.getTime() + " ms");
+						stopWatch.getTime() + " ms");
 		}
 
 		return client;
@@ -122,15 +122,11 @@ public class EmbeddedElasticsearchConnection
 		ImmutableSettings.Builder builder) {
 
 		builder.put("cluster.name", elasticsearchConfiguration.clusterName());
-
 		builder.put("http.enabled", elasticsearchConfiguration.httpEnabled());
-
-		builder.put("index.number_of_shards", 1);
 		builder.put("index.number_of_replicas", 0);
-
+		builder.put("index.number_of_shards", 1);
 		builder.put("node.client", false);
 		builder.put("node.data", true);
-
 		builder.put(
 			"path.data",
 			PropsUtil.get(PropsKeys.LIFERAY_HOME) + "/data/elasticsearch");
