@@ -140,15 +140,11 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 		builder.put(
 			"client.transport.sniff",
 			elasticsearchConfiguration.clientTransportSniff());
-
 		builder.put("cluster.name", elasticsearchConfiguration.clusterName());
-
 		builder.put("http.enabled", false);
-
 		builder.put("node.client", true);
 		builder.put("node.data", false);
 		builder.put("node.local", false);
-
 		builder.put(
 			"path.logs", PropsUtil.get(PropsKeys.LIFERAY_HOME) + "/logs");
 		builder.put(
