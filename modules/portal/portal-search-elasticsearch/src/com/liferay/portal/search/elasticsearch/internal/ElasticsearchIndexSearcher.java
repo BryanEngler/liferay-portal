@@ -384,9 +384,9 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			boolean count)
 		throws Exception {
 
-		QueryConfig queryConfig = query.getQueryConfig();
-
 		Client client = _elasticsearchConnectionManager.getClient();
+
+		QueryConfig queryConfig = query.getQueryConfig();
 
 		SearchRequestBuilder searchRequestBuilder = client.prepareSearch(
 			getSelectedIndexNames(queryConfig, searchContext));
@@ -442,9 +442,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		SearchResponse searchResponse = doSearch(
 			searchContext, query, start, end, false);
 
-		Hits hits = processResponse(searchResponse, searchContext, query);
-
-		return hits;
+		return processResponse(searchResponse, searchContext, query);
 	}
 
 	protected SearchResponse executeSearchRequest(
