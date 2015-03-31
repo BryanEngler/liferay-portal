@@ -73,6 +73,7 @@ public class DDLPortletDataHandler extends BasePortletDataHandler {
 			new PortletDataHandlerBoolean(
 				NAMESPACE, "records", true, false, null,
 				DDLRecord.class.getName()),
+			new PortletDataHandlerBoolean(NAMESPACE, "referenced-content"),
 			new PortletDataHandlerBoolean(
 				NAMESPACE, "data-definitions", true, false, null,
 				DDMStructure.class.getName(), DDLRecordSet.class.getName()));

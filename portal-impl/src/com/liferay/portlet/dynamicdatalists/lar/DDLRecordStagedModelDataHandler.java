@@ -16,14 +16,19 @@ package com.liferay.portlet.dynamicdatalists.lar;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
+import com.liferay.portal.kernel.lar.ExportImportHelperUtil;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.lar.PortletDataException;
 import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.portal.kernel.lar.StagedModelModifiedDateComparator;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.service.ServiceContext;
@@ -31,16 +36,20 @@ import com.liferay.portlet.dynamicdatalists.model.DDLRecord;
 import com.liferay.portlet.dynamicdatalists.model.DDLRecordSet;
 import com.liferay.portlet.dynamicdatalists.model.DDLRecordVersion;
 import com.liferay.portlet.dynamicdatalists.service.DDLRecordLocalServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.model.Value;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageEngineUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMFormValuesToFieldsConverterUtil;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
  * @author Daniel Kocsis
+ * @author Steven Smith
  */
 public class DDLRecordStagedModelDataHandler
 	extends BaseStagedModelDataHandler<DDLRecord> {
@@ -101,6 +110,105 @@ public class DDLRecordStagedModelDataHandler
 
 		DDMFormValues ddmFormValues = StorageEngineUtil.getDDMFormValues(
 			recordVersion.getDDMStorageId());
+
+		List<DDMFormFieldValue> formFieldValues =
+			ddmFormValues.getDDMFormFieldValues();
+
+		for (DDMFormFieldValue formFieldValue : formFieldValues) {
+			String type = formFieldValue.getType();
+
+			if (type.contains("ddm-link-to-page")) {
+				Value value = formFieldValue.getValue();
+
+				Map<Locale, String> values = value.getValues();
+
+				for (Map.Entry<Locale, String> entry : values.entrySet()) {
+					String jsonValue = entry.getValue();
+
+					if (!jsonValue.contains("privateLayout")) {
+						continue;
+					}
+
+					Map<String, Object> jsonMap =
+						(Map<String, Object>)JSONFactoryUtil.
+							looseDeserialize(jsonValue);
+
+					boolean isPrivateLayout = GetterUtil.getBoolean(
+						jsonMap.get("privateLayout"));
+
+					long groupId = GetterUtil.getLong(jsonMap.get("groupId"));
+					long layoutId = GetterUtil.getLong(jsonMap.get("layoutId"));
+
+					String layoutType = "private";
+
+					if (!isPrivateLayout) {
+						layoutType = "public";
+					}
+
+					StringBundler sb = new StringBundler(7);
+
+					sb.append(StringPool.CDATA_OPEN);
+					sb.append(layoutId);
+					sb.append(StringPool.AT);
+					sb.append(layoutType);
+					sb.append(StringPool.AT);
+					sb.append(groupId);
+					sb.append(StringPool.CDATA_CLOSE);
+
+					String layoutLinkUrl = sb.toString();
+
+					String reference =
+						ExportImportHelperUtil.replaceExportLayoutReferences(
+							portletDataContext, layoutLinkUrl);
+
+					entry.setValue(reference);
+				}
+			}
+
+			if (type.contains("ddm-documentlibrary")) {
+				Value value = formFieldValue.getValue();
+
+				Map<Locale, String> values = value.getValues();
+
+				for (Map.Entry<Locale, String> entry : values.entrySet()) {
+					String jsonValue = entry.getValue();
+
+					if (!jsonValue.contains("uuid")) {
+						continue;
+					}
+
+					Map<String, Object> jsonMap =
+							(Map<String, Object>)JSONFactoryUtil.
+								looseDeserialize(jsonValue);
+
+					long groupId = GetterUtil.getLong(jsonMap.get("groupId"));
+					String uuid = GetterUtil.getString(jsonMap.get("uuid"));
+
+					StringBundler sb = new StringBundler(6);
+
+					sb.append(StringPool.CDATA_OPEN);
+					sb.append("/documents/");
+					sb.append(groupId);
+					sb.append(StringPool.SLASH);
+					sb.append(uuid);
+					sb.append(StringPool.CDATA_CLOSE);
+
+					String documentLibraryURL = sb.toString();
+
+					boolean isIncludeReferencedContent =
+						portletDataContext.getBooleanParameter(
+							DDLPortletDataHandler.NAMESPACE,
+							"referenced-content");
+
+					String reference =
+						ExportImportHelperUtil.replaceExportDLReferences(
+							portletDataContext, record, documentLibraryURL,
+							isIncludeReferencedContent);
+
+					entry.setValue(reference);
+				}
+			}
+		}
 
 		Fields fields = DDMFormValuesToFieldsConverterUtil.convert(
 			recordSet.getDDMStructure(), ddmFormValues);
