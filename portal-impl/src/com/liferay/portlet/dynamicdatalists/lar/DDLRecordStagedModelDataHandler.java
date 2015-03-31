@@ -136,20 +136,16 @@ public class DDLRecordStagedModelDataHandler
 					}
 
 					Map<String, Object> jsonMap =
-						(Map<String, Object>)JSONFactoryUtil.
-							looseDeserialize(jsonValue);
-
-					boolean isPrivateLayout = GetterUtil.getBoolean(
-						jsonMap.get("privateLayout"));
+						(Map<String, Object>)JSONFactoryUtil.looseDeserialize(
+							jsonValue);
 
 					long groupId = GetterUtil.getLong(jsonMap.get("groupId"));
 					long layoutId = GetterUtil.getLong(jsonMap.get("layoutId"));
 
-					String layoutType = "private";
+					boolean privateLayout = GetterUtil.getBoolean(
+						jsonMap.get("privateLayout"));
 
-					if (!isPrivateLayout) {
-						layoutType = "public";
-					}
+					String layoutType = privateLayout ? "private" : "public";
 
 					StringBundler sb = new StringBundler(7);
 
@@ -184,8 +180,8 @@ public class DDLRecordStagedModelDataHandler
 					}
 
 					Map<String, Object> jsonMap =
-							(Map<String, Object>)JSONFactoryUtil.
-								looseDeserialize(jsonValue);
+						(Map<String, Object>)JSONFactoryUtil.looseDeserialize(
+							jsonValue);
 
 					long groupId = GetterUtil.getLong(jsonMap.get("groupId"));
 					String uuid = GetterUtil.getString(jsonMap.get("uuid"));
@@ -201,7 +197,7 @@ public class DDLRecordStagedModelDataHandler
 
 					String documentLibraryURL = sb.toString();
 
-					boolean isIncludeReferencedContent =
+					boolean includeReferencedContent =
 						portletDataContext.getBooleanParameter(
 							DDLPortletDataHandler.NAMESPACE,
 							"referenced-content");
@@ -209,7 +205,7 @@ public class DDLRecordStagedModelDataHandler
 					String reference =
 						ExportImportHelperUtil.replaceExportDLReferences(
 							portletDataContext, record, documentLibraryURL,
-							isIncludeReferencedContent);
+							includeReferencedContent);
 
 					entry.setValue(reference);
 				}
