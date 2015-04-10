@@ -193,22 +193,19 @@ public class DefaultElasticsearchDocumentFactory
 			return value;
 		}
 
-		Class<? extends Number> numericClass = field.getNumericClass();
+		Class<? extends Number> clazz = field.getNumericClass();
 
-		if (numericClass.equals(Float.class)) {
+		if (clazz.equals(Float.class)) {
 			return Float.valueOf(value);
 		}
-
-		if (numericClass.equals(Integer.class)) {
+		else if (clazz.equals(Integer.class)) {
 			return Integer.valueOf(value);
 		}
-
-		if (numericClass.equals(Short.class)) {
-			return Short.valueOf(value);
-		}
-
-		if (numericClass.equals(Long.class)) {
+		else if (clazz.equals(Long.class)) {
 			return Long.valueOf(value);
+		}
+		else if (clazz.equals(Short.class)) {
+			return Short.valueOf(value);
 		}
 
 		return Double.valueOf(value);
