@@ -39,7 +39,7 @@
 				"index": "not_analyzed",
 				"type": "float"
 			},
-		  "uid": {
+			"uid": {
 				"index": "not_analyzed",
 				"store": "yes",
 				"type": "string"
