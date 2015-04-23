@@ -29,7 +29,7 @@
 				"index": "not_analyzed",
 				"store": "yes",
 				"type": "string"
-			  },
+			},
 			"groupId": {
 				"index": "not_analyzed",
 				"store": "yes",
@@ -43,7 +43,7 @@
 				"index": "not_analyzed",
 				"store": "yes",
 				"type": "string"
-				}
+			}
 		}
 	}
 }
