@@ -172,6 +172,14 @@ Format format = FastDateFormatFactoryUtil.getSimpleDateFormat(simpleDateFormatPa
 	);
 
 	Liferay.component('<%= nameId %>DatePicker');
+
+	var preventKeyboardDateChange = function(event) {
+		if (!event.isKey('TAB')) {
+			event.preventDefault();
+		}
+	};
+
+	A.one('#<%= randomNamespace %>displayDate>').on('keydown', preventKeyboardDateChange);
 </aui:script>
 
 <%!
