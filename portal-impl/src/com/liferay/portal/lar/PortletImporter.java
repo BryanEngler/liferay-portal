@@ -66,6 +66,7 @@ import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.kernel.zip.ZipReader;
 import com.liferay.portal.kernel.zip.ZipReaderFactoryUtil;
 import com.liferay.portal.model.Group;
+import com.liferay.portal.model.GroupConstants;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutConstants;
 import com.liferay.portal.model.Lock;
@@ -106,6 +107,7 @@ import java.io.Serializable;
 
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -896,21 +898,48 @@ public class PortletImporter {
 			}
 		}
 
-		if (preserveScopeLayoutId && (layout != null)) {
+		if (layout != null) {
 			javax.portlet.PortletPreferences jxPortletPreferences =
 				PortletPreferencesFactoryUtil.getLayoutPortletSetup(
 					layout, portletDataContext.getPortletId());
 
-			try {
-				jxPortletPreferences.setValue("lfrScopeType", scopeType);
-				jxPortletPreferences.setValue(
-					"lfrScopeLayoutUuid", scopeLayoutUuid);
+			if (preserveScopeLayoutId) {
+				try {
+					jxPortletPreferences.setValue("lfrScopeType", scopeType);
+					jxPortletPreferences.setValue(
+						"lfrScopeLayoutUuid", scopeLayoutUuid);
 
-				jxPortletPreferences.store();
+					jxPortletPreferences.store();
+				}
+				finally {
+					portletDataContext.setScopeType(scopeType);
+					portletDataContext.setScopeLayoutUuid(scopeLayoutUuid);
+				}
 			}
-			finally {
-				portletDataContext.setScopeType(scopeType);
-				portletDataContext.setScopeLayoutUuid(scopeLayoutUuid);
+
+			scopeLayoutUuid = GetterUtil.getString(
+				jxPortletPreferences.getValue("lfrScopeLayoutUuid", null));
+
+			if (Validator.isNotNull(scopeLayoutUuid)) {
+				Layout scopeLayout =
+					LayoutLocalServiceUtil.getLayoutByUuidAndGroupId(
+						scopeLayoutUuid, groupId, false);
+
+				if (!scopeLayout.hasScopeGroup()) {
+					String name = String.valueOf(scopeLayout.getPlid());
+
+					Map<Locale, String> nameMap = new HashMap<>();
+
+					nameMap.put(LocaleUtil.getDefault(), name);
+
+					GroupLocalServiceUtil.addGroup(
+						portletDataContext.getUserId(null),
+						GroupConstants.DEFAULT_PARENT_GROUP_ID,
+						Layout.class.getName(), scopeLayout.getPlid(),
+						GroupConstants.DEFAULT_LIVE_GROUP_ID, nameMap, null, 0,
+						true, GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION,
+						null, false, true, null);
+				}
 			}
 		}
 	}
