@@ -258,15 +258,6 @@ if (fieldParamSelection.equals("0")) {
 	var customRangeTo = Liferay.component('<%= renderResponse.getNamespace() %>modifiedtoDatePicker');
 	var searchButton = A.one('#<portlet:namespace />searchCustomRangeButton');
 
-	var preventKeyboardDateChange = function(event) {
-		if (!event.isKey('TAB')) {
-			event.preventDefault();
-		}
-	};
-
-	A.one('#<portlet:namespace /><%= HtmlUtil.escapeJS(facet.getFieldId()) %>from').on('keydown', preventKeyboardDateChange);
-	A.one('#<portlet:namespace /><%= HtmlUtil.escapeJS(facet.getFieldId()) %>to').on('keydown', preventKeyboardDateChange);
-
 	var DEFAULTS_FORM_VALIDATOR = A.config.FormValidator;
 
 	A.mix(
