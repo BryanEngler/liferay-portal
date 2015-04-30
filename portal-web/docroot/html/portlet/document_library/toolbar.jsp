@@ -84,7 +84,9 @@ String keywords = ParamUtil.getString(request, "keywords");
 
 		<liferay-util:include page="/html/portlet/document_library/add_button.jsp" />
 
-		<liferay-util:include page="/html/portlet/document_library/sort_button.jsp" />
+		<c:if test='<%= !strutsAction.equals("/document_library/search") %>'>
+			<liferay-util:include page="/html/portlet/document_library/sort_button.jsp" />
+		</c:if>
 
 		<c:if test="<%= !user.isDefaultUser() %>">
 			<aui:nav-item dropdown="<%= true %>" label="manage">

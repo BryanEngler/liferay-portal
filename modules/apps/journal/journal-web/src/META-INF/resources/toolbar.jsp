@@ -22,17 +22,15 @@ long folderId = GetterUtil.getLong((String)liferayPortletRequest.getAttribute("v
 PortletURL portletURL = liferayPortletResponse.createRenderURL();
 
 portletURL.setParameter("folderId", String.valueOf(folderId));
+
+String keywords = ParamUtil.getString(request, "keywords");
+
+boolean advancedSearch = ParamUtil.getBoolean(liferayPortletRequest, ArticleDisplayTerms.ADVANCED_SEARCH);
 %>
 
 <aui:form action="<%= portletURL.toString() %>" method="post" name="fm1">
 	<aui:nav-bar>
 		<aui:nav collapsible="<%= true %>" cssClass="nav-display-style-buttons navbar-nav" icon="th-list" id="displayStyleButtons">
-
-			<%
-			String keywords = ParamUtil.getString(request, "keywords");
-
-			boolean advancedSearch = ParamUtil.getBoolean(liferayPortletRequest, ArticleDisplayTerms.ADVANCED_SEARCH);
-			%>
 
 			<c:if test="<%= Validator.isNull(keywords) && !advancedSearch %>">
 				<liferay-util:include page="/display_style_buttons.jsp" servletContext="<%= application %>" />
@@ -63,7 +61,9 @@ portletURL.setParameter("folderId", String.valueOf(folderId));
 
 			<liferay-util:include page="/add_button.jsp" servletContext="<%= application %>" />
 
-			<liferay-util:include page="/sort_button.jsp" servletContext="<%= application %>" />
+			<c:if test="<%= Validator.isNull(keywords) && !advancedSearch %>">
+				<liferay-util:include page="/sort_button.jsp" servletContext="<%= application %>" />
+			</c:if>
 
 			<c:if test="<%= !user.isDefaultUser() %>">
 				<aui:nav-item dropdown="<%= true %>" label="manage">
