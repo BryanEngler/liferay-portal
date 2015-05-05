@@ -1008,10 +1008,25 @@ public class LayoutImporter {
 					portletDataContext.getCompanyId());
 			}
 			else if (Validator.isNotNull(scopeLayoutUuid)) {
-				Layout scopeLayout =
-					LayoutLocalServiceUtil.getLayoutByUuidAndGroupId(
-						scopeLayoutUuid, portletDataContext.getGroupId(),
-						portletDataContext.isPrivateLayout());
+				Layout scopeLayout = null;
+
+				try {
+					scopeLayout =
+						LayoutLocalServiceUtil.getLayoutByUuidAndGroupId(
+							scopeLayoutUuid, portletDataContext.getGroupId(),
+							portletDataContext.isPrivateLayout());
+				}
+				catch (NoSuchLayoutException nsle) {
+					Group sourceGroup = GroupLocalServiceUtil.getGroup(
+						portletDataContext.getSourceGroupId());
+
+					if (sourceGroup.isLayoutSetPrototype()) {
+						scopeLayout =
+							LayoutLocalServiceUtil.getLayoutByUuidAndGroupId(
+								scopeLayoutUuid,
+								portletDataContext.getGroupId(), false);
+					}
+				}
 
 				if (scopeLayout.hasScopeGroup()) {
 					scopeGroup = scopeLayout.getScopeGroup();
