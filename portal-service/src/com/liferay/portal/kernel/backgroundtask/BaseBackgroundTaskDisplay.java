@@ -82,11 +82,11 @@ public class BaseBackgroundTaskDisplay implements BackgroundTaskDisplay {
 
 	@Override
 	public boolean hasPercentage() {
-		if (_percentage < 0) {
-			return false;
+		if (_percentage >= 0) {
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	protected BackgroundTaskStatus getBackgroundTaskStatus() {
