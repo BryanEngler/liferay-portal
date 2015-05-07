@@ -1008,10 +1008,26 @@ public class LayoutImporter {
 					portletDataContext.getCompanyId());
 			}
 			else if (Validator.isNotNull(scopeLayoutUuid)) {
+				String layoutsImportMode = MapUtil.getString(
+					portletDataContext.getParameterMap(),
+					PortletDataHandlerKeys.LAYOUTS_IMPORT_MODE);
+
+				boolean privateLayout;
+
+				if (layoutsImportMode.equals(
+						PortletDataHandlerKeys.
+							LAYOUTS_IMPORT_MODE_CREATED_FROM_PROTOTYPE)) {
+
+					privateLayout = false;
+				}
+				else {
+					privateLayout = portletDataContext.isPrivateLayout();
+				}
+
 				Layout scopeLayout =
 					LayoutLocalServiceUtil.getLayoutByUuidAndGroupId(
 						scopeLayoutUuid, portletDataContext.getGroupId(),
-						portletDataContext.isPrivateLayout());
+						privateLayout);
 
 				if (scopeLayout.hasScopeGroup()) {
 					scopeGroup = scopeLayout.getScopeGroup();
@@ -1036,7 +1052,7 @@ public class LayoutImporter {
 
 				if (group.isStaged() && !group.isStagedRemotely()) {
 					try {
-						boolean privateLayout = GetterUtil.getBoolean(
+						privateLayout = GetterUtil.getBoolean(
 							portletElement.attributeValue("private-layout"));
 
 						Layout oldLayout =
