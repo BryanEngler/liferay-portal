@@ -137,7 +137,13 @@ Format format = FastDateFormatFactoryUtil.getSimpleDateFormat(simpleDateFormatPa
 							}
 						},
 						selectionChange: function(event) {
-							datePicker.updateValue(event.newSelection[0]);
+							if (isNaN(event.newSelection[0])) {
+								event.newSelection[0] = new Date();
+								datePicker.updateValue(event.newSelection[0]);
+							}
+							else {
+								datePicker.updateValue(datePicker.absoluteDate(event.newSelection[0]));
+							}
 						}
 					},
 					popover: {
@@ -167,6 +173,12 @@ Format format = FastDateFormatFactoryUtil.getSimpleDateFormat(simpleDateFormatPa
 				}
 			};
 
+			datePicker.absoluteDate = function(date) {
+				if (date) {
+					date.setFullYear(Math.abs(Number(date.getFullYear())));
+				}
+				return date;
+			};
 			return datePicker;
 		}
 	);
