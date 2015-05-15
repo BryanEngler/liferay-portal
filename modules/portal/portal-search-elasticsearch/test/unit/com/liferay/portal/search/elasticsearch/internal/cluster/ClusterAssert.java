@@ -34,6 +34,10 @@ public class ClusterAssert {
 	public static void assertShards(Index index, Type... types)
 		throws Exception {
 
+		Type[] expectedTypes = ArrayUtil.clone(types);
+
+		Arrays.sort(expectedTypes);
+
 		RecoveryState[] recoveryStates = index.getRecoveryStates(types.length);
 
 		Type[] actualTypes = new Type[types.length];
@@ -42,10 +46,7 @@ public class ClusterAssert {
 			actualTypes[i] = recoveryStates[i].getType();
 		}
 
-		Type[] expectedTypes = ArrayUtil.clone(types);
-
 		Arrays.sort(actualTypes);
-		Arrays.sort(expectedTypes);
 
 		Assert.assertEquals(
 			ArrayUtils.toString(expectedTypes),
