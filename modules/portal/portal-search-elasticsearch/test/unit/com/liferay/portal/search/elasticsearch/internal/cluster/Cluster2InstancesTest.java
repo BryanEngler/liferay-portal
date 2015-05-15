@@ -55,9 +55,11 @@ public class Cluster2InstancesTest {
 	@Test
 	public void test2Nodes1PrimaryShard() throws Exception {
 		Index index1 = createIndex(_elasticsearchFixture1);
-		Index index2 = createIndex(_elasticsearchFixture2);
 
 		assertEntireClusterHasOnly1PrimaryShard(index1);
+
+		Index index2 = createIndex(_elasticsearchFixture2);
+
 		assertEntireClusterHasOnly1PrimaryShard(index2);
 	}
 
