@@ -33,18 +33,22 @@ public class Cluster2InstancesTest {
 	@BeforeClass
 	public static void setUpClass() throws Exception {
 		_elasticsearchFixture1 = createFixture(1);
-		_elasticsearchFixture2 = createFixture(2);
 
 		_elasticsearchFixture1.setUpClass();
+
+		_elasticsearchFixture2 = createFixture(2);
+
 		_elasticsearchFixture2.setUpClass();
 	}
 
 	@AfterClass
 	public static void tearDownClass() throws Exception {
 		_elasticsearchFixture1.tearDownClass();
-		_elasticsearchFixture2.tearDownClass();
 
 		_elasticsearchFixture1 = null;
+
+		_elasticsearchFixture2.tearDownClass();
+
 		_elasticsearchFixture2 = null;
 	}
 
