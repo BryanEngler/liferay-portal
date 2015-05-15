@@ -51,8 +51,8 @@ import org.mockito.Mockito;
  */
 public class ElasticsearchFixture {
 
-	public ElasticsearchFixture(String subdir) {
-		_tmpDir = "tmp/" + subdir;
+	public ElasticsearchFixture(String subdirName) {
+		_tmpDirName = "tmp/" + subdirName;
 	}
 
 	public Index createIndex(String indexName) {
@@ -100,7 +100,7 @@ public class ElasticsearchFixture {
 	public class Index {
 
 		public Index(String name) {
-			this._name = name;
+			_name = name;
 		}
 
 		public String getName() {
@@ -119,12 +119,13 @@ public class ElasticsearchFixture {
 						public List<ShardRecoveryResponse> call()
 							throws Exception {
 
-							List<ShardRecoveryResponse> list =
+							List<ShardRecoveryResponse> shardRecoveryResponses =
 								getShardRecoveryResponses();
 
-							Assert.assertEquals(expectedShards, list.size());
+							Assert.assertEquals(
+								expectedShards, shardRecoveryResponses.size());
 
-							return list;
+							return shardRecoveryResponses;
 						}
 
 					});
@@ -134,6 +135,7 @@ public class ElasticsearchFixture {
 			for (int i = 0; i < expectedShards; i++) {
 				ShardRecoveryResponse shardRecoveryResponse =
 					shardRecoveryResponses.get(i);
+
 				recoveryStates[i] = shardRecoveryResponse.recoveryState();
 			}
 
@@ -167,7 +169,7 @@ public class ElasticsearchFixture {
 		Mockito.when(
 			props.get(PropsKeys.LIFERAY_HOME)
 		).thenReturn(
-			_tmpDir
+			_tmpDirName
 		);
 
 		embeddedElasticsearchConnection.setProps(props);
@@ -185,10 +187,10 @@ public class ElasticsearchFixture {
 	}
 
 	protected void deleteTmpDir() throws Exception {
-		FileUtils.deleteDirectory(new File(_tmpDir));
+		FileUtils.deleteDirectory(new File(_tmpDirName));
 	}
 
 	private ElasticsearchConnection _elasticsearchConnection;
-	private final String _tmpDir;
+	private final String _tmpDirName;
 
 }

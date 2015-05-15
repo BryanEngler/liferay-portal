@@ -84,26 +84,32 @@ public class ReplicasClusterListenerTest {
 	@Test
 	public void testMasterTokenAcquired() {
 		masterTokenAcquired();
+
 		assertReplicasChanged();
 	}
 
 	@Test
 	public void testMasterTokenReleased() {
 		masterTokenReleased();
+
 		assertReplicasUnchanged();
 	}
 
 	@Test
 	public void testNonMasterLiferayNodeDoesNothing() {
 		setMasterExecutor(false);
+
 		processClusterEvent();
+
 		assertReplicasUnchanged();
 	}
 
 	@Test
 	public void testRemoteElasticsearchClusterIsLeftAlone() {
 		setEmbeddedCluster(false);
+
 		processClusterEvent();
+
 		assertReplicasUnchanged();
 	}
 
