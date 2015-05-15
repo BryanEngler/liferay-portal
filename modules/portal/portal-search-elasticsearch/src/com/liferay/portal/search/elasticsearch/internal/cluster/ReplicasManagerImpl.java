@@ -39,12 +39,12 @@ public class ReplicasManagerImpl implements ReplicasManager {
 	public void updateNumberOfReplicas(
 		int numberOfReplicas, String... indices) {
 
+		UpdateSettingsRequestBuilder updateSettingsRequestBuilder =
+			_indicesAdminClient.prepareUpdateSettings(indices);
+
 		Builder builder = ImmutableSettings.settingsBuilder();
 
 		builder.put("number_of_replicas", numberOfReplicas);
-
-		UpdateSettingsRequestBuilder updateSettingsRequestBuilder =
-			_indicesAdminClient.prepareUpdateSettings(indices);
 
 		updateSettingsRequestBuilder.setSettings(builder);
 

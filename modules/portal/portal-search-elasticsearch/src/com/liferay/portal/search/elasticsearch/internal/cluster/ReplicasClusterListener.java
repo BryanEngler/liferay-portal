@@ -73,7 +73,7 @@ public class ReplicasClusterListener
 		}
 		catch (Exception e) {
 			if (_log.isWarnEnabled()) {
-				_log.warn("Cannot update indices for number of replicas", e);
+				_log.warn("Unable to update number of replicas", e);
 			}
 		}
 	}
