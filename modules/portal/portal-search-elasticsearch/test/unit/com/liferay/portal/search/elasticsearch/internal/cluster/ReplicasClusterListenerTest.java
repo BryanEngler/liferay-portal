@@ -37,12 +37,6 @@ public class ReplicasClusterListenerTest {
 		setMasterExecutor(true);
 
 		Mockito.when(
-			_replicasClusterContext.getTargetIndexNames()
-		).thenReturn(
-			_INDICES
-		);
-
-		Mockito.when(
 			_replicasClusterContext.getClusterSize()
 		).thenReturn(
 			_REPLICAS + 1
@@ -52,6 +46,12 @@ public class ReplicasClusterListenerTest {
 			_replicasClusterContext.getReplicasManager()
 		).thenReturn(
 			_replicasManager
+		);
+
+		Mockito.when(
+			_replicasClusterContext.getTargetIndexNames()
+		).thenReturn(
+			_INDICES
 		);
 
 		_replicasClusterListener = new ReplicasClusterListener(
