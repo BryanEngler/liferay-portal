@@ -75,6 +75,16 @@ public class InvokerFilter extends BasePortalLifecycle implements Filter {
 
 		String requestURL = getURL(request);
 
+		if (_filterConfig == null) {
+			response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+
+			if (_log.isWarnEnabled()) {
+				_log.warn("Service has not been initialized");
+			}
+
+			return;
+		}
+
 		if (requestURL.length() > _invokerFilterURIMaxLength) {
 			response.sendError(HttpServletResponse.SC_REQUEST_URI_TOO_LONG);
 
