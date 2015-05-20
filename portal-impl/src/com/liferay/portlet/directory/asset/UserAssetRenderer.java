@@ -16,6 +16,7 @@ package com.liferay.portlet.directory.asset;
 
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.User;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionChecker;
@@ -59,6 +60,11 @@ public class UserAssetRenderer extends BaseAssetRenderer {
 	@Override
 	public long getGroupId() {
 		return 0;
+	}
+
+	@Override
+	public String getStatusLabel() {
+		return WorkflowConstants.getStatusLabel(_user.getStatus());
 	}
 
 	@Override
