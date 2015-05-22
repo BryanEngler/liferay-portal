@@ -1066,8 +1066,8 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 	 * @throws PortalException if the properties contained new locales that were
 	 *         not supported
 	 */
-	@Override
 	@Clusterable
+	@Override
 	public void updatePreferences(long companyId, UnicodeProperties properties)
 		throws PortalException {
 
