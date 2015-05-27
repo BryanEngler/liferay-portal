@@ -86,6 +86,7 @@ import com.liferay.util.EncryptorException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -1066,8 +1067,8 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 	 * @throws PortalException if the properties contained new locales that were
 	 *         not supported
 	 */
-	@Override
 	@Clusterable
+	@Override
 	public void updatePreferences(long companyId, UnicodeProperties properties)
 		throws PortalException {
 
