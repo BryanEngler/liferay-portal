@@ -16,6 +16,8 @@ package com.liferay.portlet.documentlibrary.lar;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
@@ -33,14 +35,17 @@ import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
+import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.Repository;
 import com.liferay.portal.repository.liferayrepository.model.LiferayFileEntry;
 import com.liferay.portal.repository.portletrepository.PortletRepository;
+import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.RepositoryLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalUtil;
@@ -60,6 +65,8 @@ import com.liferay.portlet.documentlibrary.util.DLProcessorRegistryUtil;
 import com.liferay.portlet.documentlibrary.util.DLProcessorThreadLocal;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.model.Value;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageEngineUtil;
 import com.liferay.portlet.trash.util.TrashUtil;
@@ -658,6 +665,36 @@ public class FileEntryStagedModelDataHandler
 			DDMFormValues ddmFormValues = StorageEngineUtil.getDDMFormValues(
 				dlFileEntryMetadata.getDDMStorageId());
 
+			List<DDMFormFieldValue> fieldValues =
+				ddmFormValues.getDDMFormFieldValues();
+
+			for (DDMFormFieldValue fieldValue : fieldValues) {
+				String fieldName = fieldValue.getName();
+
+				if (fieldName.contains("Link_To_Layout")) {
+					Value value = fieldValue.getValue();
+
+					String fieldValueString = value.getString(
+						LocaleUtil.getDefault());
+
+					JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+						fieldValueString);
+
+					long groupId = jsonObject.getLong("groupId");
+					long layoutId = jsonObject.getLong("layoutId");
+					Boolean privateLayout = jsonObject.getBoolean(
+						"privateLayout");
+
+					Layout layout = LayoutLocalServiceUtil.getLayout(
+						groupId, privateLayout, layoutId);
+
+					jsonObject.put("uuid", layout.getUuid());
+
+					value.addString(
+						LocaleUtil.getDefault(), jsonObject.toString());
+				}
+			}
+
 			portletDataContext.addZipEntry(path, ddmFormValues);
 		}
 	}
@@ -709,6 +746,61 @@ public class FileEntryStagedModelDataHandler
 
 			DDMFormValues ddmFormValues =
 				(DDMFormValues)portletDataContext.getZipEntryAsObject(path);
+
+			List<DDMFormFieldValue> fieldValues =
+				ddmFormValues.getDDMFormFieldValues();
+
+			for (DDMFormFieldValue fieldValue : fieldValues) {
+				String fieldName = fieldValue.getName();
+
+				if (fieldName.contains("Link_To_Layout")) {
+					Value value = fieldValue.getValue();
+
+					String fieldValueString = value.getString(
+						LocaleUtil.getDefault());
+
+					JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+						fieldValueString);
+
+					Boolean privateLayout = jsonObject.getBoolean(
+						"privateLayout");
+					String uuid = jsonObject.getString("uuid");
+
+					try {
+						Layout layout =
+							LayoutLocalServiceUtil.getLayoutByUuidAndGroupId(
+								uuid, serviceContext.getScopeGroupId(),
+								privateLayout);
+
+						jsonObject.put(
+							"groupId", serviceContext.getScopeGroupId());
+						jsonObject.put("layoutId", layout.getLayoutId());
+
+						value.addString(
+							LocaleUtil.getDefault(), jsonObject.toString());
+					}
+					catch (Exception e) {
+						jsonObject.put("layoutId", StringPool.BLANK);
+
+						value.addString(
+							LocaleUtil.getDefault(), jsonObject.toString());
+
+						if (_log.isDebugEnabled() || _log.isWarnEnabled()) {
+							String message =
+								"Unable to get layout with uuid " + uuid +
+									" in group " +
+										portletDataContext.getScopeGroupId();
+
+							if (_log.isWarnEnabled()) {
+								_log.warn(message);
+							}
+							else {
+								_log.debug(message, e);
+							}
+						}
+					}
+				}
+			}
 
 			serviceContext.setAttribute(
 				DDMFormValues.class.getName() + ddmStructure.getStructureId(),
