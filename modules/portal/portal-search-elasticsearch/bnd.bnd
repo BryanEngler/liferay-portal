@@ -1,15 +1,15 @@
 Bundle-ClassPath: \
 	.,\
 	lib/antlr-runtime.jar,\
-	lib/asm.jar,\
 	lib/asm-commons.jar,\
-	lib/elasticsearch.jar,\
+	lib/asm.jar,\
 	lib/elasticsearch-analysis-icu.jar,\
 	lib/elasticsearch-analysis-kuromoji.jar,\
 	lib/elasticsearch-analysis-phonetic.jar,\
 	lib/elasticsearch-analysis-smartcn.jar,\
 	lib/elasticsearch-analysis-stempel.jar,\
 	lib/elasticsearch-groovy.jar,\
+	lib/elasticsearch.jar,\
 	lib/groovy-all.jar,\
 	lib/icu4j.jar,\
 	lib/jts.jar,\
