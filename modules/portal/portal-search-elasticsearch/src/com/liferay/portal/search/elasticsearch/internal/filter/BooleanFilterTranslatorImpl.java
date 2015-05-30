@@ -41,26 +41,29 @@ public class BooleanFilterTranslatorImpl implements BooleanFilterTranslator {
 
 		boolFilterBuilder.cache(booleanFilter.isCached());
 
-		for (BooleanClause<Filter> clause :
+		for (BooleanClause<Filter> booleanClause :
 				booleanFilter.getMustBooleanClauses()) {
 
-			FilterBuilder filterBuilder = translate(clause, filterVisitor);
+			FilterBuilder filterBuilder = translate(
+				booleanClause, filterVisitor);
 
 			boolFilterBuilder.must(filterBuilder);
 		}
 
-		for (BooleanClause<Filter> clause :
+		for (BooleanClause<Filter> booleanClause :
 				booleanFilter.getMustNotBooleanClauses()) {
 
-			FilterBuilder filterBuilder = translate(clause, filterVisitor);
+			FilterBuilder filterBuilder = translate(
+				booleanClause, filterVisitor);
 
 			boolFilterBuilder.mustNot(filterBuilder);
 		}
 
-		for (BooleanClause<Filter> clause :
+		for (BooleanClause<Filter> booleanClause :
 				booleanFilter.getShouldBooleanClauses()) {
 
-			FilterBuilder filterBuilder = translate(clause, filterVisitor);
+			FilterBuilder filterBuilder = translate(
+				booleanClause, filterVisitor);
 
 			boolFilterBuilder.should(filterBuilder);
 		}
@@ -69,10 +72,10 @@ public class BooleanFilterTranslatorImpl implements BooleanFilterTranslator {
 	}
 
 	protected FilterBuilder translate(
-		BooleanClause<Filter> clause,
+		BooleanClause<Filter> booleanClause,
 		FilterVisitor<FilterBuilder> filterVisitor) {
 
-		Filter filter = clause.getClause();
+		Filter filter = booleanClause.getClause();
 
 		return filter.accept(filterVisitor);
 	}
