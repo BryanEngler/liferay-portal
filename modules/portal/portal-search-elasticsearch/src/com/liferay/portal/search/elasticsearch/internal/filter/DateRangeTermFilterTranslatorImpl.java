@@ -46,21 +46,14 @@ public class DateRangeTermFilterTranslatorImpl
 			dateRangeTermFilter.getTimeZone());
 
 		try {
-			Object lowerBound = format.parseObject(
-				dateRangeTermFilter.getLowerBound());
-
-			rangeFilterBuilder.from(lowerBound);
-
+			rangeFilterBuilder.from(
+				format.parseObject(dateRangeTermFilter.getLowerBound()));
 			rangeFilterBuilder.includeLower(
 				dateRangeTermFilter.isIncludesLower());
-
-			Object upperBound = format.parseObject(
-				dateRangeTermFilter.getUpperBound());
-
-			rangeFilterBuilder.to(upperBound);
-
 			rangeFilterBuilder.includeUpper(
 				dateRangeTermFilter.isIncludesUpper());
+			rangeFilterBuilder.to(
+				format.parseObject(dateRangeTermFilter.getUpperBound()));
 		}
 		catch (ParseException e) {
 			throw new IllegalArgumentException(
