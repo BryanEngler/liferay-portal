@@ -36,8 +36,6 @@ public class GeoPolygonFilterTranslatorImpl
 		GeoPolygonFilterBuilder geoPolygonFilterBuilder =
 			FilterBuilders.geoPolygonFilter(geoPolygonFilter.getFieldName());
 
-		geoPolygonFilterBuilder.cache(geoPolygonFilter.isCached());
-
 		for (GeoLocationPoint geoLocationPoint :
 				geoPolygonFilter.getGeoLocationPoints()) {
 
@@ -45,6 +43,8 @@ public class GeoPolygonFilterTranslatorImpl
 				geoLocationPoint.getLatitude(),
 				geoLocationPoint.getLongitude());
 		}
+
+		geoPolygonFilterBuilder.cache(geoPolygonFilter.isCached());
 
 		return geoPolygonFilterBuilder;
 	}

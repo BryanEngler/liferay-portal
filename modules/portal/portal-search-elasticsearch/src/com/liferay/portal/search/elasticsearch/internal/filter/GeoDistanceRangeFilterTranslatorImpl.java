@@ -40,6 +40,12 @@ public class GeoDistanceRangeFilterTranslatorImpl
 				geoDistanceRangeFilter.getFieldName());
 
 		geoDistanceRangeFilterBuilder.cache(geoDistanceRangeFilter.isCached());
+		geoDistanceRangeFilterBuilder.from(
+			String.valueOf(geoDistanceRangeFilter.getLowerBoundGeoDistance()));
+		geoDistanceRangeFilterBuilder.includeLower(
+			geoDistanceRangeFilter.isIncludesLower());
+		geoDistanceRangeFilterBuilder.includeUpper(
+			geoDistanceRangeFilter.isIncludesUpper());
 
 		GeoLocationPoint pinGeoLocationPoint =
 			geoDistanceRangeFilter.getPinGeoLocationPoint();
@@ -48,17 +54,8 @@ public class GeoDistanceRangeFilterTranslatorImpl
 			pinGeoLocationPoint.getLatitude(),
 			pinGeoLocationPoint.getLongitude());
 
-		geoDistanceRangeFilterBuilder.from(
-			geoDistanceRangeFilter.getLowerBoundGeoDistance().toString());
-
-		geoDistanceRangeFilterBuilder.includeLower(
-			geoDistanceRangeFilter.isIncludesLower());
-
 		geoDistanceRangeFilterBuilder.to(
-			geoDistanceRangeFilter.getUpperBoundGeoDistance().toString());
-
-		geoDistanceRangeFilterBuilder.includeUpper(
-			geoDistanceRangeFilter.isIncludesUpper());
+			String.valueOf(geoDistanceRangeFilter.getUpperBoundGeoDistance()));
 
 		return geoDistanceRangeFilterBuilder;
 	}
