@@ -43,11 +43,11 @@ public class GeoBoundingBoxFilterTranslatorImpl
 		GeoLocationPoint bottomRightGeoLocationPoint =
 			geoBoundingBoxFilter.getBottomRightGeoLocationPoint();
 
-		GeoPoint bottomRightGP = new GeoPoint(
+		GeoPoint bottomRightGeoPoint = new GeoPoint(
 			bottomRightGeoLocationPoint.getLatitude(),
 			bottomRightGeoLocationPoint.getLongitude());
 
-		geoBoundingBoxFilterBuilder.bottomRight(bottomRightGP);
+		geoBoundingBoxFilterBuilder.bottomRight(bottomRightGeoPoint);
 
 		GeoLocationPoint topLeftGeoLocationPoint =
 			geoBoundingBoxFilter.getTopLeftGeoLocationPoint();
