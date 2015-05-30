@@ -50,6 +50,7 @@ public class DateRangeTermFilterTranslatorImpl
 				dateRangeTermFilter.getLowerBound());
 
 			rangeFilterBuilder.from(lowerBound);
+
 			rangeFilterBuilder.includeLower(
 				dateRangeTermFilter.isIncludesLower());
 
@@ -57,12 +58,13 @@ public class DateRangeTermFilterTranslatorImpl
 				dateRangeTermFilter.getUpperBound());
 
 			rangeFilterBuilder.to(upperBound);
+
 			rangeFilterBuilder.includeUpper(
 				dateRangeTermFilter.isIncludesUpper());
 		}
 		catch (ParseException e) {
 			throw new IllegalArgumentException(
-				"Invalid dates: " + dateRangeTermFilter, e);
+				"Invalid date range " + dateRangeTermFilter, e);
 		}
 
 		return rangeFilterBuilder;
