@@ -37,6 +37,8 @@ public class GeoDistanceFilterTranslatorImpl
 			FilterBuilders.geoDistanceFilter(geoDistanceFilter.getFieldName());
 
 		geoDistanceFilterBuilder.cache(geoDistanceFilter.isCached());
+		geoDistanceFilterBuilder.distance(
+			String.valueOf(geoDistanceFilter.getGeoDistance()));
 
 		GeoLocationPoint pinGeoLocationPoint =
 			geoDistanceFilter.getPinGeoLocationPoint();
@@ -44,9 +46,6 @@ public class GeoDistanceFilterTranslatorImpl
 		geoDistanceFilterBuilder.point(
 			pinGeoLocationPoint.getLatitude(),
 			pinGeoLocationPoint.getLongitude());
-
-		geoDistanceFilterBuilder.distance(
-			geoDistanceFilter.getGeoDistance().toString());
 
 		return geoDistanceFilterBuilder;
 	}

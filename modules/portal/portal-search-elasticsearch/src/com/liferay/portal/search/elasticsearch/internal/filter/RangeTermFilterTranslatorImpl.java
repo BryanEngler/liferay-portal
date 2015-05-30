@@ -36,12 +36,10 @@ public class RangeTermFilterTranslatorImpl
 			rangeTermFilter.getFieldName());
 
 		rangeFilterBuilder.cache(rangeTermFilter.isCached());
-
 		rangeFilterBuilder.from(rangeTermFilter.getLowerBound());
 		rangeFilterBuilder.includeLower(rangeTermFilter.isIncludesLower());
-
-		rangeFilterBuilder.to(rangeTermFilter.getUpperBound());
 		rangeFilterBuilder.includeUpper(rangeTermFilter.isIncludesUpper());
+		rangeFilterBuilder.to(rangeTermFilter.getUpperBound());
 
 		return rangeFilterBuilder;
 	}

@@ -38,8 +38,6 @@ public class GeoBoundingBoxFilterTranslatorImpl
 			FilterBuilders.geoBoundingBoxFilter(
 				geoBoundingBoxFilter.getFieldName());
 
-		geoBoundingBoxFilterBuilder.cache(geoBoundingBoxFilter.isCached());
-
 		GeoLocationPoint bottomRightGeoLocationPoint =
 			geoBoundingBoxFilter.getBottomRightGeoLocationPoint();
 
@@ -48,6 +46,8 @@ public class GeoBoundingBoxFilterTranslatorImpl
 			bottomRightGeoLocationPoint.getLongitude());
 
 		geoBoundingBoxFilterBuilder.bottomRight(bottomRightGeoPoint);
+
+		geoBoundingBoxFilterBuilder.cache(geoBoundingBoxFilter.isCached());
 
 		GeoLocationPoint topLeftGeoLocationPoint =
 			geoBoundingBoxFilter.getTopLeftGeoLocationPoint();
