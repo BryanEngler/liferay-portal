@@ -392,9 +392,9 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		QueryBuilder queryBuilder = _queryTranslator.translate(
 			query, searchContext);
 
-		if (query.getPreFilter() != null) {
+		if (query.getPreBooleanFilter() != null) {
 			FilterBuilder filterBuilder = _filterTranslator.translate(
-				query.getPreFilter());
+				query.getPreBooleanFilter());
 
 			queryBuilder = QueryBuilders.filteredQuery(
 				queryBuilder, filterBuilder);
