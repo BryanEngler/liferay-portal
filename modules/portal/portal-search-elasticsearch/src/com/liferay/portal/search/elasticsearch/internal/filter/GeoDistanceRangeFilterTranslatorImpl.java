@@ -41,10 +41,12 @@ public class GeoDistanceRangeFilterTranslatorImpl
 
 		geoDistanceRangeFilterBuilder.cache(geoDistanceRangeFilter.isCached());
 
-		GeoLocationPoint pinGLP = geoDistanceRangeFilter.getPinLocation();
+		GeoLocationPoint pinGeoLocationPoint =
+			geoDistanceRangeFilter.getPinGeoLocationPoint();
 
 		geoDistanceRangeFilterBuilder.point(
-			pinGLP.getLatitude(), pinGLP.getLongitude());
+			pinGeoLocationPoint.getLatitude(),
+			pinGeoLocationPoint.getLongitude());
 
 		geoDistanceRangeFilterBuilder.from(
 			geoDistanceRangeFilter.getLowerBoundGeoDistance().toString());

@@ -40,19 +40,23 @@ public class GeoBoundingBoxFilterTranslatorImpl
 
 		geoBoundingBoxFilterBuilder.cache(geoBoundingBoxFilter.isCached());
 
-		GeoLocationPoint bottomRightGLP = geoBoundingBoxFilter.getBottomRight();
+		GeoLocationPoint bottomRightGeoLocationPoint =
+			geoBoundingBoxFilter.getBottomRightGeoLocationPoint();
 
 		GeoPoint bottomRightGP = new GeoPoint(
-			bottomRightGLP.getLatitude(), bottomRightGLP.getLongitude());
+			bottomRightGeoLocationPoint.getLatitude(),
+			bottomRightGeoLocationPoint.getLongitude());
 
 		geoBoundingBoxFilterBuilder.bottomRight(bottomRightGP);
 
-		GeoLocationPoint topLeftGLP = geoBoundingBoxFilter.getTopLeft();
+		GeoLocationPoint topLeftGeoLocationPoint =
+			geoBoundingBoxFilter.getTopLeftGeoLocationPoint();
 
-		GeoPoint topLeftGP = new GeoPoint(
-			topLeftGLP.getLatitude(), topLeftGLP.getLongitude());
+		GeoPoint topLeftGeoPoint = new GeoPoint(
+			topLeftGeoLocationPoint.getLatitude(),
+			topLeftGeoLocationPoint.getLongitude());
 
-		geoBoundingBoxFilterBuilder.topLeft(topLeftGP);
+		geoBoundingBoxFilterBuilder.topLeft(topLeftGeoPoint);
 
 		return geoBoundingBoxFilterBuilder;
 	}

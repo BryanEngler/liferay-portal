@@ -38,10 +38,12 @@ public class GeoDistanceFilterTranslatorImpl
 
 		geoDistanceFilterBuilder.cache(geoDistanceFilter.isCached());
 
-		GeoLocationPoint pinGLP = geoDistanceFilter.getPinLocation();
+		GeoLocationPoint pinGeoLocationPoint =
+			geoDistanceFilter.getPinGeoLocationPoint();
 
 		geoDistanceFilterBuilder.point(
-			pinGLP.getLatitude(), pinGLP.getLongitude());
+			pinGeoLocationPoint.getLatitude(),
+			pinGeoLocationPoint.getLongitude());
 
 		geoDistanceFilterBuilder.distance(
 			geoDistanceFilter.getGeoDistance().toString());
