@@ -110,8 +110,8 @@ public class BookmarksFolderAssetRenderer
 	}
 
 	@Override
-	public String getStatusLabel() {
-		return WorkflowConstants.getStatusLabel(_folder.getStatus());
+	public int getStatus() {
+		return _folder.getStatus();
 	}
 
 	@Override
