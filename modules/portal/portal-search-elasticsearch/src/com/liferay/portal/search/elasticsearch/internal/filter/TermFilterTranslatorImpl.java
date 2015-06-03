@@ -41,10 +41,10 @@ public class TermFilterTranslatorImpl implements TermFilterTranslator {
 
 	@Override
 	public FilterBuilder translate(TermFilter termFilter) {
+		FilterBuilder filterBuilder = null;
+
 		String field = termFilter.getField();
 		String value = termFilter.getValue();
-
-		FilterBuilder filterBuilder = null;
 
 		if ((_queryPreProcessConfiguration != null) &&
 			_queryPreProcessConfiguration.isSubstringSearchAlways(field)) {
