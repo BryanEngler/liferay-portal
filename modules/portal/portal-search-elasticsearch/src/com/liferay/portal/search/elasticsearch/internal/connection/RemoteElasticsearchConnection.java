@@ -52,7 +52,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	configurationPid = "com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration",
-	immediate = true, property = { "operation.mode=REMOTE" },
+	immediate = true, property = {"operation.mode=REMOTE"},
 	service = ElasticsearchConnection.class
 )
 public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
