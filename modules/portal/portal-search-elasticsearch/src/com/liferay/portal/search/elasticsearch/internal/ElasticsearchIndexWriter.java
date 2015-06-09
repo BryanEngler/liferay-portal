@@ -169,7 +169,7 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
-	public void partialUpdateDocument(
+	public void partiallyUpdateDocument(
 			SearchContext searchContext, Document document)
 		throws SearchException {
 
@@ -178,7 +178,7 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
-	public void partialUpdateDocuments(
+	public void partiallyUpdateDocuments(
 			SearchContext searchContext, Collection<Document> documents)
 		throws SearchException {
 
