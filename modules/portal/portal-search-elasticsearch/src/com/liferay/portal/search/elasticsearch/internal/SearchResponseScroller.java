@@ -93,10 +93,10 @@ public class SearchResponseScroller {
 
 		searchRequestBuilder.setScroll(scroll);
 
-		ActionFuture<SearchResponse> searchResponseFuture =
+		ActionFuture<SearchResponse> searchResponseActionFuture =
 			searchRequestBuilder.execute();
 
-		SearchResponse searchResponse = searchResponseFuture.get();
+		SearchResponse searchResponse = searchResponseActionFuture.get();
 
 		_scrollId = searchResponse.getScrollId();
 
@@ -117,19 +117,20 @@ public class SearchResponseScroller {
 
 		searchScrollRequestBuilder.setScroll(scroll);
 
-		ActionFuture<SearchResponse> searchResponseFuture =
+		ActionFuture<SearchResponse> searchResponseActionFuture =
 			searchScrollRequestBuilder.execute();
 
-		SearchResponse searchResponse = searchResponseFuture.get();
+		SearchResponse searchResponse = searchResponseActionFuture.get();
 
 		LogUtil.logActionResponse(_log, searchResponse);
 
 		_previousScrollIds.add(_scrollId);
 
 		SearchHits searchHits = searchResponse.getHits();
-		SearchHit[] searchHitArray = searchHits.getHits();
 
-		if (ArrayUtil.isNotEmpty(searchHitArray)) {
+		SearchHit[] searchHitsArray = searchHits.getHits();
+
+		if (ArrayUtil.isNotEmpty(searchHitsArray)) {
 			_scrollId = null;
 
 			return false;

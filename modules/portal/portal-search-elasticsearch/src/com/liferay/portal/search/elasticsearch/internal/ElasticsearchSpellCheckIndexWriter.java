@@ -128,10 +128,10 @@ public class ElasticsearchSpellCheckIndexWriter
 		SearchResponseScroller searchResponseScroller = null;
 
 		try {
+			Client client = _elasticsearchConnectionManager.getClient();
+
 			MatchAllQueryBuilder matchAllQueryBuilder =
 				QueryBuilders.matchAllQuery();
-
-			Client client = _elasticsearchConnectionManager.getClient();
 
 			searchResponseScroller = new SearchResponseScroller(
 				client, searchContext, matchAllQueryBuilder,

@@ -147,6 +147,8 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 		SearchResponseScroller searchResponseScroller = null;
 
 		try {
+			Client client = _elasticsearchConnectionManager.getClient();
+
 			MatchAllQueryBuilder matchAllQueryBuilder =
 				QueryBuilders.matchAllQuery();
 
@@ -157,8 +159,6 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 
 			QueryBuilder queryBuilder = QueryBuilders.filteredQuery(
 				matchAllQueryBuilder, termFilterBuilder);
-
-			Client client = _elasticsearchConnectionManager.getClient();
 
 			searchResponseScroller = new SearchResponseScroller(
 				client, searchContext, queryBuilder,
