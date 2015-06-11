@@ -52,10 +52,9 @@ public class MultiMatchQueryTranslatorImpl
 				multiMatchQuery.getCutOffFrequency());
 		}
 
-		Set<String> fields = multiMatchQuery.getFields();
 		Map<String, Float> fieldBoosts = multiMatchQuery.getFieldsBoosts();
 
-		for (String field : fields) {
+		for (String field : multiMatchQuery.getFields()) {
 			Float fieldBoost = null;
 
 			if (fieldBoosts != null) {
