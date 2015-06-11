@@ -38,11 +38,11 @@ public class DeleteDocumentsSearchHitsProcessor implements SearchHitsProcessor {
 			SearchContext searchContext, SearchHits searchHits)
 		throws SearchException {
 
-		SearchHit[] searchHitArray = searchHits.getHits();
+		SearchHit[] searchHitsArray = searchHits.getHits();
 
 		Collection<String> uids = new HashSet<>();
 
-		for (SearchHit searchHit : searchHitArray) {
+		for (SearchHit searchHit : searchHitsArray) {
 			uids.add(searchHit.getId());
 		}
 
