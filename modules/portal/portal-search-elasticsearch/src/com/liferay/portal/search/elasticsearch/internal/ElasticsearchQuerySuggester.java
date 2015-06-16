@@ -32,7 +32,6 @@ import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectio
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +41,7 @@ import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.suggest.SuggestRequestBuilder;
 import org.elasticsearch.action.suggest.SuggestResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.text.Text;
 import org.elasticsearch.search.suggest.Suggest;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.search.suggest.term.TermSuggestion;
@@ -66,7 +66,7 @@ public class ElasticsearchQuerySuggester extends BaseQuerySuggester {
 			searchContext.getLocale(), Field.SPELL_CHECK_WORD);
 
 		TermSuggester termSuggester = new TermSuggester(
-			_REQUEST_TYPE_SPELL_CHECK, field, searchContext.getKeywords());
+			"spellCheckRequest", field, searchContext.getKeywords());
 
 		termSuggester.setSize(max);
 
@@ -118,7 +118,7 @@ public class ElasticsearchQuerySuggester extends BaseQuerySuggester {
 		SuggestRequestBuilder suggestRequestBuilder = client.prepareSuggest(
 			String.valueOf(searchContext.getCompanyId()));
 
-		for (SuggestBuilder.SuggestionBuilder suggestionBuilder :
+		for (SuggestBuilder.SuggestionBuilder<?> suggestionBuilder :
 				suggestBuilder.getSuggestion()) {
 
 			suggestRequestBuilder.addSuggestion(suggestionBuilder);
@@ -139,12 +139,13 @@ public class ElasticsearchQuerySuggester extends BaseQuerySuggester {
 
 		SuggesterResults suggesterResults = new SuggesterResults();
 
-		for (Suggest.Suggestion<?
-				extends Suggest.Suggestion.Entry<?
-				extends Suggest.Suggestion.Entry.Option>> suggestion :
-					suggest) {
+		for (Suggest.Suggestion
+				<? extends Suggest.Suggestion.Entry
+					<? extends Suggest.Suggestion.Entry.Option>> suggestion :
+						suggest) {
 
 			SuggesterResult suggesterResult = translate(suggestion);
+
 			suggesterResults.addSuggesterResult(suggesterResult);
 		}
 
@@ -162,32 +163,33 @@ public class ElasticsearchQuerySuggester extends BaseQuerySuggester {
 	public String[] suggestKeywordQueries(
 		SearchContext searchContext, int max) {
 
+		List<String> keywordQueries = new ArrayList<>();
+
 		String field = DocumentImpl.getLocalizedName(
 			searchContext.getLocale(), Field.KEYWORD_SEARCH);
 
 		PhraseSuggester phraseSuggester = new PhraseSuggester(
-			_REQUEST_TYPE_KEYWORD_QUERY, field, searchContext.getKeywords());
+			"keywordQueryRequest", field, searchContext.getKeywords());
 
 		phraseSuggester.setSize(max);
 
 		SuggesterResults suggesterResults = suggest(
 			searchContext, phraseSuggester);
 
-		List<String> keywordQueries = new ArrayList<>();
-
 		SuggesterResult suggesterResult = suggesterResults.getSuggesterResult(
 			phraseSuggester.getName());
 
-		Iterator<SuggesterResult.Entry> iterator =
-			suggesterResult.getEntries().iterator();
+		List<SuggesterResult.Entry> suggesterResultEntries =
+			suggesterResult.getEntries();
 
-		if (iterator.hasNext()) {
-			SuggesterResult.Entry suggesterResultEntry = iterator.next();
+		for (SuggesterResult.Entry suggesterResultEntry :
+				suggesterResultEntries) {
 
-			for (SuggesterResult.Entry.Option option :
+			for (SuggesterResult.Entry.Option suggesterResultEntryOption :
 					suggesterResultEntry.getOptions()) {
 
-				String optionText = String.valueOf(option.getText());
+				String optionText = String.valueOf(
+					suggesterResultEntryOption.getText());
 
 				keywordQueries.add(optionText);
 			}
@@ -210,53 +212,10 @@ public class ElasticsearchQuerySuggester extends BaseQuerySuggester {
 		_suggesterTranslator = suggesterTranslator;
 	}
 
-	protected SuggesterResult.Entry translate(
-		Suggest.Suggestion.Entry
-			<? extends Suggest.Suggestion.Entry.Option> suggestionEntry) {
-
-		SuggesterResult.Entry suggesterResultEntry = new SuggesterResult.Entry(
-			suggestionEntry.getText().string());
-
-		List<? extends Suggest.Suggestion.Entry.Option> options =
-			suggestionEntry.getOptions();
-
-		for (Suggest.Suggestion.Entry.Option option : options) {
-			SuggesterResult.Entry.Option suggesterResultEntryOption = translate(
-				option);
-
-			suggesterResultEntry.addOption(suggesterResultEntryOption);
-		}
-
-		return suggesterResultEntry;
-	}
-
-	protected SuggesterResult.Entry.Option translate(
-		Suggest.Suggestion.Entry.Option option) {
-
-		SuggesterResult.Entry.Option suggesterResultEntryOption =
-			new SuggesterResult.Entry.Option(
-				option.getText().string(), option.getScore());
-
-		if (option.getHighlighted() != null) {
-			suggesterResultEntryOption.setHighlightedText(
-				option.getHighlighted().string());
-		}
-
-		if (option instanceof TermSuggestion.Entry.Option) {
-			TermSuggestion.Entry.Option termSuggestionEntryOption =
-				(TermSuggestion.Entry.Option)option;
-
-			suggesterResultEntryOption.setFrequency(
-				termSuggestionEntryOption.getFreq());
-		}
-
-		return suggesterResultEntryOption;
-	}
-
 	protected SuggesterResult translate(
-		Suggest.Suggestion<?
-			extends Suggest.Suggestion.Entry<?
-				extends Suggest.Suggestion.Entry.Option>> suggestion) {
+		Suggest.Suggestion
+			<? extends Suggest.Suggestion.Entry
+				<? extends Suggest.Suggestion.Entry.Option>> suggestion) {
 
 		SuggesterResult suggesterResult = new SuggesterResult(
 			suggestion.getName());
@@ -273,10 +232,53 @@ public class ElasticsearchQuerySuggester extends BaseQuerySuggester {
 		return suggesterResult;
 	}
 
-	private static final String _REQUEST_TYPE_KEYWORD_QUERY =
-		"keywordQueryRequest";
+	protected SuggesterResult.Entry.Option translate(
+		Suggest.Suggestion.Entry.Option suggestionEntryOption) {
 
-	private static final String _REQUEST_TYPE_SPELL_CHECK = "spellCheckRequest";
+		SuggesterResult.Entry.Option suggesterResultEntryOption =
+			new SuggesterResult.Entry.Option(
+				suggestionEntryOption.getText().string(),
+				suggestionEntryOption.getScore());
+
+		if (suggestionEntryOption.getHighlighted() != null) {
+			suggesterResultEntryOption.setHighlightedText(
+				suggestionEntryOption.getHighlighted().string());
+		}
+
+		if (suggestionEntryOption instanceof TermSuggestion.Entry.Option) {
+			TermSuggestion.Entry.Option termSuggestionEntryOption =
+				(TermSuggestion.Entry.Option)suggestionEntryOption;
+
+			suggesterResultEntryOption.setFrequency(
+				termSuggestionEntryOption.getFreq());
+		}
+
+		return suggesterResultEntryOption;
+	}
+
+	protected SuggesterResult.Entry translate(
+		Suggest.Suggestion.Entry<? extends Suggest.Suggestion.Entry.Option>
+			suggestionEntry) {
+
+		Text text = suggestionEntry.getText();
+
+		SuggesterResult.Entry suggesterResultEntry = new SuggesterResult.Entry(
+			text.string());
+
+		List<? extends Suggest.Suggestion.Entry.Option>
+			suggestionEntryOptions = suggestionEntry.getOptions();
+
+		for (Suggest.Suggestion.Entry.Option suggestionEntryOption :
+				suggestionEntryOptions) {
+
+			SuggesterResult.Entry.Option suggesterResultEntryOption = translate(
+				suggestionEntryOption);
+
+			suggesterResultEntry.addOption(suggesterResultEntryOption);
+		}
+
+		return suggesterResultEntry;
+	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ElasticsearchQuerySuggester.class);
