@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.search.suggest.SuggestBuilder;
+
 import org.osgi.service.component.annotations.Component;
 
 /**
@@ -41,9 +42,8 @@ public class AggregateSuggesterTranslatorImpl
 			aggregateSuggester.getName());
 
 		aggregateSuggestBuilder.setText(aggregateSuggester.getValue());
-		
-		Map<String, Suggester> suggesters =
-			aggregateSuggester.getSuggesters(); 
+
+		Map<String, Suggester> suggesters = aggregateSuggester.getSuggesters();
 
 		for (Suggester suggester : suggesters.values()) {
 			SuggestBuilder suggestBuilder = suggesterTranslator.translate(
