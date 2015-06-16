@@ -34,6 +34,9 @@ public class TermSuggesterTranslatorImpl
 
 	@Override
 	public SuggestBuilder translate(TermSuggester termSuggester) {
+		SuggestBuilder suggestBuilder = new SuggestBuilder(
+			termSuggester.getName());
+
 		TermSuggestionBuilder termSuggesterBuilder =
 			SuggestBuilders.termSuggestion(termSuggester.getName());
 
@@ -96,9 +99,6 @@ public class TermSuggesterTranslatorImpl
 		}
 
 		termSuggesterBuilder.text(termSuggester.getValue());
-
-		SuggestBuilder suggestBuilder = new SuggestBuilder(
-			termSuggester.getName());
 
 		suggestBuilder.addSuggestion(termSuggesterBuilder);
 
