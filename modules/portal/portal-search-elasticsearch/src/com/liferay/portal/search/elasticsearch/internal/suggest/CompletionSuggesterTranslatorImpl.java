@@ -33,6 +33,9 @@ public class CompletionSuggesterTranslatorImpl
 
 	@Override
 	public SuggestBuilder translate(CompletionSuggester completionSuggester) {
+		SuggestBuilder suggestBuilder = new SuggestBuilder(
+			completionSuggester.getName());
+
 		CompletionSuggestionBuilder completionSuggesterBuilder =
 			SuggestBuilders.completionSuggestion(completionSuggester.getName());
 
@@ -53,9 +56,6 @@ public class CompletionSuggesterTranslatorImpl
 		}
 
 		completionSuggesterBuilder.text(completionSuggester.getValue());
-
-		SuggestBuilder suggestBuilder = new SuggestBuilder(
-			completionSuggester.getName());
 
 		suggestBuilder.addSuggestion(completionSuggesterBuilder);
 
