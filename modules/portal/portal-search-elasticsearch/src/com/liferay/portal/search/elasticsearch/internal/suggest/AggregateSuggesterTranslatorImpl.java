@@ -20,9 +20,9 @@ import com.liferay.portal.kernel.search.suggest.SuggesterTranslator;
 import com.liferay.portal.search.elasticsearch.suggest.AggregateSuggesterTranslator;
 
 import java.util.List;
+import java.util.Map;
 
 import org.elasticsearch.search.suggest.SuggestBuilder;
-
 import org.osgi.service.component.annotations.Component;
 
 /**
@@ -41,17 +41,18 @@ public class AggregateSuggesterTranslatorImpl
 			aggregateSuggester.getName());
 
 		aggregateSuggestBuilder.setText(aggregateSuggester.getValue());
+		
+		Map<String, Suggester> suggesters =
+			aggregateSuggester.getSuggesters(); 
 
-		for (Suggester suggester :
-				aggregateSuggester.getSuggesters().values()) {
-
+		for (Suggester suggester : suggesters.values()) {
 			SuggestBuilder suggestBuilder = suggesterTranslator.translate(
 				suggester, null);
 
 			List<SuggestBuilder.SuggestionBuilder<?>> suggestionBuilders =
 				suggestBuilder.getSuggestion();
 
-			for (SuggestBuilder.SuggestionBuilder suggestionBuilder :
+			for (SuggestBuilder.SuggestionBuilder<?> suggestionBuilder :
 					suggestionBuilders) {
 
 				suggestionBuilder.text(null);
