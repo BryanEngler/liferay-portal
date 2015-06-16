@@ -42,6 +42,9 @@ public class PhraseSuggesterTranslatorImpl
 
 	@Override
 	public SuggestBuilder translate(PhraseSuggester phraseSuggester) {
+		SuggestBuilder suggestBuilder = new SuggestBuilder(
+			phraseSuggester.getName());
+
 		PhraseSuggestionBuilder phraseSuggestionBuilder =
 			SuggestBuilders.phraseSuggestion(phraseSuggester.getName());
 
@@ -58,6 +61,11 @@ public class PhraseSuggesterTranslatorImpl
 
 		if (phraseSuggester.getConfidence() != null) {
 			phraseSuggestionBuilder.confidence(phraseSuggester.getConfidence());
+		}
+
+		if (phraseSuggester.isForceUnigrams() != null) {
+			phraseSuggestionBuilder.forceUnigrams(
+				phraseSuggester.isForceUnigrams());
 		}
 
 		if (phraseSuggester.getGramSize() != null) {
@@ -97,15 +105,7 @@ public class PhraseSuggesterTranslatorImpl
 			phraseSuggestionBuilder.tokenLimit(phraseSuggester.getTokenLimit());
 		}
 
-		if (phraseSuggester.isForceUnigrams() != null) {
-			phraseSuggestionBuilder.forceUnigrams(
-				phraseSuggester.isForceUnigrams());
-		}
-
 		phraseSuggestionBuilder.text(phraseSuggester.getValue());
-
-		SuggestBuilder suggestBuilder = new SuggestBuilder(
-			phraseSuggester.getName());
 
 		suggestBuilder.addSuggestion(phraseSuggestionBuilder);
 
