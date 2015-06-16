@@ -14,7 +14,6 @@
 
 package com.liferay.portal.model;
 
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -213,20 +212,11 @@ public class LayoutStagingHandler implements InvocationHandler, Serializable {
 
 		List<LayoutRevision> layoutRevisions =
 			LayoutRevisionLocalServiceUtil.getLayoutRevisions(
-				layoutSetBranchId, layout.getPlid(), QueryUtil.ALL_POS,
-				QueryUtil.ALL_POS,
-				new LayoutRevisionCreateDateComparator(true));
+				layoutSetBranchId, layout.getPlid(), 0, 1,
+				new LayoutRevisionCreateDateComparator(false));
 
 		if (!layoutRevisions.isEmpty()) {
 			layoutRevision = layoutRevisions.get(0);
-
-			for (LayoutRevision curLayoutRevision : layoutRevisions) {
-				if (curLayoutRevision.isHead()) {
-					layoutRevision = curLayoutRevision;
-
-					break;
-				}
-			}
 		}
 
 		if (layoutRevision != null) {
