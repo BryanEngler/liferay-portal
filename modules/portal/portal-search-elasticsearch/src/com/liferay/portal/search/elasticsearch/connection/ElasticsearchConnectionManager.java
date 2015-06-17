@@ -127,7 +127,7 @@ public class ElasticsearchConnectionManager {
 
 		if (!_elasticsearchConnections.containsKey(newOperationMode)) {
 			throw new IllegalArgumentException(
-				"No connection available for : " + newOperationMode);
+				"No connection available for: " + newOperationMode);
 		}
 
 		if (_operationMode != null) {

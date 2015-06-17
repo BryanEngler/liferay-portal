@@ -44,6 +44,7 @@ public class TestCluster {
 	public void destroyNode(int index) throws Exception {
 		if (_elasticsearchFixtures[index] != null) {
 			_elasticsearchFixtures[index].destroyNode();
+
 			_elasticsearchFixtures[index] = null;
 		}
 	}
@@ -109,7 +110,7 @@ public class TestCluster {
 
 		@Override
 		public String[] getHosts() {
-			return new String[] { "127.0.0.1" };
+			return new String[] {"127.0.0.1"};
 		}
 
 		@Override
