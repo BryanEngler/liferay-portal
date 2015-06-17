@@ -39,14 +39,16 @@ public class ClusterAssert {
 
 		ClusterAssert.assertHealth(
 			elasticsearchFixture,
-			new ClusterAssert.HealthExpectations() { {
-				activePrimaryShards = 1;
-				activeShards = 1;
-				numberOfDataNodes = 1;
-				numberOfNodes = 1;
-				status = YELLOW;
-				unassignedShards = 1;
-			} });
+			new ClusterAssert.HealthExpectations() {
+				{
+					activePrimaryShards = 1;
+					activeShards = 1;
+					numberOfDataNodes = 1;
+					numberOfNodes = 1;
+					status = YELLOW;
+					unassignedShards = 1;
+				}
+			});
 	}
 
 	public static void assert1PrimaryShardAnd2Nodes(
@@ -55,14 +57,16 @@ public class ClusterAssert {
 
 		ClusterAssert.assertHealth(
 			elasticsearchFixture,
-			new ClusterAssert.HealthExpectations() { {
-				activePrimaryShards = 1;
-				activeShards = 1;
-				numberOfDataNodes = 2;
-				numberOfNodes = 2;
-				status = GREEN;
-				unassignedShards = 0;
-			} });
+			new ClusterAssert.HealthExpectations() {
+				{
+					activePrimaryShards = 1;
+					activeShards = 1;
+					numberOfDataNodes = 2;
+					numberOfNodes = 2;
+					status = GREEN;
+					unassignedShards = 0;
+				}
+			});
 	}
 
 	public static void assert1PrimaryShardOnly(
@@ -71,14 +75,16 @@ public class ClusterAssert {
 
 		ClusterAssert.assertHealth(
 			elasticsearchFixture,
-			new ClusterAssert.HealthExpectations() { {
-				activePrimaryShards = 1;
-				activeShards = 1;
-				numberOfDataNodes = 1;
-				numberOfNodes = 1;
-				status = GREEN;
-				unassignedShards = 0;
-			} });
+			new ClusterAssert.HealthExpectations() {
+				{
+					activePrimaryShards = 1;
+					activeShards = 1;
+					numberOfDataNodes = 1;
+					numberOfNodes = 1;
+					status = GREEN;
+					unassignedShards = 0;
+				}
+			});
 	}
 
 	public static void assert1ReplicaAnd1UnassignedShard(
@@ -87,14 +93,16 @@ public class ClusterAssert {
 
 		ClusterAssert.assertHealth(
 			elasticsearchFixture,
-			new ClusterAssert.HealthExpectations() { {
-				activePrimaryShards = 1;
-				activeShards = 2;
-				numberOfDataNodes = 2;
-				numberOfNodes = 2;
-				status = YELLOW;
-				unassignedShards = 1;
-			} });
+			new ClusterAssert.HealthExpectations() {
+				{
+					activePrimaryShards = 1;
+					activeShards = 2;
+					numberOfDataNodes = 2;
+					numberOfNodes = 2;
+					status = YELLOW;
+					unassignedShards = 1;
+				}
+			});
 	}
 
 	public static void assert1ReplicaShard(
@@ -103,14 +111,16 @@ public class ClusterAssert {
 
 		ClusterAssert.assertHealth(
 			elasticsearchFixture,
-			new ClusterAssert.HealthExpectations() { {
-				activePrimaryShards = 1;
-				activeShards = 2;
-				numberOfDataNodes = 2;
-				numberOfNodes = 2;
-				status = GREEN;
-				unassignedShards = 0;
-			} });
+			new ClusterAssert.HealthExpectations() {
+				{
+					activePrimaryShards = 1;
+					activeShards = 2;
+					numberOfDataNodes = 2;
+					numberOfNodes = 2;
+					status = GREEN;
+					unassignedShards = 0;
+				}
+			});
 	}
 
 	public static void assert2ReplicaShards(
@@ -119,14 +129,16 @@ public class ClusterAssert {
 
 		ClusterAssert.assertHealth(
 			elasticsearchFixture,
-			new ClusterAssert.HealthExpectations() { {
-				activePrimaryShards = 1;
-				activeShards = 3;
-				numberOfDataNodes = 3;
-				numberOfNodes = 3;
-				status = GREEN;
-				unassignedShards = 0;
-			} });
+			new ClusterAssert.HealthExpectations() {
+				{
+					activePrimaryShards = 1;
+					activeShards = 3;
+					numberOfDataNodes = 3;
+					numberOfNodes = 3;
+					status = GREEN;
+					unassignedShards = 0;
+				}
+			});
 	}
 
 	public static void assertHealth(
@@ -149,6 +161,7 @@ public class ClusterAssert {
 				}
 
 			});
+
 	}
 
 	public static class HealthExpectations {
