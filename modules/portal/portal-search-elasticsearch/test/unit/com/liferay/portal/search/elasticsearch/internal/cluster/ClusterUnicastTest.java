@@ -41,11 +41,15 @@ public class ClusterUnicastTest {
 	@Test
 	public void testSplitBrainPreventedEvenIfMasterLeaves() throws Exception {
 		ElasticsearchFixture elasticsearchFixture0 = _testCluster.getNode(0);
-		ElasticsearchFixture elasticsearchFixture1 = _testCluster.getNode(1);
-		ElasticsearchFixture elasticsearchFixture2 = _testCluster.getNode(2);
 
 		Index index0 = createIndex(elasticsearchFixture0);
+
+		ElasticsearchFixture elasticsearchFixture1 = _testCluster.getNode(1);
+
 		Index index1 = createIndex(elasticsearchFixture1);
+
+		ElasticsearchFixture elasticsearchFixture2 = _testCluster.getNode(2);
+
 		Index index2 = createIndex(elasticsearchFixture2);
 
 		updateNumberOfReplicas(2, index0, elasticsearchFixture0);
