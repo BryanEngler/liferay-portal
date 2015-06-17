@@ -161,7 +161,6 @@ public class ClusterAssert {
 				}
 
 			});
-
 	}
 
 	public static class HealthExpectations {
