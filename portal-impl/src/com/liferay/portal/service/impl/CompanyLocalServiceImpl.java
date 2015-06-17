@@ -22,6 +22,7 @@ import com.liferay.portal.LocaleException;
 import com.liferay.portal.NoSuchShardException;
 import com.liferay.portal.NoSuchVirtualHostException;
 import com.liferay.portal.RequiredCompanyException;
+import com.liferay.portal.kernel.cluster.Clusterable;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
@@ -1066,6 +1067,7 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 	 * @throws PortalException if the properties contained new locales that were
 	 *         not supported
 	 */
+	@Clusterable
 	@Override
 	public void updatePreferences(long companyId, UnicodeProperties properties)
 		throws PortalException {
