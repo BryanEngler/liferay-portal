@@ -41,11 +41,12 @@ public class Cluster2InstancesTest {
 	@Test
 	public void test2Nodes1PrimaryShard() throws Exception {
 		ElasticsearchFixture elasticsearchFixture0 = _testCluster.getNode(0);
-		ElasticsearchFixture elasticsearchFixture1 = _testCluster.getNode(1);
 
 		createIndex(elasticsearchFixture0);
 
 		ClusterAssert.assert1PrimaryShardOnly(elasticsearchFixture0);
+
+		ElasticsearchFixture elasticsearchFixture1 = _testCluster.getNode(1);
 
 		createIndex(elasticsearchFixture1);
 
@@ -55,9 +56,11 @@ public class Cluster2InstancesTest {
 	@Test
 	public void testExpandAndShrink() throws Exception {
 		ElasticsearchFixture elasticsearchFixture0 = _testCluster.getNode(0);
-		ElasticsearchFixture elasticsearchFixture1 = _testCluster.getNode(1);
 
 		Index index0 = createIndex(elasticsearchFixture0);
+
+		ElasticsearchFixture elasticsearchFixture1 = _testCluster.getNode(1);
+
 		Index index1 = createIndex(elasticsearchFixture1);
 
 		updateNumberOfReplicas(1, index1, elasticsearchFixture1);
