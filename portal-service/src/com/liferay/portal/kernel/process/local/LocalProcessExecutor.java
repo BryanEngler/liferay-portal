@@ -132,7 +132,7 @@ public class LocalProcessExecutor implements ProcessExecutor {
 		try {
 			List<String> arguments = processConfig.getArguments();
 
-			List<String> commands = new ArrayList<>(arguments.size() + 4);
+			List<String> commands = new ArrayList<>(arguments.size() + 5);
 
 			commands.add(processConfig.getJavaExecutable());
 			commands.add("-cp");
