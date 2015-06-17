@@ -35,17 +35,17 @@ public class ClusterExecutorClusterSettingsContext
 	public String[] getHosts() {
 		List<ClusterNode> clusterNodes = _clusterExecutor.getClusterNodes();
 
-		String[] addresses = new String[clusterNodes.size()];
+		String[] hosts = new String[clusterNodes.size()];
 
-		for (int i = 0; i < addresses.length; i++) {
+		for (int i = 0; i < hosts.length; i++) {
 			ClusterNode clusterNode = clusterNodes.get(i);
 
 			InetAddress bindInetAddress = clusterNode.getBindInetAddress();
 
-			addresses[i] = bindInetAddress.getHostAddress();
+			hosts[i] = bindInetAddress.getHostAddress();
 		}
 
-		return addresses;
+		return hosts;
 	}
 
 	@Override
