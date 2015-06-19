@@ -151,6 +151,11 @@ public class DLFileEntryAssetRenderer
 	}
 
 	@Override
+	public int getStatus() {
+		return _fileVersion.getStatus();
+	}
+
+	@Override
 	public String getSummary(
 		PortletRequest portletRequest, PortletResponse portletResponse) {
 

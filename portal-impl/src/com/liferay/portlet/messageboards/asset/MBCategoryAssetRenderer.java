@@ -62,6 +62,11 @@ public class MBCategoryAssetRenderer extends BaseAssetRenderer {
 	}
 
 	@Override
+	public int getStatus() {
+		return _category.getStatus();
+	}
+
+	@Override
 	public String getSummary(
 		PortletRequest portletRequest, PortletResponse portletResponse) {
 

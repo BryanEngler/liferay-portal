@@ -110,6 +110,11 @@ public class BookmarksFolderAssetRenderer
 	}
 
 	@Override
+	public int getStatus() {
+		return _folder.getStatus();
+	}
+
+	@Override
 	public String getSummary(
 		PortletRequest portletRequest, PortletResponse portletResponse) {
 
