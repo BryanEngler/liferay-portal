@@ -45,9 +45,11 @@ String title = assetRenderer.getTitle(LocaleUtil.fromLanguageId(languageId));
 
 boolean print = ((Boolean)request.getAttribute("view.jsp-print")).booleanValue();
 
-String defaultAssetPublisherPortletId = layout.getTypeSettingsProperties().getProperty(LayoutTypePortletConstants.DEFAULT_ASSET_PUBLISHER_PORTLET_ID, StringPool.BLANK);
+UnicodeProperties layoutTypeSettings = layout.getTypeSettingsProperties();
 
-if (Validator.isNull(defaultAssetPublisherPortletId) || Validator.equals(portletDisplay.getId(), defaultAssetPublisherPortletId)) {
+String defaultAssetPublisherPortletId = layoutTypeSettings.getProperty(LayoutTypePortletConstants.DEFAULT_ASSET_PUBLISHER_PORTLET_ID);
+
+if (Validator.isNull(defaultAssetPublisherPortletId) || defaultAssetPublisherPortletId.equals(portletDisplay.getId())) {
 	request.setAttribute(WebKeys.LAYOUT_ASSET_ENTRY, assetEntry);
 }
 
