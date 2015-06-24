@@ -257,18 +257,11 @@ public class EmbeddedElasticsearchConnection
 			builder.put("network.bind.host", networkBindHost);
 		}
 
-		String networkPublishHost =
-			elasticsearchConfiguration.networkPublishHost();
-
-		if (Validator.isNotNull(networkPublishHost)) {
-			builder.put("network.publish.host", networkPublishHost);
-		}
-
 		String networkHost = elasticsearchConfiguration.networkHost();
 
 		if (Validator.isNull(networkBindHost) &&
 			Validator.isNull(networkHost) &&
-			Validator.isNull(networkPublishHost)) {
+			Validator.isNull(elasticsearchConfiguration.networkPublishHost())) {
 
 			InetAddress localBindInetAddress =
 				_clusterSettingsContext.getLocalBindInetAddress();
@@ -280,6 +273,13 @@ public class EmbeddedElasticsearchConnection
 
 		if (Validator.isNotNull(networkHost)) {
 			builder.put("network.host", networkHost);
+		}
+
+		String networkPublishHost =
+			elasticsearchConfiguration.networkPublishHost();
+
+		if (Validator.isNotNull(networkPublishHost)) {
+			builder.put("network.publish.host", networkPublishHost);
 		}
 
 		String transportTcpPort = elasticsearchConfiguration.transportTcpPort();
