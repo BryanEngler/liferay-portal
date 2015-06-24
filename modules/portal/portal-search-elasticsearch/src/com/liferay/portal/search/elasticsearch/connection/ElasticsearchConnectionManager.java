@@ -16,6 +16,7 @@ package com.liferay.portal.search.elasticsearch.connection;
 
 import aQute.bnd.annotation.metatype.Configurable;
 
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
 
 import java.util.HashMap;
@@ -135,8 +136,10 @@ public class ElasticsearchConnectionManager {
 		OperationMode newOperationMode =
 			_elasticsearchConfiguration.operationMode();
 
-		if (newOperationMode.equals(_operationMode) &&
-			_elasticsearchConfiguration.clusterName().equals(_clusterName)) {
+		if (Validator.equals(
+				_elasticsearchConfiguration.clusterName(), _clusterName) &&
+			Validator.equals(
+				_elasticsearchConfiguration.operationMode(), _operationMode)) {
 
 			return;
 		}

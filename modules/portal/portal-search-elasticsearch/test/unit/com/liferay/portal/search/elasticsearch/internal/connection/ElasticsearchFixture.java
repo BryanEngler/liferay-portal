@@ -209,12 +209,11 @@ public class ElasticsearchFixture {
 		Object instance, Object[] parameters) {
 
 		try {
-			Method activateMethod = clazz.getDeclaredMethod(
-				methodName, parameterTypes);
+			Method method = clazz.getDeclaredMethod(methodName, parameterTypes);
 
-			activateMethod.setAccessible(true);
+			method.setAccessible(true);
 
-			activateMethod.invoke(instance, parameters);
+			method.invoke(instance, parameters);
 		}
 		catch (Exception e) {
 			throw new IllegalStateException(e);
