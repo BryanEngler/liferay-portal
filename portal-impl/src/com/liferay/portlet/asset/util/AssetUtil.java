@@ -551,6 +551,15 @@ public class AssetUtil {
 		return sb.toString();
 	}
 
+	public static String getDefaultAssetPublisherId(Layout layout) {
+		UnicodeProperties typeSettingsProperties =
+			layout.getTypeSettingsProperties();
+
+		return typeSettingsProperties.getProperty(
+			LayoutTypePortletConstants.DEFAULT_ASSET_PUBLISHER_PORTLET_ID,
+			StringPool.BLANK);
+	}
+
 	public static Set<String> getLayoutTagNames(HttpServletRequest request) {
 		Set<String> tagNames = (Set<String>)request.getAttribute(
 			WebKeys.ASSET_LAYOUT_TAG_NAMES);
@@ -583,13 +592,16 @@ public class AssetUtil {
 	public static boolean isDefaultAssetPublisher(
 		Layout layout, String portletId, String portletResource) {
 
-		UnicodeProperties typeSettingsProperties =
-			layout.getTypeSettingsProperties();
+		String defaultAssetPublisherPortletId = getDefaultAssetPublisherId(
+			layout);
 
-		String defaultAssetPublisherPortletId =
-			typeSettingsProperties.getProperty(
-				LayoutTypePortletConstants.DEFAULT_ASSET_PUBLISHER_PORTLET_ID,
-				StringPool.BLANK);
+		return isDefaultAssetPublisher(
+			defaultAssetPublisherPortletId, portletId, portletResource);
+	}
+
+	public static boolean isDefaultAssetPublisher(
+		String defaultAssetPublisherPortletId, String portletId,
+		String portletResource) {
 
 		if (Validator.isNull(defaultAssetPublisherPortletId)) {
 			return false;
