@@ -122,8 +122,10 @@ public class ReplicasClusterListenerTest {
 
 	@Test
 	public void testResilientToUpdateFailures() {
+		Throwable throwable = new RuntimeException();
+
 		Mockito.doThrow(
-			ReplicasClusterListenerTestException.class
+			throwable
 		).when(
 			_replicasManager).updateNumberOfReplicas(
 				Mockito.anyInt(), (String[])Mockito.anyVararg()
@@ -143,16 +145,8 @@ public class ReplicasClusterListenerTest {
 
 			Assert.assertEquals(
 				"Unable to update number of replicas", logRecord.getMessage());
-
-			Throwable throwable = logRecord.getThrown();
-
-			Assert.assertEquals(
-				ReplicasClusterListenerTestException.class,
-				throwable.getClass());
+			Assert.assertSame(throwable, logRecord.getThrown());
 		}
-	}
-
-	public static class ReplicasClusterListenerTestException extends Exception {
 	}
 
 	protected void assertReplicasChanged() {
