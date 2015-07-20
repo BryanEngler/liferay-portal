@@ -31,6 +31,17 @@ import javax.naming.ldap.LdapContext;
  */
 public class PortalLDAPUtil {
 
+	public static LdapContext fetchContext(long ldapServerId, long companyId)
+		throws Exception {
+
+		try {
+			return PortalLDAPUtil.getContext(ldapServerId, companyId);
+		}
+		catch (Exception e) {
+			return null;
+		}
+	}
+
 	public static LdapContext getContext(long ldapServerId, long companyId)
 		throws Exception {
 
