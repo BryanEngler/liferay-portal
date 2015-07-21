@@ -49,6 +49,7 @@ page import="com.liferay.portal.security.auth.FullNameDefinitionFactory" %><%@
 page import="com.liferay.portal.security.auth.FullNameField" %><%@
 page import="com.liferay.portal.security.auth.ScreenNameValidator" %><%@
 page import="com.liferay.portal.security.auth.ScreenNameValidatorFactory" %><%@
+page import="com.liferay.portal.security.ldap.LDAPSettingsUtil" %><%@
 page import="com.liferay.portal.security.membershippolicy.OrganizationMembershipPolicyUtil" %><%@
 page import="com.liferay.portal.security.membershippolicy.RoleMembershipPolicyUtil" %><%@
 page import="com.liferay.portal.security.membershippolicy.UserGroupMembershipPolicyUtil" %><%@

@@ -21,7 +21,10 @@ User selUser = (User)request.getAttribute("user.selUser");
 
 PasswordPolicy passwordPolicy = (PasswordPolicy)request.getAttribute("user.passwordPolicy");
 
+boolean passwordModifiable = LDAPSettingsUtil.isEditableLDAPUser(selUser);
+
 boolean passwordReset = false;
+
 boolean passwordResetDisabled = false;
 
 if (((selUser == null) || (selUser.getLastLoginDate() == null)) && ((passwordPolicy == null) || (passwordPolicy.isChangeable() && passwordPolicy.isChangeRequired()))) {
@@ -42,6 +45,15 @@ else {
 <aui:model-context bean="<%= selUser %>" model="<%= User.class %>" />
 
 <h3><liferay-ui:message key="password" /></h3>
+
+<c:if test="<%= !passwordModifiable %>">
+
+	<%
+		SessionErrors.add(renderRequest, "LDAPUser");
+	%>
+
+	<liferay-ui:error key="LDAPUser" message="please-enable-ldap-exporting-to-modify-user-data-through-liferay" />
+</c:if>
 
 <liferay-ui:error exception="<%= UserPasswordException.MustBeLonger.class %>">
 
@@ -91,12 +103,12 @@ else {
 	<!-- End LPS-38289 and LPS-55993 -->
 
 	<c:if test="<%= portletName.equals(PortletKeys.MY_ACCOUNT) %>">
-		<aui:input autocomplete="off" label="current-password" name="password0" size="30" type="password" />
+		<aui:input autocomplete="off" disabled="<%= !passwordModifiable %>" label="current-password" name="password0" size="30" type="password" />
 	</c:if>
 
-	<aui:input autocomplete="off" label="new-password" name="password1" size="30" type="password" />
+	<aui:input autocomplete="off" disabled="<%= !passwordModifiable %>" label="new-password" name="password1" size="30" type="password" />
 
-	<aui:input autocomplete="off" label="enter-again" name="password2" size="30" type="password">
+	<aui:input autocomplete="off" disabled="<%= !passwordModifiable %>" label="enter-again" name="password2" size="30" type="password">
 		<aui:validator name="equalTo">
 			'#<portlet:namespace />password1'
 		</aui:validator>
