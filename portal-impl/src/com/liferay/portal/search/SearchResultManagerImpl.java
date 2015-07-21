@@ -39,6 +39,7 @@ import com.liferay.registry.collections.ServiceReferenceMapper;
 import com.liferay.registry.collections.ServiceTrackerCollections;
 import com.liferay.registry.collections.ServiceTrackerMap;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.portlet.PortletRequest;
@@ -153,15 +154,32 @@ public class SearchResultManagerImpl implements SearchResultManager {
 				PortletRequest portletRequest, PortletResponse portletResponse)
 			throws PortalException {
 
-			String entryClassName = GetterUtil.getString(
-				document.get(Field.ENTRY_CLASS_NAME));
-			long entryClassPK = GetterUtil.getLong(
-				document.get(Field.ENTRY_CLASS_PK));
+			List<String> searchResultVersions = searchResult.getVersions();
+			boolean setSummary = true;
+			String version = document.get(Field.VERSION);
 
-			searchResult.setSummary(
-				getSummary(
-					document, entryClassName, entryClassPK, locale,
-					portletRequest, portletResponse));
+			if (Validator.isNotNull(version) &&
+				!searchResultVersions.isEmpty()) {
+
+				for (String searchResultVersion : searchResultVersions) {
+					if (searchResultVersion.compareTo(version) == 1) {
+						setSummary = false;
+						break;
+					}
+				}
+			}
+
+			if (setSummary) {
+				String entryClassName = GetterUtil.getString(
+					document.get(Field.ENTRY_CLASS_NAME));
+				long entryClassPK = GetterUtil.getLong(
+					document.get(Field.ENTRY_CLASS_PK));
+
+				searchResult.setSummary(
+					getSummary(
+						document, entryClassName, entryClassPK, locale,
+						portletRequest, portletResponse));
+			}
 		}
 
 	}
