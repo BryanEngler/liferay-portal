@@ -53,6 +53,9 @@ public class UserPasswordException extends PortalException {
 	@Deprecated
 	public static final int PASSWORDS_DO_NOT_MATCH = 10;
 
+	@Deprecated
+	public static final int PASSWORD_LDAP_CONTROLLED = 11;
+
 	/**
 	 * @deprecated As of 7.0.0, replaced by the inner classes
 	 */
@@ -67,6 +70,22 @@ public class UserPasswordException extends PortalException {
 	@Deprecated
 	public int getType() {
 		return _type;
+	}
+
+	public static class MustBeExportingOrDisabledLDAP extends UserPasswordException {
+
+		public MustBeExportingOrDisabledLDAP(long userId) {
+			super(
+				String.format(
+					"Password for user %s can only be changed by enabling LDAP"
+					+ " exporting or disabling LDAP", userId),
+				PASSWORD_LDAP_CONTROLLED);
+
+			this.userId = userId;
+		}
+
+		public final long userId;
+
 	}
 
 	public static class MustBeLonger extends UserPasswordException {
