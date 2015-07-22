@@ -51,6 +51,7 @@ page import="com.liferay.portal.security.auth.ScreenNameValidatorFactory" %><%@
 page import="com.liferay.portal.security.membershippolicy.OrganizationMembershipPolicyUtil" %><%@
 page import="com.liferay.portal.security.membershippolicy.RoleMembershipPolicyUtil" %><%@
 page import="com.liferay.portal.security.membershippolicy.UserGroupMembershipPolicyUtil" %><%@
+page import="com.liferay.portal.service.UserLocalServiceUtil" %><%@
 page import="com.liferay.portal.service.permission.OrganizationPermissionUtil" %><%@
 page import="com.liferay.portal.service.permission.UserPermissionUtil" %><%@
 page import="com.liferay.portlet.announcements.model.AnnouncementsDelivery" %><%@
