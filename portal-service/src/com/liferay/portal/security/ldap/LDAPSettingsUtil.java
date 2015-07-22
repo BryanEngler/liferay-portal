@@ -14,14 +14,11 @@
 
 package com.liferay.portal.security.ldap;
 
-import com.liferay.portal.model.User;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
 import com.liferay.registry.ServiceTracker;
 
 import java.util.Properties;
-
-import javax.naming.ldap.LdapContext;
 
 /**
  * @author Edward Han
@@ -79,29 +76,6 @@ public class LDAPSettingsUtil {
 		throws Exception {
 
 		return _getInstance().getUserMappings(ldapServerId, companyId);
-	}
-
-	public static boolean isEditableLDAPUser(User user) throws Exception {
-		if (!LDAPSettingsUtil.isImportEnabled(user.getCompanyId()) ||
-			LDAPSettingsUtil.isExportEnabled(user.getCompanyId())) {
-
-			return true;
-		}
-
-		long ldapServerId = user.getLdapServerId();
-
-		if (ldapServerId <= 0) {
-			return true;
-		}
-
-		LdapContext ldapContext = PortalLDAPUtil.fetchContext(
-			ldapServerId, user.getCompanyId());
-
-		if (ldapContext == null) {
-			return true;
-		}
-
-		return false;
 	}
 
 	public static boolean isExportEnabled(long companyId) {

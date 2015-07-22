@@ -21,7 +21,7 @@ User selUser = (User)request.getAttribute("user.selUser");
 
 PasswordPolicy passwordPolicy = (PasswordPolicy)request.getAttribute("user.passwordPolicy");
 
-boolean passwordModifiable = LDAPSettingsUtil.isEditableLDAPUser(selUser);
+boolean passwordModifiable = UserLocalServiceUtil.isPasswordModifiable(selUser);
 
 boolean passwordReset = false;
 
