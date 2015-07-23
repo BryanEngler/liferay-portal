@@ -124,6 +124,24 @@ public class UserPasswordException extends PortalException {
 
 	}
 
+	public static class MustHaveLDAPExportingEnabled
+		extends UserPasswordException {
+
+		public MustHaveLDAPExportingEnabled(long userId) {
+			super(
+				String.format(
+					"Password for user %s can only be changed by enabling" +
+						" LDAP exporting",
+					userId)
+			);
+
+			this.userId = userId;
+		}
+
+		public final long userId;
+
+	}
+
 	public static class MustMatch extends UserPasswordException {
 
 		public MustMatch(long userId) {
@@ -282,6 +300,12 @@ public class UserPasswordException extends PortalException {
 
 		return sampleDictionaryWords.toString() + StringPool.SPACE +
 			StringPool.TRIPLE_PERIOD;
+	}
+
+	private UserPasswordException(String message) {
+		super(message);
+
+		_type = 0;
 	}
 
 	private UserPasswordException(String message, int type) {
