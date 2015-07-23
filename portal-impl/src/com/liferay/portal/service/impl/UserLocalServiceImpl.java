@@ -135,7 +135,6 @@ import com.liferay.portal.security.pwd.RegExpToolkit;
 import com.liferay.portal.service.BaseServiceImpl;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
-import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.service.base.UserLocalServiceBaseImpl;
 import com.liferay.portal.service.persistence.UserGroupRolePK;
 import com.liferay.portal.util.PortalUtil;
@@ -4000,17 +3999,17 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 	}
 
 	/**
-	 * Removes the ldapServerId from all users.
+	 * Removes the association between all users and the LDAP server.
 	 *
-	 * @param  ldapServerId the id we are finding and updating users on
+	 * @param  ldapServerId the ID of the LDAP server
 	 * @throws PortalException if a portal exception occurred
 	 */
 	@Override
 	public void unsetLDAPUsers(final long ldapServerId) throws PortalException {
-		ActionableDynamicQuery userLDAPActionableDynamicQuery =
+		ActionableDynamicQuery actionableDynamicQuery =
 			getActionableDynamicQuery();
 
-		userLDAPActionableDynamicQuery.setAddCriteriaMethod(
+		actionableDynamicQuery.setAddCriteriaMethod(
 			new ActionableDynamicQuery.AddCriteriaMethod() {
 
 				@Override
@@ -4022,7 +4021,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 				}
 			});
 
-		userLDAPActionableDynamicQuery.setPerformActionMethod(
+		actionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.PerformActionMethod() {
 
 				@Override
@@ -4039,12 +4038,12 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 								user.getUserId());
 					}
 
-					updateUser(user);
+					userLocalService.updateUser(user);
 				}
 
 			});
 
-		userLDAPActionableDynamicQuery.performActions();
+		actionableDynamicQuery.performActions();
 	}
 
 	/**

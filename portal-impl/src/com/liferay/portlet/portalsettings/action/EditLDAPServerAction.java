@@ -195,7 +195,7 @@ public class EditLDAPServerAction extends PortletAction {
 		CompanyServiceUtil.updatePreferences(
 			themeDisplay.getCompanyId(), properties);
 
-		// Remove LDAPServerID from users
+		// Remove ldapServerId from users
 
 		UserLocalServiceUtil.unsetLDAPUsers(ldapServerId);
 	}
