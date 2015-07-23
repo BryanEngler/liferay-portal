@@ -63,7 +63,7 @@ else {
 	<%= LanguageUtil.format(request, "that-password-does-not-comply-with-the-regular-expression", upe.regex, false) %>
 </liferay-ui:error>
 
-<liferay-ui:error exception="<%= UserPasswordException.MustHaveLDAPExportingEnabled.class %>" message="please-enable-ldap-exporting-to-modify-user-data-through-liferay" />
+<liferay-ui:error exception="<%= UserPasswordException.MustHaveLDAPExportingEnabled.class %>" message="please-enable-ldap-exporting-to-modify-the-password-through-the-control-panel" />
 <liferay-ui:error exception="<%= UserPasswordException.MustMatch.class %>" message="the-passwords-you-entered-do-not-match" />
 <liferay-ui:error exception="<%= UserPasswordException.MustMatchCurrentPassword.class %>" message="the-password-you-entered-for-the-current-password-does-not-match-your-current-password" />
 <liferay-ui:error exception="<%= UserPasswordException.MustNotBeChanged.class %>" message="your-password-cannot-be-changed" />

@@ -94,9 +94,8 @@ public class UserPasswordException extends PortalException {
 			long userId, ModelListenerException modelListenerException) {
 
 			super(
-				String.format(
-					"Password must comply with model listeners: " +
-						modelListenerException.getMessage()),
+				"Password must comply with model listeners: " +
+					modelListenerException.getMessage(),
 				PASSWORD_INVALID);
 
 			this.userId = userId;
@@ -112,8 +111,7 @@ public class UserPasswordException extends PortalException {
 
 		public MustComplyWithRegex(long userId, String regex) {
 			super(
-				String.format("Password must comply with regex: " + regex),
-				PASSWORD_INVALID);
+				"Password must comply with regex: " + regex, PASSWORD_INVALID);
 
 			this.regex = regex;
 			this.userId = userId;
@@ -130,8 +128,8 @@ public class UserPasswordException extends PortalException {
 		public MustHaveLDAPExportingEnabled(long userId) {
 			super(
 				String.format(
-					"Password for user %s can only be changed by enabling" +
-						" LDAP exporting",
+					"Password for user %s can only be changed when LDAP " +
+						"exporting is enabled",
 					userId)
 			);
 
