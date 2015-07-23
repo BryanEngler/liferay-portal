@@ -123,6 +123,7 @@ import com.liferay.portal.security.auth.ScreenNameGeneratorFactory;
 import com.liferay.portal.security.auth.ScreenNameValidator;
 import com.liferay.portal.security.auth.ScreenNameValidatorFactory;
 import com.liferay.portal.security.ldap.LDAPSettingsUtil;
+import com.liferay.portal.security.ldap.PortalLDAPUtil;
 import com.liferay.portal.security.permission.PermissionCacheUtil;
 import com.liferay.portal.security.pwd.PasswordEncryptorUtil;
 import com.liferay.portal.security.pwd.PwdAuthenticator;
@@ -2959,6 +2960,37 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			else {
 				return false;
 			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns <code>true</code> if the user's password is modifiable.
+	 *
+	 * @param  user the user
+	 * @return <code>true</code> if the user's password is modifiable;
+	 *         <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isPasswordModifiable(User user) {
+		if (!LDAPSettingsUtil.isImportEnabled(user.getCompanyId()) ||
+			LDAPSettingsUtil.isExportEnabled(user.getCompanyId())) {
+
+			return true;
+		}
+
+		long ldapServerId = user.getLdapServerId();
+
+		if (ldapServerId <= 0) {
+			return true;
+		}
+
+		try {
+			PortalLDAPUtil.getContext(ldapServerId, user.getCompanyId());
+		}
+		catch (Exception e) {
+			return true;
 		}
 
 		return false;

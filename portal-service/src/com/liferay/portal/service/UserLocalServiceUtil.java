@@ -1969,6 +1969,18 @@ public class UserLocalServiceUtil {
 	}
 
 	/**
+	* Returns <code>true</code> if the user's password is modifiable.
+	*
+	* @param user the user
+	* @return <code>true</code> if the user's password is modifiable;
+	<code>false</code> otherwise
+	*/
+	public static boolean isPasswordModifiable(
+		com.liferay.portal.model.User user) {
+		return getService().isPasswordModifiable(user);
+	}
+
+	/**
 	* Returns the default user for the company.
 	*
 	* @param companyId the primary key of the company

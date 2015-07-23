@@ -43,6 +43,7 @@ else {
 
 <h3><liferay-ui:message key="password" /></h3>
 
+<liferay-ui:error exception="<%= UserPasswordException.MustBeExportingOrDisabledLDAP.class %>" message="please-enable-ldap-exporting-to-modify-user-data-through-liferay" />
 <liferay-ui:error exception="<%= UserPasswordException.MustBeLonger.class %>">
 
 	<%
