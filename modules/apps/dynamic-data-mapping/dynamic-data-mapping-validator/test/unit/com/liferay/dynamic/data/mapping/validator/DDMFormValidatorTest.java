@@ -64,6 +64,17 @@ public class DDMFormValidatorTest {
 	}
 
 	@Test(expected = DDMFormValidationException.class)
+	public void testDashInFieldName() throws Exception {
+		DDMForm ddmForm = DDMFormTestUtil.createDDMForm(
+			createAvailableLocales(LocaleUtil.US), LocaleUtil.US);
+
+		ddmForm.addDDMFormField(
+			new DDMFormField("text-dash", DDMFormFieldType.TEXT));
+
+		_ddmFormValidator.validate(ddmForm);
+	}
+
+	@Test(expected = DDMFormValidationException.class)
 	public void testDuplicateFieldName() throws Exception {
 		DDMForm ddmForm = DDMFormTestUtil.createDDMForm(
 			createAvailableLocales(LocaleUtil.US), LocaleUtil.US);
