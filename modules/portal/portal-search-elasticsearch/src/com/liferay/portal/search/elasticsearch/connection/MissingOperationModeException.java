@@ -20,7 +20,7 @@ package com.liferay.portal.search.elasticsearch.connection;
 public class MissingOperationModeException extends IllegalArgumentException {
 
 	public MissingOperationModeException(OperationMode operationMode) {
-		super("No connection available for: " + operationMode);
+		super("No connection available for operation mode " + operationMode);
 	}
 
 }
