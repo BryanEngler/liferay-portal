@@ -51,8 +51,8 @@ public class ElasticsearchConnectionManagerTest {
 
 		_elasticsearchConnectionManager.activate(properties);
 
-		verifyNeitherCloseNorConnect(_embeddedElasticsearchConnection);
-		verifyNeitherCloseNorConnect(_remoteElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_embeddedElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_remoteElasticsearchConnection);
 	}
 
 	@Test
@@ -62,10 +62,11 @@ public class ElasticsearchConnectionManagerTest {
 		properties.put("operationMode", OperationMode.EMBEDDED.name());
 
 		_elasticsearchConnectionManager.activate(properties);
+
 		_elasticsearchConnectionManager.connect();
 
-		verifyConnectNotClose(_embeddedElasticsearchConnection);
-		verifyNeitherCloseNorConnect(_remoteElasticsearchConnection);
+		verifyConnectNeverClose(_embeddedElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_remoteElasticsearchConnection);
 	}
 
 	@Test
@@ -84,18 +85,18 @@ public class ElasticsearchConnectionManagerTest {
 	}
 
 	@Test
-	public void testGetClientWhenOperationModeNotSetYet() {
+	public void testGetClientWhenOperationModeNotSet() {
 		try {
 			_elasticsearchConnectionManager.getClient();
 
-			Assert.fail("Client available when operation mode not set yet");
+			Assert.fail();
 		}
 		catch (ElasticsearchConnectionNotInitializedException ecnie) {
 		}
 	}
 
 	@Test
-	public void testModifiedClosesOldConnectionAndOpensNewConnection() {
+	public void testSetModifiedOperationModeResetsConnection() {
 		HashMap<String, Object> properties = new HashMap<>();
 
 		properties.put("operationMode", OperationMode.EMBEDDED.name());
@@ -108,20 +109,20 @@ public class ElasticsearchConnectionManagerTest {
 
 		_elasticsearchConnectionManager.modified(properties);
 
-		verifyCloseNotConnect(_embeddedElasticsearchConnection);
-		verifyConnectNotClose(_remoteElasticsearchConnection);
+		verifyCloseNeverConnect(_embeddedElasticsearchConnection);
+		verifyConnectNeverClose(_remoteElasticsearchConnection);
 	}
 
 	@Test
-	public void testSetOperationModeToSameMustNotTouchAnyConnection() {
+	public void testSetSameOperationModeMustNotResetConnection() {
 		modify(OperationMode.REMOTE);
 
 		resetMockConnections();
 
 		modify(OperationMode.REMOTE);
 
-		verifyNeitherCloseNorConnect(_embeddedElasticsearchConnection);
-		verifyNeitherCloseNorConnect(_remoteElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_embeddedElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_remoteElasticsearchConnection);
 	}
 
 	@Test
@@ -129,15 +130,15 @@ public class ElasticsearchConnectionManagerTest {
 		_elasticsearchConnectionManager.unsetElasticsearchConnection(
 			_remoteElasticsearchConnection);
 
-		verifyCloseNotConnect(_remoteElasticsearchConnection);
-		verifyNeitherCloseNorConnect(_embeddedElasticsearchConnection);
+		verifyCloseNeverConnect(_remoteElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_embeddedElasticsearchConnection);
 
 		resetMockConnections();
 
 		try {
 			modify(OperationMode.REMOTE);
 
-			Assert.fail("Allowed setting an unavailable operation mode");
+			Assert.fail();
 		}
 		catch (MissingOperationModeException mome) {
 			String message = mome.getMessage();
@@ -146,30 +147,30 @@ public class ElasticsearchConnectionManagerTest {
 				message.contains(String.valueOf(OperationMode.REMOTE)));
 		}
 
-		verifyNeitherCloseNorConnect(_embeddedElasticsearchConnection);
-		verifyNeitherCloseNorConnect(_remoteElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_embeddedElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_remoteElasticsearchConnection);
 	}
 
 	@Test
 	public void testToggleOperationMode() {
 		modify(OperationMode.EMBEDDED);
 
-		verifyConnectNotClose(_embeddedElasticsearchConnection);
-		verifyNeitherCloseNorConnect(_remoteElasticsearchConnection);
+		verifyConnectNeverClose(_embeddedElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_remoteElasticsearchConnection);
 
 		resetMockConnections();
 
 		modify(OperationMode.REMOTE);
 
-		verifyCloseNotConnect(_embeddedElasticsearchConnection);
-		verifyConnectNotClose(_remoteElasticsearchConnection);
+		verifyCloseNeverConnect(_embeddedElasticsearchConnection);
+		verifyConnectNeverClose(_remoteElasticsearchConnection);
 
 		resetMockConnections();
 
 		modify(OperationMode.EMBEDDED);
 
-		verifyCloseNotConnect(_remoteElasticsearchConnection);
-		verifyConnectNotClose(_embeddedElasticsearchConnection);
+		verifyCloseNeverConnect(_remoteElasticsearchConnection);
+		verifyConnectNeverClose(_embeddedElasticsearchConnection);
 	}
 
 	@Test
@@ -190,8 +191,8 @@ public class ElasticsearchConnectionManagerTest {
 			_remoteElasticsearchConnection,
 			_elasticsearchConnectionManager.getElasticsearchConnection());
 
-		verifyCloseNotConnect(_embeddedElasticsearchConnection);
-		verifyConnectNotClose(_remoteElasticsearchConnection);
+		verifyCloseNeverConnect(_embeddedElasticsearchConnection);
+		verifyConnectNeverClose(_remoteElasticsearchConnection);
 	}
 
 	@Test
@@ -209,7 +210,7 @@ public class ElasticsearchConnectionManagerTest {
 		try {
 			modify(OperationMode.REMOTE);
 
-			Assert.fail("Changed operation mode although connect failed");
+			Assert.fail();
 		}
 		catch (IllegalStateException ise) {
 		}
@@ -218,8 +219,8 @@ public class ElasticsearchConnectionManagerTest {
 			_embeddedElasticsearchConnection,
 			_elasticsearchConnectionManager.getElasticsearchConnection());
 
-		verifyConnectNotClose(_remoteElasticsearchConnection);
-		verifyNeitherCloseNorConnect(_embeddedElasticsearchConnection);
+		verifyConnectNeverClose(_remoteElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_embeddedElasticsearchConnection);
 	}
 
 	protected void modify(OperationMode operationMode) {
@@ -242,34 +243,37 @@ public class ElasticsearchConnectionManagerTest {
 		);
 	}
 
-	protected void verifyCloseNotConnect(
+	protected void verifyCloseNeverConnect(
 		ElasticsearchConnection elasticsearchConnection) {
 
 		Mockito.verify(
 			elasticsearchConnection
 		).close();
+
 		Mockito.verify(
 			elasticsearchConnection, Mockito.never()
 		).connect();
 	}
 
-	protected void verifyConnectNotClose(
+	protected void verifyConnectNeverClose(
 		ElasticsearchConnection elasticsearchConnection) {
 
 		Mockito.verify(
 			elasticsearchConnection, Mockito.never()
 		).close();
+
 		Mockito.verify(
 			elasticsearchConnection
 		).connect();
 	}
 
-	protected void verifyNeitherCloseNorConnect(
+	protected void verifyNeverCloseNeverConnect(
 		ElasticsearchConnection elasticsearchConnection) {
 
 		Mockito.verify(
 			elasticsearchConnection, Mockito.never()
 		).close();
+
 		Mockito.verify(
 			elasticsearchConnection, Mockito.never()
 		).connect();
