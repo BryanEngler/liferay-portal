@@ -37,7 +37,11 @@ import com.liferay.portal.UserSmsException;
 import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.cache.PortalCacheMapSynchronizeUtil;
 import com.liferay.portal.kernel.cache.PortalCacheMapSynchronizeUtil.Synchronizer;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
+import com.liferay.portal.kernel.dao.orm.Property;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.WildcardMode;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -131,6 +135,7 @@ import com.liferay.portal.security.pwd.RegExpToolkit;
 import com.liferay.portal.service.BaseServiceImpl;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
+import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.service.base.UserLocalServiceBaseImpl;
 import com.liferay.portal.service.persistence.UserGroupRolePK;
 import com.liferay.portal.util.PortalUtil;
@@ -3970,6 +3975,56 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		};
 
 		TransactionCommitCallbackUtil.registerCallback(callable);
+	}
+
+	/**
+	 * Removes the ldapServerId from all users.
+	 *
+	 * @param  ldapServerId the id we are finding and updating users on
+	 * @throws PortalException if a portal exception occurred
+	 */
+	@Override
+	public void unsetLDAPUsers(final long ldapServerId) throws PortalException {
+		ActionableDynamicQuery userLDAPActionableDynamicQuery =
+			UserLocalServiceUtil.getActionableDynamicQuery();
+
+		userLDAPActionableDynamicQuery.setAddCriteriaMethod(
+			new ActionableDynamicQuery.AddCriteriaMethod() {
+
+				@Override
+				public void addCriteria(DynamicQuery dynamicQuery) {
+					Property ldapProperty = PropertyFactoryUtil.forName(
+						"ldapServerId");
+
+					dynamicQuery.add(ldapProperty.like(ldapServerId));
+				}
+			});
+
+		userLDAPActionableDynamicQuery.setPerformActionMethod(
+			new ActionableDynamicQuery.PerformActionMethod() {
+
+				@Override
+				public void performAction(Object object)
+					throws PortalException {
+
+					User user = (User)object;
+
+					user.setLdapServerId(-1);
+
+					if (_log.isWarnEnabled()) {
+						_log.warn(
+							"Removing user from LDAP Server: " +
+								user.getUserId());
+					}
+
+					UserLocalServiceUtil.updateUser(user);
+
+					reindex(user);
+				}
+
+			});
+
+		userLDAPActionableDynamicQuery.performActions();
 	}
 
 	/**
