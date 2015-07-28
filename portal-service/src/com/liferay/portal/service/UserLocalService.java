@@ -1658,6 +1658,16 @@ public interface UserLocalService extends BaseLocalService,
 		throws PortalException;
 
 	/**
+	* Returns <code>true</code> if the user's password is modifiable.
+	*
+	* @param user the user
+	* @return <code>true</code> if the user's password is modifiable;
+	<code>false</code> otherwise
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public boolean isPasswordModifiable(com.liferay.portal.model.User user);
+
+	/**
 	* Returns the default user for the company.
 	*
 	* @param companyId the primary key of the company
@@ -2098,6 +2108,14 @@ public interface UserLocalService extends BaseLocalService,
 	public void unsetGroupUsers(long groupId, long[] userIds,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
+
+	/**
+	* Removes the ldapServerId from all users.
+	*
+	* @param  ldapServerId the id we are finding and updating users on
+	* @throws PortalException if a portal exception occurred
+	*/
+	public void unsetLDAPUsers(long ldapServerId) throws PortalException;
 
 	/**
 	* Removes the users from the organization.
