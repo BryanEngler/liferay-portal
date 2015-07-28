@@ -114,18 +114,6 @@ public class ElasticsearchConnectionManagerTest {
 	}
 
 	@Test
-	public void testSetSameOperationModeMustNotResetConnection() {
-		modify(OperationMode.REMOTE);
-
-		resetMockConnections();
-
-		modify(OperationMode.REMOTE);
-
-		verifyNeverCloseNeverConnect(_embeddedElasticsearchConnection);
-		verifyNeverCloseNeverConnect(_remoteElasticsearchConnection);
-	}
-
-	@Test
 	public void testSetOperationModeToUnavailable() {
 		_elasticsearchConnectionManager.unsetElasticsearchConnection(
 			_remoteElasticsearchConnection);
@@ -146,6 +134,18 @@ public class ElasticsearchConnectionManagerTest {
 			Assert.assertTrue(
 				message.contains(String.valueOf(OperationMode.REMOTE)));
 		}
+
+		verifyNeverCloseNeverConnect(_embeddedElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_remoteElasticsearchConnection);
+	}
+
+	@Test
+	public void testSetSameOperationModeMustNotResetConnection() {
+		modify(OperationMode.REMOTE);
+
+		resetMockConnections();
+
+		modify(OperationMode.REMOTE);
 
 		verifyNeverCloseNeverConnect(_embeddedElasticsearchConnection);
 		verifyNeverCloseNeverConnect(_remoteElasticsearchConnection);
