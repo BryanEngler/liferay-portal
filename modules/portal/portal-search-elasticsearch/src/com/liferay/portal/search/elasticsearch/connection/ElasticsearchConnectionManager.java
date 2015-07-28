@@ -167,7 +167,7 @@ public class ElasticsearchConnectionManager {
 			catch (Exception e) {
 				if (_log.isErrorEnabled()) {
 					_log.error(
-						"Unable to close: " + oldElasticsearchConnection, e);
+						"Unable to close " + oldElasticsearchConnection, e);
 				}
 			}
 		}
