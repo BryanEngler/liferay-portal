@@ -2504,9 +2504,9 @@ public class UserLocalServiceUtil {
 	}
 
 	/**
-	* Removes the ldapServerId from all users.
+	* Removes the association between all users and the LDAP server.
 	*
-	* @param  ldapServerId the id we are finding and updating users on
+	* @param ldapServerId the ID of the LDAP server
 	* @throws PortalException if a portal exception occurred
 	*/
 	public static void unsetLDAPUsers(long ldapServerId)
