@@ -4040,8 +4040,6 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 					}
 
 					updateUser(user);
-
-					reindex(user);
 				}
 
 			});
