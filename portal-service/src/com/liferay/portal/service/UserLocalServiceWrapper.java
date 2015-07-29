@@ -2105,6 +2105,18 @@ public class UserLocalServiceWrapper implements UserLocalService,
 	}
 
 	/**
+	* Returns <code>true</code> if the user's password is modifiable.
+	*
+	* @param user the user
+	* @return <code>true</code> if the user's password is modifiable;
+	<code>false</code> otherwise
+	*/
+	@Override
+	public boolean isPasswordModifiable(com.liferay.portal.model.User user) {
+		return _userLocalService.isPasswordModifiable(user);
+	}
+
+	/**
 	* Returns the default user for the company.
 	*
 	* @param companyId the primary key of the company
@@ -2642,6 +2654,18 @@ public class UserLocalServiceWrapper implements UserLocalService,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_userLocalService.unsetGroupUsers(groupId, userIds, serviceContext);
+	}
+
+	/**
+	* Removes the ldapServerId from all users.
+	*
+	* @param  ldapServerId the id we are finding and updating users on
+	* @throws PortalException if a portal exception occurred
+	*/
+	@Override
+	public void unsetLDAPUsers(long ldapServerId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_userLocalService.unsetLDAPUsers(ldapServerId);
 	}
 
 	/**
