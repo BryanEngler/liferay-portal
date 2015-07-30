@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.ldap.LDAPSettingsUtil;
 import com.liferay.portal.service.CompanyServiceUtil;
+import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.struts.PortletAction;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.Portal;
@@ -193,6 +194,10 @@ public class EditLDAPServerAction extends PortletAction {
 
 		CompanyServiceUtil.updatePreferences(
 			themeDisplay.getCompanyId(), properties);
+
+		// Remove LDAPServerID from users
+
+		UserLocalServiceUtil.unsetLDAPUsers(ldapServerId);
 	}
 
 	protected void updateLDAPServer(ActionRequest actionRequest)
