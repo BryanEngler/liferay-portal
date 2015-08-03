@@ -15,6 +15,8 @@
 package com.liferay.portal.verify;
 
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.ClassName;
@@ -90,13 +92,46 @@ public class VerifyWorkflow extends VerifyProcess {
 		runSQL(sb.toString());
 	}
 
+	protected void deleteOrphanedWorkflowInstanceLinks() throws Exception {
+		for (String tableName : getOrphanedWorkflowInstanceTableNames()) {
+			deleteOrphanedWorkflowInstanceLinks(tableName);
+		}
+	}
+
+	protected void deleteOrphanedWorkflowInstanceLinks(String tableName)
+		throws Exception {
+
+		StringBundler sb = new StringBundler(6);
+
+		sb.append("delete from ");
+		sb.append(tableName);
+		sb.append(" where classPK not in ");
+		sb.append(StringPool.OPEN_PARENTHESIS);
+		sb.append("select recordId from DDLRecord");
+		sb.append(StringPool.CLOSE_PARENTHESIS);
+
+		try {
+			runSQL(sb.toString());
+		}
+		catch (Exception e) {
+			if (_log.isWarnEnabled()) {
+				_log.warn("Unable to delete from table: " + tableName);
+			}
+		}
+	}
+
 	@Override
 	protected void doVerify() throws Exception {
 		deleteOrphanedWorkflowDefinitionLinks();
+		deleteOrphanedWorkflowInstanceLinks();
 	}
 
 	protected String[][] getOrphanedAttachedModels() {
 		return _ORPHANED_ATTACHED_MODELS;
+	}
+
+	protected String[] getOrphanedWorkflowInstanceTableNames() {
+		return _WORKFLOW_INSTANCE_TABLE_NAMES;
 	}
 
 	private static final String[][] _ORPHANED_ATTACHED_MODELS = new String[][] {
@@ -105,5 +140,12 @@ public class VerifyWorkflow extends VerifyProcess {
 			"KaleoProcess", "kaleoProcessId"
 		}
 	};
+
+	private static final String[] _WORKFLOW_INSTANCE_TABLE_NAMES =
+		new String[] {
+			"kaleoinstance", "kaleoinstancetoken", "workflowinstancelink"
+	};
+
+	private static final Log _log = LogFactoryUtil.getLog(VerifyWorkflow.class);
 
 }
