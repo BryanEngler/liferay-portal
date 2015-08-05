@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.util.PortalUtil;
 
 /**
@@ -34,59 +35,49 @@ public class UpgradeKaleoInstance extends UpgradeProcess {
 
 		sb.append("delete from ");
 		sb.append(tableName);
-		sb.append(" where classPK not in ");
-		sb.append(StringPool.OPEN_PARENTHESIS);
-		sb.append("select recordId from DDLRecord");
-		sb.append(StringPool.CLOSE_PARENTHESIS);
-		sb.append(" and ");
+		sb.append(" where ");
 		sb.append(columnName);
-		sb.append(" like ");
+		sb.append(" = ");
 		sb.append(StringPool.APOSTROPHE);
 		sb.append(columnValue);
 		sb.append(StringPool.APOSTROPHE);
+		sb.append(" and classPK not in ");
+		sb.append(StringPool.OPEN_PARENTHESIS);
+		sb.append("select recordId from DDLRecord");
+		sb.append(StringPool.CLOSE_PARENTHESIS);
 
 		runSQL(sb.toString());
 	}
 
 	@Override
 	protected void doUpgrade() throws Exception {
-		for (String[] tableData : getOrphanedWorkflowInstanceTableData()) {
+		for (String[] tableData : _WORKFLOW_INSTANCE_TABLE_DATA) {
 			String tableName = tableData[0];
 			String columnName = tableData[1];
 			String columnValue = null;
 
 			if (StringUtil.matches(columnName, "classNameId")) {
-				columnValue = getKaleoClassNameId();
+				columnValue = GetterUtil.getString(
+					PortalUtil.getClassNameId(_KALEOPROCESS_CLASS_NAME));
 			}
 			else {
-				columnValue = getKaleoClassName();
+				columnValue = _KALEOPROCESS_CLASS_NAME;
 			}
 
-			deleteOrphanedWorkflowInstanceLinks(
-				tableName, columnName, columnValue);
+			if (Validator.isNotNull(columnValue)) {
+				deleteOrphanedWorkflowInstanceLinks(
+					tableName, columnName, columnValue);
+			}
 		}
 	}
 
-	protected String getKaleoClassName() {
-		return _KALEO_CLASS_NAME;
-	}
-
-	protected String getKaleoClassNameId() {
-		return GetterUtil.getString(
-			PortalUtil.getClassNameId(_KALEO_CLASS_NAME));
-	}
-
-	protected String[][] getOrphanedWorkflowInstanceTableData() {
-		return _WORKFLOW_INSTANCE_TABLE_DATA;
-	}
-
-	private static final String _KALEO_CLASS_NAME =
+	private static final String _KALEOPROCESS_CLASS_NAME =
 		"com.liferay.portal.workflow.kaleo.forms.model.KaleoProcess";
 
 	private static final String[][] _WORKFLOW_INSTANCE_TABLE_DATA = {
-		new String[] {"KaleoInstance", "className"},
-		new String[] {"KaleoInstanceToken", "className"},
-		new String[] {"workflowinstancelink", "classNameId"}
+		{"KaleoInstance", "className"},
+		{"KaleoInstanceToken", "className"},
+		{"WorkflowInstanceLink", "classNameId"}
 	};
 
 }
