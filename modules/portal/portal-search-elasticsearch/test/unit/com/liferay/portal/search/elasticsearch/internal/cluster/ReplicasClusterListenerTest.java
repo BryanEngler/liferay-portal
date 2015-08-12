@@ -36,7 +36,7 @@ import org.mockito.MockitoAnnotations;
  * @author André de Oliveira
  */
 @Ignore(
-	"This test is ignored, because it is very unstable, André please fix it."
+	"This test will ignored due to instability until André fixes it."
 )
 public class ReplicasClusterListenerTest {
 
