@@ -39,28 +39,23 @@ public class HealthExpectations {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(20);
+		StringBundler sb = new StringBundler(15);
 
-		sb.append("activePrimaryShards=");
+		sb.append("{activePrimaryShards=");
 		sb.append(activePrimaryShards);
-		sb.append('\n');
-		sb.append("activeShards=");
+		sb.append(", activeShards=");
 		sb.append(activeShards);
-		sb.append('\n');
-		sb.append("numberOfDataNodes=");
+		sb.append(", numberOfDataNodes=");
 		sb.append(numberOfDataNodes);
-		sb.append('\n');
-		sb.append("numberOfNodes=");
+		sb.append(", numberOfNodes=");
 		sb.append(numberOfNodes);
-		sb.append('\n');
-		sb.append("status=");
+		sb.append(", status=");
 		sb.append(status);
-		sb.append('\n');
-		sb.append("timedOut=");
+		sb.append(", timedOut=");
 		sb.append(timedOut);
-		sb.append('\n');
-		sb.append("unassignedShards=");
+		sb.append(", unassignedShards=");
 		sb.append(unassignedShards);
+		sb.append("}");
 
 		return sb.toString();
 	}
