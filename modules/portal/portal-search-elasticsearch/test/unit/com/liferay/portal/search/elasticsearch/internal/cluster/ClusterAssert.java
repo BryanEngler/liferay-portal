@@ -166,13 +166,14 @@ public class ClusterAssert {
 
 	private static void _assertHealth(
 		ClusterHealthResponse clusterHealthResponse,
-		HealthExpectations healthExpectations) {
+		HealthExpectations expectedHealthExpectations) {
 
 		HealthExpectations actualHealthExpectations = new HealthExpectations(
 			clusterHealthResponse);
 
 		Assert.assertEquals(
-			healthExpectations.toString(), actualHealthExpectations.toString());
+			expectedHealthExpectations.toString(),
+			actualHealthExpectations.toString());
 	}
 
 }
