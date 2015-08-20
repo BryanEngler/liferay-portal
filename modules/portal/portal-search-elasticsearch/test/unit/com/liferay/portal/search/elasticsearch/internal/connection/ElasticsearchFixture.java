@@ -166,6 +166,22 @@ public class ElasticsearchFixture {
 
 	}
 
+	protected void addDiskThresholdSettingsContributor(
+		EmbeddedElasticsearchConnection embeddedElasticsearchConnection) {
+
+		embeddedElasticsearchConnection.addSettingsContributor(
+			new BaseSettingsContributor(0) {
+
+				@Override
+				public void populate(Builder builder) {
+					builder.put(
+						"cluster.routing.allocation.disk.threshold_enabled",
+						"false");
+				}
+
+			});
+	}
+
 	protected void addUnicastSettingsContributor(
 		EmbeddedElasticsearchConnection embeddedElasticsearchConnection) {
 
@@ -194,9 +210,8 @@ public class ElasticsearchFixture {
 		EmbeddedElasticsearchConnection embeddedElasticsearchConnection =
 			new EmbeddedElasticsearchConnection();
 
+		addDiskThresholdSettingsContributor(embeddedElasticsearchConnection);
 		addUnicastSettingsContributor(embeddedElasticsearchConnection);
-
-		preventUnassignedReplicasWithLowSpace(embeddedElasticsearchConnection);
 
 		Props props = Mockito.mock(Props.class);
 
@@ -236,22 +251,6 @@ public class ElasticsearchFixture {
 		catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
-	}
-
-	protected void preventUnassignedReplicasWithLowSpace(
-		EmbeddedElasticsearchConnection embeddedElasticsearchConnection) {
-
-		embeddedElasticsearchConnection.addSettingsContributor(
-			new BaseSettingsContributor(0) {
-
-				@Override
-				public void populate(Builder builder) {
-					builder.put(
-						"cluster.routing.allocation.disk.threshold_enabled",
-						"false");
-				}
-
-			});
 	}
 
 	private ClusterSettingsContext _clusterSettingsContext;
