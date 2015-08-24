@@ -202,13 +202,11 @@ public class WikiDisplayExportImportPortletPreferencesProcessor
 
 			});
 		actionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod() {
+			new ActionableDynamicQuery.PerformActionMethod<WikiPage>() {
 
 				@Override
-				public void performAction(Object object)
+				public void performAction(WikiPage page)
 					throws PortalException {
-
-					WikiPage page = (WikiPage)object;
 
 					StagedModelDataHandlerUtil.exportReferenceStagedModel(
 						portletDataContext, portletId, page);
