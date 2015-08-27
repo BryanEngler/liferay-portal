@@ -59,6 +59,7 @@ import com.liferay.portal.kernel.servlet.BrowserSnifferUtil;
 import com.liferay.portal.kernel.servlet.DynamicServletRequest;
 import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.servlet.HttpMethods;
+import com.liferay.portal.kernel.servlet.LiferayHttpServletRequestWrapper;
 import com.liferay.portal.kernel.servlet.NonSerializableObjectRequestWrapper;
 import com.liferay.portal.kernel.servlet.PersistentHttpServletRequestWrapper;
 import com.liferay.portal.kernel.servlet.PortalMessages;
@@ -5428,6 +5429,10 @@ public class PortalImpl implements Portal {
 		while (currentRequest instanceof HttpServletRequestWrapper) {
 			if (currentRequest instanceof UploadServletRequest) {
 				return (UploadServletRequest)currentRequest;
+			}
+
+			if (!(currentRequest instanceof LiferayHttpServletRequestWrapper)) {
+				break;
 			}
 
 			if (currentRequest instanceof

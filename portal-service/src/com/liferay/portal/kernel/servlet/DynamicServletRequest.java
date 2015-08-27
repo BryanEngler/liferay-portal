@@ -27,14 +27,13 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
  * @author Brian Wing Shun Chan
  * @author Shuyang Zhou
  * @author Sampsa Sohlman
  */
-public class DynamicServletRequest extends HttpServletRequestWrapper {
+public class DynamicServletRequest extends LiferayHttpServletRequestWrapper {
 
 	public static final String DYNAMIC_QUERY_STRING = "DYNAMIC_QUERY_STRING";
 

@@ -17,6 +17,7 @@ package com.liferay.portlet;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.HttpMethods;
+import com.liferay.portal.kernel.servlet.LiferayHttpServletRequestWrapper;
 import com.liferay.portal.kernel.servlet.ServletInputStreamAdapter;
 import com.liferay.portal.kernel.util.ClassLoaderUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -45,14 +46,13 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpSession;
 
 /**
  * @author Brian Wing Shun Chan
  * @author Brian Myunghun Kim
  */
-public class PortletServletRequest extends HttpServletRequestWrapper {
+public class PortletServletRequest extends LiferayHttpServletRequestWrapper {
 
 	public PortletServletRequest(
 		HttpServletRequest request, PortletRequest portletRequest,

@@ -17,12 +17,11 @@ package com.liferay.portal.kernel.servlet;
 import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
  * @author Brian Wing Shun Chan
  */
-public class ProtectedServletRequest extends HttpServletRequestWrapper {
+public class ProtectedServletRequest extends LiferayHttpServletRequestWrapper {
 
 	public ProtectedServletRequest(
 		HttpServletRequest request, String remoteUser) {

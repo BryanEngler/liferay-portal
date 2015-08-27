@@ -17,6 +17,7 @@ package com.liferay.portal.upload;
 import com.liferay.portal.kernel.io.ByteArrayFileInputStream;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.servlet.LiferayHttpServletRequestWrapper;
 import com.liferay.portal.kernel.upload.FileItem;
 import com.liferay.portal.kernel.upload.UploadException;
 import com.liferay.portal.kernel.upload.UploadServletRequest;
@@ -46,7 +47,6 @@ import java.util.Set;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileUploadBase;
@@ -59,7 +59,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  * @author Raymond Augé
  */
 public class UploadServletRequestImpl
-	extends HttpServletRequestWrapper implements UploadServletRequest {
+	extends LiferayHttpServletRequestWrapper implements UploadServletRequest {
 
 	public static File getTempDir() {
 		if (_tempDir == null) {

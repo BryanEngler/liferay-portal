@@ -15,25 +15,15 @@
 package com.liferay.portal.kernel.servlet;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
- * @author Shuyang Zhou
+ * @author Bryan Engler
  */
-public class PersistentHttpServletRequestWrapper
-	extends LiferayHttpServletRequestWrapper implements Cloneable {
+public class LiferayHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
-	public PersistentHttpServletRequestWrapper(HttpServletRequest request) {
+	public LiferayHttpServletRequestWrapper(HttpServletRequest request) {
 		super(request);
-	}
-
-	@Override
-	public PersistentHttpServletRequestWrapper clone() {
-		try {
-			return (PersistentHttpServletRequestWrapper)super.clone();
-		}
-		catch (CloneNotSupportedException cnse) {
-			throw new RuntimeException(cnse);
-		}
 	}
 
 }

@@ -19,12 +19,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
  * @author Brian Wing Shun Chan
  */
-public class TrackedServletRequest extends HttpServletRequestWrapper {
+public class TrackedServletRequest extends LiferayHttpServletRequestWrapper {
 
 	public TrackedServletRequest(HttpServletRequest request) {
 		super(request);

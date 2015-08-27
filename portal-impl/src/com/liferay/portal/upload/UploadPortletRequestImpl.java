@@ -14,6 +14,7 @@
 
 package com.liferay.portal.upload;
 
+import com.liferay.portal.kernel.servlet.LiferayHttpServletRequestWrapper;
 import com.liferay.portal.kernel.upload.FileItem;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.upload.UploadServletRequest;
@@ -34,14 +35,12 @@ import java.util.Map;
 
 import javax.portlet.PortletRequest;
 
-import javax.servlet.http.HttpServletRequestWrapper;
-
 /**
  * @author Brian Wing Shun Chan
  * @author Harry Mark
  */
 public class UploadPortletRequestImpl
-	extends HttpServletRequestWrapper implements UploadPortletRequest {
+	extends LiferayHttpServletRequestWrapper implements UploadPortletRequest {
 
 	public UploadPortletRequestImpl(
 		UploadServletRequest uploadServletRequest,

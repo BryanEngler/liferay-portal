@@ -15,6 +15,7 @@
 package com.liferay.portal.apache.bridges.struts;
 
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
+import com.liferay.portal.kernel.servlet.LiferayHttpServletRequestWrapper;
 import com.liferay.portal.kernel.servlet.ServletInputStreamAdapter;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.struts.StrutsUtil;
@@ -32,13 +33,12 @@ import java.util.Vector;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
  * @author Michael Young
  * @author Deepak Gothe
  */
-public class LiferayStrutsRequestImpl extends HttpServletRequestWrapper {
+public class LiferayStrutsRequestImpl extends LiferayHttpServletRequestWrapper {
 
 	public LiferayStrutsRequestImpl(HttpServletRequest request) {
 		super(request);

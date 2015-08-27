@@ -16,20 +16,20 @@ package com.liferay.portal.servlet.filters.sessionid;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.servlet.LiferayHttpServletRequestWrapper;
 import com.liferay.portal.kernel.util.CookieKeys;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
  * @author Brian Wing Shun Chan
  */
-public class SessionIdServletRequest extends HttpServletRequestWrapper {
+public class SessionIdServletRequest extends LiferayHttpServletRequestWrapper {
 
 	public SessionIdServletRequest(
 		HttpServletRequest request, HttpServletResponse response) {

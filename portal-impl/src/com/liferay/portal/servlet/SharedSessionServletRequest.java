@@ -14,18 +14,18 @@
 
 package com.liferay.portal.servlet;
 
+import com.liferay.portal.kernel.servlet.LiferayHttpServletRequestWrapper;
 import com.liferay.portal.kernel.util.ServerDetector;
 import com.liferay.portal.resiliency.spi.agent.SPIAgentRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpSession;
 
 /**
  * @author Brian Wing Shun Chan
  * @author Brian Myunghun Kim
  */
-public class SharedSessionServletRequest extends HttpServletRequestWrapper {
+public class SharedSessionServletRequest extends LiferayHttpServletRequestWrapper {
 
 	public SharedSessionServletRequest(
 		HttpServletRequest request, boolean shared) {

@@ -14,6 +14,7 @@
 
 package com.liferay.util.servlet;
 
+import com.liferay.portal.kernel.servlet.LiferayHttpServletRequestWrapper;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
@@ -27,12 +28,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
  * @author Brian Wing Shun Chan
  */
-public class EncryptedServletRequest extends HttpServletRequestWrapper {
+public class EncryptedServletRequest extends LiferayHttpServletRequestWrapper {
 
 	public EncryptedServletRequest(HttpServletRequest request, Key key) {
 		super(request);

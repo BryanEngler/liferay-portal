@@ -14,17 +14,18 @@
 
 package com.liferay.portal.upload;
 
+import com.liferay.portal.kernel.servlet.LiferayHttpServletRequestWrapper;
+
 import java.io.IOException;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
  * @author Brian Myunghun Kim
  * @author Brian Wing Shun Chan
  */
-public class LiferayServletRequest extends HttpServletRequestWrapper {
+public class LiferayServletRequest extends LiferayHttpServletRequestWrapper {
 
 	public LiferayServletRequest(HttpServletRequest request) {
 		super(request);

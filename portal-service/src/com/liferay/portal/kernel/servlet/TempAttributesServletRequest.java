@@ -22,12 +22,11 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
  * @author Shuyang Zhou
  */
-public class TempAttributesServletRequest extends HttpServletRequestWrapper {
+public class TempAttributesServletRequest extends LiferayHttpServletRequestWrapper {
 
 	public TempAttributesServletRequest(HttpServletRequest request) {
 		super(request);

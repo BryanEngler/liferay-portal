@@ -14,6 +14,7 @@
 
 package com.liferay.util.bridges.php;
 
+import com.liferay.portal.kernel.servlet.LiferayHttpServletRequestWrapper;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -28,12 +29,11 @@ import javax.portlet.RenderResponse;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
  * @author Jorge Ferrer
  */
-public class PHPServletRequest extends HttpServletRequestWrapper {
+public class PHPServletRequest extends LiferayHttpServletRequestWrapper {
 
 	public PHPServletRequest(
 		HttpServletRequest request, ServletConfig servletConfig,
