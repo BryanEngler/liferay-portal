@@ -94,9 +94,7 @@ public class UserNotificationMessageSender
 
 		ServiceContext serviceContext = executionContext.getServiceContext();
 
-		if (serviceContext != null) {
-			userId = serviceContext.getGuestOrUserId();
-		}
+		long userId = serviceContext.getGuestOrUserId();
 
 		jsonObject.put(
 			WorkflowConstants.CONTEXT_USER_ID, String.valueOf(userId));
