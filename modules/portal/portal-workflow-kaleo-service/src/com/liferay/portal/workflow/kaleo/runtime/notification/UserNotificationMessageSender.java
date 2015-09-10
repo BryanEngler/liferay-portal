@@ -21,8 +21,6 @@ import com.liferay.portal.model.UserNotificationDeliveryConstants;
 import com.liferay.portal.service.UserNotificationEventLocalServiceUtil;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.workflow.kaleo.definition.NotificationReceptionType;
-import com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken;
-import com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken;
 import com.liferay.portal.workflow.kaleo.runtime.ExecutionContext;
 
 import java.io.Serializable;
@@ -94,16 +92,10 @@ public class UserNotificationMessageSender
 			String.valueOf(
 				workflowContext.get(WorkflowConstants.CONTEXT_GROUP_ID)));
 
-		KaleoInstanceToken kaleoInstanceToken =
-			executionContext.getKaleoInstanceToken();
+		ServiceContext serviceContext = executionContext.getServiceContext();
 
-		long userId = kaleoInstanceToken.getUserId();
-
-		KaleoTaskInstanceToken kaleoTaskInstanceToken =
-			executionContext.getKaleoTaskInstanceToken();
-
-		if (kaleoTaskInstanceToken != null) {
-			userId = kaleoTaskInstanceToken.getUserId();
+		if (serviceContext != null) {
+			userId = serviceContext.getGuestOrUserId();
 		}
 
 		jsonObject.put(
