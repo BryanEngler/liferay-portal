@@ -70,7 +70,7 @@ public class DefaultStatsTranslator implements StatsTranslator {
 			org.elasticsearch.search.aggregations.metrics.stats.Stats
 				elasticsearchStats =
 					(org.elasticsearch.search.aggregations.metrics.stats.Stats)
-					aggregationMap.get(field + "_stats");
+						aggregationMap.get(field + "_stats");
 
 			statsResults.setMean(elasticsearchStats.getAvg());
 		}
