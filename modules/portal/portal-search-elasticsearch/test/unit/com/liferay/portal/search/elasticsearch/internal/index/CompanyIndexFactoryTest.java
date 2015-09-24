@@ -114,9 +114,10 @@ public class CompanyIndexFactoryTest {
 		GetIndexResponse getIndexResponse = _elasticsearchFixture.getIndex(
 			name);
 
-		ImmutableOpenMap<String, Settings> map = getIndexResponse.getSettings();
+		ImmutableOpenMap<String, Settings> immutableOpenMap =
+			getIndexResponse.getSettings();
 
-		return map.get(name);
+		return immutableOpenMap.get(name);
 	}
 
 	private static final long _COMPANY_ID = RandomTestUtil.randomLong();
