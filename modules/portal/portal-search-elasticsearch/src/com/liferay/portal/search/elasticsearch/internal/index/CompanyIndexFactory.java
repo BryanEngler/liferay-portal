@@ -141,7 +141,6 @@ public class CompanyIndexFactory implements IndexFactory {
 
 		setAdditionalIndexConfigurations(
 			elasticsearchConfiguration.additionalIndexConfigurations());
-
 		setIndexConfigFileName(
 			MapUtil.getString(properties, "indexConfigFileName"));
 
