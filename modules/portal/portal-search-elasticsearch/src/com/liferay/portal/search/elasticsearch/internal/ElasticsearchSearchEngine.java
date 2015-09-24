@@ -313,7 +313,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 
 			return true;
 		}
-		catch (RepositoryMissingException ee) {
+		catch (RepositoryMissingException rme) {
 			return false;
 		}
 	}
