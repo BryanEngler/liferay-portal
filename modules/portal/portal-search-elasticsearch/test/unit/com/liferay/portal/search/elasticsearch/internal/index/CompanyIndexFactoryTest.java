@@ -79,11 +79,6 @@ public class CompanyIndexFactoryTest {
 
 	@Test
 	public void testIndexSettingsContributor() throws Exception {
-		_companyIndexFactory.setAdditionalIndexConfigurations(
-			new String[] {
-				"index.number_of_replicas: 0", "index.number_of_shards: 0"
-			});
-
 		_companyIndexFactory.addIndexSettingsContributor(
 			new BaseIndexSettingsContributor(1) {
 
@@ -93,6 +88,10 @@ public class CompanyIndexFactoryTest {
 					builder.put("index.number_of_shards", "3");
 				}
 
+			});
+		_companyIndexFactory.setAdditionalIndexConfigurations(
+			new String[] {
+				"index.number_of_replicas: 0", "index.number_of_shards: 0"
 			});
 
 		Settings settings = createIndex();
