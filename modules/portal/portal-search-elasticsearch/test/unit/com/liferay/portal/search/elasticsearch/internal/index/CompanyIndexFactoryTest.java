@@ -92,6 +92,7 @@ public class CompanyIndexFactoryTest {
 					builder.put("index.number_of_replicas", "2");
 					builder.put("index.number_of_shards", "3");
 				}
+
 			});
 
 		Settings settings = createIndex();
