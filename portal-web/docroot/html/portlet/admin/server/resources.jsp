@@ -139,7 +139,11 @@ long usedMemory = totalMemory - runtime.freeMemory();
 									<liferay-ui:message arguments="<%= indexer.getClassName() %>" key="reindex-x" />
 								</td>
 								<td>
-									<aui:button cssClass="save-server-button" data-classname="<%= indexer.getClassName() %>" data-cmd="reindex" value="execute" />
+									<aui:button cssClass="save-server-button" data-classname="<%= indexer.getClassName() %>" data-cmd="reindex" disabled="<%= !indexer.isIndexerEnabled() %>" value="execute" />
+
+									<aui:button cssClass='<%= "save-server-button " + (indexer.isIndexerEnabled() ? "btn-success" : "btn-warning") %>' data-classname="<%= indexer.getClassName() %>" data-cmd="toggleIndexerEnabled" value='<%= indexer.isIndexerEnabled() ? "enabled" : "disabled" %>' />
+
+									<liferay-ui:icon-help message="disable-indexer-help" />
 								</td>
 							</tr>
 
