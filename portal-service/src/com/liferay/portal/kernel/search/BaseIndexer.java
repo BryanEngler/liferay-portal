@@ -401,6 +401,7 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 		return _filterSearch;
 	}
 
+	@Override
 	public boolean isIndexerEnabled() {
 		return _indexerEnabled;
 	}
@@ -660,6 +661,11 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 	public void setCommitImmediately(boolean commitImmediately) {
 		_commitImmediately = commitImmediately;
+	}
+
+	@Override
+	public void setIndexerEnabled(boolean indexerEnabled) {
+		_indexerEnabled = indexerEnabled;
 	}
 
 	public void setSelectAllLocales(boolean selectAllLocales) {
@@ -1854,10 +1860,6 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 	protected void setFilterSearch(boolean filterSearch) {
 		_filterSearch = filterSearch;
-	}
-
-	protected void setIndexerEnabled(boolean indexerEnabled) {
-		_indexerEnabled = indexerEnabled;
 	}
 
 	protected void setPermissionAware(boolean permissionAware) {
