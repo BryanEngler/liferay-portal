@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Contact;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.ResourceConstants;
@@ -77,6 +78,8 @@ public class VerifyResourcePermissions extends VerifyProcess {
 
 			verifyLayout(role);
 		}
+
+		verifyDuplicateResourcePermissions();
 	}
 
 	@Override
@@ -91,6 +94,71 @@ public class VerifyResourcePermissions extends VerifyProcess {
 			verifiableResourcedModels.toArray(
 				new VerifiableResourcedModel[
 					verifiableResourcedModels.size()]));
+	}
+
+	protected void verifyDuplicateResourcePermissions() throws Exception {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		String pkColumnName = "resourcePermissionId";
+
+		StringBuilder sb = new StringBuilder(13);
+
+		sb.append("select alpha.");
+		sb.append(pkColumnName);
+		sb.append(" from ResourcePermission as alpha, ");
+		sb.append("ResourcePermission as beta where ");
+		sb.append("alpha.companyId = beta.companyId AND ");
+		sb.append("alpha.name = beta.name AND ");
+		sb.append("alpha.scope = beta.scope AND ");
+		sb.append("alpha.primKey = beta.primKey AND ");
+		sb.append("alpha.roleId = beta.roleId AND ");
+		sb.append("alpha.");
+		sb.append(pkColumnName);
+		sb.append(" > beta.");
+		sb.append(pkColumnName);
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			ps = con.prepareStatement(sb.toString());
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				long primKey = rs.getLong(pkColumnName);
+
+				verifyDuplicateResourcePermissions(primKey);
+			}
+		}
+		finally {
+			DataAccess.cleanUp(con, ps, rs);
+		}
+	}
+
+	protected void verifyDuplicateResourcePermissions(long primKey)
+		throws Exception {
+
+		ResourcePermission resourcePermission =
+			ResourcePermissionLocalServiceUtil.fetchResourcePermission(primKey);
+
+		if (Validator.isNotNull(resourcePermission)) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Removing ResourcePermission with ID: {" + primKey + "}");
+			}
+
+			ResourcePermissionLocalServiceUtil.deleteResourcePermission(
+				primKey);
+		}
+		else {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"No resource found for ResourcePermission with ID: {" +
+					primKey + "}. Possibly could have already been removed.");
+			}
+		}
 	}
 
 	protected void verifyLayout(Role role) throws Exception {
