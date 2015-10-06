@@ -727,13 +727,11 @@ public class DLFileEntryLocalServiceImpl
 			});
 		actionableDynamicQuery.setGroupId(groupId);
 		actionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod() {
+			new ActionableDynamicQuery.PerformActionMethod<DLFileEntry>() {
 
 				@Override
-				public void performAction(Object object)
+				public void performAction(DLFileEntry dlFileEntry)
 					throws PortalException {
-
-					DLFileEntry dlFileEntry = (DLFileEntry)object;
 
 					if (includeTrashedEntries ||
 						!dlFileEntry.isInTrashExplicitly()) {
@@ -1778,13 +1776,11 @@ public class DLFileEntryLocalServiceImpl
 			DLFileEntry.class.getName());
 
 		actionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod() {
+			new ActionableDynamicQuery.PerformActionMethod<DLFileEntry>() {
 
 				@Override
-				public void performAction(Object object)
+				public void performAction(DLFileEntry dlFileEntry)
 					throws PortalException {
-
-					DLFileEntry dlFileEntry = (DLFileEntry)object;
 
 					dlFileEntry.setTreePath(treePath);
 
