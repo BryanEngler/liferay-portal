@@ -155,7 +155,6 @@ public class RolesAdminPortletDataHandler extends BasePortletDataHandler {
 		actionableDynamicQuery.performCount();
 	}
 
-	@SuppressWarnings("unchecked")
 	protected ActionableDynamicQuery getRoleActionableDynamicQuery(
 		final PortletDataContext portletDataContext, final boolean export) {
 
