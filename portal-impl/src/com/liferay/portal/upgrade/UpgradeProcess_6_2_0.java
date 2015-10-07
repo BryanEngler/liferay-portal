@@ -70,10 +70,12 @@ public class UpgradeProcess_6_2_0 extends UpgradeProcess {
 		upgrade(UpgradeCustomizablePortlets.class);
 		upgrade(UpgradeDocumentLibrary.class);
 		upgrade(UpgradeDynamicDataListDisplay.class);
-		upgrade(UpgradeDynamicDataMapping.class);
 		upgrade(UpgradeGroup.class);
 		upgrade(UpgradeImageGallery.class);
 		upgrade(UpgradeJournal.class);
+
+		upgrade(UpgradeDynamicDataMapping.class);
+
 		upgrade(UpgradeLayout.class);
 		upgrade(UpgradeLayoutFriendlyURL.class);
 		upgrade(UpgradeLayoutRevision.class);

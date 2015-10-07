@@ -18,8 +18,10 @@ import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.metadata.RawMetadataProcessor;
+import com.liferay.portal.kernel.upgrade.UpgradeException;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -35,7 +37,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Juan Fernández
@@ -74,6 +78,145 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 		updateStructures();
 
 		updateTemplates();
+	}
+
+	protected Set<String> getDuplicateElementNames(
+		Element element, Set<String> elementNames,
+		Set<String> duplicateElementNames) {
+
+		String elementName = element.attributeValue("name");
+
+		if (!elementNames.add(elementName)) {
+			duplicateElementNames.add(elementName);
+		}
+
+		List<Element> dynamicElements = element.elements("dynamic-element");
+
+		for (Element dynamicElement : dynamicElements) {
+			duplicateElementNames = getDuplicateElementNames(
+				dynamicElement, elementNames, duplicateElementNames);
+		}
+
+		return duplicateElementNames;
+	}
+
+	protected Set<String> getDuplicateElementNames(long structureId)
+		throws Exception {
+
+		String xml =
+			"<root>" + getFullStructureXML(structureId, StringPool.BLANK) +
+				"</root>";
+
+		Document document = SAXReaderUtil.read(xml);
+
+		return getDuplicateElementNames(
+			document.getRootElement(), new HashSet<String>(),
+			new HashSet<String>());
+	}
+
+	protected String getFullStructureXML(long structureId, String xml)
+		throws Exception {
+
+		long parentStructureId = getParentStructureId(structureId);
+
+		if (parentStructureId != 0) {
+			xml = getFullStructureXML(parentStructureId, xml);
+		}
+
+		Document document = SAXReaderUtil.read(getXsd(structureId));
+
+		Element rootElement = document.getRootElement();
+
+		List<Element> dynamicElements = rootElement.elements("dynamic-element");
+
+		for (Element dynamicElement : dynamicElements) {
+			xml += dynamicElement.asXML();
+		}
+
+		return xml;
+	}
+
+	protected long getParentStructureId(long structureId) throws Exception {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			ps = con.prepareStatement(
+				"select parentStructureId from DDMStructure where structureId" +
+					" = ?");
+
+			ps.setLong(1, structureId);
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				return rs.getLong("parentStructureId");
+			}
+
+			return 0;
+		}
+		finally {
+			DataAccess.cleanUp(con, ps, rs);
+		}
+	}
+
+	protected String getXsd(long structureId) throws Exception {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			ps = con.prepareStatement(
+				"select xsd from DDMStructure where structureId = ?");
+
+			ps.setLong(1, structureId);
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				return rs.getString("xsd");
+			}
+
+			return StringPool.BLANK;
+		}
+		finally {
+			DataAccess.cleanUp(con, ps, rs);
+		}
+	}
+
+	protected void logDuplicateNames(
+			long classNameId, String structureKey,
+			Set<String> duplicateElementNames)
+		throws Exception {
+
+		if (!_log.isWarnEnabled()) {
+			return;
+		}
+
+		StringBundler sb = new StringBundler(
+			duplicateElementNames.size() * 2 + 7);
+
+		sb.append("Structure with class name ID ");
+		sb.append(classNameId);
+		sb.append(" and structure key = ");
+		sb.append(structureKey);
+		sb.append(" contains more than one element that is identified by the ");
+		sb.append("same name either within itself or within any of its ");
+		sb.append("parent structures. The duplicate element names are: ");
+
+		for (String duplicateElementName : duplicateElementNames) {
+			sb.append(duplicateElementName);
+			sb.append(StringPool.COMMA_AND_SPACE);
+		}
+
+		sb.setIndex(sb.index() - 1);
+
+		_log.warn(sb.toString());
 	}
 
 	protected void updateMetadataElement(
@@ -138,11 +281,15 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			con = DataAccess.getUpgradeOptimizedConnection();
 
 			ps = con.prepareStatement(
-				"select structureId, structureKey, xsd from DDMStructure");
+				"select classNameId, structureId, structureKey, xsd from " +
+					"DDMStructure");
 
 			rs = ps.executeQuery();
 
+			boolean duplicateExists = false;
+
 			while (rs.next()) {
+				long classNameId = rs.getLong("classNameId");
 				long structureId = rs.getLong("structureId");
 				String structureKey = rs.getString("structureKey");
 				String xsd = rs.getString("xsd");
@@ -154,8 +301,28 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 					structureKey = StringUtil.toUpperCase(structureKey.trim());
 				}
 
-				updateStructure(
-					structureId, structureKey, updateXSD(xsd, structureKey));
+				Set<String> duplicateElementNames = getDuplicateElementNames(
+					structureId);
+
+				if (!duplicateElementNames.isEmpty()) {
+					duplicateExists = true;
+
+					logDuplicateNames(
+						classNameId, structureKey, duplicateElementNames);
+				}
+
+				if (!duplicateExists) {
+					updateStructure(
+						structureId, structureKey,
+						updateXSD(xsd, structureKey));
+				}
+			}
+
+			if (duplicateExists) {
+				throw new UpgradeException(
+					"Duplicate element name found in structures. See https://" +
+						"issues.liferay.com/browse/LPS-52278 for more " +
+							"information");
 			}
 		}
 		finally {
