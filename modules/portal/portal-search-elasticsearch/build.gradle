@@ -11,7 +11,6 @@ dependencies {
 	provided group: "org.elasticsearch", name: "elasticsearch-analysis-smartcn", version: "2.7.0"
 	provided group: "org.elasticsearch", name: "elasticsearch-analysis-stempel", version: "2.7.0"
 
-	testCompile group: "com.liferay.portal", name: "portal-test", version: liferay.portalVersion
 	testCompile group: "commons-io", name: "commons-io", version: "2.4"
 }
 
