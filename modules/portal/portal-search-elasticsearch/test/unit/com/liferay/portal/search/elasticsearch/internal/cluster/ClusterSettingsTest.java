@@ -45,24 +45,24 @@ public class ClusterSettingsTest {
 
 	@Test
 	public void testClusterSettings() throws Exception {
-		ElasticsearchFixture elasticsearchCluster = _testCluster.getNode(0);
+		ElasticsearchFixture elasticsearchFixture = _testCluster.getNode(0);
 
-		EmbeddedElasticsearchConnection connection =
+		EmbeddedElasticsearchConnection embeddedElasticsearchConnection =
 			(EmbeddedElasticsearchConnection)
-				elasticsearchCluster.getElasticsearchConnection();
+				elasticsearchFixture.getElasticsearchConnection();
 
 		InternalNode internalNode = ReflectionTestUtil.getFieldValue(
-			connection, "_node");
+			embeddedElasticsearchConnection, "_node");
 
 		Injector injector = internalNode.injector();
 
 		InternalClusterService internalClusterService = injector.getInstance(
 			InternalClusterService.class);
 
-		TimeValue loggingThreshold = ReflectionTestUtil.getFieldValue(
+		TimeValue slowTaskLoggingThreshold = ReflectionTestUtil.getFieldValue(
 			internalClusterService, "slowTaskLoggingThreshold");
 
-		Assert.assertEquals("10m", loggingThreshold.toString());
+		Assert.assertEquals("10m", slowTaskLoggingThreshold.toString());
 	}
 
 	private final TestCluster _testCluster = new TestCluster(1, this);
