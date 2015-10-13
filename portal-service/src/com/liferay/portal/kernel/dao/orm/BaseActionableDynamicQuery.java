@@ -311,8 +311,20 @@ public abstract class BaseActionableDynamicQuery
 		}
 	}
 
+	protected long getCompanyId() {
+		return _companyId;
+	}
+
 	protected Projection getCountProjection() {
 		return ProjectionFactoryUtil.rowCount();
+	}
+
+	protected int getInterval() {
+		return _interval;
+	}
+
+	protected Class<?> getModelClass() {
+		return _clazz;
 	}
 
 	protected TransactionAttribute getTransactionAttribute() {
