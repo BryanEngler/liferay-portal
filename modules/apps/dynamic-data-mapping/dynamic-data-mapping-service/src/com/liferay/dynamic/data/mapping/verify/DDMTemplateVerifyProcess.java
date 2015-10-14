@@ -14,17 +14,16 @@
 
 package com.liferay.dynamic.data.mapping.verify;
 
-import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.verify.VerifyProcess;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -53,7 +52,7 @@ public class DDMTemplateVerifyProcess extends VerifyProcess {
 
 		StringBuilder sb = new StringBuilder(11);
 
-		sb.append("select alpha.");
+		sb.append("select distinct alpha.");
 		sb.append(pkColumnName);
 		sb.append(" from DDMTemplate alpha, ");
 		sb.append("DDMTemplate beta where ");
@@ -75,7 +74,12 @@ public class DDMTemplateVerifyProcess extends VerifyProcess {
 			while (rs.next()) {
 				long primKey = rs.getLong(pkColumnName);
 
-				removeDuplicateDDMTemplates(primKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(
+						"Removing DDMTemplate with Template ID: " + primKey);
+				}
+
+				DDMTemplateLocalServiceUtil.deleteDDMTemplate(primKey);
 			}
 		}
 		finally {
@@ -83,45 +87,24 @@ public class DDMTemplateVerifyProcess extends VerifyProcess {
 		}
 	}
 
-	protected void removeDuplicateDDMTemplates(long primKey) throws Exception {
-		DDMTemplate ddmTemplate = DDMTemplateLocalServiceUtil.fetchDDMTemplate(
-			primKey);
-
-		if (Validator.isNotNull(ddmTemplate)) {
-			if (_log.isDebugEnabled()) {
-				_log.debug("Removing DDMTemplate with ID: {" + primKey + "}");
-			}
-
-			DDMTemplateLocalServiceUtil.deleteDDMTemplate(primKey);
-		}
-		else {
-			if (_log.isDebugEnabled()) {
-				_log.debug(
-					"No template found for DDMTemplate with ID: {" +
-					primKey + "}. Possibly could have already been removed.");
-			}
-		}
-	}
-
 	protected void verifyDuplicateDDMTemplates() throws Exception {
 		try {
 			runSQL("drop index IX_E6DFAB84 on DDMTemplate");
 		}
-		catch (Exception e) {
+		catch (SQLException e) {
 		}
 
-		StringBuilder sb = new StringBuilder(2);
-
-		sb.append("create unique index IX_E6DFAB84 on DDMTemplate ");
-		sb.append("(groupId, classNameId, templateKey)");
+		String sql =
+			"create unique index IX_E6DFAB84 on DDMTemplate (groupId, " +
+				"classNameId, templateKey)";
 
 		try {
-			runSQL(sb.toString());
+			runSQL(sql);
 		}
-		catch (Exception e) {
+		catch (SQLException e) {
 			removeDuplicateDDMTemplates();
 
-			runSQL(sb.toString());
+			runSQL(sql);
 		}
 	}
 
