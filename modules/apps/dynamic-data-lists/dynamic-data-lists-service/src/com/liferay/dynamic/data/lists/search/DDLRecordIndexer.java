@@ -279,7 +279,6 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 		final ActionableDynamicQuery actionableDynamicQuery =
 			DDLRecordLocalServiceUtil.getActionableDynamicQuery();
 
-		actionableDynamicQuery.setCompanyId(companyId);
 		actionableDynamicQuery.setAddCriteriaMethod(
 			new ActionableDynamicQuery.AddCriteriaMethod() {
 				@Override
@@ -321,6 +320,8 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 						recordSetProperty.in(recordSetDynamicQuery));
 				}
 		});
+		actionableDynamicQuery.setCommitImmediately(isCommitImmediately());
+		actionableDynamicQuery.setCompanyId(companyId);
 		actionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.PerformActionMethod() {
 
@@ -347,9 +348,7 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 					}
 				}
 		});
-
 		actionableDynamicQuery.setSearchEngineId(getSearchEngineId());
-		actionableDynamicQuery.setCommitImmediately(isCommitImmediately());
 
 		actionableDynamicQuery.performActions();
 	}

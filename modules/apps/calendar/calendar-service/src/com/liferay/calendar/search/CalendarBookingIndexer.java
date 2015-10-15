@@ -205,7 +205,6 @@ public class CalendarBookingIndexer extends BaseIndexer<CalendarBooking> {
 		final ActionableDynamicQuery actionableDynamicQuery =
 			CalendarBookingLocalServiceUtil.getActionableDynamicQuery();
 
-		actionableDynamicQuery.setCompanyId(companyId);
 		actionableDynamicQuery.setAddCriteriaMethod(
 			new ActionableDynamicQuery.AddCriteriaMethod() {
 
@@ -223,7 +222,8 @@ public class CalendarBookingIndexer extends BaseIndexer<CalendarBooking> {
 				}
 
 			});
-
+		actionableDynamicQuery.setCommitImmediately(isCommitImmediately());
+		actionableDynamicQuery.setCompanyId(companyId);
 		actionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.PerformActionMethod<CalendarBooking>() {
 
@@ -245,9 +245,7 @@ public class CalendarBookingIndexer extends BaseIndexer<CalendarBooking> {
 				}
 
 			});
-
 		actionableDynamicQuery.setSearchEngineId(getSearchEngineId());
-		actionableDynamicQuery.setCommitImmediately(isCommitImmediately());
 
 		actionableDynamicQuery.performActions();
 	}
