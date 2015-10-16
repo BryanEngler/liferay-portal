@@ -36,8 +36,6 @@ import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portlet.trash.util.TrashUtil;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Locale;
 
 import javax.portlet.PortletRequest;
@@ -204,11 +202,10 @@ public class CalendarBookingIndexer extends BaseIndexer<CalendarBooking> {
 	protected void reindexCalendarBookings(long companyId)
 		throws PortalException {
 
-		final Collection<Document> documents = new ArrayList<>();
-
-		ActionableDynamicQuery actionableDynamicQuery =
+		final ActionableDynamicQuery actionableDynamicQuery =
 			CalendarBookingLocalServiceUtil.getActionableDynamicQuery();
 
+		actionableDynamicQuery.setCompanyId(companyId);
 		actionableDynamicQuery.setAddCriteriaMethod(
 			new ActionableDynamicQuery.AddCriteriaMethod() {
 
@@ -235,7 +232,7 @@ public class CalendarBookingIndexer extends BaseIndexer<CalendarBooking> {
 					try {
 						Document document = getDocument(calendarBooking);
 
-						documents.add(document);
+						actionableDynamicQuery.addDocument(document);
 					}
 					catch (PortalException pe) {
 						if (_log.isWarnEnabled()) {
@@ -249,12 +246,10 @@ public class CalendarBookingIndexer extends BaseIndexer<CalendarBooking> {
 
 			});
 
-		actionableDynamicQuery.setCompanyId(companyId);
+		actionableDynamicQuery.setSearchEngineId(getSearchEngineId());
+		actionableDynamicQuery.setCommitImmediately(isCommitImmediately());
 
 		actionableDynamicQuery.performActions();
-
-		SearchEngineUtil.updateDocuments(
-			getSearchEngineId(), companyId, documents, isCommitImmediately());
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
