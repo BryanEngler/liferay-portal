@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.portlet.PortletLayoutListener;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.systemevent.SystemEventHierarchyEntry;
 import com.liferay.portal.kernel.systemevent.SystemEventHierarchyEntryThreadLocal;
@@ -46,13 +47,16 @@ import com.liferay.portal.model.LayoutSet;
 import com.liferay.portal.model.LayoutSetPrototype;
 import com.liferay.portal.model.LayoutType;
 import com.liferay.portal.model.LayoutTypePortlet;
+import com.liferay.portal.model.Portlet;
 import com.liferay.portal.model.PortletConstants;
+import com.liferay.portal.model.PortletPreferences;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.ResourcePermission;
 import com.liferay.portal.model.SystemEventConstants;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserGroup;
 import com.liferay.portal.model.impl.VirtualLayout;
+import com.liferay.portal.service.PortletLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.base.LayoutLocalServiceBaseImpl;
 import com.liferay.portal.util.PortalUtil;
@@ -553,8 +557,29 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 
 		// Portlet preferences
 
-		portletPreferencesLocalService.deletePortletPreferencesByPlid(
-			layout.getPlid());
+		List<PortletPreferences> portletPreferencesList =
+			portletPreferencesLocalService.getPortletPreferencesByPlid(
+				layout.getPlid());
+
+		for (PortletPreferences portletPreferences : portletPreferencesList) {
+			Portlet portlet = PortletLocalServiceUtil.getPortletById(
+				layout.getCompanyId(), portletPreferences.getPortletId());
+
+			PortletLayoutListener portletLayoutListener = null;
+
+			if (portlet != null) {
+				portletLayoutListener =
+					portlet.getPortletLayoutListenerInstance();
+
+				if (portletLayoutListener != null) {
+					portletLayoutListener.onRemoveFromLayout(
+						portletPreferences.getPortletId(), layout.getPlid());
+				}
+			}
+
+			portletPreferencesLocalService.deletePortletPreferences(
+				portletPreferences);
+		}
 
 		// Subscriptions
 
