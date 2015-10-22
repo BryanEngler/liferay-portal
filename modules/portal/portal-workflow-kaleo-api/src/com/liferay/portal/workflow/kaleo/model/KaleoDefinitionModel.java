@@ -22,6 +22,7 @@ import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.GroupedModel;
 import com.liferay.portal.model.LocalizedModel;
+import com.liferay.portal.model.PartitionedModel;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -47,7 +48,7 @@ import java.util.Map;
  */
 @ProviderType
 public interface KaleoDefinitionModel extends BaseModel<KaleoDefinition>,
-	GroupedModel, LocalizedModel {
+	GroupedModel, LocalizedModel, PartitionedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *

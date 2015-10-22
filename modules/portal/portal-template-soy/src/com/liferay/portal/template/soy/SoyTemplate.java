@@ -26,10 +26,10 @@ import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateException;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.template.AbstractTemplate;
+import com.liferay.portal.template.AbstractMultiResourceTemplate;
 import com.liferay.portal.template.TemplateContextHelper;
-import com.liferay.portal.template.TemplateResourceThreadLocal;
 
 import java.io.Reader;
 import java.io.Writer;
@@ -38,40 +38,44 @@ import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
  * @author Bruno Basto
  */
-public class SoyTemplate extends AbstractTemplate {
+public class SoyTemplate extends AbstractMultiResourceTemplate {
 
 	public SoyTemplate(
-		TemplateResource templateResource,
+		List<TemplateResource> templateResources,
 		TemplateResource errorTemplateResource, Map<String, Object> context,
 		TemplateContextHelper templateContextHelper, boolean privileged) {
 
 		super(
-			templateResource, errorTemplateResource, context,
+			templateResources, errorTemplateResource, context,
 			templateContextHelper, TemplateConstants.LANG_TYPE_SOY, 0);
 
 		_privileged = privileged;
 	}
 
-	protected SoyFileSet getSoyFileSet(TemplateResource templateResource)
+	protected SoyFileSet getSoyFileSet(List<TemplateResource> templateResources)
 		throws Exception {
 
 		SoyFileSet soyFileSet = null;
 
 		if (_privileged) {
 			soyFileSet = AccessController.doPrivileged(
-				new TemplatePrivilegedExceptionAction(templateResource));
+				new TemplatePrivilegedExceptionAction(templateResources));
 		}
 		else {
 			Builder builder = new SoyFileSet.Builder();
 
-			String templateContent = getTemplateContent(templateResource);
+			for (TemplateResource templateResource : templateResources) {
+				String templateContent = getTemplateContent(templateResource);
 
-			builder.add(templateContent, templateResource.getTemplateId());
+				builder.add(templateContent, templateResource.getTemplateId());
+			}
 
 			soyFileSet = builder.build();
 		}
@@ -107,15 +111,21 @@ public class SoyTemplate extends AbstractTemplate {
 
 		put("exception", exception.getMessage());
 
-		if (templateResource instanceof StringTemplateResource) {
-			StringTemplateResource stringTemplateResource =
-				(StringTemplateResource)templateResource;
+		StringBundler sb = new StringBundler();
 
-			put("script", stringTemplateResource.getContent());
+		for (TemplateResource templateResource : templateResources) {
+			if (templateResource instanceof StringTemplateResource) {
+				StringTemplateResource stringTemplateResource =
+					(StringTemplateResource)templateResource;
+
+				sb.append(stringTemplateResource.getContent());
+			}
 		}
 
+		put("script", sb.toString());
+
 		try {
-			processTemplate(errorTemplateResource, writer);
+			processTemplates(Arrays.asList(errorTemplateResource), writer);
 		}
 		catch (Exception e) {
 			throw new TemplateException(
@@ -126,12 +136,9 @@ public class SoyTemplate extends AbstractTemplate {
 	}
 
 	@Override
-	protected void processTemplate(
-			TemplateResource templateResource, Writer writer)
+	protected void processTemplates(
+			List<TemplateResource> templateResources, Writer writer)
 		throws Exception {
-
-		TemplateResourceThreadLocal.setTemplateResource(
-			TemplateConstants.LANG_TYPE_SOY, templateResource);
 
 		try {
 			String namespace = GetterUtil.getString(
@@ -141,7 +148,7 @@ public class SoyTemplate extends AbstractTemplate {
 				throw new TemplateException("No namespace specified.");
 			}
 
-			SoyFileSet soyFileSet = getSoyFileSet(templateResource);
+			SoyFileSet soyFileSet = getSoyFileSet(templateResources);
 
 			SoyTofu soyTofu = soyFileSet.compileToTofu();
 
@@ -154,10 +161,6 @@ public class SoyTemplate extends AbstractTemplate {
 		catch (PrivilegedActionException pae) {
 			throw pae.getException();
 		}
-		finally {
-			TemplateResourceThreadLocal.setTemplateResource(
-				TemplateConstants.LANG_TYPE_SOY, null);
-		}
 	}
 
 	private final boolean _privileged;
@@ -166,23 +169,24 @@ public class SoyTemplate extends AbstractTemplate {
 		implements PrivilegedExceptionAction<SoyFileSet> {
 
 		public TemplatePrivilegedExceptionAction(
-			TemplateResource templateResource) {
+			List<TemplateResource> templateResources) {
 
-			_templateResource = templateResource;
+			_templateResources = templateResources;
 		}
 
 		@Override
 		public SoyFileSet run() throws Exception {
 			Builder builder = new SoyFileSet.Builder();
 
-			String templateContent = getTemplateContent(_templateResource);
-
-			builder.add(templateContent, _templateResource.getTemplateId());
+			for (TemplateResource templateResource : _templateResources) {
+				String templateContent = getTemplateContent(templateResource);
+				builder.add(templateContent, templateResource.getTemplateId());
+			}
 
 			return builder.build();
 		}
 
-		private final TemplateResource _templateResource;
+		private final List<TemplateResource> _templateResources;
 
 	}
 

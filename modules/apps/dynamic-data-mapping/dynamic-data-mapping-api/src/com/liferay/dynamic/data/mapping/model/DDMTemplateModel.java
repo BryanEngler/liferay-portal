@@ -22,6 +22,7 @@ import com.liferay.portal.model.AttachedModel;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.LocalizedModel;
+import com.liferay.portal.model.PartitionedModel;
 import com.liferay.portal.model.StagedGroupedModel;
 import com.liferay.portal.service.ServiceContext;
 
@@ -48,7 +49,7 @@ import java.util.Map;
  */
 @ProviderType
 public interface DDMTemplateModel extends AttachedModel, BaseModel<DDMTemplate>,
-	LocalizedModel, StagedGroupedModel {
+	LocalizedModel, PartitionedModel, StagedGroupedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *

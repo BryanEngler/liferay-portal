@@ -63,8 +63,8 @@ public class ConfigurationHelper {
 				return configurations[0];
 			}
 		}
-		catch (InvalidSyntaxException | IOException ise) {
-			ReflectionUtil.throwException(ise);
+		catch (InvalidSyntaxException | IOException e) {
+			ReflectionUtil.throwException(e);
 		}
 
 		return null;

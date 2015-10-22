@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.bean.AutoEscape;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.LocalizedModel;
+import com.liferay.portal.model.PartitionedModel;
 import com.liferay.portal.model.WorkflowedModel;
 import com.liferay.portal.service.ServiceContext;
 
@@ -47,7 +48,7 @@ import java.util.Map;
  */
 @ProviderType
 public interface DDMStructureVersionModel extends BaseModel<DDMStructureVersion>,
-	LocalizedModel, WorkflowedModel {
+	LocalizedModel, PartitionedModel, WorkflowedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -101,6 +102,7 @@ public interface DDMStructureVersionModel extends BaseModel<DDMStructureVersion>
 	 *
 	 * @return the company ID of this d d m structure version
 	 */
+	@Override
 	public long getCompanyId();
 
 	/**
@@ -108,6 +110,7 @@ public interface DDMStructureVersionModel extends BaseModel<DDMStructureVersion>
 	 *
 	 * @param companyId the company ID of this d d m structure version
 	 */
+	@Override
 	public void setCompanyId(long companyId);
 
 	/**

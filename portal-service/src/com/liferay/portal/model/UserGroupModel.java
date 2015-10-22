@@ -40,7 +40,7 @@ import java.util.Date;
  */
 @ProviderType
 public interface UserGroupModel extends BaseModel<UserGroup>, MVCCModel,
-	StagedAuditedModel {
+	PartitionedModel, StagedAuditedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *

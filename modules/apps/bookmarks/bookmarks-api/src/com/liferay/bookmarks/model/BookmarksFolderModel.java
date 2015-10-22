@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.ContainerModel;
+import com.liferay.portal.model.PartitionedModel;
 import com.liferay.portal.model.StagedGroupedModel;
 import com.liferay.portal.model.TrashedModel;
 import com.liferay.portal.model.WorkflowedModel;
@@ -49,7 +50,8 @@ import java.util.Date;
  */
 @ProviderType
 public interface BookmarksFolderModel extends BaseModel<BookmarksFolder>,
-	ContainerModel, StagedGroupedModel, TrashedModel, WorkflowedModel {
+	ContainerModel, PartitionedModel, StagedGroupedModel, TrashedModel,
+	WorkflowedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *

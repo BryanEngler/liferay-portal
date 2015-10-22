@@ -21,6 +21,7 @@ import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.GroupedModel;
 import com.liferay.portal.model.MVCCModel;
+import com.liferay.portal.model.PartitionedModel;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -45,7 +46,7 @@ import java.util.Map;
  */
 @ProviderType
 public interface BackgroundTaskModel extends BaseModel<BackgroundTask>,
-	GroupedModel, MVCCModel {
+	GroupedModel, MVCCModel, PartitionedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *

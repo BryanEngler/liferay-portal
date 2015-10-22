@@ -723,6 +723,10 @@ public class Entity {
 		}
 	}
 
+	public boolean isPartitionedModel() {
+		return hasColumn("companyId");
+	}
+
 	public boolean isPermissionCheckEnabled() {
 		for (EntityFinder finder : _finderList) {
 			if (isPermissionCheckEnabled(finder)) {

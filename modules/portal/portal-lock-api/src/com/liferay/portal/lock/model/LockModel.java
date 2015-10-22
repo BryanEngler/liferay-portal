@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.bean.AutoEscape;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.MVCCModel;
+import com.liferay.portal.model.PartitionedModel;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -42,7 +43,7 @@ import java.util.Date;
  * @generated
  */
 @ProviderType
-public interface LockModel extends BaseModel<Lock>, MVCCModel {
+public interface LockModel extends BaseModel<Lock>, MVCCModel, PartitionedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -113,6 +114,7 @@ public interface LockModel extends BaseModel<Lock>, MVCCModel {
 	 *
 	 * @return the company ID of this lock
 	 */
+	@Override
 	public long getCompanyId();
 
 	/**
@@ -120,6 +122,7 @@ public interface LockModel extends BaseModel<Lock>, MVCCModel {
 	 *
 	 * @param companyId the company ID of this lock
 	 */
+	@Override
 	public void setCompanyId(long companyId);
 
 	/**

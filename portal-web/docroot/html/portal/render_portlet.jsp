@@ -213,6 +213,11 @@ if ((!group.hasStagingGroup() || group.isStagingGroup()) &&
 	if (PropsValues.PORTLET_CSS_ENABLED) {
 		showPortletCssIcon = true;
 	}
+
+	if (!group.isStagedRemotely() && group.hasLocalOrRemoteStagingGroup() && !PropsValues.STAGING_LIVE_GROUP_PORTLET_CONFIGURATION_ENABLED) {
+		showConfigurationIcon = false;
+		showPortletCssIcon = false;
+	}
 }
 
 if (layoutTypePortlet.isCustomizable() && !layoutTypePortlet.isColumnDisabled(columnId) && !portlet.isPreferencesCompanyWide() && portlet.isPreferencesUniquePerLayout() && LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.CUSTOMIZE)) {
@@ -443,6 +448,8 @@ if (portlet.getConfigurationActionInstance() != null) {
 	urlConfiguration.setParameter("mvcPath", "/edit_configuration.jsp");
 
 	String settingsScope = (String)request.getAttribute(WebKeys.SETTINGS_SCOPE);
+
+	settingsScope = ParamUtil.get(request, "settingsScope", settingsScope);
 
 	if (Validator.isNotNull(settingsScope)) {
 		urlConfiguration.setParameter("settingsScope", settingsScope);

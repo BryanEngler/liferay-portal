@@ -8,6 +8,7 @@
  * @param name
  * @param required
  * @param showAsSwitcher
+ * @param showLabel
  * @param status
  * @param visible
  */
@@ -23,13 +24,18 @@
 			</label>
 		{else}
 			<div class="checkbox checkbox-default">
-				<label class="control-label" for="{$name}">
-					<input id="{$name}" name="{$name}" type="checkbox" {$status} value="true" /> {$label}
+				{if $showLabel}
+					<label class="control-label" for="{$name}">
+				{/if}
 
-					{if $required}
-						<b>*</b>
-					{/if}
-				</label>
+				<input id="{$name}" name="{$name}" type="checkbox" {$status} value="true" />{if $showLabel} {$label}{/if}
+
+				{if $showLabel}
+						{if $required}
+							<b>*</b>
+						{/if}
+					</label>
+				{/if}
 			</div>
 		{/if}
 

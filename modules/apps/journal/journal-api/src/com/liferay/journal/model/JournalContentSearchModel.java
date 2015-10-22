@@ -19,6 +19,7 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.portal.kernel.bean.AutoEscape;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.PartitionedModel;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -39,7 +40,8 @@ import java.io.Serializable;
  * @generated
  */
 @ProviderType
-public interface JournalContentSearchModel extends BaseModel<JournalContentSearch> {
+public interface JournalContentSearchModel extends BaseModel<JournalContentSearch>,
+	PartitionedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -93,6 +95,7 @@ public interface JournalContentSearchModel extends BaseModel<JournalContentSearc
 	 *
 	 * @return the company ID of this journal content search
 	 */
+	@Override
 	public long getCompanyId();
 
 	/**
@@ -100,6 +103,7 @@ public interface JournalContentSearchModel extends BaseModel<JournalContentSearc
 	 *
 	 * @param companyId the company ID of this journal content search
 	 */
+	@Override
 	public void setCompanyId(long companyId);
 
 	/**

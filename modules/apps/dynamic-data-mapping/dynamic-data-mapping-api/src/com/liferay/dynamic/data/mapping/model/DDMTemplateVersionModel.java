@@ -22,6 +22,7 @@ import com.liferay.portal.model.AttachedModel;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.LocalizedModel;
+import com.liferay.portal.model.PartitionedModel;
 import com.liferay.portal.model.WorkflowedModel;
 import com.liferay.portal.service.ServiceContext;
 
@@ -48,7 +49,8 @@ import java.util.Map;
  */
 @ProviderType
 public interface DDMTemplateVersionModel extends AttachedModel,
-	BaseModel<DDMTemplateVersion>, LocalizedModel, WorkflowedModel {
+	BaseModel<DDMTemplateVersion>, LocalizedModel, PartitionedModel,
+	WorkflowedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -102,6 +104,7 @@ public interface DDMTemplateVersionModel extends AttachedModel,
 	 *
 	 * @return the company ID of this d d m template version
 	 */
+	@Override
 	public long getCompanyId();
 
 	/**
@@ -109,6 +112,7 @@ public interface DDMTemplateVersionModel extends AttachedModel,
 	 *
 	 * @param companyId the company ID of this d d m template version
 	 */
+	@Override
 	public void setCompanyId(long companyId);
 
 	/**

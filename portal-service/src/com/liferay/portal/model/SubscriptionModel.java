@@ -40,7 +40,7 @@ import java.util.Date;
  */
 @ProviderType
 public interface SubscriptionModel extends AttachedModel, BaseModel<Subscription>,
-	GroupedModel, MVCCModel {
+	GroupedModel, MVCCModel, PartitionedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *

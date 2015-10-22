@@ -19,6 +19,7 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.portal.kernel.bean.AutoEscape;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.PartitionedModel;
 import com.liferay.portal.model.WorkflowedModel;
 import com.liferay.portal.service.ServiceContext;
 
@@ -43,7 +44,7 @@ import java.util.Date;
  */
 @ProviderType
 public interface DDLRecordVersionModel extends BaseModel<DDLRecordVersion>,
-	WorkflowedModel {
+	PartitionedModel, WorkflowedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -97,6 +98,7 @@ public interface DDLRecordVersionModel extends BaseModel<DDLRecordVersion>,
 	 *
 	 * @return the company ID of this d d l record version
 	 */
+	@Override
 	public long getCompanyId();
 
 	/**
@@ -104,6 +106,7 @@ public interface DDLRecordVersionModel extends BaseModel<DDLRecordVersion>,
 	 *
 	 * @param companyId the company ID of this d d l record version
 	 */
+	@Override
 	public void setCompanyId(long companyId);
 
 	/**

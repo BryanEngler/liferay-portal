@@ -40,7 +40,7 @@ import java.util.Date;
  */
 @ProviderType
 public interface LayoutSetBranchModel extends BaseModel<LayoutSetBranch>,
-	GroupedModel, MVCCModel {
+	GroupedModel, MVCCModel, PartitionedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *

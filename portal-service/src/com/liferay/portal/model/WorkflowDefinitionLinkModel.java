@@ -40,7 +40,7 @@ import java.util.Date;
  */
 @ProviderType
 public interface WorkflowDefinitionLinkModel extends AttachedModel,
-	BaseModel<WorkflowDefinitionLink>, GroupedModel, MVCCModel {
+	BaseModel<WorkflowDefinitionLink>, GroupedModel, MVCCModel, PartitionedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *

@@ -43,7 +43,7 @@ import java.util.Map;
  */
 @ProviderType
 public interface RoleModel extends AttachedModel, BaseModel<Role>, LocalizedModel,
-	MVCCModel, StagedAuditedModel {
+	MVCCModel, PartitionedModel, StagedAuditedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *

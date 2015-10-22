@@ -14,6 +14,10 @@ AUI.add(
 						valueFn: '_valueContainer'
 					},
 
+					evaluation: {
+						value: null
+					},
+
 					portletNamespace: {
 						value: ''
 					}
@@ -74,6 +78,8 @@ AUI.add(
 							function(hasErrors) {
 								if (!hasErrors) {
 									var formNode = instance.getFormNode();
+
+									instance.showLoadingFeedback();
 
 									formNode.submit();
 								}
