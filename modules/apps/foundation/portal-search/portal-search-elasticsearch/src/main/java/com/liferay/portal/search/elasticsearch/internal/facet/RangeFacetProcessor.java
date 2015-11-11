@@ -79,7 +79,7 @@ public class RangeFacetProcessor
 
 			String[] range = RangeParserUtil.parserRange(rangeString);
 
-			defaultRangeBuilder.addRange(range[0], range[1]);
+			defaultRangeBuilder.addRange(rangeString, range[0], range[1]);
 		}
 	}
 
@@ -97,7 +97,7 @@ public class RangeFacetProcessor
 
 		String[] range = RangeParserUtil.parserRange(rangeString);
 
-		defaultRangeBuilder.addRange(range[0], range[1]);
+		defaultRangeBuilder.addRange(rangeString, range[0], range[1]);
 	}
 
 }
