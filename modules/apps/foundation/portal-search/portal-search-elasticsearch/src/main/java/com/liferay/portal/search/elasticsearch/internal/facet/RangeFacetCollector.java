@@ -16,9 +16,6 @@ package com.liferay.portal.search.elasticsearch.internal.facet;
 
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
-import com.liferay.portal.kernel.util.CharPool;
-import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.List;
 
@@ -57,19 +54,12 @@ public class RangeFacetCollector implements FacetCollector {
 			buckets.size());
 
 		for (Bucket bucket : buckets) {
-			String key = StringUtil.replace(
-				bucket.getKeyAsString(), CharPool.DASH, _TO_STRING);
-
-			key = StringPool.OPEN_BRACKET.concat(key).concat(
-				StringPool.CLOSE_BRACKET);
-
-			termCollectorHolder.add(key, (int)bucket.getDocCount());
+			termCollectorHolder.add(
+				bucket.getKeyAsString(), (int)bucket.getDocCount());
 		}
 
 		return termCollectorHolder;
 	}
-
-	private static final String _TO_STRING = " TO ";
 
 	private final String _fieldName;
 	private final TermCollectorHolder _termCollectorHolder;
