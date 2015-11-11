@@ -1,0 +1,149 @@
+<%--
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+--%>
+
+<%@ page import="com.liferay.portal.kernel.json.JSONArray" %>
+<%@ page import="com.liferay.portal.kernel.json.JSONObject" %>
+<%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
+<%@ page import="com.liferay.portal.kernel.search.facet.Facet" %>
+<%@ page import="com.liferay.portal.kernel.search.facet.collector.FacetCollector" %>
+<%@ page import="com.liferay.portal.kernel.search.facet.collector.TermCollector" %>
+<%@ page import="com.liferay.portal.kernel.search.facet.config.FacetConfiguration" %>
+<%@ page import="com.liferay.portal.kernel.util.HtmlUtil" %>
+<%@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
+<%@ page import="com.liferay.portal.kernel.util.StringPool" %>
+
+<%@ include file="/facets/init.jsp" %>
+
+<%
+Facet facet1 = facet;
+JSONObject dataJSONObject1 = dataJSONObject;
+FacetCollector facetCollector1 = facetCollector;
+FacetConfiguration facetConfiguration1 = facetConfiguration;
+javax.portlet.RenderResponse renderResponse1 = renderResponse;
+String randomNamespace1 = randomNamespace;
+
+String fieldParamSelection = ParamUtil.getString(request, facet1.getFieldId() + "selection", "0");
+
+JSONArray rangesJSONArray = dataJSONObject1.getJSONArray("ranges");
+
+String geodistanceLabel = StringPool.BLANK;
+
+int index = 0;
+
+if (fieldParamSelection.equals("0")) {
+	geodistanceLabel = LanguageUtil.get(request, HtmlUtil.escape(facetConfiguration1.getLabel()));
+}
+%>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<div class="panel-title">
+			<liferay-ui:message key="distance" />
+		</div>
+	</div>
+
+	<div class="panel-body">
+		<div class="<%= cssClass %>" data-facetFieldName="<%= HtmlUtil.escapeAttribute(facet1.getFieldId()) %>" id="<%= randomNamespace1 %>facet">
+			<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(facet1.getFieldId()) %>" type="hidden" value="<%= fieldParam %>" />
+			<aui:input autocomplete="off" name='<%= HtmlUtil.escapeAttribute(facet1.getFieldId()) + "selection" %>' type="hidden" value="<%= fieldParamSelection %>" />
+
+			<aui:field-wrapper cssClass='<%= randomNamespace1 + "calendar calendar_" %>' label="" name="<%= HtmlUtil.escapeAttribute(facet1.getFieldId()) %>">
+				<ul class="list-unstyled modified">
+					<li class="default facet-value">
+
+						<%
+						String defaultRangeCssClass = "text-default";
+
+						if (fieldParamSelection.equals("0")) {
+							defaultRangeCssClass = "text-primary";
+						}
+
+						String taglibClearFacet = "window['" + renderResponse1.getNamespace() + HtmlUtil.escapeJS(facet1.getFieldId()) + "clearFacet'](0);";
+						%>
+
+						<aui:a cssClass="<%= defaultRangeCssClass %>" href="javascript:;" onClick="<%= taglibClearFacet %>">
+							<liferay-ui:message key="<%= HtmlUtil.escape(facetConfiguration1.getLabel()) %>" />
+						</aui:a>
+					</li>
+
+					<%
+					for (int i = 0; i < rangesJSONArray.length(); i++) {
+						JSONObject rangesJSONObject = rangesJSONArray.getJSONObject(i);
+
+						String label = HtmlUtil.escape(rangesJSONObject.getString("label"));
+						String range = rangesJSONObject.getString("range");
+
+						index = (i + 1);
+
+						if (fieldParamSelection.equals(String.valueOf(index))) {
+							geodistanceLabel = LanguageUtil.get(request, label);
+						}
+					%>
+
+						<li class="facet-value">
+
+							<%
+							String rangeCssClass = "text-default";
+
+							if (fieldParamSelection.equals(String.valueOf(index))) {
+								rangeCssClass = "text-primary";
+							}
+
+							String taglibSetRange = "window['" + renderResponse1.getNamespace() + HtmlUtil.escapeJS(facet1.getFieldId()) + "setRange'](" + index + ", '" + HtmlUtil.escapeJS(range) + "');";
+							%>
+
+							<aui:a cssClass="<%= rangeCssClass %>" href="javascript:;" onClick="<%= taglibSetRange %>">
+								<liferay-ui:message key="<%= label %>" />
+
+								<%
+								TermCollector termCollector = facetCollector.getTermCollector(range);
+								%>
+
+								<c:if test="<%= termCollector != null %>">
+									<span class="frequency">(<%= termCollector.getFrequency() %>)</span>
+								</c:if>
+							</aui:a>
+						</li>
+
+					<%
+					}
+					%>
+
+				</ul>
+			</aui:field-wrapper>
+		</div>
+	</div>
+</div>
+
+<aui:script>
+	function <portlet:namespace /><%= HtmlUtil.escapeJS(facet1.getFieldId()) %>clearFacet(selection) {
+		var form = AUI.$(document.<portlet:namespace />fm);
+
+		form.fm('<%= HtmlUtil.escapeJS(facet1.getFieldId()) %>').val('');
+		form.fm('<%= HtmlUtil.escapeJS(facet1.getFieldId()) %>selection').val(selection);
+
+		submitForm(form);
+	}
+
+	function <portlet:namespace /><%= HtmlUtil.escapeJS(facet1.getFieldId()) %>setRange(selection, range) {
+		var form = AUI.$(document.<portlet:namespace />fm);
+
+		form.fm('<%= HtmlUtil.escapeJS(facet1.getFieldId()) %>').val(range);
+		form.fm('<%= HtmlUtil.escapeJS(facet1.getFieldId()) %>selection').val(selection);
+
+		submitForm(form);
+	}
+</aui:script>
