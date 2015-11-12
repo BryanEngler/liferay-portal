@@ -888,6 +888,11 @@ public class LayoutLocalServiceWrapper implements LayoutLocalService,
 			friendlyURL);
 	}
 
+	@Override
+	public com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		return _layoutLocalService.getIndexableActionableDynamicQuery();
+	}
+
 	/**
 	* Returns the layout matching the primary key, group, and privacy; throws a
 	* {@link NoSuchLayoutException} otherwise.

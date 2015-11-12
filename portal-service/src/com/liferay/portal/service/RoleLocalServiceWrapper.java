@@ -517,6 +517,11 @@ public class RoleLocalServiceWrapper implements RoleLocalService,
 		return _roleLocalService.getGroupRolesCount(groupId);
 	}
 
+	@Override
+	public com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		return _roleLocalService.getIndexableActionableDynamicQuery();
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*
