@@ -24,7 +24,7 @@ JSONObject dataJSONObject = searchFacet.getData();
 JSONArray rangesJSONArray = dataJSONObject.getJSONArray("ranges");
 %>
 
-<aui:fieldset id='<%= renderResponse.getNamespace() + "rangesId" %>'>
+<aui:fieldset id='<%= renderResponse.getNamespace() + "MODIFIEDrangesId" %>'>
 
 	<%
 	int[] rangesIndexes = new int[rangesJSONArray.length()];
@@ -53,7 +53,7 @@ JSONArray rangesJSONArray = dataJSONObject.getJSONArray("ranges");
 <aui:script use="liferay-auto-fields">
 	var autoFields = new Liferay.AutoFields(
 		{
-			contentBox: 'fieldset#<portlet:namespace />rangesId',
+			contentBox: 'fieldset#<portlet:namespace />MODIFIEDrangesId',
 			fieldIndexes: '<portlet:namespace /><%= searchFacet.getClassName() %>rangesIndexes',
 			namespace: '<portlet:namespace />'
 		}
