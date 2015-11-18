@@ -59,28 +59,27 @@ public class S3StoreTest extends BaseStoreTestCase {
 	@Override
 	@Test
 	public void testUpdateFileWithNewFileName() throws Exception {
-		String fileName = RandomTestUtil.randomString();
-
-		store.updateFile(
-			companyId, repositoryId, fileName, RandomTestUtil.randomString());
-
-		Assert.assertFalse(store.hasFile(companyId, repositoryId, fileName));
+		updateFileShouldNotUpdateFile();
 	}
 
 	@Override
 	@Test
 	public void testUpdateFileWithNewRepositoryId() throws Exception {
+		updateFileShouldNotUpdateFile();
+	}
+
+	@Override
+	protected String getStoreType() {
+		return "com.liferay.portal.store.s3.S3Store";
+	}
+
+	protected void updateFileShouldNotUpdateFile() throws Exception {
 		String fileName = RandomTestUtil.randomString();
 
 		store.updateFile(
 			companyId, repositoryId, fileName, RandomTestUtil.randomString());
 
 		Assert.assertFalse(store.hasFile(companyId, repositoryId, fileName));
-	}
-
-	@Override
-	protected String getStoreType() {
-		return "com.liferay.portal.store.s3.S3Store";
 	}
 
 }
