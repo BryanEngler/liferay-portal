@@ -576,10 +576,10 @@ public class JournalPortlet extends MVCPortlet {
 
 		if (uploadException != null) {
 			if (uploadException.isExceededLiferayFileItemSizeLimit()) {
-				throw new LiferayFileItemException();
+				throw new LiferayFileItemException(uploadException);
 			}
 			else if (uploadException.isExceededSizeLimit()) {
-				throw new ArticleContentSizeException();
+				throw new ArticleContentSizeException(uploadException);
 			}
 
 			throw new PortalException(uploadException.getCause());
