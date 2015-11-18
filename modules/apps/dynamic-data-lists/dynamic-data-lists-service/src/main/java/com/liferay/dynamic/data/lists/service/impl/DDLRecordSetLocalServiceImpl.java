@@ -408,7 +408,9 @@ public class DDLRecordSetLocalServiceImpl
 			ddmStructureId);
 
 		if (ddmStructure == null) {
-			throw new RecordSetDDMStructureIdException();
+			throw new RecordSetDDMStructureIdException(
+				"No DDMStructure found for {ddmStructureId=" +
+					ddmStructureId + "}");
 		}
 	}
 
@@ -418,7 +420,7 @@ public class DDLRecordSetLocalServiceImpl
 		String name = nameMap.get(LocaleUtil.getSiteDefault());
 
 		if (Validator.isNull(name)) {
-			throw new RecordSetNameException();
+			throw new RecordSetNameException("Name is null");
 		}
 	}
 
