@@ -124,8 +124,14 @@ public class AddTemplateMVCActionCommand extends DDMBaseMVCActionCommand {
 
 		String fileScriptContent = FileUtil.read(file);
 
-		if (Validator.isNotNull(fileScriptContent) && !isValidFile(file)) {
-			throw new TemplateScriptException();
+		String contentType = MimeTypesUtil.getContentType(file);
+
+		if (Validator.isNotNull(fileScriptContent) &&
+			!(contentType.equals(ContentTypes.APPLICATION_XSLT_XML) ||
+			contentType.startsWith(ContentTypes.TEXT))) {
+
+			throw new TemplateScriptException(
+				"Invalid contentType " + contentType);
 		}
 
 		return fileScriptContent;
@@ -141,18 +147,6 @@ public class AddTemplateMVCActionCommand extends DDMBaseMVCActionCommand {
 		}
 
 		return ParamUtil.getString(uploadPortletRequest, "scriptContent");
-	}
-
-	protected boolean isValidFile(File file) {
-		String contentType = MimeTypesUtil.getContentType(file);
-
-		if (contentType.equals(ContentTypes.APPLICATION_XSLT_XML) ||
-			contentType.startsWith(ContentTypes.TEXT)) {
-
-			return true;
-		}
-
-		return false;
 	}
 
 	@Reference(unbind = "-")
