@@ -576,10 +576,10 @@ public class JournalPortlet extends MVCPortlet {
 
 		if (uploadException != null) {
 			if (uploadException.isExceededLiferayFileItemSizeLimit()) {
-				throw new LiferayFileItemException();
+				throw new LiferayFileItemException(uploadException);
 			}
 			else if (uploadException.isExceededSizeLimit()) {
-				throw new ArticleContentSizeException();
+				throw new ArticleContentSizeException(uploadException);
 			}
 
 			throw new PortalException(uploadException.getCause());
@@ -641,16 +641,6 @@ public class JournalPortlet extends MVCPortlet {
 		String content = (String)contentAndImages[0];
 		Map<String, byte[]> images =
 			(HashMap<String, byte[]>)contentAndImages[1];
-
-		Boolean fileItemThresholdSizeExceeded =
-			(Boolean)uploadPortletRequest.getAttribute(
-				WebKeys.FILE_ITEM_THRESHOLD_SIZE_EXCEEDED);
-
-		if ((fileItemThresholdSizeExceeded != null) &&
-			fileItemThresholdSizeExceeded.booleanValue()) {
-
-			throw new ArticleContentSizeException();
-		}
 
 		String ddmTemplateKey = ParamUtil.getString(
 			uploadPortletRequest, "ddmTemplateKey");
