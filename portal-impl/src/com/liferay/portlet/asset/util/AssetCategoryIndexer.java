@@ -256,6 +256,8 @@ public class AssetCategoryIndexer extends BaseIndexer<AssetCategory> {
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
+		indexableActionableDynamicQuery.setParallel(true);
+
 		indexableActionableDynamicQuery.performActions();
 	}
 

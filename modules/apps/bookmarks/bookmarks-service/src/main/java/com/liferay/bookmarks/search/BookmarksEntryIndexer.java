@@ -206,6 +206,8 @@ public class BookmarksEntryIndexer extends BaseIndexer<BookmarksEntry> {
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
+		indexableActionableDynamicQuery.setParallel(true);
+
 		indexableActionableDynamicQuery.performActions();
 	}
 

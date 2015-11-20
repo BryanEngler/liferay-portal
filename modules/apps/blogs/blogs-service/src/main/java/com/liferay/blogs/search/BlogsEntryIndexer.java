@@ -203,6 +203,8 @@ public class BlogsEntryIndexer extends BaseIndexer<BlogsEntry> {
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
+		indexableActionableDynamicQuery.setParallel(true);
+
 		indexableActionableDynamicQuery.performActions();
 	}
 
