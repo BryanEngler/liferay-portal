@@ -557,6 +557,8 @@ public class BookmarksEntryLocalServiceImpl
 
 			});
 
+		indexableActionableDynamicQuery.setParallel(true);
+
 		indexableActionableDynamicQuery.performActions();
 	}
 

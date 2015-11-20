@@ -198,6 +198,8 @@ public class BookmarksFolderIndexer extends BaseIndexer<BookmarksFolder> {
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
+		indexableActionableDynamicQuery.setParallel(true);
+
 		indexableActionableDynamicQuery.performActions();
 	}
 

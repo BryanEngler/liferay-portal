@@ -4780,6 +4780,8 @@ public class JournalArticleLocalServiceImpl
 
 			});
 
+		indexableActionableDynamicQuery.setParallel(true);
+
 		indexableActionableDynamicQuery.performActions();
 	}
 

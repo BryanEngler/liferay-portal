@@ -353,6 +353,8 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 		});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
+		indexableActionableDynamicQuery.setParallel(true);
+
 		indexableActionableDynamicQuery.performActions();
 	}
 

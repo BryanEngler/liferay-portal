@@ -185,6 +185,8 @@ public class CalendarIndexer extends BaseIndexer<Calendar> {
 
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
+		indexableActionableDynamicQuery.setParallel(true);
+
 		indexableActionableDynamicQuery.performActions();
 	}
 

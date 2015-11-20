@@ -180,6 +180,8 @@ public class WikiNodeIndexer extends BaseIndexer<WikiNode> {
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
+		indexableActionableDynamicQuery.setParallel(true);
+
 		indexableActionableDynamicQuery.performActions();
 	}
 

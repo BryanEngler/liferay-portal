@@ -1835,6 +1835,8 @@ public class DLFileEntryLocalServiceImpl
 
 			});
 
+		indexableActionableDynamicQuery.setParallel(true);
+
 		indexableActionableDynamicQuery.performActions();
 	}
 

@@ -250,6 +250,8 @@ public class CalendarBookingIndexer extends BaseIndexer<CalendarBooking> {
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
+		indexableActionableDynamicQuery.setParallel(true);
+
 		indexableActionableDynamicQuery.performActions();
 	}
 
