@@ -48,11 +48,11 @@ import org.osgi.service.component.annotations.Reference;
  * @author Sergio González
  */
 @Component(
-		immediate = true, property = {"javax.portlet.name=" + WikiPortletKeys.WIKI},
-		service = AssetRendererFactory.class
+	immediate = true, property = {"javax.portlet.name=" + WikiPortletKeys.WIKI},
+	service = AssetRendererFactory.class
 )
 public class WikiPageAssetRendererFactory
-		extends BaseAssetRendererFactory<WikiPage> {
+	extends BaseAssetRendererFactory<WikiPage> {
 
 	public static final String TYPE = "wiki";
 
@@ -65,7 +65,7 @@ public class WikiPageAssetRendererFactory
 
 	@Override
 	public AssetRenderer<WikiPage> getAssetRenderer(long classPK, int type)
-			throws PortalException {
+		throws PortalException {
 
 		WikiPage page = _wikiPageLocalService.fetchWikiPage(classPK);
 
@@ -76,28 +76,28 @@ public class WikiPageAssetRendererFactory
 				}
 				catch (NoSuchPageException nspe) {
 					WikiPageResource pageResource =
-							_wikiPageResourceLocalService.getPageResource(classPK);
+						_wikiPageResourceLocalService.getPageResource(classPK);
 
 					page = _wikiPageLocalService.getPage(
-							pageResource.getNodeId(),
-							pageResource.getTitle(), null);
+						pageResource.getNodeId(), pageResource.getTitle(),
+						null);
 				}
 			}
 			else if (type == TYPE_LATEST) {
 				WikiPageResource pageResource =
-						_wikiPageResourceLocalService.getPageResource(classPK);
+					_wikiPageResourceLocalService.getPageResource(classPK);
 
 				page = _wikiPageLocalService.getPage(
-						pageResource.getNodeId(), pageResource.getTitle(), null);
+					pageResource.getNodeId(), pageResource.getTitle(), null);
 			}
 			else {
 				throw new IllegalArgumentException(
-						"Unknown asset renderer type " + type);
+					"Unknown asset renderer type " + type);
 			}
 		}
 
 		WikiPageAssetRenderer wikiPageAssetRenderer = new WikiPageAssetRenderer(
-				page);
+			page);
 
 		wikiPageAssetRenderer.setAssetRendererType(type);
 		wikiPageAssetRenderer.setServletContext(_servletContext);
@@ -122,12 +122,12 @@ public class WikiPageAssetRendererFactory
 
 	@Override
 	public PortletURL getURLView(
-			LiferayPortletResponse liferayPortletResponse,
-			WindowState windowState) {
+		LiferayPortletResponse liferayPortletResponse,
+		WindowState windowState) {
 
 		LiferayPortletURL liferayPortletURL =
-				liferayPortletResponse.createLiferayPortletURL(
-						WikiPortletKeys.WIKI, PortletRequest.RENDER_PHASE);
+			liferayPortletResponse.createLiferayPortletURL(
+				WikiPortletKeys.WIKI, PortletRequest.RENDER_PHASE);
 
 		try {
 			liferayPortletURL.setWindowState(windowState);
@@ -141,14 +141,14 @@ public class WikiPageAssetRendererFactory
 	@Override
 	public boolean hasPermission(
 			PermissionChecker permissionChecker, long classPK, String actionId)
-			throws Exception {
+		throws Exception {
 
 		return WikiPagePermissionChecker.contains(
-				permissionChecker, classPK, actionId);
+			permissionChecker, classPK, actionId);
 	}
 
 	@Reference(
-			target = "(osgi.web.symbolicname=com.liferay.wiki.web)", unbind = "-"
+		target = "(osgi.web.symbolicname=com.liferay.wiki.web)", unbind = "-"
 	)
 	public void setServletContext(ServletContext servletContext) {
 		_servletContext = servletContext;
@@ -161,20 +161,20 @@ public class WikiPageAssetRendererFactory
 
 	@Reference(unbind = "-")
 	protected void setWikiPageLocalService(
-			WikiPageLocalService wikiPageLocalService) {
+		WikiPageLocalService wikiPageLocalService) {
 
 		_wikiPageLocalService = wikiPageLocalService;
 	}
 
 	@Reference(unbind = "-")
 	protected void setWikiPageResourceLocalService(
-			WikiPageResourceLocalService wikiPageResourceLocalService) {
+		WikiPageResourceLocalService wikiPageResourceLocalService) {
 
 		_wikiPageResourceLocalService = wikiPageResourceLocalService;
 	}
 
-	private ServletContext _servletContext;
-	private WikiPageLocalService _wikiPageLocalService;
-	private WikiPageResourceLocalService _wikiPageResourceLocalService;
+	private volatile ServletContext _servletContext;
+	private volatile WikiPageLocalService _wikiPageLocalService;
+	private volatile WikiPageResourceLocalService _wikiPageResourceLocalService;
 
 }
