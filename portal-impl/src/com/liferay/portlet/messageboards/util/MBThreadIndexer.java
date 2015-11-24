@@ -297,6 +297,8 @@ public class MBThreadIndexer extends BaseIndexer<MBThread> {
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
+		indexableActionableDynamicQuery.setParallel(true);
+
 		indexableActionableDynamicQuery.performActions();
 	}
 

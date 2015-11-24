@@ -224,6 +224,8 @@ public class SCIndexer extends BaseIndexer<SCProductEntry> {
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
+		indexableActionableDynamicQuery.setParallel(true);
+
 		indexableActionableDynamicQuery.performActions();
 	}
 

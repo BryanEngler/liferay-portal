@@ -200,6 +200,8 @@ public class AssetVocabularyIndexer extends BaseIndexer<AssetVocabulary> {
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
+		indexableActionableDynamicQuery.setParallel(true);
+
 		indexableActionableDynamicQuery.performActions();
 	}
 

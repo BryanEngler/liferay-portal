@@ -196,6 +196,8 @@ public class JournalFolderIndexer
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
+		indexableActionableDynamicQuery.setParallel(true);
+
 		indexableActionableDynamicQuery.performActions();
 	}
 

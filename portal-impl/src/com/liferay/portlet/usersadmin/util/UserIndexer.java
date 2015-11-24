@@ -417,6 +417,8 @@ public class UserIndexer extends BaseIndexer<User> {
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
+		indexableActionableDynamicQuery.setParallel(true);
+
 		indexableActionableDynamicQuery.performActions();
 	}
 

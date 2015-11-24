@@ -184,6 +184,8 @@ public class UserGroupIndexer extends BaseIndexer<UserGroup> {
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
+		indexableActionableDynamicQuery.setParallel(true);
+
 		indexableActionableDynamicQuery.performActions();
 	}
 
