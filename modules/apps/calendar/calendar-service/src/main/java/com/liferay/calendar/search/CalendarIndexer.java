@@ -161,6 +161,7 @@ public class CalendarIndexer extends BaseIndexer<Calendar> {
 			_calendarLocalService.getIndexableActionableDynamicQuery();
 
 		indexableActionableDynamicQuery.setCompanyId(companyId);
+		indexableActionableDynamicQuery.setParallel(true);
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.PerformActionMethod<Calendar>() {
 
@@ -184,8 +185,6 @@ public class CalendarIndexer extends BaseIndexer<Calendar> {
 		});
 
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
-
-		indexableActionableDynamicQuery.setParallel(true);
 
 		indexableActionableDynamicQuery.performActions();
 	}

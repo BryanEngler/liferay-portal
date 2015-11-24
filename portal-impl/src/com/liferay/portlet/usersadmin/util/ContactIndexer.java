@@ -183,6 +183,7 @@ public class ContactIndexer extends BaseIndexer<Contact> {
 			ContactLocalServiceUtil.getIndexableActionableDynamicQuery();
 
 		indexableActionableDynamicQuery.setCompanyId(companyId);
+		indexableActionableDynamicQuery.setParallel(true);
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.PerformActionMethod<Contact>() {
 
@@ -208,8 +209,6 @@ public class ContactIndexer extends BaseIndexer<Contact> {
 
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
-
-		indexableActionableDynamicQuery.setParallel(true);
 
 		indexableActionableDynamicQuery.performActions();
 	}

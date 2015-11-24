@@ -436,6 +436,7 @@ public class MBMessageIndexer
 			});
 		indexableActionableDynamicQuery.setCompanyId(companyId);
 		indexableActionableDynamicQuery.setGroupId(groupId);
+		indexableActionableDynamicQuery.setParallel(true);
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.PerformActionMethod<MBMessage>() {
 
@@ -462,8 +463,6 @@ public class MBMessageIndexer
 
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
-
-		indexableActionableDynamicQuery.setParallel(true);
 
 		indexableActionableDynamicQuery.performActions();
 	}

@@ -170,6 +170,7 @@ public class JournalFolderIndexer
 			_journalFolderLocalService.getIndexableActionableDynamicQuery();
 
 		indexableActionableDynamicQuery.setCompanyId(companyId);
+		indexableActionableDynamicQuery.setParallel(true);
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.PerformActionMethod<JournalFolder>() {
 
@@ -195,8 +196,6 @@ public class JournalFolderIndexer
 
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
-
-		indexableActionableDynamicQuery.setParallel(true);
 
 		indexableActionableDynamicQuery.performActions();
 	}

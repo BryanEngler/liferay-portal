@@ -292,6 +292,7 @@ public class ExportImportConfigurationIndexer
 				getIndexableActionableDynamicQuery();
 
 		indexableActionableDynamicQuery.setCompanyId(companyId);
+		indexableActionableDynamicQuery.setParallel(true);
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.
 				PerformActionMethod<ExportImportConfiguration>() {
@@ -319,8 +320,6 @@ public class ExportImportConfigurationIndexer
 
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
-
-		indexableActionableDynamicQuery.setParallel(true);
 
 		indexableActionableDynamicQuery.performActions();
 	}

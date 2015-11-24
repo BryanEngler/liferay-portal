@@ -535,6 +535,7 @@ public class BookmarksEntryLocalServiceImpl
 		final Indexer<BookmarksEntry> indexer = IndexerRegistryUtil.getIndexer(
 			BookmarksEntry.class);
 
+		indexableActionableDynamicQuery.setParallel(true);
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.PerformActionMethod<BookmarksEntry>() {
 
@@ -556,8 +557,6 @@ public class BookmarksEntryLocalServiceImpl
 				}
 
 			});
-
-		indexableActionableDynamicQuery.setParallel(true);
 
 		indexableActionableDynamicQuery.performActions();
 	}

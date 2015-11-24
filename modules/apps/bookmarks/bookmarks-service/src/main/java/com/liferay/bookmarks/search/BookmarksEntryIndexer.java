@@ -183,6 +183,7 @@ public class BookmarksEntryIndexer extends BaseIndexer<BookmarksEntry> {
 			});
 		indexableActionableDynamicQuery.setCompanyId(companyId);
 		indexableActionableDynamicQuery.setGroupId(groupId);
+		indexableActionableDynamicQuery.setParallel(true);
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.PerformActionMethod<BookmarksEntry>() {
 
@@ -205,8 +206,6 @@ public class BookmarksEntryIndexer extends BaseIndexer<BookmarksEntry> {
 
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
-
-		indexableActionableDynamicQuery.setParallel(true);
 
 		indexableActionableDynamicQuery.performActions();
 	}

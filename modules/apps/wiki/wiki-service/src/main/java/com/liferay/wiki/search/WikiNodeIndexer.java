@@ -158,6 +158,7 @@ public class WikiNodeIndexer extends BaseIndexer<WikiNode> {
 
 			});
 		indexableActionableDynamicQuery.setCompanyId(companyId);
+		indexableActionableDynamicQuery.setParallel(true);
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.PerformActionMethod<WikiNode>() {
 
@@ -179,8 +180,6 @@ public class WikiNodeIndexer extends BaseIndexer<WikiNode> {
 
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
-
-		indexableActionableDynamicQuery.setParallel(true);
 
 		indexableActionableDynamicQuery.performActions();
 	}

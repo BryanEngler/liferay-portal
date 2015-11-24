@@ -174,6 +174,7 @@ public class AssetVocabularyIndexer extends BaseIndexer<AssetVocabulary> {
 				getIndexableActionableDynamicQuery();
 
 		indexableActionableDynamicQuery.setCompanyId(companyId);
+		indexableActionableDynamicQuery.setParallel(true);
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.PerformActionMethod<AssetVocabulary>() {
 
@@ -199,8 +200,6 @@ public class AssetVocabularyIndexer extends BaseIndexer<AssetVocabulary> {
 
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
-
-		indexableActionableDynamicQuery.setParallel(true);
 
 		indexableActionableDynamicQuery.performActions();
 	}

@@ -236,6 +236,7 @@ public class OrganizationIndexer extends BaseIndexer<Organization> {
 			OrganizationLocalServiceUtil.getIndexableActionableDynamicQuery();
 
 		indexableActionableDynamicQuery.setCompanyId(companyId);
+		indexableActionableDynamicQuery.setParallel(true);
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.PerformActionMethod<Organization>() {
 
@@ -258,8 +259,6 @@ public class OrganizationIndexer extends BaseIndexer<Organization> {
 
 			});
 		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
-
-		indexableActionableDynamicQuery.setParallel(true);
 
 		indexableActionableDynamicQuery.performActions();
 	}
