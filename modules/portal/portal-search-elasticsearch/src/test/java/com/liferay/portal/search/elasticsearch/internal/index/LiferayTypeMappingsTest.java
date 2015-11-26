@@ -66,7 +66,7 @@ public class LiferayTypeMappingsTest {
 		Client client = _elasticsearchFixture.getClient();
 
 		IndexRequestBuilder indexRequestBuilder = client.prepareIndex(
-			_index.getName(), _TYPE);
+			_index.getName(), LiferayTypeMappingsConstants.TYPE);
 
 		String field_pt = RandomTestUtil.randomString() + "_pt";
 		String field_pt_BR = RandomTestUtil.randomString() + "_pt_BR";
@@ -92,7 +92,6 @@ public class LiferayTypeMappingsTest {
 
 		Map<String, Object> mappings = fieldMappingMetaData.sourceAsMap();
 
-		@SuppressWarnings("unchecked")
 		Map<String, Object> mapping = (Map<String, Object>)mappings.get(field);
 
 		return (String)mapping.get("analyzer");
@@ -140,11 +139,9 @@ public class LiferayTypeMappingsTest {
 
 	protected FieldMappingMetaData getFieldMapping(final String field) {
 		return getFieldMapping(
-			_elasticsearchFixture.getAdminClient(), _index.getName(), _TYPE,
-			field);
+			_elasticsearchFixture.getAdminClient(), _index.getName(),
+			LiferayTypeMappingsConstants.TYPE, field);
 	}
-
-	private static final String _TYPE = LiferayTypeMappingsConstants.TYPE;
 
 	private ElasticsearchFixture _elasticsearchFixture;
 	private Index _index;
