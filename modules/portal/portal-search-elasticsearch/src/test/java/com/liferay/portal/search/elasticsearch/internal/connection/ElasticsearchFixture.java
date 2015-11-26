@@ -288,6 +288,7 @@ public class ElasticsearchFixture {
 
 		embeddedElasticsearchConnection.setClusterSettingsContext(
 			clusterSettingsContext);
+
 		embeddedElasticsearchConnection.setProps(props);
 
 		embeddedElasticsearchConnection.activate(

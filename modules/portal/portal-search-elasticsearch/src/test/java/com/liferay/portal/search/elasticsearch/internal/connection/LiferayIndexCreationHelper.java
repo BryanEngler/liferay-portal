@@ -46,12 +46,12 @@ public class LiferayIndexCreationHelper implements IndexCreationHelper {
 
 	private String read(String file) {
 		try (InputStream inputStream =
-			LiferayIndexCreationHelper.class.getResourceAsStream(file)) {
+				LiferayIndexCreationHelper.class.getResourceAsStream(file)) {
 
 			return StringUtil.read(inputStream);
 		}
-		catch (IOException e) {
-			throw new RuntimeException(e);
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
 		}
 	}
 
