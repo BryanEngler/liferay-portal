@@ -47,13 +47,18 @@ public class VerifyPostgreSQL extends VerifyProcess {
 		Statement statement = connection.createStatement();
 
 		verifyRules(statement, db);
+		deleteOrphanedLargeObjects(statement, db);
 	}
 
 	protected void verifyRules(Statement statement, DB db) throws Exception {
 
-		ResultSet rs = statement.executeQuery("SELECT * FROM " +
-			"pg_catalog.pg_rules WHERE rulename = 'delete_dlcontent_data_' " +
-			"OR rulename = 'update_dlcontent_data'");
+		StringBundler sb = new StringBundler(3);
+
+		sb.append("SELECT * FROM pg_catalog.pg_rules WHERE ");
+		sb.append("rulename = 'delete_dlcontent_data_' ");
+		sb.append("OR rulename = 'update_dlcontent_data'");
+
+		ResultSet rs = statement.executeQuery(sb.toString());
 
 		if (!rs.next()) {
 
@@ -64,6 +69,20 @@ public class VerifyPostgreSQL extends VerifyProcess {
 
 			db.runSQLTemplate("rules.sql", false);
 		}
+	}
+
+	protected void deleteOrphanedLargeObjects(Statement statement, DB db)
+		throws Exception {
+
+		StringBundler sb = new StringBundler(5);
+
+		sb.append("SELECT lo_unlink(l.loid) ");
+		sb.append("FROM pg_largeobject l ");
+		sb.append("GROUP BY loid ");
+		sb.append("HAVING (NOT EXISTS ");
+		sb.append("(SELECT 1 FROM dlcontent t WHERE t.data_ = l.loid));");
+
+		statement.executeQuery(sb.toString());
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
