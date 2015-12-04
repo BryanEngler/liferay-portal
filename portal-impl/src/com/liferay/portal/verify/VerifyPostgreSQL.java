@@ -18,21 +18,29 @@ import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.util.PropsValues;
 
-import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 
 /**
  * @author Michael Bowerman
  */
 public class VerifyPostgreSQL extends VerifyProcess {
+
+	protected void deleteOrphanedLargeObjects(Statement statement, DB db)
+		throws Exception {
+
+		StringBundler sb = new StringBundler(5);
+
+		sb.append("SELECT lo_unlink(l.loid) ");
+		sb.append("FROM pg_largeobject l ");
+		sb.append("GROUP BY loid ");
+		sb.append("HAVING (NOT EXISTS ");
+		sb.append("(SELECT 1 FROM dlcontent t WHERE t.data_ = l.loid));");
+
+		statement.executeQuery(sb.toString());
+	}
 
 	@Override
 	protected void doVerify() throws Exception {
@@ -51,7 +59,6 @@ public class VerifyPostgreSQL extends VerifyProcess {
 	}
 
 	protected void verifyRules(Statement statement, DB db) throws Exception {
-
 		StringBundler sb = new StringBundler(3);
 
 		sb.append("SELECT * FROM pg_catalog.pg_rules WHERE ");
@@ -61,7 +68,6 @@ public class VerifyPostgreSQL extends VerifyProcess {
 		ResultSet rs = statement.executeQuery(sb.toString());
 
 		if (!rs.next()) {
-
 			if (_log.isInfoEnabled()) {
 				_log.info(
 					"Adding rules for deleting and updating large documents");
@@ -69,20 +75,6 @@ public class VerifyPostgreSQL extends VerifyProcess {
 
 			db.runSQLTemplate("rules.sql", false);
 		}
-	}
-
-	protected void deleteOrphanedLargeObjects(Statement statement, DB db)
-		throws Exception {
-
-		StringBundler sb = new StringBundler(5);
-
-		sb.append("SELECT lo_unlink(l.loid) ");
-		sb.append("FROM pg_largeobject l ");
-		sb.append("GROUP BY loid ");
-		sb.append("HAVING (NOT EXISTS ");
-		sb.append("(SELECT 1 FROM dlcontent t WHERE t.data_ = l.loid));");
-
-		statement.executeQuery(sb.toString());
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
