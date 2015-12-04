@@ -133,6 +133,10 @@ public class ReleaseLocalServiceImpl extends ReleaseLocalServiceBaseImpl {
 			db.runSQLTemplate("indexes.sql", false);
 			db.runSQLTemplate("sequences.sql", false);
 
+			if (db.getType().equals(DB.TYPE_POSTGRESQL)) {
+				db.runSQLTemplate("rules.sql", false);
+			}
+
 			StartupHelperUtil.setDbNew(true);
 		}
 		catch (Exception e) {

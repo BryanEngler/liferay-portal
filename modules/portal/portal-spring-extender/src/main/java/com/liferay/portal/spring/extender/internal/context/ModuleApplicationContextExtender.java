@@ -269,6 +269,12 @@ public class ModuleApplicationContextExtender extends AbstractExtender {
 							db.runSQLTemplateString(
 								getSQLTemplateString("indexes.sql"), true,
 								true);
+
+							if (db.getType().equals(DB.TYPE_POSTGRESQL)) {
+								db.runSQLTemplateString(
+									getSQLTemplateString("rules.sql"), true,
+									true);
+							}
 						}
 						catch (Exception e) {
 							new UpgradeException(e);
