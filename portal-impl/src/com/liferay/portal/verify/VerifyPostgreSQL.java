@@ -31,13 +31,11 @@ public class VerifyPostgreSQL extends VerifyProcess {
 	protected void deleteOrphanedLargeObjects(Statement statement, DB db)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(5);
+		StringBundler sb = new StringBundler(3);
 
-		sb.append("SELECT lo_unlink(l.loid) ");
-		sb.append("FROM pg_largeobject l ");
-		sb.append("GROUP BY loid ");
-		sb.append("HAVING (NOT EXISTS ");
-		sb.append("(SELECT 1 FROM dlcontent t WHERE t.data_ = l.loid));");
+		sb.append("select lo_unlink(l.loid) from pg_largeobject l group by ");
+		sb.append("loid having (not exists (select 1 from DLContent t where ");
+		sb.append("t.data_ = l.loid));");
 
 		statement.executeQuery(sb.toString());
 	}
@@ -61,9 +59,9 @@ public class VerifyPostgreSQL extends VerifyProcess {
 	protected void verifyRules(Statement statement, DB db) throws Exception {
 		StringBundler sb = new StringBundler(3);
 
-		sb.append("SELECT * FROM pg_catalog.pg_rules WHERE ");
+		sb.append("selec * from pg_catalog.pg_rules where ");
 		sb.append("rulename = 'delete_dlcontent_data_' ");
-		sb.append("OR rulename = 'update_dlcontent_data'");
+		sb.append("or rulename = 'update_dlcontent_data'");
 
 		ResultSet rs = statement.executeQuery(sb.toString());
 

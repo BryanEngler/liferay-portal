@@ -3,11 +3,11 @@ import com.liferay.gradle.util.copy.RenameDependencyClosure
 
 buildscript {
 	repositories {
-		mavenLocal()
-
 		maven {
 			url System.properties["repository.url"] ?: "http://cdn.repository.liferay.com/nexus/content/groups/public"
 		}
+
+		mavenLocal()
 	}
 
 	dependencies {

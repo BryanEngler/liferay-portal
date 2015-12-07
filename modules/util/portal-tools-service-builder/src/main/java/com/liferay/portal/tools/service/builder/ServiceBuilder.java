@@ -794,9 +794,9 @@ public class ServiceBuilder {
 				_createServicePropsUtil();
 
 				_createSQLIndexes();
+				_createSQLRules();
 				_createSQLTables();
 				_createSQLSequences();
-				_createSQLRules();
 
 				_createProps();
 
@@ -3419,48 +3419,99 @@ public class ServiceBuilder {
 			_mkdir(sqlDir);
 		}
 
-		// indexes.sql loading
-
 		File sqlFile = new File(_sqlDirName + "/" + _sqlRulesFileName);
 
 		if (!sqlFile.exists()) {
 			_touch(sqlFile);
 		}
 
-		StringBundler sb = new StringBundler(29);
+		for (int i = 0; i < _ejbList.size(); i++) {
+			Entity entity = _ejbList.get(i);
 
-		sb.append("CREATE OR REPLACE RULE delete_DLContent_data_ AS ON DELETE TO DLContent ");
-		sb.append("DO ALSO ");
-		sb.append("SELECT ");
-		sb.append("CASE WHEN EXISTS( ");
-		sb.append("SELECT 1 FROM ");
-		sb.append("pg_catalog.pg_largeobject ");
-		sb.append("WHERE ");
-		sb.append("(loid = OLD.data_) ");
-		sb.append(") ");
-		sb.append("THEN ");
-		sb.append("lo_unlink(OLD.data_) ");
-		sb.append("END ");
-		sb.append("FROM DLContent ");
-		sb.append("WHERE DLContent.data_ = OLD.data_; ");
+			List<EntityRule> ruleList = entity.getRuleList();
 
-		sb.append("CREATE OR REPLACE RULE update_DLContent_data_ AS ON UPDATE TO DLContent ");
-		sb.append("WHERE OLD.data_ IS DISTINCT FROM NEW.data_ AND OLD.data_ IS NOT NULL ");
-		sb.append("DO ALSO ");
-		sb.append("SELECT ");
-		sb.append("CASE WHEN EXISTS( ");
-		sb.append("SELECT 1 FROM ");
-		sb.append("pg_catalog.pg_largeobject  ");
-		sb.append("WHERE ");
-		sb.append("(loid = OLD.data_) ");
-		sb.append(") ");
-		sb.append("THEN ");
-		sb.append("lo_unlink(OLD.data_) ");
-		sb.append("END ");
-		sb.append("FROM DLContent ");
-		sb.append("WHERE DLContent.data_ = OLD.data_;");
+			for (int j = 0; j < ruleList.size(); j++) {
+				EntityRule rule = ruleList.get(j);
 
-		ToolsUtil.writeFileRaw(sqlFile, sb.toString(), _modifiedFileNames);
+				String createRuleSQL = _getCreateRuleSQL(rule);
+
+				if (Validator.isNotNull(createRuleSQL)) {
+					_createSQLRules(sqlFile, createRuleSQL, rule, true);
+				}
+			}
+		}
+
+		String content = _read(sqlFile);
+
+		ToolsUtil.writeFileRaw(sqlFile, content.trim(), _modifiedFileNames);
+	}
+
+	private void _createSQLRules(
+			File sqlFile, String newCreateRuleString, EntityRule rule,
+			boolean addMissingRules)
+			throws IOException {
+
+		if (!sqlFile.exists()) {
+			_touch(sqlFile);
+		}
+
+		String content = _read(sqlFile);
+
+		String name = rule.getName();
+		String ruleContent = rule.getContent();
+
+		int x = content.indexOf(_SQL_CREATE_RULE + name);
+		int y = x + _SQL_CREATE_RULE.length() + name.length() +
+			content.length();
+
+		if (x != -1) {
+			String oldCreateTableString = content.substring(x, y);
+
+			if (!oldCreateTableString.equals(newCreateRuleString)) {
+				content =
+					content.substring(0, x) + newCreateRuleString +
+						content.substring(y);
+
+				_write(sqlFile, content);
+			}
+		}
+		else if (addMissingRules) {
+			try (UnsyncBufferedReader unsyncBufferedReader =
+					new UnsyncBufferedReader(new UnsyncStringReader(content))) {
+
+				StringBundler sb = new StringBundler();
+
+				String line = null;
+				boolean appendNewRule = true;
+
+				while ((line = unsyncBufferedReader.readLine()) != null) {
+					if (appendNewRule && line.startsWith(_SQL_CREATE_RULE)) {
+						x = _SQL_CREATE_RULE.length();
+						y = line.indexOf(" ", x);
+
+						String ruleName = line.substring(x, y);
+
+						if (ruleName.compareTo(rule.getName()) > 0) {
+							sb.append(newCreateRuleString);
+							sb.append("\n\n");
+
+							appendNewRule = false;
+						}
+					}
+
+					sb.append(line);
+					sb.append("\n");
+				}
+
+				if (appendNewRule) {
+					sb.append("\n");
+					sb.append(newCreateRuleString);
+				}
+
+				ToolsUtil.writeFileRaw(
+					sqlFile, sb.toString(), _modifiedFileNames);
+			}
+		}
 	}
 
 	private void _createSQLSequences() throws IOException {
@@ -4213,6 +4264,19 @@ public class ServiceBuilder {
 		}
 
 		sb.append(");");
+
+		return sb.toString();
+	}
+
+	private String _getCreateRuleSQL(EntityRule rule) {
+		StringBundler sb = new StringBundler();
+
+		sb.append(_SQL_CREATE_RULE);
+		sb.append(" ");
+		sb.append(rule.getName());
+		sb.append(" ");
+		sb.append(rule.getContent());
+		sb.append("\n");
 
 		return sb.toString();
 	}
@@ -5103,6 +5167,19 @@ public class ServiceBuilder {
 			}
 		}
 
+		List<EntityRule> ruleList = new ArrayList<>();
+
+		List<Element> ruleElements = entityElement.elements("rule");
+
+		for (Element ruleElement : ruleElements) {
+			String ruleName = ruleElement.attributeValue("name");
+			String ruleContent = ruleElement.attributeValue("content");
+
+			EntityRule rule = new EntityRule(ruleName, ruleContent);
+
+			ruleList.add(rule);
+		}
+
 		List<String> txRequiredList = new ArrayList<>();
 
 		List<Element> txRequiredElements = entityElement.elements(
@@ -5125,7 +5202,7 @@ public class ServiceBuilder {
 				sessionFactory, txManager, cacheEnabled, dynamicUpdateEnabled,
 				jsonEnabled, mvccEnabled, trashEnabled, deprecated, pkList,
 				regularColList, blobList, collectionList, columnList, order,
-				finderList, referenceList, unresolvedReferenceList,
+				finderList, referenceList, ruleList, unresolvedReferenceList,
 				txRequiredList, resourceActionModel));
 	}
 
@@ -5275,6 +5352,8 @@ public class ServiceBuilder {
 	private static final int _SESSION_TYPE_REMOTE = 0;
 
 	private static final String _SPRING_NAMESPACE_BEANS = "beans";
+
+	private static final String _SQL_CREATE_RULE = "create or replace rule ";
 
 	private static final String _SQL_CREATE_TABLE = "create table ";
 

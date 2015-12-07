@@ -126,6 +126,8 @@ public class ReleaseLocalServiceImpl extends ReleaseLocalServiceBaseImpl {
 
 			DB db = DBFactoryUtil.getDB();
 
+			String dbType = db.getType();
+
 			db.runSQLTemplate("portal-tables.sql", false);
 			db.runSQLTemplate("portal-data-common.sql", false);
 			db.runSQLTemplate("portal-data-counter.sql", false);
@@ -133,7 +135,7 @@ public class ReleaseLocalServiceImpl extends ReleaseLocalServiceBaseImpl {
 			db.runSQLTemplate("indexes.sql", false);
 			db.runSQLTemplate("sequences.sql", false);
 
-			if (db.getType().equals(DB.TYPE_POSTGRESQL)) {
+			if (dbType.equals(DB.TYPE_POSTGRESQL)) {
 				db.runSQLTemplate("rules.sql", false);
 			}
 
