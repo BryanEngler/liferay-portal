@@ -4269,10 +4269,9 @@ public class ServiceBuilder {
 	}
 
 	private String _getCreateRuleSQL(EntityRule rule) {
-		StringBundler sb = new StringBundler();
+		StringBundler sb = new StringBundler(5);
 
 		sb.append(_SQL_CREATE_RULE);
-		sb.append(" ");
 		sb.append(rule.getName());
 		sb.append(" ");
 		sb.append(rule.getContent());

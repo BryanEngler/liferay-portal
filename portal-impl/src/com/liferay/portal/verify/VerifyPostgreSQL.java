@@ -16,12 +16,19 @@ package com.liferay.portal.verify;
 
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
+import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
+import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.ClassLoaderUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringUtil;
 
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Michael Bowerman
@@ -57,25 +64,78 @@ public class VerifyPostgreSQL extends VerifyProcess {
 	}
 
 	protected void verifyRules(Statement statement, DB db) throws Exception {
-		StringBundler sb = new StringBundler(3);
+		ClassLoader classLoader = ClassLoaderUtil.getContextClassLoader();
 
-		sb.append("selec * from pg_catalog.pg_rules where ");
-		sb.append("rulename = 'delete_dlcontent_data_' ");
-		sb.append("or rulename = 'update_dlcontent_data'");
+		InputStream is = classLoader.getResourceAsStream(
+			"com/liferay/portal/tools/sql/dependencies/rules.sql");
 
-		ResultSet rs = statement.executeQuery(sb.toString());
+		if (is == null) {
+			is = classLoader.getResourceAsStream("rules.sql");
+		}
 
-		if (!rs.next()) {
-			if (_log.isInfoEnabled()) {
-				_log.info(
-					"Adding rules for deleting and updating large documents");
+		if (is == null) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"rules.sql file does not exist. No new rules will be " +
+					"created for this database.");
 			}
 
-			db.runSQLTemplate("rules.sql", false);
+			return;
+		}
+
+		List<String> ruleList = new ArrayList<String>();
+
+		String content = StringUtil.read(is);
+
+		try (UnsyncBufferedReader unsyncBufferedReader =
+				new UnsyncBufferedReader(new UnsyncStringReader(content))) {
+
+			int ruleNameIndex = 0;
+			int ruleDefinitionIndex = 0;
+
+			String line = null;
+
+			while ((line = unsyncBufferedReader.readLine()) != null) {
+				if (line.startsWith(_SQL_CREATE_RULE)) {
+					ruleNameIndex = _SQL_CREATE_RULE.length();
+					ruleDefinitionIndex = line.indexOf(" ", ruleNameIndex);
+
+					String rule = line.substring(
+						ruleNameIndex, ruleDefinitionIndex);
+
+					ruleList.add(rule);
+				}
+			}
+		}
+
+		ResultSet rs = null;
+
+		for (String rule : ruleList) {
+			StringBundler sb = new StringBundler(4);
+
+			sb.append("select * from pg_catalog.pg_rules where rulename = ");
+			sb.append("lower ('");
+			sb.append(rule);
+			sb.append("')");
+
+			rs = statement.executeQuery(sb.toString());
+
+			if (!rs.next()) {
+				if (_log.isInfoEnabled()) {
+					_log.info(
+						"Adding rules from rules.sql file");
+				}
+
+				db.runSQLTemplate("rules.sql", false);
+
+				break;
+			}
 		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		VerifyPostgreSQL.class);
 
+	private static final String _SQL_CREATE_RULE =
+		"create or replace rule ";
 }
