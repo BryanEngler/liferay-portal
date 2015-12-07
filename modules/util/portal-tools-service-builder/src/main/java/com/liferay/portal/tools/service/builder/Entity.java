@@ -107,8 +107,8 @@ public class Entity {
 		List<EntityColumn> regularColList, List<EntityColumn> blobList,
 		List<EntityColumn> collectionList, List<EntityColumn> columnList,
 		EntityOrder order, List<EntityFinder> finderList,
-		List<Entity> referenceList, List<EntityRule> ruleList,
-		List<String> unresolvedReferenceList, List<String> txRequiredList,
+		List<Entity> referenceList, List<String> unresolvedReferenceList,
+		List<EntityRule> ruleList, List<String> txRequiredList,
 		boolean resourceActionModel) {
 
 		_packagePath = packagePath;

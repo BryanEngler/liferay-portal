@@ -25,8 +25,10 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.InputStream;
+
 import java.sql.ResultSet;
 import java.sql.Statement;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +85,7 @@ public class VerifyPostgreSQL extends VerifyProcess {
 			return;
 		}
 
-		List<String> ruleList = new ArrayList<String>();
+		List<String> ruleList = new ArrayList<>();
 
 		String content = StringUtil.read(is);
 
@@ -122,8 +124,7 @@ public class VerifyPostgreSQL extends VerifyProcess {
 
 			if (!rs.next()) {
 				if (_log.isInfoEnabled()) {
-					_log.info(
-						"Adding rules from rules.sql file");
+					_log.info("Adding rules from rules.sql file");
 				}
 
 				db.runSQLTemplate("rules.sql", false);
@@ -133,9 +134,9 @@ public class VerifyPostgreSQL extends VerifyProcess {
 		}
 	}
 
+	private static final String _SQL_CREATE_RULE = "create or replace rule ";
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		VerifyPostgreSQL.class);
 
-	private static final String _SQL_CREATE_RULE =
-		"create or replace rule ";
 }

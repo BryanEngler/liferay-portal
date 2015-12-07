@@ -3449,7 +3449,7 @@ public class ServiceBuilder {
 	private void _createSQLRules(
 			File sqlFile, String newCreateRuleString, EntityRule rule,
 			boolean addMissingRules)
-			throws IOException {
+		throws IOException {
 
 		if (!sqlFile.exists()) {
 			_touch(sqlFile);
@@ -3458,11 +3458,11 @@ public class ServiceBuilder {
 		String content = _read(sqlFile);
 
 		String name = rule.getName();
-		String ruleContent = rule.getContent();
+		String definition = rule.getDefinition();
 
 		int x = content.indexOf(_SQL_CREATE_RULE + name);
-		int y = x + _SQL_CREATE_RULE.length() + name.length() +
-			content.length();
+		int y =
+			x + _SQL_CREATE_RULE.length() + name.length() + definition.length();
 
 		if (x != -1) {
 			String oldCreateTableString = content.substring(x, y);
@@ -4143,6 +4143,18 @@ public class ServiceBuilder {
 		return sb.toString();
 	}
 
+	private String _getCreateRuleSQL(EntityRule rule) {
+		StringBundler sb = new StringBundler(5);
+
+		sb.append(_SQL_CREATE_RULE);
+		sb.append(rule.getName());
+		sb.append(" ");
+		sb.append(rule.getDefinition());
+		sb.append("\n");
+
+		return sb.toString();
+	}
+
 	private String _getCreateTableSQL(Entity entity) {
 		List<EntityColumn> pkList = entity.getPKList();
 		List<EntityColumn> regularColList = entity.getRegularColList();
@@ -4264,18 +4276,6 @@ public class ServiceBuilder {
 		}
 
 		sb.append(");");
-
-		return sb.toString();
-	}
-
-	private String _getCreateRuleSQL(EntityRule rule) {
-		StringBundler sb = new StringBundler(5);
-
-		sb.append(_SQL_CREATE_RULE);
-		sb.append(rule.getName());
-		sb.append(" ");
-		sb.append(rule.getContent());
-		sb.append("\n");
 
 		return sb.toString();
 	}
@@ -5172,9 +5172,9 @@ public class ServiceBuilder {
 
 		for (Element ruleElement : ruleElements) {
 			String ruleName = ruleElement.attributeValue("name");
-			String ruleContent = ruleElement.attributeValue("content");
+			String ruleDefinition = ruleElement.attributeValue("definition");
 
-			EntityRule rule = new EntityRule(ruleName, ruleContent);
+			EntityRule rule = new EntityRule(ruleName, ruleDefinition);
 
 			ruleList.add(rule);
 		}
@@ -5201,7 +5201,7 @@ public class ServiceBuilder {
 				sessionFactory, txManager, cacheEnabled, dynamicUpdateEnabled,
 				jsonEnabled, mvccEnabled, trashEnabled, deprecated, pkList,
 				regularColList, blobList, collectionList, columnList, order,
-				finderList, referenceList, ruleList, unresolvedReferenceList,
+				finderList, referenceList, unresolvedReferenceList, ruleList,
 				txRequiredList, resourceActionModel));
 	}
 

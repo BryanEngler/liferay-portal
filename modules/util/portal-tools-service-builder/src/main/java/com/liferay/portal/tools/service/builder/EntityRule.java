@@ -19,9 +19,9 @@ package com.liferay.portal.tools.service.builder;
  */
 public class EntityRule {
 
-	public EntityRule(String name, String content) {
+	public EntityRule(String name, String definition) {
 		_name = name;
-		_content = content;
+		_definition = definition;
 	}
 
 	@Override
@@ -46,8 +46,8 @@ public class EntityRule {
 		}
 	}
 
-	public String getContent() {
-		return _content;
+	public String getDefinition() {
+		return _definition;
 	}
 
 	public String getName() {
@@ -59,7 +59,7 @@ public class EntityRule {
 		return _name.hashCode();
 	}
 
-	private final String _content;
+	private final String _definition;
 	private final String _name;
 
 }
