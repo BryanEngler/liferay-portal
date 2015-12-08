@@ -18,6 +18,7 @@ import com.liferay.application.list.PanelCategory;
 import com.liferay.application.list.constants.ApplicationListWebKeys;
 import com.liferay.application.list.constants.PanelCategoryKeys;
 import com.liferay.application.list.display.context.logic.PanelCategoryHelper;
+import com.liferay.application.list.util.LatentGroupManagerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.PortletProvider;
 import com.liferay.portal.kernel.portlet.PortletProviderUtil;
@@ -38,7 +39,6 @@ import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.exportimport.staging.StagingUtil;
 import com.liferay.product.navigation.product.menu.web.display.context.ProductMenuDisplayContext;
 import com.liferay.product.navigation.site.administration.application.list.SiteAdministrationPanelCategory;
-import com.liferay.product.navigation.site.administration.util.LatentGroupManagerUtil;
 
 import java.util.List;
 
@@ -108,6 +108,18 @@ public class SiteAdministrationPanelCategoryDisplayContext {
 		_groupName = group.getDescriptiveName(_themeDisplay.getLocale());
 
 		return _groupName;
+	}
+
+	public String getGroupURL() {
+		if (_groupURL != null) {
+			return _groupURL;
+		}
+
+		_groupURL = StringPool.BLANK;
+
+		Group group = getGroup();
+
+		return getGroupURL(group);
 	}
 
 	public String getGroupURL(boolean privateLayout) {
@@ -359,6 +371,22 @@ public class SiteAdministrationPanelCategoryDisplayContext {
 		}
 
 		return null;
+	}
+
+	protected String getGroupURL(Group group) {
+		String groupDisplayURL = group.getDisplayURL(_themeDisplay, false);
+
+		if (Validator.isNotNull(groupDisplayURL)) {
+			return groupDisplayURL;
+		}
+
+		groupDisplayURL = group.getDisplayURL(_themeDisplay, true);
+
+		if (Validator.isNotNull(groupDisplayURL)) {
+			return groupDisplayURL;
+		}
+
+		return getGroupAdministrationURL(group);
 	}
 
 	protected String getGroupURL(Group group, boolean privateLayout) {

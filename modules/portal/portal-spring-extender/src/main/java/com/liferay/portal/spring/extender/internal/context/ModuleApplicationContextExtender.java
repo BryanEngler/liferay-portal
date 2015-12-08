@@ -260,6 +260,8 @@ public class ModuleApplicationContextExtender extends AbstractExtender {
 
 						DB db = dbFactory.getDB();
 
+						String dbType = db.getType();
+
 						try {
 							db.runSQLTemplateString(
 								getSQLTemplateString("tables.sql"), true, true);
@@ -269,6 +271,12 @@ public class ModuleApplicationContextExtender extends AbstractExtender {
 							db.runSQLTemplateString(
 								getSQLTemplateString("indexes.sql"), true,
 								true);
+
+							if (dbType.equals(DB.TYPE_POSTGRESQL)) {
+								db.runSQLTemplateString(
+									getSQLTemplateString("rules.sql"), true,
+									true);
+							}
 						}
 						catch (Exception e) {
 							new UpgradeException(e);

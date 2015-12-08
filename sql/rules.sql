@@ -1,0 +1,3 @@
+create or replace rule delete_DLContent_data_ as on delete to DLContent do also select case when exists (select 1 from pg_catalog.pg_largeobject where (loid = old.data_)) then lo_unlink (old.data_) end from DLContent where DLContent.data_ = old.data_;
+
+create or replace rule update_DLContent_data_ as on update to DLContent where old.data_ is distinct from new.data_ and old.data_ is not null do also select case when exists (select 1 from pg_catalog.pg_largeobject where (loid = old.data_)) then lo_unlink (old.data_) end from DLContent where DLContent.data_ = old.data_;
