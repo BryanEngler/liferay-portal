@@ -131,6 +131,10 @@ public class StripDoctypeFilter {
 	}
 
 	protected StripDoctypeFilter(InputStream inputStream, Reader reader) {
+		if ((inputStream == null) && (reader == null)) {
+			throw new NullPointerException("No underlying source available");
+		}
+
 		_inputStream = inputStream;
 
 		_reader = reader;
@@ -147,11 +151,7 @@ public class StripDoctypeFilter {
 			return _inputStream.read();
 		}
 
-		if (_reader != null) {
-			return _reader.read();
-		}
-
-		throw new IllegalStateException("No underlying source available");
+		return _reader.read();
 	}
 
 	protected void setBuffer(int[] buffer) {
