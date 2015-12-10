@@ -142,6 +142,7 @@
 /sql/lportal.script
 /sql/portal
 /sql/portal-tables
+/sql/rules
 /sql/sequences
 /sql/sql.*.properties
 /sql/update-*

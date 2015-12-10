@@ -57,7 +57,7 @@
 			<copy todir="${portal-impl.classes.dir}/com/liferay/portal/tools/sql/dependencies" preservelastmodified="true">
 				<fileset
 					dir="${project.dir}/sql"
-					includes="portal-data-common.sql,portal-data-counter.sql,portal-data-release.sql,portal-tables.sql,indexes.properties,indexes.sql,sequences.sql,update-*.sql"
+					includes="portal-data-common.sql,portal-data-counter.sql,portal-data-release.sql,portal-tables.sql,indexes.properties,indexes.sql,rules.sql,sequences.sql,update-*.sql"
 				/>
 			</copy>
 
@@ -659,6 +659,7 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 			<arg value="service.sql.dir=${basedir}/../sql" />
 			<arg value="service.sql.file=portal-tables.sql" />
 			<arg value="service.sql.indexes.file=indexes.sql" />
+			<arg value="service.sql.rules.file=rules.sql" />
 			<arg value="service.sql.sequences.file=sequences.sql" />
 			<arg value="service.target.entity.name=${service.target.entity.name}" />
 			<arg value="service.test.dir=${basedir}/test/integration" />
