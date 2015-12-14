@@ -55,6 +55,26 @@ public class WikiPagePermissionChecker implements BaseModelPermissionChecker {
 	}
 
 	public static void check(
+			PermissionChecker permissionChecker, long resourcePrimKey,
+			String actionId, boolean assetEntryVisible)
+		throws PortalException {
+
+		if (assetEntryVisible) {
+			check(permissionChecker, resourcePrimKey, actionId);
+		}
+		else {
+			WikiPage page = _wikiPageLocalService.fetchPage(resourcePrimKey);
+
+			if (page == null) {
+				page = _wikiPageLocalService.getPage(
+					resourcePrimKey, (Boolean)null);
+			}
+
+			check(permissionChecker, page, actionId);
+		}
+	}
+
+	public static void check(
 			PermissionChecker permissionChecker, long nodeId, String title,
 			double version, String actionId)
 		throws PortalException {
@@ -208,10 +228,10 @@ public class WikiPagePermissionChecker implements BaseModelPermissionChecker {
 	@Override
 	public void checkBaseModel(
 			PermissionChecker permissionChecker, long groupId, long primaryKey,
-			String actionId)
+			String actionId, boolean assetEntryVisible)
 		throws PortalException {
 
-		check(permissionChecker, primaryKey, actionId);
+		check(permissionChecker, primaryKey, actionId, assetEntryVisible);
 	}
 
 	@Reference(unbind = "-")

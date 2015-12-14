@@ -39,7 +39,8 @@ public interface DiscussionPermission {
 		throws PortalException;
 
 	public boolean hasAddPermission(
-			long companyId, long groupId, String className, long classPK)
+			long companyId, long groupId, String className, long classPK,
+			boolean assetEntryVisible)
 		throws PortalException;
 
 	public boolean hasDeletePermission(long commentId) throws PortalException;
@@ -54,7 +55,8 @@ public interface DiscussionPermission {
 	public boolean hasUpdatePermission(long commentId) throws PortalException;
 
 	public boolean hasViewPermission(
-			long companyId, long groupId, String className, long classPK)
+			long companyId, long groupId, String className, long classPK,
+			boolean assetEntryVisible)
 		throws PortalException;
 
 }

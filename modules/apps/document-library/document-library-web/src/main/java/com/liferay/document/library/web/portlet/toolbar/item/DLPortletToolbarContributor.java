@@ -94,7 +94,7 @@ public class DLPortletToolbarContributor implements PortletToolbarContributor {
 		if (!containsPermission(
 				themeDisplay.getPermissionChecker(),
 				themeDisplay.getScopeGroupId(), folderId,
-				ActionKeys.ADD_DOCUMENT)) {
+				ActionKeys.ADD_DOCUMENT, true)) {
 
 			return;
 		}
@@ -144,8 +144,8 @@ public class DLPortletToolbarContributor implements PortletToolbarContributor {
 
 		if (!containsPermission(
 				themeDisplay.getPermissionChecker(),
-				themeDisplay.getScopeGroupId(), folderId,
-				ActionKeys.ADD_FOLDER)) {
+				themeDisplay.getScopeGroupId(), folderId, ActionKeys.ADD_FOLDER,
+				true)) {
 
 			return;
 		}
@@ -199,7 +199,7 @@ public class DLPortletToolbarContributor implements PortletToolbarContributor {
 		if (!containsPermission(
 				themeDisplay.getPermissionChecker(),
 				themeDisplay.getScopeGroupId(), folderId,
-				ActionKeys.ADD_DOCUMENT)) {
+				ActionKeys.ADD_DOCUMENT, true)) {
 
 			return;
 		}
@@ -244,7 +244,7 @@ public class DLPortletToolbarContributor implements PortletToolbarContributor {
 				themeDisplay.getPermissionChecker(),
 				themeDisplay.getScopeGroupId(),
 				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
-				ActionKeys.ADD_REPOSITORY)) {
+				ActionKeys.ADD_REPOSITORY, true)) {
 
 			return;
 		}
@@ -286,7 +286,7 @@ public class DLPortletToolbarContributor implements PortletToolbarContributor {
 		if (!containsPermission(
 				themeDisplay.getPermissionChecker(),
 				themeDisplay.getScopeGroupId(), folderId,
-				ActionKeys.ADD_SHORTCUT)) {
+				ActionKeys.ADD_SHORTCUT, true)) {
 
 			return;
 		}
@@ -319,11 +319,12 @@ public class DLPortletToolbarContributor implements PortletToolbarContributor {
 
 	protected boolean containsPermission(
 		PermissionChecker permissionChecker, long groupId, long folderId,
-		String actionId) {
+		String actionId, boolean assetEntryVisible) {
 
 		try {
 			_baseModelPermissionChecker.checkBaseModel(
-				permissionChecker, groupId, folderId, actionId);
+				permissionChecker, groupId, folderId, actionId,
+				assetEntryVisible);
 		}
 		catch (PortalException pe) {
 			return false;
