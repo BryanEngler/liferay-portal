@@ -23,7 +23,7 @@ public interface BaseModelPermissionChecker {
 
 	public void checkBaseModel(
 			PermissionChecker permissionChecker, long groupId, long primaryKey,
-			String actionId)
+			String actionId, boolean assetEntryVisible)
 		throws PortalException;
 
 }

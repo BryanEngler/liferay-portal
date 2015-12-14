@@ -122,7 +122,7 @@ public class PermissionServiceImpl extends PermissionServiceBaseImpl {
 
 		if (baseModelPermissionChecker != null) {
 			baseModelPermissionChecker.checkBaseModel(
-				permissionChecker, groupId, classPK, actionId);
+				permissionChecker, groupId, classPK, actionId, true);
 
 			return true;
 		}

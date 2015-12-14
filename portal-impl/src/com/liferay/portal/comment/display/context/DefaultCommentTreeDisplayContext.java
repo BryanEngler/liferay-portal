@@ -147,7 +147,8 @@ public class DefaultCommentTreeDisplayContext
 			_discussionRequestHelper.getCompanyId(),
 			_discussionRequestHelper.getScopeGroupId(),
 			_discussionTaglibHelper.getClassName(),
-			_discussionTaglibHelper.getClassPK());
+			_discussionTaglibHelper.getClassPK(),
+			_discussionTaglibHelper.isAssetEntryVisible());
 	}
 
 	@Override
@@ -188,7 +189,8 @@ public class DefaultCommentTreeDisplayContext
 			_discussionRequestHelper.getCompanyId(),
 			_discussionRequestHelper.getScopeGroupId(),
 			_discussionTaglibHelper.getClassName(),
-			_discussionTaglibHelper.getClassPK());
+			_discussionTaglibHelper.getClassPK(),
+			_discussionTaglibHelper.isAssetEntryVisible());
 	}
 
 	protected boolean isCommentApproved() {

@@ -96,8 +96,8 @@ public class BookmarksPortletToolbarContributor
 
 		if (!containsPermission(
 				themeDisplay.getPermissionChecker(),
-				themeDisplay.getScopeGroupId(), folderId,
-				ActionKeys.ADD_ENTRY)) {
+				themeDisplay.getScopeGroupId(), folderId, ActionKeys.ADD_ENTRY,
+				true)) {
 
 			return;
 		}
@@ -134,8 +134,8 @@ public class BookmarksPortletToolbarContributor
 
 		if (!containsPermission(
 				themeDisplay.getPermissionChecker(),
-				themeDisplay.getScopeGroupId(), folderId,
-				ActionKeys.ADD_FOLDER)) {
+				themeDisplay.getScopeGroupId(), folderId, ActionKeys.ADD_FOLDER,
+				true)) {
 
 			return;
 		}
@@ -166,11 +166,12 @@ public class BookmarksPortletToolbarContributor
 
 	protected boolean containsPermission(
 		PermissionChecker permissionChecker, long groupId, long folderId,
-		String actionId) {
+		String actionId, boolean assetEntryVisible) {
 
 		try {
 			_baseModelPermissionChecker.checkBaseModel(
-				permissionChecker, groupId, folderId, actionId);
+				permissionChecker, groupId, folderId, actionId,
+				assetEntryVisible);
 		}
 		catch (PortalException pe) {
 			return false;

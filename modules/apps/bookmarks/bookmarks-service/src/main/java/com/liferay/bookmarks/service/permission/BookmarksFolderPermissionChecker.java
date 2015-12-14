@@ -134,7 +134,7 @@ public class BookmarksFolderPermissionChecker
 	@Override
 	public void checkBaseModel(
 			PermissionChecker permissionChecker, long groupId, long primaryKey,
-			String actionId)
+			String actionId, boolean assetEntryVisible)
 		throws PortalException {
 
 		check(permissionChecker, groupId, primaryKey, actionId);

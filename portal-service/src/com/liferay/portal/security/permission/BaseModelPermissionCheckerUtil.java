@@ -24,7 +24,7 @@ public class BaseModelPermissionCheckerUtil {
 
 	public static Boolean containsBaseModelPermission(
 		PermissionChecker permissionChecker, long groupId, String className,
-		long classPK, String actionId) {
+		long classPK, String actionId, boolean assetEntryVisible) {
 
 		BaseModelPermissionChecker baseModelPermissionChecker =
 			_serviceTrackerMap.getService(className);
@@ -35,7 +35,8 @@ public class BaseModelPermissionCheckerUtil {
 
 		try {
 			baseModelPermissionChecker.checkBaseModel(
-				permissionChecker, groupId, classPK, actionId);
+				permissionChecker, groupId, classPK, actionId,
+				assetEntryVisible);
 		}
 		catch (Exception e) {
 			return false;

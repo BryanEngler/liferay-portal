@@ -79,6 +79,16 @@ public class MBDiscussionPermission implements BaseModelPermissionChecker {
 		PermissionChecker permissionChecker, long companyId, long groupId,
 		String className, long classPK, String actionId) {
 
+		return contains(
+			permissionChecker, companyId, groupId, className, classPK, actionId,
+			true);
+	}
+
+	public static boolean contains(
+		PermissionChecker permissionChecker, long companyId, long groupId,
+		String className, long classPK, String actionId,
+		boolean assetEntryVisible) {
+
 		if (MBBanLocalServiceUtil.hasBan(
 				groupId, permissionChecker.getUserId())) {
 
@@ -120,7 +130,8 @@ public class MBDiscussionPermission implements BaseModelPermissionChecker {
 
 		hasPermission =
 			BaseModelPermissionCheckerUtil.containsBaseModelPermission(
-				permissionChecker, groupId, className, classPK, actionId);
+				permissionChecker, groupId, className, classPK, actionId,
+				assetEntryVisible);
 
 		if (hasPermission != null) {
 			return hasPermission.booleanValue();
@@ -170,7 +181,7 @@ public class MBDiscussionPermission implements BaseModelPermissionChecker {
 	@Override
 	public void checkBaseModel(
 			PermissionChecker permissionChecker, long groupId, long primaryKey,
-			String actionId)
+			String actionId, boolean assetEntryVisible)
 		throws PortalException {
 
 		MBDiscussion mbDiscussion =

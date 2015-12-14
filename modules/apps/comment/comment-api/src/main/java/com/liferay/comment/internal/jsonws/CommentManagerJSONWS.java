@@ -148,7 +148,7 @@ public class CommentManagerJSONWS extends BaseServiceImpl {
 
 		BaseModelPermissionCheckerUtil.containsBaseModelPermission(
 			getPermissionChecker(), groupId, className, classPK,
-			ActionKeys.VIEW);
+			ActionKeys.VIEW, true);
 
 		return _commentManager.hasDiscussion(className, classPK);
 	}

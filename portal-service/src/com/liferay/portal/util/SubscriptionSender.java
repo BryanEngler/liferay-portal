@@ -477,7 +477,7 @@ public class SubscriptionSender implements Serializable {
 			hasPermission =
 				BaseModelPermissionCheckerUtil.containsBaseModelPermission(
 					permissionChecker, groupId, className, classPK,
-					ActionKeys.VIEW);
+					ActionKeys.VIEW, true);
 
 			if ((hasPermission == null) || !hasPermission) {
 				return false;
@@ -513,7 +513,7 @@ public class SubscriptionSender implements Serializable {
 		if (resourceAction != null) {
 			return BaseModelPermissionCheckerUtil.containsBaseModelPermission(
 				permissionChecker, groupId, subscription.getClassName(),
-				subscription.getClassPK(), ActionKeys.SUBSCRIBE);
+				subscription.getClassPK(), ActionKeys.SUBSCRIBE, true);
 		}
 
 		return Boolean.TRUE;

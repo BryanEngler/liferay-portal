@@ -29,7 +29,7 @@ public abstract class BaseDiscussionPermission implements DiscussionPermission {
 			long companyId, long groupId, String className, long classPK)
 		throws PortalException {
 
-		if (!hasAddPermission(companyId, groupId, className, classPK)) {
+		if (!hasAddPermission(companyId, groupId, className, classPK, true)) {
 			throw new PrincipalException.MustHavePermission(
 				0, className, classPK, ActionKeys.ADD_DISCUSSION);
 		}
@@ -66,7 +66,7 @@ public abstract class BaseDiscussionPermission implements DiscussionPermission {
 			long companyId, long groupId, String className, long classPK)
 		throws PortalException {
 
-		if (!hasViewPermission(companyId, groupId, className, classPK)) {
+		if (!hasViewPermission(companyId, groupId, className, classPK, true)) {
 			throw new PrincipalException.MustHavePermission(
 				0, className, classPK, ActionKeys.VIEW);
 		}

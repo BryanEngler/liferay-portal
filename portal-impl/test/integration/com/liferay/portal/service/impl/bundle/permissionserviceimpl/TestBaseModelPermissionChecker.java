@@ -39,7 +39,7 @@ public class TestBaseModelPermissionChecker
 	@Override
 	public void checkBaseModel(
 		PermissionChecker permissionChecker, long groupId, long primaryKey,
-		String actionId) {
+		String actionId, boolean assetEntryVisible) {
 
 		_atomicReference.set(StackTraceUtil.getCallerKey());
 
