@@ -116,6 +116,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.time.StopWatch;
 
@@ -1393,15 +1394,16 @@ public class PortletImportController implements ImportController {
 					StringUtil.split(
 						headerElement.attributeValue("available-locales"))));
 
-			for (Locale sourceAvailableLocale : sourceAvailableLocales) {
-				if (!LanguageUtil.isAvailableLocale(
-						PortalUtil.getSiteGroupId(groupId),
-						sourceAvailableLocale)) {
+			Set<Locale> targetAvailableLocales =
+				LanguageUtil.getAvailableLocales(
+					PortalUtil.getSiteGroupId(groupId));
 
+			for (Locale targetAvailableLocale : targetAvailableLocales) {
+				if (!sourceAvailableLocales.contains(targetAvailableLocale)) {
 					LocaleException le = new LocaleException(
 						LocaleException.TYPE_EXPORT_IMPORT,
-						"Locale " + sourceAvailableLocale + " is not " +
-							"available in company " + companyId);
+						"Locale " + targetAvailableLocale + " is not " +
+							"available for company " + companyId);
 
 					le.setSourceAvailableLocales(sourceAvailableLocales);
 					le.setTargetAvailableLocales(
