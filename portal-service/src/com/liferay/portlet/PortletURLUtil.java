@@ -14,6 +14,9 @@
 
 package com.liferay.portlet;
 
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
@@ -347,6 +350,26 @@ public class PortletURLUtil {
 		}
 
 		return refreshUrlParameters;
+	}
+
+	public static String getRefreshURLParametersJSON(
+		HttpServletRequest request) {
+
+		JSONObject parametersJSON = JSONFactoryUtil.createJSONObject();
+
+		Map<String, String[]> parameters = getRefreshURLParameters(request);
+
+		for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
+			JSONArray valueArray = JSONFactoryUtil.createJSONArray();
+
+			for (String value : entry.getValue()) {
+				valueArray.put(value);
+			}
+
+			parametersJSON.put(entry.getKey(), valueArray);
+		}
+
+		return parametersJSON.toString();
 	}
 
 	protected static boolean isRefreshURLReservedParameter(
