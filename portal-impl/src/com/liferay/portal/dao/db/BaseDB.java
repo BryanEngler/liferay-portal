@@ -409,6 +409,7 @@ public abstract class BaseDB implements DB {
 				}
 				else {
 					sb.append(line);
+					sb.append(StringPool.NEW_LINE);
 
 					if (line.endsWith(";")) {
 						String sql = sb.toString();
@@ -760,7 +761,7 @@ public abstract class BaseDB implements DB {
 				}
 			}
 			else if (!tablesSQLLowerCase.contains(
-						"create table " + tableNameLowerCase + " (")) {
+						CREATE_TABLE + tableNameLowerCase + " (")) {
 
 				continue;
 			}
@@ -969,7 +970,7 @@ public abstract class BaseDB implements DB {
 
 					String[] columns = StringUtil.split(line.substring(x, y));
 
-					x = portalData.indexOf("create table " + table + " (");
+					x = portalData.indexOf(CREATE_TABLE + table + " (");
 					y = portalData.indexOf(");", x);
 
 					String portalTableData = portalData.substring(x, y);
@@ -1096,6 +1097,8 @@ public abstract class BaseDB implements DB {
 	protected static final String ALTER_COLUMN_TYPE = "alter_column_type ";
 
 	protected static final String ALTER_TABLE_NAME = "alter_table_name ";
+
+	protected static final String CREATE_TABLE = "create table ";
 
 	protected static final String DROP_INDEX = "drop index";
 
