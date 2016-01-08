@@ -187,7 +187,8 @@ public class ElasticsearchConnectionManager {
 			catch (Exception e) {
 				if (_log.isWarnEnabled()) {
 					_log.warn(
-						"Unable to reinitialize index for: " + companyId, e);
+						"Unable to reinitialize index for company " + companyId,
+						e);
 				}
 			}
 		}
