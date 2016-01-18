@@ -99,47 +99,45 @@
 >
 
 	<%
-	int usersCount = GetterUtil.getInteger(groupUsersCounts.get(curGroup.getGroupId()));
+	String message = "inherited-memberships-are-not-included-in-members-count";
 	%>
 
-	<c:if test="<%= usersCount > 0 %>">
-		<div class="user-count">
-			<%= LanguageUtil.format(request, usersCount > 1 ? "x-users" : "x-user", usersCount, false) %>
-		</div>
-	</c:if>
+	<span onmouseover="Liferay.Portal.ToolTip.show(this, '<%= LanguageUtil.get(request, message) %>');">
 
-	<%
-	LinkedHashMap<String, Object> organizationParams = new LinkedHashMap<String, Object>();
+		<%
+		int usersCount = UserLocalServiceUtil.getGroupUsersCount(curGroup.getGroupId());
+		%>
 
-	organizationParams.put("groupOrganization", Long.valueOf(curGroup.getGroupId()));
-	organizationParams.put("organizationsGroups", Long.valueOf(curGroup.getGroupId()));
+		<c:if test="<%= usersCount > 0 %>">
+			<div class="user-count">
+				<%= LanguageUtil.format(request, usersCount > 1 ? "x-users" : "x-user", usersCount, false) %>
+			</div>
+		</c:if>
 
-	int organizationsCount = OrganizationLocalServiceUtil.searchCount(company.getCompanyId(), OrganizationConstants.ANY_PARENT_ORGANIZATION_ID, null, null, null, null, organizationParams);
-	%>
+		<%
+		int organizationsCount = OrganizationLocalServiceUtil.getGroupOrganizationsCount(curGroup.getGroupId());
+		%>
 
-	<c:if test="<%= organizationsCount > 0 %>">
-		<div class="organization-count">
-			<%= LanguageUtil.format(request, organizationsCount > 1 ? "x-organizations" : "x-organization", organizationsCount, false) %>
-		</div>
-	</c:if>
+		<c:if test="<%= organizationsCount > 0 %>">
+			<div class="organization-count">
+				<%= LanguageUtil.format(request, organizationsCount > 1 ? "x-organizations" : "x-organization", organizationsCount, false) %>
+			</div>
+		</c:if>
 
-	<%
-	LinkedHashMap<String, Object> userGroupParams = new LinkedHashMap<String, Object>();
+		<%
+		int userGroupsCount = UserGroupLocalServiceUtil.getGroupUserGroupsCount(curGroup.getGroupId());
+		%>
 
-	userGroupParams.put("userGroupsGroups", Long.valueOf(curGroup.getGroupId()));
+		<c:if test="<%= userGroupsCount > 0 %>">
+			<div class="user-group-count">
+				<%= LanguageUtil.format(request, userGroupsCount > 1 ? "x-user-groups" : "x-user-group", userGroupsCount, false) %>
+			</div>
+		</c:if>
 
-	int userGroupsCount = UserGroupLocalServiceUtil.searchCount(company.getCompanyId(), null, userGroupParams);
-	%>
-
-	<c:if test="<%= userGroupsCount > 0 %>">
-		<div class="user-group-count">
-			<%= LanguageUtil.format(request, userGroupsCount > 1 ? "x-user-groups" : "x-user-group", userGroupsCount, false) %>
-		</div>
-	</c:if>
-
-	<c:if test="<%= (usersCount + organizationsCount + userGroupsCount) <= 0 %>">
-		0
-	</c:if>
+		<c:if test="<%= (usersCount + organizationsCount + userGroupsCount) <= 0 %>">
+			0
+		</c:if>
+	</span>
 </liferay-ui:search-container-column-text>
 
 <c:if test="<%= PropsValues.LIVE_USERS_ENABLED %>">
