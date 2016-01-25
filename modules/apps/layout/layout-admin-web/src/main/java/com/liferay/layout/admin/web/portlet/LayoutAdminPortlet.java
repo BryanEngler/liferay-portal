@@ -39,6 +39,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.MultiSessionMessages;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.upload.UploadException;
@@ -67,7 +68,6 @@ import com.liferay.portal.model.LayoutTypePortlet;
 import com.liferay.portal.model.Theme;
 import com.liferay.portal.model.ThemeSetting;
 import com.liferay.portal.model.impl.ThemeSettingImpl;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.GroupLocalService;
 import com.liferay.portal.service.GroupService;
 import com.liferay.portal.service.LayoutLocalService;
@@ -330,9 +330,9 @@ public class LayoutAdminPortlet extends MVCPortlet {
 
 		String redirect = ParamUtil.getString(actionRequest, "redirect");
 
-		long plid = ParamUtil.getLong(actionRequest, "plid");
+		long selPlid = ParamUtil.getLong(actionRequest, "selPlid");
 
-		if (plid <= 0) {
+		if (selPlid <= 0) {
 			long groupId = ParamUtil.getLong(actionRequest, "groupId");
 			boolean privateLayout = ParamUtil.getBoolean(
 				actionRequest, "privateLayout");
@@ -341,13 +341,13 @@ public class LayoutAdminPortlet extends MVCPortlet {
 			Layout layout = layoutLocalService.getLayout(
 				groupId, privateLayout, layoutId);
 
-			plid = layout.getPlid();
+			selPlid = layout.getPlid();
 		}
 
 		Object[] returnValue = SitesUtil.deleteLayout(
 			actionRequest, actionResponse);
 
-		if (plid == themeDisplay.getRefererPlid()) {
+		if (selPlid == themeDisplay.getRefererPlid()) {
 			long newRefererPlid = (Long)returnValue[2];
 
 			redirect = HttpUtil.setParameter(

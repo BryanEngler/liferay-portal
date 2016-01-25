@@ -16,6 +16,7 @@ package com.liferay.portal.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.util.Accessor;
 
 /**
@@ -27,6 +28,7 @@ import com.liferay.portal.kernel.util.Accessor;
  * @see com.liferay.portal.model.impl.GroupModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.portal.model.impl.GroupImpl")
 @ProviderType
 public interface Group extends GroupModel, PersistedModel, TreeModel {
 	/*
@@ -191,7 +193,7 @@ public interface Group extends GroupModel, PersistedModel, TreeModel {
 	public boolean isRoot();
 
 	public boolean isShowSite(
-		com.liferay.portal.security.permission.PermissionChecker permissionChecker,
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker,
 		boolean privateSite)
 		throws com.liferay.portal.kernel.exception.PortalException;
 

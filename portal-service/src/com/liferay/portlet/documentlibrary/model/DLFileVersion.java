@@ -16,6 +16,7 @@ package com.liferay.portlet.documentlibrary.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.model.PersistedModel;
 import com.liferay.portal.model.TreeModel;
@@ -29,6 +30,7 @@ import com.liferay.portal.model.TreeModel;
  * @see com.liferay.portlet.documentlibrary.model.impl.DLFileVersionModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.portlet.documentlibrary.model.impl.DLFileVersionImpl")
 @ProviderType
 public interface DLFileVersion extends DLFileVersionModel, PersistedModel,
 	TreeModel {
