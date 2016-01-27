@@ -46,7 +46,6 @@ public class ElasticsearchConfigurationTest {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	protected Map<String, Object> loadConfigurationProperties(String fileName)
 		throws Exception {
 
