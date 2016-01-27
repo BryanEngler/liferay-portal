@@ -24,6 +24,7 @@ import com.liferay.portal.search.elasticsearch.settings.TypeMappingsHelper;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
@@ -101,7 +102,7 @@ public class CompanyIndexFactoryTest {
 
 	@Test
 	public void testDefaultIndices() throws Exception {
-		HashMap<String, Object> properties = new HashMap<>();
+		Map<String, Object> properties = new HashMap<>();
 
 		properties.put(
 			"typeMappings.KeywordQueryDocumentType",
@@ -128,7 +129,6 @@ public class CompanyIndexFactoryTest {
 		Assert.assertTrue(
 			map.containsKey(
 				LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE));
-
 		Assert.assertTrue(map.containsKey("KeywordQueryDocumentType"));
 		Assert.assertTrue(map.containsKey("SpellCheckDocumentType"));
 	}
