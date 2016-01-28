@@ -1121,7 +1121,8 @@ public class GroupServiceHttp {
 
 	public static void updateStagedPortlets(HttpPrincipal httpPrincipal,
 		long groupId,
-		java.util.Map<java.lang.String, java.lang.String> stagedPortletIds)
+		java.util.Map<java.lang.String, java.lang.String> stagedPortletIds,
+		boolean checkPermission)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(GroupServiceUtil.class,
@@ -1129,7 +1130,7 @@ public class GroupServiceHttp {
 					_updateStagedPortletsParameterTypes33);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey, groupId,
-					stagedPortletIds);
+					stagedPortletIds, checkPermission);
 
 			try {
 				TunnelUtil.invoke(httpPrincipal, methodHandler);
@@ -1272,6 +1273,6 @@ public class GroupServiceHttp {
 			long.class, java.lang.String.class
 		};
 	private static final Class<?>[] _updateStagedPortletsParameterTypes33 = new Class[] {
-			long.class, java.util.Map.class
+			long.class, java.util.Map.class, boolean.class
 		};
 }

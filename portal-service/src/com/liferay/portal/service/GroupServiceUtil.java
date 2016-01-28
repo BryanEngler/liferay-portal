@@ -635,9 +635,11 @@ public class GroupServiceUtil {
 	}
 
 	public static void updateStagedPortlets(long groupId,
-		java.util.Map<java.lang.String, java.lang.String> stagedPortletIds)
+		java.util.Map<java.lang.String, java.lang.String> stagedPortletIds,
+		boolean checkPermission)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().updateStagedPortlets(groupId, stagedPortletIds);
+		getService()
+			.updateStagedPortlets(groupId, stagedPortletIds, checkPermission);
 	}
 
 	public static GroupService getService() {

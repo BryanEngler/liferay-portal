@@ -561,6 +561,6 @@ public interface GroupService extends BaseService {
 		java.lang.String typeSettings) throws PortalException;
 
 	public void updateStagedPortlets(long groupId,
-		java.util.Map<java.lang.String, java.lang.String> stagedPortletIds)
-		throws PortalException;
+		java.util.Map<java.lang.String, java.lang.String> stagedPortletIds,
+		boolean checkPermission) throws PortalException;
 }
