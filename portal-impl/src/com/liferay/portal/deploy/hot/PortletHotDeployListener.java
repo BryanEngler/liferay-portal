@@ -44,11 +44,14 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.language.LanguageResources;
+import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.model.PortletApp;
 import com.liferay.portal.model.PortletCategory;
 import com.liferay.portal.model.PortletFilter;
 import com.liferay.portal.model.PortletURLListener;
+import com.liferay.portal.service.GroupLocalServiceUtil;
+import com.liferay.portal.service.GroupServiceUtil;
 import com.liferay.portal.service.PortletLocalServiceUtil;
 import com.liferay.portal.service.ResourceActionLocalServiceUtil;
 import com.liferay.portal.util.Portal;
@@ -61,6 +64,7 @@ import com.liferay.portlet.PortletContextBagPool;
 import com.liferay.portlet.PortletFilterFactory;
 import com.liferay.portlet.PortletInstanceFactoryUtil;
 import com.liferay.portlet.PortletURLListenerFactory;
+import com.liferay.portlet.exportimport.lar.PortletDataHandler;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
 import com.liferay.registry.ServiceRegistration;
@@ -304,6 +308,8 @@ public class PortletHotDeployListener extends BaseHotDeployListener {
 
 		ClassLoader classLoader = hotDeployEvent.getContextClassLoader();
 
+		Map<String, String> stagedPortletIds = new HashMap<>();
+
 		Iterator<Portlet> itr = portlets.iterator();
 
 		while (itr.hasNext()) {
@@ -334,6 +340,28 @@ public class PortletHotDeployListener extends BaseHotDeployListener {
 
 				strutsBridges = true;
 			}
+
+			if (!portlet.isActive()) {
+				continue;
+			}
+
+			PortletDataHandler portletDataHandler =
+				portlet.getPortletDataHandlerInstance();
+
+			if ((portletDataHandler == null) ||
+				!portletDataHandler.isDataSiteLevel()) {
+
+				continue;
+			}
+
+			String portletId = portlet.getPortletId();
+
+			stagedPortletIds.put(portletId, "false");
+		}
+
+		for (Group liveGroup : GroupLocalServiceUtil.getLiveGroups()) {
+			GroupServiceUtil.updateStagedPortlets(
+				liveGroup.getGroupId(), stagedPortletIds, false);
 		}
 
 		if (phpPortlet) {

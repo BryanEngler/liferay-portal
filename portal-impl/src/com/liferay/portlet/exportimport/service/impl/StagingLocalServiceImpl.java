@@ -956,7 +956,7 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 
 		try {
 			GroupServiceHttp.updateStagedPortlets(
-				httpPrincipal, remoteGroupId, stagedPortletIds);
+				httpPrincipal, remoteGroupId, stagedPortletIds, true);
 		}
 		catch (NoSuchGroupException nsge) {
 			RemoteExportException ree = new RemoteExportException(
