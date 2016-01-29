@@ -652,9 +652,11 @@ public class GroupServiceWrapper implements GroupService,
 
 	@Override
 	public void updateStagedPortlets(long groupId,
-		java.util.Map<java.lang.String, java.lang.String> stagedPortletIds)
+		java.util.Map<java.lang.String, java.lang.String> stagedPortletIds,
+		boolean checkPermission)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		_groupService.updateStagedPortlets(groupId, stagedPortletIds);
+		_groupService.updateStagedPortlets(groupId, stagedPortletIds,
+			checkPermission);
 	}
 
 	@Override
