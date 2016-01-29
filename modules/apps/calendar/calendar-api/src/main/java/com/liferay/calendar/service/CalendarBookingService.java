@@ -148,7 +148,9 @@ public interface CalendarBookingService extends BaseService {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public boolean hasChildCalendarBookings(long parentCalendarBookingId);
 
-	public void invokeTransition(long calendarBookingId, int status,
+	public com.liferay.calendar.model.CalendarBooking invokeTransition(
+		long calendarBookingId, int status, long startTime,
+		boolean updateInstance, boolean allFollowing,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 

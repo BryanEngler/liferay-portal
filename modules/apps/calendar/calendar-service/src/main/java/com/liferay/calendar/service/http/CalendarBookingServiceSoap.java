@@ -367,12 +367,17 @@ public class CalendarBookingServiceSoap {
 		}
 	}
 
-	public static void invokeTransition(long calendarBookingId, int status,
+	public static com.liferay.calendar.model.CalendarBookingSoap invokeTransition(
+		long calendarBookingId, int status, long startTime,
+		boolean updateInstance, boolean allFollowing,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
-			CalendarBookingServiceUtil.invokeTransition(calendarBookingId,
-				status, serviceContext);
+			com.liferay.calendar.model.CalendarBooking returnValue = CalendarBookingServiceUtil.invokeTransition(calendarBookingId,
+					status, startTime, updateInstance, allFollowing,
+					serviceContext);
+
+			return com.liferay.calendar.model.CalendarBookingSoap.toSoapModel(returnValue);
 		}
 		catch (Exception e) {
 			_log.error(e, e);
