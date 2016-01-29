@@ -206,11 +206,13 @@ public class CalendarBookingServiceWrapper implements CalendarBookingService,
 	}
 
 	@Override
-	public void invokeTransition(long calendarBookingId, int status,
+	public com.liferay.calendar.model.CalendarBooking invokeTransition(
+		long calendarBookingId, int status, long startTime,
+		boolean updateInstance, boolean allFollowing,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		_calendarBookingService.invokeTransition(calendarBookingId, status,
-			serviceContext);
+		return _calendarBookingService.invokeTransition(calendarBookingId,
+			status, startTime, updateInstance, allFollowing, serviceContext);
 	}
 
 	@Override

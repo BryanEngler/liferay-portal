@@ -1134,7 +1134,7 @@ public class Recurrence implements Serializable {
 	protected int interval;
 
 	/**
-	 * Field interval
+	 * Field occurrence
 	 */
 	protected int occurrence = 0;
 
