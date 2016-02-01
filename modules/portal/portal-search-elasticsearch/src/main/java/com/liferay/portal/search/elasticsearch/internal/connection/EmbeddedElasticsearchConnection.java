@@ -214,10 +214,10 @@ public class EmbeddedElasticsearchConnection
 	@Override
 	protected void loadRequiredDefaultConfigurations(Settings.Builder builder) {
 		builder.put("action.auto_create_index", false);
-
 		builder.put(
 			"bootstrap.mlockall",
 			elasticsearchConfiguration.bootstrapMlockAll());
+
 		configureClustering(builder);
 
 		configureHttp(builder);
