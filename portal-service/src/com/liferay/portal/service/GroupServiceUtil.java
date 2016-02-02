@@ -634,10 +634,23 @@ public class GroupServiceUtil {
 		return getService().updateGroup(groupId, typeSettings);
 	}
 
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #updateStagedPortlets(long,
+	Map, boolean)}
+	*/
+	@Deprecated
 	public static void updateStagedPortlets(long groupId,
 		java.util.Map<java.lang.String, java.lang.String> stagedPortletIds)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService().updateStagedPortlets(groupId, stagedPortletIds);
+	}
+
+	public static void updateStagedPortlets(long groupId,
+		java.util.Map<java.lang.String, java.lang.String> stagedPortletIds,
+		boolean checkPermission)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService()
+			.updateStagedPortlets(groupId, stagedPortletIds, checkPermission);
 	}
 
 	public static GroupService getService() {

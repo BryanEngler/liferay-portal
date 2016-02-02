@@ -650,11 +650,25 @@ public class GroupServiceWrapper implements GroupService,
 		return _groupService.updateGroup(groupId, typeSettings);
 	}
 
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #updateStagedPortlets(long,
+	Map, boolean)}
+	*/
+	@Deprecated
 	@Override
 	public void updateStagedPortlets(long groupId,
 		java.util.Map<java.lang.String, java.lang.String> stagedPortletIds)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_groupService.updateStagedPortlets(groupId, stagedPortletIds);
+	}
+
+	@Override
+	public void updateStagedPortlets(long groupId,
+		java.util.Map<java.lang.String, java.lang.String> stagedPortletIds,
+		boolean checkPermission)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_groupService.updateStagedPortlets(groupId, stagedPortletIds,
+			checkPermission);
 	}
 
 	@Override
