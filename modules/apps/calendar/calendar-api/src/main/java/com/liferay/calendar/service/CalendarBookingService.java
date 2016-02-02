@@ -151,7 +151,16 @@ public interface CalendarBookingService extends BaseService {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public boolean hasChildCalendarBookings(long parentCalendarBookingId);
 
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #invokeTransition(long, int,
+	long, boolean, boolean, ServiceContext)}
+	*/
+	@java.lang.Deprecated
 	public void invokeTransition(long calendarBookingId, int status,
+		ServiceContext serviceContext) throws PortalException;
+
+	public CalendarBooking invokeTransition(long calendarBookingId, int status,
+		long startTime, boolean updateInstance, boolean allFollowing,
 		ServiceContext serviceContext) throws PortalException;
 
 	public CalendarBooking moveCalendarBookingToTrash(long calendarBookingId)

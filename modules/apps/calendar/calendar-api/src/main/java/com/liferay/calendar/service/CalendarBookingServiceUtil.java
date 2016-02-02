@@ -199,10 +199,25 @@ public class CalendarBookingServiceUtil {
 		return getService().hasChildCalendarBookings(parentCalendarBookingId);
 	}
 
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #invokeTransition(long, int,
+	long, boolean, boolean, ServiceContext)}
+	*/
+	@Deprecated
 	public static void invokeTransition(long calendarBookingId, int status,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService().invokeTransition(calendarBookingId, status, serviceContext);
+	}
+
+	public static com.liferay.calendar.model.CalendarBooking invokeTransition(
+		long calendarBookingId, int status, long startTime,
+		boolean updateInstance, boolean allFollowing,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .invokeTransition(calendarBookingId, status, startTime,
+			updateInstance, allFollowing, serviceContext);
 	}
 
 	public static com.liferay.calendar.model.CalendarBooking moveCalendarBookingToTrash(
