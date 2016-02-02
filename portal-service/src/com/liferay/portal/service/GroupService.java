@@ -554,7 +554,16 @@ public interface GroupService extends BaseService {
 	public Group updateGroup(long groupId, java.lang.String typeSettings)
 		throws PortalException;
 
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #updateStagedPortlets(long,
+	Map, boolean)}
+	*/
+	@java.lang.Deprecated
 	public void updateStagedPortlets(long groupId,
 		Map<java.lang.String, java.lang.String> stagedPortletIds)
 		throws PortalException;
+
+	public void updateStagedPortlets(long groupId,
+		Map<java.lang.String, java.lang.String> stagedPortletIds,
+		boolean checkPermission) throws PortalException;
 }
