@@ -1001,8 +1001,8 @@ public class GroupServiceImpl extends GroupServiceBaseImpl {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #updateStagedPortlets(long,
-	 *             Map, boolean)}
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             #updateStagedPortlets(long, Map, boolean)}
 	 */
 	@Deprecated
 	@Override
