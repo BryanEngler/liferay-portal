@@ -1000,15 +1000,31 @@ public class GroupServiceImpl extends GroupServiceBaseImpl {
 		}
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #updateStagedPortlets(long,
+	 *             Map, boolean)}
+	 */
+	@Deprecated
 	@Override
 	public void updateStagedPortlets(
 			long groupId, Map<String, String> stagedPortletIds)
 		throws PortalException {
 
+		updateStagedPortlets(groupId, stagedPortletIds, true);
+	}
+
+	@Override
+	public void updateStagedPortlets(
+			long groupId, Map<String, String> stagedPortletIds,
+			boolean checkPermission)
+		throws PortalException {
+
 		Group group = groupPersistence.findByPrimaryKey(groupId);
 
-		GroupPermissionUtil.check(
-			getPermissionChecker(), group, ActionKeys.UPDATE);
+		if (checkPermission) {
+			GroupPermissionUtil.check(
+				getPermissionChecker(), group, ActionKeys.UPDATE);
+		}
 
 		UnicodeProperties typeSettingsProperties =
 			group.getTypeSettingsProperties();

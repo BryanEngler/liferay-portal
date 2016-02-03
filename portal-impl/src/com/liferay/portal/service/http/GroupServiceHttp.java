@@ -1149,6 +1149,37 @@ public class GroupServiceHttp {
 		}
 	}
 
+	public static void updateStagedPortlets(HttpPrincipal httpPrincipal,
+		long groupId,
+		java.util.Map<java.lang.String, java.lang.String> stagedPortletIds,
+		boolean checkPermission)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		try {
+			MethodKey methodKey = new MethodKey(GroupServiceUtil.class,
+					"updateStagedPortlets",
+					_updateStagedPortletsParameterTypes34);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey, groupId,
+					stagedPortletIds, checkPermission);
+
+			try {
+				TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
+					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(GroupServiceHttp.class);
 	private static final Class<?>[] _addGroupParameterTypes0 = new Class[] {
 			long.class, long.class, java.util.Map.class, java.util.Map.class,
@@ -1273,5 +1304,8 @@ public class GroupServiceHttp {
 		};
 	private static final Class<?>[] _updateStagedPortletsParameterTypes33 = new Class[] {
 			long.class, java.util.Map.class
+		};
+	private static final Class<?>[] _updateStagedPortletsParameterTypes34 = new Class[] {
+			long.class, java.util.Map.class, boolean.class
 		};
 }
