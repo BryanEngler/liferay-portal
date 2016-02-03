@@ -780,9 +780,10 @@ AUI.add(
 							if schedulerEvent.isRecurring() {
 								scheduler.load();
 							}
-							if calendarBooking.status === CalendarWorkflow.STATUS_DENIED {
-								CalendarUtil.destroyEvent(schedulerEvent);
-							}
+						}
+
+						if calendarBooking.status === CalendarWorkflow.STATUS_DENIED {
+							CalendarUtil.destroyEvent(schedulerEvent);
 						}
 						else {
 							schedulerEvent.set('status', calendarBooking.status);
