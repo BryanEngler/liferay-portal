@@ -79,7 +79,7 @@ public class UserGroupIndexer extends BaseIndexer<UserGroup> {
 			long entryClassPK, String actionId)
 		throws Exception {
 
-		UserGroup userGroup = UserGroupLocalServiceUtil.getUserGroup(
+		UserGroup userGroup = _userGroupLocalService.getUserGroup(
 			entryClassPK);
 
 		return UserGroupPermissionUtil.contains(
