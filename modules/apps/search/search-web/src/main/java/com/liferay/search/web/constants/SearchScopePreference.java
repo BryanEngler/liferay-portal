@@ -41,7 +41,7 @@ public enum SearchScopePreference {
 		if (searchScopePreference == null) {
 			throw new IllegalArgumentException(
 				"The string " + preferenceString +
-					" does not correspond to a valid Search Scope preference");
+					" does not correspond to a valid search scope preference");
 		}
 
 		return searchScopePreference;

@@ -30,7 +30,7 @@ public enum SearchScope {
 		if (searchScope == null) {
 			throw new IllegalArgumentException(
 				"The string " + parameterString +
-					" does not correspond to a valid Search Scope");
+					" does not correspond to a valid search scope");
 		}
 
 		return searchScope;

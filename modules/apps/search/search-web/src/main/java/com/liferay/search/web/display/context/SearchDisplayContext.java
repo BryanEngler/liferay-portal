@@ -509,7 +509,8 @@ public class SearchDisplayContext {
 
 		if (searchScope == null) {
 			throw new IllegalArgumentException(
-				"Scope parameter is empty and no default set in preferences");
+				"Scope parameter is empty and no default is set in " +
+					"preferences");
 		}
 
 		return searchScope;

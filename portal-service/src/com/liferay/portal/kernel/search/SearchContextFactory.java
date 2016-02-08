@@ -72,12 +72,12 @@ public class SearchContextFactory {
 		}
 
 		if (!parameters.containsKey("groupId")) {
-			String[] scope = parameters.get("scope");
+			String[] scopes = parameters.get("scope");
 
-			if (scope != null) {
+			if (scopes != null) {
 				String groupId = "0";
 
-				if (Validator.equals(scope[0], "this-site")) {
+				if (Validator.equals(scopes[0], "this-site")) {
 					groupId = String.valueOf(themeDisplay.getScopeGroupId());
 				}
 
