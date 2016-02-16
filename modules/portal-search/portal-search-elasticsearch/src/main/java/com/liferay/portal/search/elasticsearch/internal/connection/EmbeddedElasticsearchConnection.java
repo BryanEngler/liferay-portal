@@ -185,9 +185,9 @@ public class EmbeddedElasticsearchConnection
 			sb.append("Liferay is configured to use embedded Elasticsearch ");
 			sb.append("as its search engine. Do NOT use embedded ");
 			sb.append("Elasticsearch in production. Embedded Elasticsearch ");
-			sb.append("is useful for development and demo purposes. Remote ");
-			sb.append("Elasticsearch connections can be configured in ");
-			sb.append("Control Panel => System Settings => Platform.");
+			sb.append("is useful for development and demonstration purposes. ");
+			sb.append("Remote Elasticsearch connections can be configured in ");
+			sb.append("the Control Panel.");
 
 			_log.warn(sb);
 		}
