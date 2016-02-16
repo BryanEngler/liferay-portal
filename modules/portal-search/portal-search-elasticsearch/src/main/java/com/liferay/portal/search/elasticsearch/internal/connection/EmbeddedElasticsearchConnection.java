@@ -180,8 +180,6 @@ public class EmbeddedElasticsearchConnection
 		stopWatch.start();
 
 		if (_log.isWarnEnabled()) {
-			_log.warn("=========================================");
-
 			StringBundler sb = new StringBundler(6);
 
 			sb.append("Liferay is configured to use embedded Elasticsearch ");
@@ -192,8 +190,6 @@ public class EmbeddedElasticsearchConnection
 			sb.append("Control Panel => System Settings => Platform.");
 
 			_log.warn(sb);
-
-			_log.warn("=========================================");
 		}
 
 		if (_log.isDebugEnabled()) {
