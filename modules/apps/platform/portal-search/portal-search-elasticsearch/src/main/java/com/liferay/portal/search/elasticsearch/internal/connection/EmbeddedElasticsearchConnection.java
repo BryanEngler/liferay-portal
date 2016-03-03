@@ -219,11 +219,12 @@ public class EmbeddedElasticsearchConnection
 	}
 
 	protected void configurePlugins() {
+		Settings settings = settingsBuilder.build();
+
 		String[] plugins = {
 			"analysis-icu", "analysis-kuromoji", "analysis-smartcn",
-			"analysis-stempel" };
-
-		Settings settings = settingsBuilder.build();
+			"analysis-stempel"
+		};
 
 		for (String plugin : plugins) {
 			configurePlugin(plugin, settings);
