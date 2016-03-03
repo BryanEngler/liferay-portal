@@ -45,10 +45,10 @@ public class ResourceUtil {
 	public static File getResourceAsTempFile(Class<?> clazz, String name)
 		throws IOException {
 
-		int periodIndex = name.lastIndexOf(CharPool.PERIOD);
+		int index = name.lastIndexOf(CharPool.PERIOD);
 
 		File file = File.createTempFile(
-			name.substring(0, periodIndex), name.substring(periodIndex));
+			name.substring(0, index), name.substring(index));
 
 		file.deleteOnExit();
 
