@@ -39,5 +39,5 @@ dependencies {
 	provided group: "org.ow2.asm", name: "asm", version: "4.1"
 	provided group: "org.ow2.asm", name: "asm-commons", version: "4.1"
 	provided group: "org.yaml", name: "snakeyaml", version: "1.15"
-	provided project(":apps:foundation:portal-configuration:portal-configuration-metatype")
+	provided group: "com.liferay", name: "com.liferay.portal.configuration.metatype", version: "2.0.0"
 }
