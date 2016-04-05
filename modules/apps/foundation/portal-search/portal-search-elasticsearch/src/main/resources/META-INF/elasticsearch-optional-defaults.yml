@@ -28,4 +28,4 @@ monitor.jvm.gc.young.warn: 1000ms
 
 threadpool:
     bulk:
-        queue_size : 100
+        queue_size: 100
