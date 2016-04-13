@@ -88,14 +88,14 @@ public class RangeFacetProcessor
 
 		SearchContext searchContext = facet.getSearchContext();
 
-		String rangeParam = GetterUtil.getString(
+		String rangeString = GetterUtil.getString(
 			searchContext.getAttribute(facet.getFieldId()));
 
-		if (Validator.isNull(rangeParam)) {
+		if (Validator.isNull(rangeString)) {
 			return;
 		}
 
-		String[] range = RangeParserUtil.parserRange(rangeParam);
+		String[] range = RangeParserUtil.parserRange(rangeString);
 
 		defaultRangeBuilder.addRange(range[0], range[1]);
 	}
