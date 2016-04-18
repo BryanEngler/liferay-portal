@@ -276,9 +276,9 @@ public class EmbeddedElasticsearchConnection
 	protected Node createNode(Settings settings) {
 		Thread thread = Thread.currentThread();
 
-		ClassLoader classLoader = thread.getContextClassLoader();
+		ClassLoader contextClassLoader = thread.getContextClassLoader();
 
-		Class<?> clazz = this.getClass();
+		Class<?> clazz = getClass();
 
 		thread.setContextClassLoader(clazz.getClassLoader());
 
@@ -286,7 +286,7 @@ public class EmbeddedElasticsearchConnection
 			return new Node(settings);
 		}
 		finally {
-			thread.setContextClassLoader(classLoader);
+			thread.setContextClassLoader(contextClassLoader);
 		}
 	}
 
