@@ -16,6 +16,8 @@ package com.liferay.portal.service.base;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.announcements.kernel.service.persistence.AnnouncementsEntryPersistence;
+
 import com.liferay.asset.kernel.service.persistence.AssetCategoryFinder;
 import com.liferay.asset.kernel.service.persistence.AssetCategoryPersistence;
 import com.liferay.asset.kernel.service.persistence.AssetEntryFinder;
@@ -2715,6 +2717,8 @@ public abstract class GroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	protected com.liferay.counter.kernel.service.CounterLocalService counterLocalService;
 	@BeanReference(type = com.liferay.portal.kernel.service.AccountLocalService.class)
 	protected com.liferay.portal.kernel.service.AccountLocalService accountLocalService;
+	@BeanReference(type = AnnouncementsEntryPersistence.class)
+	protected AnnouncementsEntryPersistence announcementsEntryPersistence;
 	@BeanReference(type = AccountPersistence.class)
 	protected AccountPersistence accountPersistence;
 	@BeanReference(type = com.liferay.portal.kernel.service.ClassNameLocalService.class)
