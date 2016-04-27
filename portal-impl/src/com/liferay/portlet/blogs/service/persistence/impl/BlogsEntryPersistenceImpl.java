@@ -4427,13 +4427,23 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 
 			BlogsEntry[] array = new BlogsEntryImpl[3];
 
-			array[0] = getByG_S_PrevAndNext(session, blogsEntry, groupId,
-					status, orderByComparator, true);
+			array[0] = getByG_S_EqualD_PrevAndNext(session, blogsEntry, groupId,
+					status, true);
+
+			if (array[0] == null) {
+				array[0] = getByG_S_D_PrevAndNext(session, blogsEntry, groupId,
+						status, true);
+			}
 
 			array[1] = blogsEntry;
 
-			array[2] = getByG_S_PrevAndNext(session, blogsEntry, groupId,
-					status, orderByComparator, false);
+			array[2] = getByG_S_EqualD_PrevAndNext(session, blogsEntry, groupId,
+					status, false);
+
+			if (array[2] == null) {
+				array[2] = getByG_S_D_PrevAndNext(session, blogsEntry, groupId,
+						status, false);
+			}
 
 			return array;
 		}
@@ -4445,83 +4455,32 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		}
 	}
 
-	protected BlogsEntry getByG_S_PrevAndNext(Session session,
-		BlogsEntry blogsEntry, long groupId, int status,
-		OrderByComparator<BlogsEntry> orderByComparator, boolean previous) {
-		StringBundler query = null;
+	protected BlogsEntry getByG_S_EqualD_PrevAndNext(Session session,
+		BlogsEntry blogsEntry, long groupId, int status, boolean previous) {
 
-		if (orderByComparator != null) {
-			query = new StringBundler(5 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
-					(orderByComparator.getOrderByFields().length * 3));
-		}
-		else {
-			query = new StringBundler(4);
-		}
+		StringBundler query = new StringBundler(9);
 
 		query.append(_SQL_SELECT_BLOGSENTRY_WHERE);
-
 		query.append(_FINDER_COLUMN_G_S_GROUPID_2);
-
 		query.append(_FINDER_COLUMN_G_S_STATUS_2);
+		query.append(WHERE_AND);
+		query.append(_FINDER_COLUMN_D_DISPLAYDATE_1);
 
-		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
-
-			if (orderByConditionFields.length > 0) {
-				query.append(WHERE_AND);
-			}
-
-			for (int i = 0; i < orderByConditionFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByConditionFields[i]);
-
-				if ((i + 1) < orderByConditionFields.length) {
-					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN_HAS_NEXT);
-					}
-					else {
-						query.append(WHERE_LESSER_THAN_HAS_NEXT);
-					}
-				}
-				else {
-					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN);
-					}
-					else {
-						query.append(WHERE_LESSER_THAN);
-					}
-				}
-			}
-
-			query.append(ORDER_BY_CLAUSE);
-
-			String[] orderByFields = orderByComparator.getOrderByFields();
-
-			for (int i = 0; i < orderByFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByFields[i]);
-
-				if ((i + 1) < orderByFields.length) {
-					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC_HAS_NEXT);
-					}
-					else {
-						query.append(ORDER_BY_DESC_HAS_NEXT);
-					}
-				}
-				else {
-					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC);
-					}
-					else {
-						query.append(ORDER_BY_DESC);
-					}
-				}
-			}
+		if (previous) {
+			query.append(_FINDER_COLUMN_D_ENTRYID_1);
 		}
 		else {
-			query.append(BlogsEntryModelImpl.ORDER_BY_JPQL);
+			query.append(_FINDER_COLUMN_D_ENTRYID_2);
+		}
+
+		query.append(ORDER_BY_CLAUSE);
+		query.append(_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
+
+		if (previous) {
+			query.append(ORDER_BY_DESC);
+		}
+		else {
+			query.append(ORDER_BY_ASC);
 		}
 
 		String sql = query.toString();
@@ -4529,7 +4488,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		Query q = session.createQuery(sql);
 
 		q.setFirstResult(0);
-		q.setMaxResults(2);
+		q.setMaxResults(1);
 
 		QueryPos qPos = QueryPos.getInstance(q);
 
@@ -4537,22 +4496,77 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 
 		qPos.add(status);
 
-		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(blogsEntry);
+		qPos.add(blogsEntry.getDisplayDate());
 
-			for (Object value : values) {
-				qPos.add(value);
-			}
-		}
+		qPos.add(blogsEntry.getEntryId());
 
 		List<BlogsEntry> list = q.list();
 
-		if (list.size() == 2) {
-			return list.get(1);
+		if (list.size() > 0) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	protected BlogsEntry getByG_S_D_PrevAndNext(Session session,
+		BlogsEntry blogsEntry, long groupId, int status, boolean previous) {
+
+		StringBundler query = new StringBundler(10);
+
+		query.append(_SQL_SELECT_BLOGSENTRY_WHERE);
+		query.append(_FINDER_COLUMN_G_S_GROUPID_2);
+		query.append(_FINDER_COLUMN_G_S_STATUS_2);
+		query.append(WHERE_AND);
+
+		if (previous) {
+			query.append(_FINDER_COLUMN_D_DISPLAYDATE_2);
 		}
 		else {
-			return null;
+			query.append(_FINDER_COLUMN_D_DISPLAYDATE_3);
 		}
+
+		query.append(ORDER_BY_CLAUSE);
+		query.append(_FINDER_COLUMN_D_DISPLAYDATE_4);
+
+		if (previous){
+			query.append(ORDER_BY_DESC_HAS_NEXT);
+		}
+		else {
+			query.append(ORDER_BY_ASC_HAS_NEXT);
+		}
+
+		query.append(_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
+
+		if (previous){
+			query.append(ORDER_BY_DESC);
+		}
+		else {
+			query.append(ORDER_BY_ASC);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(1);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(status);
+
+		qPos.add(blogsEntry.getDisplayDate());
+
+		List<BlogsEntry> list = q.list();
+
+		if (list.size() > 0) {
+			return list.get(0);
+		}
+
+		return null;
 	}
 
 	/**
@@ -5000,6 +5014,12 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		}
 	}
 
+	private static final String _FINDER_COLUMN_D_DISPLAYDATE_1 = "blogsEntry.displayDate = ? AND ";
+	private static final String _FINDER_COLUMN_D_DISPLAYDATE_2 = "blogsEntry.displayDate < ?";
+	private static final String _FINDER_COLUMN_D_DISPLAYDATE_3 = "blogsEntry.displayDate > ?";
+	private static final String _FINDER_COLUMN_D_DISPLAYDATE_4 = "blogsEntry.displayDate";
+	private static final String _FINDER_COLUMN_D_ENTRYID_1 = "blogsEntry.entryId < ?";
+	private static final String _FINDER_COLUMN_D_ENTRYID_2 = "blogsEntry.entryId > ?";
 	private static final String _FINDER_COLUMN_G_S_GROUPID_2 = "blogsEntry.groupId = ? AND ";
 	private static final String _FINDER_COLUMN_G_S_STATUS_2 = "blogsEntry.status = ?";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_G_NOTS = new FinderPath(BlogsEntryModelImpl.ENTITY_CACHE_ENABLED,
