@@ -878,15 +878,32 @@ public class PortalImpl implements Portal {
 				String[] allowedDomains =
 					PropsValues.REDIRECT_URL_DOMAINS_ALLOWED;
 
-				if ((allowedDomains.length > 0) &&
-					!ArrayUtil.contains(allowedDomains, domain)) {
+				if (allowedDomains.length == 0) {
+					return url;
+				}
 
-					if (_log.isWarnEnabled()) {
-						_log.warn("Redirect URL " + url + " is not allowed");
+				for (String allowedDomain : allowedDomains) {
+					if (!domain.endsWith(allowedDomain)) {
+						continue;
 					}
 
-					url = null;
+					if (domain.length() == allowedDomain.length()) {
+						return url;
+					}
+
+					char c = domain.charAt(
+						domain.length() - allowedDomain.length() - 1);
+
+					if (c == CharPool.PERIOD) {
+						return url;
+					}
 				}
+
+				if (_log.isWarnEnabled()) {
+					_log.warn("Redirect URL " + url + " is not allowed");
+				}
+
+				url = null;
 			}
 			else if (securityMode.equals("ip")) {
 				String[] allowedIps = PropsValues.REDIRECT_URL_IPS_ALLOWED;
