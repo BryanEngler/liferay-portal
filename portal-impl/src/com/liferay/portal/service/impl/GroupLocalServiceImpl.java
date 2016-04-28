@@ -772,6 +772,17 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 			deletePortletData(group);
 
+			//Announcements
+
+			if (group.isSite()) {
+				announcementsEntryPersistence.removeByC_C(
+					group.getClassNameId(), group.getGroupId());
+			}
+			else {
+				announcementsEntryPersistence.removeByC_C(
+					group.getClassNameId(), group.getClassPK());
+			}
+
 			// Asset
 
 			if (group.isRegularSite()) {
