@@ -871,47 +871,46 @@ public class PortalImpl implements Portal {
 			return url;
 		}
 
-		try {
-			String securityMode = PropsValues.REDIRECT_URL_SECURITY_MODE;
+		String securityMode = PropsValues.REDIRECT_URL_SECURITY_MODE;
 
-			if (securityMode.equals("domain")) {
-				String[] allowedDomains =
-					PropsValues.REDIRECT_URL_DOMAINS_ALLOWED;
+		if (securityMode.equals("domain")) {
+			String[] allowedDomains = PropsValues.REDIRECT_URL_DOMAINS_ALLOWED;
 
-				if (allowedDomains.length == 0) {
-					return url;
-				}
-
-				for (String allowedDomain : allowedDomains) {
-					if (!domain.endsWith(allowedDomain)) {
-						continue;
-					}
-
-					if (domain.length() == allowedDomain.length()) {
-						return url;
-					}
-
-					char c = domain.charAt(
-						domain.length() - allowedDomain.length() - 1);
-
-					if (c == CharPool.PERIOD) {
-						return url;
-					}
-				}
-
-				if (_log.isWarnEnabled()) {
-					_log.warn("Redirect URL " + url + " is not allowed");
-				}
-
-				url = null;
+			if (allowedDomains.length == 0) {
+				return url;
 			}
-			else if (securityMode.equals("ip")) {
-				String[] allowedIps = PropsValues.REDIRECT_URL_IPS_ALLOWED;
 
-				if (allowedIps.length == 0) {
+			for (String allowedDomain : allowedDomains) {
+				if (!domain.endsWith(allowedDomain)) {
+					continue;
+				}
+
+				if (domain.length() == allowedDomain.length()) {
 					return url;
 				}
 
+				char c = domain.charAt(
+					domain.length() - allowedDomain.length() - 1);
+
+				if (c == CharPool.PERIOD) {
+					return url;
+				}
+			}
+
+			if (_log.isWarnEnabled()) {
+				_log.warn("Redirect URL " + url + " is not allowed");
+			}
+
+			url = null;
+		}
+		else if (securityMode.equals("ip")) {
+			String[] allowedIps = PropsValues.REDIRECT_URL_IPS_ALLOWED;
+
+			if (allowedIps.length == 0) {
+				return url;
+			}
+
+			try {
 				InetAddress inetAddress = InetAddress.getByName(domain);
 
 				String hostAddress = inetAddress.getHostAddress();
@@ -933,13 +932,14 @@ public class PortalImpl implements Portal {
 
 				url = null;
 			}
-		}
-		catch (UnknownHostException uhe) {
-			if (_log.isDebugEnabled()) {
-				_log.debug("Unable to determine IP for redirect URL " + url);
-			}
+			catch (UnknownHostException uhe) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(
+						"Unable to determine IP for redirect URL " + url);
+				}
 
-			url = null;
+				url = null;
+			}
 		}
 
 		return url;
