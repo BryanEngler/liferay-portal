@@ -16,6 +16,8 @@ package com.liferay.portal.service.base;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.announcements.kernel.service.persistence.AnnouncementsEntryPersistence;
+
 import com.liferay.expando.kernel.service.persistence.ExpandoRowPersistence;
 
 import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
@@ -1536,6 +1538,8 @@ public abstract class RoleLocalServiceBaseImpl extends BaseLocalServiceImpl
 	protected ClassNamePersistence classNamePersistence;
 	@BeanReference(type = com.liferay.portal.kernel.service.CompanyLocalService.class)
 	protected com.liferay.portal.kernel.service.CompanyLocalService companyLocalService;
+	@BeanReference(type = AnnouncementsEntryPersistence.class)
+	protected AnnouncementsEntryPersistence announcementsEntryPersistence;
 	@BeanReference(type = CompanyPersistence.class)
 	protected CompanyPersistence companyPersistence;
 	@BeanReference(type = com.liferay.portal.kernel.service.GroupLocalService.class)

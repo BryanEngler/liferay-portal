@@ -413,6 +413,11 @@ public class RoleLocalServiceImpl extends RoleLocalServiceBaseImpl {
 
 		expandoRowLocalService.deleteRows(role.getRoleId());
 
+		//Announcements
+
+		announcementsEntryPersistence.removeByC_C(
+			role.getClassNameId(), role.getRoleId());
+
 		// Permission cache
 
 		PermissionCacheUtil.clearCache();
