@@ -39,6 +39,12 @@ import org.osgi.service.component.annotations.Component;
 public class AnnouncementsPortletDataHandler
 	extends DefaultConfigurationPortletDataHandler {
 
+	@Activate
+	protected void activate() {
+		setDataLevel(DataLevel.PORTLET_INSTANCE);
+		setPublishToLiveByDefault(true);
+	}
+
 	@Override
 	protected PortletPreferences doDeleteData(
 			PortletDataContext portletDataContext, String portletId,
@@ -59,12 +65,6 @@ public class AnnouncementsPortletDataHandler
 		}
 
 		return null;
-	}
-
-	@Activate
-	protected void activate() {
-		setDataLevel(DataLevel.PORTLET_INSTANCE);
-		setPublishToLiveByDefault(true);
 	}
 
 	@BeanReference(type = GroupLocalService.class)
