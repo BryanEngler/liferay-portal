@@ -20,7 +20,6 @@ import com.liferay.exportimport.kernel.lar.DataLevel;
 import com.liferay.exportimport.kernel.lar.DefaultConfigurationPortletDataHandler;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.PortletDataHandler;
-import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.GroupLocalService;
 
@@ -28,6 +27,7 @@ import javax.portlet.PortletPreferences;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Christopher Kian
@@ -67,7 +67,11 @@ public class AnnouncementsPortletDataHandler
 		return null;
 	}
 
-	@BeanReference(type = GroupLocalService.class)
+	@Reference(unbind = "-")
+	protected void setGroupLocalService(GroupLocalService groupLocalService) {
+		_groupLocalService = groupLocalService;
+	}
+
 	private GroupLocalService _groupLocalService;
 
 }
