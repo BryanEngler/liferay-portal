@@ -40,25 +40,22 @@ public class AnnouncementsPortletDataHandler
 	extends DefaultConfigurationPortletDataHandler {
 
 	@Override
-	public PortletPreferences deleteData(
-		PortletDataContext portletDataContext, String portletId,
-		PortletPreferences portletPreferences) {
+	protected PortletPreferences doDeleteData(
+			PortletDataContext portletDataContext, String portletId,
+			PortletPreferences portletPreferences)
+		throws Exception {
 
 		long groupId = portletDataContext.getGroupId();
 
-		try {
-			Group group = _groupLocalService.getGroup(groupId);
+		Group group = _groupLocalService.getGroup(groupId);
 
-			if (group.isSite()) {
-				AnnouncementsEntryUtil.removeByC_C(
-					group.getClassNameId(), group.getGroupId());
-			}
-			else {
-				AnnouncementsEntryUtil.removeByC_C(
-					group.getClassNameId(), group.getClassPK());
-			}
+		if (group.isSite()) {
+			AnnouncementsEntryUtil.removeByC_C(
+				group.getClassNameId(), group.getGroupId());
 		}
-		catch (Exception e) {
+		else {
+			AnnouncementsEntryUtil.removeByC_C(
+				group.getClassNameId(), group.getClassPK());
 		}
 
 		return null;
