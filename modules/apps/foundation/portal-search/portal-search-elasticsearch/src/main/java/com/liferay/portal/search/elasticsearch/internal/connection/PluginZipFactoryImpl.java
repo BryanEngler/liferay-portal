@@ -31,7 +31,7 @@ public class PluginZipFactoryImpl implements PluginZipFactory {
 		}
 		catch (IOException ioe) {
 			throw new RuntimeException(
-				"Unable to write temporary plugin zip file from resource " +
+				"Unable to write temporary plugin zip file for resource " +
 					resourceName,
 				ioe);
 		}
