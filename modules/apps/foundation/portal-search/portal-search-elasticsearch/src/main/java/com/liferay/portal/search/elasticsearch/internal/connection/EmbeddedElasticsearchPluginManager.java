@@ -59,12 +59,8 @@ public class EmbeddedElasticsearchPluginManager {
 	}
 
 	protected PluginZip createPluginZip() throws IOException {
-		String versionString = Version.CURRENT.toString();
-
-		String resourceName =
-			"/plugins/" + _pluginName + "-" + versionString + ".zip";
-
-		return _pluginZipFactory.createPluginZip(resourceName);
+		return _pluginZipFactory.createPluginZip(
+			"/plugins/" + _pluginName + "-" + Version.CURRENT + ".zip");
 	}
 
 	protected void downloadAndExtract(PluginZip pluginZip) throws IOException {
