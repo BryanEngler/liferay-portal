@@ -97,7 +97,8 @@ public class EmbeddedElasticsearchPluginManager {
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(
-					"Plugin " + _pluginName + " already installed. Skipping...",
+					"Skipping plugin " + _pluginName +
+						" because it is already installed",
 					ioe);
 			}
 
