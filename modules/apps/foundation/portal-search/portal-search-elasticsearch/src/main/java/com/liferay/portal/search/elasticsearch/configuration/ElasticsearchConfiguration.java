@@ -31,12 +31,16 @@ import com.liferay.portal.search.elasticsearch.connection.OperationMode;
 public interface ElasticsearchConfiguration {
 
 	@Meta.AD(
-		deflt = "LiferayElasticsearchCluster", name = "cluster-name",
+		deflt = "LiferayElasticsearchCluster",
+		description = "cluster-name-help", name = "cluster-name",
 		required = false
 	)
 	public String clusterName();
 
-	@Meta.AD(deflt = "EMBEDDED", name = "operation-mode", required = false)
+	@Meta.AD(
+		deflt = "EMBEDDED", description = "operation-mode-help",
+		name = "operation-mode", required = false
+	)
 	public OperationMode operationMode();
 
 	@Meta.AD(
@@ -45,7 +49,10 @@ public interface ElasticsearchConfiguration {
 	)
 	public String indexNamePrefix();
 
-	@Meta.AD(deflt = "false", name = "bootstrap-mlockall", required = false)
+	@Meta.AD(
+		deflt = "false", description = "bootstrap-mlockall-help",
+		name = "bootstrap-mlockall", required = false
+	)
 	public boolean bootstrapMlockAll();
 
 	@Meta.AD(
@@ -54,55 +61,84 @@ public interface ElasticsearchConfiguration {
 	)
 	public boolean logExceptionsOnly();
 
-	@Meta.AD(deflt = "5", name = "retry-on-conflict", required = false)
+	@Meta.AD(
+		deflt = "5", description = "retry-on-conflict-help",
+		name = "retry-on-conflict", required = false
+	)
 	public int retryOnConflict();
 
 	@Meta.AD(
-		deflt = "9300-9400", name = "discovery-zen-ping-unicast-hosts-port",
-		required = false
+		deflt = "9300-9400",
+		description = "discovery-zen-ping-unicast-hosts-port-help",
+		name = "discovery-zen-ping-unicast-hosts-port", required = false
 	)
 	public String discoveryZenPingUnicastHostsPort();
 
-	@Meta.AD(deflt = "", name = "network-host", required = false)
+	@Meta.AD(
+		deflt = "", description = "network-host-help", name = "network-host",
+		required = false
+	)
 	public String networkHost();
 
-	@Meta.AD(deflt = "", name = "network-bind-host", required = false)
+	@Meta.AD(
+		deflt = "", description = "network-bind-host-help",
+		name = "network-bind-host", required = false
+	)
 	public String networkBindHost();
 
-	@Meta.AD(deflt = "", name = "network-publish-host", required = false)
+	@Meta.AD(
+		deflt = "", description = "network-publish-host-help",
+		name = "network-publish-host", required = false
+	)
 	public String networkPublishHost();
 
-	@Meta.AD(deflt = "", name = "transport-tcp-port", required = false)
+	@Meta.AD(
+		deflt = "", description = "transport-tcp-port-help",
+		name = "transport-tcp-port", required = false
+	)
 	public String transportTcpPort();
 
 	@Meta.AD(
-		deflt = "localhost:9300", name = "transport-addresses", required = false
+		deflt = "localhost:9300", description = "transport-addresses-help",
+		name = "transport-addresses", required = false
 	)
 	public String[] transportAddresses();
 
-	@Meta.AD(deflt = "true", name = "client-transport-sniff", required = false)
+	@Meta.AD(
+		deflt = "true", description = "client-transport-sniff-help",
+		name = "client-transport-sniff", required = false
+	)
 	public boolean clientTransportSniff();
 
 	@Meta.AD(
-		deflt = "false", name = "client-transport-ignore-cluster-name",
-		required = false
+		deflt = "false",
+		description = "client-transport-ignore-cluster-name-help",
+		name = "client-transport-ignore-cluster-name", required = false
 	)
 	public boolean clientTransportIgnoreClusterName();
 
 	@Meta.AD(
-		deflt = "5s", name = "client-transport-nodes-sampler-interval",
-		required = false
+		deflt = "5s",
+		description = "client-transport-nodes-sampler-interval-help",
+		name = "client-transport-nodes-sampler-interval", required = false
 	)
 	public String clientTransportNodesSamplerInterval();
 
-	@Meta.AD(deflt = "true", name = "http-enabled", required = false)
+	@Meta.AD(
+		deflt = "true", description = "http-enabled-help",
+		name = "http-enabled", required = false
+	)
 	public boolean httpEnabled();
 
-	@Meta.AD(deflt = "true", name = "http-cors-enabled", required = false)
+	@Meta.AD(
+		deflt = "true", description = "http-cors-enabled-help",
+		name = "http-cors-enabled", required = false
+	)
 	public boolean httpCORSEnabled();
 
 	@Meta.AD(
 		deflt = "/https?:\\/\\/localhost(:[0-9]+)?/",
+		description = "http-cors-allow-origin-help",
 		name = "http-cors-allow-origin", required = false
 	)
 	public String httpCORSAllowOrigin();
