@@ -1,0 +1,71 @@
+.gm-style {
+	font-family: inherit;
+	font-size: inherit;
+	font-weight: inherit;
+}
+
+.map-drawing-toolbar {
+	background-color: #29343D;
+	display: none;
+	margin-bottom: 0;
+	padding: 8px 10px;
+}
+
+.map-drawing-toolbar .map-clear-button {
+	display: none;
+}
+
+.map-drawing-toolbar .toolbar-message {
+	color: #FFF;
+	padding-left: 10px;
+}
+
+.search-results-map-window-content {
+	box-shadow: none;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	margin-bottom: 0;
+	max-width: 400px;
+}
+
+.search-results-map-window-content.tabular-list-group .list-group-item-field, .search-results-map-window-content.tabular-list-group .list-group-item-content {
+	border-width: 0;
+	padding-bottom: 0;
+	padding-top: 5px;
+}
+
+.search-results-map-window-content.tabular-list-group .list-group-item-field {
+	padding-left: 0;
+}
+
+.search-list-sidebar-toggle {
+	background-color: #FFF;
+	border: 1px solid rgba(133, 156, 173, 0.2);
+	border-radius: 4px 0 0 4px;
+	cursor: pointer;
+	height: 42px;
+	padding: 7px 0;
+	text-align: center;
+	width: 26px;
+}
+
+.search-list-sidebar-toggle:hover {
+	color: #65B6F0;
+}
+
+.search-map-container {
+	.btn.selected {
+		background-color: #EDF0F3;
+	}
+
+	.sidenav-menu-slider {
+		height: 100%;
+
+		.sidenav-menu {
+			overflow: scroll;
+
+			.main-content-body {
+				margin-top: 0;
+			}
+		}
+	}
+}
