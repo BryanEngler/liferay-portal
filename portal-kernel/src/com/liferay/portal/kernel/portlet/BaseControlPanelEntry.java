@@ -25,6 +25,8 @@ import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortletCategoryKeys;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.trash.kernel.model.TrashEntry;
+import com.liferay.trash.kernel.util.TrashUtil;
 
 import java.util.List;
 
@@ -118,10 +120,21 @@ public abstract class BaseControlPanelEntry implements ControlPanelEntry {
 			return true;
 		}
 
-		if (category.equals(PortletCategoryKeys.SITE_ADMINISTRATION_CONTENT) &&
-			group.isLayout() && !portlet.isScopeable()) {
+		if (category.equals(PortletCategoryKeys.SITE_ADMINISTRATION_CONTENT)) {
+			if (TrashUtil.isTrashEnabled(group)) {
+				String portletName = portlet.getPortletName();
 
-			return true;
+				String trashPortletName = PortletProviderUtil.getPortletId(
+					TrashEntry.class.getName(), PortletProvider.Action.VIEW);
+
+				if (portletName.equals(trashPortletName)) {
+					return false;
+				}
+			}
+
+			if (group.isLayout() && !portlet.isScopeable()) {
+				return true;
+			}
 		}
 
 		return false;
