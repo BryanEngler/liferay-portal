@@ -470,7 +470,7 @@ if (portletTitleBasedNavigation) {
 
 					<%
 					if (layoutAssetEntry != null) {
-						AssetEntry incrementAssetEntry = AssetEntryServiceUtil.incrementViewCounter(layoutAssetEntry.getClassName(), fileEntry.getFileEntryId());
+						AssetEntry incrementAssetEntry = AssetEntryLocalServiceUtil.incrementViewCounter(user.getUserId(), layoutAssetEntry.getClassName(), fileEntry.getFileEntryId());
 
 						if (incrementAssetEntry != null) {
 							layoutAssetEntry = incrementAssetEntry;
