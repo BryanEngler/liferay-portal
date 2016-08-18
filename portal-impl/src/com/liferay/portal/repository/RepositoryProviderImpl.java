@@ -78,8 +78,6 @@ public class RepositoryProviderImpl implements RepositoryProvider {
 		throws PortalException {
 
 		try {
-			checkFileEntryPermissions(fileEntryId);
-
 			return getRepository(getFileEntryRepositoryId(fileEntryId));
 		}
 		catch (InvalidRepositoryIdException irie) {
@@ -117,8 +115,6 @@ public class RepositoryProviderImpl implements RepositoryProvider {
 		throws PortalException {
 
 		try {
-			checkFileShortcutPermissions(fileShortcutId);
-
 			return getRepository(getFileShortcutRepositoryId(fileShortcutId));
 		}
 		catch (InvalidRepositoryIdException irie) {
@@ -156,8 +152,6 @@ public class RepositoryProviderImpl implements RepositoryProvider {
 		throws PortalException {
 
 		try {
-			checkFileVersionPermissions(fileVersionId);
-
 			return getRepository(getFileVersionRepositoryId(fileVersionId));
 		}
 		catch (InvalidRepositoryIdException irie) {
@@ -194,8 +188,6 @@ public class RepositoryProviderImpl implements RepositoryProvider {
 		throws PortalException {
 
 		try {
-			checkFolderPermissions(folderId);
-
 			return getRepository(getFolderRepositoryId(folderId));
 		}
 		catch (InvalidRepositoryIdException irie) {
@@ -275,6 +267,10 @@ public class RepositoryProviderImpl implements RepositoryProvider {
 		return repository;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	protected void checkFileEntryPermissions(long fileEntryId)
 		throws PortalException {
 
@@ -290,6 +286,10 @@ public class RepositoryProviderImpl implements RepositoryProvider {
 		}
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	protected void checkFileShortcutPermissions(long fileShortcutId)
 		throws PortalException {
 
@@ -306,6 +306,10 @@ public class RepositoryProviderImpl implements RepositoryProvider {
 		}
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	protected void checkFileVersionPermissions(long fileVersionId)
 		throws PortalException {
 
@@ -322,6 +326,10 @@ public class RepositoryProviderImpl implements RepositoryProvider {
 		}
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	protected void checkFolderPermissions(long folderId)
 		throws PortalException {
 
