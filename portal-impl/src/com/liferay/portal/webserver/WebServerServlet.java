@@ -406,7 +406,7 @@ public class WebServerServlet extends HttpServlet {
 			FileShortcut dlFileShortcut = DLAppServiceUtil.getFileShortcut(
 				fileShortcutId);
 
-			return DLAppServiceUtil.getFileEntry(
+			return DLAppLocalServiceUtil.getFileEntry(
 				dlFileShortcut.getToFileEntryId());
 		}
 		else if (pathArray.length == 2) {
