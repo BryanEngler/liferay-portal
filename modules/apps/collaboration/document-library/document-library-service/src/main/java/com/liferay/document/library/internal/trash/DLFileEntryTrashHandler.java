@@ -211,9 +211,9 @@ public class DLFileEntryTrashHandler extends DLBaseTrashHandler {
 	@Override
 	public boolean isInTrash(long classPK) throws PortalException {
 		try {
-			DLFileEntry dlFileEntry = getDLFileEntry(classPK);
+			FileEntry fileEntry = _dlAppLocalService.getFileEntry(classPK);
 
-			return dlFileEntry.isInTrash();
+			return fileEntry.isInTrash();
 		}
 		catch (UnsupportedCapabilityException uce) {
 			if (_log.isDebugEnabled()) {
