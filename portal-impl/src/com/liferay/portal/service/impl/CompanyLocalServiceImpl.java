@@ -302,7 +302,12 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 			}
 		}
 
-		preregisterCompany(company.getCompanyId());
+		try {
+			preregisterCompany(company.getCompanyId());
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+		}
 
 		CompanyProvider currentCompanyProvider =
 			_companyProviderWrapper.getCompanyProvider();
