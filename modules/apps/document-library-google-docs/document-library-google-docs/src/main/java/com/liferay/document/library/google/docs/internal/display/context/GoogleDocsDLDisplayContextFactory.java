@@ -21,7 +21,7 @@ import com.liferay.document.library.google.docs.internal.util.GoogleDocsMetadata
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFileEntryType;
 import com.liferay.document.library.kernel.model.DLFileVersion;
-import com.liferay.document.library.kernel.service.DLAppService;
+import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.service.DLFileEntryMetadataLocalService;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
@@ -104,7 +104,7 @@ public class GoogleDocsDLDisplayContextFactory
 		try {
 			long fileEntryId = fileShortcut.getToFileEntryId();
 
-			FileEntry fileEntry = _dlAppService.getFileEntry(fileEntryId);
+			FileEntry fileEntry = _dlAppLocalService.getFileEntry(fileEntryId);
 
 			FileVersion fileVersion = fileEntry.getFileVersion();
 
@@ -162,8 +162,8 @@ public class GoogleDocsDLDisplayContextFactory
 	}
 
 	@Reference(unbind = "-")
-	public void setDLAppService(DLAppService dlAppService) {
-		_dlAppService = dlAppService;
+	public void setDLAppLocalService(DLAppLocalService dlAppLocalService) {
+		_dlAppLocalService = dlAppLocalService;
 	}
 
 	@Reference(unbind = "-")
@@ -187,7 +187,7 @@ public class GoogleDocsDLDisplayContextFactory
 
 	private DDMFormValuesToFieldsConverter _ddmFormValuesToFieldsConverter;
 	private DDMStructureLocalService _ddmStructureLocalService;
-	private DLAppService _dlAppService;
+	private DLAppLocalService _dlAppLocalService;
 	private DLFileEntryMetadataLocalService _dlFileEntryMetadataLocalService;
 	private FieldsToDDMFormValuesConverter _fieldsToDDMFormValuesConverter;
 	private StorageEngine _storageEngine;
