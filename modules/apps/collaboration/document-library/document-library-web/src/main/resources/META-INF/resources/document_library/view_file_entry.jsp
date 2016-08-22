@@ -211,7 +211,7 @@ if (portletTitleBasedNavigation) {
 						</c:if>
 					</dl>
 
-					<c:if test="<%= dlViewFileVersionDisplayContext.isDownloadLinkVisible() %>">
+					<c:if test="<%= dlViewFileVersionDisplayContext.isDownloadLinkVisible() || Validator.isNotNull(fileShortcutId) %>">
 						<span class="download-document">
 							<liferay-ui:icon
 								iconCssClass="icon-download"
