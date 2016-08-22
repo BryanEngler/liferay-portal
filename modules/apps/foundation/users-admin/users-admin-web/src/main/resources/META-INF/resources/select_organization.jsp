@@ -140,6 +140,7 @@ renderResponse.setTitle(LanguageUtil.get(request, "organizations"));
 					data.put("name", organization.getName());
 					data.put("organizationid", organization.getOrganizationId());
 					data.put("type", LanguageUtil.get(request, organization.getType()));
+					data.put("single-disable", Boolean.TRUE);
 
 					boolean disabled = false;
 

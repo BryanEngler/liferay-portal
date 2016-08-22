@@ -867,10 +867,13 @@
 						var confirmSelection = currentTarget.attr('data-confirm-selection') === 'true';
 						var confirmSelectionMessage = currentTarget.attr('data-confirm-selection-message');
 
+						var singleDisable = currentTarget.attr('single-disable') === 'true';
+
 						if (!confirmSelection || confirm(confirmSelectionMessage)) {
 							if (disableButton !== false) {
-								selectorButtons.prop('disabled', false);
-
+								if(singleDisable !== false) {
+									selectorButtons.prop('disabled', false);
+								}
 								currentTarget.prop('disabled', true);
 							}
 

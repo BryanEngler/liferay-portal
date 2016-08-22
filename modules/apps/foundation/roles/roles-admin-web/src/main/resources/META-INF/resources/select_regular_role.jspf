@@ -119,6 +119,7 @@ portletURL.setParameter("eventName", eventName);
 					data.put("roleid", role.getRoleId());
 					data.put("roletitle", role.getTitle(locale));
 					data.put("searchcontainername", "roles");
+					data.put("single-disable", Boolean.TRUE);
 
 					long[] defaultRoleIds = selUser.getRoleIds();
 

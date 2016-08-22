@@ -243,6 +243,7 @@ if (step == 1) {
 							data.put("roleid", role.getRoleId());
 							data.put("roletitle", role.getTitle(locale));
 							data.put("searchcontainername", "siteRoles");
+							data.put("single-disable", Boolean.TRUE);
 
 							boolean disabled = false;
 

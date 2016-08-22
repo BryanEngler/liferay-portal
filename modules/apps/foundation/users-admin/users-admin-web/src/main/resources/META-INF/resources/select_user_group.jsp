@@ -124,6 +124,7 @@ renderResponse.setTitle(LanguageUtil.get(request, "user-groups"));
 
 					data.put("usergroupid", userGroup.getUserGroupId());
 					data.put("usergroupname", userGroup.getName());
+					data.put("single-disable", Boolean.TRUE);
 
 					boolean disabled = false;
 
