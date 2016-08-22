@@ -90,10 +90,10 @@ public interface ElasticsearchConfiguration {
 	@Meta.AD(deflt = "/https?:\\/\\/localhost(:[0-9]+)?/", required = false)
 	public String httpCORSAllowOrigin();
 
-	@Meta.AD(description = "%http-cors-configurations-help", required = false)
+	@Meta.AD(description = "http-cors-configurations-help", required = false)
 	public String httpCORSConfigurations();
 
-	@Meta.AD(description = "%additional-configurations-help", required = false)
+	@Meta.AD(description = "additional-configurations-help", required = false)
 	public String additionalConfigurations();
 
 	@Meta.AD(
@@ -101,7 +101,7 @@ public interface ElasticsearchConfiguration {
 	)
 	public String additionalIndexConfigurations();
 
-	@Meta.AD(description = "%additional-type-mappings-help", required = false)
+	@Meta.AD(description = "additional-type-mappings-help", required = false)
 	public String additionalTypeMappings();
 
 }
