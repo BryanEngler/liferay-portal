@@ -243,6 +243,8 @@ if (portletTitleBasedNavigation && (folderId != DLFolderConstants.DEFAULT_PARENT
 
 					DLViewFileVersionDisplayContext dlViewFileVersionDisplayContext = null;
 
+					long fileShortcutId = 0;
+
 					if (fileShortcut == null) {
 						dlViewFileVersionDisplayContext = dlDisplayContextProvider.getDLViewFileVersionDisplayContext(request, response, fileEntry.getFileVersion());
 
@@ -251,7 +253,9 @@ if (portletTitleBasedNavigation && (folderId != DLFolderConstants.DEFAULT_PARENT
 					else {
 						dlViewFileVersionDisplayContext = dlDisplayContextProvider.getDLViewFileVersionDisplayContext(request, response, fileShortcut);
 
-						row.setPrimaryKey(String.valueOf(fileShortcut.getFileShortcutId()));
+						fileShortcutId = fileShortcut.getFileShortcutId();
+
+						row.setPrimaryKey(String.valueOf(fileShortcutId));
 					}
 
 					boolean draggable = false;
@@ -331,6 +335,7 @@ if (portletTitleBasedNavigation && (folderId != DLFolderConstants.DEFAULT_PARENT
 								rowURL.setParameter("mvcRenderCommandName", "/document_library/view_file_entry");
 								rowURL.setParameter("redirect", HttpUtil.removeParameter(currentURL, liferayPortletResponse.getNamespace() + "ajax"));
 								rowURL.setParameter("fileEntryId", String.valueOf(fileEntry.getFileEntryId()));
+								rowURL.setParameter("fileShortcutId", String.valueOf(fileShortcutId));
 								%>
 
 								<c:choose>
@@ -374,6 +379,7 @@ if (portletTitleBasedNavigation && (folderId != DLFolderConstants.DEFAULT_PARENT
 								rowURL.setParameter("mvcRenderCommandName", "/document_library/view_file_entry");
 								rowURL.setParameter("redirect", HttpUtil.removeParameter(currentURL, liferayPortletResponse.getNamespace() + "ajax"));
 								rowURL.setParameter("fileEntryId", String.valueOf(fileEntry.getFileEntryId()));
+								rowURL.setParameter("fileShortcutId", String.valueOf(fileShortcutId));
 								%>
 
 								<liferay-ui:search-container-column-text
