@@ -23,6 +23,8 @@ String tabs2 = ParamUtil.getString(request, "tabs2", "version-history");
 
 String redirect = ParamUtil.getString(request, "redirect");
 
+long fileShortcutId = ParamUtil.getLong(request, "fileShortcutId");
+
 String uploadProgressId = "dlFileEntryUploadProgress";
 
 FileEntry fileEntry = (FileEntry)request.getAttribute(WebKeys.DOCUMENT_LIBRARY_FILE_ENTRY);
@@ -215,7 +217,7 @@ if (portletTitleBasedNavigation) {
 								iconCssClass="icon-download"
 								label="<%= true %>"
 								message='<%= LanguageUtil.get(resourceBundle, "download") + " (" + TextFormatter.formatStorageSize(fileVersion.getSize(), locale) + ")" %>'
-								url="<%= DLUtil.getDownloadURL(fileEntry, fileVersion, themeDisplay, StringPool.BLANK) %>"
+								url="<%= DLUtil.getDownloadURL(fileEntry, fileVersion, fileShortcutId, themeDisplay, StringPool.BLANK) %>"
 							/>
 						</span>
 						<span class="conversions">
@@ -230,7 +232,7 @@ if (portletTitleBasedNavigation) {
 									label="<%= true %>"
 									message='<%= LanguageUtil.get(resourceBundle, "download") + " (" + TextFormatter.formatStorageSize(fileVersion.getSize(), locale) + ")" %>'
 									method="get"
-									url="<%= DLUtil.getDownloadURL(fileEntry, fileVersion, themeDisplay, StringPool.BLANK) %>"
+									url="<%= DLUtil.getDownloadURL(fileEntry, fileVersion, fileShortcutId, themeDisplay, StringPool.BLANK) %>"
 								/>
 
 							<%
@@ -250,7 +252,7 @@ if (portletTitleBasedNavigation) {
 						</span>
 
 						<div class="hide lfr-asset-field url-file-container">
-							<aui:input name="url" type="resource" value="<%= DLUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), themeDisplay, StringPool.BLANK, false, true) %>" />
+							<aui:input name="url" type="resource" value="<%= DLUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), fileShortcutId, themeDisplay, StringPool.BLANK, false, true) %>" />
 						</div>
 
 						<c:if test="<%= portletDisplay.isWebDAVEnabled() && fileEntry.isSupportsSocial() %>">
@@ -437,7 +439,7 @@ if (portletTitleBasedNavigation) {
 					<span class="document-thumbnail">
 
 						<%
-						String thumbnailSrc = DLUtil.getThumbnailSrc(fileEntry, fileVersion, themeDisplay);
+						String thumbnailSrc = DLUtil.getThumbnailSrc(fileEntry, fileVersion, fileShortcutId, themeDisplay);
 						%>
 
 						<c:if test="<%= Validator.isNotNull(thumbnailSrc) %>">
