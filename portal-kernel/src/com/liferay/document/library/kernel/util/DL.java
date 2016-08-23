@@ -80,6 +80,15 @@ public interface DL {
 		throws PortalException;
 
 	public String getDownloadURL(
+		FileEntry fileEntry, FileVersion fileVersion, long fileShortcutId,
+		ThemeDisplay themeDisplay, String queryString);
+
+	public String getDownloadURL(
+		FileEntry fileEntry, FileVersion fileVersion, long fileShortcutId,
+		ThemeDisplay themeDisplay, String queryString, boolean appendVersion,
+		boolean absoluteURL);
+
+	public String getDownloadURL(
 		FileEntry fileEntry, FileVersion fileVersion, ThemeDisplay themeDisplay,
 		String queryString);
 
@@ -116,6 +125,15 @@ public interface DL {
 	public String getImagePreviewURL(
 			FileEntry fileEntry, ThemeDisplay themeDisplay)
 		throws Exception;
+
+	public String getPreviewURL(
+		FileEntry fileEntry, FileVersion fileVersion, long fileShortcutId,
+		ThemeDisplay themeDisplay, String queryString);
+
+	public String getPreviewURL(
+		FileEntry fileEntry, FileVersion fileVersion, long fileShortcutId,
+		ThemeDisplay themeDisplay, String queryString, boolean appendVersion,
+		boolean absoluteURL);
 
 	public String getPreviewURL(
 		FileEntry fileEntry, FileVersion fileVersion, ThemeDisplay themeDisplay,
@@ -155,6 +173,11 @@ public interface DL {
 	public String getThumbnailSrc(
 			FileEntry fileEntry, FileVersion fileVersion,
 			DLFileShortcut dlFileShortcut, ThemeDisplay themeDisplay)
+		throws Exception;
+
+	public String getThumbnailSrc(
+			FileEntry fileEntry, FileVersion fileVersion, long fileShortcutId,
+			ThemeDisplay themeDisplay)
 		throws Exception;
 
 	public String getThumbnailSrc(
