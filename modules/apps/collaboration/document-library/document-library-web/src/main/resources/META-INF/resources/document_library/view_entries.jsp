@@ -279,7 +279,7 @@ if (portletTitleBasedNavigation && (folderId != DLFolderConstants.DEFAULT_PARENT
 
 					row.setData(rowData);
 
-					String thumbnailSrc = DLUtil.getThumbnailSrc(fileEntry, latestFileVersion, themeDisplay);
+					String thumbnailSrc = DLUtil.getThumbnailSrc(fileEntry, latestFileVersion, fileShortcutId, themeDisplay);
 					%>
 
 					<c:choose>
