@@ -21,6 +21,8 @@ FileVersion fileVersion = (FileVersion)request.getAttribute(WebKeys.DOCUMENT_LIB
 
 int status = ParamUtil.getInteger(request, "status", WorkflowConstants.STATUS_ANY);
 
+long fileShortcutId = ParamUtil.getInteger(request, "fileShortcutId");
+
 FileEntry fileEntry = fileVersion.getFileEntry();
 
 boolean hasAudio = AudioProcessorUtil.hasAudio(fileVersion);

@@ -19,6 +19,8 @@
 <%
 String redirect = ParamUtil.getString(request, "redirect");
 
+long fileShortcutId = ParamUtil.getLong(request, "fileShortcutId");
+
 boolean showHistoryActions = ParamUtil.getBoolean(request, "showHistoryActions", true);
 
 ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
@@ -39,7 +41,7 @@ FileEntry fileEntry = fileVersion.getFileEntry();
 	<liferay-ui:icon
 		message="download"
 		method="get"
-		url="<%= DLUtil.getPreviewURL(fileEntry, fileVersion, themeDisplay, StringPool.BLANK) %>"
+		url="<%= DLUtil.getPreviewURL(fileEntry, fileVersion, fileShortcutId, themeDisplay, StringPool.BLANK, true, true) %>"
 	/>
 
 	<c:if test="<%= showHistoryActions %>">
