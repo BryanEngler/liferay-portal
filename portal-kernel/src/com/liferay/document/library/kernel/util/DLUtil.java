@@ -99,6 +99,24 @@ public class DLUtil {
 	}
 
 	public static String getDownloadURL(
+		FileEntry fileEntry, FileVersion fileVersion, long fileShortcutId,
+		ThemeDisplay themeDisplay, String queryString) {
+
+		return getDL().getDownloadURL(
+			fileEntry, fileVersion, fileShortcutId, themeDisplay, queryString);
+	}
+
+	public static String getDownloadURL(
+		FileEntry fileEntry, FileVersion fileVersion, long fileShortcutId,
+		ThemeDisplay themeDisplay, String queryString, boolean appendVersion,
+		boolean absoluteURL) {
+
+		return getDL().getDownloadURL(
+			fileEntry, fileVersion, fileShortcutId, themeDisplay, queryString,
+			appendVersion, absoluteURL);
+	}
+
+	public static String getDownloadURL(
 		FileEntry fileEntry, FileVersion fileVersion, ThemeDisplay themeDisplay,
 		String queryString) {
 
@@ -171,6 +189,24 @@ public class DLUtil {
 	}
 
 	public static String getPreviewURL(
+		FileEntry fileEntry, FileVersion fileVersion, long fileShortcutId,
+		ThemeDisplay themeDisplay, String queryString) {
+
+		return getDL().getPreviewURL(
+			fileEntry, fileVersion, fileShortcutId, themeDisplay, queryString);
+	}
+
+	public static String getPreviewURL(
+		FileEntry fileEntry, FileVersion fileVersion, long fileShortcutId,
+		ThemeDisplay themeDisplay, String queryString, boolean appendVersion,
+		boolean absoluteURL) {
+
+		return getDL().getPreviewURL(
+			fileEntry, fileVersion, fileShortcutId, themeDisplay, queryString,
+			appendVersion, absoluteURL);
+	}
+
+	public static String getPreviewURL(
 		FileEntry fileEntry, FileVersion fileVersion, ThemeDisplay themeDisplay,
 		String queryString) {
 
@@ -240,6 +276,15 @@ public class DLUtil {
 
 		return getDL().getThumbnailSrc(
 			fileEntry, fileVersion, dlFileShortcut, themeDisplay);
+	}
+
+	public static String getThumbnailSrc(
+			FileEntry fileEntry, FileVersion fileVersion, long fileShortcutId,
+			ThemeDisplay themeDisplay)
+		throws Exception {
+
+		return getDL().getThumbnailSrc(
+			fileEntry, fileVersion, fileShortcutId, themeDisplay);
 	}
 
 	public static String getThumbnailSrc(

@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1468904359940
+Bnd-LastModified: 1471987853346
 Bundle-ManifestVersion: 2
 Bundle-Name: system.packages.extra
 Bundle-SymbolicName: system.packages.extra
@@ -2143,7 +2143,7 @@ Export-Package: com.liferay.ibm.icu;version="4.0.1",com.liferay.ibm.ic
  ence,com.liferay.portal.kernel.util",com.liferay.document.library.ker
  nel.store;version="1.0.0";uses:="com.liferay.portal.kernel.exception,
  com.liferay.portal.kernel.transaction",com.liferay.document.library.k
- ernel.util;version="1.0.0";uses:="com.liferay.document.library.kernel
+ ernel.util;version="1.1.0";uses:="com.liferay.document.library.kernel
  .exception,com.liferay.document.library.kernel.model,com.liferay.expo
  rtimport.kernel.lar,com.liferay.portal.kernel.exception,com.liferay.p
  ortal.kernel.repository.model,com.liferay.portal.kernel.search,com.li
@@ -3751,8 +3751,8 @@ Export-Package: com.liferay.ibm.icu;version="4.0.1",com.liferay.ibm.ic
  0.2";uses:="com.liferay.document.library.kernel.store,com.liferay.por
  tal.kernel.bean,com.liferay.portal.kernel.exception,com.liferay.porta
  l.kernel.messaging.proxy,com.liferay.portal.kernel.service,org.aopall
- iance.intercept",com.liferay.portlet.documentlibrary.util;version="1.
- 0.2";uses:="com.liferay.document.library.kernel.exception,com.liferay
+ iance.intercept",com.liferay.portlet.documentlibrary.util;version="2.
+ 0.0";uses:="com.liferay.document.library.kernel.exception,com.liferay
  .document.library.kernel.model,com.liferay.document.library.kernel.se
  rvice,com.liferay.document.library.kernel.service.persistence,com.lif
  eray.document.library.kernel.util,com.liferay.exportimport.kernel.lar
