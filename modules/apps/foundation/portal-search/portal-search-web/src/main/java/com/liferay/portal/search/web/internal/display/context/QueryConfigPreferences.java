@@ -14,14 +14,23 @@
 
 package com.liferay.portal.search.web.internal.display.context;
 
-import javax.portlet.PortletException;
-import javax.portlet.PortletURL;
-
 /**
  * @author André de Oliveira
  */
-public interface PortletURLFactory {
+public interface QueryConfigPreferences {
 
-	public PortletURL getPortletURL() throws PortletException;
+	public int getCollatedSpellCheckResultDisplayThreshold();
+
+	public int getQueryIndexingThreshold();
+
+	public int getQuerySuggestionsDisplayThreshold();
+
+	public int getQuerySuggestionsMax();
+
+	public boolean isCollatedSpellCheckResultEnabled();
+
+	public boolean isQueryIndexingEnabled();
+
+	public boolean isQuerySuggestionsEnabled();
 
 }

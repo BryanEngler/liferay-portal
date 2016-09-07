@@ -14,14 +14,13 @@
 
 package com.liferay.portal.search.web.internal.display.context;
 
-import javax.portlet.PortletException;
-import javax.portlet.PortletURL;
+import com.liferay.portal.kernel.search.QueryConfig;
 
 /**
  * @author André de Oliveira
  */
-public interface PortletURLFactory {
+public interface QueryConfigSupplier {
 
-	public PortletURL getPortletURL() throws PortletException;
+	public QueryConfig getQueryConfig();
 
 }

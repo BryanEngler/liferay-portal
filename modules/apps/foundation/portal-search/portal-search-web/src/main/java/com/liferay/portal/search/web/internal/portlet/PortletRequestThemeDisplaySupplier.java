@@ -12,36 +12,30 @@
  * details.
  */
 
-package com.liferay.portal.search.web.internal.display.context;
+package com.liferay.portal.search.web.internal.portlet;
 
-import com.liferay.portal.kernel.portlet.PortletURLUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.search.web.internal.display.context.ThemeDisplaySupplier;
 
-import javax.portlet.MimeResponse;
-import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
-import javax.portlet.PortletURL;
 
 /**
  * @author André de Oliveira
  */
-public class PortletURLFactoryImpl implements PortletURLFactory {
+public class PortletRequestThemeDisplaySupplier
+	implements ThemeDisplaySupplier {
 
-	public PortletURLFactoryImpl(
-		PortletRequest portletRequest, MimeResponse mimeResponse) {
-
+	public PortletRequestThemeDisplaySupplier(PortletRequest portletRequest) {
 		_portletRequest = portletRequest;
-		_mimeResponse = mimeResponse;
 	}
 
 	@Override
-	public PortletURL getPortletURL() throws PortletException {
-		PortletURL portletURL = PortletURLUtil.getCurrent(
-			_portletRequest, _mimeResponse);
-
-		return PortletURLUtil.clone(portletURL, _mimeResponse);
+	public ThemeDisplay getThemeDisplay() {
+		return (ThemeDisplay)_portletRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
 	}
 
-	private final MimeResponse _mimeResponse;
 	private final PortletRequest _portletRequest;
 
 }

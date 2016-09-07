@@ -12,16 +12,15 @@
  * details.
  */
 
-package com.liferay.portal.search.web.internal.display.context;
+package com.liferay.portal.search.web.search.builder;
 
-import javax.portlet.PortletException;
-import javax.portlet.PortletURL;
+import com.liferay.portal.kernel.search.facet.Facet;
 
 /**
  * @author André de Oliveira
  */
-public interface PortletURLFactory {
+public interface SearchBuilder {
 
-	public PortletURL getPortletURL() throws PortletException;
+	public void addFacet(Facet facet);
 
 }
