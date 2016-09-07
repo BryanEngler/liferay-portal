@@ -34,7 +34,7 @@
 	for (SearchFacet searchFacet : searchFacets) {
 	%>
 
-		<aui:input label="<%= searchFacet.getTitle() %>" name='<%= "preferences--" + searchFacet.getClassName() + "--" %>' type="checkbox" value="<%= searchDisplayContext.isDisplayFacet(searchFacet.getClassName()) %>" />
+		<aui:input label="<%= searchFacet.getTitle() %>" name='<%= "preferences--" + searchFacet.getClassName() + "--" %>' type="checkbox" value="<%= searchDisplayContext.isDisplayFacet(searchFacet) %>" />
 
 		<div class="facet-configuration" id="<portlet:namespace /><%= AUIUtil.normalizeId(searchFacet.getClassName()) %>FacetConfiguration">
 			<liferay-ui:toggle-area align="none" defaultShowContent="hide" hideMessage='<%= LanguageUtil.get(request, "configure") %>' id="<%= StringUtil.replace(searchFacet.getClassName(), CharPool.PERIOD, CharPool.UNDERLINE) %>" showMessage='<%= LanguageUtil.get(request, "configure") %>'>
