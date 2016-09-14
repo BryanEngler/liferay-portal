@@ -349,6 +349,10 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 	}
 
 	protected void checkPackagePath(String fileName, String packagePath) {
+		if (Validator.isNull(packagePath)) {
+			processMessage(fileName, "Missing package");
+		}
+
 		int pos = fileName.lastIndexOf(CharPool.SLASH);
 
 		String filePath = StringUtil.replace(
@@ -631,13 +635,13 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 
 		className = className.substring(0, pos);
 
+		String packagePath = StringPool.BLANK;
+
 		Matcher matcher = _packagePattern.matcher(content);
 
-		if (!matcher.find()) {
-			processMessage(fileName, "Missing package");
+		if (matcher.find()) {
+			packagePath = matcher.group(2);
 		}
-
-		String packagePath = matcher.group(2);
 
 		checkPackagePath(fileName, packagePath);
 
@@ -1727,7 +1731,14 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 		return content;
 	}
 
-	protected String formatDeprecatedJavadoc(String line) {
+	protected String formatDeprecatedJavadoc(
+			String fileName, String absolutePath, String line)
+		throws Exception {
+
+		if (!portalSource) {
+			return line;
+		}
+
 		Matcher matcher = _deprecatedPattern.matcher(line);
 
 		if (!matcher.find()) {
@@ -1735,7 +1746,11 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 		}
 
 		ComparableVersion mainReleaseComparableVersion =
-			getMainReleaseComparableVersion();
+			getMainReleaseComparableVersion(fileName, absolutePath, true);
+
+		if (mainReleaseComparableVersion == null) {
+			return line;
+		}
 
 		if (matcher.group(2) == null) {
 			return StringUtil.insert(
@@ -2298,7 +2313,8 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 				checkResourceUtil(line, fileName, lineCount);
 
 				if (_addMissingDeprecationReleaseVersion) {
-					line = formatDeprecatedJavadoc(line);
+					line = formatDeprecatedJavadoc(
+						fileName, absolutePath, line);
 				}
 
 				if (trimmedLine.startsWith("* @see ") &&

@@ -118,9 +118,34 @@ version 1.0.125.
 
 ## 2.0.27 - 2016-09-07
 
+### Changed
 - [LPS-68014]: Update the [Liferay Ant BND] dependency to version 2.0.29.
 - [LPS-68035]: Update the [Liferay Source Formatter] dependency to version
 1.0.274.
+
+## 2.0.28 - 2016-09-08
+
+### Changed
+- [LPS-66853]: Update the [Liferay Source Formatter] dependency to version
+1.0.275.
+
+## 2.0.29 - 2016-09-08
+
+### Changed
+- [LPS-66853]: Update the [Liferay Source Formatter] dependency to version
+1.0.276.
+
+## 2.0.30 - 2016-09-09
+
+### Added
+- [LPS-61099]: Allow the `liferay.appServerParentDir` property's default value
+to be overridden by setting the project property `app.server.parent.dir`.
+
+## 2.0.31 - 2016-09-12
+
+### Added
+- [LPS-67766]: Automatically apply plugin `com.liferay.soy.translation` in order
+to use the Liferay localization mechanism in the generated `.soy.js` files.
 
 [Gradle Bundle Plugin]: https://github.com/TomDmitriev/gradle-bundle-plugin
 [Liferay Ant BND]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/ant-bnd
@@ -130,10 +155,12 @@ version 1.0.125.
 [Liferay Gradle Plugins JS Transpiler]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-js-transpiler
 [Liferay Portal Tools Service Builder]: https://github.com/liferay/liferay-portal/tree/master/modules/util/portal-tools-service-builder
 [Liferay Source Formatter]: https://github.com/liferay/liferay-portal/tree/master/modules/util/source-formatter
+[LPS-61099]: https://issues.liferay.com/browse/LPS-61099
 [LPS-66853]: https://issues.liferay.com/browse/LPS-66853
 [LPS-67023]: https://issues.liferay.com/browse/LPS-67023
 [LPS-67352]: https://issues.liferay.com/browse/LPS-67352
 [LPS-67658]: https://issues.liferay.com/browse/LPS-67658
+[LPS-67766]: https://issues.liferay.com/browse/LPS-67766
 [LPS-67804]: https://issues.liferay.com/browse/LPS-67804
 [LPS-67986]: https://issues.liferay.com/browse/LPS-67986
 [LPS-67996]: https://issues.liferay.com/browse/LPS-67996

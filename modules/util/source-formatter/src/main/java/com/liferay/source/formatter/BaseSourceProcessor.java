@@ -574,7 +574,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 				Properties bndFileLanguageProperties =
 					getBNDFileLanguageProperties(fileName);
 
-				if ((bndFileLanguageProperties == null) ||
+				if ((bndFileLanguageProperties != null) &&
 					!bndFileLanguageProperties.containsKey(languageKey)) {
 
 					processMessage(
@@ -1678,7 +1678,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 			getBNDFileLocationAndContentTuple(fileName);
 
 		if (bndFileLocationAndContentTuple == null) {
-			return null;
+			return new Properties();
 		}
 
 		String bndFileLocation =
@@ -1692,6 +1692,17 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 		String bndContent = (String)bndFileLocationAndContentTuple.getObject(1);
 
+		if (bndContent.matches(
+				"[\\s\\S]*Provide-Capability:.*liferay\\.resource\\.bundle" +
+					"[\\s\\S]*")) {
+
+			// Return null, in order to skip checking for language keys for
+			// modules that use LanguageExtender. No fix in place for this right
+			// now.
+
+			return null;
+		}
+
 		Matcher matcher = bndContentDirPattern.matcher(bndContent);
 
 		if (matcher.find()) {
@@ -1699,7 +1710,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 				bndFileLocation + matcher.group(1) + "/Language.properties");
 
 			if (!file.exists()) {
-				return null;
+				return new Properties();
 			}
 
 			properties = new Properties();
@@ -1713,7 +1724,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 			return properties;
 		}
 
-		return null;
+		return new Properties();
 	}
 
 	protected Tuple getBNDFileLocationAndContentTuple(String fileName)
@@ -2097,21 +2108,57 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		return x + 1;
 	}
 
-	protected ComparableVersion getMainReleaseComparableVersion() {
-		if (_mainReleaseComparableVersion != null) {
-			return _mainReleaseComparableVersion;
+	protected ComparableVersion getMainReleaseComparableVersion(
+			String fileName, String absolutePath, boolean checkModuleVersion)
+		throws Exception {
+
+		boolean usePortalReleaseVersion = true;
+
+		if (checkModuleVersion && isModulesFile(absolutePath)) {
+			usePortalReleaseVersion = false;
 		}
 
-		String releaseVersion = ReleaseInfo.getVersion();
+		String releaseVersion = StringPool.BLANK;
+
+		if (usePortalReleaseVersion) {
+			if (_mainReleaseComparableVersion != null) {
+				return _mainReleaseComparableVersion;
+			}
+
+			releaseVersion = ReleaseInfo.getVersion();
+		}
+		else {
+			Tuple bndFileLocationAndContentTuple =
+				getBNDFileLocationAndContentTuple(fileName);
+
+			if (bndFileLocationAndContentTuple == null) {
+				return null;
+			}
+
+			String bndContent =
+				(String)bndFileLocationAndContentTuple.getObject(1);
+
+			Matcher matcher = bndReleaseVersionPattern.matcher(bndContent);
+
+			if (!matcher.find()) {
+				return null;
+			}
+
+			releaseVersion = matcher.group(1);
+		}
 
 		int pos = releaseVersion.lastIndexOf(CharPool.PERIOD);
 
 		String mainReleaseVersion = releaseVersion.substring(0, pos) + ".0";
 
-		_mainReleaseComparableVersion = new ComparableVersion(
+		ComparableVersion mainReleaseComparableVersion = new ComparableVersion(
 			mainReleaseVersion);
 
-		return _mainReleaseComparableVersion;
+		if (usePortalReleaseVersion) {
+			_mainReleaseComparableVersion = mainReleaseComparableVersion;
+		}
+
+		return mainReleaseComparableVersion;
 	}
 
 	protected List<String> getModuleLangDirNames(
@@ -2908,6 +2955,8 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		"[a-z]+[-_a-zA-Z0-9]*");
 	protected static Pattern bndContentDirPattern = Pattern.compile(
 		"\\scontent=(.*?)(,\\\\|\n|$)");
+	protected static Pattern bndReleaseVersionPattern = Pattern.compile(
+		"Bundle-Version: (.*)\n");
 	protected static Pattern emptyCollectionPattern = Pattern.compile(
 		"Collections\\.EMPTY_(LIST|MAP|SET)");
 	protected static Pattern getterUtilGetPattern = Pattern.compile(

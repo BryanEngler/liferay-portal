@@ -123,9 +123,9 @@ even if the versions in the `packageinfo` files are greater.
 - [LPS-67863]: Disable the `printArtifactPublishCommands` task if the project's
 `build.gradle` contains the string `version: "default"`, to prevent releasing
 modules with unpublished dependencies.
-- [LPS-67863]: The `.version-override-${project.name}.properties` now contains
-only the version overrides that differ from the versions specified in the
-`bnd.bnd` and `packageinfo` files.
+- [LPS-67863]: The `.version-override-${project.name}.properties` file now
+contains only the version overrides that differ from the versions specified in
+the `bnd.bnd` and `packageinfo` files.
 
 ## 1.2.5 - 2016-09-01
 
@@ -182,14 +182,46 @@ configuration.
 ### Changed
 - [LPS-68014]: Update the [Liferay Gradle Plugins] dependency to version 2.0.27.
 
+## 1.2.15 - 2016-09-08
+
+### Changed
+- [LPS-66853]: Update the [Liferay Gradle Plugins] dependency to version 2.0.28.
+
+## 1.2.16 - 2016-09-08
+
+### Added
+- [LPS-67863]: Allow dependency versions to be overridden in the
+`.version-override-${project.name}.properties` file:
+
+		[artifact group]-[artifact name]=[new version]
+
+### Changed
+- [LPS-66853]: Update the [Liferay Gradle Plugins] dependency to version 2.0.29.
+
+## 1.2.17 - 2016-09-09
+
+### Changed
+- [LPS-61099]: Update the [Liferay Gradle Plugins] dependency to version 2.0.30.
+- [LRDOCS-2841]: Look for the `.releng` directory starting from the project
+directory instead of the root project directory. Doing this lets submodules like
+`content-targeting` have their own separate `.releng` directory.
+
+## 1.2.18 - 2016-09-12
+
+### Changed
+- [LPS-67766]: Update the [Liferay Gradle Plugins] dependency to version 2.0.31.
+
 [Liferay Gradle Plugins]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins
+[LPS-61099]: https://issues.liferay.com/browse/LPS-61099
 [LPS-66853]: https://issues.liferay.com/browse/LPS-66853
 [LPS-67023]: https://issues.liferay.com/browse/LPS-67023
 [LPS-67352]: https://issues.liferay.com/browse/LPS-67352
 [LPS-67658]: https://issues.liferay.com/browse/LPS-67658
 [LPS-67694]: https://issues.liferay.com/browse/LPS-67694
+[LPS-67766]: https://issues.liferay.com/browse/LPS-67766
 [LPS-67804]: https://issues.liferay.com/browse/LPS-67804
 [LPS-67863]: https://issues.liferay.com/browse/LPS-67863
 [LPS-67996]: https://issues.liferay.com/browse/LPS-67996
 [LPS-68009]: https://issues.liferay.com/browse/LPS-68009
 [LPS-68014]: https://issues.liferay.com/browse/LPS-68014
+[LRDOCS-2841]: https://issues.liferay.com/browse/LRDOCS-2841
