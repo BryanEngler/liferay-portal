@@ -225,6 +225,8 @@
 				([$FOLDER_ID$]) AND
 				([$OWNER_USER_ID$] [$OWNER_USER_ID_AND_OR_CONNECTOR$] [$STATUS$]) AND
 				(tempJournalArticle.id_ IS NULL)
+			GROUP BY
+				JournalArticle.id_
 			ORDER BY
 				JournalArticle.id_ ASC
 		]]>
