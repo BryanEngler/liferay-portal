@@ -20,7 +20,6 @@ import com.liferay.portal.kernel.util.Validator;
 
 import java.io.IOException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -40,22 +39,7 @@ public abstract class BaseJSPSearchFacet extends BaseSearchFacet {
 			HttpServletRequest request, HttpServletResponse response)
 		throws IOException {
 
-		if (Validator.isNull(getConfigurationJspPath())) {
-			return;
-		}
-
-		RequestDispatcher requestDispatcher =
-			_servletContext.getRequestDispatcher(getConfigurationJspPath());
-
-		try {
-			requestDispatcher.include(request, response);
-		}
-		catch (ServletException se) {
-			_log.error("Unable to include JSP " + getDisplayJspPath(), se);
-
-			throw new IOException(
-				"Unable to include " + getDisplayJspPath(), se);
-		}
+		include(getConfigurationJspPath(), request, response);
 	}
 
 	@Override
@@ -63,26 +47,30 @@ public abstract class BaseJSPSearchFacet extends BaseSearchFacet {
 			HttpServletRequest request, HttpServletResponse response)
 		throws IOException {
 
-		if (Validator.isNull(getDisplayJspPath())) {
-			return;
-		}
-
-		RequestDispatcher requestDispatcher =
-			_servletContext.getRequestDispatcher(getDisplayJspPath());
-
-		try {
-			requestDispatcher.include(request, response);
-		}
-		catch (ServletException se) {
-			_log.error("Unable to include JSP", se);
-
-			throw new IOException(
-				"Unable to include " + getDisplayJspPath(), se);
-		}
+		include(getDisplayJspPath(), request, response);
 	}
 
 	public void setServletContext(ServletContext servletContext) {
 		_servletContext = servletContext;
+	}
+
+	protected void include(
+			String path, HttpServletRequest request,
+			HttpServletResponse response)
+		throws IOException {
+
+		if (Validator.isNull(path)) {
+			return;
+		}
+
+		try {
+			ResourceHelper.include(path, request, response, _servletContext);
+		}
+		catch (ServletException se) {
+			_log.error("Unable to include JSP " + path, se);
+
+			throw new IOException("Unable to include " + path, se);
+		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
