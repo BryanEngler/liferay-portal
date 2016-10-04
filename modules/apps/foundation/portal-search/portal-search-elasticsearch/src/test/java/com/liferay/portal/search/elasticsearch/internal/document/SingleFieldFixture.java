@@ -15,9 +15,12 @@
 package com.liferay.portal.search.elasticsearch.internal.document;
 
 import com.liferay.portal.search.elasticsearch.internal.connection.ElasticsearchFixture.IndexName;
+import com.liferay.portal.search.elasticsearch.internal.query.QueryBuilderFactory;
+import com.liferay.portal.search.elasticsearch.internal.query.SearchAssert;
 
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.index.query.QueryBuilder;
 
 /**
  * @author André de Oliveira
@@ -28,6 +31,15 @@ public class SingleFieldFixture {
 		_client = client;
 		_index = indexName.getName();
 		_type = type;
+	}
+
+	public void assertNoHits(String text) throws Exception {
+		SearchAssert.assertNoHits(_client, _field, _createQueryBuilder(text));
+	}
+
+	public void assertSearch(String text, String... expected) throws Exception {
+		SearchAssert.assertSearch(
+			_client, _field, _createQueryBuilder(text), expected);
 	}
 
 	public void indexDocument(String value) {
@@ -43,9 +55,20 @@ public class SingleFieldFixture {
 		_field = field;
 	}
 
+	public void setQueryBuilderFactory(
+		QueryBuilderFactory queryBuilderFactory) {
+
+		_queryBuilderFactory = queryBuilderFactory;
+	}
+
+	private QueryBuilder _createQueryBuilder(String text) {
+		return _queryBuilderFactory.create(_field, text);
+	}
+
 	private final Client _client;
 	private String _field;
 	private final String _index;
+	private QueryBuilderFactory _queryBuilderFactory;
 	private final String _type;
 
 }
