@@ -706,6 +706,19 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 			anyAssetTypeString = portletPreferences.getValue(
 				"anyAssetType", null);
 		}
+		else if ("false".equals(anyAssetTypeString)) {
+			String[] classNameIds = portletPreferences.getValues(
+				"classNameIds", StringPool.EMPTY_ARRAY);
+
+			if (classNameIds.length == 1) {
+				portletPreferences.setValue("anyAssetType", classNameIds[0]);
+
+				anyAssetTypeString = portletPreferences.getValue(
+					"anyAssetType", null);
+
+				portletPreferences.reset("classNameIds");
+			}
+		}
 
 		String anyAssetTypeClassName = StringPool.BLANK;
 
