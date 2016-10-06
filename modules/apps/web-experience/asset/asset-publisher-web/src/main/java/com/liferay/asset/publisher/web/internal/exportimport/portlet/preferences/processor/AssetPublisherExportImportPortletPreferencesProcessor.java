@@ -740,7 +740,14 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 				portletPreferences.getValue(name, null));
 
 			if (name.equals("anyAssetType") || name.equals("classNameIds")) {
-				updateExportClassNameIds(portletPreferences, name);
+				if (name.equals("classNameIds") &&
+					!"false".equals(anyAssetTypeString)) {
+
+					portletPreferences.reset(name);
+				}
+				else {
+					updateExportClassNameIds(portletPreferences, name);
+				}
 			}
 			else if (name.equals(
 						"anyClassTypeDLFileEntryAssetRendererFactory") ||
