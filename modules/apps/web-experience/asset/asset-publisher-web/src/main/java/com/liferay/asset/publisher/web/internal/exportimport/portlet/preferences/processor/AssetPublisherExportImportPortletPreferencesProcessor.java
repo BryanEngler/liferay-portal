@@ -757,6 +757,27 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 					 name.equals(
 						 "classTypeIdsDLFileEntryAssetRendererFactory")) {
 
+				String anyClassTypeDLFileEntryAssetRendererFactory =
+					portletPreferences.getValue(
+						"anyClassTypeDLFileEntryAssetRendererFactory", null);
+
+				String[] classTypeIdsDLFileEntryAssetRendererFactory =
+					portletPreferences.getValues(
+						"classTypeIdsDLFileEntryAssetRendererFactory",
+						StringPool.EMPTY_ARRAY);
+
+				if ("false".equals(
+						anyClassTypeDLFileEntryAssetRendererFactory) &&
+					(classTypeIdsDLFileEntryAssetRendererFactory.length == 1)) {
+
+					portletPreferences.setValue(
+						"anyClassTypeDLFileEntryAssetRendererFactory",
+						classTypeIdsDLFileEntryAssetRendererFactory[0]);
+
+					portletPreferences.reset(
+						"classTypeIdsDLFileEntryAssetRendererFactory");
+				}
+
 				updateExportPortletPreferencesClassPKs(
 					portletDataContext, portlet, portletPreferences, name,
 					DLFileEntryType.class.getName());
@@ -768,6 +789,28 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 						  JournalArticle.class.getName())) ||
 					 name.equals(
 						 "classTypeIdsJournalArticleAssetRendererFactory")) {
+
+				String anyClassTypeJournalArticleAssetRendererFactory =
+					portletPreferences.getValue(
+						"anyClassTypeJournalArticleAssetRendererFactory", null);
+
+				String[] classTypeIdsJournalArticleAssetRendererFactory =
+					portletPreferences.getValues(
+						"classTypeIdsJournalArticleAssetRendererFactory",
+						StringPool.EMPTY_ARRAY);
+
+				if ("false".equals(
+						anyClassTypeJournalArticleAssetRendererFactory) &&
+					(classTypeIdsJournalArticleAssetRendererFactory.length ==
+						1)) {
+
+					portletPreferences.setValue(
+						"anyClassTypeJournalArticleAssetRendererFactory",
+						classTypeIdsJournalArticleAssetRendererFactory[0]);
+
+					portletPreferences.reset(
+						"classTypeIdsJournalArticleAssetRendererFactory");
+				}
 
 				updateExportPortletPreferencesClassPKs(
 					portletDataContext, portlet, portletPreferences, name,
