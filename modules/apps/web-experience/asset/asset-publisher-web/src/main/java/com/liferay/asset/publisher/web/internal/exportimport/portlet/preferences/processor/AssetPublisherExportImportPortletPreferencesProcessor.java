@@ -776,10 +776,19 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 
 					portletPreferences.reset(
 						"classTypeIdsDLFileEntryAssetRendererFactory");
+
+					anyClassTypeDLFileEntryAssetRendererFactory =
+						portletPreferences.getValue(
+							"anyClassTypeDLFileEntryAssetRendererFactory",
+							null);
 				}
 
 				if (!anyAssetTypeClassName.equals(
-						DLFileEntry.class.getName())) {
+						DLFileEntry.class.getName()) ||
+					(name.equals(
+						"classTypeIdsDLFileEntryAssetRendererFactory") &&
+					 !"false".equals(
+						 anyClassTypeDLFileEntryAssetRendererFactory))) {
 
 					portletPreferences.reset(name);
 				}
@@ -817,10 +826,19 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 
 					portletPreferences.reset(
 						"classTypeIdsJournalArticleAssetRendererFactory");
+
+					anyClassTypeJournalArticleAssetRendererFactory =
+						portletPreferences.getValue(
+							"anyClassTypeJournalArticleAssetRendererFactory",
+							null);
 				}
 
 				if (!anyAssetTypeClassName.equals(
-						JournalArticle.class.getName())) {
+						JournalArticle.class.getName()) ||
+					(name.equals(
+						"classTypeIdsJournalArticleAssetRendererFactory") &&
+					 !"false".equals(
+						 anyClassTypeJournalArticleAssetRendererFactory))) {
 
 					portletPreferences.reset(name);
 				}
