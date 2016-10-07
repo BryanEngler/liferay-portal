@@ -146,7 +146,7 @@ public class PermissionsPortletConfigurationIcon
 			showPermissionsIcon = false;
 		}
 
-		if (group.isControlPanel()) {
+		if (layout.isTypeControlPanel()) {
 			showPermissionsIcon = false;
 		}
 
