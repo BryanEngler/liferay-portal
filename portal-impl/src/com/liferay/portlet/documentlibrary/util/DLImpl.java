@@ -269,6 +269,29 @@ public class DLImpl implements DL {
 
 	@Override
 	public String getDownloadURL(
+		FileEntry fileEntry, FileVersion fileVersion, long fileShortcutId,
+		ThemeDisplay themeDisplay, String queryString) {
+
+		return getDownloadURL(
+			fileEntry, fileVersion, fileShortcutId, themeDisplay, queryString,
+			true, true);
+	}
+
+	@Override
+	public String getDownloadURL(
+		FileEntry fileEntry, FileVersion fileVersion, long fileShortcutId,
+		ThemeDisplay themeDisplay, String queryString, boolean appendVersion,
+		boolean absoluteURL) {
+
+		String previewURL = getPreviewURL(
+			fileEntry, fileVersion, fileShortcutId, themeDisplay, queryString,
+			appendVersion, absoluteURL);
+
+		return HttpUtil.addParameter(previewURL, "download", true);
+	}
+
+	@Override
+	public String getDownloadURL(
 		FileEntry fileEntry, FileVersion fileVersion, ThemeDisplay themeDisplay,
 		String queryString) {
 
@@ -281,11 +304,9 @@ public class DLImpl implements DL {
 		FileEntry fileEntry, FileVersion fileVersion, ThemeDisplay themeDisplay,
 		String queryString, boolean appendVersion, boolean absoluteURL) {
 
-		String previewURL = getPreviewURL(
-			fileEntry, fileVersion, themeDisplay, queryString, appendVersion,
+		return getDownloadURL(
+			fileEntry, fileVersion, 0, themeDisplay, queryString, appendVersion,
 			absoluteURL);
-
-		return HttpUtil.addParameter(previewURL, "download", true);
 	}
 
 	@Override
@@ -522,7 +543,7 @@ public class DLImpl implements DL {
 		}
 
 		return getImageSrc(
-			fileEntry, fileVersion, themeDisplay, previewQueryString);
+			fileEntry, fileVersion, 0, themeDisplay, previewQueryString);
 	}
 
 	@Override
@@ -536,17 +557,19 @@ public class DLImpl implements DL {
 
 	@Override
 	public String getPreviewURL(
-		FileEntry fileEntry, FileVersion fileVersion, ThemeDisplay themeDisplay,
-		String queryString) {
+		FileEntry fileEntry, FileVersion fileVersion, long fileShortcutId,
+		ThemeDisplay themeDisplay, String queryString) {
 
 		return getPreviewURL(
-			fileEntry, fileVersion, themeDisplay, queryString, true, true);
+			fileEntry, fileVersion, fileShortcutId, themeDisplay, queryString,
+			true, true);
 	}
 
 	@Override
 	public String getPreviewURL(
-		FileEntry fileEntry, FileVersion fileVersion, ThemeDisplay themeDisplay,
-		String queryString, boolean appendVersion, boolean absoluteURL) {
+		FileEntry fileEntry, FileVersion fileVersion, long fileShortcutId,
+		ThemeDisplay themeDisplay, String queryString, boolean appendVersion,
+		boolean absoluteURL) {
 
 		StringBundler sb = new StringBundler(15);
 
@@ -556,21 +579,27 @@ public class DLImpl implements DL {
 
 		sb.append(PortalUtil.getPathContext());
 		sb.append("/documents/");
-		sb.append(fileEntry.getRepositoryId());
-		sb.append(StringPool.SLASH);
-		sb.append(fileEntry.getFolderId());
-		sb.append(StringPool.SLASH);
 
-		String fileName = fileEntry.getFileName();
-
-		if (fileEntry.isInTrash()) {
-			fileName = TrashUtil.getOriginalTitle(fileEntry.getFileName());
+		if (Validator.isNotNull(fileShortcutId)) {
+			sb.append(fileShortcutId);
 		}
+		else {
+			sb.append(fileEntry.getRepositoryId());
+			sb.append(StringPool.SLASH);
+			sb.append(fileEntry.getFolderId());
+			sb.append(StringPool.SLASH);
 
-		sb.append(HttpUtil.encodeURL(HtmlUtil.unescape(fileName)));
+			String fileName = fileEntry.getFileName();
 
-		sb.append(StringPool.SLASH);
-		sb.append(HttpUtil.encodeURL(fileEntry.getUuid()));
+			if (fileEntry.isInTrash()) {
+				fileName = TrashUtil.getOriginalTitle(fileEntry.getFileName());
+			}
+
+			sb.append(HttpUtil.encodeURL(HtmlUtil.unescape(fileName)));
+
+			sb.append(StringPool.SLASH);
+			sb.append(HttpUtil.encodeURL(fileEntry.getUuid()));
+		}
 
 		if (appendVersion) {
 			sb.append("?version=");
@@ -600,6 +629,25 @@ public class DLImpl implements DL {
 		}
 
 		return previewURL;
+	}
+
+	@Override
+	public String getPreviewURL(
+		FileEntry fileEntry, FileVersion fileVersion, ThemeDisplay themeDisplay,
+		String queryString) {
+
+		return getPreviewURL(
+			fileEntry, fileVersion, themeDisplay, queryString, true, true);
+	}
+
+	@Override
+	public String getPreviewURL(
+		FileEntry fileEntry, FileVersion fileVersion, ThemeDisplay themeDisplay,
+		String queryString, boolean appendVersion, boolean absoluteURL) {
+
+		return getPreviewURL(
+			fileEntry, fileVersion, 0, themeDisplay, queryString, appendVersion,
+			absoluteURL);
 	}
 
 	@Override
@@ -725,7 +773,7 @@ public class DLImpl implements DL {
 
 	@Override
 	public String getThumbnailSrc(
-			FileEntry fileEntry, FileVersion fileVersion,
+			FileEntry fileEntry, FileVersion fileVersion, long fileShortcutId,
 			ThemeDisplay themeDisplay)
 		throws Exception {
 
@@ -744,7 +792,17 @@ public class DLImpl implements DL {
 		}
 
 		return getImageSrc(
-			fileEntry, fileVersion, themeDisplay, thumbnailQueryString);
+			fileEntry, fileVersion, fileShortcutId, themeDisplay,
+			thumbnailQueryString);
+	}
+
+	@Override
+	public String getThumbnailSrc(
+			FileEntry fileEntry, FileVersion fileVersion,
+			ThemeDisplay themeDisplay)
+		throws Exception {
+
+		return getThumbnailSrc(fileEntry, fileVersion, 0, themeDisplay);
 	}
 
 	@Override
@@ -1150,7 +1208,7 @@ public class DLImpl implements DL {
 	}
 
 	protected String getImageSrc(
-			FileEntry fileEntry, FileVersion fileVersion,
+			FileEntry fileEntry, FileVersion fileVersion, long fileShortcutId,
 			ThemeDisplay themeDisplay, String queryString)
 		throws Exception {
 
@@ -1158,7 +1216,8 @@ public class DLImpl implements DL {
 
 		if (Validator.isNotNull(queryString)) {
 			thumbnailSrc = getPreviewURL(
-				fileEntry, fileVersion, themeDisplay, queryString, true, true);
+				fileEntry, fileVersion, fileShortcutId, themeDisplay,
+				queryString, true, true);
 		}
 
 		return thumbnailSrc;

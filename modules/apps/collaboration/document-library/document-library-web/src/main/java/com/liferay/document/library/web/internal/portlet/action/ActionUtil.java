@@ -17,6 +17,7 @@ package com.liferay.document.library.web.internal.portlet.action;
 import com.liferay.document.library.kernel.exception.NoSuchFileEntryException;
 import com.liferay.document.library.kernel.exception.NoSuchFolderException;
 import com.liferay.document.library.kernel.model.DLFolder;
+import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.document.library.kernel.service.DLAppServiceUtil;
 import com.liferay.document.library.kernel.util.RawMetadataProcessorUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -29,6 +30,8 @@ import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.RepositoryServiceUtil;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -38,6 +41,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portlet.documentlibrary.service.permission.DLFileShortcutPermission;
 import com.liferay.portlet.documentlibrary.service.permission.DLPermission;
 
 import java.util.ArrayList;
@@ -94,9 +98,20 @@ public class ActionUtil {
 
 		long fileEntryId = ParamUtil.getLong(request, "fileEntryId");
 
+		long fileShortcutId = ParamUtil.getLong(request, "fileShortcutId");
+
 		FileEntry fileEntry = null;
 
-		if (fileEntryId > 0) {
+		if (Validator.isNotNull(fileShortcutId)) {
+			PermissionChecker permissionChecker =
+				PermissionThreadLocal.getPermissionChecker();
+
+			DLFileShortcutPermission.check(
+				permissionChecker, fileShortcutId, ActionKeys.VIEW);
+
+			fileEntry = DLAppLocalServiceUtil.getFileEntry(fileEntryId);
+		}
+		else if (fileEntryId > 0) {
 			fileEntry = DLAppServiceUtil.getFileEntry(fileEntryId);
 		}
 

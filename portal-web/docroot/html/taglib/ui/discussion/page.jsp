@@ -17,6 +17,8 @@
 <%@ include file="/html/taglib/ui/discussion/init.jsp" %>
 
 <%
+long fileShortcutId = ParamUtil.getLong(request, "fileShortcutId");
+
 String randomNamespace = StringUtil.randomId() + StringPool.UNDERLINE;
 
 boolean skipEditorLoading = ParamUtil.getBoolean(request, "skipEditorLoading");
@@ -41,7 +43,7 @@ CommentSectionDisplayContext commentSectionDisplayContext = CommentDisplayContex
 		</div>
 	</c:if>
 
-	<c:if test="<%= commentSectionDisplayContext.isDiscussionVisible() %>">
+	<c:if test="<%= commentSectionDisplayContext.isDiscussionVisible() || Validator.isNotNull(fileShortcutId) %>">
 		<div class="taglib-discussion" id="<%= namespace %>discussionContainer">
 			<aui:form action="<%= discussionTaglibHelper.getFormAction() %>" method="post" name="<%= discussionTaglibHelper.getFormName() %>">
 				<input name="namespace" type="hidden" value="<%= namespace %>" />

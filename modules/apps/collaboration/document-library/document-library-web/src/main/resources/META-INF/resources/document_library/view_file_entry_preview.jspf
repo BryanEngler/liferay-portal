@@ -38,12 +38,12 @@
 
 			previewQueryString = "&previewFileIndex=";
 
-			previewFileURL = DLUtil.getPreviewURL(fileEntry, fileVersion, themeDisplay, previewQueryString);
+			previewFileURL = DLUtil.getPreviewURL(fileEntry, fileVersion, fileShortcutId, themeDisplay, previewQueryString);
 		}
 		else if (hasVideo) {
 			previewQueryString = "&videoPreview=1";
 
-			videoThumbnailURL = DLUtil.getPreviewURL(fileEntry, fileVersion, themeDisplay, "&videoThumbnail=1");
+			videoThumbnailURL = DLUtil.getPreviewURL(fileEntry, fileVersion, fileShortcutId, themeDisplay, "&videoThumbnail=1");
 		}
 
 		if (status != WorkflowConstants.STATUS_ANY) {
@@ -54,7 +54,7 @@
 			previewFileURLs = new String[PropsValues.DL_FILE_ENTRY_PREVIEW_AUDIO_CONTAINERS.length];
 
 			for (int i = 0; i < PropsValues.DL_FILE_ENTRY_PREVIEW_AUDIO_CONTAINERS.length; i++) {
-				previewFileURLs[i] = DLUtil.getPreviewURL(fileEntry, fileVersion, themeDisplay, previewQueryString + "&type=" + PropsValues.DL_FILE_ENTRY_PREVIEW_AUDIO_CONTAINERS[i]);
+				previewFileURLs[i] = DLUtil.getPreviewURL(fileEntry, fileVersion, fileShortcutId, themeDisplay, previewQueryString + "&type=" + PropsValues.DL_FILE_ENTRY_PREVIEW_AUDIO_CONTAINERS[i]);
 			}
 		}
 		else if (hasVideo) {
@@ -62,7 +62,7 @@
 				previewFileURLs = new String[PropsValues.DL_FILE_ENTRY_PREVIEW_VIDEO_CONTAINERS.length];
 
 				for (int i = 0; i < PropsValues.DL_FILE_ENTRY_PREVIEW_VIDEO_CONTAINERS.length; i++) {
-					previewFileURLs[i] = DLUtil.getPreviewURL(fileEntry, fileVersion, themeDisplay, previewQueryString + "&type=" + PropsValues.DL_FILE_ENTRY_PREVIEW_VIDEO_CONTAINERS[i]);
+					previewFileURLs[i] = DLUtil.getPreviewURL(fileEntry, fileVersion, fileShortcutId, themeDisplay, previewQueryString + "&type=" + PropsValues.DL_FILE_ENTRY_PREVIEW_VIDEO_CONTAINERS[i]);
 				}
 			}
 			else {
@@ -74,7 +74,7 @@
 		else {
 			previewFileURLs = new String[1];
 
-			previewFileURLs[0] = DLUtil.getPreviewURL(fileEntry, fileVersion, themeDisplay, previewQueryString);
+			previewFileURLs[0] = DLUtil.getPreviewURL(fileEntry, fileVersion, fileShortcutId, themeDisplay, previewQueryString);
 		}
 
 		previewFileURL = previewFileURLs[0];
