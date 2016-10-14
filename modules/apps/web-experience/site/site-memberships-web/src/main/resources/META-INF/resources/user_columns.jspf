@@ -21,7 +21,7 @@
 
 	List<Team> teams = TeamLocalServiceUtil.getUserOrUserGroupTeams(siteMembershipsDisplayContext.getGroupId(), user2.getUserId());
 
-	Set<String> names = SetUtil.fromList(ListUtil.toList(userGroupRoles,UsersAdmin.USER_GROUP_ROLE_TITLE_ACCESSOR));
+	Set<String> names = SetUtil.fromList(ListUtil.toList(userGroupRoles, UsersAdmin.USER_GROUP_ROLE_TITLE_ACCESSOR));
 	names.addAll(SetUtil.fromList(ListUtil.toList(userGroupGroupRoles, Role.TITLE_ACCESSOR)));
 	names.addAll(SetUtil.fromList(ListUtil.toList(teams, Team.NAME_ACCESSOR)));
 %>
