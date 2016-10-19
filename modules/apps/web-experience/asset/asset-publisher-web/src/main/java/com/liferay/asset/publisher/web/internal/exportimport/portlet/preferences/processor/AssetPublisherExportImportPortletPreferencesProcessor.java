@@ -700,13 +700,13 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 		String selectionStyle = portletPreferences.getValue(
 			"selectionStyle", null);
 
-		if ("manual".equals(selectionStyle)) {
+		if (selectionStyle.equals("manual")) {
 			portletPreferences.reset("anyAssetType");
 
 			anyAssetTypeString = portletPreferences.getValue(
 				"anyAssetType", null);
 		}
-		else if ("false".equals(anyAssetTypeString)) {
+		else if (anyAssetTypeString.equals("false")) {
 			String[] classNameIds = portletPreferences.getValues(
 				"classNameIds", StringPool.EMPTY_ARRAY);
 
@@ -741,7 +741,7 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 
 			if (name.equals("anyAssetType") || name.equals("classNameIds")) {
 				if (name.equals("classNameIds") &&
-					!"false".equals(anyAssetTypeString)) {
+					!anyAssetTypeString.equals("false")) {
 
 					portletPreferences.reset(name);
 				}
@@ -766,8 +766,8 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 						"classTypeIdsDLFileEntryAssetRendererFactory",
 						StringPool.EMPTY_ARRAY);
 
-				if ("false".equals(
-						anyClassTypeDLFileEntryAssetRendererFactory) &&
+				if (anyClassTypeDLFileEntryAssetRendererFactory.equals(
+						"false") &&
 					(classTypeIdsDLFileEntryAssetRendererFactory.length == 1)) {
 
 					portletPreferences.setValue(
@@ -787,8 +787,8 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 						DLFileEntry.class.getName()) ||
 					(name.equals(
 						"classTypeIdsDLFileEntryAssetRendererFactory") &&
-					 !"false".equals(
-						 anyClassTypeDLFileEntryAssetRendererFactory))) {
+					 !anyClassTypeDLFileEntryAssetRendererFactory.equals(
+						 "false"))) {
 
 					portletPreferences.reset(name);
 				}
@@ -815,8 +815,8 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 						"classTypeIdsJournalArticleAssetRendererFactory",
 						StringPool.EMPTY_ARRAY);
 
-				if ("false".equals(
-						anyClassTypeJournalArticleAssetRendererFactory) &&
+				if (anyClassTypeJournalArticleAssetRendererFactory.equals(
+						"false") &&
 					(classTypeIdsJournalArticleAssetRendererFactory.length ==
 						1)) {
 
@@ -837,8 +837,8 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 						JournalArticle.class.getName()) ||
 					(name.equals(
 						"classTypeIdsJournalArticleAssetRendererFactory") &&
-					 !"false".equals(
-						 anyClassTypeJournalArticleAssetRendererFactory))) {
+					 !anyClassTypeJournalArticleAssetRendererFactory.equals(
+						 "false"))) {
 
 					portletPreferences.reset(name);
 				}
