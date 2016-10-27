@@ -71,7 +71,7 @@ public class SearchAssert {
 	protected static List<String> getValues(
 		SearchHits searchHits, String field) {
 
-		ArrayList<String> values = new ArrayList<>();
+		List<String> values = new ArrayList<>();
 
 		for (SearchHit searchHit : searchHits.hits()) {
 			SearchHitField searchHitField = searchHit.field(field);
