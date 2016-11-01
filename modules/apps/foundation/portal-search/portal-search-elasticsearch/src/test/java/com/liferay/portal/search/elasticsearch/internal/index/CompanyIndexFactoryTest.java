@@ -17,6 +17,7 @@ package com.liferay.portal.search.elasticsearch.internal.index;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch.index.IndexNameBuilder;
 import com.liferay.portal.search.elasticsearch.internal.cluster.TestCluster;
 import com.liferay.portal.search.elasticsearch.internal.connection.ElasticsearchFixture;
@@ -154,6 +155,22 @@ public class CompanyIndexFactoryTest {
 	}
 
 	@Test
+	public void testIgnoreAdditionalTypeMappings() throws Exception {
+		_companyIndexFactory.setAdditionalIndexConfigurations(
+			loadAdditionalAnalyzers());
+		_companyIndexFactory.setAdditionalTypeMappings(
+			loadAdditionalTypeMappings());
+		_companyIndexFactory.setOverrideTypeMappings(
+			loadOverrideTypeMappings());
+
+		createIndices();
+
+		String field = indexOneDocument();
+
+		assertAnalyzer(field, null);
+	}
+
+	@Test
 	public void testIndexSettingsContributor() throws Exception {
 		_companyIndexFactory.addIndexSettingsContributor(
 			new BaseIndexSettingsContributor(1) {
@@ -202,6 +219,18 @@ public class CompanyIndexFactoryTest {
 		assertAnalyzer(field, "brazilian");
 	}
 
+	@Test
+	public void testOverrideTypeMappings() throws Exception {
+		_companyIndexFactory.setOverrideTypeMappings(
+			loadOverrideTypeMappings());
+
+		createIndices();
+
+		String field = indexOneDocument("title");
+
+		assertAnalyzer(field, "kuromoji");
+	}
+
 	@Rule
 	public TestName testName = new TestName();
 
@@ -247,13 +276,19 @@ public class CompanyIndexFactoryTest {
 	}
 
 	protected String indexOneDocument() {
+		return indexOneDocument(StringPool.BLANK);
+	}
+
+	protected String indexOneDocument(String field) {
 		Client client = _elasticsearchFixture.getClient();
 
 		IndexRequestBuilder indexRequestBuilder = client.prepareIndex(
 			getTestIndexName(),
 			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE);
 
-		String field = RandomTestUtil.randomString() + "_ja";
+		if (Validator.isNull(field)) {
+			field = RandomTestUtil.randomString() + "_ja";
+		}
 
 		indexRequestBuilder.setSource(field, RandomTestUtil.randomString());
 
@@ -270,6 +305,11 @@ public class CompanyIndexFactoryTest {
 	protected String loadAdditionalTypeMappings() throws Exception {
 		return ResourceUtil.getResourceAsString(
 			getClass(), "CompanyIndexFactoryTest-additionalTypeMappings.json");
+	}
+
+	protected String loadOverrideTypeMappings() throws Exception {
+		return ResourceUtil.getResourceAsString(
+			getClass(), "CompanyIndexFactoryTest-overrideTypeMappings.json");
 	}
 
 	protected String replaceAnalyzer(String mappings, String analyzer) {
