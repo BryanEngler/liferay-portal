@@ -15,6 +15,7 @@
 package com.liferay.portal.search.elasticsearch.internal.facet;
 
 import com.liferay.portal.search.elasticsearch.internal.ElasticsearchIndexingFixture;
+import com.liferay.portal.search.elasticsearch.internal.connection.ElasticsearchFixture;
 import com.liferay.portal.search.test.util.facet.BaseSimpleFacetTestCase;
 import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
@@ -47,7 +48,7 @@ public class SimpleFacetTest extends BaseSimpleFacetTestCase {
 	@Override
 	protected IndexingFixture createIndexingFixture() {
 		return new ElasticsearchIndexingFixture(
-			SimpleFacetTest.class.getSimpleName(),
+			new ElasticsearchFixture(SimpleFacetTest.class.getSimpleName()),
 			BaseIndexingTestCase.COMPANY_ID);
 	}
 

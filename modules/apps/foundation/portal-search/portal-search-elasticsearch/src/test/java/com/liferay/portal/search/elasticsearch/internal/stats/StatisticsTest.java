@@ -15,6 +15,7 @@
 package com.liferay.portal.search.elasticsearch.internal.stats;
 
 import com.liferay.portal.search.elasticsearch.internal.ElasticsearchIndexingFixture;
+import com.liferay.portal.search.elasticsearch.internal.connection.ElasticsearchFixture;
 import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 import com.liferay.portal.search.test.util.stats.BaseStatisticsTestCase;
@@ -35,7 +36,7 @@ public class StatisticsTest extends BaseStatisticsTestCase {
 	@Override
 	protected IndexingFixture createIndexingFixture() {
 		return new ElasticsearchIndexingFixture(
-			StatisticsTest.class.getSimpleName(),
+			new ElasticsearchFixture(StatisticsTest.class.getSimpleName()),
 			BaseIndexingTestCase.COMPANY_ID);
 	}
 
