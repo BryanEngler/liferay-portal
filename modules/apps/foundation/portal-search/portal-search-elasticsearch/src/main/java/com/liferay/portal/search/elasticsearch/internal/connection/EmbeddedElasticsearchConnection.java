@@ -79,8 +79,8 @@ public class EmbeddedElasticsearchConnection
 			if (_log.isWarnEnabled()) {
 				_log.warn(
 					"Unable to preload " + ByteBufferUtil.class +
-						" to prevent netty shutdown concurrent class loading " +
-							"interruption issue.",
+						" to prevent Netty shutdown concurrent class loading " +
+							"interruption issue",
 					cnfe);
 			}
 		}
