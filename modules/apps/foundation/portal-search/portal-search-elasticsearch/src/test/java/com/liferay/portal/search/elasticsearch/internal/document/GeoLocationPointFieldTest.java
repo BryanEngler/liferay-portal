@@ -137,8 +137,8 @@ public class GeoLocationPointFieldTest extends BaseIndexingTestCase {
 				getLiferayDocumentTypeFactory();
 
 			String source =
-				"{ properties: { " + _CUSTOM_FIELD + " : { lat_lon: true, " +
-					"store: true, type: \"geo_point\" } } }";
+				"{properties: { " + _CUSTOM_FIELD + " : {lat_lon: true, " +
+					"store: true, type: \"geo_point\"}}}";
 
 			liferayDocumentTypeFactory.addTypeMappings(indexName, source);
 		}
