@@ -573,7 +573,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	protected Document processSearchHit(
 		SearchHit searchHit, QueryConfig queryConfig) {
 
-		Document document = _searchHitToDocumentTranslator.translate(searchHit);
+		Document document = searchHitDocumentTranslator.translate(searchHit);
 
 		populateUID(document, queryConfig);
 
@@ -726,6 +726,9 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	protected QueryTranslator<QueryBuilder> queryTranslator;
 
 	@Reference
+	protected SearchHitDocumentTranslator searchHitDocumentTranslator;
+
+	@Reference
 	protected StatsTranslator statsTranslator;
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -733,7 +736,5 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 	private volatile ElasticsearchConfiguration _elasticsearchConfiguration;
 	private boolean _logExceptionsOnly;
-	private final SearchHitToDocumentTranslator _searchHitToDocumentTranslator =
-		new SearchHitToDocumentTranslator();
 
 }
