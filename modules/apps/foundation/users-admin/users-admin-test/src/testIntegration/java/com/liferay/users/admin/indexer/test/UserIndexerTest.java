@@ -14,6 +14,7 @@
 
 package com.liferay.users.admin.indexer.test;
 
+import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.users.admin.internal.search.UserIndexer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
@@ -45,10 +46,12 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @author André de Oliveira
  */
+@RunWith(Arquillian.class)
 @Sync
 public class UserIndexerTest {
 
