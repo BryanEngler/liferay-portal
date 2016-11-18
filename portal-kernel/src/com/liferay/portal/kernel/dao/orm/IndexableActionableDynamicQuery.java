@@ -17,6 +17,7 @@ package com.liferay.portal.kernel.dao.orm;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskThreadLocal;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.Document;
+import com.liferay.portal.kernel.search.IndexWriterHelper;
 import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
 import com.liferay.portal.kernel.search.SearchEngineHelperUtil;
 import com.liferay.portal.kernel.search.background.task.ReindexStatusMessageSenderUtil;
@@ -70,6 +71,10 @@ public class IndexableActionableDynamicQuery
 		}
 	}
 
+	public void setIndexWriterHelper(IndexWriterHelper indexWriterHelper) {
+		_indexWriterHelper = indexWriterHelper;
+	}
+
 	@Override
 	public void setParallel(boolean parallel) {
 		if (isParallel() == parallel) {
@@ -120,9 +125,16 @@ public class IndexableActionableDynamicQuery
 				_documents);
 		}
 
-		IndexWriterHelperUtil.updateDocuments(
-			_searchEngineId, getCompanyId(), new ArrayList<>(_documents),
-			false);
+		if (Validator.isNotNull(_indexWriterHelper)) {
+			_indexWriterHelper.updateDocuments(
+				_searchEngineId, getCompanyId(), new ArrayList<>(_documents),
+				false);
+		}
+		else {
+			IndexWriterHelperUtil.updateDocuments(
+				_searchEngineId, getCompanyId(), new ArrayList<>(_documents),
+				false);
+		}
 
 		_count += _documents.size();
 
@@ -150,6 +162,7 @@ public class IndexableActionableDynamicQuery
 
 	private long _count;
 	private Collection<Document> _documents = new ArrayList<>();
+	private IndexWriterHelper _indexWriterHelper;
 	private String _searchEngineId;
 	private long _total;
 
