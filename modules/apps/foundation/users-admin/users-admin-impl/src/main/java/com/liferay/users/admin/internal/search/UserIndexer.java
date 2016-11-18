@@ -37,9 +37,8 @@ import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
 import com.liferay.portal.kernel.security.auth.FullNameGenerator;
 import com.liferay.portal.kernel.security.auth.FullNameGeneratorFactory;
-import com.liferay.portal.kernel.service.OrganizationLocalServiceUtil;
-import com.liferay.portal.kernel.service.UserLocalServiceUtil;
-import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
+import com.liferay.portal.kernel.service.OrganizationLocalService;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -55,12 +54,15 @@ import java.util.Set;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * @author Raymond Augé
  * @author Zsigmond Rab
  * @author Hugo Huijser
  */
-@OSGiBeanProperties
+@Component(immediate = true, service = Indexer.class)
 public class UserIndexer extends BaseIndexer<User> {
 
 	public static final String CLASS_NAME = User.class.getName();
@@ -327,7 +329,7 @@ public class UserIndexer extends BaseIndexer<User> {
 
 	@Override
 	protected void doReindex(String className, long classPK) throws Exception {
-		User user = UserLocalServiceUtil.getUserById(classPK);
+		User user = userLocalService.getUserById(classPK);
 
 		doReindex(user);
 	}
@@ -374,7 +376,7 @@ public class UserIndexer extends BaseIndexer<User> {
 
 		for (long organizationId : organizationIds) {
 			Organization organization =
-				OrganizationLocalServiceUtil.getOrganization(organizationId);
+				organizationLocalService.getOrganization(organizationId);
 
 			for (long ancestorOrganizationId :
 					organization.getAncestorOrganizationIds()) {
@@ -388,7 +390,7 @@ public class UserIndexer extends BaseIndexer<User> {
 
 	protected void reindexUsers(long companyId) throws PortalException {
 		final IndexableActionableDynamicQuery indexableActionableDynamicQuery =
-			UserLocalServiceUtil.getIndexableActionableDynamicQuery();
+			userLocalService.getIndexableActionableDynamicQuery();
 
 		indexableActionableDynamicQuery.setCompanyId(companyId);
 		indexableActionableDynamicQuery.setPerformActionMethod(
@@ -418,6 +420,12 @@ public class UserIndexer extends BaseIndexer<User> {
 
 		indexableActionableDynamicQuery.performActions();
 	}
+
+	@Reference
+	protected OrganizationLocalService organizationLocalService;
+
+	@Reference
+	protected UserLocalService userLocalService;
 
 	private static final Log _log = LogFactoryUtil.getLog(UserIndexer.class);
 
