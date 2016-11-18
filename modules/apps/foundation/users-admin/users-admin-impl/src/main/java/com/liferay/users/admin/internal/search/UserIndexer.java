@@ -28,7 +28,7 @@ import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
+import com.liferay.portal.kernel.search.IndexWriterHelper;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchContext;
@@ -349,7 +349,7 @@ public class UserIndexer extends BaseIndexer<User> {
 
 		Document document = getDocument(user);
 
-		IndexWriterHelperUtil.updateDocument(
+		indexWriterHelper.updateDocument(
 			getSearchEngineId(), user.getCompanyId(), document,
 			isCommitImmediately());
 
@@ -420,6 +420,9 @@ public class UserIndexer extends BaseIndexer<User> {
 
 		indexableActionableDynamicQuery.performActions();
 	}
+
+	@Reference
+	protected IndexWriterHelper indexWriterHelper;
 
 	@Reference
 	protected OrganizationLocalService organizationLocalService;
