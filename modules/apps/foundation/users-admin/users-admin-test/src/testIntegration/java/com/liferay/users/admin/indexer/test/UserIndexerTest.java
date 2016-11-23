@@ -15,12 +15,17 @@
 package com.liferay.users.admin.indexer.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.users.admin.internal.search.UserIndexer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.search.Document;
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserServiceUtil;
@@ -33,7 +38,9 @@ import com.liferay.portal.kernel.test.util.SearchContextTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.security.permission.PermissionCheckerUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.util.ArrayList;
@@ -41,6 +48,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -64,9 +72,24 @@ public class UserIndexerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_indexer = new UserIndexer();
+		_indexer = IndexerRegistryUtil.getIndexer(User.class);
 
 		_serviceContext = ServiceContextTestUtil.getServiceContext();
+
+		_permissionChecker = PermissionThreadLocal.getPermissionChecker();
+
+		_principal = PrincipalThreadLocal.getName();
+
+		User user = UserLocalServiceUtil.getUser(TestPropsValues.getUserId());
+
+		PermissionCheckerUtil.setThreadValues(user);
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		PermissionThreadLocal.setPermissionChecker(_permissionChecker);
+
+		PrincipalThreadLocal.setName(_principal);
 	}
 
 	@Test
@@ -109,7 +132,7 @@ public class UserIndexerTest {
 	public void testEmptyQuery() throws Exception {
 		addUser();
 
-		assertHits("", 1);
+		assertHits("", 2);
 	}
 
 	@Test
@@ -145,16 +168,13 @@ public class UserIndexerTest {
 	public void testLikeCharacter() throws Exception {
 		addUser();
 
-		assertHits("%", 1);
+		assertHits("%", 2);
 		assertHits("%" + RandomTestUtil.randomString(), 0);
 	}
 
 	@Test
 	public void testLuceneQueryParserUnfriendlyCharacters() throws Exception {
-		User user1 = addUser();
-		User user2 = assertSearchOneUser("@");
-
-		Assert.assertEquals(user1.getEmailAddress(), user2.getEmailAddress());
+		assertSearchOneUser("@");
 
 		assertHits("@" + RandomTestUtil.randomString(), 0);
 		assertHits("!", 0);
@@ -372,7 +392,9 @@ public class UserIndexerTest {
 	}
 
 	protected User getUser(Hits hits) throws PortalException {
-		long userId = UserIndexer.getUserId(hits.doc(0));
+		Document document = hits.doc(0);
+
+		long userId = GetterUtil.getLong(document.get(Field.USER_ID));
 
 		return UserLocalServiceUtil.getUser(userId);
 	}
@@ -396,7 +418,10 @@ public class UserIndexerTest {
 		Assert.assertEquals(middleName, user.getMiddleName());
 	}
 
-	private Indexer<User> _indexer;
+	private static Indexer<User> _indexer;
+
+	private PermissionChecker _permissionChecker;
+	private String _principal;
 	private ServiceContext _serviceContext;
 
 	@DeleteAfterTestRun
