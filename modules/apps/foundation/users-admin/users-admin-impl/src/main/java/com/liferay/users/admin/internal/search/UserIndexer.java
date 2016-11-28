@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Contact;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.BaseIndexer;
@@ -254,10 +255,18 @@ public class UserIndexer extends BaseIndexer<User> {
 
 		long[] organizationIds = user.getOrganizationIds();
 
+		Set<Long> userSiteGroupIds = new HashSet<>();
+
+		for (Group userSiteGroup : user.getSiteGroups()) {
+			userSiteGroupIds.add(userSiteGroup.getGroupId());
+		}
+
+		long[] groupIds = ArrayUtil.toLongArray(userSiteGroupIds);
+
 		document.addKeyword(Field.COMPANY_ID, user.getCompanyId());
-		document.addKeyword(Field.GROUP_ID, user.getGroupIds());
+		document.addKeyword(Field.GROUP_ID, groupIds);
 		document.addDate(Field.MODIFIED_DATE, user.getModifiedDate());
-		document.addKeyword(Field.SCOPE_GROUP_ID, user.getGroupIds());
+		document.addKeyword(Field.SCOPE_GROUP_ID, groupIds);
 		document.addKeyword(Field.STATUS, user.getStatus());
 		document.addKeyword(Field.USER_ID, user.getUserId());
 		document.addKeyword(Field.USER_NAME, user.getFullName());
@@ -268,7 +277,7 @@ public class UserIndexer extends BaseIndexer<User> {
 		document.addText("emailAddress", user.getEmailAddress());
 		document.addText("firstName", user.getFirstName());
 		document.addText("fullName", user.getFullName());
-		document.addKeyword("groupIds", user.getGroupIds());
+		document.addKeyword("groupIds", groupIds);
 		document.addText("jobTitle", user.getJobTitle());
 		document.addText("lastName", user.getLastName());
 		document.addText("middleName", user.getMiddleName());
