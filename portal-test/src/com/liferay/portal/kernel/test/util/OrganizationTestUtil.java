@@ -88,6 +88,14 @@ public class OrganizationTestUtil {
 			user.getUserId(), parentOrganizationId, name, site);
 	}
 
+	public static Organization addOrganization(
+		User user, long parentOrganizationId, String name, boolean site)
+		throws Exception {
+
+		return OrganizationLocalServiceUtil.addOrganization(
+			user.getUserId(), parentOrganizationId, name, site);
+	}
+
 	public static OrgLabor addOrgLabor(Organization organization)
 		throws Exception {
 
