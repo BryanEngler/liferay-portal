@@ -60,12 +60,29 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 		}
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #encodeFieldName(String,
+	 *             int)}
+	 */
+	@Deprecated
 	@Override
 	public String encodeFieldName(String columnName) {
-		StringBundler sb = new StringBundler(5);
+		return encodeFieldName(
+			columnName, ExpandoColumnConstants.INDEX_TYPE_TEXT);
+	}
+
+	@Override
+	public String encodeFieldName(String columnName, int indexType) {
+		StringBundler sb = new StringBundler(7);
 
 		sb.append(FIELD_NAMESPACE);
 		sb.append(StringPool.DOUBLE_UNDERLINE);
+
+		if (indexType == ExpandoColumnConstants.INDEX_TYPE_KEYWORD) {
+			sb.append("keyword");
+			sb.append(StringPool.DOUBLE_UNDERLINE);
+		}
+
 		sb.append(
 			StringUtil.toLowerCase(ExpandoTableConstants.DEFAULT_TABLE_NAME));
 		sb.append(StringPool.DOUBLE_UNDERLINE);
