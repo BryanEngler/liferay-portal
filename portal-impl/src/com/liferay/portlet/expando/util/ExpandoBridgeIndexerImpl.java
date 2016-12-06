@@ -96,7 +96,14 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 			List<ExpandoValue> expandoValues)
 		throws PortalException {
 
-		String fieldName = encodeFieldName(expandoColumn.getName());
+		UnicodeProperties typeSettingsProperties =
+			expandoColumn.getTypeSettingsProperties();
+
+		int indexType = GetterUtil.getInteger(
+			typeSettingsProperties.getProperty(
+				ExpandoColumnConstants.INDEX_TYPE));
+
+		String fieldName = encodeFieldName(expandoColumn.getName(), indexType);
 
 		ExpandoValue expandoValue = new ExpandoValueImpl();
 
@@ -114,13 +121,6 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 				break;
 			}
 		}
-
-		UnicodeProperties typeSettingsProperties =
-			expandoColumn.getTypeSettingsProperties();
-
-		int indexType = GetterUtil.getInteger(
-			typeSettingsProperties.getProperty(
-				ExpandoColumnConstants.INDEX_TYPE));
 
 		int type = expandoColumn.getType();
 
