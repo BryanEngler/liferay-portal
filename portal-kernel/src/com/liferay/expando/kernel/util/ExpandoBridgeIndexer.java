@@ -14,12 +14,15 @@
 
 package com.liferay.expando.kernel.util;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.portal.kernel.search.Document;
 
 /**
  * @author Raymond Augé
  */
+@ProviderType
 public interface ExpandoBridgeIndexer {
 
 	public void addAttributes(Document document, ExpandoBridge expandoBridge);
