@@ -58,6 +58,10 @@ public class SubstringFieldQueryBuilder implements FieldQueryBuilder {
 
 		value = StringUtil.replace(value, CharPool.PERCENT, StringPool.BLANK);
 
+		String escapedSpace = StringPool.BACK_SLASH + StringPool.SPACE;
+
+		value = StringUtil.replace(value, CharPool.SPACE, escapedSpace);
+
 		if (value.isEmpty()) {
 			value = StringPool.STAR;
 		}
