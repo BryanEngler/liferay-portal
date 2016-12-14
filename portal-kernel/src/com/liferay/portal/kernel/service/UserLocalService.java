@@ -609,17 +609,6 @@ public interface UserLocalService extends BaseLocalService,
 		java.lang.String googleUserId) throws PortalException;
 
 	/**
-	* Returns the user with the primary key from the company.
-	*
-	* @param companyId the primary key of the user's company
-	* @param userId the primary key of the user
-	* @return the user with the primary key
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public User getUserById(long companyId, long userId)
-		throws PortalException;
-
-	/**
 	* Returns the user with the primary key.
 	*
 	* @param userId the primary key of the user
@@ -627,6 +616,17 @@ public interface UserLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public User getUserById(long userId) throws PortalException;
+
+	/**
+	* Returns the user with the primary key from the company.
+	*
+	* @param companyId the primary key of the user's company
+	* @param userId the primary key of the user
+	* @return the user with the primary key
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public User getUserById(long userId, long companyId)
+		throws PortalException;
 
 	/**
 	* Returns the user with the OpenID.

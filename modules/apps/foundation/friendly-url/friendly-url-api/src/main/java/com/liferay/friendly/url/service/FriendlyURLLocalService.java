@@ -78,7 +78,7 @@ public interface FriendlyURLLocalService extends BaseLocalService,
 		java.lang.Class<?> clazz, long classPK, java.lang.String urlTitle)
 		throws PortalException;
 
-	public FriendlyURL addFriendlyURL(long companyId, long groupId,
+	public FriendlyURL addFriendlyURL(long groupId, long companyId,
 		long classNameId, long classPK, java.lang.String urlTitle)
 		throws PortalException;
 
@@ -115,11 +115,11 @@ public interface FriendlyURLLocalService extends BaseLocalService,
 		java.lang.Class<?> clazz, java.lang.String urlTitle);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public FriendlyURL fetchFriendlyURL(long companyId, long groupId,
-		long classNameId, java.lang.String urlTitle);
+	public FriendlyURL fetchFriendlyURL(long friendlyURLId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public FriendlyURL fetchFriendlyURL(long friendlyURLId);
+	public FriendlyURL fetchFriendlyURL(long groupId, long companyId,
+		long classNameId, java.lang.String urlTitle);
 
 	/**
 	* Returns the friendly u r l matching the UUID and group.
@@ -160,7 +160,7 @@ public interface FriendlyURLLocalService extends BaseLocalService,
 		java.lang.Class<?> clazz, long classPK) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public FriendlyURL getMainFriendlyURL(long companyId, long groupId,
+	public FriendlyURL getMainFriendlyURL(long groupId, long companyId,
 		long classNameId, long classPK) throws PortalException;
 
 	/**
@@ -269,7 +269,7 @@ public interface FriendlyURLLocalService extends BaseLocalService,
 	public List<FriendlyURL> getFriendlyURLs(int start, int end);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<FriendlyURL> getFriendlyURLs(long companyId, long groupId,
+	public List<FriendlyURL> getFriendlyURLs(long groupId, long companyId,
 		long classNameId, long classPK);
 
 	/**
@@ -317,13 +317,13 @@ public interface FriendlyURLLocalService extends BaseLocalService,
 		Projection projection);
 
 	public void deleteFriendlyURL(long companyId, long groupId,
-		java.lang.Class<?> clazz, long classPK);
-
-	public void deleteFriendlyURL(long companyId, long groupId,
 		java.lang.Class<?> clazz, long classPK, java.lang.String urlTitle)
 		throws NoSuchFriendlyURLException;
 
-	public void deleteFriendlyURL(long companyId, long groupId,
+	public void deleteFriendlyURL(long groupId, long companyId,
+		java.lang.Class<?> clazz, long classPK);
+
+	public void deleteFriendlyURL(long groupId, long companyId,
 		long classNameId, long classPK, java.lang.String urlTitle)
 		throws NoSuchFriendlyURLException;
 
@@ -332,6 +332,6 @@ public interface FriendlyURLLocalService extends BaseLocalService,
 	public void validate(long companyId, long groupId, long classNameId,
 		java.lang.String urlTitle) throws PortalException;
 
-	public void validate(long companyId, long groupId, long classNameId,
+	public void validate(long groupId, long companyId, long classNameId,
 		long classPK, java.lang.String urlTitle) throws PortalException;
 }
