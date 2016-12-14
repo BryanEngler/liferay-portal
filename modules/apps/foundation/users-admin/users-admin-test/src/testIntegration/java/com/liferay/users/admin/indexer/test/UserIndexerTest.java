@@ -38,7 +38,6 @@ import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -117,10 +116,13 @@ public class UserIndexerTest {
 
 	@Test
 	public void testEmptyQuery() throws Exception {
-		User user1 = addUser();
-		User user2 = getTestUser();
+		List<User> users = getUsers("");
 
-		assertSearch("", user1, user2);
+		User user = addUser();
+
+		users.add(user);
+
+		assertSearch("", users);
 	}
 
 	@Test
@@ -154,20 +156,26 @@ public class UserIndexerTest {
 
 	@Test
 	public void testLikeCharacter() throws Exception {
-		User user1 = addUser();
-		User user2 = getTestUser();
+		List<User> users = getUsers("%");
 
-		assertSearch("%", user1, user2);
+		User user = addUser();
+
+		users.add(user);
+
+		assertSearch("%", users);
 
 		assertNoHits("%" + RandomTestUtil.randomString());
 	}
 
 	@Test
 	public void testLuceneQueryParserUnfriendlyCharacters() throws Exception {
-		User user1 = addUser();
-		User user2 = getTestUser();
+		List<User> users = getUsers("@");
 
-		assertSearch("@", user1, user2);
+		User user = addUser();
+
+		users.add(user);
+
+		assertSearch("@", users);
 
 		assertNoHits("@" + RandomTestUtil.randomString());
 		assertNoHits("!");
@@ -363,21 +371,12 @@ public class UserIndexerTest {
 		assertLength(hits, 0);
 	}
 
-	protected void assertSearch(String keywords, User...users)
+	protected void assertSearch(String keywords, List<User> users)
 		throws Exception {
 
-		Hits hits = search(keywords);
+		List<User> actualUsers = getUsers(keywords);
 
-		Document[] documents = hits.getDocs();
-
-		List<User> actualUsers = new ArrayList<>(documents.length);
-
-		for (Document document : documents) {
-			actualUsers.add(getUser(document));
-		}
-
-		Assert.assertEquals(
-			getScreenNames(Arrays.asList(users)), getScreenNames(actualUsers));
+		Assert.assertEquals(getScreenNames(users), getScreenNames(actualUsers));
 	}
 
 	protected User assertSearchOneUser(String keywords) throws Exception {
@@ -415,10 +414,6 @@ public class UserIndexerTest {
 		return searchContext;
 	}
 
-	protected User getTestUser() throws Exception {
-		return TestPropsValues.getUser();
-	}
-
 	protected User getUser(Document document) throws Exception {
 		long userId = GetterUtil.getLong(document.get(Field.USER_ID));
 
@@ -431,6 +426,20 @@ public class UserIndexerTest {
 		Document document = hits.doc(0);
 
 		return getUser(document);
+	}
+
+	protected List<User> getUsers(String keywords) throws Exception {
+		Hits hits = search(keywords);
+
+		Document[] documents = hits.getDocs();
+
+		List<User> users = new ArrayList<>(documents.length);
+
+		for (Document document : documents) {
+			users.add(getUser(document));
+		}
+
+		return users;
 	}
 
 	protected Hits search(SearchContext searchContext) throws Exception {
