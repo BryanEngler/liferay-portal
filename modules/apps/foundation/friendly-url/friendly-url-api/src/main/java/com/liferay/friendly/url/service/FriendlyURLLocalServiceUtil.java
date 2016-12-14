@@ -62,11 +62,11 @@ public class FriendlyURLLocalServiceUtil {
 	}
 
 	public static com.liferay.friendly.url.model.FriendlyURL addFriendlyURL(
-		long companyId, long groupId, long classNameId, long classPK,
+		long groupId, long companyId, long classNameId, long classPK,
 		java.lang.String urlTitle)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .addFriendlyURL(companyId, groupId, classNameId, classPK,
+				   .addFriendlyURL(groupId, companyId, classNameId, classPK,
 			urlTitle);
 	}
 
@@ -112,15 +112,15 @@ public class FriendlyURLLocalServiceUtil {
 	}
 
 	public static com.liferay.friendly.url.model.FriendlyURL fetchFriendlyURL(
-		long companyId, long groupId, long classNameId,
-		java.lang.String urlTitle) {
-		return getService()
-				   .fetchFriendlyURL(companyId, groupId, classNameId, urlTitle);
+		long friendlyURLId) {
+		return getService().fetchFriendlyURL(friendlyURLId);
 	}
 
 	public static com.liferay.friendly.url.model.FriendlyURL fetchFriendlyURL(
-		long friendlyURLId) {
-		return getService().fetchFriendlyURL(friendlyURLId);
+		long groupId, long companyId, long classNameId,
+		java.lang.String urlTitle) {
+		return getService()
+				   .fetchFriendlyURL(groupId, companyId, classNameId, urlTitle);
 	}
 
 	/**
@@ -170,10 +170,10 @@ public class FriendlyURLLocalServiceUtil {
 	}
 
 	public static com.liferay.friendly.url.model.FriendlyURL getMainFriendlyURL(
-		long companyId, long groupId, long classNameId, long classPK)
+		long groupId, long companyId, long classNameId, long classPK)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .getMainFriendlyURL(companyId, groupId, classNameId, classPK);
+				   .getMainFriendlyURL(groupId, companyId, classNameId, classPK);
 	}
 
 	/**
@@ -311,9 +311,9 @@ public class FriendlyURLLocalServiceUtil {
 	}
 
 	public static java.util.List<com.liferay.friendly.url.model.FriendlyURL> getFriendlyURLs(
-		long companyId, long groupId, long classNameId, long classPK) {
+		long groupId, long companyId, long classNameId, long classPK) {
 		return getService()
-				   .getFriendlyURLs(companyId, groupId, classNameId, classPK);
+				   .getFriendlyURLs(groupId, companyId, classNameId, classPK);
 	}
 
 	/**
@@ -371,22 +371,22 @@ public class FriendlyURLLocalServiceUtil {
 	}
 
 	public static void deleteFriendlyURL(long companyId, long groupId,
-		java.lang.Class<?> clazz, long classPK) {
-		getService().deleteFriendlyURL(companyId, groupId, clazz, classPK);
-	}
-
-	public static void deleteFriendlyURL(long companyId, long groupId,
 		java.lang.Class<?> clazz, long classPK, java.lang.String urlTitle)
 		throws com.liferay.friendly.url.exception.NoSuchFriendlyURLException {
 		getService()
 			.deleteFriendlyURL(companyId, groupId, clazz, classPK, urlTitle);
 	}
 
-	public static void deleteFriendlyURL(long companyId, long groupId,
+	public static void deleteFriendlyURL(long groupId, long companyId,
+		java.lang.Class<?> clazz, long classPK) {
+		getService().deleteFriendlyURL(groupId, companyId, clazz, classPK);
+	}
+
+	public static void deleteFriendlyURL(long groupId, long companyId,
 		long classNameId, long classPK, java.lang.String urlTitle)
 		throws com.liferay.friendly.url.exception.NoSuchFriendlyURLException {
 		getService()
-			.deleteFriendlyURL(companyId, groupId, classNameId, classPK,
+			.deleteFriendlyURL(groupId, companyId, classNameId, classPK,
 			urlTitle);
 	}
 
@@ -400,10 +400,10 @@ public class FriendlyURLLocalServiceUtil {
 		getService().validate(companyId, groupId, classNameId, urlTitle);
 	}
 
-	public static void validate(long companyId, long groupId, long classNameId,
+	public static void validate(long groupId, long companyId, long classNameId,
 		long classPK, java.lang.String urlTitle)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().validate(companyId, groupId, classNameId, classPK, urlTitle);
+		getService().validate(groupId, companyId, classNameId, classPK, urlTitle);
 	}
 
 	public static FriendlyURLLocalService getService() {

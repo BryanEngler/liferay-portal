@@ -50,7 +50,7 @@ public class FriendlyURLLocalServiceImpl
 
 	@Override
 	public FriendlyURL addFriendlyURL(
-			long companyId, long groupId, long classNameId, long classPK,
+			long groupId, long companyId, long classNameId, long classPK,
 			String urlTitle)
 		throws PortalException {
 
@@ -59,7 +59,7 @@ public class FriendlyURLLocalServiceImpl
 
 		validate(companyId, groupId, classNameId, classPK, normalizedUrlTitle);
 
-		FriendlyURL mainFriendlyURL = friendlyURLPersistence.fetchByC_G_C_C_M(
+		FriendlyURL mainFriendlyURL = friendlyURLPersistence.fetchByG_C_C_C_M(
 			companyId, groupId, classNameId, classPK, true);
 
 		if (mainFriendlyURL != null) {
@@ -68,7 +68,7 @@ public class FriendlyURLLocalServiceImpl
 			friendlyURLPersistence.update(mainFriendlyURL);
 		}
 
-		FriendlyURL oldFriendlyURL = friendlyURLPersistence.fetchByC_G_C_C_U(
+		FriendlyURL oldFriendlyURL = friendlyURLPersistence.fetchByG_C_C_C_U(
 			companyId, groupId, classNameId, classPK, normalizedUrlTitle);
 
 		if (oldFriendlyURL != null) {
@@ -93,11 +93,11 @@ public class FriendlyURLLocalServiceImpl
 
 	@Override
 	public void deleteFriendlyURL(
-		long companyId, long groupId, Class<?> clazz, long classPK) {
+		long groupId, long companyId, Class<?> clazz, long classPK) {
 
 		long classNameId = classNameLocalService.getClassNameId(clazz);
 
-		friendlyURLPersistence.removeByC_G_C_C(
+		friendlyURLPersistence.removeByG_C_C_C(
 			companyId, groupId, classNameId, classPK);
 	}
 
@@ -114,14 +114,14 @@ public class FriendlyURLLocalServiceImpl
 
 	@Override
 	public void deleteFriendlyURL(
-			long companyId, long groupId, long classNameId, long classPK,
+			long groupId, long companyId, long classNameId, long classPK,
 			String urlTitle)
 		throws NoSuchFriendlyURLException {
 
-		friendlyURLPersistence.removeByC_G_C_C_U(
+		friendlyURLPersistence.removeByG_C_C_C_U(
 			companyId, groupId, classNameId, classPK, urlTitle);
 
-		List<FriendlyURL> friendlyURLs = friendlyURLPersistence.findByC_G_C_C(
+		List<FriendlyURL> friendlyURLs = friendlyURLPersistence.findByG_C_C_C(
 			companyId, groupId, classNameId, classPK, 0, 1,
 			new FriendlyURLCreateDateComparator());
 
@@ -150,17 +150,17 @@ public class FriendlyURLLocalServiceImpl
 
 	@Override
 	public FriendlyURL fetchFriendlyURL(
-		long companyId, long groupId, long classNameId, String urlTitle) {
+		long groupId, long companyId, long classNameId, String urlTitle) {
 
-		return friendlyURLPersistence.fetchByC_G_C_U(
+		return friendlyURLPersistence.fetchByG_C_C_U(
 			companyId, groupId, classNameId, urlTitle);
 	}
 
 	@Override
 	public List<FriendlyURL> getFriendlyURLs(
-		long companyId, long groupId, long classNameId, long classPK) {
+		long groupId, long companyId, long classNameId, long classPK) {
 
-		return friendlyURLPersistence.findByC_G_C_C(
+		return friendlyURLPersistence.findByG_C_C_C(
 			companyId, groupId, classNameId, classPK);
 	}
 
@@ -176,10 +176,10 @@ public class FriendlyURLLocalServiceImpl
 
 	@Override
 	public FriendlyURL getMainFriendlyURL(
-			long companyId, long groupId, long classNameId, long classPK)
+			long groupId, long companyId, long classNameId, long classPK)
 		throws PortalException {
 
-		return friendlyURLPersistence.findByC_G_C_C_M(
+		return friendlyURLPersistence.findByG_C_C_C_M(
 			companyId, groupId, classNameId, classPK, true);
 	}
 
@@ -215,7 +215,7 @@ public class FriendlyURLLocalServiceImpl
 
 	@Override
 	public void validate(
-			long companyId, long groupId, long classNameId, long classPK,
+			long groupId, long companyId, long classNameId, long classPK,
 			String urlTitle)
 		throws PortalException {
 
@@ -230,7 +230,7 @@ public class FriendlyURLLocalServiceImpl
 			urlTitle);
 
 		if (classPK > 0) {
-			FriendlyURL friendlyURL = friendlyURLPersistence.fetchByC_G_C_C_U(
+			FriendlyURL friendlyURL = friendlyURLPersistence.fetchByG_C_C_C_U(
 				companyId, groupId, classNameId, classPK, normalizedUrlTitle);
 
 			if (friendlyURL != null) {
@@ -238,7 +238,7 @@ public class FriendlyURLLocalServiceImpl
 			}
 		}
 
-		int count = friendlyURLPersistence.countByC_G_C_U(
+		int count = friendlyURLPersistence.countByG_C_C_U(
 			companyId, groupId, classNameId, normalizedUrlTitle);
 
 		if (count > 0) {
