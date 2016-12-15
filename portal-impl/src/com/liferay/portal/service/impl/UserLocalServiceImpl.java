@@ -2782,10 +2782,10 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 	 * @return the user with the primary key
 	 */
 	@Override
-	public User getUserById(long companyId, long userId)
+	public User getUserById(long userId, long companyId)
 		throws PortalException {
 
-		return userPersistence.findByC_U(companyId, userId);
+		return userPersistence.findByU_C(companyId, userId);
 	}
 
 	/**

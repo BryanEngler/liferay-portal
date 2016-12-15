@@ -190,7 +190,7 @@ public class MailingListMessageListener extends BaseMessageListener {
 			anonymous = true;
 
 			user = UserLocalServiceUtil.getUserById(
-				companyId, mailingListRequest.getUserId());
+				mailingListRequest.getUserId(), companyId);
 		}
 
 		long parentMessageId = MBUtil.getParentMessageId(mailMessage);

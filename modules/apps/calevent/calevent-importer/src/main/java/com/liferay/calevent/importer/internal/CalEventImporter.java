@@ -579,7 +579,7 @@ public class CalEventImporter {
 		User user = null;
 
 		try {
-			user = _userLocalService.getUserById(companyId, userId);
+			user = _userLocalService.getUserById(userId, companyId);
 		}
 		catch (NoSuchUserException nsue) {
 
