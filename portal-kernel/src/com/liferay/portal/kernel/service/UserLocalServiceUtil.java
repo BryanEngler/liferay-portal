@@ -686,19 +686,6 @@ public class UserLocalServiceUtil {
 	}
 
 	/**
-	* Returns the user with the primary key from the company.
-	*
-	* @param companyId the primary key of the user's company
-	* @param userId the primary key of the user
-	* @return the user with the primary key
-	*/
-	public static com.liferay.portal.kernel.model.User getUserById(
-		long companyId, long userId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getUserById(companyId, userId);
-	}
-
-	/**
 	* Returns the user with the primary key.
 	*
 	* @param userId the primary key of the user
@@ -707,6 +694,19 @@ public class UserLocalServiceUtil {
 	public static com.liferay.portal.kernel.model.User getUserById(long userId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getUserById(userId);
+	}
+
+	/**
+	* Returns the user with the primary key from the company.
+	*
+	* @param companyId the primary key of the user's company
+	* @param userId the primary key of the user
+	* @return the user with the primary key
+	*/
+	public static com.liferay.portal.kernel.model.User getUserById(
+		long userId, long companyId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getUserById(userId, companyId);
 	}
 
 	/**

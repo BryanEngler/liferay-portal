@@ -349,7 +349,7 @@ public class ServicePreAction extends Action {
 
 			if (layoutGroup.isUser()) {
 				User layoutUser = UserLocalServiceUtil.getUserById(
-					companyId, layoutGroup.getClassPK());
+					layoutGroup.getClassPK(), companyId);
 
 				updateUserLayouts(layoutUser);
 
