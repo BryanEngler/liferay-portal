@@ -54,11 +54,11 @@ public class FriendlyURLLocalServiceUtil {
 	}
 
 	public static com.liferay.friendly.url.model.FriendlyURL addFriendlyURL(
-		long companyId, long groupId, java.lang.Class<?> clazz, long classPK,
+		long groupId, long companyId, java.lang.Class<?> clazz, long classPK,
 		java.lang.String urlTitle)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .addFriendlyURL(companyId, groupId, clazz, classPK, urlTitle);
+				   .addFriendlyURL(groupId, companyId, clazz, classPK, urlTitle);
 	}
 
 	public static com.liferay.friendly.url.model.FriendlyURL addFriendlyURL(
@@ -106,14 +106,14 @@ public class FriendlyURLLocalServiceUtil {
 	}
 
 	public static com.liferay.friendly.url.model.FriendlyURL fetchFriendlyURL(
-		long companyId, long groupId, java.lang.Class<?> clazz,
-		java.lang.String urlTitle) {
-		return getService().fetchFriendlyURL(companyId, groupId, clazz, urlTitle);
+		long friendlyURLId) {
+		return getService().fetchFriendlyURL(friendlyURLId);
 	}
 
 	public static com.liferay.friendly.url.model.FriendlyURL fetchFriendlyURL(
-		long friendlyURLId) {
-		return getService().fetchFriendlyURL(friendlyURLId);
+		long groupId, long companyId, java.lang.Class<?> clazz,
+		java.lang.String urlTitle) {
+		return getService().fetchFriendlyURL(groupId, companyId, clazz, urlTitle);
 	}
 
 	public static com.liferay.friendly.url.model.FriendlyURL fetchFriendlyURL(
@@ -163,10 +163,10 @@ public class FriendlyURLLocalServiceUtil {
 	}
 
 	public static com.liferay.friendly.url.model.FriendlyURL getMainFriendlyURL(
-		long companyId, long groupId, java.lang.Class<?> clazz, long classPK)
+		long groupId, long companyId, java.lang.Class<?> clazz, long classPK)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .getMainFriendlyURL(companyId, groupId, clazz, classPK);
+				   .getMainFriendlyURL(groupId, companyId, clazz, classPK);
 	}
 
 	public static com.liferay.friendly.url.model.FriendlyURL getMainFriendlyURL(
@@ -237,10 +237,11 @@ public class FriendlyURLLocalServiceUtil {
 		return getService().getOSGiServiceIdentifier();
 	}
 
-	public static java.lang.String getUniqueUrlTitle(long companyId,
-		long groupId, long classNameId, long classPK, java.lang.String urlTitle) {
+	public static java.lang.String getUniqueUrlTitle(long groupId,
+		long companyId, long classNameId, long classPK,
+		java.lang.String urlTitle) {
 		return getService()
-				   .getUniqueUrlTitle(companyId, groupId, classNameId, classPK,
+				   .getUniqueUrlTitle(groupId, companyId, classNameId, classPK,
 			urlTitle);
 	}
 
@@ -370,16 +371,16 @@ public class FriendlyURLLocalServiceUtil {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
-	public static void deleteFriendlyURL(long companyId, long groupId,
-		java.lang.Class<?> clazz, long classPK, java.lang.String urlTitle)
-		throws com.liferay.friendly.url.exception.NoSuchFriendlyURLException {
-		getService()
-			.deleteFriendlyURL(companyId, groupId, clazz, classPK, urlTitle);
-	}
-
 	public static void deleteFriendlyURL(long groupId, long companyId,
 		java.lang.Class<?> clazz, long classPK) {
 		getService().deleteFriendlyURL(groupId, companyId, clazz, classPK);
+	}
+
+	public static void deleteFriendlyURL(long groupId, long companyId,
+		java.lang.Class<?> clazz, long classPK, java.lang.String urlTitle)
+		throws com.liferay.friendly.url.exception.NoSuchFriendlyURLException {
+		getService()
+			.deleteFriendlyURL(groupId, companyId, clazz, classPK, urlTitle);
 	}
 
 	public static void deleteFriendlyURL(long groupId, long companyId,
@@ -394,10 +395,10 @@ public class FriendlyURLLocalServiceUtil {
 		getService().deleteGroupFriendlyURLs(groupId, classNameId);
 	}
 
-	public static void validate(long companyId, long groupId, long classNameId,
+	public static void validate(long groupId, long companyId, long classNameId,
 		java.lang.String urlTitle)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().validate(companyId, groupId, classNameId, urlTitle);
+		getService().validate(groupId, companyId, classNameId, urlTitle);
 	}
 
 	public static void validate(long groupId, long companyId, long classNameId,
