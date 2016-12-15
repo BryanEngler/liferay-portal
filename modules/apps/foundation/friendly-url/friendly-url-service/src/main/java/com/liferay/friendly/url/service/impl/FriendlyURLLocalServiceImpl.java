@@ -38,14 +38,14 @@ public class FriendlyURLLocalServiceImpl
 
 	@Override
 	public FriendlyURL addFriendlyURL(
-			long companyId, long groupId, Class<?> clazz, long classPK,
+			long groupId, long companyId, Class<?> clazz, long classPK,
 			String urlTitle)
 		throws PortalException {
 
 		long classNameId = classNameLocalService.getClassNameId(clazz);
 
 		return addFriendlyURL(
-			companyId, groupId, classNameId, classPK, urlTitle);
+			groupId, companyId, classNameId, classPK, urlTitle);
 	}
 
 	@Override
@@ -57,10 +57,10 @@ public class FriendlyURLLocalServiceImpl
 		String normalizedUrlTitle = FriendlyURLNormalizerUtil.normalize(
 			urlTitle);
 
-		validate(companyId, groupId, classNameId, classPK, normalizedUrlTitle);
+		validate(groupId, companyId, classNameId, classPK, normalizedUrlTitle);
 
 		FriendlyURL mainFriendlyURL = friendlyURLPersistence.fetchByG_C_C_C_M(
-			companyId, groupId, classNameId, classPK, true);
+			groupId, companyId, classNameId, classPK, true);
 
 		if (mainFriendlyURL != null) {
 			mainFriendlyURL.setMain(false);
@@ -69,7 +69,7 @@ public class FriendlyURLLocalServiceImpl
 		}
 
 		FriendlyURL oldFriendlyURL = friendlyURLPersistence.fetchByG_C_C_C_U(
-			companyId, groupId, classNameId, classPK, normalizedUrlTitle);
+			groupId, companyId, classNameId, classPK, normalizedUrlTitle);
 
 		if (oldFriendlyURL != null) {
 			oldFriendlyURL.setMain(true);
@@ -81,8 +81,8 @@ public class FriendlyURLLocalServiceImpl
 
 		FriendlyURL friendlyURL = createFriendlyURL(friendlyURLId);
 
-		friendlyURL.setCompanyId(companyId);
 		friendlyURL.setGroupId(groupId);
+		friendlyURL.setCompanyId(companyId);
 		friendlyURL.setClassNameId(classNameId);
 		friendlyURL.setClassPK(classPK);
 		friendlyURL.setUrlTitle(normalizedUrlTitle);
@@ -98,18 +98,18 @@ public class FriendlyURLLocalServiceImpl
 		long classNameId = classNameLocalService.getClassNameId(clazz);
 
 		friendlyURLPersistence.removeByG_C_C_C(
-			companyId, groupId, classNameId, classPK);
+			groupId, companyId, classNameId, classPK);
 	}
 
 	@Override
 	public void deleteFriendlyURL(
-			long companyId, long groupId, Class<?> clazz, long classPK,
+			long groupId, long companyId, Class<?> clazz, long classPK,
 			String urlTitle)
 		throws NoSuchFriendlyURLException {
 
 		long classNameId = classNameLocalService.getClassNameId(clazz);
 
-		deleteFriendlyURL(companyId, groupId, classNameId, classPK, urlTitle);
+		deleteFriendlyURL(groupId, companyId, classNameId, classPK, urlTitle);
 	}
 
 	@Override
@@ -119,10 +119,10 @@ public class FriendlyURLLocalServiceImpl
 		throws NoSuchFriendlyURLException {
 
 		friendlyURLPersistence.removeByG_C_C_C_U(
-			companyId, groupId, classNameId, classPK, urlTitle);
+			groupId, companyId, classNameId, classPK, urlTitle);
 
 		List<FriendlyURL> friendlyURLs = friendlyURLPersistence.findByG_C_C_C(
-			companyId, groupId, classNameId, classPK, 0, 1,
+			groupId, companyId, classNameId, classPK, 0, 1,
 			new FriendlyURLCreateDateComparator());
 
 		if (!friendlyURLs.isEmpty()) {
@@ -141,11 +141,11 @@ public class FriendlyURLLocalServiceImpl
 
 	@Override
 	public FriendlyURL fetchFriendlyURL(
-		long companyId, long groupId, Class<?> clazz, String urlTitle) {
+		long groupId, long companyId, Class<?> clazz, String urlTitle) {
 
 		long classNameId = classNameLocalService.getClassNameId(clazz);
 
-		return fetchFriendlyURL(companyId, groupId, classNameId, urlTitle);
+		return fetchFriendlyURL(groupId, companyId, classNameId, urlTitle);
 	}
 
 	@Override
@@ -153,7 +153,7 @@ public class FriendlyURLLocalServiceImpl
 		long groupId, long companyId, long classNameId, String urlTitle) {
 
 		return friendlyURLPersistence.fetchByG_C_C_U(
-			companyId, groupId, classNameId, urlTitle);
+			groupId, companyId, classNameId, urlTitle);
 	}
 
 	@Override
@@ -161,17 +161,17 @@ public class FriendlyURLLocalServiceImpl
 		long groupId, long companyId, long classNameId, long classPK) {
 
 		return friendlyURLPersistence.findByG_C_C_C(
-			companyId, groupId, classNameId, classPK);
+			groupId, companyId, classNameId, classPK);
 	}
 
 	@Override
 	public FriendlyURL getMainFriendlyURL(
-			long companyId, long groupId, Class<?> clazz, long classPK)
+			long groupId, long companyId, Class<?> clazz, long classPK)
 		throws PortalException {
 
 		long classNameId = classNameLocalService.getClassNameId(clazz);
 
-		return getMainFriendlyURL(companyId, groupId, classNameId, classPK);
+		return getMainFriendlyURL(groupId, companyId, classNameId, classPK);
 	}
 
 	@Override
@@ -180,17 +180,17 @@ public class FriendlyURLLocalServiceImpl
 		throws PortalException {
 
 		return friendlyURLPersistence.findByG_C_C_C_M(
-			companyId, groupId, classNameId, classPK, true);
+			groupId, companyId, classNameId, classPK, true);
 	}
 
 	@Override
 	public String getUniqueUrlTitle(
-		long companyId, long groupId, long classNameId, long classPK,
+		long groupId, long companyId, long classNameId, long classPK,
 		String urlTitle) {
 
 		for (int i = 1;; i++) {
 			FriendlyURL curFriendlyURL = fetchFriendlyURL(
-				companyId, groupId, classNameId, urlTitle);
+				groupId, companyId, classNameId, urlTitle);
 
 			if ((curFriendlyURL == null) ||
 				(curFriendlyURL.getClassPK() == classPK)) {
@@ -231,7 +231,7 @@ public class FriendlyURLLocalServiceImpl
 
 		if (classPK > 0) {
 			FriendlyURL friendlyURL = friendlyURLPersistence.fetchByG_C_C_C_U(
-				companyId, groupId, classNameId, classPK, normalizedUrlTitle);
+				groupId, companyId, classNameId, classPK, normalizedUrlTitle);
 
 			if (friendlyURL != null) {
 				return;
@@ -239,7 +239,7 @@ public class FriendlyURLLocalServiceImpl
 		}
 
 		int count = friendlyURLPersistence.countByG_C_C_U(
-			companyId, groupId, classNameId, normalizedUrlTitle);
+			groupId, companyId, classNameId, normalizedUrlTitle);
 
 		if (count > 0) {
 			throw new DuplicateFriendlyURLException();
@@ -248,10 +248,10 @@ public class FriendlyURLLocalServiceImpl
 
 	@Override
 	public void validate(
-			long companyId, long groupId, long classNameId, String urlTitle)
+			long groupId, long companyId, long classNameId, String urlTitle)
 		throws PortalException {
 
-		validate(companyId, groupId, classNameId, 0, urlTitle);
+		validate(groupId, companyId, classNameId, 0, urlTitle);
 	}
 
 }
