@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch.internal.facet;
 
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.search.elasticsearch.facet.FacetProcessor;
@@ -38,10 +39,15 @@ public class DefaultFacetProcessor
 		FacetConfiguration facetConfiguration = facet.getFacetConfiguration();
 
 		String fieldName = facetConfiguration.getFieldName();
+		JSONObject data = facetConfiguration.getData();
 
 		TermsBuilder termsBuilder = new TermsBuilder(fieldName);
 
 		termsBuilder.field(fieldName);
+
+		if (data.getInt("maxTerms") > 0) {
+			termsBuilder.size(data.getInt("maxTerms"));
+		}
 
 		searchRequestBuilder.addAggregation(termsBuilder);
 	}
