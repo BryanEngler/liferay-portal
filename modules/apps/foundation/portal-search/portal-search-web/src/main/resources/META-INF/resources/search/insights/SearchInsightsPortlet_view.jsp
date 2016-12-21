@@ -1,3 +1,4 @@
+<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -11,22 +12,24 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+--%>
 
-package com.liferay.portal.search.web.internal.results.data;
+<%@ page import="com.liferay.portal.search.web.internal.search.insights.portlet.SearchInsightsDisplayContext" %>
 
-import com.liferay.portal.kernel.search.Document;
+<%
+SearchInsightsDisplayContext searchInsightsDisplayContext =
+	(SearchInsightsDisplayContext)java.util.Objects.requireNonNull(
+		request.getAttribute(SearchInsightsDisplayContext.ATTRIBUTE));
+%>
 
-import java.util.List;
-
-/**
- * @author André de Oliveira
- */
-public interface SearchResultsData {
-
-	public List<Document> getDocuments();
-
-	public String getQueryString();
-
-	public String[] getQueryTerms();
-
-}
+<table class="full-query">
+	<tr>
+		<td valign="top">
+			<div class="container">
+				<code>
+					<%= searchInsightsDisplayContext.getQueryString() %>
+				</code>
+			</div>
+		</td>
+	</tr>
+</table>

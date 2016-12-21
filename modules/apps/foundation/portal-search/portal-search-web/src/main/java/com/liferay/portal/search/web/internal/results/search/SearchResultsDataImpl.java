@@ -28,9 +28,10 @@ import java.util.List;
 public class SearchResultsDataImpl implements SearchResultsData, Serializable {
 
 	public SearchResultsDataImpl(
-		List<Document> documents, String[] queryTerms) {
+		List<Document> documents, String queryString, String[] queryTerms) {
 
 		_documents = documents;
+		_queryString = queryString;
 		_queryTerms = queryTerms;
 	}
 
@@ -40,11 +41,17 @@ public class SearchResultsDataImpl implements SearchResultsData, Serializable {
 	}
 
 	@Override
+	public String getQueryString() {
+		return _queryString;
+	}
+
+	@Override
 	public String[] getQueryTerms() {
 		return _queryTerms;
 	}
 
 	private final List<Document> _documents;
+	private final String _queryString;
 	private final String[] _queryTerms;
 
 }

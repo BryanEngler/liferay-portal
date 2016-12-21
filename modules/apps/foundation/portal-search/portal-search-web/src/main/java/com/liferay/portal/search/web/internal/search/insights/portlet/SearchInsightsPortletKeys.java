@@ -12,21 +12,22 @@
  * details.
  */
 
-package com.liferay.portal.search.web.internal.results.data;
-
-import com.liferay.portal.kernel.search.Document;
-
-import java.util.List;
+package com.liferay.portal.search.web.internal.search.insights.portlet;
 
 /**
- * @author André de Oliveira
+ * @author Bryan Engler
  */
-public interface SearchResultsData {
+public class SearchInsightsPortletKeys {
 
-	public List<Document> getDocuments();
+	public static final String CSS_CLASS_WRAPPER = "portlet-search-insights";
 
-	public String getQueryString();
+	public static final String DISPLAY_NAME = "PoC: Search Insights";
 
-	public String[] getQueryTerms();
+	public static final String PORTLET_NAME =
+		"com_liferay_portal_search_web_search_insights_portlet_" +
+			"SearchInsightsPortlet";
+
+	public static final String VIEW_TEMPLATE =
+		"/search/insights/SearchInsightsPortlet_view.jsp";
 
 }

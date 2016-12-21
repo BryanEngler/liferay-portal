@@ -77,10 +77,14 @@ public class SearchResultsDataSupplierImpl
 		SearchContainer<Document> searchContainer =
 			searchResponse.getSearchContainer();
 
+		SearchContext searchContext = searchResponse.getSearchContext();
+
 		Hits hits = searchResponse.getHits();
 
 		SearchResultsData searchResultsData = new SearchResultsDataImpl(
-			searchContainer.getResults(), hits.getQueryTerms());
+			searchContainer.getResults(),
+			(String)searchContext.getAttribute("queryString"),
+			hits.getQueryTerms());
 
 		return new PortletSharedSearchResultImpl(
 			searchResultsData, searchResponse.getSearchContext());

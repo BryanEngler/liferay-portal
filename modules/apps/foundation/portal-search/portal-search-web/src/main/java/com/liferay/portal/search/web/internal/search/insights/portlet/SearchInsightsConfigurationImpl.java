@@ -12,21 +12,17 @@
  * details.
  */
 
-package com.liferay.portal.search.web.internal.results.data;
+package com.liferay.portal.search.web.internal.search.insights.portlet;
 
-import com.liferay.portal.kernel.search.Document;
-
-import java.util.List;
+import com.liferay.portal.search.web.internal.request.params.SearchParametersConfiguration;
 
 /**
- * @author André de Oliveira
+ * @author Bryan Engler
  */
-public interface SearchResultsData {
+public class SearchInsightsConfigurationImpl
+	implements SearchParametersConfiguration {
 
-	public List<Document> getDocuments();
-
-	public String getQueryString();
-
-	public String[] getQueryTerms();
+	@Override
+	public String getQParameterName() { return "q"; }
 
 }

@@ -12,21 +12,24 @@
  * details.
  */
 
-package com.liferay.portal.search.web.internal.results.data;
+package com.liferay.portal.search.web.internal.search.insights.portlet;
 
-import com.liferay.portal.kernel.search.Document;
-
-import java.util.List;
+import java.io.Serializable;
 
 /**
- * @author André de Oliveira
+ * @author Bryan Engler
  */
-public interface SearchResultsData {
+public class SearchInsightsDisplayContext implements Serializable {
 
-	public List<Document> getDocuments();
+	public String getQueryString() {
+		return _queryString;
+	}
 
-	public String getQueryString();
+	public void setQueryString(String queryString) {
+		_queryString = queryString;
+	}
 
-	public String[] getQueryTerms();
+	public static final String ATTRIBUTE = "SearchInsightsDisplayContext";
 
+	private String _queryString;
 }

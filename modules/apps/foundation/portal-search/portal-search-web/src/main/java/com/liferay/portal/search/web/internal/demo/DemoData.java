@@ -102,6 +102,11 @@ public class DemoData implements SearchResultsData {
 	}
 
 	@Override
+	public String getQueryString() {
+		return null;
+	}
+
+	@Override
 	public String[] getQueryTerms() {
 		return null;
 	}
