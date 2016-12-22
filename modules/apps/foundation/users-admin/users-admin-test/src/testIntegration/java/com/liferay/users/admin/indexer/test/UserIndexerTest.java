@@ -15,25 +15,36 @@
 package com.liferay.users.admin.indexer.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserGroup;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistry;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.service.OrganizationLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserGroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
+import com.liferay.portal.kernel.test.util.GroupTestUtil;
+import com.liferay.portal.kernel.test.util.OrganizationTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.SearchContextTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.test.util.UserGroupTestUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.security.permission.PermissionCheckerUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
@@ -77,6 +88,10 @@ public class UserIndexerTest {
 		_indexer = indexerRegistry.getIndexer(User.class);
 
 		_serviceContext = ServiceContextTestUtil.getServiceContext();
+
+		User user = UserLocalServiceUtil.getUser(TestPropsValues.getUserId());
+
+		PermissionCheckerUtil.setThreadValues(user);
 	}
 
 	@Test
@@ -151,6 +166,74 @@ public class UserIndexerTest {
 		User user = assertSearchOneUser("firstName", "Mary \"Jane Watson\"");
 
 		Assert.assertEquals(firstName, user.getFirstName());
+	}
+
+	@Test
+	public void testInheritedGroupAssociationsViaOrganization()
+		throws Exception {
+
+		String firstName = "George";
+		String middleName = "Herman";
+		String lastName = "Ruth";
+
+		User user1 = addUserNameFields(firstName, lastName, middleName, false);
+		User user2 = addUserNameFields(firstName, lastName, middleName, false);
+
+		User user3 = addUser();
+
+		Group group = GroupTestUtil.addGroup(
+			TestPropsValues.getCompanyId(), user3.getUserId(), 0);
+
+		_groups.add(group);
+
+		Organization organization = OrganizationTestUtil.addOrganization(
+			user1, 0, RandomTestUtil.randomString(), false);
+
+		_organizations.add(organization);
+
+		UserLocalServiceUtil.addOrganizationUser(
+			organization.getOrganizationId(), user1);
+
+		OrganizationLocalServiceUtil.addGroupOrganization(
+			group.getGroupId(), organization.getOrganizationId());
+
+		_indexer.reindex(user1);
+		_indexer.reindex(user2);
+
+		User hitUser = assertSearchGroupOneUser(lastName, group.getGroupId());
+
+		Assert.assertEquals(user1.getUserId(), hitUser.getUserId());
+	}
+
+	@Test
+	public void testInheritedGroupAssociationsViaUserGroup() throws Exception {
+		String firstName = "Henry";
+		String middleName = "Louis";
+		String lastName = "Aaron";
+
+		User user1 = addUserNameFields(firstName, lastName, middleName);
+		User user2 = addUserNameFields(firstName, lastName, middleName);
+
+		Group group = GroupTestUtil.addGroup();
+
+		_groups.add(group);
+
+		UserGroup userGroup = UserGroupTestUtil.addUserGroup();
+
+		_userGroups.add(userGroup);
+
+		UserLocalServiceUtil.addUserGroupUser(
+			userGroup.getUserGroupId(), user1);
+
+		UserGroupLocalServiceUtil.addGroupUserGroup(
+			group.getGroupId(), userGroup.getUserGroupId());
+
+		_indexer.reindex(user1);
+		_indexer.reindex(user2);
+
+		User hitUser = assertSearchGroupOneUser(lastName, group.getGroupId());
+
+		Assert.assertEquals(user1.getUserId(), hitUser.getUserId());
 	}
 
 	@Test
@@ -288,6 +371,15 @@ public class UserIndexerTest {
 			String screenName, String emailAddress)
 		throws Exception {
 
+		return addUser(
+			firstName, lastName, middleName, screenName, emailAddress, true);
+	}
+
+	protected User addUser(
+			String firstName, String lastName, String middleName,
+			String screenName, String emailAddress, boolean addToGroup)
+		throws Exception {
+
 		long creatorUserId = TestPropsValues.getUserId();
 		long companyId = TestPropsValues.getCompanyId();
 		boolean autoPassword = true;
@@ -304,11 +396,15 @@ public class UserIndexerTest {
 		int birthdayDay = 1;
 		int birthdayYear = 1970;
 		String jobTitle = null;
-		long[] groupIds = new long[] {TestPropsValues.getGroupId()};
+		long[] groupIds = null;
 		long[] organizationIds = null;
 		long[] roleIds = null;
 		long[] userGroupIds = null;
 		boolean sendMail = false;
+
+		if (addToGroup) {
+			groupIds = new long[] {TestPropsValues.getGroupId()};
+		}
 
 		User user = _userLocalService.addUser(
 			creatorUserId, companyId, autoPassword, password1, password2,
@@ -331,14 +427,26 @@ public class UserIndexerTest {
 		addUser(firstName, lastName, middleName, screenName, emailAddress);
 	}
 
-	protected void addUserNameFields(
+	protected User addUserNameFields(
 			String firstName, String lastName, String middleName)
+		throws Exception {
+
+		return addUserNameFields(firstName, lastName, middleName, true);
+	}
+
+	protected User addUserNameFields(
+			String firstName, String lastName, String middleName,
+			boolean addToGroup)
 		throws Exception {
 
 		String screenName = RandomTestUtil.randomString();
 		String emailAddress = RandomTestUtil.randomString() + "@liferay.com";
 
-		addUser(firstName, lastName, middleName, screenName, emailAddress);
+		User user = addUser(
+			firstName, lastName, middleName, screenName, emailAddress,
+			addToGroup);
+
+		return user;
 	}
 
 	protected void addUserScreenName(String screenName) throws Exception {
@@ -373,6 +481,21 @@ public class UserIndexerTest {
 
 		Assert.assertEquals(
 			getScreenNames(expectedUsers), getScreenNames(actualUsers));
+	}
+
+	protected User assertSearchGroupOneUser(String keywords, long groupId)
+		throws Exception {
+
+		SearchContext searchContext = SearchContextTestUtil.getSearchContext(
+			groupId);
+
+		searchContext.setKeywords(keywords);
+
+		Hits hits = search(searchContext);
+
+		assertLength(hits, 1);
+
+		return getUser(hits);
 	}
 
 	protected User assertSearchOneUser(String keywords) throws Exception {
@@ -477,8 +600,19 @@ public class UserIndexerTest {
 		Assert.assertEquals(middleName, user.getMiddleName());
 	}
 
+	@DeleteAfterTestRun
+	private final List<Group> _groups = new ArrayList<>();
+
 	private Indexer<User> _indexer;
+
+	@DeleteAfterTestRun
+	private final List<Organization> _organizations = new ArrayList<>();
+
 	private ServiceContext _serviceContext;
+
+	@DeleteAfterTestRun
+	private final List<UserGroup> _userGroups = new ArrayList<>();
+
 	private UserLocalService _userLocalService;
 
 	@DeleteAfterTestRun
