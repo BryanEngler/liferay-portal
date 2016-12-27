@@ -25,6 +25,7 @@ import com.liferay.expando.kernel.util.ExpandoBridgeIndexer;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Document;
@@ -158,6 +159,16 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 			else {
 				document.addKeyword(fieldName, new float[0]);
 			}
+		}
+		else if (type == ExpandoColumnConstants.GEOLOCATION) {
+			JSONObject geolocationJSONObject =
+				expandoValue.getGeolocationJSONObject();
+
+			double latitude = geolocationJSONObject.getDouble("latitude");
+			double longitude = geolocationJSONObject.getDouble("longitude");
+
+			document.addGeoLocation(
+				fieldName + "_geolocation", latitude, longitude);
 		}
 		else if (type == ExpandoColumnConstants.INTEGER) {
 			document.addKeyword(fieldName, expandoValue.getInteger());
