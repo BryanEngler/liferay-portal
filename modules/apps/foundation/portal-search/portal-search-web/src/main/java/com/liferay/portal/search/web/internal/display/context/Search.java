@@ -17,6 +17,7 @@ package com.liferay.portal.search.web.internal.display.context;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.kernel.search.HitsImpl;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.facet.AssetEntriesFacet;
@@ -24,6 +25,7 @@ import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.ScopeFacet;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcher;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcherManager;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.web.search.builder.SearchBuilder;
 
@@ -59,15 +61,19 @@ public class Search {
 		SearchContext searchContext = buildSearchContext(
 			keywords, searchContainer.getStart(), searchContainer.getEnd());
 
-		FacetedSearcher facetedSearcher =
-			_facetedSearcherManager.createFacetedSearcher();
+		Hits hits = new HitsImpl();
 
-		Hits hits = search(facetedSearcher, searchContext);
+		if (!isEmptySearch(searchContext)) {
+			FacetedSearcher facetedSearcher =
+				_facetedSearcherManager.createFacetedSearcher();
 
-		searchContainer.setTotal(hits.getLength());
-		searchContainer.setResults(hits.toList());
+			hits = search(facetedSearcher, searchContext);
 
-		searchContainer.setSearch(true);
+			searchContainer.setTotal(hits.getLength());
+			searchContainer.setResults(hits.toList());
+
+			searchContainer.setSearch(true);
+		}
 
 		return new SearchResponse(hits, searchContext, searchContainer);
 	}
@@ -119,6 +125,12 @@ public class Search {
 			searchContributor -> searchContributor.contribute(
 				searchBuilder, searchContext));
 		return searchContext;
+	}
+
+	protected boolean isEmptySearch(SearchContext searchContext) {
+		String keywords = searchContext.getKeywords();
+
+		return keywords.equals(StringPool.BLANK);
 	}
 
 	protected Hits search(
