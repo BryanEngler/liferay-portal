@@ -38,6 +38,10 @@ public class SiteFacetPortletDisplayContext {
 		return _termDisplayContexts;
 	}
 
+	public boolean isMultipleSelection() {
+		return _multipleSelection;
+	}
+
 	public boolean isNothingSelected() {
 		return _nothingSelected;
 	}
@@ -52,6 +56,10 @@ public class SiteFacetPortletDisplayContext {
 
 	public void setFieldParamInputValue(String fieldParamInputValue) {
 		_fieldParamInputValue = fieldParamInputValue;
+	}
+
+	public void setMultipleSelection(boolean multipleSelection) {
+		_multipleSelection = multipleSelection;
 	}
 
 	public void setNothingSelected(boolean nothingSelected) {
@@ -70,6 +78,7 @@ public class SiteFacetPortletDisplayContext {
 
 	private String _fieldParamInputName;
 	private String _fieldParamInputValue;
+	private boolean _multipleSelection;
 	private boolean _nothingSelected;
 	private boolean _renderNothing;
 	private Collection<SiteFacetPortletTermDisplayContext>

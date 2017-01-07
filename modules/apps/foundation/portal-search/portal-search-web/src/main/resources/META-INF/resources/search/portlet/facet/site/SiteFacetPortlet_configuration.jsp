@@ -44,6 +44,8 @@ com.liferay.portal.search.web.internal.portlet.facet.site.SiteFacetPortletPrefer
 			<aui:input label="frequency-threshold" name="<%= PortletPreferencesJspUtil.getInputName(SiteFacetPortletPreferences.PREFERENCE_FREQUENCY_THRESHOLD) %>" value="<%= siteFacetPortletPreferences.getFrequencyThreshold() %>" />
 
 			<aui:input label="show-asset-count" name="<%= PortletPreferencesJspUtil.getInputName(SiteFacetPortletPreferences.PREFERENCE_FREQUENCIES_VISIBLE) %>" type="checkbox" value="<%= siteFacetPortletPreferences.isFrequenciesVisible() %>" />
+
+			<aui:input label="allow-multiple-selection" name="<%= PortletPreferencesJspUtil.getInputName(SiteFacetPortletPreferences.PREFERENCE_MULTIPLE_SELECTION) %>" type="checkbox" value="<%= siteFacetPortletPreferences.isMultipleSelection() %>" />
 		</div>
 	</div>
 

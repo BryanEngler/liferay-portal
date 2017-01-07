@@ -62,7 +62,7 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 					<aui:fieldset>
 
 						<%
-						boolean multiselect = false;
+						boolean multipleSelection = siteFacetPortletDisplayContext.isMultipleSelection();
 
 						int i = 1;
 
@@ -76,7 +76,7 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 									data-term-id="<%= siteFacetPortletTermDisplayContext.getValue() %>"
 									id="<portlet:namespace /><%= termName %>"
 									name="<portlet:namespace /><%= termName %>"
-									onChange='<%= renderResponse.getNamespace() + (multiselect ? "_applyFacet(event);" : "_applySingleFacet(event);") %>'
+									onChange='<%= renderResponse.getNamespace() + (multipleSelection ? "_applyFacet(event);" : "_applySingleFacet(event);") %>'
 									type="checkbox"
 									<%= siteFacetPortletTermDisplayContext.isSelected() ? "checked" : StringPool.BLANK %>
 								/>

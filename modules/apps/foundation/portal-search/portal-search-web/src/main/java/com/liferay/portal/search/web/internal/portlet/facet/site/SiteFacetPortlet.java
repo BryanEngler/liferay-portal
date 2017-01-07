@@ -160,12 +160,16 @@ public class SiteFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 				facet, fieldParam, locale, countThreshold, maxTerms,
 				frequenciesVisible, groupLocalService);
 
+		boolean multipleSelection =
+			siteFacetPortletConfiguration.isMultipleSelection();
+
 		return buildDisplayContext(
-			fieldParam, frequenciesVisible, scopeSearchFacetDisplayContext);
+			fieldParam, frequenciesVisible, multipleSelection,
+			scopeSearchFacetDisplayContext);
 	}
 
 	protected SiteFacetPortletDisplayContext buildDisplayContext(
-		String fieldParam, boolean showFrequencies,
+		String fieldParam, boolean showFrequencies, boolean multipleSelection,
 		ScopeSearchFacetDisplayContext scopeSearchFacetDisplayContext) {
 
 		SiteFacetPortletDisplayContext siteFacetPortletDisplayContext =
@@ -186,6 +190,7 @@ public class SiteFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 		siteFacetPortletDisplayContext.setFieldParamInputName(_PARAM);
 		siteFacetPortletDisplayContext.setFieldParamInputValue(fieldParam);
 		siteFacetPortletDisplayContext.setRenderNothing(renderNothing);
+		siteFacetPortletDisplayContext.setMultipleSelection(multipleSelection);
 		siteFacetPortletDisplayContext.setNothingSelected(nothingSelected);
 
 		return siteFacetPortletDisplayContext;

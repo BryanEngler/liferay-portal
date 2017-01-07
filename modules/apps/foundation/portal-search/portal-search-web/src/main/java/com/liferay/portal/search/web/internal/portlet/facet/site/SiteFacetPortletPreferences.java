@@ -21,6 +21,8 @@ public interface SiteFacetPortletPreferences {
 
 	public static final boolean DEFAULT_FREQUENCIES_VISIBLE = true;
 
+	public static final boolean DEFAULT_MULTIPLE_SELECTION = false;
+
 	public static final String PREFERENCE_FREQUENCIES_VISIBLE =
 		"frequenciesVisible";
 
@@ -29,10 +31,15 @@ public interface SiteFacetPortletPreferences {
 
 	public static final String PREFERENCE_MAX_TERMS = "maxTerms";
 
+	public static final String PREFERENCE_MULTIPLE_SELECTION =
+		"multipleSelection";
+
 	public int getFrequencyThreshold();
 
 	public int getMaxTerms();
 
 	public boolean isFrequenciesVisible();
+
+	public boolean isMultipleSelection();
 
 }

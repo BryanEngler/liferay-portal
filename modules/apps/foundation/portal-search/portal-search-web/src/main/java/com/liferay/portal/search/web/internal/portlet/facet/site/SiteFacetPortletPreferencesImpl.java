@@ -54,6 +54,13 @@ public class SiteFacetPortletPreferencesImpl
 			SiteFacetPortletPreferences.DEFAULT_FREQUENCIES_VISIBLE);
 	}
 
+	@Override
+	public boolean isMultipleSelection() {
+		return _portletPreferencesHelper.getBoolean(
+			SiteFacetPortletPreferences.PREFERENCE_MULTIPLE_SELECTION,
+			SiteFacetPortletPreferences.DEFAULT_MULTIPLE_SELECTION);
+	}
+
 	private final PortletPreferencesHelper _portletPreferencesHelper;
 
 }
