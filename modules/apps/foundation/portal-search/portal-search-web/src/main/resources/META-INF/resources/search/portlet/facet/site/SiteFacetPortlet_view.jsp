@@ -62,6 +62,8 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 					<aui:fieldset>
 
 						<%
+						boolean multiselect = false;
+
 						int i = 1;
 
 						for (SiteFacetPortletTermDisplayContext siteFacetPortletTermDisplayContext : siteFacetPortletDisplayContext.getTermDisplayContexts()) {
@@ -74,7 +76,7 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 									data-term-id="<%= siteFacetPortletTermDisplayContext.getValue() %>"
 									id="<portlet:namespace /><%= termName %>"
 									name="<portlet:namespace /><%= termName %>"
-									onChange='<%= renderResponse.getNamespace() + "_applyFacet(event);" %>'
+									onChange='<%= renderResponse.getNamespace() + (multiselect ? "_applyFacet(event);" : "_applySingleFacet(event);") %>'
 									type="checkbox"
 									<%= siteFacetPortletTermDisplayContext.isSelected() ? "checked" : StringPool.BLANK %>
 								/>
@@ -140,6 +142,20 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 		document.location.search = newParameters.join('&');
 	}
 
+	function <%= namespace %>_setParameters(selectedFacets){
+		var key = '<%= siteFacetPortletDisplayContext.getFieldParamInputName() %>';
+
+		var parameterArray = document.location.search.substr(1).split('&');
+
+		var newParameters = <%= namespace %>_removeParameters(key, parameterArray);
+
+		if (selectedFacets.length > 0) {
+			newParameters = <%= namespace %>_addParameter(key, selectedFacets.join(','), newParameters);
+		}
+
+		document.location.search = newParameters.join('&');
+	}
+
 	Liferay.provide(
 		window,
 		'<portlet:namespace />_applyFacet',
@@ -161,17 +177,31 @@ String cssClassFacetTerm = "facet-term-" + namespace;
 					}
 				);
 
-				var key = '<%= siteFacetPortletDisplayContext.getFieldParamInputName() %>';
+				<%= namespace %>_setParameters(selectedFacets);
+			}
+		},
+		['aui-base']
+	);
 
-				var parameterArray = document.location.search.substr(1).split('&');
+	Liferay.provide(
+		window,
+		'<portlet:namespace />_applySingleFacet',
+		function(event) {
 
-				var newParameters = <%= namespace %>_removeParameters(key, parameterArray);
+			var form = event.currentTarget.form;
 
-				if (selectedFacets.length > 0) {
-					newParameters = <%= namespace %>_addParameter(key, selectedFacets.join(','), newParameters);
+			if (form) {
+				var checkbox = $('#' + event.currentTarget.name);
+
+				var checked = checkbox.prop('checked');
+
+				var selectedFacets = [];
+
+				if (checked) {
+					selectedFacets.push(event.currentTarget.getAttribute('data-term-id'));
 				}
 
-				document.location.search = newParameters.join('&');
+				<%= namespace %>_setParameters(selectedFacets);
 			}
 		},
 		['aui-base']

@@ -21,8 +21,10 @@ import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.ScopeFacet;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.web.internal.display.context.PortletRequestThemeDisplaySupplier;
 import com.liferay.portal.search.web.internal.display.context.ThemeDisplaySupplier;
 import com.liferay.portal.search.web.internal.facet.display.context.ScopeSearchFacetDisplayContext;
@@ -277,11 +279,17 @@ public class SiteFacetPortlet extends MVCPortlet implements SearchAwarePortlet {
 	protected Optional<long[]> getSites(HttpServletRequest httpServletRequest) {
 		Optional<String> paramValue = getSiteParamValue(httpServletRequest);
 
-		Optional<Long> map = paramValue.map(Long::valueOf);
+		return paramValue.map(value -> {
+			String[] groupIds = StringUtil.split(value);
 
-		Optional<long[]> map2 = map.map(l -> new long[] {l});
+			List<Long> longValues = new ArrayList<>();
 
-		return map2;
+			for (String groupId : groupIds) {
+				longValues.add(Long.valueOf(groupId));
+			}
+
+			return ArrayUtil.toLongArray(longValues);
+		});
 	}
 
 	protected SiteFacetPortletTermDisplayContext getTermDisplayContext(
