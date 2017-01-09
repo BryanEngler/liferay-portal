@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.search.web.internal.facet.display.builder.AssetTagsSearchFacetDisplayBuilder;
 
 import java.util.Collections;
 import java.util.List;
@@ -61,8 +62,7 @@ public class AssetTagsSearchFacetDisplayContextTest {
 		Assert.assertEquals(0, assetTagsSearchFacetTermDisplayContexts.size());
 
 		Assert.assertEquals(
-			facetParam,
-			assetTagsSearchFacetDisplayContext.getFieldParamInputValue());
+			facetParam, assetTagsSearchFacetDisplayContext.getParamValue());
 		Assert.assertTrue(
 			assetTagsSearchFacetDisplayContext.isNothingSelected());
 		Assert.assertTrue(assetTagsSearchFacetDisplayContext.isRenderNothing());
@@ -95,11 +95,10 @@ public class AssetTagsSearchFacetDisplayContextTest {
 			term, assetTagsSearchFacetTermDisplayContext.getValue());
 		Assert.assertTrue(assetTagsSearchFacetTermDisplayContext.isSelected());
 		Assert.assertTrue(
-			assetTagsSearchFacetTermDisplayContext.isShowFrequency());
+			assetTagsSearchFacetTermDisplayContext.isFrequencyVisible());
 
 		Assert.assertEquals(
-			facetParam,
-			assetTagsSearchFacetDisplayContext.getFieldParamInputValue());
+			facetParam, assetTagsSearchFacetDisplayContext.getParamValue());
 		Assert.assertFalse(
 			assetTagsSearchFacetDisplayContext.isNothingSelected());
 		Assert.assertFalse(
@@ -136,11 +135,10 @@ public class AssetTagsSearchFacetDisplayContextTest {
 			term, assetTagsSearchFacetTermDisplayContext.getValue());
 		Assert.assertFalse(assetTagsSearchFacetTermDisplayContext.isSelected());
 		Assert.assertTrue(
-			assetTagsSearchFacetTermDisplayContext.isShowFrequency());
+			assetTagsSearchFacetTermDisplayContext.isFrequencyVisible());
 
 		Assert.assertEquals(
-			facetParam,
-			assetTagsSearchFacetDisplayContext.getFieldParamInputValue());
+			facetParam, assetTagsSearchFacetDisplayContext.getParamValue());
 		Assert.assertTrue(
 			assetTagsSearchFacetDisplayContext.isNothingSelected());
 		Assert.assertFalse(
@@ -177,11 +175,10 @@ public class AssetTagsSearchFacetDisplayContextTest {
 			term, assetTagsSearchFacetTermDisplayContext.getValue());
 		Assert.assertTrue(assetTagsSearchFacetTermDisplayContext.isSelected());
 		Assert.assertTrue(
-			assetTagsSearchFacetTermDisplayContext.isShowFrequency());
+			assetTagsSearchFacetTermDisplayContext.isFrequencyVisible());
 
 		Assert.assertEquals(
-			facetParam,
-			assetTagsSearchFacetDisplayContext.getFieldParamInputValue());
+			facetParam, assetTagsSearchFacetDisplayContext.getParamValue());
 		Assert.assertFalse(
 			assetTagsSearchFacetDisplayContext.isNothingSelected());
 		Assert.assertFalse(
@@ -191,8 +188,21 @@ public class AssetTagsSearchFacetDisplayContextTest {
 	protected AssetTagsSearchFacetDisplayContext createDisplayContext(
 		String facetParam) {
 
-		return new AssetTagsSearchFacetDisplayContext(
-			_facet, facetParam, "cloud", 0, 0, true);
+		AssetTagsSearchFacetDisplayBuilder assetTagsSearchFacetDisplayBuilder =
+			new AssetTagsSearchFacetDisplayBuilder();
+
+		assetTagsSearchFacetDisplayBuilder.setDisplayStyle("cloud");
+		assetTagsSearchFacetDisplayBuilder.setFacet(_facet);
+		assetTagsSearchFacetDisplayBuilder.setFrequenciesVisible(true);
+		assetTagsSearchFacetDisplayBuilder.setFrequencyThreshold(0);
+		assetTagsSearchFacetDisplayBuilder.setMaxTerms(0);
+		assetTagsSearchFacetDisplayBuilder.setParamName(_facet.getFieldId());
+		assetTagsSearchFacetDisplayBuilder.setParamValue(facetParam);
+
+		AssetTagsSearchFacetDisplayContext assetTagsSearchFacetDisplayContext =
+			assetTagsSearchFacetDisplayBuilder.build();
+
+		return assetTagsSearchFacetDisplayContext;
 	}
 
 	protected TermCollector createTermCollector(String term, int frequency) {
