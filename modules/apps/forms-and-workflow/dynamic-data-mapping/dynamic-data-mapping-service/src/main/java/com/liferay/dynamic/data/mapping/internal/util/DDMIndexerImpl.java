@@ -171,7 +171,8 @@ public class DDMIndexerImpl implements DDMIndexer {
 							double longitude = geolocationJSONObject.getDouble(
 								"longitude");
 
-							document.addGeoLocation(name, latitude, longitude);
+							document.addGeoLocation(
+								name + "_geolocation", latitude, longitude);
 						}
 						else if (type.equals(DDMImpl.TYPE_RADIO) ||
 								 type.equals(DDMImpl.TYPE_SELECT)) {
