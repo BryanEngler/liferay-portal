@@ -34,6 +34,11 @@ String url = (String)request.getAttribute("liferay-ui:page-iterator:url");
 String urlAnchor = (String)request.getAttribute("liferay-ui:page-iterator:urlAnchor");
 int pages = GetterUtil.getInteger((String)request.getAttribute("liferay-ui:page-iterator:pages"));
 
+// TODO New Search must suppress namespace due to using a Search Page approach where all portlets cooperate
+if ("start".equals(curParam)) {
+	namespace = "";
+}
+
 if ((portletURL != null) && Validator.isNull(url) && Validator.isNull(urlAnchor)) {
 	String[] urlArray = PortalUtil.stripURLAnchor(portletURL.toString(), StringPool.POUND);
 
