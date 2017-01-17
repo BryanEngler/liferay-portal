@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class UserSearchFacetDisplayBuilder {
 
-	public UserSearchFacetDisplayContext build() throws Exception {
+	public UserSearchFacetDisplayContext build() {
 		UserSearchFacetDisplayContext userSearchFacetDisplayContext =
 			new UserSearchFacetDisplayContext();
 
@@ -46,9 +46,7 @@ public class UserSearchFacetDisplayBuilder {
 
 		userSearchFacetDisplayContext.setNothingSelected(nothingSelected);
 
-		FacetCollector facetCollector = _facet.getFacetCollector();
-
-		List<TermCollector> termCollectors = facetCollector.getTermCollectors();
+		List<TermCollector> termCollectors = getTermCollectors();
 
 		if (nothingSelected && termCollectors.isEmpty()) {
 			userSearchFacetDisplayContext.setRenderNothing(true);
@@ -150,6 +148,16 @@ public class UserSearchFacetDisplayBuilder {
 		userSearchFacetTermDisplayContext.setUserName(_paramValue);
 
 		return Collections.singletonList(userSearchFacetTermDisplayContext);
+	}
+
+	protected List<TermCollector> getTermCollectors() {
+		FacetCollector facetCollector = _facet.getFacetCollector();
+
+		if (facetCollector == null) {
+			return Collections.emptyList();
+		}
+
+		return facetCollector.getTermCollectors();
 	}
 
 	private Facet _facet;
