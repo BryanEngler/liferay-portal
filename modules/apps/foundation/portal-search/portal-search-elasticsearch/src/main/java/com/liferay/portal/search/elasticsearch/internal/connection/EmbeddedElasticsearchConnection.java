@@ -26,8 +26,8 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnection;
 import com.liferay.portal.search.elasticsearch.connection.OperationMode;
-import com.liferay.portal.search.elasticsearch.index.IndexFactory;
 import com.liferay.portal.search.elasticsearch.internal.cluster.ClusterSettingsContext;
+import com.liferay.portal.search.elasticsearch.internal.index.SearchIndexBuilder;
 import com.liferay.portal.search.elasticsearch.settings.SettingsContributor;
 
 import java.io.IOException;
@@ -101,8 +101,8 @@ public class EmbeddedElasticsearchConnection
 
 	@Override
 	@Reference(unbind = "-")
-	public void setIndexFactory(IndexFactory indexFactory) {
-		super.setIndexFactory(indexFactory);
+	public void setSearchIndexBuilder(SearchIndexBuilder searchIndexBuilder) {
+		super.setSearchIndexBuilder(searchIndexBuilder);
 	}
 
 	@Activate
