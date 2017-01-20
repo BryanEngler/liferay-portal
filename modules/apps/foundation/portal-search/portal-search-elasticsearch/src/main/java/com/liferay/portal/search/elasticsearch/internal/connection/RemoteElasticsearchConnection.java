@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
+import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfigurationContainer;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnection;
 import com.liferay.portal.search.elasticsearch.connection.OperationMode;
 import com.liferay.portal.search.elasticsearch.internal.index.ElasticsearchIndexBuilder;
@@ -64,6 +65,16 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 	@Override
 	public OperationMode getOperationMode() {
 		return OperationMode.REMOTE;
+	}
+
+	@Override
+	@Reference(unbind = "-")
+	public void setElasticsearchConfigurationContainer(
+		ElasticsearchConfigurationContainer
+			elasticsearchConfigurationContainer) {
+
+		super.setElasticsearchConfigurationContainer(
+			elasticsearchConfigurationContainer);
 	}
 
 	@Override
