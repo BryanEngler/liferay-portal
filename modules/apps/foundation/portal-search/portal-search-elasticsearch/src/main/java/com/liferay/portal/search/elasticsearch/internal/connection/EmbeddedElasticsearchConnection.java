@@ -14,7 +14,6 @@
 
 package com.liferay.portal.search.elasticsearch.internal.connection;
 
-import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.SecureRandomUtil;
@@ -25,7 +24,6 @@ import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfigurationContainer;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnection;
 import com.liferay.portal.search.elasticsearch.connection.OperationMode;
@@ -195,16 +193,16 @@ public class EmbeddedElasticsearchConnection
 	}
 
 	@Activate
-	@Modified
 	protected void activate(
 		BundleContext bundleContext, Map<String, Object> properties) {
-
-		elasticsearchConfiguration = ConfigurableUtil.createConfigurable(
-			ElasticsearchConfiguration.class, properties);
 
 		java.io.File tempDir = bundleContext.getDataFile(JNA_TMP_DIR);
 
 		_jnaTmpDirName = tempDir.getAbsolutePath();
+
+		if (_log.isInfoEnabled()) {
+			_log.info("Embedded Elasticsearch connection activated");
+		}
 	}
 
 	@Override
@@ -481,6 +479,13 @@ public class EmbeddedElasticsearchConnection
 			settingsBuilder.put("index.translog.interval", "1ms");
 			settingsBuilder.put(
 				"monitor.jvm.enabled", Boolean.FALSE.toString());
+		}
+	}
+
+	@Modified
+	protected void modified(Map<String, Object> properties) {
+		if (_log.isInfoEnabled()) {
+			_log.info("Embedded Elasticsearch connection modified");
 		}
 	}
 
