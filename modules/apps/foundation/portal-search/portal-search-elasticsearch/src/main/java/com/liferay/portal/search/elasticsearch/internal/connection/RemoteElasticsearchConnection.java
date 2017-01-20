@@ -14,7 +14,6 @@
 
 package com.liferay.portal.search.elasticsearch.internal.connection;
 
-import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -24,7 +23,6 @@ import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
-import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfigurationContainer;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnection;
 import com.liferay.portal.search.elasticsearch.connection.OperationMode;
@@ -34,7 +32,6 @@ import com.liferay.portal.search.elasticsearch.settings.SettingsContributor;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -85,13 +82,11 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 		super.setElasticsearchIndexBuilder(elasticsearchIndexBuilder);
 	}
 
-	public void setTransportAddresses(Set<String> transportAddresses) {
-		_transportAddresses = transportAddresses;
-	}
-
 	@Activate
 	protected void activate(Map<String, Object> properties) {
-		replaceElasticsearchConfiguration(properties);
+		if (_log.isInfoEnabled()) {
+			_log.info("Remote Elasticsearch connection activated");
+		}
 	}
 
 	@Override
@@ -126,14 +121,17 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 
 	@Override
 	protected Client createClient() {
-		if (_transportAddresses.isEmpty()) {
+		Set<String> transportAddresses = SetUtil.fromArray(
+			elasticsearchConfiguration.transportAddresses());
+
+		if (transportAddresses.isEmpty()) {
 			throw new IllegalStateException(
 				"There must be at least one transport address");
 		}
 
 		TransportClient transportClient = createTransportClient();
 
-		for (String transportAddress : _transportAddresses) {
+		for (String transportAddress : transportAddresses) {
 			try {
 				addTransportAddress(transportClient, transportAddress);
 			}
@@ -202,7 +200,9 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 
 	@Modified
 	protected synchronized void modified(Map<String, Object> properties) {
-		replaceElasticsearchConfiguration(properties);
+		if (_log.isInfoEnabled()) {
+			_log.info("Remote Elasticsearch connection modified");
+		}
 	}
 
 	@Override
@@ -212,24 +212,10 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 		super.removeSettingsContributor(settingsContributor);
 	}
 
-	protected void replaceElasticsearchConfiguration(
-		Map<String, Object> properties) {
-
-		elasticsearchConfiguration = ConfigurableUtil.createConfigurable(
-			ElasticsearchConfiguration.class, properties);
-
-		String[] transportAddresses =
-			elasticsearchConfiguration.transportAddresses();
-
-		setTransportAddresses(SetUtil.fromArray(transportAddresses));
-	}
-
 	@Reference
 	protected Props props;
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		RemoteElasticsearchConnection.class);
-
-	private Set<String> _transportAddresses = new HashSet<>();
 
 }
