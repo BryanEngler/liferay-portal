@@ -206,12 +206,6 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 	@Modified
 	protected synchronized void modified(Map<String, Object> properties) {
 		replaceElasticsearchConfiguration(properties);
-
-		if (isConnected()) {
-			close();
-
-			connect();
-		}
 	}
 
 	@Override
