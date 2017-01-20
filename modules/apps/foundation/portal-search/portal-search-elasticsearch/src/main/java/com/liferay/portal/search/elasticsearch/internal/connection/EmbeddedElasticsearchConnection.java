@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
+import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfigurationHolder;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnection;
 import com.liferay.portal.search.elasticsearch.connection.OperationMode;
 import com.liferay.portal.search.elasticsearch.internal.cluster.ClusterSettingsContext;
@@ -97,6 +98,15 @@ public class EmbeddedElasticsearchConnection
 	@Override
 	public OperationMode getOperationMode() {
 		return OperationMode.EMBEDDED;
+	}
+
+	@Override
+	@Reference(unbind = "-")
+	public void setElasticsearchConfigurationHolder(
+		ElasticsearchConfigurationHolder elasticsearchConfigurationHolder) {
+
+		super.setElasticsearchConfigurationHolder(
+			elasticsearchConfigurationHolder);
 	}
 
 	@Override

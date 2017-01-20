@@ -18,6 +18,7 @@ import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
+import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfigurationHolder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -121,8 +122,7 @@ public class ElasticsearchConnectionManager {
 
 	@Activate
 	protected void activate(Map<String, Object> properties) {
-		_elasticsearchConfiguration = ConfigurableUtil.createConfigurable(
-			ElasticsearchConfiguration.class, properties);
+		setElasticsearchConfiguration(properties);
 
 		activate(_elasticsearchConfiguration.operationMode());
 	}
@@ -135,8 +135,7 @@ public class ElasticsearchConnectionManager {
 
 	@Modified
 	protected synchronized void modified(Map<String, Object> properties) {
-		_elasticsearchConfiguration = ConfigurableUtil.createConfigurable(
-			ElasticsearchConfiguration.class, properties);
+		setElasticsearchConfiguration(properties);
 
 		modify(_elasticsearchConfiguration.operationMode());
 	}
@@ -168,6 +167,16 @@ public class ElasticsearchConnectionManager {
 		_operationMode = operationMode;
 	}
 
+	protected void setElasticsearchConfiguration(
+		Map<String, Object> properties) {
+
+		_elasticsearchConfiguration = ConfigurableUtil.createConfigurable(
+			ElasticsearchConfiguration.class, properties);
+
+		_elasticsearchConfigurationHolder.setElasticsearchConfiguration(
+			_elasticsearchConfiguration);
+	}
+
 	protected void validate(OperationMode operationMode) {
 		if (!_elasticsearchConnections.containsKey(operationMode)) {
 			throw new MissingOperationModeException(operationMode);
@@ -178,6 +187,10 @@ public class ElasticsearchConnectionManager {
 		ElasticsearchConnectionManager.class);
 
 	private volatile ElasticsearchConfiguration _elasticsearchConfiguration;
+
+	@Reference
+	private ElasticsearchConfigurationHolder _elasticsearchConfigurationHolder;
+
 	private final Map<OperationMode, ElasticsearchConnection>
 		_elasticsearchConnections = new HashMap<>();
 	private OperationMode _operationMode;
