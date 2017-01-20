@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
+import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfigurationContainer;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnection;
 import com.liferay.portal.search.elasticsearch.internal.index.ElasticsearchIndexBuilder;
 import com.liferay.portal.search.elasticsearch.settings.ClientSettingsHelper;
@@ -59,6 +60,10 @@ public abstract class BaseElasticsearchConnection
 
 	@Override
 	public void connect() {
+		elasticsearchConfiguration =
+			_elasticsearchConfigurationContainer.
+				getElasticsearchConfiguration();
+
 		loadOptionalDefaultConfigurations();
 
 		loadAdditionalConfigurations();
@@ -198,6 +203,14 @@ public abstract class BaseElasticsearchConnection
 		_settingsContributors.remove(settingsContributor);
 	}
 
+	protected void setElasticsearchConfigurationContainer(
+		ElasticsearchConfigurationContainer
+			elasticsearchConfigurationContainer) {
+
+		_elasticsearchConfigurationContainer =
+			elasticsearchConfigurationContainer;
+	}
+
 	protected volatile ElasticsearchConfiguration elasticsearchConfiguration;
 	protected final Settings.Builder settingsBuilder = Settings.builder();
 	protected final List<String> transportClientPlugins = new ArrayList<>(1);
@@ -206,6 +219,8 @@ public abstract class BaseElasticsearchConnection
 		BaseElasticsearchConnection.class);
 
 	private Client _client;
+	private ElasticsearchConfigurationContainer
+		_elasticsearchConfigurationContainer;
 	private ElasticsearchIndexBuilder _elasticsearchIndexBuilder;
 	private final Set<SettingsContributor> _settingsContributors =
 		new ConcurrentSkipListSet<>();
