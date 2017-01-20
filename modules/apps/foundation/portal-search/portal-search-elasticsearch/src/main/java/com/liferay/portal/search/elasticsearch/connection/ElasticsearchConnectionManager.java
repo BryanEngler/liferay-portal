@@ -133,6 +133,17 @@ public class ElasticsearchConnectionManager {
 		_operationMode = operationMode;
 	}
 
+	protected void connect(ElasticsearchConnection elasticsearchConnection) {
+		try {
+			elasticsearchConnection.connect();
+		}
+		catch (Exception e) {
+			elasticsearchConnection.close();
+
+			throw new IllegalStateException(e);
+		}
+	}
+
 	@Modified
 	protected synchronized void modified(Map<String, Object> properties) {
 		setElasticsearchConfiguration(properties);
@@ -141,27 +152,31 @@ public class ElasticsearchConnectionManager {
 	}
 
 	protected synchronized void modify(OperationMode operationMode) {
-		if (Objects.equals(operationMode, _operationMode)) {
-			return;
-		}
-
 		validate(operationMode);
 
-		ElasticsearchConnection newElasticsearchConnection =
+		ElasticsearchConnection elasticsearchConnection =
 			_elasticsearchConnections.get(operationMode);
 
-		newElasticsearchConnection.connect();
+		if (switchingOperationMode(operationMode)) {
+			connect(elasticsearchConnection);
 
-		if (_operationMode != null) {
-			ElasticsearchConnection oldElasticsearchConnection =
-				_elasticsearchConnections.get(_operationMode);
+			elasticsearchConnection = _elasticsearchConnections.get(
+				_operationMode);
+		}
 
-			try {
-				oldElasticsearchConnection.close();
+		try {
+			elasticsearchConnection.close();
+		}
+		catch (Exception e) {
+			_log.error("Unable to close " + elasticsearchConnection, e);
+
+			if (!_elasticsearchConfiguration.logExceptionsOnly()) {
+				throw new IllegalStateException(e);
 			}
-			catch (Exception e) {
-				_log.error("Unable to close " + oldElasticsearchConnection, e);
-			}
+		}
+
+		if (!switchingOperationMode(operationMode)) {
+			connect(elasticsearchConnection);
 		}
 
 		_operationMode = operationMode;
@@ -175,6 +190,10 @@ public class ElasticsearchConnectionManager {
 
 		_elasticsearchConfigurationHolder.setElasticsearchConfiguration(
 			_elasticsearchConfiguration);
+	}
+
+	protected boolean switchingOperationMode(OperationMode operationMode) {
+		return !Objects.equals(operationMode, _operationMode);
 	}
 
 	protected void validate(OperationMode operationMode) {
