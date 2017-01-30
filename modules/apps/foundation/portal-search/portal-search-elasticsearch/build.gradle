@@ -41,6 +41,6 @@ dependencies {
 	provided group: "org.ow2.asm", name: "asm-commons", version: "4.1"
 	provided group: "org.yaml", name: "snakeyaml", version: "1.15"
 
-	testCompile group: "com.liferay", name: "com.liferay.portal.search", version: "3.4.0"
-	testCompile group: "com.liferay", name: "com.liferay.portal.search.test.util", version: "1.0.0"
+	testCompile project(":apps:foundation:portal-search:portal-search")
+	testCompile project(":apps:foundation:portal-search:portal-search-test-util")
 }
