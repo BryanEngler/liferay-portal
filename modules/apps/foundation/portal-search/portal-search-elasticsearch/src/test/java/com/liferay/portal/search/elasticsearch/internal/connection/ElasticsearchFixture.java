@@ -14,11 +14,15 @@
 
 package com.liferay.portal.search.elasticsearch.internal.connection;
 
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
+import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfigurationHolder;
 import com.liferay.portal.search.elasticsearch.internal.cluster.ClusterSettingsContext;
 import com.liferay.portal.search.elasticsearch.internal.cluster.UnicastSettingsContributor;
+import com.liferay.portal.search.elasticsearch.internal.configuration.ElasticserachConfigurationHolderImpl;
+import com.liferay.portal.search.elasticsearch.internal.index.SearchIndexBuilder;
 import com.liferay.portal.search.elasticsearch.settings.BaseSettingsContributor;
 import com.liferay.portal.search.elasticsearch.settings.ClientSettingsHelper;
 
@@ -247,6 +251,19 @@ public class ElasticsearchFixture implements IndicesAdminClientSupplier {
 			clusterSettingsContext;
 
 		embeddedElasticsearchConnection.props = props;
+
+		ElasticsearchConfigurationHolder elasticsearchConfigurationHolder =
+			new ElasticserachConfigurationHolderImpl();
+
+		elasticsearchConfigurationHolder.setElasticsearchConfiguration(
+			ConfigurableUtil.createConfigurable(
+			ElasticsearchConfiguration.class, new HashMap<String, Object>()));
+
+		embeddedElasticsearchConnection.setElasticsearchConfigurationHolder(
+			elasticsearchConfigurationHolder);
+
+		embeddedElasticsearchConnection.setSearchIndexBuilder(
+			Mockito.mock(SearchIndexBuilder.class));
 
 		embeddedElasticsearchConnection.activate(
 			_elasticsearchConfigurationProperties);
