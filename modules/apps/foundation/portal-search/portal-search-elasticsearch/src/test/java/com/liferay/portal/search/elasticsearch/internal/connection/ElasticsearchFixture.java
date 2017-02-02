@@ -14,13 +14,16 @@
 
 package com.liferay.portal.search.elasticsearch.internal.connection;
 
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
+import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfigurationContainer;
 import com.liferay.portal.search.elasticsearch.internal.cluster.ClusterSettingsContext;
 import com.liferay.portal.search.elasticsearch.internal.cluster.UnicastSettingsContributor;
+import com.liferay.portal.search.elasticsearch.internal.configuration.ElasticserachConfigurationContainerImpl;
+import com.liferay.portal.search.elasticsearch.internal.index.ElasticsearchIndexBuilder;
 import com.liferay.portal.search.elasticsearch.settings.BaseSettingsContributor;
 import com.liferay.portal.search.elasticsearch.settings.ClientSettingsHelper;
 import com.liferay.portal.util.FileImpl;
@@ -47,8 +50,6 @@ import org.elasticsearch.client.IndicesAdminClient;
 import org.elasticsearch.common.unit.TimeValue;
 
 import org.mockito.Mockito;
-
-import org.osgi.framework.BundleContext;
 
 /**
  * @author André de Oliveira
@@ -261,19 +262,23 @@ public class ElasticsearchFixture implements IndicesAdminClientSupplier {
 
 		embeddedElasticsearchConnection.props = props;
 
-		BundleContext bundleContext = Mockito.mock(BundleContext.class);
+		ElasticsearchConfigurationContainer
+			elasticsearchConfigurationContainer =
+				new ElasticserachConfigurationContainerImpl();
 
-		Mockito.when(
-			bundleContext.getDataFile(
-				EmbeddedElasticsearchConnection.JNA_TMP_DIR)
-		).thenReturn(
-			new File(
-				SystemProperties.get(SystemProperties.TMP_DIR) + "/" +
-					EmbeddedElasticsearchConnection.JNA_TMP_DIR)
-		);
+		ElasticsearchConfiguration elasticsearchConfiguration =
+			ConfigurableUtil.createConfigurable(
+				ElasticsearchConfiguration.class,
+				_elasticsearchConfigurationProperties);
 
-		embeddedElasticsearchConnection.activate(
-			bundleContext, _elasticsearchConfigurationProperties);
+		elasticsearchConfigurationContainer.setElasticsearchConfiguration(
+			elasticsearchConfiguration);
+
+		embeddedElasticsearchConnection.setElasticsearchConfigurationContainer(
+			elasticsearchConfigurationContainer);
+
+		embeddedElasticsearchConnection.setElasticsearchIndexBuilder(
+			Mockito.mock(ElasticsearchIndexBuilder.class));
 
 		embeddedElasticsearchConnection.connect();
 
