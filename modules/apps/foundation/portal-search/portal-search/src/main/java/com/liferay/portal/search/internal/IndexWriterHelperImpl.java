@@ -403,7 +403,6 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 	 *             isIndexReadOnly(String)}
 	 */
 	@Deprecated
-	@Override
 	public boolean isIndexReadOnly(String className) {
 		return _indexStatusManager.isIndexReadOnly(className);
 	}
@@ -545,7 +544,6 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 	 *             setIndexReadOnly(String, boolean)}
 	 */
 	@Deprecated
-	@Override
 	public void setIndexReadOnly(String className, boolean indexReadOnly) {
 		_indexStatusManager.setIndexReadOnly(className, indexReadOnly);
 	}
