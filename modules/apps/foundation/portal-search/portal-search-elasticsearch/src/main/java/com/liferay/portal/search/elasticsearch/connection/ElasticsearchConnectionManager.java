@@ -188,7 +188,7 @@ public class ElasticsearchConnectionManager {
 		_elasticsearchConfiguration = ConfigurableUtil.createConfigurable(
 			ElasticsearchConfiguration.class, properties);
 
-		_elasticsearchConfigurationContainer.setElasticsearchConfiguration(
+		elasticsearchConfigurationContainer.setElasticsearchConfiguration(
 			_elasticsearchConfiguration);
 	}
 
@@ -202,15 +202,14 @@ public class ElasticsearchConnectionManager {
 		}
 	}
 
+	@Reference
+	protected ElasticsearchConfigurationContainer
+		elasticsearchConfigurationContainer;
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		ElasticsearchConnectionManager.class);
 
 	private volatile ElasticsearchConfiguration _elasticsearchConfiguration;
-
-	@Reference
-	private ElasticsearchConfigurationContainer
-		_elasticsearchConfigurationContainer;
-
 	private final Map<OperationMode, ElasticsearchConnection>
 		_elasticsearchConnections = new HashMap<>();
 	private OperationMode _operationMode;
