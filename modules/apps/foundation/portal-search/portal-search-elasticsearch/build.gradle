@@ -45,7 +45,3 @@ dependencies {
 	testCompile group: "com.liferay", name: "com.liferay.portal.search", version: "3.4.0"
 	testCompile group: "com.liferay", name: "com.liferay.portal.search.test.util", version: "1.0.0"
 }
-
-liferayOSGi {
-	expandCompileInclude = false
-}
