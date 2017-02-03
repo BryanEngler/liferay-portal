@@ -14,7 +14,21 @@
 
 package com.liferay.portal.search.elasticsearch.connection;
 
+import com.liferay.portal.kernel.configuration.Filter;
+import com.liferay.portal.kernel.util.Props;
+import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.search.elasticsearch.internal.configuration.ElasticserachConfigurationHolderImpl;
+import com.liferay.portal.search.elasticsearch.internal.connection.RemoteElasticsearchConnection;
+
+import java.net.InetSocketAddress;
+
 import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
+
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,13 +48,18 @@ public class ElasticsearchConnectionManagerTest {
 		MockitoAnnotations.initMocks(this);
 
 		resetMockConnections();
+		setUpPropsUtil();
 
-		_elasticsearchConnectionManager = new ElasticsearchConnectionManager();
+		_elasticsearchConnectionManager =
+			createElasticsearchConnectionManager();
+
+		_elasticsearchConnectionManager.setElasticsearchConfiguration(
+			new HashMap<String, Object>());
 
 		_elasticsearchConnectionManager.setEmbeddedElasticsearchConnection(
-			_embeddedElasticsearchConnection);
+			_mockedEmbeddedElasticsearchConnection);
 		_elasticsearchConnectionManager.setRemoteElasticsearchConnection(
-			_remoteElasticsearchConnection);
+			_mockedRemoteElasticsearchConnection);
 	}
 
 	@Test
@@ -51,8 +70,8 @@ public class ElasticsearchConnectionManagerTest {
 
 		_elasticsearchConnectionManager.activate(properties);
 
-		verifyNeverCloseNeverConnect(_embeddedElasticsearchConnection);
-		verifyNeverCloseNeverConnect(_remoteElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_mockedEmbeddedElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_mockedRemoteElasticsearchConnection);
 	}
 
 	@Test
@@ -65,8 +84,8 @@ public class ElasticsearchConnectionManagerTest {
 
 		_elasticsearchConnectionManager.connect();
 
-		verifyConnectNeverClose(_embeddedElasticsearchConnection);
-		verifyNeverCloseNeverConnect(_remoteElasticsearchConnection);
+		verifyConnectNeverClose(_mockedEmbeddedElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_mockedRemoteElasticsearchConnection);
 	}
 
 	@Test
@@ -75,13 +94,13 @@ public class ElasticsearchConnectionManagerTest {
 
 		_elasticsearchConnectionManager.getClient();
 
-		Mockito.verify(_embeddedElasticsearchConnection).getClient();
+		Mockito.verify(_mockedEmbeddedElasticsearchConnection).getClient();
 
 		modify(OperationMode.REMOTE);
 
 		_elasticsearchConnectionManager.getClient();
 
-		Mockito.verify(_remoteElasticsearchConnection).getClient();
+		Mockito.verify(_mockedRemoteElasticsearchConnection).getClient();
 	}
 
 	@Test
@@ -93,6 +112,33 @@ public class ElasticsearchConnectionManagerTest {
 		}
 		catch (ElasticsearchConnectionNotInitializedException ecnie) {
 		}
+	}
+
+	@Test
+	public void testModifyTransportAddress() {
+		_elasticsearchConnectionManager.setRemoteElasticsearchConnection(
+			_remoteElasticsearchConnection);
+
+		_remoteElasticsearchConnection.setElasticsearchConfigurationHolder(
+			new ElasticserachConfigurationHolderImpl());
+
+		HashMap<String, Object> properties = new HashMap<>();
+
+		properties.put("operationMode", OperationMode.REMOTE.name());
+
+		_elasticsearchConnectionManager.modified(properties);
+
+		Assert.assertTrue(_remoteElasticsearchConnection.isConnected());
+
+		assertTransportAddress("localhost", 9300);
+
+		properties.put("transportAddresses", "127.0.0.1:9999");
+
+		_elasticsearchConnectionManager.modified(properties);
+
+		Assert.assertTrue(_remoteElasticsearchConnection.isConnected());
+
+		assertTransportAddress("127.0.0.1", 9999);
 	}
 
 	@Test
@@ -109,17 +155,17 @@ public class ElasticsearchConnectionManagerTest {
 
 		_elasticsearchConnectionManager.modified(properties);
 
-		verifyCloseNeverConnect(_embeddedElasticsearchConnection);
-		verifyConnectNeverClose(_remoteElasticsearchConnection);
+		verifyCloseNeverConnect(_mockedEmbeddedElasticsearchConnection);
+		verifyConnectNeverClose(_mockedRemoteElasticsearchConnection);
 	}
 
 	@Test
 	public void testSetOperationModeToUnavailable() {
 		_elasticsearchConnectionManager.unsetElasticsearchConnection(
-			_remoteElasticsearchConnection);
+			_mockedRemoteElasticsearchConnection);
 
-		verifyCloseNeverConnect(_remoteElasticsearchConnection);
-		verifyNeverCloseNeverConnect(_embeddedElasticsearchConnection);
+		verifyCloseNeverConnect(_mockedRemoteElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_mockedEmbeddedElasticsearchConnection);
 
 		resetMockConnections();
 
@@ -135,42 +181,48 @@ public class ElasticsearchConnectionManagerTest {
 				message.contains(String.valueOf(OperationMode.REMOTE)));
 		}
 
-		verifyNeverCloseNeverConnect(_embeddedElasticsearchConnection);
-		verifyNeverCloseNeverConnect(_remoteElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_mockedEmbeddedElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_mockedRemoteElasticsearchConnection);
 	}
 
 	@Test
-	public void testSetSameOperationModeMustNotResetConnection() {
-		modify(OperationMode.REMOTE);
+	public void testSetSameOperationModeResetsConnection() {
+		HashMap<String, Object> properties = new HashMap<>();
+
+		properties.put("operationMode", OperationMode.REMOTE.name());
+
+		_elasticsearchConnectionManager.modified(properties);
 
 		resetMockConnections();
 
-		modify(OperationMode.REMOTE);
+		properties.put("operationMode", OperationMode.REMOTE.name());
 
-		verifyNeverCloseNeverConnect(_embeddedElasticsearchConnection);
-		verifyNeverCloseNeverConnect(_remoteElasticsearchConnection);
+		_elasticsearchConnectionManager.modified(properties);
+
+		verifyNeverCloseNeverConnect(_mockedEmbeddedElasticsearchConnection);
+		verifyConnectAndClose(_mockedRemoteElasticsearchConnection);
 	}
 
 	@Test
 	public void testToggleOperationMode() {
 		modify(OperationMode.EMBEDDED);
 
-		verifyConnectNeverClose(_embeddedElasticsearchConnection);
-		verifyNeverCloseNeverConnect(_remoteElasticsearchConnection);
+		verifyConnectNeverClose(_mockedEmbeddedElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_mockedRemoteElasticsearchConnection);
 
 		resetMockConnections();
 
 		modify(OperationMode.REMOTE);
 
-		verifyCloseNeverConnect(_embeddedElasticsearchConnection);
-		verifyConnectNeverClose(_remoteElasticsearchConnection);
+		verifyCloseNeverConnect(_mockedEmbeddedElasticsearchConnection);
+		verifyConnectNeverClose(_mockedRemoteElasticsearchConnection);
 
 		resetMockConnections();
 
 		modify(OperationMode.EMBEDDED);
 
-		verifyCloseNeverConnect(_remoteElasticsearchConnection);
-		verifyConnectNeverClose(_embeddedElasticsearchConnection);
+		verifyCloseNeverConnect(_mockedRemoteElasticsearchConnection);
+		verifyConnectNeverClose(_mockedEmbeddedElasticsearchConnection);
 	}
 
 	@Test
@@ -182,17 +234,17 @@ public class ElasticsearchConnectionManagerTest {
 		Mockito.doThrow(
 			IllegalStateException.class
 		).when(
-			_embeddedElasticsearchConnection
+			_mockedEmbeddedElasticsearchConnection
 		).close();
 
 		modify(OperationMode.REMOTE);
 
 		Assert.assertSame(
-			_remoteElasticsearchConnection,
+			_mockedRemoteElasticsearchConnection,
 			_elasticsearchConnectionManager.getElasticsearchConnection());
 
-		verifyCloseNeverConnect(_embeddedElasticsearchConnection);
-		verifyConnectNeverClose(_remoteElasticsearchConnection);
+		verifyCloseNeverConnect(_mockedEmbeddedElasticsearchConnection);
+		verifyConnectNeverClose(_mockedRemoteElasticsearchConnection);
 	}
 
 	@Test
@@ -204,7 +256,7 @@ public class ElasticsearchConnectionManagerTest {
 		Mockito.doThrow(
 			IllegalStateException.class
 		).when(
-			_remoteElasticsearchConnection
+			_mockedRemoteElasticsearchConnection
 		).connect();
 
 		try {
@@ -216,11 +268,90 @@ public class ElasticsearchConnectionManagerTest {
 		}
 
 		Assert.assertSame(
-			_embeddedElasticsearchConnection,
+			_mockedEmbeddedElasticsearchConnection,
 			_elasticsearchConnectionManager.getElasticsearchConnection());
 
-		verifyConnectNeverClose(_remoteElasticsearchConnection);
-		verifyNeverCloseNeverConnect(_embeddedElasticsearchConnection);
+		verifyConnectAndClose(_mockedRemoteElasticsearchConnection);
+		verifyNeverCloseNeverConnect(_mockedEmbeddedElasticsearchConnection);
+	}
+
+	protected static ElasticsearchConnectionManager
+		createElasticsearchConnectionManager() {
+
+		return new ElasticsearchConnectionManager() {
+			{
+				elasticsearchConfigurationHolder =
+					new ElasticserachConfigurationHolderImpl();
+			}
+		};
+	}
+
+	protected static RemoteElasticsearchConnection
+		createRemoteElasticsearchConnection() {
+
+		return new RemoteElasticsearchConnection() {
+			{
+				props = new Props() {
+
+					@Override
+					public boolean contains(String key) {
+						return false;
+					}
+
+					@Override
+					public String get(String key) {
+						return null;
+					}
+
+					@Override
+					public String get(String key, Filter filter) {
+						return null;
+					}
+
+					@Override
+					public String[] getArray(String key) {
+						return new String[0];
+					}
+
+					@Override
+					public String[] getArray(String key, Filter filter) {
+						return new String[0];
+					}
+
+					@Override
+					public Properties getProperties() {
+						return null;
+					}
+
+					@Override
+					public Properties getProperties(
+						String prefix, boolean removePrefix) {
+
+						return null;
+					}
+
+				};
+			}
+		};
+	}
+
+	protected void assertTransportAddress(String hostString, int port) {
+		TransportClient transportClient =
+			(TransportClient)_remoteElasticsearchConnection.getClient();
+
+		List<TransportAddress> transportAddresses =
+			transportClient.transportAddresses();
+
+		Assert.assertEquals(1, transportAddresses.size());
+
+		InetSocketTransportAddress inetSocketTransportAddress =
+			(InetSocketTransportAddress)transportAddresses.get(0);
+
+		InetSocketAddress inetSocketAddress =
+			inetSocketTransportAddress.address();
+
+		Assert.assertEquals(hostString, inetSocketAddress.getHostString());
+		Assert.assertEquals(port, inetSocketAddress.getPort());
 	}
 
 	protected void modify(OperationMode operationMode) {
@@ -229,18 +360,25 @@ public class ElasticsearchConnectionManagerTest {
 
 	protected void resetMockConnections() {
 		Mockito.reset(
-			_embeddedElasticsearchConnection, _remoteElasticsearchConnection);
+			_mockedEmbeddedElasticsearchConnection,
+			_mockedRemoteElasticsearchConnection);
 
 		Mockito.when(
-			_embeddedElasticsearchConnection.getOperationMode()
+			_mockedEmbeddedElasticsearchConnection.getOperationMode()
 		).thenReturn(
 			OperationMode.EMBEDDED
 		);
 		Mockito.when(
-			_remoteElasticsearchConnection.getOperationMode()
+			_mockedRemoteElasticsearchConnection.getOperationMode()
 		).thenReturn(
 			OperationMode.REMOTE
 		);
+	}
+
+	protected void setUpPropsUtil() {
+		Props props = Mockito.mock(Props.class);
+
+		PropsUtil.setProps(props);
 	}
 
 	protected void verifyCloseNeverConnect(
@@ -253,6 +391,18 @@ public class ElasticsearchConnectionManagerTest {
 		Mockito.verify(
 			elasticsearchConnection, Mockito.never()
 		).connect();
+	}
+
+	protected void verifyConnectAndClose(
+		ElasticsearchConnection elasticsearchConnection) {
+
+		Mockito.verify(
+			elasticsearchConnection
+		).connect();
+
+		Mockito.verify(
+			elasticsearchConnection
+		).close();
 	}
 
 	protected void verifyConnectNeverClose(
@@ -282,9 +432,12 @@ public class ElasticsearchConnectionManagerTest {
 	private ElasticsearchConnectionManager _elasticsearchConnectionManager;
 
 	@Mock
-	private ElasticsearchConnection _embeddedElasticsearchConnection;
+	private ElasticsearchConnection _mockedEmbeddedElasticsearchConnection;
 
 	@Mock
-	private ElasticsearchConnection _remoteElasticsearchConnection;
+	private ElasticsearchConnection _mockedRemoteElasticsearchConnection;
+
+	private final RemoteElasticsearchConnection _remoteElasticsearchConnection =
+		createRemoteElasticsearchConnection();
 
 }
