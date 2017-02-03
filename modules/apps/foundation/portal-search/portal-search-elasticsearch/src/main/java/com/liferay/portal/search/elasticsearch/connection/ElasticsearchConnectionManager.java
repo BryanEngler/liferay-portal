@@ -18,7 +18,7 @@ import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
-import com.liferay.portal.search.elasticsearch.index.IndexFactory;
+import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfigurationContainer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -85,10 +85,6 @@ public class ElasticsearchConnectionManager {
 		return _elasticsearchConnections.get(_operationMode);
 	}
 
-	public synchronized void registerCompanyId(long companyId) {
-		_companyIds.put(companyId, companyId);
-	}
-
 	@Reference(
 		cardinality = ReferenceCardinality.MANDATORY,
 		target = "(operation.mode=EMBEDDED)",
@@ -115,10 +111,6 @@ public class ElasticsearchConnectionManager {
 			elasticsearchConnection);
 	}
 
-	public synchronized void unregisterCompanyId(long companyId) {
-		_companyIds.remove(companyId);
-	}
-
 	public void unsetElasticsearchConnection(
 		ElasticsearchConnection elasticsearchConnection) {
 
@@ -130,8 +122,7 @@ public class ElasticsearchConnectionManager {
 
 	@Activate
 	protected void activate(Map<String, Object> properties) {
-		_elasticsearchConfiguration = ConfigurableUtil.createConfigurable(
-			ElasticsearchConfiguration.class, properties);
+		setElasticsearchConfiguration(properties);
 
 		activate(_elasticsearchConfiguration.operationMode());
 	}
@@ -142,52 +133,67 @@ public class ElasticsearchConnectionManager {
 		_operationMode = operationMode;
 	}
 
+	protected void connect(ElasticsearchConnection elasticsearchConnection) {
+		try {
+			elasticsearchConnection.connect();
+		}
+		catch (Exception e) {
+			elasticsearchConnection.close();
+
+			throw new IllegalStateException(e);
+		}
+	}
+
 	@Modified
 	protected synchronized void modified(Map<String, Object> properties) {
-		_elasticsearchConfiguration = ConfigurableUtil.createConfigurable(
-			ElasticsearchConfiguration.class, properties);
+		setElasticsearchConfiguration(properties);
 
 		modify(_elasticsearchConfiguration.operationMode());
 	}
 
 	protected synchronized void modify(OperationMode operationMode) {
-		if (Objects.equals(operationMode, _operationMode)) {
-			return;
-		}
-
 		validate(operationMode);
 
-		ElasticsearchConnection newElasticsearchConnection =
+		ElasticsearchConnection elasticsearchConnection =
 			_elasticsearchConnections.get(operationMode);
 
-		newElasticsearchConnection.connect();
+		if (switchingOperationMode(operationMode)) {
+			connect(elasticsearchConnection);
 
-		if (_operationMode != null) {
-			ElasticsearchConnection oldElasticsearchConnection =
-				_elasticsearchConnections.get(_operationMode);
+			elasticsearchConnection = _elasticsearchConnections.get(
+				_operationMode);
+		}
 
-			try {
-				oldElasticsearchConnection.close();
+		try {
+			elasticsearchConnection.close();
+		}
+		catch (Exception e) {
+			_log.error("Unable to close " + elasticsearchConnection, e);
+
+			if (!_elasticsearchConfiguration.logExceptionsOnly()) {
+				throw new IllegalStateException(e);
 			}
-			catch (Exception e) {
-				_log.error("Unable to close " + oldElasticsearchConnection, e);
-			}
+		}
+
+		if (!switchingOperationMode(operationMode)) {
+			connect(elasticsearchConnection);
 		}
 
 		_operationMode = operationMode;
+	}
 
-		for (Long companyId : _companyIds.values()) {
-			try {
-				indexFactory.createIndices(getAdminClient(), companyId);
-			}
-			catch (Exception e) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(
-						"Unable to reinitialize index for company " + companyId,
-						e);
-				}
-			}
-		}
+	protected void setElasticsearchConfiguration(
+		Map<String, Object> properties) {
+
+		_elasticsearchConfiguration = ConfigurableUtil.createConfigurable(
+			ElasticsearchConfiguration.class, properties);
+
+		elasticsearchConfigurationContainer.setElasticsearchConfiguration(
+			_elasticsearchConfiguration);
+	}
+
+	protected boolean switchingOperationMode(OperationMode operationMode) {
+		return !Objects.equals(operationMode, _operationMode);
 	}
 
 	protected void validate(OperationMode operationMode) {
@@ -196,13 +202,13 @@ public class ElasticsearchConnectionManager {
 		}
 	}
 
-	@Reference(unbind = "-")
-	protected IndexFactory indexFactory;
+	@Reference
+	protected ElasticsearchConfigurationContainer
+		elasticsearchConfigurationContainer;
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ElasticsearchConnectionManager.class);
 
-	private final Map<Long, Long> _companyIds = new HashMap<>();
 	private volatile ElasticsearchConfiguration _elasticsearchConfiguration;
 	private final Map<OperationMode, ElasticsearchConnection>
 		_elasticsearchConnections = new HashMap<>();

@@ -16,10 +16,12 @@ package com.liferay.portal.search.elasticsearch.internal.connection;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
+import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfigurationContainer;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnection;
-import com.liferay.portal.search.elasticsearch.index.IndexFactory;
+import com.liferay.portal.search.elasticsearch.internal.index.ElasticsearchIndexBuilder;
 import com.liferay.portal.search.elasticsearch.settings.ClientSettingsHelper;
 import com.liferay.portal.search.elasticsearch.settings.SettingsContributor;
 
@@ -58,6 +60,10 @@ public abstract class BaseElasticsearchConnection
 
 	@Override
 	public void connect() {
+		elasticsearchConfiguration =
+			_elasticsearchConfigurationContainer.
+				getElasticsearchConfiguration();
+
 		loadOptionalDefaultConfigurations();
 
 		loadAdditionalConfigurations();
@@ -67,6 +73,19 @@ public abstract class BaseElasticsearchConnection
 		loadSettingsContributors();
 
 		_client = createClient();
+
+		if (_elasticsearchIndexBuilder != null) {
+			long timeout = 10 * Time.SECOND;
+
+			getClusterHealthResponse(timeout);
+
+			_elasticsearchIndexBuilder.createAllIndicies(_client.admin());
+		}
+		else {
+			if (_log.isWarnEnabled()) {
+				_log.warn("SearchIndexBuilder has not been set");
+			}
+		}
 	}
 
 	@Override
@@ -109,8 +128,10 @@ public abstract class BaseElasticsearchConnection
 		return false;
 	}
 
-	public void setIndexFactory(IndexFactory indexFactory) {
-		_indexFactory = indexFactory;
+	public void setElasticsearchIndexBuilder(
+		ElasticsearchIndexBuilder elasticsearchIndexBuilder) {
+
+		_elasticsearchIndexBuilder = elasticsearchIndexBuilder;
 	}
 
 	protected void addSettingsContributor(
@@ -120,10 +141,6 @@ public abstract class BaseElasticsearchConnection
 	}
 
 	protected abstract Client createClient();
-
-	protected IndexFactory getIndexFactory() {
-		return _indexFactory;
-	}
 
 	protected void loadAdditionalConfigurations() {
 		String additionalConfigurations =
@@ -186,6 +203,14 @@ public abstract class BaseElasticsearchConnection
 		_settingsContributors.remove(settingsContributor);
 	}
 
+	protected void setElasticsearchConfigurationContainer(
+		ElasticsearchConfigurationContainer
+			elasticsearchConfigurationContainer) {
+
+		_elasticsearchConfigurationContainer =
+			elasticsearchConfigurationContainer;
+	}
+
 	protected volatile ElasticsearchConfiguration elasticsearchConfiguration;
 	protected final Settings.Builder settingsBuilder = Settings.builder();
 	protected final List<String> transportClientPlugins = new ArrayList<>(1);
@@ -194,7 +219,9 @@ public abstract class BaseElasticsearchConnection
 		BaseElasticsearchConnection.class);
 
 	private Client _client;
-	private IndexFactory _indexFactory;
+	private ElasticsearchConfigurationContainer
+		_elasticsearchConfigurationContainer;
+	private ElasticsearchIndexBuilder _elasticsearchIndexBuilder;
 	private final Set<SettingsContributor> _settingsContributors =
 		new ConcurrentSkipListSet<>();
 

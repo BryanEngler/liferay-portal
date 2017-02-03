@@ -14,7 +14,6 @@
 
 package com.liferay.portal.search.elasticsearch.internal.connection;
 
-import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.PortalRunMode;
@@ -23,11 +22,11 @@ import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
+import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfigurationContainer;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnection;
 import com.liferay.portal.search.elasticsearch.connection.OperationMode;
-import com.liferay.portal.search.elasticsearch.index.IndexFactory;
 import com.liferay.portal.search.elasticsearch.internal.cluster.ClusterSettingsContext;
+import com.liferay.portal.search.elasticsearch.internal.index.ElasticsearchIndexBuilder;
 import com.liferay.portal.search.elasticsearch.settings.SettingsContributor;
 
 import java.io.IOException;
@@ -101,15 +100,27 @@ public class EmbeddedElasticsearchConnection
 
 	@Override
 	@Reference(unbind = "-")
-	public void setIndexFactory(IndexFactory indexFactory) {
-		super.setIndexFactory(indexFactory);
+	public void setElasticsearchConfigurationContainer(
+		ElasticsearchConfigurationContainer
+			elasticsearchConfigurationContainer) {
+
+		super.setElasticsearchConfigurationContainer(
+			elasticsearchConfigurationContainer);
+	}
+
+	@Override
+	@Reference(unbind = "-")
+	public void setElasticsearchIndexBuilder(
+		ElasticsearchIndexBuilder elasticsearchIndexBuilder) {
+
+		super.setElasticsearchIndexBuilder(elasticsearchIndexBuilder);
 	}
 
 	@Activate
-	@Modified
 	protected void activate(Map<String, Object> properties) {
-		elasticsearchConfiguration = ConfigurableUtil.createConfigurable(
-			ElasticsearchConfiguration.class, properties);
+		if (_log.isInfoEnabled()) {
+			_log.info("Embedded Elasticsearch connection activated");
+		}
 	}
 
 	@Override
@@ -340,6 +351,13 @@ public class EmbeddedElasticsearchConnection
 			settingsBuilder.put("index.refresh_interval", "1ms");
 			settingsBuilder.put("index.translog.flush_threshold_ops", "1");
 			settingsBuilder.put("index.translog.interval", "1ms");
+		}
+	}
+
+	@Modified
+	protected void modified(Map<String, Object> properties) {
+		if (_log.isInfoEnabled()) {
+			_log.info("Embedded Elasticsearch connection modified");
 		}
 	}
 
