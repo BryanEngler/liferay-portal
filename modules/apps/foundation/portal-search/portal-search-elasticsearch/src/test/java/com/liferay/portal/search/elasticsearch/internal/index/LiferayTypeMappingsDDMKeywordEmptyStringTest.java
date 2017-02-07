@@ -22,6 +22,7 @@ import com.liferay.portal.search.elasticsearch.internal.connection.IndexName;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
@@ -142,12 +143,12 @@ public class LiferayTypeMappingsDDMKeywordEmptyStringTest {
 		return indexRequestBuilder;
 	}
 
-	protected void index(HashMap<String, Object> map2) {
-		IndexRequestBuilder indexRequestBuilder2 = getIndexRequestBuilder();
+	protected void index(Map<String, Object> map) {
+		IndexRequestBuilder indexRequestBuilder = getIndexRequestBuilder();
 
-		indexRequestBuilder2.setSource(map2);
+		indexRequestBuilder.setSource(map);
 
-		indexRequestBuilder2.get();
+		indexRequestBuilder.get();
 	}
 
 	private ElasticsearchFixture _elasticsearchFixture;
