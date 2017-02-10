@@ -16,6 +16,7 @@ package com.liferay.portal.search.elasticsearch.internal.facet;
 
 import java.io.IOException;
 
+import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.search.aggregations.bucket.range.AbstractRangeBuilder;
 import org.elasticsearch.search.aggregations.bucket.range.InternalRange;
@@ -71,7 +72,7 @@ public class DefaultRangeBuilder extends AbstractRangeBuilder<RangeBuilder> {
 
 	@Override
 	protected XContentBuilder doInternalXContent(
-			XContentBuilder builder, Params params)
+			XContentBuilder builder, ToXContent.Params params)
 		throws IOException {
 
 		super.doInternalXContent(builder, params);
