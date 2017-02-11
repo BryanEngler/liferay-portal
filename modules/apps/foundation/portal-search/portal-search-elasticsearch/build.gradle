@@ -6,6 +6,7 @@ dependencies {
 	compileInclude group: "com.fasterxml.jackson.dataformat", name: "jackson-dataformat-yaml", version: "2.6.2"
 	compileInclude group: "com.google.guava", name: "guava", version: "18.0"
 	compileInclude group: "org.elasticsearch", name: "elasticsearch", version: "5.2.0"
+	compileInclude group: "org.elasticsearch.client", name: "transport", version: "5.2.0"
 	compileInclude group: "com.ning", name: "compress-lzf", version: "1.0.2"
 	compileInclude group: "com.spatial4j", name: "spatial4j", version: "0.5"
 	compileInclude group: "com.tdunning", name: "t-digest", version: "3.0"

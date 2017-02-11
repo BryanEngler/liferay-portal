@@ -18,6 +18,7 @@ import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.SetUtil;
@@ -33,7 +34,9 @@ import com.liferay.portal.search.elasticsearch.settings.SettingsContributor;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,6 +45,7 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.plugins.Plugin;
 
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -137,16 +141,13 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 	}
 
 	protected TransportClient createTransportClient() {
-		TransportClient.Builder transportClientBuilder =
-			TransportClient.builder();
+		Class[] classes = new Class[transportClientPlugins.size()];
 
-		transportClientBuilder.settings(settingsBuilder);
-
-		for (String plugin : transportClientPlugins) {
-			transportClientBuilder.addPlugin(getPluginClass(plugin));
+		for (int i = 0; i < transportClientPlugins.size(); i++){
+			classes[i] = getPluginClass(transportClientPlugins.get(i));
 		}
 
-		return transportClientBuilder.build();
+		return new PreBuiltTransportClient(settingsBuilder.build(), classes);
 	}
 
 	@Deactivate
