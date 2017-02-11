@@ -80,6 +80,7 @@ import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.tophits.TopHits;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.GeoDistanceSortBuilder;
@@ -245,16 +246,28 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		SearchRequestBuilder searchRequestBuilder, QueryConfig queryConfig,
 		String fieldName) {
 
-		searchRequestBuilder.addHighlightedField(
+		//searchRequestBuilder.addHighlightedField(
+		//	fieldName, queryConfig.getHighlightFragmentSize(),
+		//	queryConfig.getHighlightSnippetSize());
+
+		HighlightBuilder highlightBuilder = new HighlightBuilder();
+
+		highlightBuilder.field(
 			fieldName, queryConfig.getHighlightFragmentSize(),
 			queryConfig.getHighlightSnippetSize());
 
 		String localizedFieldName = DocumentImpl.getLocalizedName(
 			queryConfig.getLocale(), fieldName);
 
-		searchRequestBuilder.addHighlightedField(
+		//searchRequestBuilder.addHighlightedField(
+		//	localizedFieldName, queryConfig.getHighlightFragmentSize(),
+		//	queryConfig.getHighlightSnippetSize());
+
+		highlightBuilder.field(
 			localizedFieldName, queryConfig.getHighlightFragmentSize(),
 			queryConfig.getHighlightSnippetSize());
+
+		searchRequestBuilder.highlighter(highlightBuilder);
 	}
 
 	protected void addHighlights(
@@ -265,12 +278,21 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 				searchRequestBuilder, queryConfig, highlightFieldName);
 		}
 
-		searchRequestBuilder.setHighlighterPostTags(
-			HighlightUtil.HIGHLIGHT_TAG_CLOSE);
-		searchRequestBuilder.setHighlighterPreTags(
-			HighlightUtil.HIGHLIGHT_TAG_OPEN);
-		searchRequestBuilder.setHighlighterRequireFieldMatch(
+		HighlightBuilder highlightBuilder = new HighlightBuilder();
+
+		highlightBuilder.postTags(HighlightUtil.HIGHLIGHT_TAG_CLOSE);
+		highlightBuilder.preTags(HighlightUtil.HIGHLIGHT_TAG_OPEN);
+		highlightBuilder.requireFieldMatch(
 			queryConfig.isHighlightRequireFieldMatch());
+
+		searchRequestBuilder.highlighter(highlightBuilder);
+
+//		searchRequestBuilder.setHighlighterPostTags(
+//			HighlightUtil.HIGHLIGHT_TAG_CLOSE);
+//		searchRequestBuilder.setHighlighterPreTags(
+//			HighlightUtil.HIGHLIGHT_TAG_OPEN);
+//		searchRequestBuilder.setHighlighterRequireFieldMatch(
+//			queryConfig.isHighlightRequireFieldMatch());
 	}
 
 	protected void addPagination(
@@ -286,10 +308,10 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		String[] selectedFieldNames = queryConfig.getSelectedFieldNames();
 
 		if (ArrayUtil.isEmpty(selectedFieldNames)) {
-			searchRequestBuilder.addField(StringPool.STAR);
+			searchRequestBuilder.addStoredField(StringPool.STAR);
 		}
 		else {
-			searchRequestBuilder.addFields(selectedFieldNames);
+			searchRequestBuilder.storedFields(selectedFieldNames);
 		}
 	}
 
