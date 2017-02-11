@@ -73,7 +73,7 @@ public class EmbeddedElasticsearchPluginManager {
 
 		Terminal terminal = Terminal.DEFAULT;
 
-		terminal.verbosity(Verbosity.SILENT);
+		terminal.setVerbosity(Verbosity.SILENT);
 
 		try {
 			pluginManager.downloadAndExtract(_pluginName, terminal, true);
