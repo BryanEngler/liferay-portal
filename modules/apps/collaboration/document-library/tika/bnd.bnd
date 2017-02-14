@@ -1,0 +1,22 @@
+Bundle-Name: Liferay Tika
+Bundle-SymbolicName: com.liferay.tika
+Bundle-Version: 1.0.0
+Import-Package: *;resolution:=optional
+-includeresource:\
+	@tika-core-[0-9]*.jar,\
+	@tika-parsers-[0-9]*.jar,\
+	@tagsoup-[0-9]*.jar,\
+	@jhighlight-[0-9]*.jar,\
+	@poi-[0-9]*.jar,\
+	@rome-[0-9]*.jar,\
+	@cdm-[0-9]*.jar,\
+	@commons-compress-[0-9]*.jar,\
+	@apache-mime4j-core-[0-9]*.jar,\
+	@jmatio-[0-9]*.jar,\
+	@java-libpst-[0-9]*.jar,\
+	@isoparser-[0-9]*.jar,\
+	@commons-exec-[0-9]*.jar,\
+	@jempbox-[0-9]*.jar,\
+	@pdfbox-[0-9]*.jar,\
+	@fontbox-[0-9]*.jar,\
+	tika=tika
