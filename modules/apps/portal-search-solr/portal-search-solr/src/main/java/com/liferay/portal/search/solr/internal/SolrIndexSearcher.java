@@ -43,6 +43,7 @@ import com.liferay.portal.kernel.search.highlight.HighlightUtil;
 import com.liferay.portal.kernel.search.query.QueryTranslator;
 import com.liferay.portal.kernel.search.suggest.QuerySuggester;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -631,25 +632,44 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 
 		List<FacetField> facetFields = queryResponse.getFacetFields();
 
-		if (ListUtil.isEmpty(facetFields)) {
-			return;
+		if (ListUtil.isNotEmpty(facetFields)) {
+			for (FacetField facetField : facetFields) {
+				String facetFieldName = facetField.getName();
+
+				Facet facet = facetsMap.get(facetFieldName);
+
+				FacetCollector facetCollector = null;
+
+				if (facet instanceof RangeFacet) {
+					facetCollector = new SolrFacetQueryCollector(
+						facetFieldName, queryResponse.getFacetQuery());
+				}
+				else {
+					facetCollector = new SolrFacetFieldCollector(
+						facetFieldName, facetField);
+				}
+
+				facet.setFacetCollector(facetCollector);
+			}
 		}
 
-		for (FacetField facetField : facetFields) {
-			Facet facet = facetsMap.get(facetField.getName());
+		Map<String, Integer> facetQuery = queryResponse.getFacetQuery();
 
-			FacetCollector facetCollector = null;
+		if (MapUtil.isNotEmpty(facetQuery)) {
+			for (String facetKey : facetQuery.keySet()) {
+				int pos = facetKey.indexOf(CharPool.COLON);
 
-			if (facet instanceof RangeFacet) {
-				facetCollector = new SolrFacetQueryCollector(
-					facetField.getName(), queryResponse.getFacetQuery());
+				String facetFieldName = facetKey.substring(0, pos);
+
+				Facet facet = facetsMap.get(facetFieldName);
+
+				if (facet.getFacetCollector() == null) {
+					FacetCollector facetCollector = new SolrFacetQueryCollector(
+						facetFieldName, queryResponse.getFacetQuery());
+
+					facet.setFacetCollector(facetCollector);
+				}
 			}
-			else {
-				facetCollector = new SolrFacetFieldCollector(
-					facetField.getName(), facetField);
-			}
-
-			facet.setFacetCollector(facetCollector);
 		}
 	}
 

@@ -42,7 +42,7 @@ public class RangeFacetProcessor implements FacetProcessor<SolrQuery> {
 	public void processFacet(SolrQuery solrQuery, Facet facet) {
 		FacetConfiguration facetConfiguration = facet.getFacetConfiguration();
 
-		solrQuery.addFacetField(facetConfiguration.getFieldName());
+		//solrQuery.addFacetField(facetConfiguration.getFieldName());
 
 		addConfigurationRanges(facetConfiguration, solrQuery);
 
