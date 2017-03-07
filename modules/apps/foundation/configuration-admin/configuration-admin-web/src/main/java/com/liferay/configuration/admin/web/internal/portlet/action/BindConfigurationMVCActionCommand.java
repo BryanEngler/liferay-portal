@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.util.PropsValues;
@@ -199,6 +200,17 @@ public class BindConfigurationMVCActionCommand implements MVCActionCommand {
 				String key = keys.nextElement();
 
 				Object value = properties.get(key);
+
+				if (value instanceof String[]) {
+					String[] values = (String[]) value;
+
+					if (values.length == 1) {
+						value = values[0];
+					}
+					else {
+						value = StringUtil.merge(values);
+					}
+				}
 
 				configuredProperties.put(key, value);
 			}
