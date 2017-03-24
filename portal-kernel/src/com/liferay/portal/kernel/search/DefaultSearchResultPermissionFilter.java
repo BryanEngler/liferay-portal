@@ -16,15 +16,23 @@ package com.liferay.portal.kernel.search;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.search.facet.Facet;
+import com.liferay.portal.kernel.search.facet.collector.DefaultTermCollector;
+import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
+import com.liferay.portal.kernel.search.facet.collector.TermCollector;
+import com.liferay.portal.kernel.search.facet.util.RangeParserUtil;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Tina Tian
@@ -53,16 +61,55 @@ public class DefaultSearchResultPermissionFilter
 
 		Document[] documents = hits.getDocs();
 
-		for (int i = 0; i < documents.length; i++) {
-			if (_isIncludeDocument(
-					documents[i], _permissionChecker.getCompanyId(),
-					companyAdmin, status)) {
+		Map<String, Facet> facetsMap = searchContext.getFacets();
 
-				docs.add(documents[i]);
+		for (int i = 0; i < documents.length; i++) {
+			Document document = documents[i];
+
+			if (_isIncludeDocument(
+					document, _permissionChecker.getCompanyId(), companyAdmin,
+					status)) {
+
+				docs.add(document);
 				scores.add(hits.score(i));
 			}
 			else {
 				excludeDocsSize++;
+
+				for (Facet facet : facetsMap.values()) {
+					FacetCollector facetCollector = facet.getFacetCollector();
+
+					if (facetCollector == null) {
+						continue;
+					}
+
+					List<TermCollector> updatedTermCollectors =
+						new ArrayList<>();
+
+					for (TermCollector termCollector :
+							facetCollector.getTermCollectors()) {
+
+						if (_documentContributedToTermCollectorFrequency(
+								document, facet.getFieldName(),
+								termCollector.getTerm())) {
+
+							int frequency = termCollector.getFrequency();
+
+							updatedTermCollectors.add(
+								new DefaultTermCollector(
+									termCollector.getTerm(), --frequency));
+						}
+						else {
+							updatedTermCollectors.add(termCollector);
+						}
+					}
+
+					FacetCollector updatedFacetCollector =
+						new SimpleFacetCollector(
+							facet.getFieldName(), updatedTermCollectors);
+
+					facet.setFacetCollector(updatedFacetCollector);
+				}
 			}
 		}
 
@@ -93,6 +140,46 @@ public class DefaultSearchResultPermissionFilter
 		}
 
 		return true;
+	}
+
+	private boolean _documentContributedToTermCollectorFrequency(
+		Document document, String facetFieldName, String term) {
+
+		Field field = document.getField(facetFieldName);
+
+		if (field != null) {
+			if (facetFieldName.equals(Field.MODIFIED_DATE)) {
+				String[] range = RangeParserUtil.parserRange(term);
+
+				String lower = range[0];
+				String upper = range[1];
+
+				if ((lower.compareTo(field.getValue()) < 0) &&
+					(upper.compareTo(field.getValue()) > 0)) {
+
+					return true;
+				}
+
+				return false;
+			}
+			else if (facetFieldName.equals(Field.ASSET_TAG_NAMES) ||
+					 facetFieldName.equals(Field.ASSET_CATEGORY_IDS)) {
+
+				String[] fieldValues = field.getValues();
+
+				for (String fieldValue : fieldValues) {
+					if (term.equals(fieldValue)) {
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			return term.equals(field.getValue());
+		}
+
+		return false;
 	}
 
 	private boolean _isIncludeDocument(
@@ -147,5 +234,38 @@ public class DefaultSearchResultPermissionFilter
 
 	private final BaseIndexer<?> _baseIndexer;
 	private final PermissionChecker _permissionChecker;
+
+	private class SimpleFacetCollector implements FacetCollector {
+
+		public SimpleFacetCollector(
+			String fieldName, List<TermCollector> termCollectors) {
+
+			_fieldName = fieldName;
+
+			for (TermCollector termCollector : termCollectors) {
+				_termCollectors.put(termCollector.getTerm(), termCollector);
+			}
+		}
+
+		@Override
+		public String getFieldName() {
+			return _fieldName;
+		}
+
+		@Override
+		public TermCollector getTermCollector(String term) {
+			return _termCollectors.get(term);
+		}
+
+		@Override
+		public List<TermCollector> getTermCollectors() {
+			return ListUtil.fromMapValues(_termCollectors);
+		}
+
+		private final String _fieldName;
+		private final Map<String, TermCollector> _termCollectors =
+			new HashMap<>();
+
+	}
 
 }
