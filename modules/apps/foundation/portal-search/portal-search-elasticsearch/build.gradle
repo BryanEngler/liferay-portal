@@ -1,13 +1,10 @@
-import com.liferay.gradle.util.FileUtil
-
-String[] elasticSearchPlugins = [
-	"analysis-icu",
-	"analysis-kuromoji",
-	"analysis-smartcn",
-	"analysis-stempel"
-]
-
 String elasticSearchVersion = "2.2.0"
+
+configurations {
+	elasticsearchPlugins {
+		transitive = false
+	}
+}
 
 dependencies {
 	compileInclude group: "com.carrotsearch", name: "hppc", version: "0.7.1"
@@ -45,6 +42,11 @@ dependencies {
 	compileInclude group: "org.ow2.asm", name: "asm-commons", version: "4.1"
 	compileInclude group: "org.yaml", name: "snakeyaml", version: "1.15"
 
+	elasticsearchPlugins ext: "zip", group: "org.elasticsearch.plugin", name: "analysis-icu", version: elasticSearchVersion
+	elasticsearchPlugins ext: "zip", group: "org.elasticsearch.plugin", name: "analysis-kuromoji", version: elasticSearchVersion
+	elasticsearchPlugins ext: "zip", group: "org.elasticsearch.plugin", name: "analysis-smartcn", version: elasticSearchVersion
+	elasticsearchPlugins ext: "zip", group: "org.elasticsearch.plugin", name: "analysis-stempel", version: elasticSearchVersion
+
 	provided group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.1.0"
 	provided group: "com.ibm.icu", name: "icu4j", version: "54.1.1"
 	provided group: "com.liferay", name: "com.liferay.portal.configuration.metatype", version: "2.0.0"
@@ -59,10 +61,6 @@ dependencies {
 
 processResources {
 	into("plugins") {
-		from {
-			elasticSearchPlugins.collect {
-				FileUtil.get(project, "https://download.elastic.co/elasticsearch/release/org/elasticsearch/plugin/${it}/${elasticSearchVersion}/${it}-${elasticSearchVersion}.zip")
-			}
-		}
+		from configurations.elasticsearchPlugins
 	}
 }
