@@ -4,10 +4,9 @@
 			{
 				"template_": {
 					"mapping": {
-						"index": "not_analyzed",
 						"index_options": "docs",
-						"omit_norms": "yes",
-						"type": "string"
+						"omit_norms": true,
+						"type": "keyword"
 					},
 					"match": "*",
 					"match_mapping_type": "string"
@@ -16,8 +15,7 @@
 			{
 				"template_spellCheckWord": {
 					"mapping": {
-						"index": "analyzed",
-						"type": "string"
+						"type": "text"
 					},
 					"match": "spellCheckWord_*",
 					"match_mapping_type": "string"
@@ -26,24 +24,20 @@
 		],
 		"properties": {
 			"companyId": {
-				"index": "not_analyzed",
-				"store": "yes",
-				"type": "string"
+				"store": true,
+				"type": "keyword"
 			},
 			"groupId": {
-				"index": "not_analyzed",
-				"store": "yes",
-				"type": "string"
+				"store": true,
+				"type": "keyword"
 			},
 			"priority": {
-				"index": "not_analyzed",
-				"store": "yes",
+				"store": true,
 				"type": "double"
 			},
 			"uid": {
-				"index": "not_analyzed",
-				"store": "yes",
-				"type": "string"
+				"store": true,
+				"type": "keyword"
 			}
 		}
 	}
