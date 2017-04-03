@@ -26,8 +26,8 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 import org.elasticsearch.Version;
-import org.elasticsearch.common.cli.Terminal;
-import org.elasticsearch.common.cli.Terminal.Verbosity;
+import org.elasticsearch.cli.Terminal;
+import org.elasticsearch.cli.Terminal.Verbosity;
 
 /**
  * @author Artur Aquino
