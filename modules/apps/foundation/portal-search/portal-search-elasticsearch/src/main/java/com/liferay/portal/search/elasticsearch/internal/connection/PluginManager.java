@@ -18,7 +18,7 @@ import java.io.IOException;
 
 import java.nio.file.Path;
 
-import org.elasticsearch.common.cli.Terminal;
+import org.elasticsearch.cli.Terminal;
 
 /**
  * @author Artur Aquino
@@ -28,12 +28,12 @@ public interface PluginManager {
 
 	public void downloadAndExtract(
 			String name, Terminal terminal, boolean batch)
-		throws IOException;
+		throws Exception;
 
 	public Path[] getInstalledPluginsPaths() throws IOException;
 
 	public boolean isCurrentVersion(Path path) throws IOException;
 
-	public void removePlugin(String name, Terminal terminal) throws IOException;
+	public void removePlugin(String name, Terminal terminal) throws Exception;
 
 }

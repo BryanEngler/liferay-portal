@@ -26,8 +26,8 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 import org.elasticsearch.Version;
-import org.elasticsearch.common.cli.Terminal;
-import org.elasticsearch.common.cli.Terminal.Verbosity;
+import org.elasticsearch.cli.Terminal;
+import org.elasticsearch.cli.Terminal.Verbosity;
 
 /**
  * @author Artur Aquino
@@ -46,7 +46,7 @@ public class EmbeddedElasticsearchPluginManager {
 		_pluginZipFactory = pluginZipFactory;
 	}
 
-	public void install() throws IOException {
+	public void install() throws Exception {
 		if (isAlreadyInstalled()) {
 			return;
 		}
@@ -61,7 +61,7 @@ public class EmbeddedElasticsearchPluginManager {
 		}
 	}
 
-	public void removeObsoletePlugin() throws IOException {
+	public void removeObsoletePlugin() throws Exception {
 		PluginManager pluginManager =
 			_pluginManagerFactory.createPluginManager();
 
@@ -85,7 +85,7 @@ public class EmbeddedElasticsearchPluginManager {
 				".zip"));
 	}
 
-	protected void downloadAndExtract(PluginZip pluginZip) throws IOException {
+	protected void downloadAndExtract(PluginZip pluginZip) throws Exception {
 		File file = new File(_pluginsPathString);
 
 		file.mkdirs();
@@ -122,7 +122,7 @@ public class EmbeddedElasticsearchPluginManager {
 	protected Terminal getTerminal() {
 		Terminal terminal = Terminal.DEFAULT;
 
-		terminal.verbosity(Verbosity.SILENT);
+		terminal.setVerbosity(Verbosity.SILENT);
 
 		return terminal;
 	}

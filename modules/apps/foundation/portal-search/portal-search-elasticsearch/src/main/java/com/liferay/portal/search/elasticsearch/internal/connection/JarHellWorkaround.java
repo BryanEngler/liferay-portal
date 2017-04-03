@@ -14,34 +14,37 @@
 
 package com.liferay.portal.search.elasticsearch.internal.connection;
 
-import java.net.URL;
-
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.env.Environment;
+import java.util.function.Supplier;
 
 /**
  * @author André de Oliveira
  */
-public class PluginManagerFactoryImpl implements PluginManagerFactory {
+public class JarHellWorkaround {
 
-	public PluginManagerFactoryImpl(Settings settings) {
-		_settings = settings;
+	public static void execute(Runnable runnable) {
+		execute(
+			() -> {
+				runnable.run();
+
+				return null;
+			});
 	}
 
-	@Override
-	public PluginManager createPluginManager() {
-		return doCreatePluginManager(null);
-	}
+	public static <T> T execute(Supplier<T> supplier) {
+		String old = System.getProperty("java.class.path");
 
-	@Override
-	public PluginManager createPluginManager(PluginZip pluginZip) {
-		return doCreatePluginManager(pluginZip.getURL());
-	}
+		System.setProperty("java.class.path", "tmp");
 
-	protected PluginManager doCreatePluginManager(URL url) {
-		return new PluginManagerImpl(new Environment(_settings), url);
-	}
+		String replaced = System.getProperty("java.class.path");
 
-	private final Settings _settings;
+		try {
+			return supplier.get();
+		}
+		finally {
+			System.setProperty("java.class.path", replaced);
+
+			System.setProperty("java.class.path", old);
+		}
+	}
 
 }

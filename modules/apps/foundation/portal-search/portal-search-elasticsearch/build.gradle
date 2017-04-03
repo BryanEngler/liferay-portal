@@ -26,6 +26,7 @@ dependencies {
 	compileInclude group: "commons-lang", name: "commons-lang", version: "2.6"
 	compileInclude group: "io.netty", name: "netty-all", version: "4.1.11.Final"
 	compileInclude group: "joda-time", name: "joda-time", version: "2.9.4"
+	compileInclude group: "net.sf.jopt-simple", name: "jopt-simple", version: "5.0.2"
 	compileInclude group: "org.antlr", name: "antlr-runtime", version: "3.5"
 	compileInclude group: "org.apache.httpcomponents", name: "httpclient", version: "4.4"
 	compileInclude group: "org.apache.logging.log4j", name: "log4j-api", version: "2.7"
