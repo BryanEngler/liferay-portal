@@ -279,6 +279,8 @@ public class EmbeddedElasticsearchConnection
 		if (Validator.isNotNull(transportTcpPort)) {
 			settingsBuilder.put("transport.tcp.port", transportTcpPort);
 		}
+
+		settingsBuilder.put("transport.type", "local");
 	}
 
 	protected void configurePaths() {
@@ -448,8 +450,10 @@ public class EmbeddedElasticsearchConnection
 
 		configureNetworking();
 
-		settingsBuilder.put("node.client", false);
 		settingsBuilder.put("node.data", true);
+		settingsBuilder.put("node.ingest", true);
+		settingsBuilder.put("node.master", true);
+
 		settingsBuilder.put(
 			DiscoveryService.SETTING_DISCOVERY_SEED,
 			SecureRandomUtil.nextLong());
