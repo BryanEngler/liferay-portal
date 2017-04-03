@@ -50,10 +50,10 @@ public interface ElasticsearchConfiguration {
 	public String indexNamePrefix();
 
 	@Meta.AD(
-		deflt = "false", description = "bootstrap-mlockall-help",
-		name = "bootstrap-mlockall", required = false
+		deflt = "false", description = "bootstrap-memory-lock-help",
+		name = "bootstrap-memory-lock", required = false
 	)
-	public boolean bootstrapMlockAll();
+	public boolean bootstrapMemoryLock();
 
 	@Meta.AD(
 		deflt = "true", description = "log-exceptions-only-help",
