@@ -284,7 +284,7 @@ public class EmbeddedElasticsearchConnection
 		try {
 			embeddedElasticsearchPluginManager.install();
 		}
-		catch (IOException ioe) {
+		catch (Exception ioe) {
 			throw new RuntimeException(
 				"Unable to install " + name + " plugin", ioe);
 		}
@@ -367,7 +367,8 @@ public class EmbeddedElasticsearchConnection
 			String name, Settings settings) {
 
 		return new EmbeddedElasticsearchPluginManager(
-			name, settings.get("path.plugins"),
+			name,
+			props.get(PropsKeys.LIFERAY_HOME) + "/data/elasticsearch/plugins",
 			new PluginManagerFactoryImpl(settings), new PluginZipFactoryImpl());
 	}
 
@@ -385,7 +386,8 @@ public class EmbeddedElasticsearchConnection
 		System.setProperty("jna.tmpdir", _jnaTmpDirName);
 
 		try {
-			return createEmbeddedElasticsearchNode(settings);
+			return PluginJarConflictCheckSuppression.execute(
+				() -> createEmbeddedElasticsearchNode(settings));
 		}
 		finally {
 			thread.setContextClassLoader(contextClassLoader);
@@ -438,7 +440,7 @@ public class EmbeddedElasticsearchConnection
 		try {
 			embeddedElasticsearchPluginManager.removeObsoletePlugin();
 		}
-		catch (IOException ioe) {
+		catch (Exception ioe) {
 			throw new RuntimeException(
 				"Unable to remove " + name + " plugin", ioe);
 		}
