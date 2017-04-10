@@ -269,7 +269,8 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	}
 
 	protected void addHighlightedField(
-		SearchRequestBuilder searchRequestBuilder, HighlightBuilder highlightBuilder, QueryConfig queryConfig,
+		SearchRequestBuilder searchRequestBuilder,
+		HighlightBuilder highlightBuilder, QueryConfig queryConfig,
 		String fieldName) {
 
 		highlightBuilder.field(
@@ -298,7 +299,8 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		for (String highlightFieldName : queryConfig.getHighlightFieldNames()) {
 			addHighlightedField(
-				searchRequestBuilder, highlightBuilder, queryConfig, highlightFieldName);
+				searchRequestBuilder, highlightBuilder, queryConfig,
+				highlightFieldName);
 		}
 
 		highlightBuilder.postTags(HighlightUtil.HIGHLIGHT_TAG_CLOSE);
@@ -419,15 +421,20 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 				GeoDistanceSort geoDistanceSort = (GeoDistanceSort)sort;
 
 				List<GeoPoint> geoPoints = new ArrayList<>();
+
 				for (GeoLocationPoint geoLocationPoint :
 						geoDistanceSort.getGeoLocationPoints()) {
 
-					geoPoints.add(new GeoPoint(
-						geoLocationPoint.getLatitude(),
-						geoLocationPoint.getLongitude()));
+					geoPoints.add(
+						new GeoPoint(
+							geoLocationPoint.getLatitude(),
+							geoLocationPoint.getLongitude()));
 				}
+
 				GeoDistanceSortBuilder geoDistanceSortBuilder =
-					SortBuilders.geoDistanceSort(sortFieldName, geoPoints.toArray(new GeoPoint[geoPoints.size()]));
+					SortBuilders.geoDistanceSort(
+						sortFieldName,
+						geoPoints.toArray(new GeoPoint[geoPoints.size()]));
 
 				geoDistanceSortBuilder.geoDistance(GeoDistance.DEFAULT);
 

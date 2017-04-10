@@ -28,7 +28,6 @@ import java.util.Optional;
 import org.elasticsearch.Version;
 import org.elasticsearch.cli.Terminal;
 import org.elasticsearch.cli.Terminal.Verbosity;
-import org.elasticsearch.plugins.PluginCli;
 
 /**
  * @author Artur Aquino

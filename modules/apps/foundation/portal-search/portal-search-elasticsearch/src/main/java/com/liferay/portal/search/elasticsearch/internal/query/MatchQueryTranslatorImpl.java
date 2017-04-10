@@ -22,10 +22,9 @@ import com.liferay.portal.search.elasticsearch.query.MatchQueryTranslator;
 
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.Operator;
-
 import org.elasticsearch.index.search.MatchQuery.Type;
 import org.elasticsearch.index.search.MatchQuery.ZeroTermsQuery;
 
@@ -86,7 +85,8 @@ public class MatchQueryTranslatorImpl
 		}
 
 		if (matchQuery.getZeroTermsQuery() != null) {
-			ZeroTermsQuery matchQueryBuilderZeroTermsQuery = translate(matchQuery.getZeroTermsQuery());
+			ZeroTermsQuery matchQueryBuilderZeroTermsQuery = translate(
+				matchQuery.getZeroTermsQuery());
 
 			matchQueryBuilder.zeroTermsQuery(matchQueryBuilderZeroTermsQuery);
 		}
