@@ -241,6 +241,14 @@ public class CompanyIndexFactory implements IndexFactory {
 			indexName, _additionalTypeMappings);
 	}
 
+	protected void loadDefaultIndexSettings(Settings.Builder builder) {
+		String defaultIndexSettings = ResourceUtil.getResourceAsString(
+			getClass(), "/META-INF/index-template.json");
+
+		builder.loadFromSource(
+			defaultIndexSettings, XContentType.JSON);
+	}
+
 	protected void loadIndexSettingsContributors(
 		final Settings.Builder builder) {
 
@@ -298,9 +306,11 @@ public class CompanyIndexFactory implements IndexFactory {
 		CreateIndexRequestBuilder createIndexRequestBuilder,
 		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
 
-		Settings.Builder builder = Settings.settingsBuilder();
+		Settings.Builder builder = Settings.builder();
 
 		liferayDocumentTypeFactory.createRequiredDefaultAnalyzers(builder);
+
+		loadDefaultIndexSettings(builder);
 
 		loadAdditionalIndexConfigurations(builder);
 
