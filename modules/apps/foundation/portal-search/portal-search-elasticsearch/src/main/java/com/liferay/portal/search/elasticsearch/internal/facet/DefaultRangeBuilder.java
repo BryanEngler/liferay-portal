@@ -86,7 +86,7 @@ public class DefaultRangeBuilder
 
 	@Override
 	protected XContentBuilder doXContentBody(
-		XContentBuilder builder, ToXContent.Params params)
+			XContentBuilder builder, ToXContent.Params params)
 		throws IOException {
 
 		super.doXContentBody(builder, params);
@@ -100,10 +100,10 @@ public class DefaultRangeBuilder
 
 	@Override
 	protected ValuesSourceAggregatorFactory<ValuesSource.Numeric, ?> innerBuild(
-		AggregationContext context,
-		ValuesSourceConfig<ValuesSource.Numeric> config,
-		AggregatorFactory<?> parent,
-		AggregatorFactories.Builder factoriesBuilder)
+			AggregationContext context,
+			ValuesSourceConfig<ValuesSource.Numeric> config,
+			AggregatorFactory<?> parent,
+			AggregatorFactories.Builder factoriesBuilder)
 		throws IOException {
 
 		return new RangeAggregatorFactory(
