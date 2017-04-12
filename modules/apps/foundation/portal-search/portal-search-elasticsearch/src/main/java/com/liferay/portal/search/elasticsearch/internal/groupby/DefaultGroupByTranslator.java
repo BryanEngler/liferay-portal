@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch.internal.groupby;
 
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.GeoDistanceSort;
 import com.liferay.portal.kernel.search.GroupBy;
@@ -27,8 +28,10 @@ import com.liferay.portal.search.elasticsearch.groupby.GroupByTranslator;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -44,6 +47,7 @@ import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
 /**
@@ -59,12 +63,16 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 
 		GroupBy groupBy = searchContext.getGroupBy();
 
-		TermsAggregationBuilder termsAggregationBuilder =
-			AggregationBuilders.terms(
-				GROUP_BY_AGGREGATION_PREFIX + groupBy.getField());
+		String fieldName = groupBy.getField();
 
-		termsAggregationBuilder = termsAggregationBuilder.field(
-			groupBy.getField());
+		TermsAggregationBuilder termsAggregationBuilder =
+			AggregationBuilders.terms(GROUP_BY_AGGREGATION_PREFIX + fieldName);
+
+		if (_textKeywordFields.contains(fieldName)) {
+			fieldName = fieldName + ".keyword";
+		}
+
+		termsAggregationBuilder = termsAggregationBuilder.field(fieldName);
 
 		TopHitsAggregationBuilder topHitsAggregationBuilder = getTopHitsBuilder(
 			searchContext, start, end, groupBy);
@@ -72,6 +80,19 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 		termsAggregationBuilder.subAggregation(topHitsAggregationBuilder);
 
 		searchRequestBuilder.addAggregation(termsAggregationBuilder);
+	}
+
+	@Activate
+	protected void activate(Map<String, Object> properties) {
+		com.liferay.portal.search.elasticsearch.internal.configuration.
+			FacetConfiguration facetConfiguration =
+				ConfigurableUtil.createConfigurable(
+					com.liferay.portal.search.elasticsearch.internal.
+						configuration.FacetConfiguration.class, properties);
+
+		String[] fieldNames = facetConfiguration.facetKeywordFields();
+
+		Collections.addAll(_textKeywordFields, fieldNames);
 	}
 
 	protected void addHighlightedField(
@@ -224,5 +245,7 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 
 		return topHitsAggregationBuilder;
 	}
+
+	private final Set<String> _textKeywordFields = new HashSet<>();
 
 }

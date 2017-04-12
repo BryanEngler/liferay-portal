@@ -56,6 +56,11 @@
 				"template_expando_keyword": {
 					"mapping": {
 						"analyzer" : "keyword_lowercase",
+						"fields": {
+							"keyword": {
+								"type": "keyword"
+							}
+						},
 						"store": true,
 						"type": "text"
 					},
@@ -480,6 +485,11 @@
 			},
 			"articleId": {
 				"analyzer": "keyword_lowercase",
+				"fields": {
+					"keyword": {
+						"type": "keyword"
+					}
+				},
 				"store": true,
 				"type": "text"
 			},

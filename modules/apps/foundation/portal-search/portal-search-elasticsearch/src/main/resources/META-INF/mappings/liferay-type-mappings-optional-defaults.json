@@ -3,6 +3,11 @@
 		{
 			"template_": {
 				"mapping": {
+					"fields": {
+						"keyword": {
+							"type": "keyword"
+						}
+					},
 					"store": true,
 					"type": "text"
 				},
