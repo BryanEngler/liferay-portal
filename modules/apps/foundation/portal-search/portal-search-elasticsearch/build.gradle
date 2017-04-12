@@ -1,8 +1,8 @@
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 
-String elasticsearchVersion = "5.0.0"
-String luceneVersion = "6.2.0"
+String elasticsearchVersion = "5.1.1"
+String luceneVersion = "6.3.0"
 
 configurations {
 	elasticsearchPlugins {
@@ -29,8 +29,8 @@ dependencies {
 	compileInclude group: "joda-time", name: "joda-time", version: "2.9.4"
 	compileInclude group: "org.antlr", name: "antlr-runtime", version: "3.5"
 	compileInclude group: "org.apache.httpcomponents", name: "httpclient", version: "4.4"
-	compileInclude group: "org.apache.logging.log4j", name: "log4j-api", version: "2.6"
-	compileInclude group: "org.apache.logging.log4j", name: "log4j-core", version: "2.6"
+	compileInclude group: "org.apache.logging.log4j", name: "log4j-api", version: "2.7"
+	compileInclude group: "org.apache.logging.log4j", name: "log4j-core", version: "2.7"
 	compileInclude group: "org.apache.lucene", name: "lucene-analyzers-common", version: luceneVersion
 	compileInclude group: "org.apache.lucene", name: "lucene-core", version: luceneVersion
 	compileInclude group: "org.apache.lucene", name: "lucene-grouping", version: luceneVersion
