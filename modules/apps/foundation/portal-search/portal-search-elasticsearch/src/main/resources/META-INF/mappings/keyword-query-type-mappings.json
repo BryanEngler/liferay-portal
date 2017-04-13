@@ -6,7 +6,7 @@
 					"mapping": {
 						"index": "true",
 						"index_options": "docs",
-						"omit_norms": "yes",
+						"omit_norms": "true",
 						"type": "keyword"
 					},
 					"match": "*",
@@ -27,12 +27,12 @@
 		"properties": {
 			"companyId": {
 				"index": "true",
-				"store": "yes",
+				"store": "true",
 				"type": "keyword"
 			},
 			"groupId": {
 				"index": "true",
-				"store": "yes",
+				"store": "true",
 				"type": "keyword"
 			},
 			"priority": {
@@ -42,7 +42,7 @@
 			},
 			"uid": {
 				"index": "true",
-				"store": "yes",
+				"store": "true",
 				"type": "keyword"
 			}
 		}

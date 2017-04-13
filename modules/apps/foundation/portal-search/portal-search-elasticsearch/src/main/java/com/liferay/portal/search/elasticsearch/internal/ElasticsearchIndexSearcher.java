@@ -436,7 +436,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 						sortFieldName,
 						geoPoints.toArray(new GeoPoint[geoPoints.size()]));
 
-				geoDistanceSortBuilder.geoDistance(GeoDistance.DEFAULT);
+				geoDistanceSortBuilder.geoDistance(GeoDistance.ARC);
 
 				Collection<String> geoHashes = geoDistanceSort.getGeoHashes();
 

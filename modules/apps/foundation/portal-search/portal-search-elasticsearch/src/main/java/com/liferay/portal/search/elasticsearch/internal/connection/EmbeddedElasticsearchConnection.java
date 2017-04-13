@@ -68,7 +68,7 @@ import org.elasticsearch.node.NodeValidationException;
 
 import org.osgi.framework.BundleContext;
 import org.elasticsearch.node.NodeValidationException;
-import org.elasticsearch.node.internal.InternalSettingsPreparer;
+import org.elasticsearch.node.InternalSettingsPreparer;
 import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.transport.Netty4Plugin;
 

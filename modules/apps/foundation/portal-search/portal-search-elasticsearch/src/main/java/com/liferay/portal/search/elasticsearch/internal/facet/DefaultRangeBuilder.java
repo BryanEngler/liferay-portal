@@ -24,10 +24,10 @@ import org.elasticsearch.search.aggregations.bucket.range.AbstractRangeBuilder;
 import org.elasticsearch.search.aggregations.bucket.range.InternalRange;
 import org.elasticsearch.search.aggregations.bucket.range.RangeAggregator;
 import org.elasticsearch.search.aggregations.bucket.range.RangeAggregatorFactory;
-import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.aggregations.support.ValuesSource;
 import org.elasticsearch.search.aggregations.support.ValuesSourceAggregatorFactory;
 import org.elasticsearch.search.aggregations.support.ValuesSourceConfig;
+import org.elasticsearch.search.internal.SearchContext;
 
 /**
  * @author Michael C. Han
@@ -75,11 +75,6 @@ public class DefaultRangeBuilder
 		return this;
 	}
 
-	@Override
-	public String getWriteableName() {
-		return "range";
-	}
-
 	public boolean hasRanges() {
 		return !ranges.isEmpty();
 	}
@@ -100,18 +95,22 @@ public class DefaultRangeBuilder
 
 	@Override
 	protected ValuesSourceAggregatorFactory<ValuesSource.Numeric, ?> innerBuild(
-			AggregationContext context,
+			SearchContext context,
 			ValuesSourceConfig<ValuesSource.Numeric> config,
 			AggregatorFactory<?> parent,
 			AggregatorFactories.Builder factoriesBuilder)
 		throws IOException {
 
 		return new RangeAggregatorFactory(
-			name, type, config,
-			ranges.toArray(new RangeAggregator.Range[ranges.size()]), keyed,
-			rangeFactory, context, parent, factoriesBuilder, metaData);
+			name, config,
+			ranges.toArray(new RangeAggregator.Range[ranges.size()]),
+			keyed, rangeFactory, context, parent, factoriesBuilder, metaData);
 	}
 
 	private String _format;
 
+	@Override
+	public String getType() {
+		return "range";
+	}
 }
