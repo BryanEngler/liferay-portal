@@ -14,12 +14,22 @@
 
 package com.liferay.portal.search.test.util.mappings;
 
+import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.kernel.search.generic.StringQuery;
 import com.liferay.portal.search.analysis.FieldQueryBuilder;
 import com.liferay.portal.search.internal.analysis.SimpleKeywordTokenizer;
 import com.liferay.portal.search.internal.analysis.TitleFieldQueryBuilder;
+import com.liferay.portal.search.test.util.IdempotentRetryAssert;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.Assert;
 
 /**
  * @author André de Oliveira
@@ -261,6 +271,43 @@ public abstract class BaseTitleFieldQueryBuilderTestCase
 
 		assertSearch("Names of tags", 2);
 		assertSearch("tags names", 2);
+	}
+
+	protected void testStringQuery() throws Exception {
+		addDocument("java");
+		addDocument("eclipse");
+		addDocument("liferay");
+
+		String query = "title:(java OR eclipse)";
+
+		StringQuery stringQuery = new StringQuery(query);
+
+		IdempotentRetryAssert.retryAssert(
+			5, TimeUnit.SECONDS,
+			new Callable<Void>() {
+
+				@Override
+				public Void call() throws Exception {
+					Hits hits = search(createSearchContext(), stringQuery);
+
+					Document[] docs = hits.getDocs();
+
+					List<String> actualValues = new ArrayList<>();
+
+					for (Document document : docs) {
+						List<String> documentValues = Arrays.asList(
+							document.getValues("title"));
+
+						actualValues.addAll(documentValues);
+					}
+
+					Assert.assertEquals(
+						query + "->" + actualValues, 2, docs.length);
+
+					return null;
+				}
+
+			});
 	}
 
 	protected void testWordPrefixes() throws Exception {

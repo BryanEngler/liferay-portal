@@ -83,6 +83,12 @@ public class TitleFieldQueryBuilderTest
 
 	@Override
 	@Test
+	public void testStringQuery() throws Exception {
+		super.testStringQuery();
+	}
+
+	@Override
+	@Test
 	public void testWordPrefixes() throws Exception {
 		super.testWordPrefixes();
 	}
