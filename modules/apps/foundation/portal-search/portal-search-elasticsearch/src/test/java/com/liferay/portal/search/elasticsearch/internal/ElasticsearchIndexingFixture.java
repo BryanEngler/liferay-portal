@@ -190,7 +190,7 @@ public class ElasticsearchIndexingFixture implements IndexingFixture {
 				searchHitDocumentTranslator =
 					new SearchHitDocumentTranslatorImpl();
 
-				activate(Collections.<String, Object>emptyMap());
+				activate(Collections.singletonMap("logExceptionsOnly", false));
 			}
 		};
 	}
