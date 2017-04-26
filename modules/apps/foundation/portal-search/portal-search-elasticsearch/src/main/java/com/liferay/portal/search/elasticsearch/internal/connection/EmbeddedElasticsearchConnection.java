@@ -17,6 +17,7 @@ package com.liferay.portal.search.elasticsearch.internal.connection;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.SecureRandomUtil;
 import com.liferay.portal.kernel.util.PortalRunMode;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -40,6 +41,7 @@ import org.apache.commons.lang.time.StopWatch;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.discovery.DiscoveryService;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 
@@ -337,6 +339,9 @@ public class EmbeddedElasticsearchConnection
 
 		settingsBuilder.put("node.client", false);
 		settingsBuilder.put("node.data", true);
+		settingsBuilder.put(
+			DiscoveryService.SETTING_DISCOVERY_SEED,
+			SecureRandomUtil.nextLong());
 
 		configurePaths();
 
