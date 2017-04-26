@@ -41,6 +41,7 @@ import org.apache.commons.lang.time.StopWatch;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
+import org.elasticsearch.node.NodeBuilder;
 
 import org.jboss.netty.util.internal.ByteBufferUtil;
 
@@ -300,7 +301,13 @@ public class EmbeddedElasticsearchConnection
 		thread.setContextClassLoader(clazz.getClassLoader());
 
 		try {
-			return new Node(settings);
+			NodeBuilder nodeBuilder = new NodeBuilder();
+
+			nodeBuilder.settings(settings);
+
+			nodeBuilder.local(true);
+
+			return nodeBuilder.build();
 		}
 		finally {
 			thread.setContextClassLoader(contextClassLoader);
@@ -330,7 +337,6 @@ public class EmbeddedElasticsearchConnection
 
 		settingsBuilder.put("node.client", false);
 		settingsBuilder.put("node.data", true);
-		settingsBuilder.put("node.local", true);
 
 		configurePaths();
 
