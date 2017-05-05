@@ -587,7 +587,13 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 			return;
 		}
 
-		hits.setLength((int)solrDocumentList.getNumFound());
+		int length = (int)solrDocumentList.getNumFound();
+
+		if (length > PropsValues.INDEX_SEARCH_LIMIT) {
+			length = PropsValues.INDEX_SEARCH_LIMIT;
+		}
+
+		hits.setLength(length);
 
 		for (SolrDocument solrDocument : solrDocumentList) {
 			QueryConfig queryConfig = query.getQueryConfig();

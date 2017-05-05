@@ -622,7 +622,14 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		}
 
 		hits.setDocs(documents.toArray(new Document[documents.size()]));
-		hits.setLength((int)searchHits.getTotalHits());
+
+		int length = (int)searchHits.getTotalHits();
+
+		if (length > PropsValues.INDEX_SEARCH_LIMIT) {
+			length = PropsValues.INDEX_SEARCH_LIMIT;
+		}
+
+		hits.setLength(length);
 		hits.setQuery(query);
 		hits.setQueryTerms(queryTerms.toArray(new String[queryTerms.size()]));
 		hits.setScores(ArrayUtil.toFloatArray(scores));
