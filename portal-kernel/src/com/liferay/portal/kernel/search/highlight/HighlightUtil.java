@@ -47,11 +47,7 @@ public class HighlightUtil {
 			Matcher matcher = _pattern.matcher(snippet);
 
 			while (matcher.find()) {
-				StringTokenizer st = new StringTokenizer(matcher.group(1));
-
-				while (st.hasMoreTokens()) {
-					queryTerms.add(st.nextToken());
-				}
+				queryTerms.add(matcher.group(1));
 			}
 
 			snippet = StringUtil.replace(
