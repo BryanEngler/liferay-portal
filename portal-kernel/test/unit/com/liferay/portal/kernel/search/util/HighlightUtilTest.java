@@ -14,11 +14,20 @@
 
 package com.liferay.portal.kernel.search.util;
 
+import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.highlight.HighlightUtil;
-import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.util.StringUtil;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import org.mockito.Mockito;
 
 /**
  * @author Tibor Lipusz
@@ -26,21 +35,76 @@ import org.junit.Test;
 public class HighlightUtilTest {
 
 	@Test
-	public void testHighlight() throws Exception {
-		StringBundler sb = new StringBundler(7);
+	public void testAddSnippet() {
+		assertAddSnippet(
+			"<liferay-hl>Hello World</liferay-hl>", "Hello World");
+	}
 
-		sb.append(HighlightUtil.HIGHLIGHTS[0]);
-		sb.append("Hello");
-		sb.append(HighlightUtil.HIGHLIGHTS[1]);
-		sb.append(" World ");
-		sb.append(HighlightUtil.HIGHLIGHTS[0]);
-		sb.append("Liferay");
-		sb.append(HighlightUtil.HIGHLIGHTS[1]);
+	@Test
+	public void testHighlight() {
+		String s = "Hello World Liferay";
+
+		assertHighlight(s, "Hello World Liferay");
+		assertHighlight(s, "[[Hello]] World Liferay", "hello");
+		assertHighlight(s, "Hello World [[Liferay]]", "LIFERAY");
+		assertHighlight(s, "[[Hello]] [[World]] Liferay", "hello", "WORLD");
+		assertHighlight(s, "[[Hello]] World [[Liferay]]", "HELLO", "liferay");
+		assertHighlight(s, "Hello [[World]] [[Liferay]]", "Liferay", "World");
+		assertHighlight(
+			s, "[[Hello]] [[World]] [[Liferay]]", "Hello", "Liferay", "World");
+	}
+
+	@Test
+	public void testHighlightWithSpaces() {
+		String s = "Hello World Liferay";
+
+		assertHighlight(s, "[[Hello World]] Liferay", "Hello World");
+		assertHighlight(s, "Hello [[World Liferay]]", "world LIFERAY");
+		assertHighlight(
+			s, "[[Hello World]] [[Liferay]]", "HELLO WORLD", "LiferaY");
+		assertHighlight(s, "[[Hello World Liferay]]", "hello world liferay");
+	}
+
+	@Test
+	public void testHighlightWithSuffixes() {
+		assertHighlight(
+			"Life at Liferay", "[[Life]] at [[Liferay]]", "life", "liferay");
+		assertHighlight(
+			"LIFERAY FOR LIFE", "[[LIFERAY]] FOR [[LIFE]]", "life", "liferay");
+		assertHighlight(
+			"Sidewalk Repair/Concrete | Case Closed Sidewalk repaired",
+			"[[Sidewalk Repair]]/Concrete | Case Closed [[Sidewalk repaired]]",
+			"sidewalk repair", "sidewalk repaired");
+	}
+
+	protected void assertAddSnippet(String snippet, String fieldValue) {
+		Document document = Mockito.mock(Document.class);
+
+		Set<String> queryTerms = new HashSet<>();
+
+		String snippetFieldName = RandomTestUtil.randomString();
+
+		HighlightUtil.addSnippet(
+			document, queryTerms, snippet, snippetFieldName);
+
+		Assert.assertEquals(Collections.singleton(fieldValue), queryTerms);
+
+		Mockito.verify(
+			document
+		).addText(
+			"snippet_".concat(snippetFieldName), fieldValue
+		);
+	}
+
+	protected void assertHighlight(
+		String s, String expected, String... queryTerms) {
+
+		expected = StringUtil.replace(
+			expected, new String[] {"[[", "]]"}, HighlightUtil.HIGHLIGHTS);
 
 		Assert.assertEquals(
-			sb.toString(),
-			HighlightUtil.highlight(
-				"Hello World Liferay", new String[] {"Hello", "Liferay"}));
+			Arrays.toString(queryTerms), expected,
+			HighlightUtil.highlight(s, queryTerms));
 	}
 
 }
