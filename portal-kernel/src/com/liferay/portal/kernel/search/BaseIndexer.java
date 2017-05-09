@@ -673,17 +673,6 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 	public long searchCount(SearchContext searchContext)
 		throws SearchException {
 
-		PermissionChecker permissionChecker =
-			PermissionThreadLocal.getPermissionChecker();
-
-		if ((permissionChecker != null) &&
-			isUseSearchResultPermissionFilter(searchContext)) {
-
-			Hits hits = search(searchContext);
-
-			return hits.getLength();
-		}
-
 		QueryConfig queryConfig = searchContext.getQueryConfig();
 
 		queryConfig.setHighlightEnabled(false);
@@ -698,7 +687,27 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 		fullQuery.setQueryConfig(queryConfig);
 
-		return IndexSearcherHelperUtil.searchCount(searchContext, fullQuery);
+		long count = IndexSearcherHelperUtil.searchCount(
+			searchContext, fullQuery);
+
+		if (count > GetterUtil.getLong(
+				PropsUtil.get(PropsKeys.INDEX_SEARCH_LIMIT))) {
+
+			return count;
+		}
+
+		PermissionChecker permissionChecker =
+			PermissionThreadLocal.getPermissionChecker();
+
+		if ((permissionChecker != null) &&
+			isUseSearchResultPermissionFilter(searchContext)) {
+
+			Hits hits = search(searchContext);
+
+			return hits.getLength();
+		}
+
+		return count;
 	}
 
 	public void setCommitImmediately(boolean commitImmediately) {
