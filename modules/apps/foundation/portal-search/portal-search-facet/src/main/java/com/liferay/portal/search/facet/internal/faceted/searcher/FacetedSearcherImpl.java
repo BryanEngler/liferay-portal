@@ -90,11 +90,16 @@ public class FacetedSearcherImpl
 				String fieldName = getExpandoFieldName(
 					searchContext, expandoBridge, attributeName);
 
+				boolean useAdvancedSearchSyntax = GetterUtil.getBoolean(
+					searchContext.getAttribute("useAdvancedSearchSyntax"));
+
+				boolean like = useAdvancedSearchSyntax;
+
 				if (searchContext.isAndSearch()) {
-					searchQuery.addRequiredTerm(fieldName, keywords);
+					searchQuery.addRequiredTerm(fieldName, keywords, like);
 				}
 				else {
-					searchQuery.addTerm(fieldName, keywords);
+					searchQuery.addTerm(fieldName, keywords, like);
 				}
 			}
 		}
@@ -123,7 +128,12 @@ public class FacetedSearcherImpl
 					Field.STAGING_GROUP, "true", BooleanClauseOccur.MUST_NOT);
 			}
 
-			searchQuery.addTerms(Field.KEYWORDS, keywords);
+			boolean useAdvancedSearchSyntax = GetterUtil.getBoolean(
+				searchContext.getAttribute("useAdvancedSearchSyntax"));
+
+			boolean like = useAdvancedSearchSyntax;
+
+			searchQuery.addTerms(Field.KEYWORDS, keywords, like);
 		}
 
 		List<Group> inactiveGroups = _groupLocalService.getActiveGroups(

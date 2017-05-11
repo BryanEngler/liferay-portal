@@ -440,6 +440,17 @@ public class SearchDisplayContext {
 		return false;
 	}
 
+	public boolean isUseAdvancedSearchSyntax() {
+		if (_useAdvancedSearchSyntax != null) {
+			return _useAdvancedSearchSyntax;
+		}
+
+		_useAdvancedSearchSyntax = GetterUtil.getBoolean(
+			_portletPreferences.getValue("useAdvancedSearchSyntax", null));
+
+		return _useAdvancedSearchSyntax;
+	}
+
 	public boolean isViewInContext() {
 		return _searchResultPreferences.isViewInContext();
 	}
@@ -577,5 +588,6 @@ public class SearchDisplayContext {
 	private final SearchResultPreferences _searchResultPreferences;
 	private String _searchScopePreferenceString;
 	private final ThemeDisplaySupplier _themeDisplaySupplier;
+	private Boolean _useAdvancedSearchSyntax;
 
 }

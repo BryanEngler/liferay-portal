@@ -376,6 +376,11 @@ public class JournalArticleIndexer
 
 		Map<String, Query> queries = new HashMap<>();
 
+		boolean useAdvancedSearchSyntax = GetterUtil.getBoolean(
+			searchContext.getAttribute("useAdvancedSearchSyntax"));
+
+		like = useAdvancedSearchSyntax;
+
 		if (Validator.isNull(searchContext.getKeywords())) {
 			BooleanQuery localizedQuery = new BooleanQueryImpl();
 

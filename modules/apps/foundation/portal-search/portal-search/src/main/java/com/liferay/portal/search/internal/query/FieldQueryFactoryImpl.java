@@ -15,6 +15,7 @@
 package com.liferay.portal.search.internal.query;
 
 import com.liferay.portal.kernel.search.Query;
+import com.liferay.portal.kernel.search.generic.StringQuery;
 import com.liferay.portal.kernel.search.query.FieldQueryFactory;
 import com.liferay.portal.search.analysis.FieldQueryBuilder;
 import com.liferay.portal.search.analysis.FieldQueryBuilderFactory;
@@ -38,9 +39,18 @@ public class FieldQueryFactoryImpl implements FieldQueryFactory {
 		String fieldName, String keywords, boolean like,
 		boolean splitKeywords) {
 
-		FieldQueryBuilder fieldQueryBuilder = getQueryBuilder(fieldName);
+		boolean useAdvancedSearchSyntax = like;
 
-		return fieldQueryBuilder.build(fieldName, keywords);
+		if (useAdvancedSearchSyntax) {
+			StringQuery query = new StringQuery(fieldName + ":" + keywords);
+
+			return query;
+		}
+		else {
+			FieldQueryBuilder fieldQueryBuilder = getQueryBuilder(fieldName);
+
+			return fieldQueryBuilder.build(fieldName, keywords);
+		}
 	}
 
 	@Reference(

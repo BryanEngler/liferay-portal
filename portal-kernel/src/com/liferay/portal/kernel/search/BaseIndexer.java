@@ -628,6 +628,28 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 			PermissionChecker permissionChecker =
 				PermissionThreadLocal.getPermissionChecker();
 
+			String keywords = searchContext.getKeywords();
+
+			if (keywords.startsWith(StringPool.STAR) &&
+				(keywords.length() > 1)) {
+
+				searchContext.setAttribute(
+					"useAdvancedSearchSyntax", Boolean.TRUE);
+
+				keywords = keywords.substring(1, keywords.length());
+			}
+
+			boolean useAdvancedSearchSyntax = GetterUtil.getBoolean(
+				searchContext.getAttribute("useAdvancedSearchSyntax"));
+
+			if (!useAdvancedSearchSyntax) {
+				keywords = keywords.replaceAll("\\bAND\\b", "and");
+				keywords = keywords.replaceAll("\\bOR\\b", "or");
+				keywords = keywords.replaceAll("\\bNOT\\b", "not");
+			}
+
+			searchContext.setKeywords(keywords);
+
 			if ((permissionChecker != null) &&
 				isUseSearchResultPermissionFilter(searchContext)) {
 
@@ -1052,6 +1074,11 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 					like = true;
 				}
 
+				boolean useAdvancedSearchSyntax = GetterUtil.getBoolean(
+					searchContext.getAttribute("useAdvancedSearchSyntax"));
+
+				like = useAdvancedSearchSyntax;
+
 				if (searchContext.isAndSearch()) {
 					Query query = searchQuery.addRequiredTerm(
 						fieldName, keywords, like);
@@ -1197,6 +1224,11 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 		}
 
 		Query query = null;
+
+		boolean useAdvancedSearchSyntax = GetterUtil.getBoolean(
+			searchContext.getAttribute("useAdvancedSearchSyntax"));
+
+		like = useAdvancedSearchSyntax;
 
 		if (searchContext.isAndSearch()) {
 			query = searchQuery.addRequiredTerm(field, value, like);
