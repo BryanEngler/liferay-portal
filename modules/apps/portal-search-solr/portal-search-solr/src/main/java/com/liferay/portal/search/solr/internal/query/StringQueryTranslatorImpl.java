@@ -15,6 +15,7 @@
 package com.liferay.portal.search.solr.internal.query;
 
 import com.liferay.portal.kernel.search.generic.StringQuery;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.solr.query.StringQueryTranslator;
 
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
@@ -32,10 +33,12 @@ public class StringQueryTranslatorImpl implements StringQueryTranslator {
 	@Override
 	public org.apache.lucene.search.Query translate(StringQuery stringQuery) {
 		try {
-			QueryParser queryParser = new QueryParser(
-				"uuid", new KeywordAnalyzer());
+			String[] queryParts = StringUtil.split(stringQuery.getQuery(), ":");
 
-			return queryParser.parse(stringQuery.getQuery());
+			QueryParser queryParser = new QueryParser(
+				queryParts[0], new KeywordAnalyzer());
+
+			return queryParser.parse(queryParts[1]);
 		}
 		catch (ParseException pe) {
 			throw new IllegalArgumentException("Invalid query", pe);
