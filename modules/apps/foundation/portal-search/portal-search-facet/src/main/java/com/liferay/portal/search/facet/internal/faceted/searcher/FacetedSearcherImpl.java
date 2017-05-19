@@ -28,10 +28,14 @@ import com.liferay.portal.kernel.search.IndexSearcherHelper;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerPostProcessor;
 import com.liferay.portal.kernel.search.IndexerRegistry;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.SearchEngineHelperUtil;
 import com.liferay.portal.kernel.search.SearchException;
+import com.liferay.portal.kernel.search.SearchPermissionChecker;
+import com.liferay.portal.kernel.search.SearchQueryPermissionFilterClassNameContributer;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcher;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
@@ -49,6 +53,7 @@ import com.liferay.portal.kernel.util.Validator;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -66,6 +71,51 @@ public class FacetedSearcherImpl
 		_groupLocalService = groupLocalService;
 		_indexerRegistry = indexerRegistry;
 		_indexSearcherHelper = indexSearcherHelper;
+	}
+
+	protected void addPermissionBooleanFilter(
+		SearchContext searchContext, BooleanFilter fullQueryBooleanFilter) {
+
+		for (String entryClassName : searchContext.getEntryClassNames()) {
+			Indexer<?> indexer = IndexerRegistryUtil.getIndexer(entryClassName);
+
+			if (indexer == null) {
+				continue;
+			}
+
+			String permissionedClassName = entryClassName;
+
+			for (SearchQueryPermissionFilterClassNameContributer contributer :
+					getContributors()) {
+
+				Optional<String> contributedClassName = contributer.contribute(
+					entryClassName);
+
+				if (contributedClassName.isPresent()) {
+					permissionedClassName = contributedClassName.get();
+					break;
+				}
+			}
+
+			BooleanFilter permissionBooleanFilter = new BooleanFilter();
+
+			permissionBooleanFilter.addTerm(
+				Field.ENTRY_CLASS_NAME, entryClassName);
+
+			if (searchContext.getUserId() > 0) {
+				SearchPermissionChecker searchPermissionChecker =
+					SearchEngineHelperUtil.getSearchPermissionChecker();
+
+				permissionBooleanFilter =
+					searchPermissionChecker.getPermissionBooleanFilter(
+						searchContext.getCompanyId(),
+						searchContext.getGroupIds(), searchContext.getUserId(),
+						permissionedClassName, permissionBooleanFilter,
+						searchContext);
+			}
+
+			fullQueryBooleanFilter.add(permissionBooleanFilter);
+		}
 	}
 
 	protected void addSearchExpandoKeywords(
@@ -187,6 +237,8 @@ public class FacetedSearcherImpl
 		}
 
 		addFacetClause(searchContext, facetBooleanFilter, facets.values());
+
+		addPermissionBooleanFilter(searchContext, fullQueryBooleanFilter);
 
 		BooleanQuery fullQuery = new BooleanQueryImpl();
 

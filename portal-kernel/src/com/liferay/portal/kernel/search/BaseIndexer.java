@@ -1599,6 +1599,19 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 		return getClassName();
 	}
 
+	protected List<SearchQueryPermissionFilterClassNameContributer>
+		getContributors() {
+
+		if (_contributors != null) {
+			return _contributors;
+		}
+
+		_contributors = ServiceTrackerCollections.openList(
+			SearchQueryPermissionFilterClassNameContributer.class);
+
+		return _contributors;
+	}
+
 	protected String[] getDefaultSelectedFieldNames() {
 		return _defaultSelectedFieldNames;
 	}
@@ -1891,6 +1904,7 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 	private static final Log _log = LogFactoryUtil.getLog(BaseIndexer.class);
 
 	private boolean _commitImmediately;
+	private List<SearchQueryPermissionFilterClassNameContributer> _contributors;
 	private String[] _defaultSelectedFieldNames;
 	private String[] _defaultSelectedLocalizedFieldNames;
 	private final Document _document = new DocumentImpl();
