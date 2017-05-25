@@ -1037,42 +1037,45 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 		Map<String, Query> expandoQueries = new HashMap<>();
 
-		ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(
-			searchContext.getCompanyId(), getClassName(searchContext));
+		for (String searchClasName : getSearchClassNames()) {
+			ExpandoBridge expandoBridge =
+				ExpandoBridgeFactoryUtil.getExpandoBridge(
+					searchContext.getCompanyId(), searchClasName);
 
-		Set<String> attributeNames = SetUtil.fromEnumeration(
-			expandoBridge.getAttributeNames());
+			Set<String> attributeNames = SetUtil.fromEnumeration(
+				expandoBridge.getAttributeNames());
 
-		for (String attributeName : attributeNames) {
-			UnicodeProperties properties = expandoBridge.getAttributeProperties(
-				attributeName);
+			for (String attributeName : attributeNames) {
+				UnicodeProperties properties =
+					expandoBridge.getAttributeProperties(attributeName);
 
-			int indexType = GetterUtil.getInteger(
-				properties.getProperty(ExpandoColumnConstants.INDEX_TYPE));
+				int indexType = GetterUtil.getInteger(
+					properties.getProperty(ExpandoColumnConstants.INDEX_TYPE));
 
-			if ((indexType != ExpandoColumnConstants.INDEX_TYPE_NONE) &&
-				Validator.isNotNull(keywords)) {
+				if ((indexType != ExpandoColumnConstants.INDEX_TYPE_NONE) &&
+					Validator.isNotNull(keywords)) {
 
-				String fieldName = getExpandoFieldName(
-					searchContext, expandoBridge, attributeName);
+					String fieldName = getExpandoFieldName(
+						searchContext, expandoBridge, attributeName);
 
-				boolean like = false;
+					boolean like = false;
 
-				if (indexType == ExpandoColumnConstants.INDEX_TYPE_TEXT) {
-					like = true;
-				}
+					if (indexType == ExpandoColumnConstants.INDEX_TYPE_TEXT) {
+						like = true;
+					}
 
-				if (searchContext.isAndSearch()) {
-					Query query = searchQuery.addRequiredTerm(
-						fieldName, keywords, like);
+					if (searchContext.isAndSearch()) {
+						Query query = searchQuery.addRequiredTerm(
+							fieldName, keywords, like);
 
-					expandoQueries.put(attributeName, query);
-				}
-				else {
-					Query query = searchQuery.addTerm(
-						fieldName, keywords, like);
+						expandoQueries.put(attributeName, query);
+					}
+					else {
+						Query query = searchQuery.addTerm(
+							fieldName, keywords, like);
 
-					expandoQueries.put(attributeName, query);
+						expandoQueries.put(attributeName, query);
+					}
 				}
 			}
 		}
