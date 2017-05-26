@@ -152,6 +152,7 @@ import com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbEntry;
 import com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbUtil;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.theme.ThemeDisplayURLStringUtil;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.upload.UploadServletRequest;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -190,6 +191,7 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.URLCodec;
+import com.liferay.portal.kernel.util.URLStringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -785,44 +787,8 @@ public class PortalImpl implements Portal {
 		ThemeDisplay themeDisplay, String url, boolean typeControlPanel,
 		boolean doAsUser) {
 
-		if (doAsUser) {
-			if (Validator.isNotNull(themeDisplay.getDoAsUserId())) {
-				url = HttpUtil.setParameter(
-					url, "doAsUserId", themeDisplay.getDoAsUserId());
-			}
-
-			if (Validator.isNotNull(themeDisplay.getDoAsUserLanguageId())) {
-				url = HttpUtil.setParameter(
-					url, "doAsUserLanguageId",
-					themeDisplay.getDoAsUserLanguageId());
-			}
-		}
-
-		if (typeControlPanel) {
-			if (Validator.isNotNull(themeDisplay.getPpid())) {
-				url = HttpUtil.setParameter(
-					url, "p_p_id", themeDisplay.getPpid());
-			}
-
-			if (themeDisplay.getDoAsGroupId() > 0) {
-				url = HttpUtil.setParameter(
-					url, "doAsGroupId", themeDisplay.getDoAsGroupId());
-			}
-
-			if (themeDisplay.getRefererGroupId() !=
-					GroupConstants.DEFAULT_PARENT_GROUP_ID) {
-
-				url = HttpUtil.setParameter(
-					url, "refererGroupId", themeDisplay.getRefererGroupId());
-			}
-
-			if (themeDisplay.getRefererPlid() != LayoutConstants.DEFAULT_PLID) {
-				url = HttpUtil.setParameter(
-					url, "refererPlid", themeDisplay.getRefererPlid());
-			}
-		}
-
-		return url;
+		return ThemeDisplayURLStringUtil.addPreservedParameters(
+			themeDisplay, url, typeControlPanel, doAsUser);
 	}
 
 	@Override
@@ -6932,16 +6898,7 @@ public class PortalImpl implements Portal {
 
 	@Override
 	public String[] stripURLAnchor(String url, String separator) {
-		String anchor = StringPool.BLANK;
-
-		int pos = url.indexOf(separator);
-
-		if (pos != -1) {
-			anchor = url.substring(pos);
-			url = url.substring(0, pos);
-		}
-
-		return new String[] {url, anchor};
+		return URLStringUtil.stripURLAnchor(url, separator);
 	}
 
 	@Override
