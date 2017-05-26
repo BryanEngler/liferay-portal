@@ -18,9 +18,10 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.theme.ThemeDisplayURLStringUtil;
 import com.liferay.portal.kernel.util.CharPool;
-import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.URLStringUtil;
 import com.liferay.portal.search.web.internal.display.context.PortletRequestThemeDisplaySupplier;
 import com.liferay.portal.search.web.internal.display.context.ThemeDisplaySupplier;
 import com.liferay.portal.search.web.internal.search.bar.constants.SearchBarPortletKeys;
@@ -56,7 +57,7 @@ public class SearchBarRedirectMVCActionCommand extends BaseMVCActionCommand {
 			portletRequest.getParameter(parameterName));
 
 		Optional<String> urlOptional = parameterValueOptional.map(
-			parameterValue -> HttpUtil.addParameter(
+			parameterValue -> URLStringUtil.addParameter(
 				url, parameterName, parameterValue));
 
 		return urlOptional.orElse(url);
@@ -124,6 +125,11 @@ public class SearchBarRedirectMVCActionCommand extends BaseMVCActionCommand {
 			searchBarPortletPreferences.getDestination();
 
 		String destination = destinationOptional.orElse(friendlyURL);
+
+		Layout layout = themeDisplay.getLayout();
+
+		destination = ThemeDisplayURLStringUtil.addPreservedParameters(
+			themeDisplay, destination, layout.isTypeControlPanel(), true);
 
 		return getPath(path, destination);
 	}
