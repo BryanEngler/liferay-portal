@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
 
@@ -47,7 +48,6 @@ public class SearchBarRedirectMVCActionCommandTest {
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 
-		setUpHttpUtil();
 		setUpPortalUtil();
 
 		searchBarRedirectMVCActionCommand =
@@ -55,8 +55,60 @@ public class SearchBarRedirectMVCActionCommandTest {
 	}
 
 	@Test
+	public void testDoAsUserIdAndScopeParameters() throws Exception {
+		String doAsUserIdParameterValue = RandomTestUtil.randomString();
+		String scopeParameterValue = RandomTestUtil.randomString();
+		String url = StringPool.SLASH + RandomTestUtil.randomString();
+
+		ActionRequestBuilder actionRequestBuilder = new ActionRequestBuilder() {
+			{
+				doAsUserId = doAsUserIdParameterValue;
+				friendlyURL = url;
+				scope = scopeParameterValue;
+			}
+		};
+
+		ActionRequest actionRequest = actionRequestBuilder.build();
+
+		ActionResponse actionResponse = Mockito.mock(ActionResponse.class);
+
+		doProcessAction(actionRequest, actionResponse);
+
+		StringBundler sb = new StringBundler(5);
+
+		sb.append(url);
+		sb.append("?doAsUserId=");
+		sb.append(doAsUserIdParameterValue);
+		sb.append("&scope=");
+		sb.append(scopeParameterValue);
+
+		verifyUrl(sb.toString());
+	}
+
+	@Test
+	public void testDoAsUserIdParameterPreserved() throws Exception {
+		String parameterValue = RandomTestUtil.randomString();
+		String url = StringPool.SLASH + RandomTestUtil.randomString();
+
+		ActionRequestBuilder actionRequestBuilder = new ActionRequestBuilder() {
+			{
+				doAsUserId = parameterValue;
+				friendlyURL = url;
+			}
+		};
+
+		ActionRequest actionRequest = actionRequestBuilder.build();
+
+		ActionResponse actionResponse = Mockito.mock(ActionResponse.class);
+
+		doProcessAction(actionRequest, actionResponse);
+
+		verifyUrl(url + "?doAsUserId=" + parameterValue);
+	}
+
+	@Test
 	public void testPlainURL() throws Exception {
-		String url = RandomTestUtil.randomString();
+		String url = StringPool.SLASH + RandomTestUtil.randomString();
 
 		ActionRequestBuilder actionRequestBuilder = new ActionRequestBuilder() {
 			{
@@ -70,15 +122,13 @@ public class SearchBarRedirectMVCActionCommandTest {
 
 		doProcessAction(actionRequest, actionResponse);
 
-		verifyParameterNotAdded("scope", http);
-
-		verifySendRedirect(StringPool.SLASH.concat(url), actionResponse);
+		verifyUrl(url);
 	}
 
 	@Test
 	public void testScopeURLParameter() throws Exception {
 		String parameterValue = RandomTestUtil.randomString();
-		String url = RandomTestUtil.randomString();
+		String url = StringPool.SLASH + RandomTestUtil.randomString();
 
 		ActionRequestBuilder actionRequestBuilder = new ActionRequestBuilder() {
 			{
@@ -93,15 +143,16 @@ public class SearchBarRedirectMVCActionCommandTest {
 
 		doProcessAction(actionRequest, actionResponse);
 
-		verifyParameterAdded(
-			StringPool.SLASH.concat(url), "scope", parameterValue, http);
+		verifyUrl(url + "?scope=" + parameterValue);
 	}
 
 	@Test
 	public void testScopeURLParameterBlank() throws Exception {
+		String url = StringPool.SLASH + RandomTestUtil.randomString();
+
 		ActionRequestBuilder actionRequestBuilder = new ActionRequestBuilder() {
 			{
-				friendlyURL = RandomTestUtil.randomString();
+				friendlyURL = url;
 				scope = StringPool.BLANK;
 			}
 		};
@@ -112,7 +163,7 @@ public class SearchBarRedirectMVCActionCommandTest {
 
 		doProcessAction(actionRequest, actionResponse);
 
-		verifyParameterNotAdded("scope", http);
+		verifyUrl(url);
 	}
 
 	protected SearchBarRedirectMVCActionCommand
@@ -133,12 +184,6 @@ public class SearchBarRedirectMVCActionCommandTest {
 
 		searchBarRedirectMVCActionCommand.doProcessAction(
 			actionRequest, actionResponse);
-	}
-
-	protected void setUpHttpUtil() {
-		HttpUtil httpUtil = new HttpUtil();
-
-		httpUtil.setHttp(http);
 	}
 
 	protected void setUpPortalUtil() {
@@ -179,36 +224,14 @@ public class SearchBarRedirectMVCActionCommandTest {
 		portalUtil.setPortal(portal);
 	}
 
-	protected void verifyParameterAdded(
-		String url, String name, String value, Http http) {
+	protected void verifyUrl(String url) {
 
 		Mockito.verify(
-			http
-		).addParameter(
-			url, name, value
-		);
-	}
-
-	protected void verifyParameterNotAdded(String name, Http http) {
-		Mockito.verify(
-			http, Mockito.never()
-		).addParameter(
-			Mockito.anyString(), Mockito.eq(name), Mockito.anyString()
-		);
-	}
-
-	protected void verifySendRedirect(String url, ActionResponse actionResponse)
-		throws Exception {
-
-		Mockito.verify(
-			actionResponse
-		).sendRedirect(
+			portal
+		).escapeRedirect(
 			url
 		);
 	}
-
-	@Mock
-	protected Http http;
 
 	@Mock
 	protected Portal portal;
@@ -259,12 +282,14 @@ public class SearchBarRedirectMVCActionCommandTest {
 		protected ThemeDisplay createThemeDisplay() {
 			ThemeDisplay themeDisplay = new ThemeDisplay();
 
+			themeDisplay.setDoAsUserId(doAsUserId);
 			themeDisplay.setLayout(createLayout());
 			themeDisplay.setURLCurrent(friendlyURL);
 
 			return themeDisplay;
 		}
 
+		protected String doAsUserId;
 		protected String friendlyURL;
 		protected String scope;
 
