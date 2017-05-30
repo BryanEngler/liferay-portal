@@ -182,7 +182,7 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 		settingsBuilder.put("http.enabled", false);
 		settingsBuilder.put("node.data", false);
 		settingsBuilder.put("node.ingest", false);
-		settingsBuilder.put("node.master", false);
+		settingsBuilder.put("node.master", true);
 		settingsBuilder.put(
 			"path.logs", props.get(PropsKeys.LIFERAY_HOME) + "/logs");
 		settingsBuilder.put(
