@@ -11,6 +11,7 @@ Import-Package:\
 	\
 	!com.conversantmedia.util.concurrent.*,\
 	\
+	!com.fasterxml.aalto.*,\
 	!com.fasterxml.jackson.*,\
 	\
 	!com.github.mustachejava.*,\
@@ -71,6 +72,8 @@ Import-Package:\
 	!org.apache.tomcat.jni.*,\
 	\
 	!org.bouncycastle.*,\
+    \
+    !org.conscrypt.*,\
 	\
 	!org.codehaus.groovy.*,\
 	\
