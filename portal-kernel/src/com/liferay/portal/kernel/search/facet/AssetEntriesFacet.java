@@ -158,6 +158,9 @@ public class AssetEntriesFacet extends MultiValueFacet {
 			for (int i = 0; i < valuesJSONArray.length(); i++) {
 				entryClassNames[i] = valuesJSONArray.getString(i);
 			}
+
+			searchContext.setAttribute(
+				"configurationEntryClassNames", entryClassNames);
 		}
 
 		if (ArrayUtil.isEmpty(entryClassNames)) {
