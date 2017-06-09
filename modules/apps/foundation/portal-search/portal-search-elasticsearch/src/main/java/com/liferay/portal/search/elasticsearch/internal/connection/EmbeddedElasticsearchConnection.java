@@ -101,7 +101,7 @@ public class EmbeddedElasticsearchConnection
 
 		_node = null;
 
-		_file.deltree(_jnaTmpDir);
+		_file.deltree(_JNA_TMP_DIR);
 	}
 
 	public Node getNode() {
@@ -313,11 +313,9 @@ public class EmbeddedElasticsearchConnection
 
 		thread.setContextClassLoader(clazz.getClassLoader());
 
-		String jnaTmpdir = "jna.tmpdir";
+		String jnaTmpDir = System.getProperty("jna.tmpdir");
 
-		String originalJnaTmpdir = System.getProperty(jnaTmpdir);
-
-		System.setProperty(jnaTmpdir, _jnaTmpDir);
+		System.setProperty("jna.tmpdir", _JNA_TMP_DIR);
 
 		try {
 			NodeBuilder nodeBuilder = new NodeBuilder();
@@ -341,11 +339,11 @@ public class EmbeddedElasticsearchConnection
 		finally {
 			thread.setContextClassLoader(contextClassLoader);
 
-			if (originalJnaTmpdir == null) {
-				System.clearProperty(jnaTmpdir);
+			if (jnaTmpDir == null) {
+				System.clearProperty("jna.tmpdir");
 			}
 			else {
-				System.setProperty(jnaTmpdir, originalJnaTmpdir);
+				System.setProperty("jna.tmpdir", jnaTmpDir);
 			}
 		}
 	}
@@ -429,7 +427,7 @@ public class EmbeddedElasticsearchConnection
 	private static final Log _log = LogFactoryUtil.getLog(
 		EmbeddedElasticsearchConnection.class);
 
-	private static final String _jnaTmpDir =
+	private static final String _JNA_TMP_DIR =
 		SystemProperties.get(SystemProperties.TMP_DIR) +
 			"/elasticSearch-tmpDir";
 
