@@ -424,12 +424,12 @@ public class EmbeddedElasticsearchConnection
 			});
 	}
 
-	private static final Log _log = LogFactoryUtil.getLog(
-		EmbeddedElasticsearchConnection.class);
-
 	private static final String _JNA_TMP_DIR =
 		SystemProperties.get(SystemProperties.TMP_DIR) +
 			"/elasticSearch-tmpDir";
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		EmbeddedElasticsearchConnection.class);
 
 	@Reference
 	private File _file;
