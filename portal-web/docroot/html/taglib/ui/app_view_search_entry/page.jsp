@@ -140,7 +140,7 @@ summary.setQueryTerms(queryTerms);
 						/>
 					</span>
 					<span class="body">
-						<%= summary.getHighlightedContent() %>
+						<%= summary.getContent(highlightEnabled, escape) %>
 					</span>
 				</aui:a>
 			</div>
@@ -181,7 +181,7 @@ summary.setQueryTerms(queryTerms);
 						/>
 					</span>
 					<span class="body">
-						<%= summary.getHighlightedContent() %>
+						<%= summary.getContent(highlightEnabled, escape) %>
 					</span>
 				</aui:a>
 			</div>
