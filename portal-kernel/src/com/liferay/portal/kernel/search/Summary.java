@@ -42,35 +42,19 @@ public class Summary {
 	}
 
 	public String getContent() {
-		if (Validator.isNull(_content)) {
-			return StringPool.BLANK;
-		}
+		return getContent(false, _escape);
+	}
 
-		if ((_maxContentLength <= 0) ||
-			(_content.length() <= _maxContentLength)) {
-
-			return _content;
-		}
-
-		if (!ArrayUtil.isEmpty(_queryTerms)) {
-			int index = StringUtil.indexOfAny(_content, _queryTerms);
-
-			if (index > _maxContentLength) {
-				_content = _content.substring(index);
-			}
-		}
-
-		_content = StringUtil.shorten(_content, _maxContentLength);
-
-		return _content;
+	public String getContent(boolean highlight, boolean escape) {
+		return _getText(_content, highlight, escape);
 	}
 
 	public String getHighlightedContent() {
-		return _escapeAndHighlight(_content);
+		return getContent(true, _escape);
 	}
 
 	public String getHighlightedTitle() {
-		return _escapeAndHighlight(_title);
+		return getTitle(true, _escape);
 	}
 
 	public Locale getLocale() {
@@ -81,22 +65,30 @@ public class Summary {
 		return _maxContentLength;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	public String[] getQueryTerms() {
 		return _queryTerms;
 	}
 
 	public String getTitle() {
-		if (Validator.isNull(_title)) {
-			return StringPool.BLANK;
-		}
+		return getTitle(false, _escape);
+	}
 
-		return _title;
+	public String getTitle(boolean highlight, boolean escape) {
+		return _getText(_title, highlight, escape);
 	}
 
 	public boolean isEscape() {
 		return _escape;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	public boolean isHighlight() {
 		return _highlight;
 	}
@@ -109,6 +101,10 @@ public class Summary {
 		_escape = escape;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	public void setHighlight(boolean highlight) {
 		_highlight = highlight;
 	}
@@ -121,6 +117,10 @@ public class Summary {
 		_maxContentLength = maxContentLength;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	public void setQueryTerms(String[] queryTerms) {
 		if (ArrayUtil.isEmpty(queryTerms)) {
 			return;
@@ -133,22 +133,32 @@ public class Summary {
 		_title = title;
 	}
 
-	private String _escapeAndHighlight(String text) {
-		if (!_highlight || Validator.isNull(text) ||
-			ArrayUtil.isEmpty(_queryTerms)) {
-
-			if (_escape) {
-				return HtmlUtil.escape(text);
-			}
-
-			return text;
+	private String _getText(String text, boolean highlight, boolean escape) {
+		if (Validator.isNull(text)) {
+			return StringPool.BLANK;
 		}
 
-		text = HighlightUtil.highlight(
-			text, _queryTerms, _ESCAPE_SAFE_HIGHLIGHTS[0],
-			_ESCAPE_SAFE_HIGHLIGHTS[1]);
+		if (!highlight || !_isHighlightSnippet(text)) {
+			if (!highlight) {
+				text = _removeHighlightTags(text);
+			}
 
-		if (_escape) {
+			if (escape) {
+				text = HtmlUtil.escape(text);
+			}
+
+			if ((_maxContentLength <= 0) ||
+				(text.length() <= _maxContentLength)) {
+
+				return text;
+			}
+
+			return StringUtil.shorten(text, _maxContentLength);
+		}
+
+		text = _replaceHighlightTags(text);
+
+		if (escape) {
 			text = HtmlUtil.escape(text);
 		}
 
@@ -156,15 +166,56 @@ public class Summary {
 			text, _ESCAPE_SAFE_HIGHLIGHTS, HighlightUtil.HIGHLIGHTS);
 	}
 
+	private boolean _isHighlightSnippet(String text) {
+		if (StringUtil.count(text, HighlightUtil.HIGHLIGHT_TAG_OPEN) > 0) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private String _removeHighlightTags(String text) {
+		text = StringUtil.replace(
+			text, HighlightUtil.HIGHLIGHT_TAG_OPEN, StringPool.BLANK);
+
+		text = StringUtil.replace(
+			text, HighlightUtil.HIGHLIGHT_TAG_CLOSE, StringPool.BLANK);
+
+		return text;
+	}
+
+	private String _replaceHighlightTags(String text) {
+		text = StringUtil.replace(
+			text, HighlightUtil.HIGHLIGHT_TAG_OPEN, _ESCAPE_SAFE_HIGHLIGHTS[0]);
+
+		text = StringUtil.replace(
+			text, HighlightUtil.HIGHLIGHT_TAG_CLOSE,
+			_ESCAPE_SAFE_HIGHLIGHTS[1]);
+
+		return text;
+	}
+
 	private static final String[] _ESCAPE_SAFE_HIGHLIGHTS =
 		{"[@HIGHLIGHT1@]", "[@HIGHLIGHT2@]"};
 
 	private String _content;
 	private boolean _escape = true;
+
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	private boolean _highlight;
+
 	private Locale _locale;
 	private int _maxContentLength;
+
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	private String[] _queryTerms;
+
 	private String _title;
 
 }
