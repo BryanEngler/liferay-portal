@@ -140,7 +140,14 @@ public class FacetedSearcherImpl
 				groupIdTermsFilter, BooleanClauseOccur.MUST_NOT);
 		}
 
-		for (String entryClassName : searchContext.getEntryClassNames()) {
+		String[] entryClassNames = (String[])searchContext.getAttribute(
+			"configurationEntryClassNames");
+
+		if (entryClassNames == null) {
+			entryClassNames = searchContext.getEntryClassNames();
+		}
+
+		for (String entryClassName : entryClassNames) {
 			Indexer<?> indexer = _indexerRegistry.getIndexer(entryClassName);
 
 			if (indexer == null) {
