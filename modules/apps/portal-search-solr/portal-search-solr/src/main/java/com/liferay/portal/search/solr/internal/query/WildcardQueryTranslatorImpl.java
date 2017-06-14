@@ -50,9 +50,9 @@ public class WildcardQueryTranslatorImpl implements WildcardQueryTranslator {
 	}
 
 	protected String escape(String value) {
-		value = escape(value, CharPool.CLOSE_PARENTHESIS);
-		value = escape(value, CharPool.OPEN_PARENTHESIS);
-		value = escape(value, CharPool.SPACE);
+		for (char character : _escape_characters) {
+			value = escape(value, character);
+		}
 
 		return value;
 	}
@@ -61,5 +61,11 @@ public class WildcardQueryTranslatorImpl implements WildcardQueryTranslator {
 		return StringUtil.replace(
 			value, character, StringPool.BACK_SLASH + character);
 	}
+
+	private final char[] _escape_characters = {
+		CharPool.CARET, CharPool.CLOSE_BRACKET, CharPool.CLOSE_CURLY_BRACE,
+		CharPool.CLOSE_PARENTHESIS, CharPool.COLON, CharPool.OPEN_BRACKET,
+		CharPool.OPEN_CURLY_BRACE, CharPool.OPEN_PARENTHESIS, CharPool.SPACE
+	};
 
 }
