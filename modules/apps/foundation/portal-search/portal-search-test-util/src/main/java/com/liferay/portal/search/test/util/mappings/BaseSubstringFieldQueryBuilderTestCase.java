@@ -15,6 +15,7 @@
 package com.liferay.portal.search.test.util.mappings;
 
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.analysis.FieldQueryBuilder;
 import com.liferay.portal.search.internal.analysis.SimpleKeywordTokenizer;
@@ -81,6 +82,39 @@ public abstract class BaseSubstringFieldQueryBuilderTestCase
 		assertSearchNoHits("\"Name Tag\"");
 		assertSearchNoHits("\"Tag (Name)\"");
 		assertSearchNoHits("\"tag 1\"");
+	}
+
+	protected void testLuceneUnfriendlyTerms() throws Exception {
+		assertSearchNoHits(StringPool.STAR);
+
+		assertSearchNoHits(StringPool.AMPERSAND);
+		assertSearchNoHits(StringPool.CARET);
+		assertSearchNoHits(StringPool.COLON);
+		assertSearchNoHits(StringPool.DASH);
+		assertSearchNoHits(StringPool.EXCLAMATION);
+
+		assertSearchNoHits(StringPool.CLOSE_PARENTHESIS);
+		assertSearchNoHits(StringPool.OPEN_PARENTHESIS);
+
+		assertSearchNoHits(StringPool.CLOSE_BRACKET);
+		assertSearchNoHits(StringPool.OPEN_BRACKET);
+
+		assertSearchNoHits(StringPool.CLOSE_CURLY_BRACE);
+		assertSearchNoHits(StringPool.OPEN_CURLY_BRACE);
+
+		assertSearchNoHits(StringPool.BACK_SLASH);
+
+		assertSearchNoHits(
+			StringPool.STAR + StringPool.SPACE + StringPool.AMPERSAND +
+				StringPool.DASH + StringPool.SPACE + StringPool.EXCLAMATION);
+
+		assertSearchNoHits("AND");
+		assertSearchNoHits("NOT");
+		assertSearchNoHits("OR");
+
+		assertSearchNoHits("ONE AND TWO OR THREE NOT FOUR");
+
+		assertSearchNoHits("\"ONE\" NOT \"TWO\"");
 	}
 
 	protected void testMultiwordPhrasePrefixes() throws Exception {

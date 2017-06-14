@@ -35,6 +35,12 @@ public class SubstringFieldQueryBuilderTest
 
 	@Override
 	@Test
+	public void testLuceneUnfriendlyTerms() throws Exception {
+		super.testLuceneUnfriendlyTerms();
+	}
+
+	@Override
+	@Test
 	public void testMultiwordPhrasePrefixes() throws Exception {
 		super.testMultiwordPhrasePrefixes();
 	}
