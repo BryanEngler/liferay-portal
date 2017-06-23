@@ -22,7 +22,6 @@ import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverter;
 import com.liferay.journal.configuration.JournalServiceConfiguration;
 import com.liferay.journal.model.JournalArticle;
-import com.liferay.journal.model.JournalArticleDisplay;
 import com.liferay.journal.model.JournalArticleResource;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.service.JournalArticleResourceLocalService;
@@ -39,7 +38,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
-import com.liferay.portal.kernel.portlet.PortletRequestModel;
 import com.liferay.portal.kernel.search.BaseIndexer;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
@@ -60,9 +58,7 @@ import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.CharPool;
-import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -71,7 +67,6 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.search.index.IndexStatusManager;
 import com.liferay.trash.TrashHelper;
@@ -474,7 +469,8 @@ public class JournalArticleIndexer
 
 			if (languageId.equals(articleDefaultLanguageId)) {
 				document.addText(Field.CONTENT, content);
-				document.addText(Field.DESCRIPTION, description);
+				document.addText(
+					Field.DESCRIPTION, HtmlUtil.extractText(description));
 				document.addText("defaultLanguageId", languageId);
 			}
 
@@ -484,7 +480,7 @@ public class JournalArticleIndexer
 			document.addText(
 				LocalizationUtil.getLocalizedName(
 					Field.DESCRIPTION, languageId),
-				description);
+				HtmlUtil.extractText(description));
 			document.addText(
 				LocalizationUtil.getLocalizedName(Field.TITLE, languageId),
 				title);
@@ -725,39 +721,14 @@ public class JournalArticleIndexer
 		Document document, Locale snippetLocale, PortletRequest portletRequest,
 		PortletResponse portletResponse) {
 
-		String content = StringPool.BLANK;
+		String prefix = Field.SNIPPET + StringPool.UNDERLINE;
 
-		if ((portletRequest == null) || (portletResponse == null)) {
-			return content;
-		}
+		String content = document.get(
+			snippetLocale, prefix + Field.DESCRIPTION, prefix + Field.CONTENT);
 
-		try {
-			String articleId = document.get(Field.ARTICLE_ID);
-			long groupId = GetterUtil.getLong(document.get(Field.GROUP_ID));
-			double version = GetterUtil.getDouble(document.get(Field.VERSION));
-			PortletRequestModel portletRequestModel = new PortletRequestModel(
-				portletRequest, portletResponse);
-			ThemeDisplay themeDisplay =
-				(ThemeDisplay)portletRequest.getAttribute(
-					WebKeys.THEME_DISPLAY);
-
-			JournalArticleDisplay articleDisplay = _journalContent.getDisplay(
-				groupId, articleId, version, null, Constants.VIEW,
-				LocaleUtil.toLanguageId(snippetLocale), 1, portletRequestModel,
-				themeDisplay);
-
-			content = articleDisplay.getDescription();
-
-			content = HtmlUtil.replaceNewLine(content);
-
-			if (Validator.isNull(content)) {
-				content = HtmlUtil.extractText(articleDisplay.getContent());
-			}
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
+		if (Validator.isNull(content)) {
+			content = document.get(
+				snippetLocale, Field.DESCRIPTION, Field.CONTENT);
 		}
 
 		return content;
