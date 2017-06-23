@@ -102,8 +102,6 @@ journalContentSearch.setResults(documents);
 
 			<%
 			Summary summary = indexer.getSummary(document, StringPool.BLANK, renderRequest, renderResponse);
-
-			summary.setHighlight(PropsValues.INDEX_SEARCH_HIGHLIGHT_ENABLED);
 			%>
 
 			<liferay-ui:search-container-column-icon
