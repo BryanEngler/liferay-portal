@@ -102,7 +102,7 @@ public class EmbeddedElasticsearchConnection
 
 		_node = null;
 
-		_file.deltree(_jnaTmpDir);
+		_file.deltree(_jnaTmpDirName);
 	}
 
 	public Node getNode() {
@@ -130,7 +130,7 @@ public class EmbeddedElasticsearchConnection
 
 		java.io.File tempDir = bundleContext.getDataFile(JNA_TMP_DIR);
 
-		_jnaTmpDir = tempDir.getAbsolutePath();
+		_jnaTmpDirName = tempDir.getAbsolutePath();
 	}
 
 	@Override
@@ -322,7 +322,7 @@ public class EmbeddedElasticsearchConnection
 
 		String jnaTmpDir = System.getProperty("jna.tmpdir");
 
-		System.setProperty("jna.tmpdir", _jnaTmpDir);
+		System.setProperty("jna.tmpdir", _jnaTmpDirName);
 
 		try {
 			NodeBuilder nodeBuilder = new NodeBuilder();
@@ -436,7 +436,7 @@ public class EmbeddedElasticsearchConnection
 	private static final Log _log = LogFactoryUtil.getLog(
 		EmbeddedElasticsearchConnection.class);
 
-	private static String _jnaTmpDir;
+	private static String _jnaTmpDirName;
 
 	@Reference
 	private File _file;
