@@ -264,10 +264,12 @@ public class ElasticsearchFixture implements IndicesAdminClientSupplier {
 
 		Mockito.when(
 			bundleContext.getDataFile(
-				embeddedElasticsearchConnection.JNA_TMP_DIR)).thenReturn(
+				embeddedElasticsearchConnection.JNA_TMP_DIR)
+		).thenReturn(
 			new File(
 				SystemProperties.get(SystemProperties.TMP_DIR) + "/" +
-					embeddedElasticsearchConnection.JNA_TMP_DIR));
+					embeddedElasticsearchConnection.JNA_TMP_DIR)
+		);
 
 		embeddedElasticsearchConnection.activate(
 			bundleContext, _elasticsearchConfigurationProperties);
