@@ -52,6 +52,13 @@ public class PluginManagerImpl implements PluginManager {
 		return _pluginManager.getListInstalledPlugins();
 	}
 
+	@Override
+	public void removePlugin(String name, Terminal terminal)
+		throws IOException {
+
+		_pluginManager.removePlugin(name, terminal);
+	}
+
 	private final org.elasticsearch.plugins.PluginManager _pluginManager;
 
 }

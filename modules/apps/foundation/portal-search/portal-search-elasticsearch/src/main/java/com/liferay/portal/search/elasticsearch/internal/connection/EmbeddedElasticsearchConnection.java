@@ -257,6 +257,10 @@ public class EmbeddedElasticsearchConnection
 		};
 
 		for (String plugin : plugins) {
+			removeObsoletePlugin(plugin, settings);
+		}
+
+		for (String plugin : plugins) {
 			configurePlugin(plugin, settings);
 		}
 	}
@@ -383,6 +387,22 @@ public class EmbeddedElasticsearchConnection
 			settingsBuilder.put("index.refresh_interval", "1ms");
 			settingsBuilder.put("index.translog.flush_threshold_ops", "1");
 			settingsBuilder.put("index.translog.interval", "1ms");
+		}
+	}
+
+	protected void removeObsoletePlugin(String name, Settings settings) {
+		EmbeddedElasticsearchPluginManager embeddedElasticsearchPluginManager =
+			new EmbeddedElasticsearchPluginManager(
+				name, settings.get("path.plugins"),
+				new PluginManagerFactoryImpl(settings),
+				new PluginZipFactoryImpl());
+
+		try {
+			embeddedElasticsearchPluginManager.removeObsoletePlugin();
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(
+				"Unable to install " + name + " plugin", ioe);
 		}
 	}
 

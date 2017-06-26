@@ -17,7 +17,9 @@ package com.liferay.portal.search.elasticsearch.internal.connection;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
 import java.nio.file.Path;
@@ -44,7 +46,7 @@ public class EmbeddedElasticsearchPluginManager {
 	}
 
 	public void install() throws IOException {
-		if (isAlreadyInstalled()) {
+		if (isLatestVersionAlreadyInstalled()) {
 			return;
 		}
 
@@ -56,6 +58,17 @@ public class EmbeddedElasticsearchPluginManager {
 		finally {
 			pluginZip.delete();
 		}
+	}
+
+	public void removeObsoletePlugin() throws IOException {
+		if (isLatestVersionAlreadyInstalled()) {
+			return;
+		}
+
+		PluginManager pluginManager =
+			_pluginManagerFactory.createPluginManager();
+
+		pluginManager.removePlugin(_pluginName, Terminal.DEFAULT);
 	}
 
 	protected PluginZip createPluginZip() throws IOException {
@@ -108,7 +121,7 @@ public class EmbeddedElasticsearchPluginManager {
 		return false;
 	}
 
-	protected boolean isAlreadyInstalled() throws IOException {
+	protected boolean isLatestVersionAlreadyInstalled() throws IOException {
 		PluginManager pluginManager =
 			_pluginManagerFactory.createPluginManager();
 
@@ -117,8 +130,34 @@ public class EmbeddedElasticsearchPluginManager {
 		if (paths != null) {
 			for (Path path : paths) {
 				if (path.endsWith(_pluginName)) {
-					return true;
+					if (_isPluginCurrentVersion(path.toString())) {
+						return true;
+					}
+					else {
+						return false;
+					}
 				}
+			}
+		}
+
+		return false;
+	}
+
+	private boolean _isPluginCurrentVersion(String path) throws IOException {
+		BufferedReader in = new BufferedReader(
+			new FileReader(path + "/plugin-descriptor.properties"));
+
+		String line;
+		String version;
+
+		String property = "version=";
+
+		while ((line = in.readLine()) != null) {
+			if (line.startsWith(property)) {
+				version = line.substring(
+					property.indexOf("=") + 1, line.length());
+
+				return Version.fromString(version).equals(Version.CURRENT);
 			}
 		}
 
