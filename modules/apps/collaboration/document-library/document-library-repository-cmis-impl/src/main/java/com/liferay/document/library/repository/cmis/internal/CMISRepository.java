@@ -1807,7 +1807,6 @@ public class CMISRepository extends BaseCmisRepository {
 					documents.size()]));
 		hits.setLength(total);
 		hits.setQuery(query);
-		hits.setQueryTerms(new String[0]);
 		hits.setScores(ArrayUtil.toFloatArray(scores));
 		hits.setSearchTime(searchTime);
 		hits.setSnippets(snippets.toArray(new String[snippets.size()]));
