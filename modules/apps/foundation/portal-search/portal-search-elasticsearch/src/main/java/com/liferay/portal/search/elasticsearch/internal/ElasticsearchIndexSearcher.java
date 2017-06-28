@@ -317,9 +317,8 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	}
 
 	protected void addSnippets(
-		Document document, Set<String> queryTerms,
-		Map<String, HighlightField> highlightFields, String fieldName,
-		Locale locale) {
+		Document document, Map<String, HighlightField> highlightFields,
+		String fieldName, Locale locale) {
 
 		String snippet = StringPool.BLANK;
 
@@ -354,9 +353,20 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			snippet);
 	}
 
+	/**
+	 * @deprecated As of 2.1.0
+	 */
+	@Deprecated
 	protected void addSnippets(
-		SearchHit hit, Document document, QueryConfig queryConfig,
-		Set<String> queryTerms) {
+		Document document, Set<String> queryTerms,
+		Map<String, HighlightField> highlightFields, String fieldName,
+		Locale locale) {
+
+		addSnippets(document, highlightFields, fieldName, locale);
+	}
+
+	protected void addSnippets(
+		SearchHit hit, Document document, QueryConfig queryConfig) {
 
 		Map<String, HighlightField> highlightFields = hit.getHighlightFields();
 
@@ -366,9 +376,20 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		for (String highlightFieldName : queryConfig.getHighlightFieldNames()) {
 			addSnippets(
-				document, queryTerms, highlightFields, highlightFieldName,
+				document, highlightFields, highlightFieldName,
 				queryConfig.getLocale());
 		}
+	}
+
+	/**
+	 * @deprecated As of 2.1.0
+	 */
+	@Deprecated
+	protected void addSnippets(
+		SearchHit hit, Document document, QueryConfig queryConfig,
+		Set<String> queryTerms) {
+
+		addSnippets(hit, document, queryConfig);
 	}
 
 	protected void addSort(
@@ -609,7 +630,6 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		SearchHits searchHits, Query query, Hits hits) {
 
 		List<Document> documents = new ArrayList<>();
-		Set<String> queryTerms = new HashSet<>();
 		List<Float> scores = new ArrayList<>();
 
 		if (searchHits.totalHits() > 0) {
@@ -623,15 +643,13 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 				scores.add(searchHit.getScore());
 
-				addSnippets(
-					searchHit, document, query.getQueryConfig(), queryTerms);
+				addSnippets(searchHit, document, query.getQueryConfig());
 			}
 		}
 
 		hits.setDocs(documents.toArray(new Document[documents.size()]));
 		hits.setLength((int)searchHits.getTotalHits());
 		hits.setQuery(query);
-		hits.setQueryTerms(queryTerms.toArray(new String[queryTerms.size()]));
 		hits.setScores(ArrayUtil.toFloatArray(scores));
 
 		return hits;
