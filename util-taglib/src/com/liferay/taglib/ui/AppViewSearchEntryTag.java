@@ -77,6 +77,14 @@ public class AppViewSearchEntryTag extends IncludeTag {
 		_fileEntryRelatedSearchResults = fileEntryRelatedSearchResults;
 	}
 
+	public void setHighlightedDescription(String highlightedDescription) {
+		_highlightedDescription = highlightedDescription;
+	}
+
+	public void setHighlightedTitle(String highlightedTitle) {
+		_highlightedTitle = highlightedTitle;
+	}
+
 	public void setHighlightEnabled(boolean highlightEnabled) {
 		_highlightEnabled = highlightEnabled;
 	}
@@ -135,6 +143,8 @@ public class AppViewSearchEntryTag extends IncludeTag {
 		_description = null;
 		_escape = true;
 		_fileEntryRelatedSearchResults = null;
+		_highlightedDescription = null;
+		_highlightedTitle = null;
 		_highlightEnabled = false;
 		_locked = false;
 		_rowCheckerId = null;
@@ -189,6 +199,12 @@ public class AppViewSearchEntryTag extends IncludeTag {
 			"liferay-ui:app-view-search-entry:fileEntryRelatedSearchResults",
 			_fileEntryRelatedSearchResults);
 		request.setAttribute(
+			"liferay-ui:app-view-search-entry:highlightedDescription",
+			_highlightedDescription);
+		request.setAttribute(
+			"liferay-ui:app-view-search-entry:highlightedTitle",
+			_highlightedTitle);
+		request.setAttribute(
 			"liferay-ui:app-view-search-entry:highlightEnabled",
 			_highlightEnabled);
 		request.setAttribute(
@@ -223,6 +239,8 @@ public class AppViewSearchEntryTag extends IncludeTag {
 	private String _description;
 	private boolean _escape = true;
 	private List<RelatedSearchResult<FileEntry>> _fileEntryRelatedSearchResults;
+	private String _highlightedDescription;
+	private String _highlightedTitle;
 	private boolean _highlightEnabled;
 	private boolean _locked;
 
