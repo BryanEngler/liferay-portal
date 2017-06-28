@@ -37,6 +37,7 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PredicateFilter;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.search.summary.SummaryBuilderFactory;
 import com.liferay.portal.search.web.constants.SearchPortletParameterNames;
 import com.liferay.portal.search.web.facet.SearchFacet;
 import com.liferay.portal.search.web.facet.util.SearchFacetTracker;
@@ -62,6 +63,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class SearchDisplayContext {
 
+	/**
+	 * @deprecated As of 1.3.0
+	 */
+	@Deprecated
 	public SearchDisplayContext(
 			RenderRequest renderRequest, PortletPreferences portletPreferences,
 			Portal portal, Html html, Language language,
@@ -70,10 +75,26 @@ public class SearchDisplayContext {
 			PortletURLFactory portletURLFactory)
 		throws PortletException {
 
+		this(
+			renderRequest, portletPreferences, portal, html, language,
+			facetedSearcherManager, indexSearchPropsValues, portletURLFactory,
+			null);
+	}
+
+	public SearchDisplayContext(
+			RenderRequest renderRequest, PortletPreferences portletPreferences,
+			Portal portal, Html html, Language language,
+			FacetedSearcherManager facetedSearcherManager,
+			IndexSearchPropsValues indexSearchPropsValues,
+			PortletURLFactory portletURLFactory,
+			SummaryBuilderFactory summaryBuilderFactory)
+		throws PortletException {
+
 		_renderRequest = renderRequest;
 		_portletPreferences = portletPreferences;
 		_indexSearchPropsValues = indexSearchPropsValues;
 		_portletURLFactory = portletURLFactory;
+		_summaryBuilderFactory = summaryBuilderFactory;
 
 		ThemeDisplaySupplier themeDisplaySupplier =
 			new PortletRequestThemeDisplaySupplier(renderRequest);
@@ -332,6 +353,10 @@ public class SearchDisplayContext {
 			"searchScope", StringPool.BLANK);
 
 		return _searchScopePreferenceString;
+	}
+
+	public SummaryBuilderFactory getSummaryBuilderFactory() {
+		return _summaryBuilderFactory;
 	}
 
 	public boolean isCollatedSpellCheckResultEnabled() {
@@ -613,6 +638,7 @@ public class SearchDisplayContext {
 	private final SearchContext _searchContext;
 	private final SearchResultPreferences _searchResultPreferences;
 	private String _searchScopePreferenceString;
+	private final SummaryBuilderFactory _summaryBuilderFactory;
 	private final ThemeDisplaySupplier _themeDisplaySupplier;
 	private Boolean _useAdvancedSearchSyntax;
 
