@@ -133,6 +133,10 @@ public class SearchResultSummaryDisplayBuilder {
 		_portletURLFactory = portletURLFactory;
 	}
 
+	/**
+	 * @deprecated As of 1.2.0
+	 */
+	@Deprecated
 	public void setQueryTerms(String[] queryTerms) {
 		_queryTerms = queryTerms;
 	}
@@ -573,7 +577,6 @@ public class SearchResultSummaryDisplayBuilder {
 
 		if (summary != null) {
 			summary.setHighlight(_highlightEnabled);
-			summary.setQueryTerms(_queryTerms);
 		}
 
 		return summary;
@@ -662,7 +665,13 @@ public class SearchResultSummaryDisplayBuilder {
 	private Language _language;
 	private Locale _locale;
 	private PortletURLFactory _portletURLFactory;
+
+	/**
+	 * @deprecated As of 1.2.0
+	 */
+	@Deprecated
 	private String[] _queryTerms;
+
 	private RenderRequest _renderRequest;
 	private RenderResponse _renderResponse;
 	private HttpServletRequest _request;
