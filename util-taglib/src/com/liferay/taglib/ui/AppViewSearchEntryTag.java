@@ -85,6 +85,10 @@ public class AppViewSearchEntryTag extends IncludeTag {
 		_locked = locked;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	public void setQueryTerms(String[] queryTerms) {
 		_queryTerms = queryTerms;
 	}
@@ -133,7 +137,6 @@ public class AppViewSearchEntryTag extends IncludeTag {
 		_fileEntryRelatedSearchResults = null;
 		_highlightEnabled = false;
 		_locked = false;
-		_queryTerms = null;
 		_rowCheckerId = null;
 		_rowCheckerName = null;
 		_showCheckbox = false;
@@ -191,8 +194,6 @@ public class AppViewSearchEntryTag extends IncludeTag {
 		request.setAttribute(
 			"liferay-ui:app-view-search-entry:locked", _locked);
 		request.setAttribute(
-			"liferay-ui:app-view-search-entry:queryTerms", _queryTerms);
-		request.setAttribute(
 			"liferay-ui:app-view-search-entry:rowCheckerId", _rowCheckerId);
 		request.setAttribute(
 			"liferay-ui:app-view-search-entry:rowCheckerName", _rowCheckerName);
@@ -224,7 +225,13 @@ public class AppViewSearchEntryTag extends IncludeTag {
 	private List<RelatedSearchResult<FileEntry>> _fileEntryRelatedSearchResults;
 	private boolean _highlightEnabled;
 	private boolean _locked;
+
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	private String[] _queryTerms;
+
 	private String _rowCheckerId;
 	private String _rowCheckerName;
 	private boolean _showCheckbox;
