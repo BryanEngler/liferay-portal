@@ -382,12 +382,6 @@
 			<type>boolean</type>
 		</attribute>
 		<attribute>
-			<description>Query terms of the search.</description>
-			<name>queryTerms</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
 			<description>A checkbox input ID to be used for the entry row checker. This is a Java <![CDATA[<code>long</code>]]>.</description>
 			<name>rowCheckerId</name>
 			<required>false</required>
