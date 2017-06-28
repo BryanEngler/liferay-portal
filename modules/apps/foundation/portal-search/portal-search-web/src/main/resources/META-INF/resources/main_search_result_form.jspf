@@ -29,11 +29,10 @@
 			colspan="<%= 2 %>"
 		>
 			<h5>
-				<a href="<%= searchResultSummaryDisplayContext.getViewURL() %>">
-					<strong><%= searchResultSummaryDisplayContext.getHighlightedTitle() %></strong>
-				</a>
+				<a href="<%= searchResultSummaryDisplayContext.getViewURL() %>"><strong><%= searchResultSummaryDisplayContext.getHighlightedTitle() %></strong></a>
 
 				<c:if test="<%= searchResultSummaryDisplayContext.isAssetRendererURLDownloadVisible() %>">
+					-
 					<aui:a href="<%= searchResultSummaryDisplayContext.getAssetRendererURLDownload() %>">
 						<liferay-ui:message arguments="<%= HtmlUtil.escape(searchResultSummaryDisplayContext.getTitle()) %>" key="download-x" />
 					</aui:a>

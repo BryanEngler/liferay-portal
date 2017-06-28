@@ -37,6 +37,7 @@ import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.search.summary.SummaryBuilderFactory;
 import com.liferay.portal.search.test.SearchTestUtil;
 import com.liferay.portal.search.web.internal.display.context.PortletURLFactory;
 import com.liferay.portal.search.web.internal.display.context.SearchResultPreferences;
@@ -348,6 +349,8 @@ public class SearchResultSummaryDisplayBuilderTest {
 			Mockito.mock(SearchResultPreferences.class));
 		searchResultSummaryDisplayBuilder.setSearchResultViewURLSupplier(
 			Mockito.mock(SearchResultViewURLSupplier.class));
+		searchResultSummaryDisplayBuilder.setSummaryBuilderFactory(
+			Mockito.mock(SummaryBuilderFactory.class));
 		searchResultSummaryDisplayBuilder.setThemeDisplay(themeDisplay);
 
 		return searchResultSummaryDisplayBuilder;
