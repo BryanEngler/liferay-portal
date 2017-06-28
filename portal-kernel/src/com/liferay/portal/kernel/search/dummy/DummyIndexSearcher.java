@@ -98,7 +98,6 @@ public class DummyIndexSearcher implements IndexSearcher {
 		hits.setLength(0);
 		hits.setQuery(new StringQuery(StringPool.BLANK));
 		hits.setQuerySuggestions(new String[0]);
-		hits.setQueryTerms(new String[0]);
 		hits.setLength(0);
 		hits.setScores(new float[0]);
 		hits.setSearchTime(0);
