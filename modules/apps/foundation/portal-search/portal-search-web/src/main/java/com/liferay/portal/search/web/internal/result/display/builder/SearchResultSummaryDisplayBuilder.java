@@ -109,6 +109,10 @@ public class SearchResultSummaryDisplayBuilder {
 		_document = document;
 	}
 
+	/**
+	 * @deprecated As of 1.2.0
+	 */
+	@Deprecated
 	public void setHighlightEnabled(boolean highlightEnabled) {
 		_highlightEnabled = highlightEnabled;
 	}
@@ -575,10 +579,6 @@ public class SearchResultSummaryDisplayBuilder {
 				assetRenderer.getSearchSummary(_locale));
 		}
 
-		if (summary != null) {
-			summary.setHighlight(_highlightEnabled);
-		}
-
 		return summary;
 	}
 
@@ -659,7 +659,13 @@ public class SearchResultSummaryDisplayBuilder {
 	private AssetRendererFactoryLookup _assetRendererFactoryLookup;
 	private String _currentURL;
 	private Document _document;
+
+	/**
+	 * @deprecated As of 1.2.0
+	 */
+	@Deprecated
 	private boolean _highlightEnabled;
+
 	private boolean _imageRequested;
 	private IndexerRegistry _indexerRegistry;
 	private Language _language;

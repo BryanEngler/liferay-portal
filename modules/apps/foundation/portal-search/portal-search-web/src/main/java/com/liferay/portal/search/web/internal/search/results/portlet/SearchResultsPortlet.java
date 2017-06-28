@@ -311,8 +311,6 @@ public class SearchResultsPortlet
 			assetRendererFactoryLookup);
 		searchResultSummaryDisplayBuilder.setCurrentURL(portletURL.toString());
 		searchResultSummaryDisplayBuilder.setDocument(document);
-		searchResultSummaryDisplayBuilder.setHighlightEnabled(
-			searchResultsPortletPreferences.isHighlightEnabled());
 		searchResultSummaryDisplayBuilder.setImageRequested(true);
 		searchResultSummaryDisplayBuilder.setIndexerRegistry(indexerRegistry);
 		searchResultSummaryDisplayBuilder.setLanguage(language);

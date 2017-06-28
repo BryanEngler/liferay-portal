@@ -51,7 +51,6 @@ page import="com.liferay.portal.kernel.search.facet.Facet" %><%@
 page import="com.liferay.portal.kernel.search.facet.collector.FacetCollector" %><%@
 page import="com.liferay.portal.kernel.search.facet.collector.TermCollector" %><%@
 page import="com.liferay.portal.kernel.search.facet.config.FacetConfiguration" %><%@
-page import="com.liferay.portal.kernel.search.highlight.HighlightUtil" %><%@
 page import="com.liferay.portal.kernel.search.suggest.KeywordsSuggestionHolder" %><%@
 page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.kernel.security.permission.ResourceActionsUtil" %><%@
