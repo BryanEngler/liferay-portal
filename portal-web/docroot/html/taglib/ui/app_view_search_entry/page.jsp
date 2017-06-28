@@ -26,6 +26,8 @@ String cssClass = GetterUtil.getString((String)request.getAttribute("liferay-ui:
 String description = (String)request.getAttribute("liferay-ui:app-view-search-entry:description");
 boolean escape = GetterUtil.getBoolean(request.getAttribute("liferay-ui:app-view-search-entry:escape"));
 List<RelatedSearchResult<FileEntry>> fileEntryRelatedSearchResults = (List<RelatedSearchResult<FileEntry>>)request.getAttribute("liferay-ui:app-view-search-entry:fileEntryRelatedSearchResults");
+String highlightedDescription = (String)request.getAttribute("liferay-ui:app-view-search-entry:highlightedDescription");
+String highlightedTitle = (String)request.getAttribute("liferay-ui:app-view-search-entry:highlightedTitle");
 boolean highlightEnabled = GetterUtil.getBoolean(request.getAttribute("liferay-ui:app-view-search-entry:highlightEnabled"));
 boolean locked = GetterUtil.getBoolean(request.getAttribute("liferay-ui:app-view-search-entry:locked"));
 String rowCheckerId = (String)request.getAttribute("liferay-ui:app-view-search-entry:rowCheckerId");
@@ -42,10 +44,6 @@ String linkTitle = title;
 if (Validator.isNotNull(description)) {
 	linkTitle += " - " + description;
 }
-
-Summary summary = new Summary(title, description);
-
-summary.setEscape(escape);
 %>
 
 <div class="app-view-entry app-view-search-entry-taglib entry-display-style <%= showCheckbox ? "selectable" : StringPool.BLANK %> <%= cssClass %>" data-title="<%= HtmlUtil.escapeAttribute(StringUtil.shorten(title, 60)) %>">
@@ -62,7 +60,7 @@ summary.setEscape(escape);
 
 		<div class="entry-metadata">
 			<span class="entry-title">
-				<%= summary.getHighlightedTitle() %>
+				<%= highlightEnabled ? highlightedTitle : title %>
 
 				<c:if test="<%= (status != WorkflowConstants.STATUS_ANY) && (status != WorkflowConstants.STATUS_APPROVED) %>">
 					<aui:workflow-status showIcon="<%= false %>" showLabel="<%= false %>" status="<%= status %>" />
@@ -94,7 +92,7 @@ summary.setEscape(escape);
 			</c:if>
 
 			<span class="entry-description">
-				<%= summary.getHighlightedContent() %>
+				<%= highlightEnabled ? highlightedDescription : description %>
 			</span>
 		</div>
 	</a>
@@ -109,7 +107,7 @@ summary.setEscape(escape);
 
 			AssetRenderer<?> assetRenderer = assetRendererFactory.getAssetRenderer(fileEntry.getFileEntryId());
 
-			summary = fileEntryRelatedSearchResult.getSummary();
+			Summary summary = fileEntryRelatedSearchResult.getSummary();
 		%>
 
 			<div class="entry-attachment">
@@ -153,7 +151,7 @@ summary.setEscape(escape);
 
 			User userDisplay = comment.getUser();
 
-			summary = commentRelatedSearchResult.getSummary();
+			Summary summary = commentRelatedSearchResult.getSummary();
 		%>
 
 			<div class="entry-discussion">
