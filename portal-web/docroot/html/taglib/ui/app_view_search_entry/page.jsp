@@ -28,7 +28,6 @@ boolean escape = GetterUtil.getBoolean(request.getAttribute("liferay-ui:app-view
 List<RelatedSearchResult<FileEntry>> fileEntryRelatedSearchResults = (List<RelatedSearchResult<FileEntry>>)request.getAttribute("liferay-ui:app-view-search-entry:fileEntryRelatedSearchResults");
 boolean highlightEnabled = GetterUtil.getBoolean(request.getAttribute("liferay-ui:app-view-search-entry:highlightEnabled"));
 boolean locked = GetterUtil.getBoolean(request.getAttribute("liferay-ui:app-view-search-entry:locked"));
-String[] queryTerms = (String[])request.getAttribute("liferay-ui:app-view-search-entry:queryTerms");
 String rowCheckerId = (String)request.getAttribute("liferay-ui:app-view-search-entry:rowCheckerId");
 String rowCheckerName = (String)request.getAttribute("liferay-ui:app-view-search-entry:rowCheckerName");
 boolean showCheckbox = GetterUtil.getBoolean(request.getAttribute("liferay-ui:app-view-search-entry:showCheckbox"));
@@ -48,7 +47,6 @@ Summary summary = new Summary(title, description);
 
 summary.setEscape(escape);
 summary.setHighlight(highlightEnabled);
-summary.setQueryTerms(queryTerms);
 %>
 
 <div class="app-view-entry app-view-search-entry-taglib entry-display-style <%= showCheckbox ? "selectable" : StringPool.BLANK %> <%= cssClass %>" data-title="<%= HtmlUtil.escapeAttribute(StringUtil.shorten(title, 60)) %>">
@@ -115,7 +113,6 @@ summary.setQueryTerms(queryTerms);
 			summary = fileEntryRelatedSearchResult.getSummary();
 
 			summary.setHighlight(highlightEnabled);
-			summary.setQueryTerms(queryTerms);
 		%>
 
 			<div class="entry-attachment">
@@ -162,7 +159,6 @@ summary.setQueryTerms(queryTerms);
 			summary = commentRelatedSearchResult.getSummary();
 
 			summary.setHighlight(highlightEnabled);
-			summary.setQueryTerms(queryTerms);
 		%>
 
 			<div class="entry-discussion">
