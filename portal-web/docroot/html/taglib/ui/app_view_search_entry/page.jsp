@@ -46,7 +46,6 @@ if (Validator.isNotNull(description)) {
 Summary summary = new Summary(title, description);
 
 summary.setEscape(escape);
-summary.setHighlight(highlightEnabled);
 %>
 
 <div class="app-view-entry app-view-search-entry-taglib entry-display-style <%= showCheckbox ? "selectable" : StringPool.BLANK %> <%= cssClass %>" data-title="<%= HtmlUtil.escapeAttribute(StringUtil.shorten(title, 60)) %>">
@@ -111,8 +110,6 @@ summary.setHighlight(highlightEnabled);
 			AssetRenderer<?> assetRenderer = assetRendererFactory.getAssetRenderer(fileEntry.getFileEntryId());
 
 			summary = fileEntryRelatedSearchResult.getSummary();
-
-			summary.setHighlight(highlightEnabled);
 		%>
 
 			<div class="entry-attachment">
@@ -157,8 +154,6 @@ summary.setHighlight(highlightEnabled);
 			User userDisplay = comment.getUser();
 
 			summary = commentRelatedSearchResult.getSummary();
-
-			summary.setHighlight(highlightEnabled);
 		%>
 
 			<div class="entry-discussion">
