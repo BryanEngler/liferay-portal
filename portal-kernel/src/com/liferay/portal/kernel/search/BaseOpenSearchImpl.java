@@ -301,8 +301,8 @@ public abstract class BaseOpenSearchImpl implements OpenSearch {
 	}
 
 	protected Object[] addSearchResults(
-		String[] queryTerms, String keywords, int startPage, int itemsPerPage,
-		int total, int start, String title, String searchPath, String format,
+		String keywords, int startPage, int itemsPerPage, int total, int start,
+		String title, String searchPath, String format,
 		ThemeDisplay themeDisplay) {
 
 		int totalPages = 0;
@@ -321,23 +321,36 @@ public abstract class BaseOpenSearchImpl implements OpenSearch {
 
 		if (format.equals("rss")) {
 			return addSearchResultsRSS(
-				doc, queryTerms, keywords, startPage, itemsPerPage, total,
-				start, totalPages, previousPage, nextPage, title, searchPath,
+				doc, keywords, startPage, itemsPerPage, total, start,
+				totalPages, previousPage, nextPage, title, searchPath,
 				themeDisplay);
 		}
 		else {
 			return addSearchResultsAtom(
-				doc, queryTerms, keywords, startPage, itemsPerPage, total,
-				start, totalPages, previousPage, nextPage, title, searchPath,
+				doc, keywords, startPage, itemsPerPage, total, start,
+				totalPages, previousPage, nextPage, title, searchPath,
 				themeDisplay);
 		}
 	}
 
-	protected Object[] addSearchResultsAtom(
-		Document doc, String[] queryTerms, String keywords, int startPage,
-		int itemsPerPage, int total, int start, int totalPages,
-		int previousPage, int nextPage, String title, String searchPath,
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
+	protected Object[] addSearchResults(
+		String[] queryTerms, String keywords, int startPage, int itemsPerPage,
+		int total, int start, String title, String searchPath, String format,
 		ThemeDisplay themeDisplay) {
+
+		return addSearchResults(
+			keywords, startPage, itemsPerPage, total, start, title, searchPath,
+			format, themeDisplay);
+	}
+
+	protected Object[] addSearchResultsAtom(
+		Document doc, String keywords, int startPage, int itemsPerPage,
+		int total, int start, int totalPages, int previousPage, int nextPage,
+		String title, String searchPath, ThemeDisplay themeDisplay) {
 
 		// feed
 
@@ -374,12 +387,6 @@ public abstract class BaseOpenSearchImpl implements OpenSearch {
 		OpenSearchUtil.addElement(
 			root, "id", OpenSearchUtil.DEFAULT_NAMESPACE,
 			"urn:uuid:" + PortalUUIDUtil.generate());
-
-		// queryTerms
-
-		OpenSearchUtil.addElement(
-			root, "queryTerms", OpenSearchUtil.DEFAULT_NAMESPACE,
-			StringUtil.merge(queryTerms, StringPool.COMMA_AND_SPACE));
 
 		// opensearch:totalResults
 
@@ -439,11 +446,25 @@ public abstract class BaseOpenSearchImpl implements OpenSearch {
 		return new Object[] {doc, root};
 	}
 
-	protected Object[] addSearchResultsRSS(
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
+	protected Object[] addSearchResultsAtom(
 		Document doc, String[] queryTerms, String keywords, int startPage,
 		int itemsPerPage, int total, int start, int totalPages,
 		int previousPage, int nextPage, String title, String searchPath,
 		ThemeDisplay themeDisplay) {
+
+		return addSearchResultsAtom(
+			doc, keywords, startPage, itemsPerPage, total, start, totalPages,
+			previousPage, nextPage, title, searchPath, themeDisplay);
+	}
+
+	protected Object[] addSearchResultsRSS(
+		Document doc, String keywords, int startPage, int itemsPerPage,
+		int total, int start, int totalPages, int previousPage, int nextPage,
+		String title, String searchPath, ThemeDisplay themeDisplay) {
 
 		// rss
 
@@ -477,12 +498,6 @@ public abstract class BaseOpenSearchImpl implements OpenSearch {
 		OpenSearchUtil.addElement(
 			channel, "description", OpenSearchUtil.NO_NAMESPACE, title);
 
-		// queryTerms
-
-		OpenSearchUtil.addElement(
-			channel, "queryTerms", OpenSearchUtil.NO_NAMESPACE,
-			StringUtil.merge(queryTerms, StringPool.COMMA_AND_SPACE));
-
 		// opensearch:totalResults
 
 		OpenSearchUtil.addElement(
@@ -508,6 +523,21 @@ public abstract class BaseOpenSearchImpl implements OpenSearch {
 		query.addAttribute("startPage", String.valueOf(startPage));
 
 		return new Object[] {doc, channel};
+	}
+
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
+	protected Object[] addSearchResultsRSS(
+		Document doc, String[] queryTerms, String keywords, int startPage,
+		int itemsPerPage, int total, int start, int totalPages,
+		int previousPage, int nextPage, String title, String searchPath,
+		ThemeDisplay themeDisplay) {
+
+		return addSearchResultsRSS(
+			doc, keywords, startPage, itemsPerPage, total, start, totalPages,
+			previousPage, nextPage, title, searchPath, themeDisplay);
 	}
 
 	protected String getOpenSearchDescriptionURL(

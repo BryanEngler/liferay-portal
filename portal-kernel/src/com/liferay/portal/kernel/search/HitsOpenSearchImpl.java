@@ -109,12 +109,10 @@ public abstract class HitsOpenSearchImpl extends BaseOpenSearchImpl {
 
 			Hits results = indexer.search(searchContext);
 
-			String[] queryTerms = results.getQueryTerms();
-
 			int total = results.getLength();
 
 			Object[] values = addSearchResults(
-				queryTerms, keywords, startPage, itemsPerPage, total, start,
+				keywords, startPage, itemsPerPage, total, start,
 				getTitle(keywords), getSearchPath(), format, themeDisplay);
 
 			com.liferay.portal.kernel.xml.Document doc =

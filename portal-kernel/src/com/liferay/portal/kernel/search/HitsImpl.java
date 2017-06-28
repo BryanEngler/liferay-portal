@@ -50,7 +50,6 @@ public class HitsImpl implements Hits {
 		setLength(hits.getLength());
 		setQuery(hits.getQuery());
 		setQuerySuggestions(hits.getQuerySuggestions());
-		setQueryTerms(hits.getQueryTerms());
 		setScores(hits.getScores());
 		setSearchTime(hits.getSearchTime());
 		setSnippets(hits.getSnippets());
@@ -101,6 +100,10 @@ public class HitsImpl implements Hits {
 		return _querySuggestions;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	@JSON
 	@Override
 	public String[] getQueryTerms() {
@@ -174,6 +177,10 @@ public class HitsImpl implements Hits {
 		_querySuggestions = querySuggestions;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	@Override
 	public void setQueryTerms(String[] queryTerms) {
 		_queryTerms = queryTerms;
@@ -257,7 +264,13 @@ public class HitsImpl implements Hits {
 	private int _length;
 	private Query _query;
 	private String[] _querySuggestions;
+
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	private String[] _queryTerms;
+
 	private float[] _scores = new float[0];
 	private float _searchTime;
 	private String[] _snippets = {};
