@@ -517,7 +517,7 @@ public class EmbeddedElasticsearchConnection
 
 	/**
 	 * Keep this as a static field to avoid the class loading failure during
-	 * tomcat shutdown.
+	 * Tomcat shutdown.
 	 */
 	private static final RejectedExecutionHandler _REJECTED_EXECUTION_HANDLER =
 		new RejectedExecutionHandler() {
