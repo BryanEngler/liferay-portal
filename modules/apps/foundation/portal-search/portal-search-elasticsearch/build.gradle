@@ -27,6 +27,7 @@ dependencies {
 	compileInclude group: "io.netty", name: "netty", version: "3.10.6.Final"
 	compileInclude group: "io.netty", name: "netty-all", version: "4.1.11.Final"
 	compileInclude group: "joda-time", name: "joda-time", version: "2.9.4"
+	compileInclude group: "net.sf.jopt-simple", name: "jopt-simple", version: "5.0.2"
 	compileInclude group: "org.antlr", name: "antlr-runtime", version: "3.5"
 	compileInclude group: "org.apache.httpcomponents", name: "httpclient", version: "4.4"
 	compileInclude group: "org.apache.logging.log4j", name: "log4j-api", version: "2.7"
@@ -57,10 +58,10 @@ dependencies {
 	compileInclude group: "org.ow2.asm", name: "asm-commons", version: "4.1"
 	compileInclude group: "org.yaml", name: "snakeyaml", version: "1.15"
 
-	elasticsearchPlugins ext: "zip", group: "org.elasticsearch.plugin", name: "analysis-icu", version: "2.4.4"
-	elasticsearchPlugins ext: "zip", group: "org.elasticsearch.plugin", name: "analysis-kuromoji", version: "2.4.4"
-	elasticsearchPlugins ext: "zip", group: "org.elasticsearch.plugin", name: "analysis-smartcn", version: "2.4.4"
-	elasticsearchPlugins ext: "zip", group: "org.elasticsearch.plugin", name: "analysis-stempel", version: "2.4.4"
+	elasticsearchPlugins ext: "zip", group: "org.elasticsearch.plugin", name: "analysis-icu", version: elasticsearchVersion
+	elasticsearchPlugins ext: "zip", group: "org.elasticsearch.plugin", name: "analysis-kuromoji", version: elasticsearchVersion
+	elasticsearchPlugins ext: "zip", group: "org.elasticsearch.plugin", name: "analysis-smartcn", version: elasticsearchVersion
+	elasticsearchPlugins ext: "zip", group: "org.elasticsearch.plugin", name: "analysis-stempel", version: elasticsearchVersion
 
 	provided group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.1.0"
 	provided group: "com.ibm.icu", name: "icu4j", version: "54.1.1"

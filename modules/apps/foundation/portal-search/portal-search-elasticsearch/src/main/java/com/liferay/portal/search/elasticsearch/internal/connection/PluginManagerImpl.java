@@ -16,15 +16,21 @@ package com.liferay.portal.search.elasticsearch.internal.connection;
 
 import java.io.IOException;
 
+import java.lang.reflect.Constructor;
 import java.net.URL;
 
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
+import com.google.common.collect.Iterators;
 import org.elasticsearch.cli.Terminal;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.env.Environment;
 import org.elasticsearch.plugins.PluginInfo;
 import org.elasticsearch.plugins.PluginManager.OutputMode;
+import org.elasticsearch.plugins.PluginCli;
+import org.elasticsearch.plugins.PluginInfo;
 
 /**
  * @author Artur Aquino
@@ -36,8 +42,10 @@ public class PluginManagerImpl implements PluginManager {
 		Environment environment, URL url, OutputMode outputMode,
 		TimeValue timeout) {
 
-		_pluginManager = new org.elasticsearch.plugins.PluginManager(
-			environment, url, outputMode, timeout);
+		this.environment = environment;
+		this.url = url;
+		this.outputMode = outputMode;
+		this.timeout = timeout;
 	}
 
 	@Override
@@ -45,12 +53,37 @@ public class PluginManagerImpl implements PluginManager {
 			String name, Terminal terminal, boolean batch)
 		throws IOException {
 
-		_pluginManager.downloadAndExtract(name, terminal, batch);
+		try {
+			PluginCli pluginCli = getPluginCli();
+
+			pluginCli.main(new String[]{"install", name,
+					"-Epath.home=" + environment.settings().get("path.home"), "-s"},
+				terminal);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private PluginCli getPluginCli() throws Exception {
+		Constructor<PluginCli> constructor =
+			PluginCli.class.getDeclaredConstructor();
+
+		constructor.setAccessible(true);
+		return constructor.newInstance();
 	}
 
 	@Override
 	public Path[] getInstalledPluginsPaths() throws IOException {
-		return _pluginManager.getListInstalledPlugins();
+		if (!Files.exists(environment.pluginsFile())) {
+			return new Path[0];
+		}
+
+		try (DirectoryStream<Path> stream =
+			     Files.newDirectoryStream(environment.pluginsFile())) {
+
+			return Iterators.toArray(stream.iterator(), Path.class);
+		}
 	}
 
 	@Override
@@ -73,11 +106,26 @@ public class PluginManagerImpl implements PluginManager {
 
 	@Override
 	public void removePlugin(String name, Terminal terminal)
-		throws IOException {
+	    throws IOException {
 
-		_pluginManager.removePlugin(name, terminal);
+	    try {
+		    PluginCli pluginCli = getPluginCli();
+
+		    pluginCli.main(new String[]{"remove", name,
+				    "-Epath.home=" + environment.settings().get("path.home"), "-s"},
+			    terminal);
+	    }
+	    catch (Exception e) {
+		    e.printStackTrace();
+	    }
 	}
 
-	private final org.elasticsearch.plugins.PluginManager _pluginManager;
+	public enum OutputMode {
+		DEFAULT, SILENT, VERBOSE
+	}
 
+	private final Environment environment;
+	private final URL url;
+	private final OutputMode outputMode;
+	private final TimeValue timeout;
 }

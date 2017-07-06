@@ -54,6 +54,7 @@ import org.elasticsearch.discovery.DiscoveryService;
 import org.elasticsearch.index.IndexService;
 import org.elasticsearch.index.settings.IndexSettingsService;
 import org.elasticsearch.indices.IndicesService;
+import org.elasticsearch.node.InternalSettingsPreparer;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.search.SearchService;
@@ -68,7 +69,6 @@ import org.elasticsearch.node.NodeValidationException;
 
 import org.osgi.framework.BundleContext;
 import org.elasticsearch.node.NodeValidationException;
-import org.elasticsearch.node.InternalSettingsPreparer;
 import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.transport.Netty4Plugin;
 
@@ -309,7 +309,7 @@ public class EmbeddedElasticsearchConnection
 			props.get(PropsKeys.LIFERAY_HOME) + "/data/elasticsearch/repo");
 	}
 
-	/* protected void configurePlugin(String name, Settings settings) {
+	protected void configurePlugin(String name, Settings settings) {
 		EmbeddedElasticsearchPluginManager embeddedElasticsearchPluginManager =
 			createEmbeddedElasticsearchPluginManager(name, settings);
 
@@ -320,9 +320,9 @@ public class EmbeddedElasticsearchConnection
 			throw new RuntimeException(
 				"Unable to install " + name + " plugin", ioe);
 		}
-	}*/
+	}
 
-	/* protected void configurePlugins() {
+	protected void configurePlugins() {
 		Settings settings = settingsBuilder.build();
 
 		String[] plugins = {
@@ -337,7 +337,7 @@ public class EmbeddedElasticsearchConnection
 		for (String plugin : plugins) {
 			configurePlugin(plugin, settings);
 		}
-	}*/
+	}
 
 	@Override
 	protected Client createClient() {
@@ -393,7 +393,8 @@ public class EmbeddedElasticsearchConnection
 			String name, Settings settings) {
 
 		return new EmbeddedElasticsearchPluginManager(
-			name, settings.get("path.plugins"),
+			name,
+			props.get(PropsKeys.LIFERAY_HOME) + "/data/elasticsearch/plugins",
 			new PluginManagerFactoryImpl(settings), new PluginZipFactoryImpl());
 	}
 
@@ -451,17 +452,6 @@ public class EmbeddedElasticsearchConnection
 		close();
 	}
 
-	private static class PluginNode extends Node {
-
-		private PluginNode(final Settings settings) {
-			super(
-				InternalSettingsPreparer.prepareEnvironment(settings, null),
-				Collections.<Class<? extends Plugin>>singletonList(
-					Netty4Plugin.class));
-		}
-
-	}
-
 	@Override
 	protected void loadRequiredDefaultConfigurations() {
 		settingsBuilder.put("action.auto_create_index", false);
@@ -485,7 +475,20 @@ public class EmbeddedElasticsearchConnection
 
 		configurePaths();
 
-		/* configurePlugins();*/
+		configurePlugins();
+	}
+
+	protected void removeObsoletePlugin(String name, Settings settings) {
+		EmbeddedElasticsearchPluginManager embeddedElasticsearchPluginManager =
+			createEmbeddedElasticsearchPluginManager(name, settings);
+
+			try {
+				embeddedElasticsearchPluginManager.removeObsoletePlugin();
+			}
+		catch (IOException ioe) {
+				throw new RuntimeException(
+					"Unable to remove " + name + " plugin", ioe);
+			}
 	}
 
 	protected void removeObsoletePlugin(String name, Settings settings) {
@@ -571,5 +574,16 @@ public class EmbeddedElasticsearchConnection
 	private File _file;
 
 	private Node _node;
+
+	private static class PluginNode extends Node {
+
+		private PluginNode(final Settings settings) {
+			super(
+				InternalSettingsPreparer.prepareEnvironment(settings, null),
+				Collections.<Class<? extends Plugin>>singletonList(
+					Netty4Plugin.class));
+		}
+
+	}
 
 }

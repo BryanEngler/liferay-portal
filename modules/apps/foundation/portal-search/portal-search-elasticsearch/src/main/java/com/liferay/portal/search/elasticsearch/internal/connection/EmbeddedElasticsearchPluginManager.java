@@ -122,7 +122,7 @@ public class EmbeddedElasticsearchPluginManager {
 	protected Terminal getTerminal() {
 		Terminal terminal = Terminal.DEFAULT;
 
-		terminal.verbosity(Verbosity.SILENT);
+		terminal.setVerbosity(Verbosity.SILENT);
 
 		return terminal;
 	}

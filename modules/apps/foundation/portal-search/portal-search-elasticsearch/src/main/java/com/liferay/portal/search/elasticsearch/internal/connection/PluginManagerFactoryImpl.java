@@ -42,8 +42,7 @@ public class PluginManagerFactoryImpl implements PluginManagerFactory {
 	protected PluginManager doCreatePluginManager(URL url) {
 		return new PluginManagerImpl(
 			new Environment(_settings), url,
-			org.elasticsearch.plugins.PluginManager.OutputMode.SILENT,
-			TimeValue.timeValueMinutes(1));
+			PluginManagerImpl.OutputMode.SILENT, TimeValue.timeValueMinutes(1));
 	}
 
 	private final Settings _settings;
