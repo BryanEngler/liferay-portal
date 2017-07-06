@@ -27,8 +27,8 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.search.elasticsearch.groupby.GroupByTranslator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -66,8 +66,7 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 		String fieldName = groupBy.getField();
 
 		TermsAggregationBuilder termsAggregationBuilder =
-			AggregationBuilders.terms(
-				GROUP_BY_AGGREGATION_PREFIX + fieldName);
+			AggregationBuilders.terms(GROUP_BY_AGGREGATION_PREFIX + fieldName);
 
 		if (_textKeywordFields.contains(fieldName)) {
 			fieldName = fieldName + ".keyword";
@@ -81,6 +80,19 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 		termsAggregationBuilder.subAggregation(topHitsAggregationBuilder);
 
 		searchRequestBuilder.addAggregation(termsAggregationBuilder);
+	}
+
+	@Activate
+	protected void activate(Map<String, Object> properties) {
+		com.liferay.portal.search.elasticsearch.internal.configuration.
+			FacetConfiguration facetConfiguration =
+				ConfigurableUtil.createConfigurable(
+					com.liferay.portal.search.elasticsearch.internal.
+						configuration.FacetConfiguration.class, properties);
+
+		String[] fieldNames = facetConfiguration.facetKeywordFields();
+
+		Collections.addAll(_textKeywordFields, fieldNames);
 	}
 
 	protected void addHighlightedField(
@@ -234,19 +246,6 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 		return topHitsAggregationBuilder;
 	}
 
-	@Activate
-	protected void activate(Map<String, Object> properties) {
-		com.liferay.portal.search.elasticsearch.internal.configuration.
-			FacetConfiguration facetConfiguration =
-			ConfigurableUtil.createConfigurable(
-				com.liferay.portal.search.elasticsearch.internal.
-					configuration.FacetConfiguration.class,
-				properties);
-
-		String[] fieldNames = facetConfiguration.facetKeywordFields();
-
-		_textKeywordFields.addAll(Arrays.asList(fieldNames));
-	}
-
 	private final Set<String> _textKeywordFields = new HashSet<>();
+
 }

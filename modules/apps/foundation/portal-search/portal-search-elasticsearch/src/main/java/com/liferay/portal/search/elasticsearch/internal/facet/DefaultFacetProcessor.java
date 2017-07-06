@@ -20,7 +20,7 @@ import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.search.elasticsearch.facet.FacetProcessor;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -85,7 +85,7 @@ public class DefaultFacetProcessor
 
 		String[] fieldNames = facetConfiguration.facetKeywordFields();
 
-		_textKeywordFacets.addAll(Arrays.asList(fieldNames));
+		Collections.addAll(_textKeywordFacets, fieldNames);
 	}
 
 	private final Set<String> _textKeywordFacets = new HashSet<>();

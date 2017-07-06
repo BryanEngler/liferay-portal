@@ -482,13 +482,13 @@ public class EmbeddedElasticsearchConnection
 		EmbeddedElasticsearchPluginManager embeddedElasticsearchPluginManager =
 			createEmbeddedElasticsearchPluginManager(name, settings);
 
-			try {
-				embeddedElasticsearchPluginManager.removeObsoletePlugin();
-			}
+		try {
+			embeddedElasticsearchPluginManager.removeObsoletePlugin();
+		}
 		catch (IOException ioe) {
-				throw new RuntimeException(
-					"Unable to remove " + name + " plugin", ioe);
-			}
+			throw new RuntimeException(
+				"Unable to remove " + name + " plugin", ioe);
+		}
 	}
 
 	protected void removeObsoletePlugin(String name, Settings settings) {

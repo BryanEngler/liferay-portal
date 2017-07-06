@@ -70,10 +70,10 @@ Import-Package:\
 	!org.apache.tomcat.jni.*,\
 	\
 	!org.bouncycastle.*,\
-    \
-    !org.conscrypt.*,\
 	\
 	!org.codehaus.groovy.*,\
+	\
+	!org.conscrypt.*,\
 	\
 	!org.eclipse.jetty.alpn.*,\
 	!org.eclipse.jetty.npn.*,\

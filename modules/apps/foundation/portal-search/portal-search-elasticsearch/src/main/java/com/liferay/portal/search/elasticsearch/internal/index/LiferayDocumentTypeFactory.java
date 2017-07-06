@@ -24,7 +24,6 @@ import com.liferay.portal.search.elasticsearch.settings.TypeMappingsHelper;
 import java.io.IOException;
 
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequestBuilder;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequestBuilder;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.client.IndicesAdminClient;
@@ -76,7 +75,7 @@ public class LiferayDocumentTypeFactory implements TypeMappingsHelper {
 		String optionalDefaultTypeMappings = ResourceUtil.getResourceAsString(
 			getClass(), name);
 
-		addTypeMappings(indexName, optionalDefaultTypeMappings);
+		//addTypeMappings(indexName, optionalDefaultTypeMappings);
 	}
 
 	public void createRequiredDefaultAnalyzers(Settings.Builder builder) {

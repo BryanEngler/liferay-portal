@@ -3,14 +3,14 @@
 		{
 			"template_": {
 				"mapping": {
-					"index": "true",
-					"store": "true",
-					"type": "text",
 					"fields": {
 						"keyword": {
 							"type": "keyword"
 						}
-					}
+					},
+					"index": "true",
+					"store": "true",
+					"type": "text"
 				},
 				"match": "*",
 				"match_mapping_type": "string"

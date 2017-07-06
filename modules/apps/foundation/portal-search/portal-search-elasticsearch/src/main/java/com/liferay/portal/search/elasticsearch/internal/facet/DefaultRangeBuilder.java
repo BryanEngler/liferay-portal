@@ -75,6 +75,11 @@ public class DefaultRangeBuilder
 		return this;
 	}
 
+	@Override
+	public String getType() {
+		return "range";
+	}
+
 	public boolean hasRanges() {
 		return !ranges.isEmpty();
 	}
@@ -103,14 +108,10 @@ public class DefaultRangeBuilder
 
 		return new RangeAggregatorFactory(
 			name, config,
-			ranges.toArray(new RangeAggregator.Range[ranges.size()]),
-			keyed, rangeFactory, context, parent, factoriesBuilder, metaData);
+			ranges.toArray(new RangeAggregator.Range[ranges.size()]), keyed,
+			rangeFactory, context, parent, factoriesBuilder, metaData);
 	}
 
 	private String _format;
 
-	@Override
-	public String getType() {
-		return "range";
-	}
 }

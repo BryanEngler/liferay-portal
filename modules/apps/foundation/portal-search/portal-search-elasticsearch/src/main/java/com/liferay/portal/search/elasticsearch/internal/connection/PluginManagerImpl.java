@@ -14,16 +14,18 @@
 
 package com.liferay.portal.search.elasticsearch.internal.connection;
 
+import com.google.common.collect.Iterators;
+
 import java.io.IOException;
 
 import java.lang.reflect.Constructor;
+
 import java.net.URL;
 
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import com.google.common.collect.Iterators;
 import org.elasticsearch.cli.Terminal;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.env.Environment;
@@ -42,10 +44,10 @@ public class PluginManagerImpl implements PluginManager {
 		Environment environment, URL url, OutputMode outputMode,
 		TimeValue timeout) {
 
-		this.environment = environment;
-		this.url = url;
-		this.outputMode = outputMode;
-		this.timeout = timeout;
+		_environment = environment;
+		_url = url;
+		_outputMode = outputMode;
+		_timeout = timeout;
 	}
 
 	@Override
@@ -56,8 +58,12 @@ public class PluginManagerImpl implements PluginManager {
 		try {
 			PluginCli pluginCli = getPluginCli();
 
-			pluginCli.main(new String[]{"install", name,
-					"-Epath.home=" + environment.settings().get("path.home"), "-s"},
+			pluginCli.main(
+				new String[] {
+					"install", name,
+					"-Epath.home=" + _environment.settings().get("path.home"),
+					"-s"
+				},
 				terminal);
 		}
 		catch (Exception e) {
@@ -65,22 +71,14 @@ public class PluginManagerImpl implements PluginManager {
 		}
 	}
 
-	private PluginCli getPluginCli() throws Exception {
-		Constructor<PluginCli> constructor =
-			PluginCli.class.getDeclaredConstructor();
-
-		constructor.setAccessible(true);
-		return constructor.newInstance();
-	}
-
 	@Override
 	public Path[] getInstalledPluginsPaths() throws IOException {
-		if (!Files.exists(environment.pluginsFile())) {
+		if (!Files.exists(_environment.pluginsFile())) {
 			return new Path[0];
 		}
 
 		try (DirectoryStream<Path> stream =
-			     Files.newDirectoryStream(environment.pluginsFile())) {
+				Files.newDirectoryStream(_environment.pluginsFile())) {
 
 			return Iterators.toArray(stream.iterator(), Path.class);
 		}
@@ -106,26 +104,41 @@ public class PluginManagerImpl implements PluginManager {
 
 	@Override
 	public void removePlugin(String name, Terminal terminal)
-	    throws IOException {
+		throws IOException {
 
-	    try {
-		    PluginCli pluginCli = getPluginCli();
+		try {
+			PluginCli pluginCli = getPluginCli();
 
-		    pluginCli.main(new String[]{"remove", name,
-				    "-Epath.home=" + environment.settings().get("path.home"), "-s"},
-			    terminal);
-	    }
-	    catch (Exception e) {
-		    e.printStackTrace();
-	    }
+			pluginCli.main(
+				new String[] {
+					"remove", name,
+					"-Epath.home=" + _environment.settings().get("path.home"),
+					"-s"
+				},
+				terminal);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public enum OutputMode {
+
 		DEFAULT, SILENT, VERBOSE
 	}
 
-	private final Environment environment;
-	private final URL url;
-	private final OutputMode outputMode;
-	private final TimeValue timeout;
+	protected PluginCli getPluginCli() throws Exception {
+		Constructor<PluginCli> constructor =
+			PluginCli.class.getDeclaredConstructor();
+
+		constructor.setAccessible(true);
+
+		return constructor.newInstance();
+	}
+
+	private final Environment _environment;
+	private final OutputMode _outputMode;
+	private final TimeValue _timeout;
+	private final URL _url;
+
 }
