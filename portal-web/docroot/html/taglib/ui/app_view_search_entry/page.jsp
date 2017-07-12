@@ -26,9 +26,10 @@ String cssClass = GetterUtil.getString((String)request.getAttribute("liferay-ui:
 String description = (String)request.getAttribute("liferay-ui:app-view-search-entry:description");
 boolean escape = GetterUtil.getBoolean(request.getAttribute("liferay-ui:app-view-search-entry:escape"));
 List<RelatedSearchResult<FileEntry>> fileEntryRelatedSearchResults = (List<RelatedSearchResult<FileEntry>>)request.getAttribute("liferay-ui:app-view-search-entry:fileEntryRelatedSearchResults");
+String highlightedDescription = (String)request.getAttribute("liferay-ui:app-view-search-entry:highlightedDescription");
+String highlightedTitle = (String)request.getAttribute("liferay-ui:app-view-search-entry:highlightedTitle");
 boolean highlightEnabled = GetterUtil.getBoolean(request.getAttribute("liferay-ui:app-view-search-entry:highlightEnabled"));
 boolean locked = GetterUtil.getBoolean(request.getAttribute("liferay-ui:app-view-search-entry:locked"));
-String[] queryTerms = (String[])request.getAttribute("liferay-ui:app-view-search-entry:queryTerms");
 String rowCheckerId = (String)request.getAttribute("liferay-ui:app-view-search-entry:rowCheckerId");
 String rowCheckerName = (String)request.getAttribute("liferay-ui:app-view-search-entry:rowCheckerName");
 boolean showCheckbox = GetterUtil.getBoolean(request.getAttribute("liferay-ui:app-view-search-entry:showCheckbox"));
@@ -43,12 +44,6 @@ String linkTitle = title;
 if (Validator.isNotNull(description)) {
 	linkTitle += " - " + description;
 }
-
-Summary summary = new Summary(title, description);
-
-summary.setEscape(escape);
-summary.setHighlight(highlightEnabled);
-summary.setQueryTerms(queryTerms);
 %>
 
 <div class="app-view-entry app-view-search-entry-taglib entry-display-style <%= showCheckbox ? "selectable" : StringPool.BLANK %> <%= cssClass %>" data-title="<%= HtmlUtil.escapeAttribute(StringUtil.shorten(title, 60)) %>">
@@ -65,7 +60,7 @@ summary.setQueryTerms(queryTerms);
 
 		<div class="entry-metadata">
 			<span class="entry-title">
-				<%= summary.getHighlightedTitle() %>
+				<%= highlightEnabled ? highlightedTitle : title %>
 
 				<c:if test="<%= (status != WorkflowConstants.STATUS_ANY) && (status != WorkflowConstants.STATUS_APPROVED) %>">
 					<aui:workflow-status showIcon="<%= false %>" showLabel="<%= false %>" status="<%= status %>" />
@@ -97,7 +92,7 @@ summary.setQueryTerms(queryTerms);
 			</c:if>
 
 			<span class="entry-description">
-				<%= summary.getHighlightedContent() %>
+				<%= highlightEnabled ? highlightedDescription : description %>
 			</span>
 		</div>
 	</a>
@@ -112,10 +107,7 @@ summary.setQueryTerms(queryTerms);
 
 			AssetRenderer<?> assetRenderer = assetRendererFactory.getAssetRenderer(fileEntry.getFileEntryId());
 
-			summary = fileEntryRelatedSearchResult.getSummary();
-
-			summary.setHighlight(highlightEnabled);
-			summary.setQueryTerms(queryTerms);
+			Summary summary = fileEntryRelatedSearchResult.getSummary();
 		%>
 
 			<div class="entry-attachment">
@@ -140,7 +132,7 @@ summary.setQueryTerms(queryTerms);
 						/>
 					</span>
 					<span class="body">
-						<%= summary.getHighlightedContent() %>
+						<%= summary.getContent(highlightEnabled, escape) %>
 					</span>
 				</aui:a>
 			</div>
@@ -159,10 +151,7 @@ summary.setQueryTerms(queryTerms);
 
 			User userDisplay = comment.getUser();
 
-			summary = commentRelatedSearchResult.getSummary();
-
-			summary.setHighlight(highlightEnabled);
-			summary.setQueryTerms(queryTerms);
+			Summary summary = commentRelatedSearchResult.getSummary();
 		%>
 
 			<div class="entry-discussion">
@@ -181,7 +170,7 @@ summary.setQueryTerms(queryTerms);
 						/>
 					</span>
 					<span class="body">
-						<%= summary.getHighlightedContent() %>
+						<%= summary.getContent(highlightEnabled, escape) %>
 					</span>
 				</aui:a>
 			</div>

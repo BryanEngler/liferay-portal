@@ -311,16 +311,12 @@ public class SearchResultsPortlet
 			assetRendererFactoryLookup);
 		searchResultSummaryDisplayBuilder.setCurrentURL(portletURL.toString());
 		searchResultSummaryDisplayBuilder.setDocument(document);
-		searchResultSummaryDisplayBuilder.setHighlightEnabled(
-			searchResultsPortletPreferences.isHighlightEnabled());
 		searchResultSummaryDisplayBuilder.setImageRequested(true);
 		searchResultSummaryDisplayBuilder.setIndexerRegistry(indexerRegistry);
 		searchResultSummaryDisplayBuilder.setLanguage(language);
 		searchResultSummaryDisplayBuilder.setLocale(themeDisplay.getLocale());
 		searchResultSummaryDisplayBuilder.setPortletURLFactory(
 			portletURLFactory);
-		searchResultSummaryDisplayBuilder.setQueryTerms(
-			portletSharedSearchResponse.getHighlights());
 		searchResultSummaryDisplayBuilder.setRenderRequest(renderRequest);
 		searchResultSummaryDisplayBuilder.setRenderResponse(renderResponse);
 		searchResultSummaryDisplayBuilder.setRequest(

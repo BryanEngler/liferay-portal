@@ -71,12 +71,10 @@ public class PortalOpenSearchImpl extends BaseOpenSearchImpl {
 			Hits results = CompanyLocalServiceUtil.search(
 				themeDisplay.getCompanyId(), userId, keywords, start, end);
 
-			String[] queryTerms = results.getQueryTerms();
-
 			int total = results.getLength();
 
 			Object[] values = addSearchResults(
-				queryTerms, keywords, startPage, itemsPerPage, total, start,
+				keywords, startPage, itemsPerPage, total, start,
 				"Liferay Portal Search: " + keywords, StringPool.BLANK, format,
 				themeDisplay);
 

@@ -276,6 +276,10 @@ public class SearchDisplayContext {
 		return _querySuggestionsMax;
 	}
 
+	/**
+	 * @deprecated As of 1.2.0
+	 */
+	@Deprecated
 	public String[] getQueryTerms() {
 		Hits hits = getHits();
 

@@ -115,7 +115,8 @@ portletURL.setParameter("keywords", keywords);
 				cssClass='<%= MathUtil.isEven(index) ? "search" : "search alt" %>'
 				description="<%= (summary != null) ? summary.getContent() : wikiPage.getSummary() %>"
 				fileEntryRelatedSearchResults="<%= searchResult.getFileEntryRelatedSearchResults() %>"
-				queryTerms="<%= hits.getQueryTerms() %>"
+				highlightedDescription="<%= (summary != null) ? summary.getHighlightedContent() : wikiPage.getSummary() %>"
+				highlightedTitle="<%= (summary != null) ? summary.getHighlightedTitle() : wikiPage.getTitle() %>"
 				title="<%= (summary != null) ? summary.getTitle() : wikiPage.getTitle() %>"
 				url="<%= rowURL %>"
 			/>

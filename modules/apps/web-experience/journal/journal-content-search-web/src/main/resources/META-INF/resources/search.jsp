@@ -57,8 +57,6 @@ searchContext.setKeywords(keywords);
 
 Hits hits = indexer.search(searchContext);
 
-String[] queryTerms = hits.getQueryTerms();
-
 ContentHits contentHits = new ContentHits();
 
 contentHits.setShowListed(journalContentSearchPortletInstanceConfiguration.showListed());
@@ -98,9 +96,6 @@ journalContentSearch.setResults(documents);
 
 			<%
 			Summary summary = indexer.getSummary(document, StringPool.BLANK, renderRequest, renderResponse);
-
-			summary.setHighlight(PropsValues.INDEX_SEARCH_HIGHLIGHT_ENABLED);
-			summary.setQueryTerms(queryTerms);
 			%>
 
 			<liferay-ui:search-container-column-icon

@@ -109,6 +109,10 @@ public class SearchResultSummaryDisplayBuilder {
 		_document = document;
 	}
 
+	/**
+	 * @deprecated As of 1.2.0
+	 */
+	@Deprecated
 	public void setHighlightEnabled(boolean highlightEnabled) {
 		_highlightEnabled = highlightEnabled;
 	}
@@ -133,6 +137,10 @@ public class SearchResultSummaryDisplayBuilder {
 		_portletURLFactory = portletURLFactory;
 	}
 
+	/**
+	 * @deprecated As of 1.2.0
+	 */
+	@Deprecated
 	public void setQueryTerms(String[] queryTerms) {
 		_queryTerms = queryTerms;
 	}
@@ -571,11 +579,6 @@ public class SearchResultSummaryDisplayBuilder {
 				assetRenderer.getSearchSummary(_locale));
 		}
 
-		if (summary != null) {
-			summary.setHighlight(_highlightEnabled);
-			summary.setQueryTerms(_queryTerms);
-		}
-
 		return summary;
 	}
 
@@ -656,13 +659,25 @@ public class SearchResultSummaryDisplayBuilder {
 	private AssetRendererFactoryLookup _assetRendererFactoryLookup;
 	private String _currentURL;
 	private Document _document;
+
+	/**
+	 * @deprecated As of 1.2.0
+	 */
+	@Deprecated
 	private boolean _highlightEnabled;
+
 	private boolean _imageRequested;
 	private IndexerRegistry _indexerRegistry;
 	private Language _language;
 	private Locale _locale;
 	private PortletURLFactory _portletURLFactory;
+
+	/**
+	 * @deprecated As of 1.2.0
+	 */
+	@Deprecated
 	private String[] _queryTerms;
+
 	private RenderRequest _renderRequest;
 	private RenderResponse _renderResponse;
 	private HttpServletRequest _request;

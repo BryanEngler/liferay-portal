@@ -44,6 +44,10 @@ public interface Hits extends Serializable {
 
 	public String[] getQuerySuggestions();
 
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	public String[] getQueryTerms();
 
 	public float[] getScores();
@@ -72,6 +76,10 @@ public interface Hits extends Serializable {
 
 	public void setQuerySuggestions(String[] querySuggestions);
 
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	public void setQueryTerms(String[] queryTerms);
 
 	public void setScores(float[] scores);

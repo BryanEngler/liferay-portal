@@ -80,6 +80,14 @@ public class AppViewSearchEntryTag extends IncludeTag {
 		_fileEntryRelatedSearchResults = fileEntryRelatedSearchResults;
 	}
 
+	public void setHighlightedDescription(String highlightedDescription) {
+		_highlightedDescription = highlightedDescription;
+	}
+
+	public void setHighlightedTitle(String highlightedTitle) {
+		_highlightedTitle = highlightedTitle;
+	}
+
 	public void setHighlightEnabled(boolean highlightEnabled) {
 		_highlightEnabled = highlightEnabled;
 	}
@@ -88,6 +96,10 @@ public class AppViewSearchEntryTag extends IncludeTag {
 		_locked = locked;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	public void setQueryTerms(String[] queryTerms) {
 		_queryTerms = queryTerms;
 	}
@@ -134,9 +146,10 @@ public class AppViewSearchEntryTag extends IncludeTag {
 		_description = null;
 		_escape = true;
 		_fileEntryRelatedSearchResults = null;
+		_highlightedDescription = null;
+		_highlightedTitle = null;
 		_highlightEnabled = _HIGHLIGHT_ENABLED;
 		_locked = false;
-		_queryTerms = null;
 		_rowCheckerId = null;
 		_rowCheckerName = null;
 		_showCheckbox = false;
@@ -189,12 +202,16 @@ public class AppViewSearchEntryTag extends IncludeTag {
 			"liferay-ui:app-view-search-entry:fileEntryRelatedSearchResults",
 			_fileEntryRelatedSearchResults);
 		request.setAttribute(
+			"liferay-ui:app-view-search-entry:highlightedDescription",
+			_highlightedDescription);
+		request.setAttribute(
+			"liferay-ui:app-view-search-entry:highlightedTitle",
+			_highlightedTitle);
+		request.setAttribute(
 			"liferay-ui:app-view-search-entry:highlightEnabled",
 			_highlightEnabled);
 		request.setAttribute(
 			"liferay-ui:app-view-search-entry:locked", _locked);
-		request.setAttribute(
-			"liferay-ui:app-view-search-entry:queryTerms", _queryTerms);
 		request.setAttribute(
 			"liferay-ui:app-view-search-entry:rowCheckerId", _rowCheckerId);
 		request.setAttribute(
@@ -228,9 +245,17 @@ public class AppViewSearchEntryTag extends IncludeTag {
 	private String _description;
 	private boolean _escape = true;
 	private List<RelatedSearchResult<FileEntry>> _fileEntryRelatedSearchResults;
+	private String _highlightedDescription;
+	private String _highlightedTitle;
 	private boolean _highlightEnabled = _HIGHLIGHT_ENABLED;
 	private boolean _locked;
+
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	private String[] _queryTerms;
+
 	private String _rowCheckerId;
 	private String _rowCheckerName;
 	private boolean _showCheckbox;
