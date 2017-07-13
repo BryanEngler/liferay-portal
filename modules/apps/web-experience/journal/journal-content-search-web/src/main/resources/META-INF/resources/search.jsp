@@ -50,10 +50,15 @@ SearchContainer journalContentSearch = new SearchContainer(renderRequest, null, 
 
 Indexer<JournalArticle> indexer = IndexerRegistryUtil.getIndexer(JournalArticle.class);
 
+QueryConfig queryConfig = new QueryConfig();
+
+queryConfig.setHighlightEnabled(journalContentSearchPortletInstanceConfiguration.enableHighlighting());
+
 SearchContext searchContext = SearchContextFactory.getInstance(request);
 
 searchContext.setGroupIds(null);
 searchContext.setKeywords(keywords);
+searchContext.setQueryConfig(queryConfig);
 
 Hits hits = indexer.search(searchContext);
 
