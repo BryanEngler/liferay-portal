@@ -56,6 +56,8 @@ import com.liferay.portal.search.elasticsearch.internal.query.WildcardQueryTrans
 import com.liferay.portal.search.elasticsearch.internal.stats.DefaultStatsTranslator;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 
+import java.util.Collections;
+
 /**
  * @author André de Oliveira
  */
@@ -188,9 +190,7 @@ public class ElasticsearchIndexingFixture implements IndexingFixture {
 				searchHitDocumentTranslator =
 					new SearchHitDocumentTranslatorImpl();
 
-				activate(
-					_elasticsearchFixture.
-						getElasticsearchConfigurationProperties());
+				activate(Collections.<String, Object>emptyMap());
 			}
 		};
 	}
@@ -208,9 +208,7 @@ public class ElasticsearchIndexingFixture implements IndexingFixture {
 						new DefaultElasticsearchDocumentFactory();
 					indexNameBuilder = indexNameBuilder1;
 
-					activate(
-						_elasticsearchFixture.
-							getElasticsearchConfigurationProperties());
+					activate(Collections.<String, Object>emptyMap());
 				}
 			};
 
