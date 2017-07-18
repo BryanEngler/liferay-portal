@@ -44,7 +44,7 @@
 		<lst name="defaults">
 			<str name="echoParams">explicit</str>
 			<int name="rows">10</int>
-			<str name="df">text</str>
+			<str name="df">all</str>
 		</lst>
 	</requestHandler>
 	<requestHandler class="solr.SearchHandler" name="/query">
@@ -52,7 +52,7 @@
 			<str name="echoParams">explicit</str>
 			<str name="wt">json</str>
 			<str name="indent">true</str>
-			<str name="df">text</str>
+			<str name="df">all</str>
 		</lst>
 	</requestHandler>
 	<requestHandler class="solr.RealTimeGetHandler" name="/get">
@@ -118,13 +118,13 @@
 	</requestHandler>
 	<requestHandler class="solr.UpdateRequestHandler" name="/update">
 		<lst name="defaults">
-			<str name="df">text</str>
+			<str name="df">all</str>
 			<str name="update.chain">replica</str>
 		</lst>
 	</requestHandler>
 	<requestHandler class="solr.extraction.ExtractingRequestHandler" name="/update/extract" startup="lazy">
 		<lst name="defaults">
-			<str name="df">text</str>
+			<str name="df">all</str>
 			<str name="fmap.content">text</str>
 			<str name="lowernames">true</str>
 			<str name="uprefix">ignored_</str>
@@ -180,7 +180,7 @@
 	</searchComponent>
 	<requestHandler class="solr.SearchHandler" name="/spell" startup="lazy">
 		<lst name="defaults">
-			<str name="df">text</str>
+			<str name="df">all</str>
 			<str name="spellcheck.dictionary">default</str>
 			<str name="spellcheck.dictionary">wordbreak</str>
 			<str name="spellcheck">on</str>
@@ -200,7 +200,7 @@
 	<searchComponent class="solr.TermVectorComponent" name="tvComponent" />
 	<requestHandler class="solr.SearchHandler" name="/tvrh" startup="lazy">
 		<lst name="defaults">
-			<str name="df">text</str>
+			<str name="df">all</str>
 			<bool name="tv">true</bool>
 		</lst>
 		<arr name="last-components">
@@ -257,7 +257,7 @@
 	<requestHandler class="solr.SearchHandler" name="/elevate" startup="lazy">
 		<lst name="defaults">
 			<str name="echoParams">explicit</str>
-			<str name="df">text</str>
+			<str name="df">all</str>
 		</lst>
 		<arr name="last-components">
 			<str>elevator</str>
