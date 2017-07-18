@@ -15,11 +15,13 @@
 package com.liferay.portal.search.solr.internal.query;
 
 import com.liferay.portal.kernel.search.generic.StringQuery;
+import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.solr.query.StringQueryTranslator;
 
-import org.apache.lucene.analysis.core.KeywordAnalyzer;
-import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -31,15 +33,33 @@ public class StringQueryTranslatorImpl implements StringQueryTranslator {
 
 	@Override
 	public org.apache.lucene.search.Query translate(StringQuery stringQuery) {
-		try {
-			QueryParser queryParser = new QueryParser(
-				"uuid", new KeywordAnalyzer());
+		return new org.apache.lucene.search.Query() {
 
-			return queryParser.parse(stringQuery.getQuery());
-		}
-		catch (ParseException pe) {
-			throw new IllegalArgumentException("Invalid query", pe);
-		}
+			@Override
+			public String toString(String field) {
+				String query = stringQuery.getQuery();
+
+				Matcher matcher = _negatedWord.matcher(query);
+
+				while (matcher.find()) {
+					StringBundler sb = new StringBundler(5);
+
+					sb.append(StringPool.OPEN_PARENTHESIS);
+					sb.append("*:*");
+					sb.append(StringPool.SPACE);
+					sb.append(matcher.group());
+					sb.append(StringPool.CLOSE_PARENTHESIS);
+
+					query = StringUtil.replace(
+						query, matcher.group(), sb.toString());
+				}
+
+				return query;
+			}
+
+		};
 	}
+
+	private final Pattern _negatedWord = Pattern.compile("(!|NOT[\\s]+)[\\w]+");
 
 }
