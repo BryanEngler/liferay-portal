@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.solr.internal.query;
 
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.generic.StringQuery;
 import com.liferay.portal.search.solr.query.StringQueryTranslator;
 
@@ -33,7 +34,7 @@ public class StringQueryTranslatorImpl implements StringQueryTranslator {
 	public org.apache.lucene.search.Query translate(StringQuery stringQuery) {
 		try {
 			QueryParser queryParser = new QueryParser(
-				"uuid", new KeywordAnalyzer());
+				Field.ALL, new KeywordAnalyzer());
 
 			return queryParser.parse(stringQuery.getQuery());
 		}

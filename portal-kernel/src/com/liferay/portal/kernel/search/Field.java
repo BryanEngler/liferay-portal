@@ -35,6 +35,8 @@ import java.util.Map;
  */
 public class Field implements Serializable {
 
+	public static final String ALL = "all";
+
 	public static final String ANY = StringPool.STAR;
 
 	public static final String ARTICLE_ID = "articleId";
