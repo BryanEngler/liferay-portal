@@ -270,10 +270,12 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 
 		solrQuery.addHighlightField(fieldName);
 
-		String localizedFieldName = DocumentImpl.getLocalizedName(
-			queryConfig.getLocale(), fieldName);
+		if (!fieldName.equals(Field.ALL)) {
+			String localizedFieldName = DocumentImpl.getLocalizedName(
+				queryConfig.getLocale(), fieldName);
 
-		solrQuery.addHighlightField(localizedFieldName);
+			solrQuery.addHighlightField(localizedFieldName);
+		}
 	}
 
 	protected void addHighlights(SolrQuery solrQuery, QueryConfig queryConfig) {
