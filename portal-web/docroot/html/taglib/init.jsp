@@ -18,6 +18,7 @@
 
 <%@ page import="com.liferay.portal.kernel.comment.Comment" %><%@
 page import="com.liferay.portal.kernel.search.RelatedSearchResult" %><%@
+page import="com.liferay.portal.kernel.search.highlight.HighlightUtil" %><%@
 page import="com.liferay.portal.kernel.util.DateFormatFactoryUtil" %><%@
 page import="com.liferay.taglib.aui.AUIUtil" %><%@
 page import="com.liferay.taglib.util.InlineUtil" %><%@

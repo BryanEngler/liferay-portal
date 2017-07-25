@@ -40,7 +40,11 @@ List<String> versions = (List<String>)request.getAttribute("liferay-ui:app-view-
 
 String linkTitle = title;
 
+linkTitle = HighlightUtil.removeHighlightTags(linkTitle);
+
 if (Validator.isNotNull(description)) {
+	description = HighlightUtil.removeHighlightTags(description);
+
 	linkTitle += " - " + description;
 }
 
