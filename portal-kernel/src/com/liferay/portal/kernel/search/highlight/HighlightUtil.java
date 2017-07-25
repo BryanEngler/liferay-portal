@@ -38,6 +38,11 @@ public class HighlightUtil {
 	public static final String[] HIGHLIGHTS =
 		{"<span class=\"highlight\">", "</span>"};
 
+	public static String addHighlightTags(String s, String[] queryTerms) {
+		return highlight(
+			s, queryTerms, HIGHLIGHT_TAG_OPEN, HIGHLIGHT_TAG_CLOSE);
+	}
+
 	public static void addSnippet(
 		Document document, Set<String> queryTerms, String snippet,
 		String snippetFieldName) {
@@ -87,6 +92,14 @@ public class HighlightUtil {
 			sb.toString(), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 
 		return _highlight(s, pattern, highlight1, highlight2);
+	}
+
+	public static String removeHighlightTags(String text) {
+		text = StringUtil.replace(text, HIGHLIGHT_TAG_OPEN, StringPool.BLANK);
+
+		text = StringUtil.replace(text, HIGHLIGHT_TAG_CLOSE, StringPool.BLANK);
+
+		return text;
 	}
 
 	private static String _highlight(
