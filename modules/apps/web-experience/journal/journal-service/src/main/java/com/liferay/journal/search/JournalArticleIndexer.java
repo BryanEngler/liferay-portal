@@ -57,10 +57,12 @@ import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
+import com.liferay.portal.kernel.search.highlight.HighlightUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -82,10 +84,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
@@ -753,6 +757,18 @@ public class JournalArticleIndexer
 			if (Validator.isNull(content)) {
 				content = HtmlUtil.extractText(articleDisplay.getContent());
 			}
+
+			Set<String> queryTerms = new HashSet<>();
+
+			String snippetFieldName =
+				Field.SNIPPET + StringPool.UNDERLINE + Field.CONTENT;
+
+			String snippet = document.get(snippetLocale, snippetFieldName);
+
+			HighlightUtil.addSnippet(document, queryTerms, snippet, "temp");
+
+			content = HighlightUtil.addHighlightTags(
+				content, ArrayUtil.toStringArray(queryTerms));
 		}
 		catch (Exception e) {
 			if (_log.isDebugEnabled()) {
