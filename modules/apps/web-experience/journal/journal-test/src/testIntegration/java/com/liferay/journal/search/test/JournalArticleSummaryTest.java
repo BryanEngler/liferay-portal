@@ -45,7 +45,6 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
@@ -109,9 +108,9 @@ public class JournalArticleSummaryTest {
 
 		String snippet = null;
 
-		PortletRequest portletRequest = Mockito.mock(PortletRequest.class);
+		PortletRequest portletRequest = new org.springframework.mock.web.portlet.MockPortletRequest();
 
-		PortletResponse portletResponse = Mockito.mock(PortletResponse.class);
+		PortletResponse portletResponse = new org.springframework.mock.web.portlet.MockPortletResponse();
 
 		Summary summary = _indexer.getSummary(
 			document, snippet, portletRequest, portletResponse);
@@ -176,9 +175,9 @@ public class JournalArticleSummaryTest {
 
 		String snippet = null;
 
-		PortletRequest portletRequest = Mockito.mock(PortletRequest.class);
+		PortletRequest portletRequest = new org.springframework.mock.web.portlet.MockPortletRequest();
 
-		PortletResponse portletResponse = Mockito.mock(PortletResponse.class);
+		PortletResponse portletResponse = new org.springframework.mock.web.portlet.MockPortletResponse();
 
 		Summary summary = _indexer.getSummary(
 			document, snippet, portletRequest, portletResponse);
