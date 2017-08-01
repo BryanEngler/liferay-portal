@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BaseIndexSearcher;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
-import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.GeoDistanceSort;
 import com.liferay.portal.kernel.search.GroupBy;
 import com.liferay.portal.kernel.search.Hits;
@@ -268,14 +267,12 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			fieldName, queryConfig.getHighlightFragmentSize(),
 			queryConfig.getHighlightSnippetSize());
 
-		if (!fieldName.equals(Field.ALL)) {
-			String localizedFieldName = DocumentImpl.getLocalizedName(
-				queryConfig.getLocale(), fieldName);
+		String localizedFieldName = DocumentImpl.getLocalizedName(
+			queryConfig.getLocale(), fieldName);
 
-			searchRequestBuilder.addHighlightedField(
-				localizedFieldName, queryConfig.getHighlightFragmentSize(),
-				queryConfig.getHighlightSnippetSize());
-		}
+		searchRequestBuilder.addHighlightedField(
+			localizedFieldName, queryConfig.getHighlightFragmentSize(),
+			queryConfig.getHighlightSnippetSize());
 	}
 
 	protected void addHighlights(

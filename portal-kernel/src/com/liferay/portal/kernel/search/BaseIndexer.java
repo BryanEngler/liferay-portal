@@ -781,7 +781,7 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 		if (queryConfig.isHighlightEnabled()) {
 			queryConfig.addHighlightFieldNames(
-				Field.CONTENT, Field.DESCRIPTION, Field.TITLE, Field.ALL);
+				Field.CONTENT, Field.DESCRIPTION, Field.TITLE);
 		}
 	}
 
