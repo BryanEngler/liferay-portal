@@ -64,6 +64,45 @@ public abstract class BaseStringQueryTestCase extends BaseIndexingTestCase {
 			"description:(java OR eclipse)", "title", Collections.emptyList());
 	}
 
+	@Test
+	public void testNot() throws Exception {
+		addDocument("title", "alpha bravo");
+		addDocument("title", "alpha charlie");
+		addDocument("title", "charlie delta");
+
+		assertSearch("NOT alpha", "title", Arrays.asList("charlie delta"));
+
+		assertSearch(
+			"NOT bravo", "title",
+			Arrays.asList("alpha charlie", "charlie delta"));
+
+		assertSearch(
+			"alpha AND NOT bravo", "title", Arrays.asList("alpha charlie"));
+
+		assertSearch(
+			"alpha OR NOT bravo", "title",
+			Arrays.asList("alpha charlie", "charlie delta", "alpha bravo"));
+	}
+
+	@Test
+	public void testOr() throws Exception {
+		addDocument("title", "alpha bravo");
+		addDocument("title", "alpha charlie");
+		addDocument("title", "charlie delta");
+
+		assertSearch(
+			"alpha OR charlie", "title",
+			Arrays.asList("alpha charlie", "alpha bravo", "charlie delta"));
+
+		assertSearch(
+			"alpha OR delta", "title",
+			Arrays.asList("charlie delta", "alpha bravo", "alpha charlie"));
+
+		assertSearch(
+			"bravo OR delta", "title",
+			Arrays.asList("alpha bravo", "charlie delta"));
+	}
+
 	protected void addDocument(String fieldName, String... fieldValues)
 		throws Exception {
 
