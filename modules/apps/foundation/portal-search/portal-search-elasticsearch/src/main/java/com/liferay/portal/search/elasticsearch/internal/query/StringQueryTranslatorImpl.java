@@ -15,7 +15,12 @@
 package com.liferay.portal.search.elasticsearch.internal.query;
 
 import com.liferay.portal.kernel.search.generic.StringQuery;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.elasticsearch.query.StringQueryTranslator;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -31,8 +36,19 @@ public class StringQueryTranslatorImpl implements StringQueryTranslator {
 
 	@Override
 	public QueryBuilder translate(StringQuery stringQuery) {
+		String query = stringQuery.getQuery();
+
+		Matcher matcher = _negatedWord.matcher(query);
+
+		while (matcher.find()) {
+			query = StringUtil.replace(
+				query, matcher.group(),
+				StringPool.OPEN_PARENTHESIS + matcher.group() +
+					StringPool.CLOSE_PARENTHESIS);
+		}
+
 		QueryStringQueryBuilder queryStringQueryBuilder =
-			QueryBuilders.queryStringQuery(stringQuery.getQuery());
+			QueryBuilders.queryStringQuery(query);
 
 		if (!stringQuery.isDefaultBoost()) {
 			queryStringQueryBuilder.boost(stringQuery.getBoost());
@@ -40,5 +56,7 @@ public class StringQueryTranslatorImpl implements StringQueryTranslator {
 
 		return queryStringQueryBuilder;
 	}
+
+	private final Pattern _negatedWord = Pattern.compile("(!|NOT[\\s]+)[\\w]+");
 
 }
