@@ -125,7 +125,7 @@ public class FacetedSearcherImpl
 		if (Validator.isNotNull(keywords)) {
 			if (luceneSyntax) {
 				searchQuery.add(
-					new StringQuery(keywords), BooleanClauseOccur.MUST);
+					new StringQuery(keywords), BooleanClauseOccur.SHOULD);
 			}
 			else {
 				addSearchLocalizedTerm(
