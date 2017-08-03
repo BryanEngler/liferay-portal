@@ -42,6 +42,7 @@ import com.liferay.portal.kernel.search.highlight.HighlightUtil;
 import com.liferay.portal.kernel.search.query.QueryTranslator;
 import com.liferay.portal.kernel.search.suggest.QuerySuggester;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -276,7 +277,8 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	}
 
 	protected void addHighlights(
-		SearchRequestBuilder searchRequestBuilder, QueryConfig queryConfig) {
+		SearchRequestBuilder searchRequestBuilder, SearchContext searchContext,
+		QueryConfig queryConfig) {
 
 		if (!queryConfig.isHighlightEnabled()) {
 			return;
@@ -291,8 +293,19 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			HighlightUtil.HIGHLIGHT_TAG_CLOSE);
 		searchRequestBuilder.setHighlighterPreTags(
 			HighlightUtil.HIGHLIGHT_TAG_OPEN);
+
+		boolean highlighterRequireFieldMatch =
+			queryConfig.isHighlightRequireFieldMatch();
+
+		boolean luceneSyntax = GetterUtil.getBoolean(
+			searchContext.getAttribute("luceneSyntax"));
+
+		if (luceneSyntax) {
+			highlighterRequireFieldMatch = false;
+		}
+
 		searchRequestBuilder.setHighlighterRequireFieldMatch(
-			queryConfig.isHighlightRequireFieldMatch());
+			highlighterRequireFieldMatch);
 	}
 
 	protected void addPagination(
@@ -476,7 +489,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		if (!count) {
 			addFacets(searchRequestBuilder, searchContext);
 			addGroupBy(searchRequestBuilder, searchContext, start, end);
-			addHighlights(searchRequestBuilder, queryConfig);
+			addHighlights(searchRequestBuilder, searchContext, queryConfig);
 			addPagination(searchRequestBuilder, start, end);
 			addSelectedFields(searchRequestBuilder, queryConfig);
 			addSort(searchRequestBuilder, searchContext.getSorts());
