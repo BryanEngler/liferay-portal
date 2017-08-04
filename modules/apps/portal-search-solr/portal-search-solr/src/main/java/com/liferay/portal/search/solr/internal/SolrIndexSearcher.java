@@ -49,6 +49,7 @@ import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.URLCodec;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.solr.configuration.SolrConfiguration;
 import com.liferay.portal.search.solr.connection.SolrClientManager;
@@ -490,9 +491,11 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 
 		QueryResponse queryResponse = executeSearchRequest(solrQuery);
 
+		String decodedQueryString = URLCodec.decodeURL(solrQueryString);
+
 		if (_log.isInfoEnabled()) {
 			_log.info(
-				"The search engine processed " + solrQueryString + " in " +
+				"The search engine processed " + decodedQueryString + " in " +
 					queryResponse.getElapsedTime() + " ms");
 		}
 
