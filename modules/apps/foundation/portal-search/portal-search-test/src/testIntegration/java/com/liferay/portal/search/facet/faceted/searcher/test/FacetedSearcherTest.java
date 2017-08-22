@@ -17,8 +17,10 @@ package com.liferay.portal.search.facet.faceted.searcher.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.facet.MultiValueFacet;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -35,6 +37,7 @@ import org.junit.runner.RunWith;
 
 /**
  * @author Andrew Betts
+ * @author Wade Cao
  */
 @RunWith(Arquillian.class)
 public class FacetedSearcherTest extends BaseFacetedSearcherTestCase {
@@ -81,6 +84,47 @@ public class FacetedSearcherTest extends BaseFacetedSearcherTestCase {
 		deactivate(group2);
 
 		assertSearch(prefix, Collections.<String, String>emptyMap());
+	}
+
+	@Test
+	public void testSearchByPostFilter() throws Exception {
+		Group group = userSearchFixture.addGroup();
+
+		String tag = RandomTestUtil.randomString();
+
+		User user = addUser(group, tag);
+
+		SearchContext searchContext = getSearchContext(tag);
+		//add userId facet for postFilter
+		MultiValueFacet multiValueFacet = new MultiValueFacet(searchContext);
+
+		multiValueFacet.setFieldName(Field.USER_ID);
+		multiValueFacet.setStatic(true);
+		multiValueFacet.setValues(new long[] {user.getUserId()});
+		searchContext.addFacet(multiValueFacet);
+
+		Hits hits = search(searchContext);
+
+		assertTags(tag, hits, toMap(user, tag));
+	}
+
+	@Test
+	public void testSearchByPreBooleanFilter() throws Exception {
+		Group group = userSearchFixture.addGroup();
+
+		String tag = RandomTestUtil.randomString();
+
+		User user = addUser(group, tag);
+
+		SearchContext searchContext = getSearchContext(tag);
+		//add an entryClassName for preBooleanFilter
+		String[] entryClassName = {"com.liferay.portal.kernel.model.User"};
+
+		searchContext.setEntryClassNames(entryClassName);
+
+		Hits hits = search(searchContext);
+
+		assertTags(tag, hits, toMap(user, tag));
 	}
 
 	protected void assertSearch(String keywords, Map<String, String> expected)
