@@ -33,6 +33,10 @@ public class ScopeSearchFacetTermDisplayContext {
 		return _groupId;
 	}
 
+	public boolean isFilterBySite() {
+		return _filterBySite;
+	}
+
 	public boolean isSelected() {
 		return _selected;
 	}
@@ -49,6 +53,10 @@ public class ScopeSearchFacetTermDisplayContext {
 		_descriptiveName = descriptiveName;
 	}
 
+	public void setFilterBySite(boolean filterBySite) {
+		_filterBySite = filterBySite;
+	}
+
 	public void setGroupId(long groupId) {
 		_groupId = groupId;
 	}
@@ -63,6 +71,7 @@ public class ScopeSearchFacetTermDisplayContext {
 
 	private int _count;
 	private String _descriptiveName;
+	private boolean _filterBySite;
 	private long _groupId;
 	private boolean _selected;
 	private boolean _showCount;
