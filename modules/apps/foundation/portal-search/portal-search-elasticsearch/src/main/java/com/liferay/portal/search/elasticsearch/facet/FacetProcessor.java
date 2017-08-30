@@ -16,11 +16,20 @@ package com.liferay.portal.search.elasticsearch.facet;
 
 import com.liferay.portal.kernel.search.facet.Facet;
 
+import java.util.List;
+import java.util.Map;
+
+import org.elasticsearch.index.query.QueryBuilder;
+
 /**
  * @author Michael C. Han
  */
 public interface FacetProcessor<T> {
 
 	public void processFacet(T searchRequestBuilder, Facet facet);
+
+	public void processFacet(
+		T searchRequestBuilder, Facet facet,
+		Map<String, List<QueryBuilder>> filterAggregationQueryBuildersMap);
 
 }
