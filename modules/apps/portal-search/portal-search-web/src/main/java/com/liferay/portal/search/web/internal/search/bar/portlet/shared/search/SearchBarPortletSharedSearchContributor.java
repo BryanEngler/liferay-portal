@@ -14,11 +14,7 @@
 
 package com.liferay.portal.search.web.internal.search.bar.portlet.shared.search;
 
-import com.liferay.portal.kernel.search.BooleanClauseOccur;
-import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.generic.BooleanClauseImpl;
-import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.search.web.internal.display.context.Keywords;
 import com.liferay.portal.search.web.internal.display.context.SearchScope;
@@ -64,13 +60,12 @@ public class SearchBarPortletSharedSearchContributor
 		Optional<Long> groupIdOptional = getThisSiteGroupId(
 			searchBarPortletPreferences, portletSharedSearchSettings);
 
+		SearchContext searchContext =
+			portletSharedSearchSettings.getSearchContext();
+
 		groupIdOptional.ifPresent(
 			groupId -> {
-				portletSharedSearchSettings.addCondition(
-					new BooleanClauseImpl(
-						new TermQueryImpl(
-							Field.GROUP_ID, String.valueOf(groupId)),
-						BooleanClauseOccur.MUST));
+				searchContext.setGroupIds(new long[] {groupId});
 			});
 	}
 
