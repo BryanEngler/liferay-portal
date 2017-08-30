@@ -14,11 +14,15 @@
 
 package com.liferay.portal.search.web.internal.type.facet.portlet;
 
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.AssetEntriesFacetFactory;
 import com.liferay.portal.kernel.search.facet.Facet;
+import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.internal.facet.display.builder.AssetEntriesSearchFacetDisplayBuilder;
 import com.liferay.portal.search.web.internal.facet.display.context.AssetEntriesSearchFacetDisplayContext;
@@ -85,6 +89,25 @@ public class TypeFacetPortlet
 			typeFacetPortletPreferences, portletSharedSearchSettings);
 
 		portletSharedSearchSettings.addFacet(facet);
+
+		FacetConfiguration facetConfiguration = facet.getFacetConfiguration();
+
+		JSONObject data = facetConfiguration.getData();
+
+		JSONArray values = data.getJSONArray("assetTypes");
+
+		String[] entryClassNames = new String[values.length()];
+
+		for (int i = 0; i < values.length(); i++) {
+			entryClassNames[i] = values.getString(i);
+		}
+
+		if (ArrayUtil.isNotEmpty(entryClassNames)) {
+			SearchContext searchContext =
+				portletSharedSearchSettings.getSearchContext();
+
+			searchContext.setEntryClassNames(entryClassNames);
+		}
 	}
 
 	@Override
@@ -169,6 +192,11 @@ public class TypeFacetPortlet
 
 		parameterValuesOptional.ifPresent(
 			assetEntriesFacetBuilder::setSelectedTypes);
+
+		Optional<String[]> classNamesOptional =
+			typeFacetPortletPreferences.getAssetTypesArray();
+
+		classNamesOptional.ifPresent(assetEntriesFacetBuilder::setClassNames);
 
 		return assetEntriesFacetBuilder.build();
 	}
