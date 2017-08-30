@@ -31,6 +31,7 @@ scopeSearchFacetDisplayBuilder.setLocale(locale);
 scopeSearchFacetDisplayBuilder.setMaxTerms(dataJSONObject.getInt("maxTerms"));
 scopeSearchFacetDisplayBuilder.setParameterName(facet.getFieldId());
 scopeSearchFacetDisplayBuilder.setParameterValue(fieldParam);
+scopeSearchFacetDisplayBuilder.setFilterBySite(facet.getSearchContext());
 
 ScopeSearchFacetDisplayContext scopeSearchFacetDisplayContext = scopeSearchFacetDisplayBuilder.build();
 %>
