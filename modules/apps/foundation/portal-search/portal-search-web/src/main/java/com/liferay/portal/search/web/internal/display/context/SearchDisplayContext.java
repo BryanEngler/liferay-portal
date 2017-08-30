@@ -560,13 +560,11 @@ public class SearchDisplayContext {
 	protected void filterByThisSite(SearchSettings searchSettings) {
 		Optional<Long> groupIdOptional = getThisSiteGroupId();
 
+		SearchContext searchContext = searchSettings.getSearchContext();
+
 		groupIdOptional.ifPresent(
 			groupId -> {
-				searchSettings.addCondition(
-					new BooleanClauseImpl(
-						new TermQueryImpl(
-							Field.GROUP_ID, String.valueOf(groupId)),
-						BooleanClauseOccur.MUST));
+				searchContext.setGroupIds(new long[] {groupId});
 			});
 	}
 
