@@ -26,7 +26,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,7 +44,6 @@ public class SearchContextFactory {
 			WebKeys.THEME_DISPLAY);
 
 		searchContext.setCompanyId(themeDisplay.getCompanyId());
-		searchContext.setGroupIds(new long[] {themeDisplay.getScopeGroupId()});
 		searchContext.setLayout(themeDisplay.getLayout());
 		searchContext.setLocale(themeDisplay.getLocale());
 		searchContext.setTimeZone(themeDisplay.getTimeZone());
@@ -71,19 +69,7 @@ public class SearchContextFactory {
 			}
 		}
 
-		if (!parameters.containsKey("groupId")) {
-			String[] scopes = parameters.get("scope");
-
-			if (scopes != null) {
-				String groupId = "0";
-
-				if (Objects.equals(scopes[0], "this-site")) {
-					groupId = String.valueOf(themeDisplay.getScopeGroupId());
-				}
-
-				attributes.put("groupId", groupId);
-			}
-		}
+		attributes.remove("groupId", "0");
 
 		searchContext.setAttributes(attributes);
 
