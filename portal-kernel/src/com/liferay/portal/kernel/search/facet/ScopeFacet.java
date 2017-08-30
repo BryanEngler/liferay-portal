@@ -136,12 +136,12 @@ public class ScopeFacet extends MultiValueFacet {
 
 		if (!groupIdsTermsFilter.isEmpty()) {
 			facetBooleanFilter.add(
-				groupIdsTermsFilter, BooleanClauseOccur.MUST);
+				groupIdsTermsFilter, BooleanClauseOccur.SHOULD);
 		}
 
 		if (!scopeGroupIdsTermsFilter.isEmpty()) {
 			facetBooleanFilter.add(
-				scopeGroupIdsTermsFilter, BooleanClauseOccur.MUST);
+				scopeGroupIdsTermsFilter, BooleanClauseOccur.SHOULD);
 		}
 
 		return BooleanClauseFactoryUtil.createFilter(
