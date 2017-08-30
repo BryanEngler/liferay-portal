@@ -127,9 +127,11 @@ public class TypeFacetPortletPreferencesImpl
 		for (AssetRendererFactory<?> assetRendererFactory :
 				assetRendererFactories) {
 
-			String className = assetRendererFactory.getClassName();
+			if (!assetRendererFactory.isSearchable()) {
+				continue;
+			}
 
-			classNames.add(className);
+			classNames.add(assetRendererFactory.getClassName());
 		}
 
 		return ArrayUtil.toStringArray(classNames);

@@ -44,6 +44,10 @@ public class AssetEntriesFacetBuilder {
 		return facet;
 	}
 
+	public void setClassNames(String... classNames) {
+		_classNames = classNames;
+	}
+
 	public void setCompanyId(long companyId) {
 		_companyId = companyId;
 	}
@@ -72,7 +76,12 @@ public class AssetEntriesFacetBuilder {
 		AssetEntriesFacetConfiguration assetEntriesFacetConfiguration =
 			new AssetEntriesFacetConfigurationImpl(facetConfiguration);
 
-		assetEntriesFacetConfiguration.setClassNames(getAssetTypes(_companyId));
+		if (_classNames == null) {
+			_classNames = getAssetTypes(_companyId);
+		}
+
+		assetEntriesFacetConfiguration.setClassNames(_classNames);
+
 		assetEntriesFacetConfiguration.setFrequencyThreshold(
 			_frequencyThreshold);
 
@@ -90,9 +99,8 @@ public class AssetEntriesFacetBuilder {
 			AssetRendererFactoryRegistryUtil.getAssetRendererFactories(
 				companyId);
 
-		for (int i = 0; i < assetRendererFactories.size(); i++) {
-			AssetRendererFactory<?> assetRendererFactory =
-				assetRendererFactories.get(i);
+		for (AssetRendererFactory<?> assetRendererFactory :
+				assetRendererFactories) {
 
 			if (!assetRendererFactory.isSearchable()) {
 				continue;
@@ -105,6 +113,7 @@ public class AssetEntriesFacetBuilder {
 	}
 
 	private final AssetEntriesFacetFactory _assetEntriesFacetFactory;
+	private String[] _classNames;
 	private long _companyId;
 	private int _frequencyThreshold;
 	private SearchContext _searchContext;

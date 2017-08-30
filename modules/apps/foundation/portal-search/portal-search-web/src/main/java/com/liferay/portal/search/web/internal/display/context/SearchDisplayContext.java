@@ -14,8 +14,16 @@
 
 package com.liferay.portal.search.web.internal.display.context;
 
+import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
+import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.Document;
@@ -29,6 +37,7 @@ import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcherMa
 import com.liferay.portal.kernel.search.generic.BooleanClauseImpl;
 import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Html;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -41,11 +50,13 @@ import com.liferay.portal.search.summary.SummaryBuilderFactory;
 import com.liferay.portal.search.web.constants.SearchPortletParameterNames;
 import com.liferay.portal.search.web.facet.SearchFacet;
 import com.liferay.portal.search.web.facet.util.SearchFacetTracker;
+import com.liferay.portal.search.web.internal.facet.AssetEntriesSearchFacet;
 import com.liferay.portal.search.web.internal.portlet.SearchPortletSearchResultPreferences;
 import com.liferay.portal.search.web.internal.search.request.SearchRequestImpl;
 import com.liferay.portal.search.web.internal.search.request.SearchResponseImpl;
 import com.liferay.portal.search.web.search.request.SearchSettings;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -492,6 +503,14 @@ public class SearchDisplayContext {
 
 		Collection<SearchFacet> searchFacets = getEnabledSearchFacets();
 
+		for (SearchFacet searchFacet : searchFacets) {
+			if (searchFacet instanceof AssetEntriesSearchFacet) {
+				SearchContext searchContext = searchSettings.getSearchContext();
+
+				setEntryClassNames(searchContext);
+			}
+		}
+
 		Stream<SearchFacet> searchFacetsStream = searchFacets.stream();
 
 		Stream<Optional<Facet>> facetOptionalsStream = searchFacetsStream.map(
@@ -554,6 +573,26 @@ public class SearchDisplayContext {
 			});
 	}
 
+	protected String[] getAssetTypes(long companyId) {
+		List<String> assetTypes = new ArrayList<>();
+
+		List<AssetRendererFactory<?>> assetRendererFactories =
+			AssetRendererFactoryRegistryUtil.getAssetRendererFactories(
+				companyId);
+
+		for (AssetRendererFactory<?> assetRendererFactory :
+				assetRendererFactories) {
+
+			if (!assetRendererFactory.isSearchable()) {
+				continue;
+			}
+
+			assetTypes.add(assetRendererFactory.getClassName());
+		}
+
+		return ArrayUtil.toStringArray(assetTypes);
+	}
+
 	protected SearchScope getSearchScope() {
 		String scopeString = ParamUtil.getString(
 			_renderRequest, SearchPortletParameterNames.SCOPE);
@@ -594,6 +633,60 @@ public class SearchDisplayContext {
 
 		return Optional.of(searchScopeGroupId);
 	}
+
+	protected void setEntryClassNames(SearchContext searchContext) {
+		try {
+			JSONObject searchConfiguration = JSONFactoryUtil.createJSONObject(
+				getSearchConfiguration());
+
+			JSONArray facets = searchConfiguration.getJSONArray("facets");
+
+			String[] entryClassnames = null;
+
+			if (facets == null) {
+				entryClassnames = getAssetTypes(searchContext.getCompanyId());
+
+				searchContext.setEntryClassNames(entryClassnames);
+
+				return;
+			}
+
+			for (int i = 0; i < facets.length(); i++) {
+				JSONObject facetConfiguration =
+					JSONFactoryUtil.createJSONObject(facets.getString(i));
+
+				String fieldName = facetConfiguration.getString("fieldName");
+
+				if (fieldName.equals(Field.ENTRY_CLASS_NAME)) {
+					JSONObject data = facetConfiguration.getJSONObject("data");
+
+					JSONArray values = data.getJSONArray("values");
+
+					entryClassnames = new String[values.length()];
+
+					for (int j = 0; j < values.length(); j++) {
+						entryClassnames[j] = values.getString(j);
+					}
+
+					break;
+				}
+			}
+
+			if (ArrayUtil.isNotEmpty(entryClassnames)) {
+				searchContext.setEntryClassNames(entryClassnames);
+			}
+		}
+		catch (JSONException jsone) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Unable to get entry class names from facet configuration",
+					jsone.getCause());
+			}
+		}
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		SearchDisplayContext.class);
 
 	private Integer _collatedSpellCheckResultDisplayThreshold;
 	private Boolean _collatedSpellCheckResultEnabled;
