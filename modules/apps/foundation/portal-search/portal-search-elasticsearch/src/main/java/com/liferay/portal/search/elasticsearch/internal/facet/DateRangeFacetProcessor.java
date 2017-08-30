@@ -20,7 +20,12 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.range.date.DateRangeBuilder;
 
@@ -34,12 +39,19 @@ import org.osgi.service.component.annotations.Component;
 	property = "class.name=com.liferay.portal.kernel.search.facet.DateRangeFacet",
 	service = FacetProcessor.class
 )
-public class DateRangeFacetProcessor
-	implements FacetProcessor<SearchRequestBuilder> {
+public class DateRangeFacetProcessor extends BaseFacetProcessor {
 
 	@Override
 	public void processFacet(
 		SearchRequestBuilder searchRequestBuilder, Facet facet) {
+
+		processFacet(searchRequestBuilder, facet, new HashMap<>());
+	}
+
+	@Override
+	public void processFacet(
+		SearchRequestBuilder searchRequestBuilder, Facet facet,
+		Map<String, List<QueryBuilder>> filterAggregationQueryBuildersMap) {
 
 		FacetConfiguration facetConfiguration = facet.getFacetConfiguration();
 
@@ -51,8 +63,10 @@ public class DateRangeFacetProcessor
 			return;
 		}
 
+		String fieldName = facetConfiguration.getFieldName();
+
 		DateRangeBuilder dateRangeBuilder = AggregationBuilders.dateRange(
-			facetConfiguration.getFieldName());
+			fieldName);
 
 		String format = jsonObject.getString("format");
 
@@ -71,7 +85,15 @@ public class DateRangeFacetProcessor
 			dateRangeBuilder.addRange(rangeParts[0], rangeParts[2]);
 		}
 
-		searchRequestBuilder.addAggregation(dateRangeBuilder);
+		if (filterAggregationQueryBuildersMap.isEmpty()) {
+			searchRequestBuilder.addAggregation(dateRangeBuilder);
+
+			return;
+		}
+
+		addFilteredAggregations(
+			searchRequestBuilder, fieldName, dateRangeBuilder,
+			filterAggregationQueryBuildersMap);
 	}
 
 }
