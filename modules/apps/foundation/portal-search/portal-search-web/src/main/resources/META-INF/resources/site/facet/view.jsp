@@ -74,7 +74,7 @@ ScopeSearchFacetDisplayContext scopeSearchFacetDisplayContext = (ScopeSearchFace
 
 								<li class="facet-value">
 									<label class="facet-checkbox-label" for="<portlet:namespace />term_<%= i %>">
-										<input class="facet-term" data-term-id="<%= scopeSearchFacetTermDisplayContext.getGroupId() %>" id="<portlet:namespace />term_<%= i %>" name="<portlet:namespace />term_<%= i %>" onChange="Liferay.Search.FacetUtil.changeSelection(event);" type="checkbox" <%= scopeSearchFacetTermDisplayContext.isSelected() ? "checked" : StringPool.BLANK %> />
+										<input class="facet-term" data-term-id="<%= scopeSearchFacetTermDisplayContext.getGroupId() %>" id="<portlet:namespace />term_<%= i %>" name="<portlet:namespace />term_<%= i %>" onChange="Liferay.Search.FacetUtil.changeSelection(event);" type="checkbox" <%= scopeSearchFacetTermDisplayContext.isSelected() || scopeSearchFacetTermDisplayContext.isFilterBySite() ? "checked" : StringPool.BLANK %> <%= scopeSearchFacetTermDisplayContext.isFilterBySite() ? "disabled" : StringPool.BLANK %> />
 
 										<span class="term-name">
 											<%= HtmlUtil.escape(scopeSearchFacetTermDisplayContext.getDescriptiveName()) %>
