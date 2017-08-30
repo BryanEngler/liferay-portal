@@ -124,6 +124,8 @@ public class SiteFacetPortlet
 			new ScopeSearchFacetDisplayBuilder();
 
 		scopeSearchFacetDisplayBuilder.setFacet(facet);
+		scopeSearchFacetDisplayBuilder.setFilterBySite(
+			facet.getSearchContext());
 		scopeSearchFacetDisplayBuilder.setFrequencyThreshold(
 			siteFacetConfiguration.getFrequencyThreshold());
 		scopeSearchFacetDisplayBuilder.setFrequenciesVisible(
