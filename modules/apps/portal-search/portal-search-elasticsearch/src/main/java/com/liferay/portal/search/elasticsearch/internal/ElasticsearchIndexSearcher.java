@@ -19,6 +19,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.search.SearchPaginationUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BaseIndexSearcher;
@@ -39,6 +40,8 @@ import com.liferay.portal.kernel.search.Stats;
 import com.liferay.portal.kernel.search.StatsResults;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
+import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
+import com.liferay.portal.kernel.search.facet.util.RangeParserUtil;
 import com.liferay.portal.kernel.search.filter.FilterTranslator;
 import com.liferay.portal.kernel.search.geolocation.GeoLocationPoint;
 import com.liferay.portal.kernel.search.highlight.HighlightUtil;
@@ -62,6 +65,7 @@ import com.liferay.portal.search.elasticsearch.internal.util.DocumentTypes;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -79,6 +83,7 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.Aggregation;
@@ -243,12 +248,16 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		Map<String, Facet> facetsMap = searchContext.getFacets();
 
+		Map<String, List<QueryBuilder>> filterAggregationQueryBuilders =
+			getFilterAggregationQueryBuilders(facetsMap);
+
 		for (Facet facet : facetsMap.values()) {
 			if (facet.isStatic()) {
 				continue;
 			}
 
-			facetProcessor.processFacet(searchRequestBuilder, facet);
+			facetProcessor.processFacet(
+				searchRequestBuilder, facet, filterAggregationQueryBuilders);
 		}
 	}
 
@@ -554,6 +563,63 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			searchContext, query, start, end, false);
 
 		return processResponse(searchResponse, searchContext, query);
+	}
+
+	protected String getAggregationName(Facet facet) {
+		FacetConfiguration facetConfiguration = facet.getFacetConfiguration();
+
+		JSONObject data = facetConfiguration.getData();
+
+		return data.getString("aggregationName", facet.getFieldName());
+	}
+
+	protected Map<String, List<QueryBuilder>> getFilterAggregationQueryBuilders(
+		Map<String, Facet> facetsMap) {
+
+		Map<String, List<QueryBuilder>> filterAggregationQueryBuilders =
+			new HashMap<>();
+
+		for (Facet facet : facetsMap.values()) {
+			if (facet.isStatic() ||
+				!(facet instanceof com.liferay.portal.search.facet.Facet)) {
+
+				continue;
+			}
+
+			com.liferay.portal.search.facet.Facet searchFacet =
+				(com.liferay.portal.search.facet.Facet)facet;
+
+			String[] selectedValues = searchFacet.getSelections();
+
+			if (ArrayUtil.isNotEmpty(selectedValues)) {
+				List<QueryBuilder> queryBuilders = new ArrayList<>();
+
+				String fieldName = facet.getFieldName();
+
+				if (fieldName.equals(Field.MODIFIED_DATE)) {
+					for (String value : selectedValues) {
+						String[] ranges = RangeParserUtil.parserRange(value);
+
+						RangeQueryBuilder rangeQuery = QueryBuilders.rangeQuery(
+							Field.MODIFIED_DATE);
+
+						rangeQuery.gte(ranges[0]);
+						rangeQuery.lte(ranges[1]);
+
+						queryBuilders.add(rangeQuery);
+					}
+				}
+				else {
+					queryBuilders.add(
+						QueryBuilders.termsQuery(fieldName, selectedValues));
+				}
+
+				filterAggregationQueryBuilders.put(
+					getAggregationName(facet), queryBuilders);
+			}
+		}
+
+		return filterAggregationQueryBuilders;
 	}
 
 	protected String[] getSelectedIndexNames(
