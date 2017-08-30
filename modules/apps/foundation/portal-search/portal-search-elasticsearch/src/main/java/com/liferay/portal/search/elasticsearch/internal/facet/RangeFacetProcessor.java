@@ -24,7 +24,12 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch.facet.FacetProcessor;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -35,29 +40,49 @@ import org.osgi.service.component.annotations.Component;
  */
 @Component(
 	immediate = true,
-	property = {"class.name=com.liferay.portal.kernel.search.facet.RangeFacet"}
+	property = {"class.name=com.liferay.portal.kernel.search.facet.RangeFacet"},
+	service = FacetProcessor.class
 )
-public class RangeFacetProcessor
-	implements FacetProcessor<SearchRequestBuilder> {
+public class RangeFacetProcessor extends BaseFacetProcessor {
 
 	@Override
 	public void processFacet(
 		SearchRequestBuilder searchRequestBuilder, Facet facet) {
 
+		processFacet(searchRequestBuilder, facet, new HashMap<>());
+	}
+
+	@Override
+	public void processFacet(
+		SearchRequestBuilder searchRequestBuilder, Facet facet,
+		Map<String, List<QueryBuilder>> filterAggregationQueryBuildersMap) {
+
 		FacetConfiguration facetConfiguration = facet.getFacetConfiguration();
 
-		DefaultRangeBuilder defaultRangeBuilder = new DefaultRangeBuilder(
-			facetConfiguration.getFieldName());
+		String fieldName = facetConfiguration.getFieldName();
 
-		defaultRangeBuilder.field(facetConfiguration.getFieldName());
+		DefaultRangeBuilder defaultRangeBuilder = new DefaultRangeBuilder(
+			fieldName);
+
+		defaultRangeBuilder.field(fieldName);
 
 		addConfigurationRanges(facetConfiguration, defaultRangeBuilder);
 
 		addCustomRange(facet, defaultRangeBuilder);
 
-		if (defaultRangeBuilder.hasRanges()) {
-			searchRequestBuilder.addAggregation(defaultRangeBuilder);
+		if (!defaultRangeBuilder.hasRanges()) {
+			return;
 		}
+
+		if (filterAggregationQueryBuildersMap.isEmpty()) {
+			searchRequestBuilder.addAggregation(defaultRangeBuilder);
+
+			return;
+		}
+
+		addFilteredAggregations(
+			searchRequestBuilder, fieldName, defaultRangeBuilder,
+			filterAggregationQueryBuildersMap);
 	}
 
 	protected void addConfigurationRanges(
