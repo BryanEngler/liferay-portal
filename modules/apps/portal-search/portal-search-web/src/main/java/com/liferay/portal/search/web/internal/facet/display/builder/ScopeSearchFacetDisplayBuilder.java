@@ -53,6 +53,7 @@ public class ScopeSearchFacetDisplayBuilder {
 		ScopeSearchFacetDisplayContext scopeSearchFacetDisplayContext =
 			new ScopeSearchFacetDisplayContext();
 
+		scopeSearchFacetDisplayContext.setFilterBySite(isFilterBySite());
 		scopeSearchFacetDisplayContext.setNothingSelected(nothingSelected);
 		scopeSearchFacetDisplayContext.setParameterName(_parameterName);
 		scopeSearchFacetDisplayContext.setParameterValue(
@@ -133,6 +134,7 @@ public class ScopeSearchFacetDisplayBuilder {
 		scopeSearchFacetTermDisplayContext.setCount(count);
 		scopeSearchFacetTermDisplayContext.setDescriptiveName(
 			getDescriptiveName(groupId));
+		scopeSearchFacetTermDisplayContext.setFilterBySite(isFilterBySite());
 		scopeSearchFacetTermDisplayContext.setGroupId(groupId);
 		scopeSearchFacetTermDisplayContext.setSelected(selected);
 		scopeSearchFacetTermDisplayContext.setShowCount(_showCounts);
