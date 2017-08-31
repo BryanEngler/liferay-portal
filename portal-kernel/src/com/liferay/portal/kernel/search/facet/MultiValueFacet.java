@@ -26,8 +26,6 @@ import com.liferay.portal.kernel.search.facet.util.FacetValueValidator;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 
 /**
  * @author Raymond Augé
@@ -128,47 +126,35 @@ public class MultiValueFacet extends BaseFacet {
 
 	@Override
 	protected BooleanClause<Filter> doGetFacetFilterBooleanClause() {
-		SearchContext searchContext = getSearchContext();
-
 		FacetConfiguration facetConfiguration = getFacetConfiguration();
 
 		JSONObject dataJSONObject = facetConfiguration.getData();
 
-		String[] values = null;
+		String[] selectedFacetValues = null;
 
-		if (isStatic() && dataJSONObject.has("values")) {
-			JSONArray valuesJSONArray = dataJSONObject.getJSONArray("values");
-
-			values = new String[valuesJSONArray.length()];
-
-			for (int i = 0; i < valuesJSONArray.length(); i++) {
-				values[i] = valuesJSONArray.getString(i);
-			}
+		if (dataJSONObject.has("facetSelections")) {
+			selectedFacetValues = _getJSONValues(
+				dataJSONObject, "facetSelections");
 		}
 
-		String[] valuesParam = StringUtil.split(
-			GetterUtil.getString(searchContext.getAttribute(getFieldId())));
-
-		if (!isStatic() && (valuesParam != null) && (valuesParam.length > 0)) {
-			values = valuesParam;
-		}
-
-		if (ArrayUtil.isEmpty(values)) {
+		if (ArrayUtil.isEmpty(selectedFacetValues)) {
 			return null;
 		}
 
+		SearchContext searchContext = getSearchContext();
+
 		TermsFilter facetTermsFilter = new TermsFilter(getFieldName());
 
-		for (String value : values) {
+		for (String selectedFacetValue : selectedFacetValues) {
 			FacetValueValidator facetValueValidator = getFacetValueValidator();
 
 			if ((searchContext.getUserId() > 0) &&
-				!facetValueValidator.check(searchContext, value)) {
+				!facetValueValidator.check(searchContext, selectedFacetValue)) {
 
 				continue;
 			}
 
-			facetTermsFilter.addValue(value);
+			facetTermsFilter.addValue(selectedFacetValue);
 		}
 
 		if (facetTermsFilter.isEmpty()) {
@@ -184,7 +170,19 @@ public class MultiValueFacet extends BaseFacet {
 
 		JSONObject dataJSONObject = facetConfiguration.getData();
 
-		dataJSONObject.put("values", valuesJSONArray);
+		dataJSONObject.put("facetSelections", valuesJSONArray);
+	}
+
+	private String[] _getJSONValues(JSONObject dataJSONObject, String key) {
+		JSONArray valuesJSONArray = dataJSONObject.getJSONArray(key);
+
+		String[] values = new String[valuesJSONArray.length()];
+
+		for (int i = 0; i < valuesJSONArray.length(); i++) {
+			values[i] = valuesJSONArray.getString(i);
+		}
+
+		return values;
 	}
 
 }

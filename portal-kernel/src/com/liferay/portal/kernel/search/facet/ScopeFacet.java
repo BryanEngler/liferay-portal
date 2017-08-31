@@ -167,16 +167,17 @@ public class ScopeFacet extends MultiValueFacet {
 
 		JSONObject dataJSONObject = facetConfiguration.getData();
 
-		if (!dataJSONObject.has("values")) {
+		if (!dataJSONObject.has("facetSelections")) {
 			return null;
 		}
 
-		JSONArray valuesJSONArray = dataJSONObject.getJSONArray("values");
+		JSONArray facetSelectionsJSONArray = dataJSONObject.getJSONArray(
+			"facetSelections");
 
-		long[] groupIds = new long[valuesJSONArray.length()];
+		long[] groupIds = new long[facetSelectionsJSONArray.length()];
 
-		for (int i = 0; i < valuesJSONArray.length(); i++) {
-			groupIds[i] = valuesJSONArray.getLong(i);
+		for (int i = 0; i < facetSelectionsJSONArray.length(); i++) {
+			groupIds[i] = facetSelectionsJSONArray.getLong(i);
 		}
 
 		return groupIds;
