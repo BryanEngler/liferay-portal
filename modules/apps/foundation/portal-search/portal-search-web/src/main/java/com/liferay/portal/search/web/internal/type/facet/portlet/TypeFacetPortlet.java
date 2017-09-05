@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.search.asset.AssetTypesSearchHelper;
 import com.liferay.portal.search.web.internal.facet.display.builder.AssetEntriesSearchFacetDisplayBuilder;
 import com.liferay.portal.search.web.internal.facet.display.context.AssetEntriesSearchFacetDisplayContext;
 import com.liferay.portal.search.web.internal.type.facet.constants.TypeFacetPortletKeys;
@@ -83,7 +84,8 @@ public class TypeFacetPortlet
 
 		TypeFacetPortletPreferences typeFacetPortletPreferences =
 			new TypeFacetPortletPreferencesImpl(
-				portletSharedSearchSettings.getPortletPreferences());
+				portletSharedSearchSettings.getPortletPreferences(),
+				assetTypesSearchHelper);
 
 		Facet facet = buildFacet(
 			typeFacetPortletPreferences, portletSharedSearchSettings);
@@ -142,7 +144,8 @@ public class TypeFacetPortlet
 		TypeFacetPortletPreferences typeFacetPortletPreferences =
 			new TypeFacetPortletPreferencesImpl(
 				portletSharedSearchResponse.getPortletPreferences(
-					renderRequest));
+					renderRequest),
+				assetTypesSearchHelper);
 
 		AssetEntriesSearchFacetDisplayBuilder
 			assetEntriesSearchFacetDisplayBuilder =
@@ -177,7 +180,8 @@ public class TypeFacetPortlet
 		PortletSharedSearchSettings portletSharedSearchSettings) {
 
 		AssetEntriesFacetBuilder assetEntriesFacetBuilder =
-			new AssetEntriesFacetBuilder(assetEntriesFacetFactory);
+			new AssetEntriesFacetBuilder(
+				assetEntriesFacetFactory, assetTypesSearchHelper);
 
 		assetEntriesFacetBuilder.setCompanyId(
 			getCompanyId(portletSharedSearchSettings));
@@ -251,6 +255,9 @@ public class TypeFacetPortlet
 
 	@Reference
 	protected AssetEntriesFacetFactory assetEntriesFacetFactory;
+
+	@Reference
+	protected AssetTypesSearchHelper assetTypesSearchHelper;
 
 	@Reference
 	protected PortletSharedSearchRequest portletSharedSearchRequest;

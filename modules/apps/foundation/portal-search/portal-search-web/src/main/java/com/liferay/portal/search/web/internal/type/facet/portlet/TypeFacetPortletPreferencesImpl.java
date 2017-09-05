@@ -14,13 +14,12 @@
 
 package com.liferay.portal.search.web.internal.type.facet.portlet;
 
-import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
-import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.search.asset.AssetTypesSearchHelper;
 import com.liferay.portal.search.web.internal.util.PortletPreferencesHelper;
 
 import java.util.ArrayList;
@@ -37,10 +36,12 @@ public class TypeFacetPortletPreferencesImpl
 	implements TypeFacetPortletPreferences {
 
 	public TypeFacetPortletPreferencesImpl(
-		Optional<PortletPreferences> portletPreferencesOptional) {
+		Optional<PortletPreferences> portletPreferencesOptional,
+		AssetTypesSearchHelper assetTypesSearchHelper) {
 
 		_portletPreferencesHelper = new PortletPreferencesHelper(
 			portletPreferencesOptional);
+		_assetTypesSearchHelper = assetTypesSearchHelper;
 	}
 
 	@Override
@@ -64,7 +65,8 @@ public class TypeFacetPortletPreferencesImpl
 
 		Optional<String[]> assetTypesOptional = getAssetTypesArray();
 
-		String[] allAssetTypes = getAllAssetTypes(companyId);
+		String[] allAssetTypes = _assetTypesSearchHelper.getAssetTypes(
+			companyId);
 
 		String[] assetTypes = assetTypesOptional.orElse(allAssetTypes);
 
@@ -85,7 +87,8 @@ public class TypeFacetPortletPreferencesImpl
 
 		Optional<String[]> assetTypesOptional = getAssetTypesArray();
 
-		String[] allAssetTypes = getAllAssetTypes(companyId);
+		String[] allAssetTypes = _assetTypesSearchHelper.getAssetTypes(
+			companyId);
 
 		String[] assetTypes = assetTypesOptional.orElse(allAssetTypes);
 
@@ -117,31 +120,12 @@ public class TypeFacetPortletPreferencesImpl
 			true);
 	}
 
-	protected String[] getAllAssetTypes(long companyId) {
-		List<String> classNames = new ArrayList<>();
-
-		List<AssetRendererFactory<?>> assetRendererFactories =
-			AssetRendererFactoryRegistryUtil.getAssetRendererFactories(
-				companyId);
-
-		for (AssetRendererFactory<?> assetRendererFactory :
-				assetRendererFactories) {
-
-			if (!assetRendererFactory.isSearchable()) {
-				continue;
-			}
-
-			classNames.add(assetRendererFactory.getClassName());
-		}
-
-		return ArrayUtil.toStringArray(classNames);
-	}
-
 	protected KeyValuePair getKeyValuePair(Locale locale, String className) {
 		return new KeyValuePair(
 			className, ResourceActionsUtil.getModelResource(locale, className));
 	}
 
+	private final AssetTypesSearchHelper _assetTypesSearchHelper;
 	private final PortletPreferencesHelper _portletPreferencesHelper;
 
 }

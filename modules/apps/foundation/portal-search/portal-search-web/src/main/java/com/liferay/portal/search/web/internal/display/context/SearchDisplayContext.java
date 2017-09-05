@@ -14,8 +14,6 @@
 
 package com.liferay.portal.search.web.internal.display.context;
 
-import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
-import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
@@ -46,6 +44,7 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PredicateFilter;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.search.asset.AssetTypesSearchHelper;
 import com.liferay.portal.search.summary.SummaryBuilderFactory;
 import com.liferay.portal.search.web.constants.SearchPortletParameterNames;
 import com.liferay.portal.search.web.facet.SearchFacet;
@@ -56,7 +55,6 @@ import com.liferay.portal.search.web.internal.search.request.SearchRequestImpl;
 import com.liferay.portal.search.web.internal.search.request.SearchResponseImpl;
 import com.liferay.portal.search.web.search.request.SearchSettings;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -80,7 +78,8 @@ public class SearchDisplayContext {
 			FacetedSearcherManager facetedSearcherManager,
 			IndexSearchPropsValues indexSearchPropsValues,
 			PortletURLFactory portletURLFactory,
-			SummaryBuilderFactory summaryBuilderFactory)
+			SummaryBuilderFactory summaryBuilderFactory,
+			AssetTypesSearchHelper assetTypesSearchHelper)
 		throws PortletException {
 
 		_renderRequest = renderRequest;
@@ -88,6 +87,7 @@ public class SearchDisplayContext {
 		_indexSearchPropsValues = indexSearchPropsValues;
 		_portletURLFactory = portletURLFactory;
 		_summaryBuilderFactory = summaryBuilderFactory;
+		_assetTypesSearchHelper = assetTypesSearchHelper;
 
 		ThemeDisplaySupplier themeDisplaySupplier =
 			new PortletRequestThemeDisplaySupplier(renderRequest);
@@ -573,26 +573,6 @@ public class SearchDisplayContext {
 			});
 	}
 
-	protected String[] getAssetTypes(long companyId) {
-		List<String> assetTypes = new ArrayList<>();
-
-		List<AssetRendererFactory<?>> assetRendererFactories =
-			AssetRendererFactoryRegistryUtil.getAssetRendererFactories(
-				companyId);
-
-		for (AssetRendererFactory<?> assetRendererFactory :
-				assetRendererFactories) {
-
-			if (!assetRendererFactory.isSearchable()) {
-				continue;
-			}
-
-			assetTypes.add(assetRendererFactory.getClassName());
-		}
-
-		return ArrayUtil.toStringArray(assetTypes);
-	}
-
 	protected SearchScope getSearchScope() {
 		String scopeString = ParamUtil.getString(
 			_renderRequest, SearchPortletParameterNames.SCOPE);
@@ -644,7 +624,8 @@ public class SearchDisplayContext {
 			String[] entryClassnames = null;
 
 			if (facets == null) {
-				entryClassnames = getAssetTypes(searchContext.getCompanyId());
+				entryClassnames = _assetTypesSearchHelper.getAssetTypes(
+					searchContext.getCompanyId());
 
 				searchContext.setEntryClassNames(entryClassnames);
 
@@ -688,6 +669,7 @@ public class SearchDisplayContext {
 	private static final Log _log = LogFactoryUtil.getLog(
 		SearchDisplayContext.class);
 
+	private final AssetTypesSearchHelper _assetTypesSearchHelper;
 	private Integer _collatedSpellCheckResultDisplayThreshold;
 	private Boolean _collatedSpellCheckResultEnabled;
 	private Boolean _displayMainQuery;
