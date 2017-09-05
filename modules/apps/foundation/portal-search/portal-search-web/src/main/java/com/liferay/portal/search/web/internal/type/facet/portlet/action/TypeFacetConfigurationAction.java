@@ -16,11 +16,16 @@ package com.liferay.portal.search.web.internal.type.facet.portlet.action;
 
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
+import com.liferay.portal.search.asset.AssetTypesSearchHelper;
 import com.liferay.portal.search.web.internal.type.facet.constants.TypeFacetPortletKeys;
 
+import javax.portlet.PortletConfig;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Lino Alves
@@ -36,5 +41,19 @@ public class TypeFacetConfigurationAction extends DefaultConfigurationAction {
 	public String getJspPath(HttpServletRequest request) {
 		return "/type/facet/configuration.jsp";
 	}
+
+	@Override
+	public void include(
+			PortletConfig portletConfig, HttpServletRequest request,
+			HttpServletResponse response)
+		throws Exception {
+
+		request.setAttribute("assetTypesSearchHelper", assetTypesSearchHelper);
+
+		super.include(portletConfig, request, response);
+	}
+
+	@Reference
+	protected AssetTypesSearchHelper assetTypesSearchHelper;
 
 }
