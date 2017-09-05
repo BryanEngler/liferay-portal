@@ -14,8 +14,6 @@
 
 package com.liferay.portal.search.facet.internal.faceted.searcher;
 
-import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
-import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactory;
@@ -51,9 +49,9 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.search.asset.AssetTypesSearchHelper;
 import com.liferay.portal.search.permission.SearchPermissionFilterContributor;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -67,12 +65,14 @@ public class FacetedSearcherImpl
 	extends BaseSearcher implements FacetedSearcher {
 
 	public FacetedSearcherImpl(
+		AssetTypesSearchHelper assetTypesSearchHelper,
 		ExpandoBridgeFactory expandoBridgeFactory,
 		GroupLocalService groupLocalService, IndexerRegistry indexerRegistry,
 		IndexSearcherHelper indexSearcherHelper,
 		Collection<SearchPermissionFilterContributor>
 			searchPermissionFilterContributors) {
 
+		_assetTypesSearchHelper = assetTypesSearchHelper;
 		_expandoBridgeFactory = expandoBridgeFactory;
 		_groupLocalService = groupLocalService;
 		_indexerRegistry = indexerRegistry;
@@ -413,28 +413,14 @@ public class FacetedSearcherImpl
 		String[] entryClassNames = searchContext.getEntryClassNames();
 
 		if (ArrayUtil.isEmpty(entryClassNames)) {
-			List<String> assetTypes = new ArrayList<>();
-
-			List<AssetRendererFactory<?>> assetRendererFactories =
-				AssetRendererFactoryRegistryUtil.getAssetRendererFactories(
-					searchContext.getCompanyId());
-
-			for (AssetRendererFactory<?> assetRendererFactory :
-					assetRendererFactories) {
-
-				if (!assetRendererFactory.isSearchable()) {
-					continue;
-				}
-
-				assetTypes.add(assetRendererFactory.getClassName());
-			}
-
-			entryClassNames = ArrayUtil.toStringArray(assetTypes);
+			entryClassNames = _assetTypesSearchHelper.getAssetTypes(
+				searchContext.getCompanyId());
 		}
 
 		return entryClassNames;
 	}
 
+	private final AssetTypesSearchHelper _assetTypesSearchHelper;
 	private final ExpandoBridgeFactory _expandoBridgeFactory;
 	private final GroupLocalService _groupLocalService;
 	private final IndexerRegistry _indexerRegistry;
