@@ -120,6 +120,8 @@ public class PermissionFilterFacetedSearcherTest
 
 		SearchContext searchContext = getSearchContext(title);
 
+		searchContext.setGroupIds(null);
+
 		Facet facet = assetEntriesFacetFactory.newInstance(searchContext);
 
 		searchContext.addFacet(facet);

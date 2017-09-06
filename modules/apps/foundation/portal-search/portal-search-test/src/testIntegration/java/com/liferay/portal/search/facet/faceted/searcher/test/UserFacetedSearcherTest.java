@@ -79,6 +79,7 @@ public class UserFacetedSearcherTest extends BaseFacetedSearcherTestCase {
 
 		searchContext.setEntryClassNames(entryClassNames);
 
+		searchContext.setGroupIds(null);
 		searchContext.setLocale(_locale);
 
 		Facet facet = createUserFacet(searchContext);
