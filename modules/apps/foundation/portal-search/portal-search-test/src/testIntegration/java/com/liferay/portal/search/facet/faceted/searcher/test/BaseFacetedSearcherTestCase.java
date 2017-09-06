@@ -24,7 +24,11 @@ import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcher;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcherManager;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactory;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
+import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowThreadLocal;
 import com.liferay.portal.search.test.internal.util.UserSearchFixture;
@@ -53,11 +57,19 @@ public abstract class BaseFacetedSearcherTestCase {
 		WorkflowThreadLocal.setEnabled(false);
 
 		setUpUserSearchFixture();
+
+		_originalPermissionChecker =
+			PermissionThreadLocal.getPermissionChecker();
+
+		PermissionThreadLocal.setPermissionChecker(
+			permissionCheckerFactory.create(TestPropsValues.getUser()));
 	}
 
 	@After
 	public void tearDown() throws Exception {
 		userSearchFixture.tearDown();
+
+		PermissionThreadLocal.setPermissionChecker(_originalPermissionChecker);
 	}
 
 	@Rule
@@ -144,6 +156,9 @@ public abstract class BaseFacetedSearcherTestCase {
 		return userSearchFixture.toMap(user, tags);
 	}
 
+	@Inject
+	protected static PermissionCheckerFactory permissionCheckerFactory;
+
 	protected final UserSearchFixture userSearchFixture =
 		new UserSearchFixture();
 
@@ -155,6 +170,8 @@ public abstract class BaseFacetedSearcherTestCase {
 
 	@DeleteAfterTestRun
 	private List<Group> _groups;
+
+	private PermissionChecker _originalPermissionChecker;
 
 	@DeleteAfterTestRun
 	private List<User> _users;

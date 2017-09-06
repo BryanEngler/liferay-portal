@@ -16,6 +16,7 @@ package com.liferay.portal.search.facet.faceted.searcher.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.service.DLAppServiceUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
@@ -31,8 +32,6 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.AssetEntriesFacetFactory;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
-import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.security.permission.PermissionCheckerFactory;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -90,20 +89,16 @@ public class AssetEntriesFacetedSearcherTest
 
 		journalArticleLocalService = registry.getService(
 			JournalArticleLocalService.class);
-
-		permissionCheckerFactory = registry.getService(
-			PermissionCheckerFactory.class);
-
-		_originalPermissionChecker =
-			PermissionThreadLocal.getPermissionChecker();
 	}
 
 	@After
 	@Override
 	public void tearDown() throws Exception {
-		super.tearDown();
+		for (FileEntry fileEntry : _fileEntries) {
+			DLAppServiceUtil.deleteFileEntry(fileEntry.getFileEntryId());
+		}
 
-		PermissionThreadLocal.setPermissionChecker(_originalPermissionChecker);
+		super.tearDown();
 	}
 
 	@Test
@@ -139,6 +134,8 @@ public class AssetEntriesFacetedSearcherTest
 		facetConfiguration.setStatic(false);
 
 		SearchContext searchContext = getSearchContext(title);
+
+		searchContext.setGroupIds(null);
 
 		Facet facet = assetEntriesFacetFactory.newInstance(searchContext);
 
@@ -187,14 +184,10 @@ public class AssetEntriesFacetedSearcherTest
 
 	protected AssetEntriesFacetFactory assetEntriesFacetFactory;
 	protected JournalArticleLocalService journalArticleLocalService;
-	protected PermissionCheckerFactory permissionCheckerFactory;
 
 	@DeleteAfterTestRun
 	private final List<JournalArticle> _articles = new ArrayList<>();
 
-	@DeleteAfterTestRun
 	private final List<FileEntry> _fileEntries = new ArrayList<>();
-
-	private PermissionChecker _originalPermissionChecker;
 
 }

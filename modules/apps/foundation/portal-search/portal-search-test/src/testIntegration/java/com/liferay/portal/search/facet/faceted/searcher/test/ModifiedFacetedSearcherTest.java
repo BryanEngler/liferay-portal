@@ -63,6 +63,8 @@ public class ModifiedFacetedSearcherTest extends BaseFacetedSearcherTestCase {
 
 		SearchContext searchContext = getSearchContext(keyword);
 
+		searchContext.setGroupIds(null);
+
 		Facet facet = _modifiedFacetFactory.newInstance(searchContext);
 
 		String configRange1 = "[11110101010101 TO 19990101010101]";

@@ -93,6 +93,8 @@ public class FacetedSearcherTest extends BaseFacetedSearcherTestCase {
 
 		SearchContext searchContext = getSearchContext(keywords);
 
+		searchContext.setGroupIds(null);
+
 		Hits hits = search(searchContext);
 
 		assertTags(keywords, hits, expected);
