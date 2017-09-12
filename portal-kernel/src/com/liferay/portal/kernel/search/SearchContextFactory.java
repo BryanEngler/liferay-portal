@@ -26,7 +26,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
@@ -84,6 +83,8 @@ public class SearchContextFactory {
 				attributes.put("groupId", groupId);
 			}
 		}
+
+		attributes.put(Field.SCOPE_GROUP_ID, themeDisplay.getScopeGroupId());
 
 		searchContext.setAttributes(attributes);
 
