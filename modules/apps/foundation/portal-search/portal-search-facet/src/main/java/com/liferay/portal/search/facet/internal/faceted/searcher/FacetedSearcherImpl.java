@@ -81,6 +81,37 @@ public class FacetedSearcherImpl
 			searchPermissionFilterContributors;
 	}
 
+	protected void addOwnerBooleanFilter(
+		BooleanFilter contextBooleanFilter, SearchContext searchContext) {
+
+		long ownerUserId = searchContext.getOwnerUserId();
+
+		if (ownerUserId > 0) {
+			contextBooleanFilter.addRequiredTerm(Field.USER_ID, ownerUserId);
+		}
+	}
+
+	protected void addPermissionBooleanFilter(
+		BooleanFilter contextBooleanFilter, String entryClassName,
+		SearchContext searchContext) {
+
+		if (searchContext.getUserId() > 0) {
+			SearchPermissionChecker searchPermissionChecker =
+				SearchEngineHelperUtil.getSearchPermissionChecker();
+
+			Optional<String> parentEntryClassNameOptional =
+				getParentEntryClassName(entryClassName);
+
+			String permissionedEntryClassName =
+				parentEntryClassNameOptional.orElse(entryClassName);
+
+			searchPermissionChecker.getPermissionBooleanFilter(
+				searchContext.getCompanyId(), searchContext.getGroupIds(),
+				searchContext.getUserId(), permissionedEntryClassName,
+				contextBooleanFilter, searchContext);
+		}
+	}
+
 	protected void addSearchExpandoKeywords(
 			BooleanQuery searchQuery, SearchContext searchContext,
 			String keywords, String className)
@@ -241,34 +272,6 @@ public class FacetedSearcherImpl
 		return fullQuery;
 	}
 
-	protected BooleanFilter createPermissionBooleanFilter(
-		String entryClassName, SearchContext searchContext) {
-
-		BooleanFilter permissionBooleanFilter = new BooleanFilter();
-
-		permissionBooleanFilter.addRequiredTerm(
-			Field.ENTRY_CLASS_NAME, entryClassName);
-
-		if (searchContext.getUserId() > 0) {
-			SearchPermissionChecker searchPermissionChecker =
-				SearchEngineHelperUtil.getSearchPermissionChecker();
-
-			Optional<String> parentEntryClassNameOptional =
-				getParentEntryClassName(entryClassName);
-
-			String permissionedEntryClassName =
-				parentEntryClassNameOptional.orElse(entryClassName);
-
-			permissionBooleanFilter =
-				searchPermissionChecker.getPermissionBooleanFilter(
-					searchContext.getCompanyId(), searchContext.getGroupIds(),
-					searchContext.getUserId(), permissionedEntryClassName,
-					permissionBooleanFilter, searchContext);
-		}
-
-		return permissionBooleanFilter;
-	}
-
 	@Override
 	protected Hits doSearch(SearchContext searchContext)
 		throws SearchException {
@@ -315,6 +318,19 @@ public class FacetedSearcherImpl
 		return entryClassNames;
 	}
 
+	protected long getLiveGroupId(long groupId) throws Exception {
+		Group group = _groupLocalService.getGroup(groupId);
+
+		long liveGroupId = group.getLiveGroupId();
+
+		if (liveGroupId == 0) {
+			liveGroupId = Long.valueOf(
+				group.getTypeSettingsProperty("remoteGroupId"));
+		}
+
+		return liveGroupId;
+	}
+
 	protected Optional<String> getParentEntryClassName(String entryClassName) {
 		for (SearchPermissionFilterContributor
 				searchPermissionFilterContributor :
@@ -332,6 +348,24 @@ public class FacetedSearcherImpl
 		}
 
 		return Optional.empty();
+	}
+
+	protected boolean isDataStaged(long groupId, String entryClassName)
+		throws Exception {
+
+		long liveGroupId = getLiveGroupId(groupId);
+
+		Group liveGroup = _groupLocalService.getGroup(liveGroupId);
+
+		AssetRendererFactory<?> factory =
+			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
+				entryClassName);
+
+		boolean dataIsStaged = GetterUtil.getBoolean(
+			liveGroup.getTypeSettingsProperty(
+				StagingConstants.STAGED_PORTLET + factory.getPortletId()));
+
+		return dataIsStaged;
 	}
 
 	@Override
