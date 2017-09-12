@@ -196,7 +196,7 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 		BooleanFilter facetBooleanFilter = new BooleanFilter();
 
-		facetBooleanFilter.addTerm(Field.ENTRY_CLASS_NAME, className);
+		facetBooleanFilter.addRequiredTerm(Field.ENTRY_CLASS_NAME, className);
 
 		if (searchContext.getUserId() > 0) {
 			SearchPermissionChecker searchPermissionChecker =
@@ -1331,6 +1331,70 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 				facetBooleanFilter.add(
 					filterBooleanClause.getClause(),
 					filterBooleanClause.getBooleanClauseOccur());
+			}
+		}
+
+		for (String entryClassName : searchContext.getEntryClassNames()) {
+			Indexer<?> indexer = IndexerRegistryUtil.getIndexer(entryClassName);
+
+			if (indexer == null) {
+				continue;
+			}
+
+			String searchEngineId = searchContext.getSearchEngineId();
+
+			if (!searchEngineId.equals(indexer.getSearchEngineId())) {
+				continue;
+			}
+
+			try {
+				BooleanFilter indexerBooleanFilter =
+					indexer.getFacetBooleanFilter(
+						entryClassName, searchContext);
+
+				if ((indexerBooleanFilter == null) ||
+					!indexerBooleanFilter.hasClauses()) {
+
+					continue;
+				}
+
+				BooleanFilter entityBooleanFilter = new BooleanFilter();
+
+				entityBooleanFilter.add(
+					indexerBooleanFilter, BooleanClauseOccur.MUST);
+
+				indexer.postProcessContextBooleanFilter(
+					entityBooleanFilter, searchContext);
+
+				for (IndexerPostProcessor indexerPostProcessor :
+						indexer.getIndexerPostProcessors()) {
+
+					indexerPostProcessor.postProcessContextBooleanFilter(
+						entityBooleanFilter, searchContext);
+				}
+
+				if (indexer.isStagingAware()) {
+					if (!searchContext.isIncludeLiveGroups() &&
+						searchContext.isIncludeStagingGroups()) {
+
+						entityBooleanFilter.addRequiredTerm(
+							Field.STAGING_GROUP, true);
+					}
+					else if (searchContext.isIncludeLiveGroups() &&
+							 !searchContext.isIncludeStagingGroups()) {
+
+						entityBooleanFilter.addRequiredTerm(
+							Field.STAGING_GROUP, false);
+					}
+				}
+
+				if (entityBooleanFilter.hasClauses()) {
+					facetBooleanFilter.add(
+						entityBooleanFilter, BooleanClauseOccur.SHOULD);
+				}
+			}
+			catch (Exception e) {
+				_log.error(e, e);
 			}
 		}
 

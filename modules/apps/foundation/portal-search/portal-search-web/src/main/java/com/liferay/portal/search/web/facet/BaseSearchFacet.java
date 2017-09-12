@@ -18,10 +18,14 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.search.facet.util.FacetFactory;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 /**
@@ -99,6 +103,35 @@ public abstract class BaseSearchFacet implements SearchFacet {
 			FacetFactory facetFactory = getFacetFactory();
 
 			facet = facetFactory.newInstance(searchContext);
+
+			String[] selectedFacetValues = StringUtil.split(
+				GetterUtil.getString(
+					searchContext.getAttribute(getFieldName())));
+
+			if (ArrayUtil.isNotEmpty(selectedFacetValues)) {
+				JSONArray selectedValuesJSONArray =
+					JSONFactoryUtil.createJSONArray();
+
+				String fieldName = getFieldName();
+
+				String scope = GetterUtil.getString(
+					searchContext.getAttribute("scope"));
+
+				for (String selectedFacetValue : selectedFacetValues) {
+					if (fieldName.equals(Field.GROUP_ID) &&
+						(selectedFacetValue.equals("0") ||
+						 scope.equals("this-site"))) {
+
+						continue;
+					}
+
+					selectedValuesJSONArray.put(selectedFacetValue);
+				}
+
+				JSONObject dataJSONObject = facetConfiguration.getData();
+
+				dataJSONObject.put("facetSelections", selectedValuesJSONArray);
+			}
 
 			facet.setFacetConfiguration(facetConfiguration);
 		}

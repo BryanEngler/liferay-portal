@@ -65,7 +65,7 @@ public class AssetEntriesFacetConfigurationImpl
 
 	@Override
 	public void setSelectedTypes(String... selectedTypes) {
-		_jsonObject.put("values", toJSONArray(selectedTypes));
+		_jsonObject.put("facetSelections", toJSONArray(selectedTypes));
 	}
 
 	protected JSONArray toJSONArray(String... values) {

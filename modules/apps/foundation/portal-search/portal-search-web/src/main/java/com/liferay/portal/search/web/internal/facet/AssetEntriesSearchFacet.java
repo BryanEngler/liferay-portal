@@ -29,10 +29,10 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.search.asset.AssetTypesSearchHelper;
 import com.liferay.portal.search.web.facet.BaseJSPSearchFacet;
 import com.liferay.portal.search.web.facet.SearchFacet;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.portlet.ActionRequest;
@@ -72,7 +72,9 @@ public class AssetEntriesSearchFacet extends BaseJSPSearchFacet {
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
-		for (String assetType : getAssetTypes(companyId)) {
+		String[] assetTypes = assetTypesSearchHelper.getAssetTypes(companyId);
+
+		for (String assetType : assetTypes) {
 			jsonArray.put(assetType);
 		}
 
@@ -122,7 +124,8 @@ public class AssetEntriesSearchFacet extends BaseJSPSearchFacet {
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
 		if (ArrayUtil.isEmpty(assetTypes)) {
-			assetTypes = getAssetTypes(themeDisplay.getCompanyId());
+			assetTypes = assetTypesSearchHelper.getAssetTypes(
+				themeDisplay.getCompanyId());
 		}
 
 		for (String assetType : assetTypes) {
@@ -153,27 +156,6 @@ public class AssetEntriesSearchFacet extends BaseJSPSearchFacet {
 		super.setServletContext(servletContext);
 	}
 
-	protected String[] getAssetTypes(long companyId) {
-		List<String> assetTypes = new ArrayList<>();
-
-		List<AssetRendererFactory<?>> assetRendererFactories =
-			AssetRendererFactoryRegistryUtil.getAssetRendererFactories(
-				companyId);
-
-		for (int i = 0; i < assetRendererFactories.size(); i++) {
-			AssetRendererFactory<?> assetRendererFactory =
-				assetRendererFactories.get(i);
-
-			if (!assetRendererFactory.isSearchable()) {
-				continue;
-			}
-
-			assetTypes.add(assetRendererFactory.getClassName());
-		}
-
-		return ArrayUtil.toStringArray(assetTypes);
-	}
-
 	@Override
 	protected FacetFactory getFacetFactory() {
 		return assetEntriesFacetFactory;
@@ -181,5 +163,8 @@ public class AssetEntriesSearchFacet extends BaseJSPSearchFacet {
 
 	@Reference
 	protected AssetEntriesFacetFactory assetEntriesFacetFactory;
+
+	@Reference
+	protected AssetTypesSearchHelper assetTypesSearchHelper;
 
 }

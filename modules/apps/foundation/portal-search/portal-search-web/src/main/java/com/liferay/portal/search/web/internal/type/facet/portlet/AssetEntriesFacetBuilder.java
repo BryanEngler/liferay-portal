@@ -14,16 +14,11 @@
 
 package com.liferay.portal.search.web.internal.type.facet.portlet;
 
-import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
-import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.AssetEntriesFacetFactory;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
-import com.liferay.portal.kernel.util.ArrayUtil;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.liferay.portal.search.asset.AssetTypesSearchHelper;
 
 /**
  * @author Lino Alves
@@ -31,9 +26,11 @@ import java.util.List;
 public class AssetEntriesFacetBuilder {
 
 	public AssetEntriesFacetBuilder(
-		AssetEntriesFacetFactory assetEntriesFacetFactory) {
+		AssetEntriesFacetFactory assetEntriesFacetFactory,
+		AssetTypesSearchHelper assetTypesSearchHelper) {
 
 		_assetEntriesFacetFactory = assetEntriesFacetFactory;
+		_assetTypesSearchHelper = assetTypesSearchHelper;
 	}
 
 	public Facet build() {
@@ -42,6 +39,10 @@ public class AssetEntriesFacetBuilder {
 		facet.setFacetConfiguration(buildFacetConfiguration(facet));
 
 		return facet;
+	}
+
+	public void setClassNames(String... classNames) {
+		_classNames = classNames;
 	}
 
 	public void setCompanyId(long companyId) {
@@ -72,7 +73,12 @@ public class AssetEntriesFacetBuilder {
 		AssetEntriesFacetConfiguration assetEntriesFacetConfiguration =
 			new AssetEntriesFacetConfigurationImpl(facetConfiguration);
 
-		assetEntriesFacetConfiguration.setClassNames(getAssetTypes(_companyId));
+		if (_classNames == null) {
+			_classNames = _assetTypesSearchHelper.getAssetTypes(_companyId);
+		}
+
+		assetEntriesFacetConfiguration.setClassNames(_classNames);
+
 		assetEntriesFacetConfiguration.setFrequencyThreshold(
 			_frequencyThreshold);
 
@@ -83,28 +89,9 @@ public class AssetEntriesFacetBuilder {
 		return facetConfiguration;
 	}
 
-	protected String[] getAssetTypes(long companyId) {
-		List<String> assetTypes = new ArrayList<>();
-
-		List<AssetRendererFactory<?>> assetRendererFactories =
-			AssetRendererFactoryRegistryUtil.getAssetRendererFactories(
-				companyId);
-
-		for (int i = 0; i < assetRendererFactories.size(); i++) {
-			AssetRendererFactory<?> assetRendererFactory =
-				assetRendererFactories.get(i);
-
-			if (!assetRendererFactory.isSearchable()) {
-				continue;
-			}
-
-			assetTypes.add(assetRendererFactory.getClassName());
-		}
-
-		return ArrayUtil.toStringArray(assetTypes);
-	}
-
 	private final AssetEntriesFacetFactory _assetEntriesFacetFactory;
+	private final AssetTypesSearchHelper _assetTypesSearchHelper;
+	private String[] _classNames;
 	private long _companyId;
 	private int _frequencyThreshold;
 	private SearchContext _searchContext;
