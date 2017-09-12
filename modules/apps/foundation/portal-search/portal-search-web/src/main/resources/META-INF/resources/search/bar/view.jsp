@@ -51,9 +51,8 @@ SearchBarPortletDisplayContext searchBarPortletDisplayContext = (SearchBarPortle
 				<c:when test="<%= searchBarPortletDisplayContext.isLetTheUserChooseTheSearchScope() %>">
 					<aui:field-wrapper cssClass="search-field" inlineField="<%= true %>">
 						<aui:select cssClass="search-select" label="" name="<%= searchBarPortletDisplayContext.getScopeParameterName() %>" title="scope">
-							<c:if test="<%= searchBarPortletDisplayContext.isAvailableEverythingSearchScope() %>">
+
 								<aui:option label="all-sites" selected="<%= searchBarPortletDisplayContext.isSelectedEverythingSearchScope() %>" value="<%= searchBarPortletDisplayContext.getEverythingSearchScopeParameterString() %>" />
-							</c:if>
 
 							<aui:option label="this-site" selected="<%= searchBarPortletDisplayContext.isSelectedCurrentSiteSearchScope() %>" value="<%= searchBarPortletDisplayContext.getCurrentSiteSearchScopeParameterString() %>" />
 						</aui:select>
