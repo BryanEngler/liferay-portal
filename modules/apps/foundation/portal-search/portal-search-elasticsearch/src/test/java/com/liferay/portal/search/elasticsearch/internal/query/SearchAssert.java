@@ -22,16 +22,19 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.text.Text;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHitField;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.highlight.HighlightField;
 
 import org.junit.Assert;
 
@@ -39,6 +42,28 @@ import org.junit.Assert;
  * @author André de Oliveira
  */
 public class SearchAssert {
+
+	public static void assertHighlights(
+			final Client client, final String field,
+			final QueryBuilder queryBuilder, final String... expectedValues)
+		throws Exception {
+
+		IdempotentRetryAssert.retryAssert(
+			10, TimeUnit.SECONDS,
+			new Callable<Void>() {
+
+				@Override
+				public Void call() throws Exception {
+					Assert.assertEquals(
+						sort(Arrays.asList(expectedValues)),
+						sort(getHighLights(
+							search(client, queryBuilder), field)));
+
+					return null;
+				}
+
+			});
+	}
 
 	public static void assertNoHits(
 			Client client, String field, QueryBuilder queryBuilder)
@@ -68,6 +93,31 @@ public class SearchAssert {
 			});
 	}
 
+	protected static List<String> getHighLights(
+		SearchHits searchHits, String field) {
+
+		List<String> highlights = new ArrayList<>();
+
+		for (SearchHit searchHit : searchHits.hits()) {
+			Map<String, HighlightField> highlightFieldMap =
+				searchHit.getHighlightFields();
+
+			HighlightField highlightField = highlightFieldMap.get(field);
+
+			Text[] fragments = highlightField.getFragments();
+
+			if (fragments.length > 0) {
+				Text highlight = fragments[0];
+
+				String highlightString = highlight.toString();
+
+				highlights.add(highlightString);
+			}
+		}
+
+		return highlights;
+	}
+
 	protected static List<String> getValues(
 		SearchHits searchHits, String field) {
 
@@ -90,6 +140,10 @@ public class SearchAssert {
 		SearchRequestBuilder searchRequestBuilder = client.prepareSearch();
 
 		searchRequestBuilder.addField(StringPool.STAR);
+
+		searchRequestBuilder.addHighlightedField(StringPool.STAR);
+
+		searchRequestBuilder.setHighlighterNumOfFragments(0);
 
 		searchRequestBuilder.setQuery(queryBuilder);
 
