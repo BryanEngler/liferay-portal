@@ -33,6 +33,13 @@ public class SingleFieldFixture {
 		_type = type;
 	}
 
+	public void assertHighlights(String text, String... expected)
+		throws Exception {
+
+		SearchAssert.assertHighlights(
+			_client, _field, _createQueryBuilder(text), expected);
+	}
+
 	public void assertNoHits(String text) throws Exception {
 		SearchAssert.assertNoHits(_client, _field, _createQueryBuilder(text));
 	}
