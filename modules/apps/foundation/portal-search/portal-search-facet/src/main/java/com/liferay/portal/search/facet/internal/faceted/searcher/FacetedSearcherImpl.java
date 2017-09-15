@@ -14,9 +14,12 @@
 
 package com.liferay.portal.search.facet.internal.faceted.searcher;
 
+import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
+import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactory;
+import com.liferay.exportimport.kernel.staging.StagingConstants;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.BaseSearcher;
 import com.liferay.portal.kernel.search.BooleanClause;
@@ -112,6 +115,82 @@ public class FacetedSearcherImpl
 		}
 	}
 
+	protected void addScopeBooleanFilter(
+			BooleanFilter contextBooleanFilter, String entryClassName,
+			boolean stagingAware, SearchContext searchContext)
+		throws Exception {
+
+		long[] groupIds = searchContext.getGroupIds();
+
+		if (Validator.isNull(groupIds)) {
+			if (stagingAware) {
+				long groupId = GetterUtil.getLong(
+					searchContext.getAttribute(Field.SCOPE_GROUP_ID));
+
+				if (isStagingGroup(groupId)) {
+					if (isDataStaged(groupId, entryClassName)) {
+						BooleanFilter stagedGroupPreBooleanFilter =
+							new BooleanFilter();
+
+						stagedGroupPreBooleanFilter.addTerm(
+							Field.GROUP_ID, groupId);
+
+						BooleanFilter liveGroupsPreBooleanFilter =
+							new BooleanFilter();
+
+						liveGroupsPreBooleanFilter.addTerm(
+							Field.STAGING_GROUP, "true",
+							BooleanClauseOccur.MUST_NOT);
+						liveGroupsPreBooleanFilter.addTerm(
+							Field.GROUP_ID,
+							String.valueOf(getLiveGroupId(groupId)),
+							BooleanClauseOccur.MUST_NOT);
+
+						stagedGroupPreBooleanFilter.add(
+							liveGroupsPreBooleanFilter);
+
+						contextBooleanFilter.add(
+							stagedGroupPreBooleanFilter,
+							BooleanClauseOccur.MUST);
+					}
+					else {
+						contextBooleanFilter.addTerm(
+							Field.STAGING_GROUP, "true",
+							BooleanClauseOccur.MUST_NOT);
+					}
+				}
+				else {
+					contextBooleanFilter.addTerm(
+						Field.STAGING_GROUP, "true",
+						BooleanClauseOccur.MUST_NOT);
+				}
+			}
+		}
+		else if (groupIds.length > 0) {
+			BooleanFilter siteBooleanFilter = new BooleanFilter();
+
+			for (int i = 0; i < groupIds.length; i++) {
+				long filterBySiteGroupId = groupIds[i];
+
+				if (isStagingGroup(filterBySiteGroupId) &&
+					!isDataStaged(filterBySiteGroupId, entryClassName)) {
+
+					filterBySiteGroupId = getLiveGroupId(filterBySiteGroupId);
+				}
+
+				if (filterBySiteGroupId != 0) {
+					siteBooleanFilter.addTerm(
+						Field.GROUP_ID, filterBySiteGroupId);
+				}
+			}
+
+			if (siteBooleanFilter.hasClauses()) {
+				contextBooleanFilter.add(
+					siteBooleanFilter, BooleanClauseOccur.MUST);
+			}
+		}
+	}
+
 	protected void addSearchExpandoKeywords(
 			BooleanQuery searchQuery, SearchContext searchContext,
 			String keywords, String className)
@@ -144,10 +223,7 @@ public class FacetedSearcherImpl
 		}
 	}
 
-	@Override
-	protected BooleanQuery createFullQuery(
-			BooleanFilter fullQueryPreBooleanFilter,
-			SearchContext searchContext)
+	protected BooleanQuery createFullQuery(SearchContext searchContext)
 		throws Exception {
 
 		BooleanQuery searchQuery = new BooleanQueryImpl();
@@ -171,28 +247,6 @@ public class FacetedSearcherImpl
 
 				searchQuery.addTerms(Field.KEYWORDS, keywords);
 			}
-
-			int groupId = GetterUtil.getInteger(
-				searchContext.getAttribute(Field.GROUP_ID));
-
-			if (groupId == 0) {
-				fullQueryPreBooleanFilter.addTerm(
-					Field.STAGING_GROUP, "true", BooleanClauseOccur.MUST_NOT);
-			}
-		}
-
-		List<Group> inactiveGroups = _groupLocalService.getActiveGroups(
-			searchContext.getCompanyId(), false);
-
-		if (ListUtil.isNotEmpty(inactiveGroups)) {
-			TermsFilter groupIdTermsFilter = new TermsFilter(Field.GROUP_ID);
-
-			groupIdTermsFilter.addValues(
-				ArrayUtil.toStringArray(
-					ListUtil.toArray(inactiveGroups, Group.GROUP_ID_ACCESSOR)));
-
-			fullQueryPreBooleanFilter.add(
-				groupIdTermsFilter, BooleanClauseOccur.MUST_NOT);
 		}
 
 		BooleanFilter fullQueryContextPreBooleanFilter = new BooleanFilter();
@@ -209,8 +263,27 @@ public class FacetedSearcherImpl
 			fullQuery.add(searchQuery, BooleanClauseOccur.MUST);
 		}
 
+		BooleanFilter fullQueryPreBooleanFilter = new BooleanFilter();
+
+		fullQueryPreBooleanFilter.addRequiredTerm(
+			Field.COMPANY_ID, searchContext.getCompanyId());
+
 		fullQueryPreBooleanFilter.add(
 			fullQueryContextPreBooleanFilter, BooleanClauseOccur.MUST);
+
+		List<Group> inactiveGroups = _groupLocalService.getActiveGroups(
+			searchContext.getCompanyId(), false);
+
+		if (ListUtil.isNotEmpty(inactiveGroups)) {
+			TermsFilter groupIdTermsFilter = new TermsFilter(Field.GROUP_ID);
+
+			groupIdTermsFilter.addValues(
+				ArrayUtil.toStringArray(
+					ListUtil.toArray(inactiveGroups, Group.GROUP_ID_ACCESSOR)));
+
+			fullQueryPreBooleanFilter.add(
+				groupIdTermsFilter, BooleanClauseOccur.MUST_NOT);
+		}
 
 		if (fullQueryPreBooleanFilter.hasClauses()) {
 			fullQuery.setPreBooleanFilter(fullQueryPreBooleanFilter);
@@ -279,13 +352,7 @@ public class FacetedSearcherImpl
 		try {
 			searchContext.setSearchEngineId(getSearchEngineId());
 
-			BooleanFilter queryBooleanFilter = new BooleanFilter();
-
-			queryBooleanFilter.addRequiredTerm(
-				Field.COMPANY_ID, searchContext.getCompanyId());
-
-			Query fullQuery = createFullQuery(
-				queryBooleanFilter, searchContext);
+			Query fullQuery = createFullQuery(searchContext);
 
 			if (!fullQuery.hasChildren()) {
 				BooleanFilter preBooleanFilter =
@@ -406,23 +473,19 @@ public class FacetedSearcherImpl
 			return;
 		}
 
-		if (indexer.isStagingAware()) {
-			if (!searchContext.isIncludeLiveGroups() &&
-				searchContext.isIncludeStagingGroups()) {
+		BooleanFilter contextBooleanFilter = new BooleanFilter();
 
-				fullQueryContextPreBooleanFilter.addRequiredTerm(
-					Field.STAGING_GROUP, true);
-			}
-			else if (searchContext.isIncludeLiveGroups() &&
-					 !searchContext.isIncludeStagingGroups()) {
+		contextBooleanFilter.addRequiredTerm(
+			Field.ENTRY_CLASS_NAME, entryClassName);
 
-				fullQueryContextPreBooleanFilter.addRequiredTerm(
-					Field.STAGING_GROUP, false);
-			}
-		}
+		addOwnerBooleanFilter(contextBooleanFilter, searchContext);
 
-		BooleanFilter contextBooleanFilter = createPermissionBooleanFilter(
-			entryClassName, searchContext);
+		addPermissionBooleanFilter(
+			contextBooleanFilter, entryClassName, searchContext);
+
+		addScopeBooleanFilter(
+			contextBooleanFilter, entryClassName, indexer.isStagingAware(),
+			searchContext);
 
 		indexer.postProcessContextBooleanFilter(
 			contextBooleanFilter, searchContext);
