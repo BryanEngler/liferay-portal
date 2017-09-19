@@ -19,6 +19,9 @@ package com.liferay.portal.search.web.internal.site.facet.portlet;
  */
 public interface SiteFacetPortletPreferences {
 
+	public static final String PREFERENCE_KEY_FILTER_AGGREGATIONS =
+		"filterAggregations";
+
 	public static final String PREFERENCE_KEY_FREQUENCIES_VISIBLE =
 		"frequenciesVisible";
 
@@ -34,6 +37,8 @@ public interface SiteFacetPortletPreferences {
 	public int getMaxTerms();
 
 	public String getParameterName();
+
+	public boolean isFilterAggregations();
 
 	public boolean isFrequenciesVisible();
 

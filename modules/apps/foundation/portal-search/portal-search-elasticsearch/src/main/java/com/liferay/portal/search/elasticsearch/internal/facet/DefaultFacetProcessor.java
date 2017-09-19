@@ -69,7 +69,12 @@ public class DefaultFacetProcessor extends BaseFacetProcessor {
 			termsBuilder.size(size);
 		}
 
-		if (filterAggregationQueryBuildersMap.isEmpty()) {
+		boolean filterAggregations = data.getBoolean(
+			"filterAggregations", true);
+
+		if (filterAggregationQueryBuildersMap.isEmpty() ||
+			!filterAggregations) {
+
 			searchRequestBuilder.addAggregation(termsBuilder);
 
 			return;

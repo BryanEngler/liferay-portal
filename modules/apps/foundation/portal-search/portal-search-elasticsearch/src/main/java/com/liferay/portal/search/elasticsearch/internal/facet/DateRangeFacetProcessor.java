@@ -88,7 +88,14 @@ public class DateRangeFacetProcessor extends BaseFacetProcessor {
 			dateRangeBuilder.addRange(rangeParts[0], rangeParts[2]);
 		}
 
-		if (filterAggregationQueryBuildersMap.isEmpty()) {
+		JSONObject data = facetConfiguration.getData();
+
+		boolean filterAggregations = data.getBoolean(
+			"filterAggregations", true);
+
+		if (filterAggregationQueryBuildersMap.isEmpty() ||
+			!filterAggregations) {
+
 			searchRequestBuilder.addAggregation(dateRangeBuilder);
 
 			return;
