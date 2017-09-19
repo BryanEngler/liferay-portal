@@ -160,6 +160,8 @@ public class SiteFacetPortlet
 			siteFacetPortletPreferences.getFrequencyThreshold());
 		scopeFacetBuilder.setMaxTerms(
 			siteFacetPortletPreferences.getMaxTerms());
+		scopeFacetBuilder.setFilterAggregations(
+			siteFacetPortletPreferences.isFilterAggregations());
 		scopeFacetBuilder.setSearchContext(
 			portletSharedSearchSettings.getSearchContext());
 

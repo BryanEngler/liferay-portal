@@ -37,6 +37,11 @@ public class ScopeFacetConfigurationImpl implements ScopeFacetConfiguration {
 	}
 
 	@Override
+	public void setFilterAggregations(boolean filterAggregations) {
+		_jsonObject.put("filterAggregations", filterAggregations);
+	}
+
+	@Override
 	public void setFrequencyThreshold(int frequencyThreshold) {
 		_jsonObject.put("frequencyThreshold", frequencyThreshold);
 	}

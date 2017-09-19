@@ -50,6 +50,7 @@ public class ScopeSearchFacet extends BaseJSPSearchFacet {
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
+		jsonObject.put("filterAggregations", true);
 		jsonObject.put("frequencyThreshold", 1);
 		jsonObject.put("maxTerms", 10);
 		jsonObject.put("showAssetCount", true);
@@ -92,6 +93,10 @@ public class ScopeSearchFacet extends BaseJSPSearchFacet {
 			actionRequest, getClassName() + "maxTerms", 10);
 		boolean showAssetCount = ParamUtil.getBoolean(
 			actionRequest, getClassName() + "showAssetCount", true);
+		boolean filterAggregations = ParamUtil.getBoolean(
+			actionRequest, getClassName() + "filterAggregations", true);
+
+		jsonObject.put("filterAggregations", filterAggregations);
 
 		jsonObject.put("frequencyThreshold", frequencyThreshold);
 		jsonObject.put("maxTerms", maxTerms);

@@ -38,6 +38,10 @@ public class ScopeFacetBuilder {
 		return facet;
 	}
 
+	public void setFilterAggregations(boolean filterAggregations) {
+		_filterAggregations = filterAggregations;
+	}
+
 	public void setFrequencyThreshold(int frequencyThreshold) {
 		_frequencyThreshold = frequencyThreshold;
 	}
@@ -68,10 +72,12 @@ public class ScopeFacetBuilder {
 
 		scopeFacetConfiguration.setFrequencyThreshold(_frequencyThreshold);
 		scopeFacetConfiguration.setMaxTerms(_maxTerms);
+		scopeFacetConfiguration.setFilterAggregations(_filterAggregations);
 
 		return facetConfiguration;
 	}
 
+	private boolean _filterAggregations;
 	private int _frequencyThreshold;
 	private int _maxTerms;
 	private final ScopeFacetFactory _scopeFacetFactory;

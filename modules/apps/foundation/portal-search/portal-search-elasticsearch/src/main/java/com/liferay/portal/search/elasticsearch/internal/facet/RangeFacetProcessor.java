@@ -74,7 +74,14 @@ public class RangeFacetProcessor extends BaseFacetProcessor {
 			return;
 		}
 
-		if (filterAggregationQueryBuildersMap.isEmpty()) {
+		JSONObject data = facetConfiguration.getData();
+
+		boolean filterAggregations = data.getBoolean(
+			"filterAggregations", true);
+
+		if (filterAggregationQueryBuildersMap.isEmpty() ||
+			!filterAggregations) {
+
 			searchRequestBuilder.addAggregation(defaultRangeBuilder);
 
 			return;

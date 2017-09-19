@@ -47,6 +47,8 @@ SiteFacetPortletPreferences siteFacetPortletPreferences = new SiteFacetPortletPr
 			<aui:input label="frequency-threshold" name="<%= PortletPreferencesJspUtil.getInputName(SiteFacetPortletPreferences.PREFERENCE_KEY_FREQUENCY_THRESHOLD) %>" value="<%= siteFacetPortletPreferences.getFrequencyThreshold() %>" />
 
 			<aui:input label="display-frequencies" name="<%= PortletPreferencesJspUtil.getInputName(SiteFacetPortletPreferences.PREFERENCE_KEY_FREQUENCIES_VISIBLE) %>" type="checkbox" value="<%= siteFacetPortletPreferences.isFrequenciesVisible() %>" />
+
+			<aui:input label="filter-aggregations" name="<%= PortletPreferencesJspUtil.getInputName(SiteFacetPortletPreferences.PREFERENCE_KEY_FILTER_AGGREGATIONS) %>" type="checkbox" value="<%= siteFacetPortletPreferences.isFilterAggregations() %>" />
 		</div>
 	</div>
 
