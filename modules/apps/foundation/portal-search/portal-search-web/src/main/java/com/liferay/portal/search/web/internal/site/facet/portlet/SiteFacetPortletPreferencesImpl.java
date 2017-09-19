@@ -52,6 +52,13 @@ public class SiteFacetPortletPreferencesImpl
 	}
 
 	@Override
+	public boolean isFilterAggregations() {
+		return _portletPreferencesHelper.getBoolean(
+			SiteFacetPortletPreferences.PREFERENCE_KEY_FILTER_AGGREGATIONS,
+			true);
+	}
+
+	@Override
 	public boolean isFrequenciesVisible() {
 		return _portletPreferencesHelper.getBoolean(
 			SiteFacetPortletPreferences.PREFERENCE_KEY_FREQUENCIES_VISIBLE,
