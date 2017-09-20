@@ -167,10 +167,10 @@ public class FacetedSearcherImpl
 			searchQuery, keywords, luceneSyntax, entryClassNameIndexerMap,
 			searchContext);
 
-		BooleanFilter fullQueryBooleanFilter = new BooleanFilter();
+		BooleanFilter fullQueryPreBooleanFilter = new BooleanFilter();
 
 		_addSearchTerms(
-			searchQuery, fullQueryBooleanFilter, luceneSyntax,
+			searchQuery, fullQueryPreBooleanFilter, luceneSyntax,
 			entryClassNameIndexerMap, searchContext);
 
 		if (searchQuery.hasClauses()) {
@@ -178,13 +178,13 @@ public class FacetedSearcherImpl
 		}
 
 		_addPreFilters(
-			fullQueryBooleanFilter, entryClassNameIndexerMap, searchContext);
+			fullQueryPreBooleanFilter, entryClassNameIndexerMap, searchContext);
 
-		if (fullQueryBooleanFilter.hasClauses()) {
-			fullQuery.setPreBooleanFilter(fullQueryBooleanFilter);
+		if (fullQueryPreBooleanFilter.hasClauses()) {
+			fullQuery.setPreBooleanFilter(fullQueryPreBooleanFilter);
 		}
 
-		BooleanFilter facetBooleanFilter = new BooleanFilter();
+		BooleanFilter fullQueryPostBooleanFilter = new BooleanFilter();
 
 		Map<String, Facet> facets = searchContext.getFacets();
 
@@ -193,16 +193,17 @@ public class FacetedSearcherImpl
 				facet.getFacetFilterBooleanClause();
 
 			if (facetClause != null) {
-				facetBooleanFilter.add(
+				fullQueryPostBooleanFilter.add(
 					facetClause.getClause(),
 					facetClause.getBooleanClauseOccur());
 			}
 		}
 
-		addFacetClause(searchContext, facetBooleanFilter, facets.values());
+		addFacetClause(
+			searchContext, fullQueryPostBooleanFilter, facets.values());
 
-		if (facetBooleanFilter.hasClauses()) {
-			fullQuery.setPostFilter(facetBooleanFilter);
+		if (fullQueryPostBooleanFilter.hasClauses()) {
+			fullQuery.setPostFilter(fullQueryPostBooleanFilter);
 		}
 
 		BooleanClause<Query>[] booleanClauses =
@@ -295,17 +296,18 @@ public class FacetedSearcherImpl
 	}
 
 	private void _addIndexerProvidedPreFilters(
-			BooleanFilter booleanFilter, Indexer<?> indexer,
+			BooleanFilter contextBooleanFilter, Indexer<?> indexer,
 			SearchContext searchContext)
 		throws Exception {
 
-		indexer.postProcessContextBooleanFilter(booleanFilter, searchContext);
+		indexer.postProcessContextBooleanFilter(
+			contextBooleanFilter, searchContext);
 
 		for (IndexerPostProcessor indexerPostProcessor :
 				indexer.getIndexerPostProcessors()) {
 
 			indexerPostProcessor.postProcessContextBooleanFilter(
-				booleanFilter, searchContext);
+				contextBooleanFilter, searchContext);
 		}
 	}
 
@@ -340,7 +342,7 @@ public class FacetedSearcherImpl
 	}
 
 	private void _addPermissionFilter(
-			BooleanFilter booleanFilter, String entryClassName,
+			BooleanFilter contextBooleanFilter, String entryClassName,
 			SearchContext searchContext)
 		throws Exception {
 
@@ -360,21 +362,21 @@ public class FacetedSearcherImpl
 		searchPermissionChecker.getPermissionBooleanFilter(
 			searchContext.getCompanyId(), searchContext.getGroupIds(),
 			searchContext.getUserId(), permissionedEntryClassName,
-			booleanFilter, searchContext);
+			contextBooleanFilter, searchContext);
 	}
 
 	private void _addPreFilters(
-			BooleanFilter queryBooleanFilter,
+			BooleanFilter fullQueryPreBooleanFilter,
 			Map<String, Indexer<?>> entryClassNameIndexerMap,
 			SearchContext searchContext)
 		throws Exception {
 
-		queryBooleanFilter.addRequiredTerm(
+		fullQueryPreBooleanFilter.addRequiredTerm(
 			Field.COMPANY_ID, searchContext.getCompanyId());
 
 		_addInactiveGroupsBooleanFilter(
-			queryBooleanFilter, searchContext);
-		_addOwnerBooleanFilter(queryBooleanFilter, searchContext);
+			fullQueryPreBooleanFilter, searchContext);
+		_addOwnerBooleanFilter(fullQueryPreBooleanFilter, searchContext);
 
 		for (Entry<String, Indexer<?>> entry :
 				entryClassNameIndexerMap.entrySet()) {
@@ -382,7 +384,7 @@ public class FacetedSearcherImpl
 			String entryClassName = entry.getKey();
 			Indexer<?> indexer = entry.getValue();
 
-			queryBooleanFilter.add(
+			fullQueryPreBooleanFilter.add(
 				_createPreFilterForEntryClassName(
 					entryClassName, indexer, searchContext),
 				BooleanClauseOccur.SHOULD);
@@ -474,19 +476,22 @@ public class FacetedSearcherImpl
 			SearchContext searchContext)
 		throws Exception {
 
-		BooleanFilter booleanFilter = new BooleanFilter();
+		BooleanFilter contextBooleanFilter = new BooleanFilter();
 
-		booleanFilter.addTerm(
+		contextBooleanFilter.addTerm(
 			Field.ENTRY_CLASS_NAME, entryClassName, BooleanClauseOccur.MUST);
 
 		_addScopeBooleanFilter(
-			booleanFilter, entryClassName, indexer.isStagingAware(), searchContext);
+			contextBooleanFilter, entryClassName, indexer.isStagingAware(),
+			searchContext);
 
-		_addPermissionFilter(booleanFilter, entryClassName, searchContext);
+		_addPermissionFilter(
+			contextBooleanFilter, entryClassName, searchContext);
 
-		_addIndexerProvidedPreFilters(booleanFilter, indexer, searchContext);
+		_addIndexerProvidedPreFilters(
+			contextBooleanFilter, indexer, searchContext);
 
-		return booleanFilter;
+		return contextBooleanFilter;
 	}
 
 	private Map<String, Indexer<?>> _getEntryClassNameIndexerMap(
