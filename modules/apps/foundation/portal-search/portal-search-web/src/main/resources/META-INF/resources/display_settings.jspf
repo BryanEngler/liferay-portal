@@ -49,7 +49,7 @@
 			</liferay-ui:toggle-area>
 		</div>
 
-		<hr />
+		<hr>
 
 		<aui:script>
 			Liferay.Util.toggleBoxes('<portlet:namespace /><%= AUIUtil.normalizeId(searchFacet.getClassName()) %>', '<portlet:namespace /><%= AUIUtil.normalizeId(searchFacet.getClassName()) %>FacetConfiguration');
