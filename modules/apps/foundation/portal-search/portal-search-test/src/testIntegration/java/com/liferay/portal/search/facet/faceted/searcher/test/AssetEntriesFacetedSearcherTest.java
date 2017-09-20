@@ -24,6 +24,9 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.facet.AssetEntriesFacetFactory;
+import com.liferay.portal.kernel.search.facet.Facet;
+import com.liferay.portal.kernel.search.facet.MultiValueFacet;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactory;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -34,8 +37,6 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.search.facet.Facet;
-import com.liferay.portal.search.facet.type.AssetEntriesFacetFactory;
 import com.liferay.portal.search.test.journal.util.JournalArticleBuilder;
 import com.liferay.portal.search.test.journal.util.JournalArticleContent;
 import com.liferay.portal.search.test.journal.util.JournalArticleTitle;
@@ -111,7 +112,7 @@ public class AssetEntriesFacetedSearcherTest
 
 		Facet facet = createFacet(searchContext);
 
-		facet.select(JournalArticle.class.getName());
+		select(facet, JournalArticle.class.getName());
 
 		searchContext.addFacet(facet);
 
@@ -198,6 +199,12 @@ public class AssetEntriesFacetedSearcherTest
 
 		PermissionThreadLocal.setPermissionChecker(
 			permissionCheckerFactory.create(user));
+	}
+
+	protected void select(Facet facet, String... selection) {
+		MultiValueFacet multiValueFacet = (MultiValueFacet)facet;
+
+		multiValueFacet.setValues(selection);
 	}
 
 	protected Map<String, Integer> toMap(Collection<String> strings) {
