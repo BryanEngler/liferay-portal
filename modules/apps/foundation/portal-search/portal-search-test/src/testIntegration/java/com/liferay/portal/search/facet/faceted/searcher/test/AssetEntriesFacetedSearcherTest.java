@@ -15,41 +15,45 @@
 package com.liferay.portal.search.facet.faceted.searcher.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.service.DLAppServiceUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
-import com.liferay.journal.configuration.JournalServiceConfiguration;
 import com.liferay.journal.model.JournalArticle;
-import com.liferay.journal.model.JournalFolder;
 import com.liferay.journal.service.JournalArticleLocalService;
-import com.liferay.journal.service.JournalFolderLocalService;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.AssetEntriesFacetFactory;
 import com.liferay.portal.kernel.search.facet.Facet;
-import com.liferay.portal.kernel.security.permission.ActionKeys;
-import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.security.permission.PermissionCheckerFactory;
+import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.service.permission.ModelPermissions;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
-import com.liferay.portal.kernel.util.HashMapDictionary;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portlet.documentlibrary.util.test.DLAppTestUtil;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.Before;
@@ -58,15 +62,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import org.osgi.service.cm.Configuration;
-import org.osgi.service.cm.ConfigurationAdmin;
-
 /**
  * @author Bryan Engler
  */
 @RunWith(Arquillian.class)
 @Sync
-public class PermissionFilterFacetedSearcherTest
+public class AssetEntriesFacetedSearcherTest
 	extends BaseFacetedSearcherTestCase {
 
 	@ClassRule
@@ -81,42 +82,56 @@ public class PermissionFilterFacetedSearcherTest
 	public void setUp() throws Exception {
 		super.setUp();
 
-		setUpJournalServiceConfiguration();
+		Registry registry = RegistryUtil.getRegistry();
 
-		_originalPermissionChecker =
-			PermissionThreadLocal.getPermissionChecker();
+		assetEntriesFacetFactory = registry.getService(
+			AssetEntriesFacetFactory.class);
+
+		journalArticleLocalService = registry.getService(
+			JournalArticleLocalService.class);
 	}
 
 	@After
 	@Override
 	public void tearDown() throws Exception {
+		for (FileEntry fileEntry : _fileEntries) {
+			DLAppServiceUtil.deleteFileEntry(fileEntry.getFileEntryId());
+		}
+
 		super.tearDown();
-
-		tearDownJournalServiceConfiguration();
-
-		PermissionThreadLocal.setPermissionChecker(_originalPermissionChecker);
 	}
 
 	@Test
-	public void testDecrementFrequencyCount() throws Exception {
+	public void testFacetSelectionPostFilter() throws Exception {
 		Group group = userSearchFixture.addGroup();
 
-		User user1 = addUser(group);
+		User user1 = userSearchFixture.addUser("joeBloggs", group);
 
-		ServiceContext serviceContext = createServiceContext(group, user1);
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext();
 
 		String title = RandomTestUtil.randomString();
 
 		addArticle(title, user1, group, 0, serviceContext);
 
-		JournalFolder folder = addFolder(user1, group, serviceContext);
-
-		addArticle(title, user1, group, folder.getFolderId(), serviceContext);
-
-		User user2 = addUser(group);
+		addFileEntry(title, user1, group, 0, serviceContext);
 
 		PermissionThreadLocal.setPermissionChecker(
-			permissionCheckerFactory.create(user2));
+			permissionCheckerFactory.create(user1));
+
+		JSONArray selectionsJSONArray = JSONFactoryUtil.createJSONArray();
+
+		selectionsJSONArray.put(DLFileEntry.class.getName());
+
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		jsonObject.put("facetSelections", selectionsJSONArray);
+
+		FacetConfiguration facetConfiguration = new FacetConfiguration();
+
+		facetConfiguration.setDataJSONObject(jsonObject);
+		facetConfiguration.setFieldName(Field.ENTRY_CLASS_NAME);
+		facetConfiguration.setStatic(false);
 
 		SearchContext searchContext = getSearchContext(title);
 
@@ -124,12 +139,18 @@ public class PermissionFilterFacetedSearcherTest
 
 		Facet facet = assetEntriesFacetFactory.newInstance(searchContext);
 
+		facet.setFacetConfiguration(facetConfiguration);
+
 		searchContext.addFacet(facet);
 
-		search(searchContext);
+		Hits hits = search(searchContext);
 
-		Map<String, Integer> expected = Collections.singletonMap(
-			JournalArticle.class.getName(), 1);
+		Assert.assertEquals(hits.toString(), 1, hits.getLength());
+
+		Map<String, Integer> expected = new HashMap<>();
+
+		expected.put(DLFileEntry.class.getName(), 1);
+		expected.put(JournalArticle.class.getName(), 1);
 
 		assertFrequencies(facet.getFieldName(), searchContext, expected);
 	}
@@ -149,77 +170,24 @@ public class PermissionFilterFacetedSearcherTest
 		_articles.add(article);
 	}
 
-	protected JournalFolder addFolder(
-			User user, Group group, ServiceContext serviceContext)
+	protected void addFileEntry(
+			String title, User user, Group group, long folderId,
+			ServiceContext serviceContext)
 		throws Exception {
 
-		JournalFolder folder = journalFolderLocalService.addFolder(
-			user.getUserId(), group.getGroupId(), 0,
-			RandomTestUtil.randomString(), StringPool.BLANK, serviceContext);
+		FileEntry fileEntry = DLAppTestUtil.addFileEntryWithWorkflow(
+			user.getUserId(), group.getGroupId(), folderId, StringPool.BLANK,
+			title, true, serviceContext);
 
-		_folders.add(folder);
-
-		return folder;
+		_fileEntries.add(fileEntry);
 	}
 
-	protected ServiceContext createServiceContext(Group group, User user)
-		throws Exception {
-
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(
-				group.getGroupId(), user.getUserId());
-
-		ModelPermissions modelPermissions = new ModelPermissions();
-
-		modelPermissions.addRolePermissions(
-			RoleConstants.OWNER, ActionKeys.VIEW);
-
-		serviceContext.setModelPermissions(modelPermissions);
-
-		serviceContext.setAddGroupPermissions(true);
-		serviceContext.setAddGuestPermissions(false);
-
-		return serviceContext;
-	}
-
-	protected void setUpJournalServiceConfiguration() throws Exception {
-		_configuration = configurationAdmin.getConfiguration(
-			JournalServiceConfiguration.class.getName(), StringPool.QUESTION);
-
-		Dictionary<String, Object> properties = new HashMapDictionary<>();
-
-		properties.put("articleViewPermissionsCheckEnabled", true);
-
-		_configuration.update(properties);
-	}
-
-	protected void tearDownJournalServiceConfiguration() throws Exception {
-		_configuration.delete();
-	}
-
-	@Inject
-	protected static AssetEntriesFacetFactory assetEntriesFacetFactory;
-
-	@Inject
-	protected static ConfigurationAdmin configurationAdmin;
-
-	@Inject
-	protected static JournalArticleLocalService journalArticleLocalService;
-
-	@Inject
-	protected static JournalFolderLocalService journalFolderLocalService;
-
-	@Inject
-	protected static PermissionCheckerFactory permissionCheckerFactory;
+	protected AssetEntriesFacetFactory assetEntriesFacetFactory;
+	protected JournalArticleLocalService journalArticleLocalService;
 
 	@DeleteAfterTestRun
 	private final List<JournalArticle> _articles = new ArrayList<>();
 
-	private Configuration _configuration;
-
-	@DeleteAfterTestRun
-	private final List<JournalFolder> _folders = new ArrayList<>();
-
-	private PermissionChecker _originalPermissionChecker;
+	private final List<FileEntry> _fileEntries = new ArrayList<>();
 
 }

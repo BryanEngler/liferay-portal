@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.search.IndexerRegistry;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcher;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcherManager;
 import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.search.asset.AssetTypesSearchHelper;
 import com.liferay.portal.search.permission.SearchPermissionFilterContributor;
 
 import java.util.Collection;
@@ -40,8 +41,9 @@ public class FacetedSearcherManagerImpl implements FacetedSearcherManager {
 	@Override
 	public FacetedSearcher createFacetedSearcher() {
 		return new FacetedSearcherImpl(
-			expandoBridgeFactory, groupLocalService, indexerRegistry,
-			indexSearcherHelper, _searchPermissionFilterContributors);
+			assetTypesSearchHelper, expandoBridgeFactory, groupLocalService,
+			indexerRegistry, indexSearcherHelper,
+			_searchPermissionFilterContributors);
 	}
 
 	@Reference(
@@ -63,6 +65,9 @@ public class FacetedSearcherManagerImpl implements FacetedSearcherManager {
 		_searchPermissionFilterContributors.remove(
 			searchPermissionFilterContributor);
 	}
+
+	@Reference
+	protected AssetTypesSearchHelper assetTypesSearchHelper;
 
 	@Reference
 	protected ExpandoBridgeFactory expandoBridgeFactory;

@@ -59,6 +59,8 @@ public class AssetTagNamesFacetedSearcherTest
 
 		SearchContext searchContext = getSearchContext(tag);
 
+		searchContext.setGroupIds(null);
+
 		Facet facet = _assetTagNamesFacetFactory.newInstance(searchContext);
 
 		searchContext.addFacet(facet);
@@ -96,6 +98,8 @@ public class AssetTagNamesFacetedSearcherTest
 		throws Exception {
 
 		SearchContext searchContext = getSearchContext(keywords);
+
+		searchContext.setGroupIds(null);
 
 		Hits hits = search(searchContext);
 

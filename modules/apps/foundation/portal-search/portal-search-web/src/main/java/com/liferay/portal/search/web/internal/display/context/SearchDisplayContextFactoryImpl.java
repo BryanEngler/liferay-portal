@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcherManager;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.search.asset.AssetTypesSearchHelper;
 import com.liferay.portal.search.summary.SummaryBuilderFactory;
 
 import javax.portlet.PortletException;
@@ -45,8 +46,11 @@ public class SearchDisplayContextFactoryImpl
 			renderRequest, portletPreferences, portal, HtmlUtil.getHtml(),
 			language, facetedSearcherManager, new IndexSearchPropsValuesImpl(),
 			new PortletURLFactoryImpl(renderRequest, renderResponse),
-			summaryBuilderFactory);
+			summaryBuilderFactory, assetTypesSearchHelper);
 	}
+
+	@Reference
+	protected AssetTypesSearchHelper assetTypesSearchHelper;
 
 	@Reference
 	protected FacetedSearcherManager facetedSearcherManager;

@@ -69,7 +69,8 @@ ScopeSearchFacetDisplayContext scopeSearchFacetDisplayContext = (ScopeSearchFace
 											name="<portlet:namespace />term_<%= i %>"
 											onChange="Liferay.Search.FacetUtil.changeSelection(event);"
 											type="checkbox"
-											<%= scopeSearchFacetTermDisplayContext.isSelected() ? "checked" : StringPool.BLANK %>
+											<%= scopeSearchFacetTermDisplayContext.isSelected() || scopeSearchFacetTermDisplayContext.isFilterBySite() ? "checked" : StringPool.BLANK %>
+											<%= scopeSearchFacetTermDisplayContext.isFilterBySite() ? "disabled" : StringPool.BLANK %>
 										/>
 
 										<span class="term-name">

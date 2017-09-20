@@ -12,21 +12,16 @@
  * details.
  */
 
-package com.liferay.portal.search.web.internal.site.facet.portlet;
+package com.liferay.portal.search.asset;
+
+import aQute.bnd.annotation.ProviderType;
 
 /**
- * @author André de Oliveira
+ * @author Bryan Engler
  */
-public interface ScopeFacetConfiguration {
+@ProviderType
+public interface AssetTypesSearchHelper {
 
-	public int getFrequencyThreshold();
-
-	public int getMaxTerms();
-
-	public void setFilterAggregations(boolean filterAggregations);
-
-	public void setFrequencyThreshold(int frequencyThreshold);
-
-	public void setMaxTerms(int maxTerms);
+	public String[] getAssetTypes(long companyId);
 
 }

@@ -196,7 +196,7 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 		BooleanFilter facetBooleanFilter = new BooleanFilter();
 
-		facetBooleanFilter.addTerm(Field.ENTRY_CLASS_NAME, className);
+		facetBooleanFilter.addRequiredTerm(Field.ENTRY_CLASS_NAME, className);
 
 		if (searchContext.getUserId() > 0) {
 			SearchPermissionChecker searchPermissionChecker =
@@ -1344,6 +1344,143 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 			}
 		}
 
+		BooleanFilter assetBooleanFilter = new BooleanFilter();
+
+		for (String entryClassName : searchContext.getEntryClassNames()) {
+			Indexer<?> indexer = IndexerRegistryUtil.getIndexer(entryClassName);
+
+			if (indexer == null) {
+				continue;
+			}
+
+			String searchEngineId = searchContext.getSearchEngineId();
+
+			if (!searchEngineId.equals(indexer.getSearchEngineId())) {
+				continue;
+			}
+
+			try {
+				BooleanFilter indexerBooleanFilter =
+					indexer.getFacetBooleanFilter(
+						entryClassName, searchContext);
+
+				if ((indexerBooleanFilter == null) ||
+					!indexerBooleanFilter.hasClauses()) {
+
+					continue;
+				}
+
+				BooleanFilter entityBooleanFilter = new BooleanFilter();
+
+				entityBooleanFilter.add(
+					indexerBooleanFilter, BooleanClauseOccur.MUST);
+
+				indexer.postProcessContextBooleanFilter(
+					entityBooleanFilter, searchContext);
+
+				for (IndexerPostProcessor indexerPostProcessor :
+						indexer.getIndexerPostProcessors()) {
+
+					indexerPostProcessor.postProcessContextBooleanFilter(
+						entityBooleanFilter, searchContext);
+				}
+
+				if (indexer.isStagingAware()) {
+					if (!searchContext.isIncludeLiveGroups() &&
+						searchContext.isIncludeStagingGroups()) {
+
+						entityBooleanFilter.addRequiredTerm(
+							Field.STAGING_GROUP, true);
+					}
+					else if (searchContext.isIncludeLiveGroups() &&
+							 !searchContext.isIncludeStagingGroups()) {
+
+						entityBooleanFilter.addRequiredTerm(
+							Field.STAGING_GROUP, false);
+					}
+				}
+
+				if (entityBooleanFilter.hasClauses()) {
+					assetBooleanFilter.add(
+						entityBooleanFilter, BooleanClauseOccur.SHOULD);
+				}
+			}
+			catch (Exception e) {
+				_log.error(e, e);
+			}
+		}
+
+		if (assetBooleanFilter.hasClauses()) {
+			facetBooleanFilter.add(assetBooleanFilter, BooleanClauseOccur.MUST);
+		}
+
+		long[] groupIds = searchContext.getGroupIds();
+
+		if (ArrayUtil.isNotEmpty(groupIds)) {
+			BooleanFilter scopeBooleanFilter = new BooleanFilter();
+
+			long ownerUserId = searchContext.getOwnerUserId();
+
+			if (ownerUserId > 0) {
+				scopeBooleanFilter.addRequiredTerm(Field.USER_ID, ownerUserId);
+			}
+
+			TermsFilter groupIdsTermsFilter = new TermsFilter(Field.GROUP_ID);
+			TermsFilter scopeGroupIdsTermsFilter = new TermsFilter(
+				Field.SCOPE_GROUP_ID);
+
+			for (int i = 0; i < groupIds.length; i++) {
+				long groupId = groupIds[i];
+
+				if (groupId <= 0) {
+					continue;
+				}
+
+				try {
+					Group group = GroupLocalServiceUtil.getGroup(groupId);
+
+					if (!GroupLocalServiceUtil.isLiveGroupActive(group)) {
+						continue;
+					}
+
+					long parentGroupId = groupId;
+
+					if (group.isLayout()) {
+						parentGroupId = group.getParentGroupId();
+					}
+
+					groupIdsTermsFilter.addValue(String.valueOf(parentGroupId));
+
+					groupIds[i] = parentGroupId;
+
+					if (group.isLayout() || searchContext.isScopeStrict()) {
+						scopeGroupIdsTermsFilter.addValue(
+							String.valueOf(groupId));
+					}
+				}
+				catch (Exception e) {
+					if (_log.isDebugEnabled()) {
+						_log.debug(e, e);
+					}
+				}
+			}
+
+			if (!groupIdsTermsFilter.isEmpty()) {
+				scopeBooleanFilter.add(
+					groupIdsTermsFilter, BooleanClauseOccur.SHOULD);
+			}
+
+			if (!scopeGroupIdsTermsFilter.isEmpty()) {
+				scopeBooleanFilter.add(
+					scopeGroupIdsTermsFilter, BooleanClauseOccur.SHOULD);
+			}
+
+			if (scopeBooleanFilter.hasClauses()) {
+				facetBooleanFilter.add(
+					scopeBooleanFilter, BooleanClauseOccur.MUST);
+			}
+		}
+
 		addFacetClause(searchContext, facetBooleanFilter, facets.values());
 
 		if (facetBooleanFilter.hasClauses()) {
@@ -1699,7 +1836,14 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 			return false;
 		}
 
-		return group.isStagingGroup();
+		boolean hasRemoteGroupId = Validator.isNotNull(
+			group.getTypeSettingsProperty("remoteGroupId"));
+
+		if (group.isStagingGroup() || hasRemoteGroupId) {
+			return true;
+		}
+
+		return false;
 	}
 
 	protected boolean isUseSearchResultPermissionFilter(

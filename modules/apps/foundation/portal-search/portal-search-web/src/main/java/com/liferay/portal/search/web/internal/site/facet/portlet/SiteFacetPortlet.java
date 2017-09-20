@@ -124,6 +124,8 @@ public class SiteFacetPortlet
 			new ScopeSearchFacetDisplayBuilder();
 
 		scopeSearchFacetDisplayBuilder.setFacet(facet);
+		scopeSearchFacetDisplayBuilder.setFilterBySite(
+			facet.getSearchContext());
 		scopeSearchFacetDisplayBuilder.setFrequencyThreshold(
 			siteFacetConfiguration.getFrequencyThreshold());
 		scopeSearchFacetDisplayBuilder.setFrequenciesVisible(
@@ -158,6 +160,8 @@ public class SiteFacetPortlet
 			siteFacetPortletPreferences.getFrequencyThreshold());
 		scopeFacetBuilder.setMaxTerms(
 			siteFacetPortletPreferences.getMaxTerms());
+		scopeFacetBuilder.setFilterAggregations(
+			siteFacetPortletPreferences.isFilterAggregations());
 		scopeFacetBuilder.setSearchContext(
 			portletSharedSearchSettings.getSearchContext());
 
