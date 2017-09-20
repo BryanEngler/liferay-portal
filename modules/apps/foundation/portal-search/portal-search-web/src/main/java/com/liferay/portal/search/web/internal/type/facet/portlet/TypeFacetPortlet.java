@@ -133,17 +133,17 @@ public class TypeFacetPortlet
 			assetEntriesSearchFacetDisplayBuilder =
 				new AssetEntriesSearchFacetDisplayBuilder();
 
-		ThemeDisplay themeDisplay = portletSharedSearchResponse.getThemeDisplay(
-			renderRequest);
-
-		assetEntriesSearchFacetDisplayBuilder.setClassNames(
-			getAssetTypesClassNames(typeFacetPortletPreferences, themeDisplay));
-
 		assetEntriesSearchFacetDisplayBuilder.setFacet(facet);
 		assetEntriesSearchFacetDisplayBuilder.setFrequencyThreshold(
 			assetEntriesFacetConfiguration.getFrequencyThreshold());
 		assetEntriesSearchFacetDisplayBuilder.setFrequenciesVisible(
 			typeFacetPortletPreferences.isFrequenciesVisible());
+
+		ThemeDisplay themeDisplay = portletSharedSearchResponse.getThemeDisplay(
+			renderRequest);
+
+		assetEntriesSearchFacetDisplayBuilder.setClassNames(
+			getAssetTypesClassNames(typeFacetPortletPreferences, themeDisplay));
 		assetEntriesSearchFacetDisplayBuilder.setLocale(
 			themeDisplay.getLocale());
 
