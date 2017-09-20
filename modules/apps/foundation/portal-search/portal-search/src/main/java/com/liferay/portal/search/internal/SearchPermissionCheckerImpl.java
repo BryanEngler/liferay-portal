@@ -475,13 +475,15 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 			return booleanFilter;
 		}
 
-		if (booleanFilter != null) {
-			booleanFilter.add(permissionBooleanFilter, BooleanClauseOccur.MUST);
+		BooleanFilter fullBooleanFilter = new BooleanFilter();
 
-			return booleanFilter;
+		if ((booleanFilter != null) && booleanFilter.hasClauses()) {
+			fullBooleanFilter.add(booleanFilter, BooleanClauseOccur.MUST);
 		}
 
-		return permissionBooleanFilter;
+		fullBooleanFilter.add(permissionBooleanFilter, BooleanClauseOccur.MUST);
+
+		return fullBooleanFilter;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
