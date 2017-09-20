@@ -40,9 +40,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 
 /**
  * @author Raymond Augé
- * @deprecated As of 7.0.0, with no direct replacement
  */
-@Deprecated
 public class AssetEntriesFacet extends MultiValueFacet {
 
 	public AssetEntriesFacet(SearchContext searchContext) {
