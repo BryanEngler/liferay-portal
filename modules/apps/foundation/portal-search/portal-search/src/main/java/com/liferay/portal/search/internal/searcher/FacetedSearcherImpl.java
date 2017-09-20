@@ -129,6 +129,8 @@ public class FacetedSearcherImpl
 	protected BooleanQuery createFullQuery(SearchContext searchContext)
 		throws Exception {
 
+		BooleanQuery fullQuery = new BooleanQueryImpl();
+
 		BooleanQuery searchQuery = new BooleanQueryImpl();
 
 		String keywords = searchContext.getKeywords();
@@ -151,12 +153,20 @@ public class FacetedSearcherImpl
 			searchQuery, fullQueryBooleanFilter, luceneSyntax,
 			entryClassNameIndexerMap, searchContext);
 
+		if (searchQuery.hasClauses()) {
+			fullQuery.add(searchQuery, BooleanClauseOccur.MUST);
+		}
+
 		_addPreFilters(
 			fullQueryBooleanFilter, entryClassNameIndexerMap, searchContext);
 
-		Map<String, Facet> facets = searchContext.getFacets();
+		if (fullQueryBooleanFilter.hasClauses()) {
+			fullQuery.setPreBooleanFilter(fullQueryBooleanFilter);
+		}
 
 		BooleanFilter facetBooleanFilter = new BooleanFilter();
+
+		Map<String, Facet> facets = searchContext.getFacets();
 
 		for (Facet facet : facets.values()) {
 			BooleanClause<Filter> facetClause =
@@ -171,18 +181,8 @@ public class FacetedSearcherImpl
 
 		addFacetClause(searchContext, facetBooleanFilter, facets.values());
 
-		BooleanQuery fullQuery = new BooleanQueryImpl();
-
 		if (facetBooleanFilter.hasClauses()) {
 			fullQuery.setPostFilter(facetBooleanFilter);
-		}
-
-		if (fullQueryBooleanFilter.hasClauses()) {
-			fullQuery.setPreBooleanFilter(fullQueryBooleanFilter);
-		}
-
-		if (searchQuery.hasClauses()) {
-			fullQuery.add(searchQuery, BooleanClauseOccur.MUST);
 		}
 
 		BooleanClause<Query>[] booleanClauses =
