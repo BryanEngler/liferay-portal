@@ -29,7 +29,6 @@ import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuil
 /**
  * @author Bryan Engler
  */
-
 public abstract class BaseFacetProcessor
 	implements FacetProcessor<SearchRequestBuilder> {
 
