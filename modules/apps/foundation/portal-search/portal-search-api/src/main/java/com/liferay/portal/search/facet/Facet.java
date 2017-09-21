@@ -19,6 +19,8 @@ package com.liferay.portal.search.facet;
  */
 public interface Facet extends com.liferay.portal.kernel.search.facet.Facet {
 
+	public String[] getSelections();
+
 	public void select(String... selections);
 
 }
