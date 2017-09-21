@@ -15,7 +15,7 @@
 package com.liferay.portal.search.web.internal.site.facet.portlet.shared.search;
 
 import com.liferay.portal.kernel.search.facet.Facet;
-import com.liferay.portal.kernel.search.facet.ScopeFacetFactory;
+import com.liferay.portal.search.facet.scope.ScopeFacetFactory;
 import com.liferay.portal.search.web.internal.site.facet.constants.SiteFacetPortletKeys;
 import com.liferay.portal.search.web.internal.site.facet.portlet.ScopeFacetBuilder;
 import com.liferay.portal.search.web.internal.site.facet.portlet.SiteFacetPortletPreferences;
