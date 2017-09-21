@@ -25,6 +25,7 @@ import com.liferay.expando.kernel.model.ExpandoColumnConstants;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.expando.kernel.util.ExpandoBridgeIndexerUtil;
+import com.liferay.exportimport.kernel.staging.StagingConstants;
 import com.liferay.portal.kernel.exception.NoSuchCountryException;
 import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.exception.NoSuchRegionException;
@@ -42,7 +43,6 @@ import com.liferay.portal.kernel.model.TrashedModel;
 import com.liferay.portal.kernel.model.WorkflowedModel;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.MultiValueFacet;
-import com.liferay.portal.kernel.search.facet.ScopeFacet;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.QueryFilter;
@@ -224,7 +224,6 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 			addSearchAssetCategoryIds(fullQueryBooleanFilter, searchContext);
 			addSearchAssetTagNames(fullQueryBooleanFilter, searchContext);
 			addSearchFolderId(fullQueryBooleanFilter, searchContext);
-			addSearchGroupId(fullQueryBooleanFilter, searchContext);
 			addSearchLayout(fullQueryBooleanFilter, searchContext);
 			addSearchUserId(fullQueryBooleanFilter, searchContext);
 
@@ -1099,12 +1098,6 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 	protected void addSearchGroupId(
 			BooleanFilter queryBooleanFilter, SearchContext searchContext)
 		throws Exception {
-
-		Facet facet = new ScopeFacet(searchContext);
-
-		facet.setStatic(true);
-
-		searchContext.addFacet(facet);
 	}
 
 	protected Map<String, Query> addSearchKeywords(
@@ -1824,6 +1817,24 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 		_stagingAware = stagingAware;
 	}
 
+	private void _addInactiveGroupsBooleanFilter(
+		BooleanFilter fullQueryPreBooleanFilter, SearchContext searchContext) {
+
+		List<Group> inactiveGroups = GroupLocalServiceUtil.getActiveGroups(
+			searchContext.getCompanyId(), false);
+
+		if (ListUtil.isNotEmpty(inactiveGroups)) {
+			TermsFilter groupIdTermsFilter = new TermsFilter(Field.GROUP_ID);
+
+			groupIdTermsFilter.addValues(
+				ArrayUtil.toStringArray(
+					ListUtil.toArray(inactiveGroups, Group.GROUP_ID_ACCESSOR)));
+
+			fullQueryPreBooleanFilter.add(
+				groupIdTermsFilter, BooleanClauseOccur.MUST_NOT);
+		}
+	}
+
 	private void _addIndexerProvidedPreFilters(
 			BooleanFilter booleanFilter, Indexer<?> indexer,
 			SearchContext searchContext)
@@ -1836,6 +1847,17 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 			indexerPostProcessor.postProcessContextBooleanFilter(
 				booleanFilter, searchContext);
+		}
+	}
+
+	private void _addOwnerBooleanFilter(
+		BooleanFilter fullQueryPreBooleanFilter, SearchContext searchContext) {
+
+		long ownerUserId = searchContext.getOwnerUserId();
+
+		if (ownerUserId > 0) {
+			fullQueryPreBooleanFilter.addRequiredTerm(
+				Field.USER_ID, ownerUserId);
 		}
 	}
 
@@ -1871,6 +1893,12 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 			SearchContext searchContext)
 		throws Exception {
 
+		queryBooleanFilter.addRequiredTerm(
+			Field.COMPANY_ID, searchContext.getCompanyId());
+
+		_addInactiveGroupsBooleanFilter(queryBooleanFilter, searchContext);
+		_addOwnerBooleanFilter(queryBooleanFilter, searchContext);
+
 		for (Entry<String, Indexer<?>> entry :
 				entryClassNameIndexerMap.entrySet()) {
 
@@ -1881,6 +1909,72 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 				_createPreFilterForEntryClassName(
 					entryClassName, indexer, searchContext),
 				BooleanClauseOccur.SHOULD);
+		}
+	}
+
+	private void _addScopeBooleanFilter(
+			BooleanFilter contextBooleanFilter, String entryClassName,
+			boolean stagingAware, SearchContext searchContext)
+		throws Exception {
+
+		long[] groupIds = searchContext.getGroupIds();
+
+		if (ArrayUtil.isNotEmpty(groupIds)) {
+			BooleanFilter siteBooleanFilter = new BooleanFilter();
+
+			for (int i = 0; i < groupIds.length; i++) {
+				long filterBySiteGroupId = groupIds[i];
+
+				if (isStagingGroup(filterBySiteGroupId) &&
+					!_isDataStaged(filterBySiteGroupId, entryClassName)) {
+
+					filterBySiteGroupId = _getLiveGroupId(filterBySiteGroupId);
+				}
+
+				if (filterBySiteGroupId != 0) {
+					siteBooleanFilter.addTerm(
+						Field.GROUP_ID, filterBySiteGroupId);
+				}
+			}
+
+			if (siteBooleanFilter.hasClauses()) {
+				contextBooleanFilter.add(
+					siteBooleanFilter, BooleanClauseOccur.MUST);
+			}
+
+			return;
+		}
+
+		if (!stagingAware) {
+			return;
+		}
+
+		long scopeGroupId = GetterUtil.getLong(
+			searchContext.getAttribute(Field.SCOPE_GROUP_ID));
+
+		if (isStagingGroup(scopeGroupId)) {
+			if (_isDataStaged(scopeGroupId, entryClassName)) {
+				contextBooleanFilter.addTerm(Field.GROUP_ID, scopeGroupId);
+
+				BooleanFilter liveGroupsPreBooleanFilter = new BooleanFilter();
+
+				liveGroupsPreBooleanFilter.addTerm(
+					Field.STAGING_GROUP, "true", BooleanClauseOccur.MUST_NOT);
+				liveGroupsPreBooleanFilter.addTerm(
+					Field.GROUP_ID,
+					String.valueOf(_getLiveGroupId(scopeGroupId)),
+					BooleanClauseOccur.MUST_NOT);
+
+				contextBooleanFilter.add(liveGroupsPreBooleanFilter);
+			}
+			else {
+				contextBooleanFilter.addTerm(
+					Field.STAGING_GROUP, "true", BooleanClauseOccur.MUST_NOT);
+			}
+		}
+		else {
+			contextBooleanFilter.addTerm(
+				Field.STAGING_GROUP, "true", BooleanClauseOccur.MUST_NOT);
 		}
 	}
 
@@ -1900,26 +1994,6 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 		}
 	}
 
-	private void _addStagingFilter(
-		BooleanFilter booleanFilter, Indexer<?> indexer,
-		SearchContext searchContext) {
-
-		if (!indexer.isStagingAware()) {
-			return;
-		}
-
-		if (!searchContext.isIncludeLiveGroups() &&
-			searchContext.isIncludeStagingGroups()) {
-
-			booleanFilter.addRequiredTerm(Field.STAGING_GROUP, true);
-		}
-		else if (searchContext.isIncludeLiveGroups() &&
-				 !searchContext.isIncludeStagingGroups()) {
-
-			booleanFilter.addRequiredTerm(Field.STAGING_GROUP, false);
-		}
-	}
-
 	private Filter _createPreFilterForEntryClassName(
 			String entryClassName, Indexer<?> indexer,
 			SearchContext searchContext)
@@ -1930,7 +2004,9 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 		booleanFilter.addTerm(
 			Field.ENTRY_CLASS_NAME, entryClassName, BooleanClauseOccur.MUST);
 
-		_addStagingFilter(booleanFilter, indexer, searchContext);
+		_addScopeBooleanFilter(
+			booleanFilter, entryClassName, indexer.isStagingAware(),
+			searchContext);
 
 		_addPermissionFilter(booleanFilter, entryClassName, searchContext);
 
@@ -1960,6 +2036,49 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 		}
 
 		return entryClassNameIndexerMap;
+	}
+
+	private long _getLiveGroupId(long groupId) throws Exception {
+		Group group = GroupLocalServiceUtil.fetchGroup(groupId);
+
+		if (group == null) {
+			return 0;
+		}
+
+		long liveGroupId = group.getLiveGroupId();
+
+		if (liveGroupId == 0) {
+			liveGroupId = Long.valueOf(
+				group.getTypeSettingsProperty("remoteGroupId"));
+		}
+
+		return liveGroupId;
+	}
+
+	private boolean _isDataStaged(long groupId, String entryClassName)
+		throws Exception {
+
+		long liveGroupId = _getLiveGroupId(groupId);
+
+		Group liveGroup = GroupLocalServiceUtil.fetchGroup(liveGroupId);
+
+		if (liveGroup == null) {
+			return false;
+		}
+
+		AssetRendererFactory<?> factory =
+			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
+				entryClassName);
+
+		if (factory == null) {
+			return false;
+		}
+
+		boolean dataIsStaged = GetterUtil.getBoolean(
+			liveGroup.getTypeSettingsProperty(
+				StagingConstants.STAGED_PORTLET + factory.getPortletId()));
+
+		return dataIsStaged;
 	}
 
 	private static final long _DEFAULT_FOLDER_ID = 0L;
