@@ -32,13 +32,13 @@ import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.Region;
 import com.liferay.portal.kernel.model.ResourcedModel;
 import com.liferay.portal.kernel.model.TrashedModel;
 import com.liferay.portal.kernel.model.WorkflowedModel;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.MultiValueFacet;
-import com.liferay.portal.kernel.search.facet.ScopeFacet;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.QueryFilter;
@@ -220,7 +220,6 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 			addSearchAssetCategoryIds(fullQueryBooleanFilter, searchContext);
 			addSearchAssetTagNames(fullQueryBooleanFilter, searchContext);
 			addSearchFolderId(fullQueryBooleanFilter, searchContext);
-			addSearchGroupId(fullQueryBooleanFilter, searchContext);
 			addSearchLayout(fullQueryBooleanFilter, searchContext);
 			addSearchUserId(fullQueryBooleanFilter, searchContext);
 
@@ -1063,12 +1062,6 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 	protected void addSearchGroupId(
 			BooleanFilter queryBooleanFilter, SearchContext searchContext)
 		throws Exception {
-
-		Facet facet = new ScopeFacet(searchContext);
-
-		facet.setStatic(true);
-
-		searchContext.addFacet(facet);
 	}
 
 	protected Map<String, Query> addSearchKeywords(
@@ -1781,6 +1774,24 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 		_stagingAware = stagingAware;
 	}
 
+	private void _addInactiveGroupsBooleanFilter(
+		BooleanFilter fullQueryPreBooleanFilter, SearchContext searchContext) {
+
+		List<Group> inactiveGroups = GroupLocalServiceUtil.getActiveGroups(
+			searchContext.getCompanyId(), false);
+
+		if (ListUtil.isNotEmpty(inactiveGroups)) {
+			TermsFilter groupIdTermsFilter = new TermsFilter(Field.GROUP_ID);
+
+			groupIdTermsFilter.addValues(
+				ArrayUtil.toStringArray(
+					ListUtil.toArray(inactiveGroups, Group.GROUP_ID_ACCESSOR)));
+
+			fullQueryPreBooleanFilter.add(
+				groupIdTermsFilter, BooleanClauseOccur.MUST_NOT);
+		}
+	}
+
 	private void _addIndexerProvidedPreFilters(
 			BooleanFilter booleanFilter, Indexer<?> indexer,
 			SearchContext searchContext)
@@ -1793,6 +1804,17 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 			indexerPostProcessor.postProcessContextBooleanFilter(
 				booleanFilter, searchContext);
+		}
+	}
+
+	private void _addOwnerBooleanFilter(
+		BooleanFilter fullQueryPreBooleanFilter, SearchContext searchContext) {
+
+		long ownerUserId = searchContext.getOwnerUserId();
+
+		if (ownerUserId > 0) {
+			fullQueryPreBooleanFilter.addRequiredTerm(
+				Field.USER_ID, ownerUserId);
 		}
 	}
 
@@ -1831,6 +1853,13 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 		BooleanFilter preFilterBooleanFilter = new BooleanFilter();
 
+		preFilterBooleanFilter.addRequiredTerm(
+			Field.COMPANY_ID, searchContext.getCompanyId());
+
+		_addScopeBooleanFilter(preFilterBooleanFilter, searchContext);
+		_addInactiveGroupsBooleanFilter(preFilterBooleanFilter, searchContext);
+		_addOwnerBooleanFilter(preFilterBooleanFilter, searchContext);
+
 		for (Entry<String, Indexer<?>> entry :
 				entryClassNameIndexerMap.entrySet()) {
 
@@ -1849,6 +1878,99 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 		}
 	}
 
+	private void _addScopeBooleanFilter(
+		BooleanFilter fullQueryPreBooleanFilter, SearchContext searchContext) {
+
+		long[] groupIds = _getGroupIds(searchContext);
+
+		if (ArrayUtil.isEmpty(groupIds) ||
+			((groupIds.length == 1) && (groupIds[0] == 0))) {
+
+			return;
+		}
+
+		BooleanFilter facetBooleanFilter = new BooleanFilter();
+
+		TermsFilter groupIdsTermsFilter = new TermsFilter(Field.GROUP_ID);
+		TermsFilter scopeGroupIdsTermsFilter = new TermsFilter(
+			Field.SCOPE_GROUP_ID);
+
+		for (int i = 0; i < groupIds.length; i++) {
+			long groupId = groupIds[i];
+
+			if (groupId <= 0) {
+				continue;
+			}
+
+			try {
+				Group group = GroupLocalServiceUtil.getGroup(groupId);
+
+				if (!GroupLocalServiceUtil.isLiveGroupActive(group)) {
+					continue;
+				}
+
+				long parentGroupId = groupId;
+
+				if (group.isLayout()) {
+					parentGroupId = group.getParentGroupId();
+				}
+
+				groupIdsTermsFilter.addValue(String.valueOf(parentGroupId));
+
+				groupIds[i] = parentGroupId;
+
+				if (group.isLayout() || searchContext.isScopeStrict()) {
+					scopeGroupIdsTermsFilter.addValue(String.valueOf(groupId));
+				}
+			}
+			catch (Exception e) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(e, e);
+				}
+			}
+		}
+
+		searchContext.setGroupIds(groupIds);
+
+		if (!groupIdsTermsFilter.isEmpty()) {
+			facetBooleanFilter.add(
+				groupIdsTermsFilter, BooleanClauseOccur.MUST);
+		}
+
+		if (!scopeGroupIdsTermsFilter.isEmpty()) {
+			facetBooleanFilter.add(
+				scopeGroupIdsTermsFilter, BooleanClauseOccur.MUST);
+		}
+
+		fullQueryPreBooleanFilter.add(
+			facetBooleanFilter, BooleanClauseOccur.MUST);
+	}
+
+	private long[] _addScopeGroup(long groupId) {
+		try {
+			List<Long> groupIds = new ArrayList<>();
+
+			groupIds.add(groupId);
+
+			Group group = GroupLocalServiceUtil.getGroup(groupId);
+
+			List<Group> groups = GroupLocalServiceUtil.getGroups(
+				group.getCompanyId(), Layout.class.getName(),
+				group.getGroupId());
+
+			for (Group scopeGroup : groups) {
+				groupIds.add(scopeGroup.getGroupId());
+			}
+
+			return ArrayUtil.toLongArray(groupIds);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+		}
+
+		return new long[] {groupId};
+	}
+
 	private void _addSearchTerms(
 			BooleanQuery searchQuery, BooleanFilter fullQueryBooleanFilter,
 			SearchContext searchContext)
@@ -1865,26 +1987,6 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 		}
 	}
 
-	private void _addStagingFilter(
-		BooleanFilter booleanFilter, Indexer<?> indexer,
-		SearchContext searchContext) {
-
-		if (!indexer.isStagingAware()) {
-			return;
-		}
-
-		if (!searchContext.isIncludeLiveGroups() &&
-			searchContext.isIncludeStagingGroups()) {
-
-			booleanFilter.addRequiredTerm(Field.STAGING_GROUP, true);
-		}
-		else if (searchContext.isIncludeLiveGroups() &&
-				 !searchContext.isIncludeStagingGroups()) {
-
-			booleanFilter.addRequiredTerm(Field.STAGING_GROUP, false);
-		}
-	}
-
 	private Filter _createPreFilterForEntryClassName(
 			String entryClassName, Indexer<?> indexer,
 			SearchContext searchContext)
@@ -1894,8 +1996,6 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 		booleanFilter.addTerm(
 			Field.ENTRY_CLASS_NAME, entryClassName, BooleanClauseOccur.MUST);
-
-		_addStagingFilter(booleanFilter, indexer, searchContext);
 
 		_addPermissionFilter(
 			booleanFilter, entryClassName, indexer, searchContext);
@@ -1926,6 +2026,27 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 		}
 
 		return entryClassNameIndexerMap;
+	}
+
+	private long[] _getGroupIds(SearchContext searchContext) {
+		long[] groupIds = _getGroupIdsFromSearchContext(searchContext);
+
+		if (ArrayUtil.isEmpty(groupIds)) {
+			groupIds = searchContext.getGroupIds();
+		}
+
+		return groupIds;
+	}
+
+	private long[] _getGroupIdsFromSearchContext(SearchContext searchContext) {
+		long groupId = GetterUtil.getLong(
+			searchContext.getAttribute(Field.GROUP_ID));
+
+		if (groupId == 0) {
+			return null;
+		}
+
+		return _addScopeGroup(groupId);
 	}
 
 	private static final long _DEFAULT_FOLDER_ID = 0L;
