@@ -217,10 +217,12 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 			BooleanFilter fullQueryBooleanFilter = new BooleanFilter();
 
+			fullQueryBooleanFilter.addRequiredTerm(
+				Field.COMPANY_ID, searchContext.getCompanyId());
+
 			addSearchAssetCategoryIds(fullQueryBooleanFilter, searchContext);
 			addSearchAssetTagNames(fullQueryBooleanFilter, searchContext);
 			addSearchFolderId(fullQueryBooleanFilter, searchContext);
-			addSearchGroupId(fullQueryBooleanFilter, searchContext);
 			addSearchLayout(fullQueryBooleanFilter, searchContext);
 			addSearchUserId(fullQueryBooleanFilter, searchContext);
 
@@ -1061,6 +1063,10 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 		searchContext.addFacet(multiValueFacet);
 	}
 
+	/**
+	 * @deprecated As of 7.0.0
+	 */
+	@Deprecated
 	protected void addSearchGroupId(
 			BooleanFilter queryBooleanFilter, SearchContext searchContext)
 		throws Exception {
@@ -1797,6 +1803,16 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 		}
 	}
 
+	private void _addOwnerBooleanFilter(
+		BooleanFilter facetBooleanFilter, SearchContext searchContext) {
+
+		long ownerUserId = searchContext.getOwnerUserId();
+
+		if (ownerUserId > 0) {
+			facetBooleanFilter.addRequiredTerm(Field.USER_ID, ownerUserId);
+		}
+	}
+
 	private void _addPermissionFilter(
 			BooleanFilter booleanFilter, String entryClassName,
 			Indexer<?> indexer, SearchContext searchContext)
@@ -1832,6 +1848,8 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 		BooleanFilter preFilterBooleanFilter = new BooleanFilter();
 
+		_addScopeBooleanFilter(preFilterBooleanFilter, searchContext);
+
 		for (Entry<String, Indexer<?>> entry :
 				entryClassNameIndexerMap.entrySet()) {
 
@@ -1848,6 +1866,74 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 			queryBooleanFilter.add(
 				preFilterBooleanFilter, BooleanClauseOccur.MUST);
 		}
+	}
+
+	private void _addScopeBooleanFilter(
+		BooleanFilter fullQueryPreBooleanFilter, SearchContext searchContext) {
+
+		long[] groupIds = searchContext.getGroupIds();
+
+		if (ArrayUtil.isEmpty(groupIds) ||
+			((groupIds.length == 1) && (groupIds[0] == 0))) {
+
+			return;
+		}
+
+		BooleanFilter facetBooleanFilter = new BooleanFilter();
+
+		_addOwnerBooleanFilter(facetBooleanFilter, searchContext);
+
+		TermsFilter groupIdsTermsFilter = new TermsFilter(Field.GROUP_ID);
+		TermsFilter scopeGroupIdsTermsFilter = new TermsFilter(
+			Field.SCOPE_GROUP_ID);
+
+		for (int i = 0; i < groupIds.length; i++) {
+			long groupId = groupIds[i];
+
+			if (groupId <= 0) {
+				continue;
+			}
+
+			try {
+				Group group = GroupLocalServiceUtil.getGroup(groupId);
+
+				if (!GroupLocalServiceUtil.isLiveGroupActive(group)) {
+					continue;
+				}
+
+				long parentGroupId = groupId;
+
+				if (group.isLayout()) {
+					parentGroupId = group.getParentGroupId();
+				}
+
+				groupIdsTermsFilter.addValue(String.valueOf(parentGroupId));
+
+				groupIds[i] = parentGroupId;
+
+				if (group.isLayout() || searchContext.isScopeStrict()) {
+					scopeGroupIdsTermsFilter.addValue(String.valueOf(groupId));
+				}
+			}
+			catch (Exception e) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(e, e);
+				}
+			}
+		}
+
+		if (!groupIdsTermsFilter.isEmpty()) {
+			facetBooleanFilter.add(
+				groupIdsTermsFilter, BooleanClauseOccur.MUST);
+		}
+
+		if (!scopeGroupIdsTermsFilter.isEmpty()) {
+			facetBooleanFilter.add(
+				scopeGroupIdsTermsFilter, BooleanClauseOccur.MUST);
+		}
+
+		fullQueryPreBooleanFilter.add(
+			facetBooleanFilter, BooleanClauseOccur.MUST);
 	}
 
 	private void _addSearchTerms(
