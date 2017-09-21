@@ -36,6 +36,11 @@ public class FacetImpl extends BaseFacet implements Facet {
 	}
 
 	@Override
+	public String[] getSelections() {
+		return _selections;
+	}
+
+	@Override
 	public void select(String... selections) {
 		_selections = selections;
 	}
