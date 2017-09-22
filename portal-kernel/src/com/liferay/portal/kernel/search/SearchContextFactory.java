@@ -85,6 +85,8 @@ public class SearchContextFactory {
 			}
 		}
 
+		attributes.put(Field.SCOPE_GROUP_ID, themeDisplay.getScopeGroupId());
+
 		searchContext.setAttributes(attributes);
 
 		// Asset
