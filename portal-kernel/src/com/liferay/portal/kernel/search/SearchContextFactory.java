@@ -71,6 +71,8 @@ public class SearchContextFactory {
 
 		attributes.remove("groupId", "0");
 
+		attributes.put(Field.SCOPE_GROUP_ID, themeDisplay.getScopeGroupId());
+
 		searchContext.setAttributes(attributes);
 
 		// Asset
