@@ -126,6 +126,12 @@ public abstract class BaseFacetedSearcherTestCase {
 		return userSearchFixture.getSearchContext(keywords);
 	}
 
+	protected SearchContext getSearchContext(String keywords, long[] groupIds)
+		throws Exception {
+
+		return userSearchFixture.getSearchContext(keywords, groupIds);
+	}
+
 	protected boolean isMissingScreenName(Document document) {
 		return Validator.isNull(document.get("screenName"));
 	}
