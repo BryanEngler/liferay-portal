@@ -1674,7 +1674,14 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 			return false;
 		}
 
-		return group.isStagingGroup();
+		boolean hasRemoteGroupId = Validator.isNotNull(
+			group.getTypeSettingsProperty("remoteGroupId"));
+
+		if (group.isStagingGroup() || hasRemoteGroupId) {
+			return true;
+		}
+
+		return false;
 	}
 
 	protected boolean isUseSearchResultPermissionFilter(
