@@ -82,7 +82,6 @@ public class UserSearchFixture {
 	}
 
 	public SearchContext getSearchContext(String keywords) throws Exception {
-
 		return getSearchContext(keywords, null);
 	}
 

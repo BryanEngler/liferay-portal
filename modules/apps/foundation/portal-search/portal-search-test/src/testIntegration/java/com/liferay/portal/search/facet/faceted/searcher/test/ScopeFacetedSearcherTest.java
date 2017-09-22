@@ -17,6 +17,7 @@ package com.liferay.portal.search.facet.faceted.searcher.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.Facet;
@@ -25,10 +26,13 @@ import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.search.facet.scope.ScopeFacetFactory;
+import com.liferay.portal.search.test.internal.util.StagingEnvironmentSearchFixture;
+import com.liferay.portal.search.test.util.DocumentsAssert;
 import com.liferay.portal.search.test.util.SearchMapUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
@@ -154,10 +158,94 @@ public class ScopeFacetedSearcherTest extends BaseFacetedSearcherTestCase {
 		assertTags(keyword, hits, tags);
 	}
 
+	@Test
+	public void testSearchInStagingEnvironmentWithScopeEverything()
+		throws Exception {
+
+		stagingEnvironmentSearchFixture.setup();
+
+		String keyword = stagingEnvironmentSearchFixture.getKeyword();
+
+		SearchContext searchContext = getSearchContext(keyword);
+
+		assertStagingEnvironmentSearch(
+			searchContext, stagingEnvironmentSearchFixture.getStagedGroup(),
+			stagingEnvironmentSearchFixture.
+				getExpectedValuesScopeEverythingFromStaged());
+
+		assertStagingEnvironmentSearch(
+			searchContext, stagingEnvironmentSearchFixture.getLiveGroup(),
+			stagingEnvironmentSearchFixture.
+				getExpectedValuesScopeEverythingFromLive());
+
+		assertStagingEnvironmentSearch(
+			searchContext, stagingEnvironmentSearchFixture.getNonStagedGroup(),
+			stagingEnvironmentSearchFixture.
+				getExpectedValuesScopeEverythingFromNonStaged());
+
+		stagingEnvironmentSearchFixture.tearDown();
+	}
+
+	@Test
+	public void testSearchInStagingEnvironmentWithScopeThisSite()
+		throws Exception {
+
+		stagingEnvironmentSearchFixture.setup();
+
+		assertStagingEnvironmentSearchScopeThisSite(
+			stagingEnvironmentSearchFixture.getStagedGroup(),
+			stagingEnvironmentSearchFixture.
+				getExpectedValuesScopeThisSiteFromStaged());
+
+		assertStagingEnvironmentSearchScopeThisSite(
+			stagingEnvironmentSearchFixture.getLiveGroup(),
+			stagingEnvironmentSearchFixture.
+				getExpectedValuesScopeThisSiteFromLive());
+
+		assertStagingEnvironmentSearchScopeThisSite(
+			stagingEnvironmentSearchFixture.getNonStagedGroup(),
+			stagingEnvironmentSearchFixture.
+				getExpectedValuesScopeThisSiteFromNonStaged());
+
+		stagingEnvironmentSearchFixture.tearDown();
+	}
+
 	protected static Map<String, Integer> toMap(Group group, Integer count) {
 		return Collections.singletonMap(
 			String.valueOf(group.getGroupId()), count);
 	}
+
+	protected void assertStagingEnvironmentSearch(
+			SearchContext searchContext, Group scopeGroup,
+			Collection<String> expectedValues)
+		throws Exception {
+
+		searchContext.setAttribute(
+			Field.SCOPE_GROUP_ID, scopeGroup.getGroupId());
+
+		Hits hits = search(searchContext);
+
+		DocumentsAssert.assertValuesIgnoreRelevance(
+			stagingEnvironmentSearchFixture.getKeyword(), hits.getDocs(),
+			"localized_title_en_US", expectedValues);
+	}
+
+	protected void assertStagingEnvironmentSearchScopeThisSite(
+			Group scopeGroup, Collection<String> expectedValues)
+		throws Exception {
+
+		String keyword = stagingEnvironmentSearchFixture.getKeyword();
+
+		SearchContext searchContext = getSearchContext(keyword);
+
+		searchContext.setGroupIds(new long[] {scopeGroup.getGroupId()});
+
+		assertStagingEnvironmentSearch(
+			searchContext, scopeGroup, expectedValues);
+	}
+
+	protected final StagingEnvironmentSearchFixture
+		stagingEnvironmentSearchFixture = new StagingEnvironmentSearchFixture();
 
 	@Inject
 	private static ScopeFacetFactory _scopeFacetFactory;
