@@ -46,7 +46,7 @@ pageContext.setAttribute("portletURL", portletURL);
 		<c:choose>
 			<c:when test="<%= searchDisplayContext.isSearchScopePreferenceLetTheUserChoose() %>">
 				<aui:select cssClass="search-select" inlineField="<%= true %>" label="" name="scope" title="scope">
-					<aui:option label="everything" selected="<%= scopeEverything %>" value="everything" />
+					<aui:option label="all-sites" selected="<%= scopeEverything %>" value="everything" />
 
 					<aui:option label="this-site" selected="<%= !scopeEverything %>" value="this-site" />
 				</aui:select>
