@@ -14,6 +14,8 @@
 
 package com.liferay.portal.service.impl;
 
+import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
+import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
@@ -55,8 +57,8 @@ import com.liferay.portal.kernel.model.UserGroup;
 import com.liferay.portal.kernel.model.VirtualHost;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.SearchEngineHelperUtil;
 import com.liferay.portal.kernel.search.SearchException;
+import com.liferay.portal.kernel.search.facet.AssetEntriesFacet;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.ScopeFacet;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcher;
@@ -801,6 +803,8 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 		SearchContext searchContext = createSearchContext(
 			companyId, userId, portletId, groupId, keywords, start, end);
 
+		addAssetEntriesFacet(searchContext);
+
 		addScopeFacet(searchContext);
 
 		try {
@@ -1277,6 +1281,11 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 	}
 
 	protected void addAssetEntriesFacet(SearchContext searchContext) {
+		Facet assetEntriesFacet = new AssetEntriesFacet(searchContext);
+
+		assetEntriesFacet.setStatic(true);
+
+		searchContext.addFacet(assetEntriesFacet);
 	}
 
 	protected void addScopeFacet(SearchContext searchContext) {
@@ -1311,8 +1320,7 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 
 		searchContext.setCompanyId(companyId);
 		searchContext.setEnd(end);
-		searchContext.setEntryClassNames(
-			SearchEngineHelperUtil.getEntryClassNames());
+		searchContext.setEntryClassNames(getAssetTypes(companyId));
 
 		if (groupId > 0) {
 			searchContext.setGroupIds(new long[] {groupId});
@@ -1522,6 +1530,26 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 		TransactionCommitCallbackUtil.registerCallback(callable);
 
 		return company;
+	}
+
+	protected String[] getAssetTypes(long companyId) {
+		List<String> assetTypes = new ArrayList<>();
+
+		List<AssetRendererFactory<?>> assetRendererFactories =
+			AssetRendererFactoryRegistryUtil.getAssetRendererFactories(
+				companyId);
+
+		for (AssetRendererFactory<?> assetRendererFactory :
+				assetRendererFactories) {
+
+			if (!assetRendererFactory.isSearchable()) {
+				continue;
+			}
+
+			assetTypes.add(assetRendererFactory.getClassName());
+		}
+
+		return ArrayUtil.toStringArray(assetTypes);
 	}
 
 	protected void preregisterCompany(long companyId) {

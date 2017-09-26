@@ -44,8 +44,8 @@ public class SimpleFacet extends BaseFacet {
 
 		String value = StringPool.BLANK;
 
-		if (isStatic() && dataJSONObject.has("value")) {
-			value = dataJSONObject.getString("value");
+		if (isStatic() && dataJSONObject.has("facetSelection")) {
+			value = dataJSONObject.getString("facetSelection");
 		}
 
 		String valueParam = GetterUtil.getString(

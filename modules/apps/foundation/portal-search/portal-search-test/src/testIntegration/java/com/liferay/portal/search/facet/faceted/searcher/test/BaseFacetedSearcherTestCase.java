@@ -15,7 +15,6 @@
 package com.liferay.portal.search.facet.faceted.searcher.test;
 
 import com.liferay.asset.kernel.model.AssetTag;
-import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Document;
@@ -25,11 +24,14 @@ import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcher;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcherManager;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactory;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
+import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowThreadLocal;
 import com.liferay.portal.search.test.internal.util.UserSearchFixture;
-import com.liferay.portal.search.test.journal.util.JournalArticleSearchFixture;
 import com.liferay.portal.search.test.util.AssertUtils;
 import com.liferay.portal.search.test.util.TermCollectorUtil;
 import com.liferay.portal.test.rule.Inject;
@@ -54,14 +56,20 @@ public abstract class BaseFacetedSearcherTestCase {
 	public void setUp() throws Exception {
 		WorkflowThreadLocal.setEnabled(false);
 
-		setUpJournalArticleSearchFixture();
 		setUpUserSearchFixture();
+
+		_originalPermissionChecker =
+			PermissionThreadLocal.getPermissionChecker();
+
+		PermissionThreadLocal.setPermissionChecker(
+			permissionCheckerFactory.create(TestPropsValues.getUser()));
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		journalArticleSearchFixture.tearDown();
 		userSearchFixture.tearDown();
+
+		PermissionThreadLocal.setPermissionChecker(_originalPermissionChecker);
 	}
 
 	@Rule
@@ -136,12 +144,6 @@ public abstract class BaseFacetedSearcherTestCase {
 		return facetedSearcher.search(searchContext);
 	}
 
-	protected void setUpJournalArticleSearchFixture() throws Exception {
-		journalArticleSearchFixture.setUp();
-
-		_journalArticles = journalArticleSearchFixture.getJournalArticles();
-	}
-
 	protected void setUpUserSearchFixture() throws Exception {
 		userSearchFixture.setUp();
 
@@ -154,8 +156,9 @@ public abstract class BaseFacetedSearcherTestCase {
 		return userSearchFixture.toMap(user, tags);
 	}
 
-	protected final JournalArticleSearchFixture journalArticleSearchFixture =
-		new JournalArticleSearchFixture();
+	@Inject
+	protected static PermissionCheckerFactory permissionCheckerFactory;
+
 	protected final UserSearchFixture userSearchFixture =
 		new UserSearchFixture();
 
@@ -168,8 +171,7 @@ public abstract class BaseFacetedSearcherTestCase {
 	@DeleteAfterTestRun
 	private List<Group> _groups;
 
-	@DeleteAfterTestRun
-	private List<JournalArticle> _journalArticles;
+	private PermissionChecker _originalPermissionChecker;
 
 	@DeleteAfterTestRun
 	private List<User> _users;

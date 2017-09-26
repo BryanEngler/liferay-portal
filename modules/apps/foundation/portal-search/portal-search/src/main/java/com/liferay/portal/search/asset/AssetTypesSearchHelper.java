@@ -12,15 +12,16 @@
  * details.
  */
 
-package com.liferay.portal.search.facet.type;
+package com.liferay.portal.search.asset;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.search.facet.FacetFactory;
-
 /**
- * @author André de Oliveira
+ * @author Bryan Engler
  */
 @ProviderType
-public interface AssetEntriesFacetFactory extends FacetFactory {
+public interface AssetTypesSearchHelper {
+
+	public String[] getAssetTypes(long companyId);
+
 }

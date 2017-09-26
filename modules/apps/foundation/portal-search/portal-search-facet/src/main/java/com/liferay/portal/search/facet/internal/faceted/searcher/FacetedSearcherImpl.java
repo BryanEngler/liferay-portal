@@ -14,9 +14,12 @@
 
 package com.liferay.portal.search.facet.internal.faceted.searcher;
 
+import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
+import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactory;
+import com.liferay.exportimport.kernel.staging.StagingConstants;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.BaseSearcher;
 import com.liferay.portal.kernel.search.BooleanClause;
@@ -31,7 +34,6 @@ import com.liferay.portal.kernel.search.IndexerRegistry;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.SearchEngineHelper;
 import com.liferay.portal.kernel.search.SearchEngineHelperUtil;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.SearchPermissionChecker;
@@ -50,13 +52,12 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.search.asset.AssetTypesSearchHelper;
 import com.liferay.portal.search.permission.SearchPermissionFilterContributor;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
@@ -67,23 +68,130 @@ public class FacetedSearcherImpl
 	extends BaseSearcher implements FacetedSearcher {
 
 	public FacetedSearcherImpl(
+		AssetTypesSearchHelper assetTypesSearchHelper,
 		ExpandoBridgeFactory expandoBridgeFactory,
 		GroupLocalService groupLocalService, IndexerRegistry indexerRegistry,
 		IndexSearcherHelper indexSearcherHelper,
-		SearchEngineHelper searchEngineHelper,
 		Collection<SearchPermissionFilterContributor>
 			searchPermissionFilterContributors) {
 
+		_assetTypesSearchHelper = assetTypesSearchHelper;
 		_expandoBridgeFactory = expandoBridgeFactory;
 		_groupLocalService = groupLocalService;
 		_indexerRegistry = indexerRegistry;
 		_indexSearcherHelper = indexSearcherHelper;
-		_searchEngineHelper = searchEngineHelper;
 		_searchPermissionFilterContributors =
 			searchPermissionFilterContributors;
 	}
 
-	protected void addSearchExpando(
+	protected void addOwnerBooleanFilter(
+		BooleanFilter contextBooleanFilter, SearchContext searchContext) {
+
+		long ownerUserId = searchContext.getOwnerUserId();
+
+		if (ownerUserId > 0) {
+			contextBooleanFilter.addRequiredTerm(Field.USER_ID, ownerUserId);
+		}
+	}
+
+	protected void addPermissionBooleanFilter(
+		BooleanFilter contextBooleanFilter, String entryClassName,
+		SearchContext searchContext) {
+
+		if (searchContext.getUserId() > 0) {
+			SearchPermissionChecker searchPermissionChecker =
+				SearchEngineHelperUtil.getSearchPermissionChecker();
+
+			Optional<String> parentEntryClassNameOptional =
+				getParentEntryClassName(entryClassName);
+
+			String permissionedEntryClassName =
+				parentEntryClassNameOptional.orElse(entryClassName);
+
+			searchPermissionChecker.getPermissionBooleanFilter(
+				searchContext.getCompanyId(), searchContext.getGroupIds(),
+				searchContext.getUserId(), permissionedEntryClassName,
+				contextBooleanFilter, searchContext);
+		}
+	}
+
+	protected void addScopeBooleanFilter(
+			BooleanFilter contextBooleanFilter, String entryClassName,
+			boolean stagingAware, SearchContext searchContext)
+		throws Exception {
+
+		long[] groupIds = searchContext.getGroupIds();
+
+		if (Validator.isNull(groupIds)) {
+			if (stagingAware) {
+				long groupId = GetterUtil.getLong(
+					searchContext.getAttribute(Field.SCOPE_GROUP_ID));
+
+				if (isStagingGroup(groupId)) {
+					if (isDataStaged(groupId, entryClassName)) {
+						BooleanFilter stagedGroupPreBooleanFilter =
+							new BooleanFilter();
+
+						stagedGroupPreBooleanFilter.addTerm(
+							Field.GROUP_ID, groupId);
+
+						BooleanFilter liveGroupsPreBooleanFilter =
+							new BooleanFilter();
+
+						liveGroupsPreBooleanFilter.addTerm(
+							Field.STAGING_GROUP, "true",
+							BooleanClauseOccur.MUST_NOT);
+						liveGroupsPreBooleanFilter.addTerm(
+							Field.GROUP_ID,
+							String.valueOf(getLiveGroupId(groupId)),
+							BooleanClauseOccur.MUST_NOT);
+
+						stagedGroupPreBooleanFilter.add(
+							liveGroupsPreBooleanFilter);
+
+						contextBooleanFilter.add(
+							stagedGroupPreBooleanFilter,
+							BooleanClauseOccur.MUST);
+					}
+					else {
+						contextBooleanFilter.addTerm(
+							Field.STAGING_GROUP, "true",
+							BooleanClauseOccur.MUST_NOT);
+					}
+				}
+				else {
+					contextBooleanFilter.addTerm(
+						Field.STAGING_GROUP, "true",
+						BooleanClauseOccur.MUST_NOT);
+				}
+			}
+		}
+		else if (groupIds.length > 0) {
+			BooleanFilter siteBooleanFilter = new BooleanFilter();
+
+			for (int i = 0; i < groupIds.length; i++) {
+				long filterBySiteGroupId = groupIds[i];
+
+				if (isStagingGroup(filterBySiteGroupId) &&
+					!isDataStaged(filterBySiteGroupId, entryClassName)) {
+
+					filterBySiteGroupId = getLiveGroupId(filterBySiteGroupId);
+				}
+
+				if (filterBySiteGroupId != 0) {
+					siteBooleanFilter.addTerm(
+						Field.GROUP_ID, filterBySiteGroupId);
+				}
+			}
+
+			if (siteBooleanFilter.hasClauses()) {
+				contextBooleanFilter.add(
+					siteBooleanFilter, BooleanClauseOccur.MUST);
+			}
+		}
+	}
+
+	protected void addSearchExpandoKeywords(
 			BooleanQuery searchQuery, SearchContext searchContext,
 			String keywords, String className)
 		throws Exception {
@@ -115,68 +223,53 @@ public class FacetedSearcherImpl
 		}
 	}
 
-	protected void addSearchKeywords(
-			BooleanQuery searchQuery, String keywords, boolean luceneSyntax,
-			Map<String, Indexer<?>> entryClassNameIndexerMap,
-			SearchContext searchContext)
-		throws Exception {
-
-		if (Validator.isNull(keywords)) {
-			return;
-		}
-
-		if (luceneSyntax) {
-			searchQuery.add(new StringQuery(keywords), BooleanClauseOccur.MUST);
-		}
-		else {
-			addSearchLocalizedTerm(
-				searchQuery, searchContext, Field.ASSET_CATEGORY_TITLES, false);
-
-			searchQuery.addTerm(Field.ASSET_TAG_NAMES, keywords);
-
-			searchQuery.addTerms(Field.KEYWORDS, keywords);
-
-			for (String entryClassName : entryClassNameIndexerMap.keySet()) {
-				addSearchExpando(
-					searchQuery, searchContext, keywords, entryClassName);
-			}
-		}
-	}
-
-	@Override
-	protected BooleanQuery createFullQuery(
-			BooleanFilter fullQueryBooleanFilter, SearchContext searchContext)
+	protected BooleanQuery createFullQuery(SearchContext searchContext)
 		throws Exception {
 
 		BooleanQuery searchQuery = new BooleanQueryImpl();
 
-		String keywords = searchContext.getKeywords();
-
 		boolean luceneSyntax = GetterUtil.getBoolean(
 			searchContext.getAttribute("luceneSyntax"));
 
-		Map<String, Indexer<?>> entryClassNameIndexerMap =
-			_getEntryClassNameIndexerMap(
-				_getEntryClassNames(searchContext),
-				searchContext.getSearchEngineId());
-
-		addSearchKeywords(
-			searchQuery, keywords, luceneSyntax, entryClassNameIndexerMap,
-			searchContext);
-
-		_addSearchTerms(
-			searchQuery, fullQueryBooleanFilter, luceneSyntax,
-			entryClassNameIndexerMap, searchContext);
+		String keywords = searchContext.getKeywords();
 
 		if (Validator.isNotNull(keywords)) {
-			int groupId = GetterUtil.getInteger(
-				searchContext.getAttribute(Field.GROUP_ID));
+			if (luceneSyntax) {
+				searchQuery.add(
+					new StringQuery(keywords), BooleanClauseOccur.MUST);
+			}
+			else {
+				addSearchLocalizedTerm(
+					searchQuery, searchContext, Field.ASSET_CATEGORY_TITLES,
+					false);
 
-			if (groupId == 0) {
-				fullQueryBooleanFilter.addTerm(
-					Field.STAGING_GROUP, "true", BooleanClauseOccur.MUST_NOT);
+				searchQuery.addTerm(Field.ASSET_TAG_NAMES, keywords);
+
+				searchQuery.addTerms(Field.KEYWORDS, keywords);
 			}
 		}
+
+		BooleanFilter fullQueryContextPreBooleanFilter = new BooleanFilter();
+
+		for (String entryClassName : getEntryClassNames(searchContext)) {
+			visitEntryClassName(
+				entryClassName, searchContext, searchQuery,
+				fullQueryContextPreBooleanFilter, luceneSyntax, keywords);
+		}
+
+		BooleanQuery fullQuery = new BooleanQueryImpl();
+
+		if (searchQuery.hasClauses()) {
+			fullQuery.add(searchQuery, BooleanClauseOccur.MUST);
+		}
+
+		BooleanFilter fullQueryPreBooleanFilter = new BooleanFilter();
+
+		fullQueryPreBooleanFilter.addRequiredTerm(
+			Field.COMPANY_ID, searchContext.getCompanyId());
+
+		fullQueryPreBooleanFilter.add(
+			fullQueryContextPreBooleanFilter, BooleanClauseOccur.MUST);
 
 		List<Group> inactiveGroups = _groupLocalService.getActiveGroups(
 			searchContext.getCompanyId(), false);
@@ -188,42 +281,33 @@ public class FacetedSearcherImpl
 				ArrayUtil.toStringArray(
 					ListUtil.toArray(inactiveGroups, Group.GROUP_ID_ACCESSOR)));
 
-			fullQueryBooleanFilter.add(
+			fullQueryPreBooleanFilter.add(
 				groupIdTermsFilter, BooleanClauseOccur.MUST_NOT);
 		}
 
-		_addPreFilters(
-			fullQueryBooleanFilter, entryClassNameIndexerMap, searchContext);
+		if (fullQueryPreBooleanFilter.hasClauses()) {
+			fullQuery.setPreBooleanFilter(fullQueryPreBooleanFilter);
+		}
+
+		BooleanFilter facetPostBooleanFilter = new BooleanFilter();
 
 		Map<String, Facet> facets = searchContext.getFacets();
-
-		BooleanFilter facetBooleanFilter = new BooleanFilter();
 
 		for (Facet facet : facets.values()) {
 			BooleanClause<Filter> facetClause =
 				facet.getFacetFilterBooleanClause();
 
 			if (facetClause != null) {
-				facetBooleanFilter.add(
+				facetPostBooleanFilter.add(
 					facetClause.getClause(),
 					facetClause.getBooleanClauseOccur());
 			}
 		}
 
-		addFacetClause(searchContext, facetBooleanFilter, facets.values());
+		addFacetClause(searchContext, facetPostBooleanFilter, facets.values());
 
-		BooleanQuery fullQuery = new BooleanQueryImpl();
-
-		if (facetBooleanFilter.hasClauses()) {
-			fullQuery.setPostFilter(facetBooleanFilter);
-		}
-
-		if (fullQueryBooleanFilter.hasClauses()) {
-			fullQuery.setPreBooleanFilter(fullQueryBooleanFilter);
-		}
-
-		if (searchQuery.hasClauses()) {
-			fullQuery.add(searchQuery, BooleanClauseOccur.MUST);
+		if (facetPostBooleanFilter.hasClauses()) {
+			fullQuery.setPostFilter(facetPostBooleanFilter);
 		}
 
 		BooleanClause<Query>[] booleanClauses =
@@ -237,8 +321,26 @@ public class FacetedSearcherImpl
 			}
 		}
 
-		_postProcessFullQuery(
-			entryClassNameIndexerMap, fullQuery, searchContext);
+		for (String entryClassName : getEntryClassNames(searchContext)) {
+			Indexer<?> indexer = _indexerRegistry.getIndexer(entryClassName);
+
+			if (indexer == null) {
+				continue;
+			}
+
+			String searchEngineId = searchContext.getSearchEngineId();
+
+			if (!searchEngineId.equals(indexer.getSearchEngineId())) {
+				continue;
+			}
+
+			for (IndexerPostProcessor indexerPostProcessor :
+					indexer.getIndexerPostProcessors()) {
+
+				indexerPostProcessor.postProcessFullQuery(
+					fullQuery, searchContext);
+			}
+		}
 
 		return fullQuery;
 	}
@@ -250,13 +352,7 @@ public class FacetedSearcherImpl
 		try {
 			searchContext.setSearchEngineId(getSearchEngineId());
 
-			BooleanFilter queryBooleanFilter = new BooleanFilter();
-
-			queryBooleanFilter.addRequiredTerm(
-				Field.COMPANY_ID, searchContext.getCompanyId());
-
-			Query fullQuery = createFullQuery(
-				queryBooleanFilter, searchContext);
+			Query fullQuery = createFullQuery(searchContext);
 
 			if (!fullQuery.hasChildren()) {
 				BooleanFilter preBooleanFilter =
@@ -278,195 +374,31 @@ public class FacetedSearcherImpl
 		}
 	}
 
-	@Override
-	protected boolean isUseSearchResultPermissionFilter(
-		SearchContext searchContext) {
-
-		String[] entryClassNames = _getEntryClassNames(searchContext);
-
-		if (ArrayUtil.isEmpty(entryClassNames)) {
-			return super.isFilterSearch();
-		}
-
-		for (String entryClassName : entryClassNames) {
-			Indexer<?> indexer = _indexerRegistry.getIndexer(entryClassName);
-
-			if (indexer == null) {
-				continue;
-			}
-
-			if (indexer.isFilterSearch()) {
-				return true;
-			}
-		}
-
-		return super.isFilterSearch();
-	}
-
-	private void _addIndexerProvidedPreFilters(
-			BooleanFilter booleanFilter, Indexer<?> indexer,
-			SearchContext searchContext)
-		throws Exception {
-
-		indexer.postProcessContextBooleanFilter(booleanFilter, searchContext);
-
-		for (IndexerPostProcessor indexerPostProcessor :
-				indexer.getIndexerPostProcessors()) {
-
-			indexerPostProcessor.postProcessContextBooleanFilter(
-				booleanFilter, searchContext);
-		}
-	}
-
-	private void _addIndexerProvidedSearchTerms(
-			BooleanQuery searchQuery, Indexer<?> indexer,
-			BooleanFilter booleanFilter, boolean luceneSyntax,
-			SearchContext searchContext)
-		throws Exception {
-
-		if (!luceneSyntax) {
-			indexer.postProcessSearchQuery(
-				searchQuery, booleanFilter, searchContext);
-		}
-
-		for (IndexerPostProcessor indexerPostProcessor :
-				indexer.getIndexerPostProcessors()) {
-
-			indexerPostProcessor.postProcessSearchQuery(
-				searchQuery, booleanFilter, searchContext);
-		}
-	}
-
-	private void _addPermissionFilter(
-			BooleanFilter booleanFilter, String entryClassName,
-			SearchContext searchContext)
-		throws Exception {
-
-		if (searchContext.getUserId() == 0) {
-			return;
-		}
-
-		SearchPermissionChecker searchPermissionChecker =
-			SearchEngineHelperUtil.getSearchPermissionChecker();
-
-		Optional<String> parentEntryClassNameOptional =
-			_getParentEntryClassName(entryClassName);
-
-		String permissionedEntryClassName = parentEntryClassNameOptional.orElse(
-			entryClassName);
-
-		searchPermissionChecker.getPermissionBooleanFilter(
-			searchContext.getCompanyId(), searchContext.getGroupIds(),
-			searchContext.getUserId(), permissionedEntryClassName,
-			booleanFilter, searchContext);
-	}
-
-	private void _addPreFilters(
-			BooleanFilter queryBooleanFilter,
-			Map<String, Indexer<?>> entryClassNameIndexerMap,
-			SearchContext searchContext)
-		throws Exception {
-
-		for (Entry<String, Indexer<?>> entry :
-				entryClassNameIndexerMap.entrySet()) {
-
-			String entryClassName = entry.getKey();
-			Indexer<?> indexer = entry.getValue();
-
-			queryBooleanFilter.add(
-				_createPreFilterForEntryClassName(
-					entryClassName, indexer, searchContext),
-				BooleanClauseOccur.SHOULD);
-		}
-	}
-
-	private void _addSearchTerms(
-			BooleanQuery searchQuery, BooleanFilter fullQueryBooleanFilter,
-			boolean luceneSyntax,
-			Map<String, Indexer<?>> entryClassNameIndexerMap,
-			SearchContext searchContext)
-		throws Exception {
-
-		for (Indexer<?> indexer : entryClassNameIndexerMap.values()) {
-			_addIndexerProvidedSearchTerms(
-				searchQuery, indexer, fullQueryBooleanFilter, luceneSyntax,
-				searchContext);
-		}
-	}
-
-	private void _addStagingFilter(
-		BooleanFilter booleanFilter, Indexer<?> indexer,
-		SearchContext searchContext) {
-
-		if (!indexer.isStagingAware()) {
-			return;
-		}
-
-		if (!searchContext.isIncludeLiveGroups() &&
-			searchContext.isIncludeStagingGroups()) {
-
-			booleanFilter.addRequiredTerm(Field.STAGING_GROUP, true);
-		}
-		else if (searchContext.isIncludeLiveGroups() &&
-				 !searchContext.isIncludeStagingGroups()) {
-
-			booleanFilter.addRequiredTerm(Field.STAGING_GROUP, false);
-		}
-	}
-
-	private Filter _createPreFilterForEntryClassName(
-			String entryClassName, Indexer<?> indexer,
-			SearchContext searchContext)
-		throws Exception {
-
-		BooleanFilter booleanFilter = new BooleanFilter();
-
-		booleanFilter.addTerm(
-			Field.ENTRY_CLASS_NAME, entryClassName, BooleanClauseOccur.MUST);
-
-		_addStagingFilter(booleanFilter, indexer, searchContext);
-
-		_addPermissionFilter(booleanFilter, entryClassName, searchContext);
-
-		_addIndexerProvidedPreFilters(booleanFilter, indexer, searchContext);
-
-		return booleanFilter;
-	}
-
-	private Map<String, Indexer<?>> _getEntryClassNameIndexerMap(
-		String[] entryClassNames, String searchEngineId) {
-
-		Map<String, Indexer<?>> entryClassNameIndexerMap = new LinkedHashMap<>(
-			entryClassNames.length);
-
-		for (String entryClassName : entryClassNames) {
-			Indexer<?> indexer = _indexerRegistry.getIndexer(entryClassName);
-
-			if (indexer == null) {
-				continue;
-			}
-
-			if (!searchEngineId.equals(indexer.getSearchEngineId())) {
-				continue;
-			}
-
-			entryClassNameIndexerMap.put(entryClassName, indexer);
-		}
-
-		return entryClassNameIndexerMap;
-	}
-
-	private String[] _getEntryClassNames(SearchContext searchContext) {
+	protected String[] getEntryClassNames(SearchContext searchContext) {
 		String[] entryClassNames = searchContext.getEntryClassNames();
 
-		if (!ArrayUtil.isEmpty(entryClassNames)) {
-			return entryClassNames;
+		if (ArrayUtil.isEmpty(entryClassNames)) {
+			entryClassNames = _assetTypesSearchHelper.getAssetTypes(
+				searchContext.getCompanyId());
 		}
 
-		return _searchEngineHelper.getEntryClassNames();
+		return entryClassNames;
 	}
 
-	private Optional<String> _getParentEntryClassName(String entryClassName) {
+	protected long getLiveGroupId(long groupId) throws Exception {
+		Group group = _groupLocalService.getGroup(groupId);
+
+		long liveGroupId = group.getLiveGroupId();
+
+		if (liveGroupId == 0) {
+			liveGroupId = Long.valueOf(
+				group.getTypeSettingsProperty("remoteGroupId"));
+		}
+
+		return liveGroupId;
+	}
+
+	protected Optional<String> getParentEntryClassName(String entryClassName) {
 		for (SearchPermissionFilterContributor
 				searchPermissionFilterContributor :
 					_searchPermissionFilterContributors) {
@@ -485,26 +417,111 @@ public class FacetedSearcherImpl
 		return Optional.empty();
 	}
 
-	private void _postProcessFullQuery(
-			Map<String, Indexer<?>> entryClassNameIndexerMap,
-			BooleanQuery fullQuery, SearchContext searchContext)
+	protected boolean isDataStaged(long groupId, String entryClassName)
 		throws Exception {
 
-		for (Indexer<?> indexer : entryClassNameIndexerMap.values()) {
-			for (IndexerPostProcessor indexerPostProcessor :
-					indexer.getIndexerPostProcessors()) {
+		long liveGroupId = getLiveGroupId(groupId);
 
-				indexerPostProcessor.postProcessFullQuery(
-					fullQuery, searchContext);
-			}
-		};
+		Group liveGroup = _groupLocalService.getGroup(liveGroupId);
+
+		AssetRendererFactory<?> factory =
+			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
+				entryClassName);
+
+		boolean dataIsStaged = GetterUtil.getBoolean(
+			liveGroup.getTypeSettingsProperty(
+				StagingConstants.STAGED_PORTLET + factory.getPortletId()));
+
+		return dataIsStaged;
 	}
 
+	@Override
+	protected boolean isUseSearchResultPermissionFilter(
+		SearchContext searchContext) {
+
+		for (String entryClassName : getEntryClassNames(searchContext)) {
+			Indexer<?> indexer = _indexerRegistry.getIndexer(entryClassName);
+
+			if (indexer == null) {
+				continue;
+			}
+
+			if (indexer.isFilterSearch()) {
+				return true;
+			}
+		}
+
+		return super.isFilterSearch();
+	}
+
+	protected void visitEntryClassName(
+			String entryClassName, SearchContext searchContext,
+			BooleanQuery searchQuery,
+			BooleanFilter fullQueryContextPreBooleanFilter,
+			boolean luceneSyntax, String keywords)
+		throws Exception {
+
+		Indexer<?> indexer = _indexerRegistry.getIndexer(entryClassName);
+
+		if (indexer == null) {
+			return;
+		}
+
+		String searchEngineId = searchContext.getSearchEngineId();
+
+		if (!searchEngineId.equals(indexer.getSearchEngineId())) {
+			return;
+		}
+
+		BooleanFilter contextBooleanFilter = new BooleanFilter();
+
+		contextBooleanFilter.addRequiredTerm(
+			Field.ENTRY_CLASS_NAME, entryClassName);
+
+		addOwnerBooleanFilter(contextBooleanFilter, searchContext);
+
+		addPermissionBooleanFilter(
+			contextBooleanFilter, entryClassName, searchContext);
+
+		addScopeBooleanFilter(
+			contextBooleanFilter, entryClassName, indexer.isStagingAware(),
+			searchContext);
+
+		indexer.postProcessContextBooleanFilter(
+			contextBooleanFilter, searchContext);
+
+		for (IndexerPostProcessor indexerPostProcessor :
+				indexer.getIndexerPostProcessors()) {
+
+			indexerPostProcessor.postProcessContextBooleanFilter(
+				contextBooleanFilter, searchContext);
+		}
+
+		fullQueryContextPreBooleanFilter.add(contextBooleanFilter);
+
+		if (!luceneSyntax) {
+			if (Validator.isNotNull(keywords)) {
+				addSearchExpandoKeywords(
+					searchQuery, searchContext, keywords, entryClassName);
+			}
+
+			indexer.postProcessSearchQuery(
+				searchQuery, fullQueryContextPreBooleanFilter, searchContext);
+		}
+
+		for (IndexerPostProcessor indexerPostProcessor :
+				indexer.getIndexerPostProcessors()) {
+
+			indexerPostProcessor.postProcessSearchQuery(
+				searchQuery, fullQueryContextPreBooleanFilter, searchContext);
+		}
+	}
+
+	private final AssetTypesSearchHelper _assetTypesSearchHelper;
 	private final ExpandoBridgeFactory _expandoBridgeFactory;
 	private final GroupLocalService _groupLocalService;
 	private final IndexerRegistry _indexerRegistry;
 	private final IndexSearcherHelper _indexSearcherHelper;
-	private final SearchEngineHelper _searchEngineHelper;
 	private final Collection<SearchPermissionFilterContributor>
 		_searchPermissionFilterContributors;
 

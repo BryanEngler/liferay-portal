@@ -31,6 +31,7 @@ scopeSearchFacetDisplayBuilder.setLocale(locale);
 scopeSearchFacetDisplayBuilder.setMaxTerms(dataJSONObject.getInt("maxTerms"));
 scopeSearchFacetDisplayBuilder.setParameterName(facet.getFieldId());
 scopeSearchFacetDisplayBuilder.setParameterValue(fieldParam);
+scopeSearchFacetDisplayBuilder.setFilterBySite(facet.getSearchContext());
 
 ScopeSearchFacetDisplayContext scopeSearchFacetDisplayContext = scopeSearchFacetDisplayBuilder.build();
 %>
@@ -52,9 +53,11 @@ ScopeSearchFacetDisplayContext scopeSearchFacetDisplayContext = scopeSearchFacet
 					<aui:input autocomplete="off" name="<%= HtmlUtil.escapeAttribute(scopeSearchFacetDisplayContext.getParameterName()) %>" type="hidden" value="<%= scopeSearchFacetDisplayContext.getParameterValue() %>" />
 
 					<ul class="list-unstyled scopes">
-						<li class="default facet-value">
-							<a class="<%= scopeSearchFacetDisplayContext.isNothingSelected() ? "text-primary" : "text-default" %>" data-value="0" href="javascript:;"><liferay-ui:message key="<%= HtmlUtil.escape(facetConfiguration.getLabel()) %>" /></a>
-						</li>
+						<c:if test="<%= !scopeSearchFacetDisplayContext.isFilterBySite() %>">
+							<li class="default facet-value">
+								<a class="<%= scopeSearchFacetDisplayContext.isNothingSelected() ? "text-primary" : "text-default" %>" data-value="0" href="javascript:;"><liferay-ui:message key="<%= HtmlUtil.escape(facetConfiguration.getLabel()) %>" /></a>
+							</li>
+						</c:if>
 
 						<%
 						List<ScopeSearchFacetTermDisplayContext> scopeSearchFacetTermDisplayContexts = scopeSearchFacetDisplayContext.getTermDisplayContexts();

@@ -19,8 +19,14 @@ package com.liferay.portal.search.web.internal.type.facet.portlet;
  */
 public interface AssetEntriesFacetConfiguration {
 
+	public String[] getClassNames();
+
 	public int getFrequencyThreshold();
 
+	public void setClassNames(String... classNames);
+
 	public void setFrequencyThreshold(int frequencyThreshold);
+
+	public void setSelectedTypes(String... selectedTypes);
 
 }

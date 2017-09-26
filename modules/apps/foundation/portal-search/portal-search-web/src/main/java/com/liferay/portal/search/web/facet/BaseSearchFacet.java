@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
@@ -103,13 +104,36 @@ public abstract class BaseSearchFacet implements SearchFacet {
 
 			facet = facetFactory.newInstance(searchContext);
 
-			facet.setFacetConfiguration(facetConfiguration);
+			String[] selectedFacetValues = StringUtil.split(
+				GetterUtil.getString(
+					searchContext.getAttribute(getFieldName())));
 
-			if (facet instanceof com.liferay.portal.search.facet.Facet) {
-				_select(
-					(com.liferay.portal.search.facet.Facet)facet,
-					searchContext);
+			if (ArrayUtil.isNotEmpty(selectedFacetValues)) {
+				JSONArray selectedValuesJSONArray =
+					JSONFactoryUtil.createJSONArray();
+
+				String fieldName = getFieldName();
+
+				String scope = GetterUtil.getString(
+					searchContext.getAttribute("scope"));
+
+				for (String selectedFacetValue : selectedFacetValues) {
+					if (fieldName.equals(Field.GROUP_ID) &&
+						(selectedFacetValue.equals("0") ||
+						 scope.equals("this-site"))) {
+
+						continue;
+					}
+
+					selectedValuesJSONArray.put(selectedFacetValue);
+				}
+
+				JSONObject dataJSONObject = facetConfiguration.getData();
+
+				dataJSONObject.put("facetSelections", selectedValuesJSONArray);
 			}
+
+			facet.setFacetConfiguration(facetConfiguration);
 		}
 
 		_facet = facet;
@@ -152,18 +176,6 @@ public abstract class BaseSearchFacet implements SearchFacet {
 		}
 
 		return null;
-	}
-
-	private void _select(
-		com.liferay.portal.search.facet.Facet facet,
-		SearchContext searchContext) {
-
-		String[] selections = StringUtil.split(
-			GetterUtil.getString(searchContext.getAttribute(getFieldName())));
-
-		if (ArrayUtil.isNotEmpty(selections)) {
-			facet.select(selections);
-		}
 	}
 
 	private FacetConfiguration _toFacetConfiguration(

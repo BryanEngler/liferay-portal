@@ -18,17 +18,9 @@ import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.service.AssetTagLocalServiceUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseOccur;
-import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.ParseException;
-import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.generic.BooleanClauseImpl;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
-import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
@@ -48,7 +40,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * @author André de Oliveira
@@ -96,8 +87,6 @@ public class UserSearchFixture {
 
 		searchContext.setKeywords(keywords);
 
-		_filterByGroups(searchContext);
-
 		return searchContext;
 	}
 
@@ -106,17 +95,10 @@ public class UserSearchFixture {
 	}
 
 	public void setUp() throws Exception {
-		_companyId = TestPropsValues.getCompanyId();
-
 		_permissionChecker = PermissionThreadLocal.getPermissionChecker();
 
 		PermissionThreadLocal.setPermissionChecker(
 			new DummyPermissionChecker() {
-
-				@Override
-				public long getCompanyId() {
-					return _companyId;
-				}
 
 				@Override
 				public boolean hasPermission(
@@ -129,11 +111,6 @@ public class UserSearchFixture {
 				public boolean hasPermission(
 					long groupId, String name, long primKey, String actionId) {
 
-					return true;
-				}
-
-				@Override
-				public boolean isCompanyAdmin(long companyId) {
 					return true;
 				}
 
@@ -188,49 +165,17 @@ public class UserSearchFixture {
 			group.getGroupId(), TestPropsValues.getUserId());
 	}
 
-	private Query _addShouldClause(BooleanQuery booleanQuery, Query query) {
-		try {
-			return booleanQuery.add(query, BooleanClauseOccur.SHOULD);
-		}
-		catch (ParseException pe) {
-			throw new RuntimeException(pe);
-		}
-	}
-
 	private User _addUser(
 			String screenName, long[] groupIds, ServiceContext serviceContext)
 		throws Exception {
 
 		return UserTestUtil.addUser(
-			_companyId, TestPropsValues.getUserId(), screenName,
-			LocaleUtil.getDefault(), RandomTestUtil.randomString(),
+			TestPropsValues.getCompanyId(), TestPropsValues.getUserId(),
+			screenName, LocaleUtil.getDefault(), RandomTestUtil.randomString(),
 			RandomTestUtil.randomString(), groupIds, serviceContext);
 	}
 
-	private void _filterByGroups(SearchContext searchContext) {
-		BooleanQuery booleanQuery = new BooleanQueryImpl();
-
-		Stream<Group> groupsStream = _groups.stream();
-
-		groupsStream.map(
-			this::_getGroupIdQuery
-		).forEach(
-			query -> _addShouldClause(booleanQuery, query)
-		);
-
-		searchContext.setBooleanClauses(
-			new BooleanClause[] {
-				new BooleanClauseImpl<>(booleanQuery, BooleanClauseOccur.MUST)
-			});
-	}
-
-	private Query _getGroupIdQuery(Group group) {
-		return new TermQueryImpl(
-			Field.GROUP_ID, String.valueOf(group.getGroupId()));
-	}
-
 	private final List<AssetTag> _assetTags = new ArrayList<>();
-	private long _companyId;
 	private final List<Group> _groups = new ArrayList<>();
 	private PermissionChecker _permissionChecker;
 	private String _principal;

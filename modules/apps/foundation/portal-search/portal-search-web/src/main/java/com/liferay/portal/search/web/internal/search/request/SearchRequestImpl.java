@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.HitsImpl;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
+import com.liferay.portal.kernel.search.facet.AssetEntriesFacet;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.ScopeFacet;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcher;
@@ -87,6 +88,14 @@ public class SearchRequestImpl implements SearchRequest {
 		return searchResponseImpl;
 	}
 
+	protected void addAssetEntriesFacet(SearchContext searchContext) {
+		Facet assetEntriesFacet = new AssetEntriesFacet(searchContext);
+
+		assetEntriesFacet.setStatic(true);
+
+		searchContext.addFacet(assetEntriesFacet);
+	}
+
 	protected void addScopeFacet(SearchContext searchContext) {
 		Facet scopeFacet = new ScopeFacet(searchContext);
 
@@ -105,6 +114,8 @@ public class SearchRequestImpl implements SearchRequest {
 		SearchContext searchContext = _searchContextBuilder.getSearchContext();
 
 		searchContext.setAttribute("paginationType", "more");
+
+		addAssetEntriesFacet(searchContext);
 
 		addScopeFacet(searchContext);
 

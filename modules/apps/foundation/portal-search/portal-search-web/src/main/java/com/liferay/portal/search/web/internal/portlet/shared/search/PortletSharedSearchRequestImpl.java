@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutTypePortlet;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.search.Document;
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcherManager;
@@ -133,6 +134,9 @@ public class PortletSharedSearchRequestImpl
 
 	protected SearchContext buildSearchContext(ThemeDisplay themeDisplay) {
 		SearchContext searchContext = new SearchContext();
+
+		searchContext.setAttribute(
+			Field.SCOPE_GROUP_ID, themeDisplay.getScopeGroupId());
 
 		searchContext.setCompanyId(themeDisplay.getCompanyId());
 		searchContext.setLayout(themeDisplay.getLayout());
