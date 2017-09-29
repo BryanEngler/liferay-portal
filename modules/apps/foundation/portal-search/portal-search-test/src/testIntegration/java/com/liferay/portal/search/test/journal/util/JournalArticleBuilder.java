@@ -19,6 +19,7 @@ import com.liferay.journal.model.JournalFolderConstants;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
+import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.Locale;
@@ -30,10 +31,12 @@ import java.util.Map;
 public class JournalArticleBuilder {
 
 	public JournalArticle addJournalArticle() throws Exception {
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(_groupId);
+		if (_userId <= 0) {
+			_userId = TestPropsValues.getUserId();
+		}
 
-		long userId = serviceContext.getUserId();
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(_groupId, _userId);
 
 		long folderId = JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID;
 		Map<Locale, String> titleMap = _journalArticleTitle.getValues();
@@ -47,8 +50,8 @@ public class JournalArticleBuilder {
 		}
 
 		return JournalArticleLocalServiceUtil.addArticle(
-			userId, _groupId, folderId, titleMap, descriptionMap, contentString,
-			ddmStructureKey, ddmTemplateKey, serviceContext);
+			_userId, _groupId, folderId, titleMap, descriptionMap,
+			contentString, ddmStructureKey, ddmTemplateKey, serviceContext);
 	}
 
 	public void setContent(JournalArticleContent content) {
@@ -67,6 +70,10 @@ public class JournalArticleBuilder {
 		_journalArticleTitle = title;
 	}
 
+	public void setUserId(long userId) {
+		_userId = userId;
+	}
+
 	public void setWorkflowEnabled(boolean withWorkflow) {
 		_workflowEnabled = withWorkflow;
 	}
@@ -83,6 +90,7 @@ public class JournalArticleBuilder {
 	private long _groupId;
 	private JournalArticleContent _journalArticleContent;
 	private JournalArticleTitle _journalArticleTitle;
+	private long _userId;
 	private boolean _workflowEnabled;
 
 }

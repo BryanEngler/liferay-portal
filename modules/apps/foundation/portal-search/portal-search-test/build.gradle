@@ -9,6 +9,8 @@ dependencies {
 	testCompile project(":core:petra:petra-lang")
 
 	testIntegrationCompile group: "com.liferay.portal", name: "com.liferay.portal.impl", version: "default"
+	testIntegrationCompile project(":apps:collaboration:blogs:blogs-api")
+	testIntegrationCompile project(":apps:collaboration:blogs:blogs-service")
 	testIntegrationCompile project(":apps:collaboration:message-boards:message-boards-api")
 	testIntegrationCompile project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-test-util")
 	testIntegrationCompile project(":apps:foundation:portal-search:portal-search-api")
