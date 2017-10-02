@@ -17,7 +17,6 @@ package com.liferay.portal.search.indexer;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.search.Document;
-import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Summary;
 
 import javax.portlet.PortletRequest;

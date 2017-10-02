@@ -65,7 +65,6 @@ public class IndexerQueryBuilderImpl<T extends BaseModel>
 
 	@Override
 	public BooleanQuery getQuery(SearchContext searchContext) {
-
 		try {
 			searchContext.setSearchEngineId(
 				_modelSearchSettings.getSearchEngineId());

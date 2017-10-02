@@ -34,7 +34,7 @@ public class UserIdQueryPreFilterContributor
 	public void contribute(
 		BooleanFilter fullQueryBooleanFilter, SearchContext searchContext) {
 
-	MultiValueFacet multiValueFacet = new MultiValueFacet(searchContext);
+		MultiValueFacet multiValueFacet = new MultiValueFacet(searchContext);
 
 		multiValueFacet.setFieldName(Field.USER_ID);
 		multiValueFacet.setStatic(true);

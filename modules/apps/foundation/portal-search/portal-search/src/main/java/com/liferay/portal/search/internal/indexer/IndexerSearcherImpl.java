@@ -38,7 +38,7 @@ import com.liferay.portal.search.indexer.IndexerSearcher;
 /**
  * @author Michael C. Han
  */
-public class  IndexerSearcherImpl<T extends BaseModel>
+public class IndexerSearcherImpl<T extends BaseModel>
 	implements IndexerSearcher {
 
 	public IndexerSearcherImpl(
@@ -135,8 +135,7 @@ public class  IndexerSearcherImpl<T extends BaseModel>
 		searchContext.setSearchEngineId(
 			_modelSearchSettings.getSearchEngineId());
 
-		BooleanQuery fullQuery = _indexerQueryBuilder.getQuery(
-			searchContext);
+		BooleanQuery fullQuery = _indexerQueryBuilder.getQuery(searchContext);
 
 		fullQuery.setQueryConfig(queryConfig);
 
