@@ -16,7 +16,6 @@ package com.liferay.document.library.internal.search.contributor.model;
 
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.search.contributor.query.QueryPreFilterContributor;
 
@@ -37,8 +36,7 @@ public class DLFolderQueryPreFilterContributor
 
 	@Override
 	public void contribute(
-			BooleanFilter fullQueryBooleanFilter, SearchContext searchContext)
-		throws SearchException {
+		BooleanFilter fullQueryBooleanFilter, SearchContext searchContext) {
 
 		fullQueryBooleanFilter.addRequiredTerm(Field.HIDDEN, false);
 	}

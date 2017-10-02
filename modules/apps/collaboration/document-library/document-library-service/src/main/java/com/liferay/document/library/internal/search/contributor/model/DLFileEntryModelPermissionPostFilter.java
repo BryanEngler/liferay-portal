@@ -15,6 +15,8 @@
 package com.liferay.document.library.internal.search.contributor.model;
 
 import com.liferay.document.library.kernel.service.DLAppLocalService;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
@@ -41,21 +43,30 @@ public class DLFileEntryModelPermissionPostFilter
 
 	@Override
 	public boolean hasPermission(
-			PermissionChecker permissionChecker, String entryClassName,
-			long entryClassPK, String actionId)
-		throws Exception {
+		PermissionChecker permissionChecker, String entryClassName,
+		long entryClassPK, String actionId) {
 
-		return DLFileEntryPermission.contains(
-			permissionChecker, entryClassPK, ActionKeys.VIEW);
+		try {
+			return DLFileEntryPermission.contains(
+				permissionChecker, entryClassPK, ActionKeys.VIEW);
+		}
+		catch (PortalException pe) {
+			throw new SystemException(pe);
+		}
 	}
 
 	@Override
-	public boolean isVisible(long classPK, int status) throws Exception {
-		FileEntry fileEntry = dlAppLocalService.getFileEntry(classPK);
+	public boolean isVisible(long classPK, int status) {
+		try {
+			FileEntry fileEntry = dlAppLocalService.getFileEntry(classPK);
 
-		FileVersion fileVersion = fileEntry.getFileVersion();
+			FileVersion fileVersion = fileEntry.getFileVersion();
 
-		return isVisible(fileVersion.getStatus(), status);
+			return isVisible(fileVersion.getStatus(), status);
+		}
+		catch (PortalException pe) {
+			throw new SystemException(pe);
+		}
 	}
 
 	protected boolean isVisible(int entryStatus, int queryStatus) {

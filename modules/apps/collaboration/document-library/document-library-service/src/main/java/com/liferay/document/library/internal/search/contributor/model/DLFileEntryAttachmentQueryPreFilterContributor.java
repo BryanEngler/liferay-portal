@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.search.BaseRelatedEntryIndexer;
 import com.liferay.portal.kernel.search.RelatedEntryIndexer;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.search.contributor.query.QueryPreFilterContributor;
 
@@ -39,8 +38,7 @@ public class DLFileEntryAttachmentQueryPreFilterContributor
 
 	@Override
 	public void contribute(
-			BooleanFilter booleanFilter, SearchContext searchContext)
-		throws SearchException {
+		BooleanFilter booleanFilter, SearchContext searchContext) {
 
 		if (!searchContext.isIncludeAttachments()) {
 			return;

@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
@@ -54,8 +53,7 @@ public class DLFileEntryQueryDDMFieldPreFilterContributor
 
 	@Override
 	public void contribute(
-			BooleanFilter booleanFilter, SearchContext searchContext)
-		throws SearchException {
+		BooleanFilter booleanFilter, SearchContext searchContext) {
 
 		try {
 			String ddmStructureFieldName = (String)searchContext.getAttribute(

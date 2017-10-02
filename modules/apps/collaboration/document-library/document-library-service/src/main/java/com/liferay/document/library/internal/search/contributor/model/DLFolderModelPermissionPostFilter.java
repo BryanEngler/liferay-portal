@@ -16,6 +16,8 @@ package com.liferay.document.library.internal.search.contributor.model;
 
 import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.service.DLFolderLocalService;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.search.contributor.model.ModelPermissionPostFilter;
@@ -39,14 +41,18 @@ public class DLFolderModelPermissionPostFilter
 
 	@Override
 	public boolean hasPermission(
-			PermissionChecker permissionChecker, String entryClassName,
-			long entryClassPK, String actionId)
-		throws Exception {
+		PermissionChecker permissionChecker, String entryClassName,
+		long entryClassPK, String actionId) {
 
 		DLFolder dlFolder = dlFolderLocalService.fetchDLFolder(entryClassPK);
 
-		return DLFolderPermission.contains(
-			permissionChecker, dlFolder, ActionKeys.VIEW);
+		try {
+			return DLFolderPermission.contains(
+				permissionChecker, dlFolder, ActionKeys.VIEW);
+		}
+		catch (PortalException pe) {
+			throw new SystemException(pe);
+		}
 	}
 
 	@Reference

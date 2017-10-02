@@ -16,7 +16,6 @@ package com.liferay.document.library.internal.search.contributor.model;
 
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
@@ -44,9 +43,8 @@ public class DLFileEntryModelSummaryContributor
 
 	@Override
 	public Summary getSummary(
-			Document document, Locale locale, String snippet,
-			PortletRequest portletRequest, PortletResponse portletResponse)
-		throws SearchException {
+		Document document, Locale locale, String snippet,
+		PortletRequest portletRequest, PortletResponse portletResponse) {
 
 		String prefix = Field.SNIPPET + StringPool.UNDERLINE;
 

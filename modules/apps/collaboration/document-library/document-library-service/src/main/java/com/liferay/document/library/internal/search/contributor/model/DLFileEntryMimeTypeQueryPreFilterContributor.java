@@ -16,7 +16,6 @@ package com.liferay.document.library.internal.search.contributor.model;
 
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
@@ -40,8 +39,7 @@ public class DLFileEntryMimeTypeQueryPreFilterContributor
 
 	@Override
 	public void contribute(
-			BooleanFilter booleanFilter, SearchContext searchContext)
-		throws SearchException {
+		BooleanFilter booleanFilter, SearchContext searchContext) {
 
 		String[] mimeTypes = (String[])searchContext.getAttribute("mimeTypes");
 
