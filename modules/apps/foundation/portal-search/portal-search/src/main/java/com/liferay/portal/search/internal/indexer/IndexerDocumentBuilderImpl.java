@@ -36,11 +36,11 @@ public class IndexerDocumentBuilderImpl<T extends BaseModel>
 	implements IndexerDocumentBuilder<T> {
 
 	public IndexerDocumentBuilderImpl(
-		Iterable<ModelDocumentContributor<T>> modelDocumentContributor,
+		Iterable<ModelDocumentContributor<T>> modelDocumentContributors,
 		Iterable<DocumentContributor<T>> documentContributors,
 		Iterable<IndexerPostProcessor> indexerPostProcessors) {
 
-		_modelDocumentContributor = modelDocumentContributor;
+		_modelDocumentContributors = modelDocumentContributors;
 		_documentContributors = documentContributors;
 		_indexerPostProcessors = indexerPostProcessors;
 	}
@@ -82,7 +82,7 @@ public class IndexerDocumentBuilderImpl<T extends BaseModel>
 				documentContributor.contribute(document, baseModel);
 			}
 
-			_modelDocumentContributor.forEach(
+			_modelDocumentContributors.forEach(
 				documentContributor -> documentContributor.contribute(
 					document, baseModel));
 
@@ -151,6 +151,6 @@ public class IndexerDocumentBuilderImpl<T extends BaseModel>
 	private final Iterable<DocumentContributor<T>> _documentContributors;
 	private final Iterable<IndexerPostProcessor> _indexerPostProcessors;
 	private final Iterable<ModelDocumentContributor<T>>
-		_modelDocumentContributor;
+		_modelDocumentContributors;
 
 }
