@@ -52,7 +52,7 @@ public class ModelSearchConfigurator<T extends BaseModel> {
 			new ModelIndexerSearcherContributorsHolder(
 				bundleContext, _modelSearchSettings.getClassName());
 
-		_modelDocumentContributors = ServiceTrackerListFactory.create(
+		_modelDocumentContributors = ServiceTrackerListFactory.open(
 			bundleContext, ModelDocumentContributor.class,
 			"(indexer.class.name=" + modelSearchSettings.getClassName() + ")");
 	}
