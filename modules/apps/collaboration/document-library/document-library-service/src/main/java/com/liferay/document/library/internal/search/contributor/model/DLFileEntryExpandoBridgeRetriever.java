@@ -22,11 +22,9 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.search.contributor.model.ExpandoBridgeRetriever;
-import com.liferay.portal.search.contributor.model.ModelDocumentContributor;
-
-import jdk.nashorn.internal.ir.annotations.Reference;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Michael C. Han
@@ -36,7 +34,7 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"indexer.class.name=com.liferay.document.library.kernel.model.DLFileEntry"
 	},
-	service = ModelDocumentContributor.class
+	service = ExpandoBridgeRetriever.class
 )
 public class DLFileEntryExpandoBridgeRetriever
 	implements ExpandoBridgeRetriever {
