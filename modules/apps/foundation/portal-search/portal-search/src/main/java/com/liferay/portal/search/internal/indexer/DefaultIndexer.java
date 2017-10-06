@@ -303,7 +303,7 @@ public class DefaultIndexer<T extends BaseModel> implements Indexer<T> {
 			SearchContext searchContext)
 		throws Exception {
 
-		//todo this isn't necessary anymore. Replaced w/ KeywordQueryContributor
+		//todo this isn't necessary anymore. Replaced w/ KeywordQueryContributor <- where to call this?
 	}
 
 	/**
