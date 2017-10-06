@@ -36,7 +36,7 @@ import org.osgi.service.component.annotations.Component;
 	service = QueryPreFilterContributor.class
 )
 public class FacetQueryPreFilterContributor
-	implements QueryPreFilterContributor {
+	implements QueryPreFilterContributor { //facets are POST filter?
 
 	@Override
 	public void contribute(
