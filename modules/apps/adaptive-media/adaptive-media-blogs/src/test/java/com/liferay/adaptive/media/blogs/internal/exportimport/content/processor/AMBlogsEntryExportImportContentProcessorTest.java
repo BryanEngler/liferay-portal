@@ -48,14 +48,14 @@ public class AMBlogsEntryExportImportContentProcessorTest {
 
 	@Before
 	public void setUp() throws Exception {
+		_amBlogsEntryExportImportContentProcessor.
+			setAMEmbeddedReferenceSetFactory(_amEmbeddedReferenceSetFactory);
+		_amBlogsEntryExportImportContentProcessor.setAMImageHTMLTagFactory(
+			_amImageHTMLTagFactory);
 		_amBlogsEntryExportImportContentProcessor.setDLAppLocalService(
 			_dlAppLocalService);
 		_amBlogsEntryExportImportContentProcessor.
 			setExportImportContentProcessor(_exportImportContentProcessor);
-		_amBlogsEntryExportImportContentProcessor.setAMImageHTMLTagFactory(
-			_amImageHTMLTagFactory);
-		_amBlogsEntryExportImportContentProcessor.
-			setAMEmbeddedReferenceSetFactory(_amEmbeddedReferenceSetFactory);
 
 		Mockito.doReturn(
 			_amEmbeddedReferenceSet
@@ -78,7 +78,6 @@ public class AMBlogsEntryExportImportContentProcessorTest {
 
 		_defineFileEntryToExport(1, _fileEntry1);
 		_defineFileEntryToImport(1, _fileEntry1);
-
 		_defineFileEntryToExport(2, _fileEntry2);
 		_defineFileEntryToImport(2, _fileEntry2);
 	}
@@ -137,23 +136,29 @@ public class AMBlogsEntryExportImportContentProcessorTest {
 	public void testExportImportContentWithMultipleReferences()
 		throws Exception {
 
+		StringBundler sb = new StringBundler(4);
+
 		String prefix = StringUtil.randomString();
+
+		sb.append(prefix);
+
+		sb.append("<img src=\"url1\" data-fileEntryId=\"1\" />");
+
 		String infix = StringUtil.randomString();
+
+		sb.append(infix);
+
+		sb.append("<img src=\"url2\" data-fileEntryId=\"2\" />");
+
 		String suffix = StringUtil.randomString();
+
+		sb.append(suffix);
 
 		String content =
 			prefix + "<img data-fileentryid=\"1\" src=\"url1\" />" + infix +
 				"<img data-fileentryid=\"2\" src=\"url2\" />" + suffix;
 
 		String importedContent = _import(_export(content));
-
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(prefix);
-		sb.append("<img src=\"url1\" data-fileEntryId=\"1\" />");
-		sb.append(infix);
-		sb.append("<img src=\"url2\" data-fileEntryId=\"2\" />");
-		sb.append(suffix);
 
 		Assert.assertEquals(sb.toString(), importedContent);
 	}
@@ -162,9 +167,27 @@ public class AMBlogsEntryExportImportContentProcessorTest {
 	public void testExportImportContentWithMultipleStaticReferences()
 		throws Exception {
 
+		StringBundler sb = new StringBundler();
+
 		String prefix = StringUtil.randomString();
+
+		sb.append(prefix);
+
+		sb.append("<picture data-fileEntryId=\"1\">");
+		sb.append("<source /><img src=\"url1\" />");
+		sb.append("</picture>");
+
 		String infix = StringUtil.randomString();
+
+		sb.append(infix);
+
+		sb.append("<picture data-fileEntryId=\"2\">");
+		sb.append("<source /><img src=\"url2\" />");
+		sb.append("</picture>");
+
 		String suffix = StringUtil.randomString();
+
+		sb.append(suffix);
 
 		String content =
 			prefix + "<picture data-fileentryid=\"1\"><img src=\"url1\" />" +
@@ -172,18 +195,6 @@ public class AMBlogsEntryExportImportContentProcessorTest {
 					"<img src=\"url2\" /></picture>" + suffix;
 
 		String importedContent = _import(_export(content));
-
-		StringBundler sb = new StringBundler();
-
-		sb.append(prefix);
-		sb.append("<picture data-fileEntryId=\"1\">");
-		sb.append("<source /><img src=\"url1\" />");
-		sb.append("</picture>");
-		sb.append(infix);
-		sb.append("<picture data-fileEntryId=\"2\">");
-		sb.append("<source /><img src=\"url2\" />");
-		sb.append("</picture>");
-		sb.append(suffix);
 
 		Assert.assertEquals(sb.toString(), importedContent);
 	}
@@ -319,26 +330,6 @@ public class AMBlogsEntryExportImportContentProcessorTest {
 		Assert.assertEquals(content, replacedContent);
 	}
 
-	@Test(expected = NoSuchFileEntryException.class)
-	public void testValidateContentFailsWhenInvalidReferences()
-		throws Exception {
-
-		String content = "<img data-fileentryid=\"0\" src=\"PATH_1\" />";
-
-		_amBlogsEntryExportImportContentProcessor.validateContentReferences(
-			1, content);
-	}
-
-	@Test(expected = NoSuchFileEntryException.class)
-	public void testValidateContentFailsWhenInvalidStaticReferences()
-		throws Exception {
-
-		String content = "<picture data-fileentryid=\"0\"></picture>";
-
-		_amBlogsEntryExportImportContentProcessor.validateContentReferences(
-			1, content);
-	}
-
 	@Test(expected = PortalException.class)
 	public void testValidateContentFailsWhenOverridenProcessorFails()
 		throws Exception {
@@ -352,6 +343,26 @@ public class AMBlogsEntryExportImportContentProcessorTest {
 		).validateContentReferences(
 			Mockito.anyLong(), Mockito.anyString()
 		);
+
+		_amBlogsEntryExportImportContentProcessor.validateContentReferences(
+			1, content);
+	}
+
+	@Test(expected = NoSuchFileEntryException.class)
+	public void testValidateContentFailsWithInvalidReferences()
+		throws Exception {
+
+		String content = "<img data-fileentryid=\"0\" src=\"PATH_1\" />";
+
+		_amBlogsEntryExportImportContentProcessor.validateContentReferences(
+			1, content);
+	}
+
+	@Test(expected = NoSuchFileEntryException.class)
+	public void testValidateContentFailsWithInvalidStaticReferences()
+		throws Exception {
+
+		String content = "<picture data-fileentryid=\"0\"></picture>";
 
 		_amBlogsEntryExportImportContentProcessor.validateContentReferences(
 			1, content);
@@ -462,13 +473,12 @@ public class AMBlogsEntryExportImportContentProcessorTest {
 		throws Exception {
 
 		Mockito.doReturn(
-			content
+			_amEmbeddedReferenceSet
 		).when(
-			_exportImportContentProcessor
-		).replaceExportContentReferences(
+			_amEmbeddedReferenceSetFactory
+		).create(
 			Mockito.any(PortletDataContext.class),
-			Mockito.any(StagedModel.class), Mockito.anyString(),
-			Mockito.anyBoolean(), Mockito.anyBoolean()
+			Mockito.any(StagedModel.class)
 		);
 
 		Mockito.doReturn(
@@ -481,12 +491,13 @@ public class AMBlogsEntryExportImportContentProcessorTest {
 		);
 
 		Mockito.doReturn(
-			_amEmbeddedReferenceSet
+			content
 		).when(
-			_amEmbeddedReferenceSetFactory
-		).create(
+			_exportImportContentProcessor
+		).replaceExportContentReferences(
 			Mockito.any(PortletDataContext.class),
-			Mockito.any(StagedModel.class)
+			Mockito.any(StagedModel.class), Mockito.anyString(),
+			Mockito.anyBoolean(), Mockito.anyBoolean()
 		);
 	}
 

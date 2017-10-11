@@ -23,7 +23,7 @@
 
 	<div class="form-group{$visible ? '' : ' hide'} liferay-ddm-form-field-date" data-fieldname="{$name}">
 		{if $showLabel}
-			<label class="control-label" for="{$name}">
+			<label class="control-label{$readOnly ? ' disabled' : ''}" for="{$name}">
 				{$label}
 
 				{if $required}
@@ -35,9 +35,19 @@
 		{/if}
 
 		<div class="input-group input-group-container">
-			<input aria-label="{$label}" class="form-control trigger{if $readOnly}-readonly{/if}" {if $readOnly}readonly{/if} type="text" value="{$displayValue}" />
+			<input
+				aria-label="{$label}"
+				class="form-control trigger{if $readOnly}-readonly{/if}"
+				{if $readOnly}disabled{/if}
+				type="text"
+				value="{$displayValue}"
+			/>
 
-			<input name="{$name}" type="hidden" value="{$value}" />
+			<input
+				name="{$name}"
+				type="hidden"
+				value="{$value}"
+			/>
 
 			<span class="input-group-addon"><span class="icon-calendar"></span></span>
 		</div>

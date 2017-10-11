@@ -368,7 +368,7 @@ public class AMImageConfigurationHelperImpl
 		DestinationConfiguration destinationConfiguration =
 			new DestinationConfiguration(
 				DestinationConfiguration.DESTINATION_TYPE_SYNCHRONOUS,
-				AMImageDestinationNames.AM_IMAGE_CONFIGURATION);
+				AMImageDestinationNames.ADAPTIVE_MEDIA_IMAGE_CONFIGURATION);
 
 		Destination destination = _destinationFactory.createDestination(
 			destinationConfiguration);
@@ -379,7 +379,7 @@ public class AMImageConfigurationHelperImpl
 	@Deactivate
 	protected void deactivate() {
 		_messageBus.removeDestination(
-			AMImageDestinationNames.AM_IMAGE_CONFIGURATION);
+			AMImageDestinationNames.ADAPTIVE_MEDIA_IMAGE_CONFIGURATION);
 	}
 
 	@Reference(unbind = "-")
@@ -551,7 +551,8 @@ public class AMImageConfigurationHelperImpl
 		message.setPayload(payload);
 
 		_messageBus.sendMessage(
-			AMImageDestinationNames.AM_IMAGE_CONFIGURATION, message);
+			AMImageDestinationNames.ADAPTIVE_MEDIA_IMAGE_CONFIGURATION,
+			message);
 	}
 
 	private void _updateConfiguration(

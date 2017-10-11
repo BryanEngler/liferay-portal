@@ -14,7 +14,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -61,7 +63,9 @@
 	<command name="ApproveFrontPageUserEdit" priority="5">
 		<property name="portal.acceptance" value="true" />
 
-		<execute macro="ProductMenu#gotoControlPanelUsers">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Users" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
@@ -72,7 +76,9 @@
 			<var name="userScreenName" value="usersn" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelUsers">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Users" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
@@ -83,7 +89,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesMembers">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Members" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -108,7 +116,9 @@
 
 		<execute macro="UserBar#gotoMyAccount" />
 
-		<execute macro="ProductMenu#gotoUserMyAccount">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="My Account" />
+			<var name="panel" value="User" />
 			<var name="portlet" value="My Submissions" />
 		</execute>
 
@@ -157,7 +167,9 @@
 
 		<execute macro="UserBar#gotoMyAccount" />
 
-		<execute macro="ProductMenu#gotoUserMyAccount">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="My Account" />
+			<var name="panel" value="User" />
 			<var name="portlet" value="My Submissions" />
 		</execute>
 
@@ -175,7 +187,9 @@
 	</command>
 
 	<command name="RejectFrontPageUserEdit" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelUsers">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Users" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
@@ -186,7 +200,9 @@
 			<var name="userScreenName" value="usersn" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelUsers">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Users" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
@@ -197,7 +213,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesMembers">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Members" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -222,7 +240,9 @@
 
 		<execute macro="UserBar#gotoMyAccount" />
 
-		<execute macro="ProductMenu#gotoUserMyAccount">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="My Account" />
+			<var name="panel" value="User" />
 			<var name="portlet" value="My Submissions" />
 		</execute>
 
@@ -269,7 +289,9 @@
 
 		<execute macro="UserBar#gotoMyAccount" />
 
-		<execute macro="ProductMenu#gotoUserMyAccount">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="My Account" />
+			<var name="panel" value="User" />
 			<var name="portlet" value="My Submissions" />
 		</execute>
 

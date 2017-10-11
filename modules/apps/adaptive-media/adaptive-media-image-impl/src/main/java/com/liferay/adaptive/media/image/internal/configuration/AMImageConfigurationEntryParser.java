@@ -16,7 +16,7 @@ package com.liferay.adaptive.media.image.internal.configuration;
 
 import com.liferay.adaptive.media.image.configuration.AMImageConfigurationEntry;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * Parses ConfigAdmin configuration entries.
@@ -76,15 +77,17 @@ import org.osgi.service.component.annotations.Component;
 @Component(immediate = true, service = AMImageConfigurationEntryParser.class)
 public class AMImageConfigurationEntryParser {
 
+	public AMImageConfigurationEntryParser() {
+	}
+
 	public String getConfigurationString(
 		AMImageConfigurationEntry amImageConfigurationEntry) {
 
 		StringBundler sb = new StringBundler();
 
-		sb.append(HttpUtil.encodeURL(amImageConfigurationEntry.getName()));
+		sb.append(_http.encodeURL(amImageConfigurationEntry.getName()));
 		sb.append(StringPool.COLON);
-		sb.append(
-			HttpUtil.encodeURL(amImageConfigurationEntry.getDescription()));
+		sb.append(_http.encodeURL(amImageConfigurationEntry.getDescription()));
 		sb.append(StringPool.COLON);
 		sb.append(amImageConfigurationEntry.getUUID());
 		sb.append(StringPool.COLON);
@@ -139,11 +142,11 @@ public class AMImageConfigurationEntryParser {
 
 		String name = fields[0];
 
-		name = HttpUtil.decodeURL(name);
+		name = _http.decodeURL(name);
 
 		String description = fields[1];
 
-		description = HttpUtil.decodeURL(description);
+		description = _http.decodeURL(description);
 
 		String uuid = fields[2];
 
@@ -183,6 +186,10 @@ public class AMImageConfigurationEntryParser {
 			name, description, uuid, properties, enabled);
 	}
 
+	protected AMImageConfigurationEntryParser(Http http) {
+		_http = http;
+	}
+
 	private static final Pattern _ATTRIBUTE_SEPARATOR_PATTERN = Pattern.compile(
 		"\\s*;\\s*");
 
@@ -194,5 +201,8 @@ public class AMImageConfigurationEntryParser {
 
 	private static final Pattern _KEY_VALUE_SEPARATOR_PATTERN = Pattern.compile(
 		"\\s*=\\s*");
+
+	@Reference
+	private Http _http;
 
 }

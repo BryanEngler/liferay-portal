@@ -139,7 +139,7 @@
 </tr>
 <tr>
 	<td>ADD_FIELD_TYPE</td>
-	<td>//div[@class='field-type']/div[contains(.,'${key_fieldType}')]</td>
+	<td>//div[@class='field-type']/div[contains(.,'${key_fieldType}')] | //li[contains(@class,'field-type')]/div/h4[contains(.,'${key_fieldType}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -224,6 +224,11 @@
 <tr>
 	<td>FIELD_BODY</td>
 	<td>//div[contains(@data-fieldname,'${key_fieldName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FIELD_BODY_CONTENT</td>
+	<td>//div[contains(@data-fieldname,'${key_fieldName}')]/div[@class='form-builder-field-content-target']</td>
 	<td></td>
 </tr>
 <tr>

@@ -124,7 +124,7 @@ public class AMImageRequestHandler
 		properties.put(
 			contentTypeAMAttribute.getName(), fileVersion.getMimeType());
 
-		AMAttribute<Object, Integer> contentLengthAMAttribute =
+		AMAttribute<Object, Long> contentLengthAMAttribute =
 			AMAttribute.getContentLengthAMAttribute();
 
 		properties.put(
@@ -277,7 +277,7 @@ public class AMImageRequestHandler
 
 			Map<String, String> properties = fileVersionMapTuple.second;
 
-			AMAttribute<Object, Integer> contentLengthAMAttribute =
+			AMAttribute<Object, Long> contentLengthAMAttribute =
 				AMAttribute.getContentLengthAMAttribute();
 
 			properties.put(

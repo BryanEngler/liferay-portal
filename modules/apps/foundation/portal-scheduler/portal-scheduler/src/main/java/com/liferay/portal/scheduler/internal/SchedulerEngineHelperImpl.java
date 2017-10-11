@@ -632,6 +632,8 @@ public class SchedulerEngineHelperImpl implements SchedulerEngineHelper {
 			String destinationName, Message message, int exceptionsMaxSize)
 		throws SchedulerException {
 
+		_schedulerEngine.validateTrigger(trigger, storageType);
+
 		if (message == null) {
 			message = new Message();
 		}
@@ -1090,7 +1092,7 @@ public class SchedulerEngineHelperImpl implements SchedulerEngineHelper {
 			SchedulerClusterInvokingThreadLocal.setEnabled(false);
 
 			try {
-				unschedule(schedulerEntry, storageType);
+				delete(schedulerEntry, storageType);
 			}
 			catch (SchedulerException se) {
 				_log.error(se, se);

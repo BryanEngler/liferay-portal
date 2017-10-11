@@ -48,7 +48,9 @@
 	</tear-down>
 
 	<command name="AddBlogsEntriesWithPortalScopeWorkflowAndAssertWorkflowScope" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -61,7 +63,9 @@
 			<var name="workflowResourceValue" value="Blogs Entry" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelSites">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Sites" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Sites" />
 		</execute>
 
@@ -71,7 +75,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Blogs" />
 		</execute>
 
@@ -83,7 +89,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Blogs" />
 		</execute>
 
@@ -104,7 +112,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Blogs" />
 		</execute>
 
@@ -125,7 +135,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Blogs" />
 		</execute>
 
@@ -146,7 +158,9 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Blogs" />
 		</execute>
 
@@ -160,7 +174,9 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Blogs" />
 		</execute>
 
@@ -183,7 +199,9 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Blogs" />
 		</execute>
 
@@ -206,7 +224,9 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Blogs" />
 		</execute>
 
@@ -241,7 +261,9 @@
 	</command>
 
 	<command name="AddBlogsEntriesWithSiteScopeWorkflowAndAssertWorkflowScope" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Sites" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Sites" />
 		</execute>
 
@@ -251,7 +273,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -262,13 +286,17 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Blogs" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Blogs" />
 		</execute>
 
@@ -290,7 +318,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Blogs" />
 		</execute>
 
@@ -306,7 +336,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Blogs" />
 		</execute>
 
@@ -314,7 +346,9 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Blogs" />
 		</execute>
 
@@ -322,7 +356,9 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Blogs" />
 		</execute>
 
@@ -345,7 +381,9 @@
 		<property name="portal.acceptance" value="true" />
 		<property name="testray.component.names" value="Training" />
 
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -355,14 +393,15 @@
 		</execute>
 
 		<execute macro="Workflow#viewDefinition">
-			<var name="workflowDefinitionName" value="Legal and Marketing Approval" />
 			<var name="workflowDefinitionTitle" value="Double Approver Definition" />
 			<var name="workflowDefinitionVersionNumber" value="1" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Dynamic Data Lists" />
 		</execute>
 
@@ -378,7 +417,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Dynamic Data Lists" />
 		</execute>
 
@@ -392,7 +433,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Dynamic Data Lists" />
 		</execute>
 
@@ -419,7 +462,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Dynamic Data Lists" />
 		</execute>
 
@@ -447,7 +492,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Dynamic Data Lists" />
 		</execute>
 
@@ -474,7 +521,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Dynamic Data Lists" />
 		</execute>
 
@@ -502,7 +551,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Dynamic Data Lists" />
 		</execute>
 
@@ -519,7 +570,9 @@
 	</command>
 
 	<command name="AddWebContentWithCategorySpecificDefinition" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -529,14 +582,15 @@
 		</execute>
 
 		<execute macro="Workflow#viewDefinition">
-			<var name="workflowDefinitionName" value="Category Specific Approval" />
 			<var name="workflowDefinitionTitle" value="Category Specific" />
 			<var name="workflowDefinitionVersionNumber" value="1" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Categories" />
 		</execute>
 
@@ -551,7 +605,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Categories" />
 		</execute>
 
@@ -562,7 +618,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Web Content" />
 		</execute>
 
@@ -594,7 +652,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Web Content" />
 		</execute>
 
@@ -627,7 +687,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Web Content" />
 		</execute>
 
@@ -655,7 +717,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Web Content" />
 		</execute>
 
@@ -709,7 +773,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -730,7 +796,9 @@
 			<var name="portletName" value="Wiki" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelUsers">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Users" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
@@ -741,7 +809,9 @@
 			<var name="userScreenName" value="usersn" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelUsers">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Users" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
@@ -750,7 +820,9 @@
 			<var name="userScreenName" value="usersn" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelUsers">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Users" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
@@ -792,7 +864,9 @@
 
 		<execute macro="UserBar#gotoMyAccount" />
 
-		<execute macro="ProductMenu#gotoUserMyAccount">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="My Account" />
+			<var name="panel" value="User" />
 			<var name="portlet" value="My Submissions" />
 		</execute>
 
@@ -886,7 +960,9 @@
 	</command>
 
 	<command name="DeactivateAndActivateUploadedDefinition" priority="3">
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -896,26 +972,29 @@
 		</execute>
 
 		<execute macro="Workflow#viewDefinition">
-			<var name="workflowDefinitionName" value="Uploaded Definition" />
 			<var name="workflowDefinitionTitle" value="New Uploaded Definition" />
 			<var name="workflowDefinitionVersionNumber" value="1" />
 		</execute>
 
 		<execute macro="Workflow#deactivateAddedWorkflowDefinition" />
 
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
 		<execute macro="Workflow#reactivateInactiveWorkflowDefinition">
-			<var name="workflowDefinitionName" value="Uploaded Definition" />
+			<var name="workflowDefinitionTitle" value="New Uploaded Definition" />
 		</execute>
 	</command>
 
 	<command name="DeactivateAndDeleteUploadedDefinition" priority="5">
 		<property name="portal.acceptance" value="true" />
 
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -925,14 +1004,15 @@
 		</execute>
 
 		<execute macro="Workflow#viewDefinition">
-			<var name="workflowDefinitionName" value="Uploaded Definition" />
 			<var name="workflowDefinitionTitle" value="New Uploaded Definition" />
 			<var name="workflowDefinitionVersionNumber" value="1" />
 		</execute>
 
 		<execute macro="Workflow#deactivateAddedWorkflowDefinition" />
 
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -942,7 +1022,9 @@
 	<command name="ViewBlogsEntryWorkflowViaNotifications" priority="3">
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -1029,7 +1111,9 @@
 	</command>
 
 	<command name="ViewInvalidDefinitionAlert" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -1045,7 +1129,9 @@
 	<command name="ViewTaskCount" priority="3">
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -1056,7 +1142,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Web Content" />
 		</execute>
 
@@ -1067,7 +1155,9 @@
 		<for list="1,2,3" param="number">
 			<execute macro="Navigator#openURL" />
 
-			<execute macro="ProductMenu#gotoSitesContent">
+			<execute macro="ProductMenu#gotoPortlet">
+				<var name="category" value="Content" />
+				<var name="panel" value="Site Administration" />
 				<var name="portlet" value="Web Content" />
 			</execute>
 
@@ -1080,7 +1170,9 @@
 
 			<execute macro="Navigator#openURL" />
 
-			<execute macro="ProductMenu#gotoSitesContent">
+			<execute macro="ProductMenu#gotoPortlet">
+				<var name="category" value="Content" />
+				<var name="panel" value="Site Administration" />
 				<var name="portlet" value="Blogs" />
 			</execute>
 
@@ -1091,7 +1183,9 @@
 			</execute>
 		</for>
 
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -1133,7 +1227,9 @@
 	<command name="ViewWebContentConfigurationCP" priority="3">
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Web Content" />
 		</execute>
 
@@ -1143,7 +1239,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Web Content" />
 		</execute>
 
@@ -1153,7 +1251,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Web Content" />
 		</execute>
 
@@ -1165,7 +1265,9 @@
 	<command name="ViewWorkflowConfigurationScope" priority="4">
 		<description message="This is a use case for LPS-59108." />
 
-		<execute macro="ProductMenu#gotoControlPanelSites">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Sites" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Sites" />
 		</execute>
 
@@ -1173,7 +1275,9 @@
 			<var name="siteName" value="New Site" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -1182,7 +1286,9 @@
 			<var name="workflowResourceValue" value="Calendar Event" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -1191,7 +1297,9 @@
 			<var name="workflowResourceValue" value="Calendar Event" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -1211,7 +1319,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -1220,7 +1330,9 @@
 			<var name="workflowResourceValue" value="Blogs Entry" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -1239,7 +1351,9 @@
 			<var name="siteName" value="${siteName}" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -1252,7 +1366,9 @@
 			<var name="workflowResourceValue" value="Blogs Entry" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelUsers">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Users" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Roles" />
 		</execute>
 
@@ -1263,7 +1379,9 @@
 			<var name="roleType" value="Site" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelUsers">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Users" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Roles" />
 		</execute>
 
@@ -1275,7 +1393,9 @@
 		</execute>
 
 		<for list="1,2" param="n">
-			<execute macro="ProductMenu#gotoControlPanelUsers">
+			<execute macro="ProductMenu#gotoPortlet">
+				<var name="category" value="Users" />
+				<var name="panel" value="Control Panel" />
 				<var name="portlet" value="Users and Organizations" />
 			</execute>
 
@@ -1286,7 +1406,9 @@
 				<var name="userScreenName" value="usersn${n}" />
 			</execute>
 
-			<execute macro="ProductMenu#gotoControlPanelUsers">
+			<execute macro="ProductMenu#gotoPortlet">
+				<var name="category" value="Users" />
+				<var name="panel" value="Control Panel" />
 				<var name="portlet" value="Users and Organizations" />
 			</execute>
 
@@ -1295,7 +1417,9 @@
 				<var name="userScreenName" value="usersn${n}" />
 			</execute>
 
-			<execute macro="ProductMenu#gotoControlPanelUsers">
+			<execute macro="ProductMenu#gotoPortlet">
+				<var name="category" value="Users" />
+				<var name="panel" value="Control Panel" />
 				<var name="portlet" value="Users and Organizations" />
 			</execute>
 
@@ -1311,7 +1435,9 @@
 
 			<execute macro="Navigator#openURL" />
 
-			<execute macro="ProductMenu#gotoSitesContent">
+			<execute macro="ProductMenu#gotoPortlet">
+				<var name="category" value="Content" />
+				<var name="panel" value="Site Administration" />
 				<var name="portlet" value="Blogs" />
 			</execute>
 
@@ -1323,7 +1449,9 @@
 
 			<execute macro="Navigator#openURL" />
 
-			<execute macro="ProductMenu#gotoSitesContent">
+			<execute macro="ProductMenu#gotoPortlet">
+				<var name="category" value="Content" />
+				<var name="panel" value="Site Administration" />
 				<var name="portlet" value="Blogs" />
 			</execute>
 
@@ -1426,7 +1554,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Web Content" />
 		</execute>
 
@@ -1436,7 +1566,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Web Content" />
 		</execute>
 
@@ -1478,7 +1610,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Web Content" />
 		</execute>
 
@@ -1491,7 +1625,9 @@
 			<var name="webContentTitle" value="WC WebContent Title" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelSites">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Sites" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Sites" />
 		</execute>
 

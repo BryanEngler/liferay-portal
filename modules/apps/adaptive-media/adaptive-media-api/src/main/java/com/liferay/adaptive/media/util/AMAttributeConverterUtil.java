@@ -41,4 +41,15 @@ public class AMAttributeConverterUtil {
 		}
 	}
 
+	public static Long parseLong(String value)
+		throws AMRuntimeException.AMAttributeFormatException {
+
+		try {
+			return Long.parseLong(value);
+		}
+		catch (NumberFormatException nfe) {
+			throw new AMRuntimeException.AMAttributeFormatException(nfe);
+		}
+	}
+
 }

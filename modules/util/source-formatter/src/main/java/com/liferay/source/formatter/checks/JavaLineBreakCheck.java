@@ -67,7 +67,7 @@ public class JavaLineBreakCheck extends LineBreakCheck {
 
 				if (!line.startsWith("import ") &&
 					!line.startsWith("package ") &&
-					!line.matches("\\s*\\*.*") &&
+					!trimmedLine.startsWith(StringPool.STAR) &&
 					(lineLength <= getMaxLineLength())) {
 
 					_checkLineBreaks(line, previousLine, fileName, lineCount);
@@ -291,7 +291,10 @@ public class JavaLineBreakCheck extends LineBreakCheck {
 			if (!ToolsUtil.isInsideQuotes(trimmedLine, x)) {
 				String linePart = trimmedLine.substring(0, x + 1);
 
-				if (getLevel(linePart) < 0) {
+				if ((getLevel(linePart) < 0) ||
+					(previousLine.endsWith(">") &&
+					 Validator.isVariableName(trimmedLine.substring(0, x)))) {
+
 					addMessage(
 						fileName,
 						"There should be a line break after '" + linePart + "'",

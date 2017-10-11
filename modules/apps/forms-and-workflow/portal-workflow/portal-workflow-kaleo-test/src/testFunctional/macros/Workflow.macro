@@ -86,6 +86,14 @@
 
 				<execute function="AssertClick#pauseAssertTextClickAt" locator1="MyWorkflowTasks#ASSIGNED_TO_ME_MENULIST_OPTION" value1="${workflowDefinitionTask}" />
 			</then>
+			<elseif>
+				<isset var="boardWorkflowTask" />
+				<then>
+					<execute function="AssertClick#pauseAssertTextClickAt" locator1="MenuItem#ANY_MENU_ITEM" value1="Approve ${boardWorkflowTask}">
+						<var name="key_menuItem" value="Approve ${boardWorkflowTask}" />
+					</execute>
+				</then>
+			</elseif>
 			<else>
 				<execute function="AssertClick#pauseAssertTextClickAt" locator1="MenuItem#ANY_MENU_ITEM" value1="Approve">
 					<var name="key_menuItem" value="Approve" />
@@ -371,7 +379,7 @@
 	</command>
 
 	<command name="deleteWorkflowDefinition">
-		<execute function="Click" locator1="WorkflowDefinition#DEFINITION_TABLE_DEACTIVATED_DEFINITION_ELLIPSIS" />
+		<execute function="Click" locator1="WorkflowDefinition#DEFINITION_TABLE_ADDED_DEFINITION_ELLIPSIS" />
 
 		<execute macro="Workflow#deleteWorkflowDefinitionCmd" />
 	</command>
@@ -455,18 +463,15 @@
 	</command>
 
 	<command name="reactivateInactiveWorkflowDefinition">
-		<var name="key_workflowDefinitionName" value="${workflowDefinitionName}" />
+		<var name="key_workflowDefinitionTitle" value="${workflowDefinitionTitle}" />
 
-		<execute function="AssertTextEquals" locator1="WorkflowDefinition#DEFINITION_TABLE_ACTIVE" value1="No" />
-
-		<execute function="Click" locator1="WorkflowDefinition#DEFINITION_TABLE_DEACTIVATED_DEFINITION_ELLIPSIS" />
+		<execute function="Click" locator1="WorkflowDefinition#DEFINITION_TABLE_SPECIFIC_DEFINITION_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#ANY_MENU_ITEM" value1="Activate">
 			<var name="key_menuItem" value="Activate" />
 		</execute>
 
 		<execute macro="Alert#viewSuccessMessage" />
-		<execute function="AssertTextEquals" locator1="WorkflowDefinition#DEFINITION_TABLE_ACTIVE" value1="Yes" />
 	</command>
 
 	<command name="rejectTaskByActions">
@@ -599,7 +604,9 @@
 	</command>
 
 	<command name="tearDownPortalWorkflow">
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -628,7 +635,9 @@
 	<command name="tearDownSiteWorkflow">
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -636,7 +645,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Web Content" />
 		</execute>
 
@@ -646,7 +657,9 @@
 	</command>
 
 	<command name="tearDownSpecificWorkflowDefinition">
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -665,7 +678,9 @@
 	</command>
 
 	<command name="tearDownWorkflowDefinitionDraftsViaKDCP">
-		<execute macro="ProductMenu#gotoControlPanelApps">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Apps" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Kaleo Designer" />
 		</execute>
 
@@ -685,7 +700,9 @@
 	</command>
 
 	<command name="tearDownWorkflowDefinitionsViaWorkflowCP">
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Workflow" />
 		</execute>
 
@@ -796,7 +813,7 @@
 
 		<execute function="UploadCommonFile#uploadCommonFileHidden" locator1="WorkflowUpload#FILE_UPLOAD" value1="${workflowDefinitionFile}" />
 
-		<execute macro="PortletEntry#save" />
+		<execute macro="PortletEntry#publish" />
 	</command>
 
 	<command name="viewAssignedToMyRolesTasksCP">
@@ -936,9 +953,7 @@
 	</command>
 
 	<command name="viewDefinition">
-		<var name="key_workflowDefinitionName" value="${workflowDefinitionName}" />
-
-		<execute function="AssertTextEquals" locator1="WorkflowDefinition#DEFINITION_TABLE_NAME" value1="${workflowDefinitionName}" />
+		<var name="key_workflowDefinitionTitle" value="${workflowDefinitionTitle}" />
 
 		<if>
 			<isset var="workflowDefinitionTitle" />
@@ -946,11 +961,11 @@
 				<execute function="AssertTextEquals" locator1="WorkflowDefinition#DEFINITION_TABLE_TITLE" value1="${workflowDefinitionTitle}" />
 			</then>
 			<else>
+				<var name="key_workflowDefinitionTitle" value="${workflowDefinitionName}" />
+
 				<execute function="AssertTextEquals" locator1="WorkflowDefinition#DEFINITION_TABLE_TITLE" value1="${workflowDefinitionName}" />
 			</else>
 		</if>
-
-		<execute function="AssertTextEquals" locator1="WorkflowDefinition#DEFINITION_TABLE_ACTIVE" value1="Yes" />
 	</command>
 
 	<command name="viewMySubmissions">
@@ -967,7 +982,7 @@
 
 	<command name="viewMySubmissionsTaskPreview">
 		<execute function="AssertTextEquals" locator1="WorkflowSubmissionsTask#PREVIEW" value1="Preview of ${workflowAssetType}" />
-		<execute function="AssertTextEquals" locator1="WorkflowSubmissionsTask#PREVIEW_TITLE" value1="${workflowAssetTitle}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="WorkflowSubmissionsTask#PREVIEW_TITLE" value1="${workflowAssetTitle}" />
 		<execute function="AssertTextEquals#assertPartialText" locator1="WorkflowSubmissionsTask#PREVIEW_CONTENT" value1="${workflowAssetContent}" />
 
 		<execute macro="SiteAdmin#viewPortletTitle">
@@ -1082,7 +1097,7 @@
 
 		<execute function="AssertTextEquals#assertText" locator1="MyWorkflowTasksTask#STATE" value1="${workflowTask}" />
 
-		<execute function="AssertTextEquals" locator1="MyWorkflowTasksTask#PREVIEW_TITLE" value1="${workflowAssetTitle}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="MyWorkflowTasksTask#PREVIEW_TITLE" value1="${workflowAssetTitle}" />
 		<execute function="AssertTextEquals#assertPartialText" locator1="MyWorkflowTasksTask#PREVIEW_CONTENT" value1="${workflowAssetContent}" />
 	</command>
 
@@ -1114,7 +1129,7 @@
 		<execute function="AssertTextEquals" locator1="MyWorkflowTasksTask#ASSIGNED_TO" value1="Nobody" />
 		<execute function="AssertTextEquals" locator1="MyWorkflowTasksTask#STATE" value1="${workflowTask}" />
 
-		<execute function="AssertTextEquals" locator1="MyWorkflowTasksTask#PREVIEW_TITLE" value1="${workflowAssetTitle}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="MyWorkflowTasksTask#PREVIEW_TITLE" value1="${workflowAssetTitle}" />
 	</command>
 
 	<command name="viewTaskHeaderTitle">

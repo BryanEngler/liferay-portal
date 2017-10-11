@@ -47,11 +47,7 @@
 			<var name="content" value="${entryContent}" />
 		</execute>
 
-		<execute function="Click" locator1="AlloyEditor#CONTENT_FIELD" />
-
-		<execute function="Click" locator1="AlloyEditor#CONTENT_ADD_BUTTON" />
-
-		<execute function="Click" locator1="AlloyEditor#CONTENT_ADD_MENUBAR_IMAGE" />
+		<execute macro="ItemSelector#gotoItemSelectorViaAlloyEditor" />
 
 		<execute macro="ItemSelector#uploadFile">
 			<var name="navTab" value="${navTab}" />
@@ -618,7 +614,9 @@
 	<command name="tearDownCP">
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Blogs" />
 		</execute>
 
@@ -638,7 +636,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Recycle Bin" />
 		</execute>
 
@@ -688,7 +688,7 @@
 	<command name="viewAutomaticURL">
 		<execute function="Click" locator1="Radio#CUSTOM_ABSTRACT" />
 
-		<execute function="Type#typeEditor" locator1="AlloyEditor#DESCRIPTION_FIELD" value1="${entryAbstractDescription}" />
+		<execute function="Type#typeEditor" locator1="TextInput#DESCRIPTION" value1="${entryAbstractDescription}" />
 	</command>
 
 	<command name="viewCategory">
@@ -1064,7 +1064,7 @@
 
 					<execute function="AssertClick" locator1="BlogsEntry#TAG" value1="${tagName}" />
 
-					<execute function="AssertTextEquals" locator1="AssetCategorization#TAG_FILTER_TITLE" value1="Entries with tag ${tagName} ." />
+					<execute function="AssertTextEquals#assertPartialText" locator1="AssetCategorization#TAG_FILTER_TITLE" value1="Entries with tag ${tagName}" />
 					<execute function="AssertTextEquals" locator1="BlogsEntry#TITLE" value1="${entryTitle}" />
 				</for>
 			</then>
@@ -1077,7 +1077,7 @@
 
 				<execute function="AssertClick" locator1="BlogsEntry#TAG" value1="${tagName}" />
 
-				<execute function="AssertTextEquals" locator1="AssetCategorization#TAG_FILTER_TITLE" value1="Entries with tag ${tagName} ." />
+				<execute function="AssertTextEquals#assertPartialText" locator1="AssetCategorization#TAG_FILTER_TITLE" value1="Entries with tag ${tagName}" />
 				<execute function="AssertTextEquals" locator1="BlogsEntry#TITLE" value1="${entryTitle}" />
 			</else>
 		</if>
@@ -1096,7 +1096,7 @@
 
 					<execute function="AssertClick" locator1="BlogsEntry#TAG" value1="${tagName}" />
 
-					<execute function="AssertTextEquals" locator1="AssetCategorization#TAG_FILTER_TITLE" value1="Entries with tag ${tagName} ." />
+					<execute function="AssertTextEquals#assertPartialText" locator1="AssetCategorization#TAG_FILTER_TITLE" value1="Entries with tag ${tagName}" />
 					<execute function="AssertTextEquals" locator1="BlogsEntry#TITLE" value1="${entryTitle}" />
 				</for>
 			</then>
@@ -1107,7 +1107,7 @@
 
 				<execute function="AssertClick" locator1="BlogsEntry#TAG" value1="${tagName}" />
 
-				<execute function="AssertTextEquals" locator1="AssetCategorization#TAG_FILTER_TITLE" value1="Entries with tag ${tagName} ." />
+				<execute function="AssertTextEquals#assertPartialText" locator1="AssetCategorization#TAG_FILTER_TITLE" value1="Entries with tag ${tagName}" />
 				<execute function="AssertTextEquals" locator1="BlogsEntry#TITLE" value1="${entryTitle}" />
 			</else>
 		</if>

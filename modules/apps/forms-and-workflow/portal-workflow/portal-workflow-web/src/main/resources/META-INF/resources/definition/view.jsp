@@ -23,7 +23,16 @@ int delta = ParamUtil.getInteger(request, SearchContainer.DEFAULT_DELTA_PARAM);
 String navigation = ParamUtil.getString(request, "navigation", "definitions");
 String definitionsNavigation = ParamUtil.getString(request, "definitionsNavigation");
 
-String orderByCol = ParamUtil.getString(request, "orderByCol", "name");
+int displayedStatus = WorkflowDefinitionConstants.STATUS_ALL;
+
+if (StringUtil.equals(definitionsNavigation, "published")) {
+	displayedStatus = WorkflowDefinitionConstants.STATUS_PUBLISHED;
+}
+else if (StringUtil.equals(definitionsNavigation, "not-published")) {
+	displayedStatus = WorkflowDefinitionConstants.STATUS_NOT_PUBLISHED;
+}
+
+String orderByCol = ParamUtil.getString(request, "orderByCol", "title");
 String orderByType = ParamUtil.getString(request, "orderByType", "asc");
 
 PortletURL navigationPortletURL = renderResponse.createRenderURL();
@@ -34,7 +43,7 @@ if (delta > 0) {
 	navigationPortletURL.setParameter("delta", String.valueOf(delta));
 }
 
-navigationPortletURL.setParameter("orderBycol", orderByCol);
+navigationPortletURL.setParameter("orderByCol", orderByCol);
 navigationPortletURL.setParameter("orderByType", orderByType);
 
 PortletURL portletURL = renderResponse.createRenderURL();
@@ -78,7 +87,7 @@ WorkflowDefinitionSearch workflowDefinitionSearch = new WorkflowDefinitionSearch
 
 	<liferay-frontend:management-bar-filters>
 		<liferay-frontend:management-bar-navigation
-			navigationKeys='<%= new String[] {"all"} %>'
+			navigationKeys='<%= new String[] {"all", "published", "not-published"} %>'
 			navigationParam="definitionsNavigation"
 			portletURL="<%= navigationPortletURL %>"
 		/>
@@ -86,7 +95,7 @@ WorkflowDefinitionSearch workflowDefinitionSearch = new WorkflowDefinitionSearch
 		<liferay-frontend:management-bar-sort
 			orderByCol="<%= orderByCol %>"
 			orderByType="<%= orderByType %>"
-			orderColumns='<%= new String[] {"active", "name", "title"} %>'
+			orderColumns='<%= new String[] {"title", "last-modified"} %>'
 			portletURL="<%= portletURL %>"
 		/>
 	</liferay-frontend:management-bar-filters>
@@ -104,7 +113,7 @@ WorkflowDefinitionSearch workflowDefinitionSearch = new WorkflowDefinitionSearch
 		%>
 
 		<liferay-ui:search-container-results
-			results="<%= workflowDefinitionDisplayContext.getSearchContainerResults(searchContainer) %>"
+			results="<%= workflowDefinitionDisplayContext.getSearchContainerResults(searchContainer, displayedStatus) %>"
 		/>
 
 		<liferay-ui:search-container-row
@@ -123,26 +132,21 @@ WorkflowDefinitionSearch workflowDefinitionSearch = new WorkflowDefinitionSearch
 
 			<liferay-ui:search-container-column-text
 				href="<%= rowURL %>"
-				name="name"
-				value="<%= workflowDefinitionDisplayContext.getName(workflowDefinition) %>"
-			/>
-
-			<liferay-ui:search-container-column-text
-				href="<%= rowURL %>"
 				name="title"
 				value="<%= workflowDefinitionDisplayContext.getTitle(workflowDefinition) %>"
 			/>
 
 			<liferay-ui:search-container-column-text
 				href="<%= rowURL %>"
-				name="version"
-				value="<%= workflowDefinitionDisplayContext.getVersion(workflowDefinition) %>"
+				name="description"
+				value="<%= workflowDefinitionDisplayContext.getDescription(workflowDefinition) %>"
 			/>
 
-			<liferay-ui:search-container-column-text
+			<liferay-ui:search-container-column-date
 				href="<%= rowURL %>"
-				name="active"
-				value="<%= workflowDefinitionDisplayContext.getActive(workflowDefinition) %>"
+				name="last-modified"
+				userName="<%= workflowDefinitionDisplayContext.getUserName(workflowDefinition) %>"
+				value="<%= workflowDefinition.getModifiedDate() %>"
 			/>
 
 			<liferay-ui:search-container-column-jsp

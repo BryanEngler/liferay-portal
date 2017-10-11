@@ -16,11 +16,12 @@ package com.liferay.adaptive.media.image.internal.util;
 
 import com.liferay.adaptive.media.exception.AMRuntimeException;
 import com.liferay.adaptive.media.image.configuration.AMImageConfigurationEntry;
-import com.liferay.adaptive.media.image.constants.AMImageConstants;
 import com.liferay.adaptive.media.image.internal.processor.util.TiffOrientationTransformer;
+import com.liferay.adaptive.media.image.mime.type.AMImageMimeTypeProvider;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.image.ImageToolUtil;
 import com.liferay.portal.kernel.repository.model.FileVersion;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 
 import java.awt.image.RenderedImage;
@@ -28,7 +29,6 @@ import java.awt.image.RenderedImage;
 import java.io.InputStream;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -40,10 +40,8 @@ import org.osgi.service.component.annotations.Reference;
 public class ImageProcessor {
 
 	public boolean isMimeTypeSupported(String mimeType) {
-		Set<String> supportedMimeTypes =
-			AMImageConstants.getSupportedMimeTypes();
-
-		return supportedMimeTypes.contains(mimeType);
+		return ArrayUtil.contains(
+			_amImageMimeTypeProvider.getSupportedMimeTypes(), mimeType);
 	}
 
 	public RenderedImage scaleImage(
@@ -75,6 +73,9 @@ public class ImageProcessor {
 			throw new AMRuntimeException.IOException(pe);
 		}
 	}
+
+	@Reference
+	private AMImageMimeTypeProvider _amImageMimeTypeProvider;
 
 	@Reference
 	private TiffOrientationTransformer _tiffOrientationTransformer;

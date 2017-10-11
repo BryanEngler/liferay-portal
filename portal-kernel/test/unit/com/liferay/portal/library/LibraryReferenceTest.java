@@ -19,13 +19,13 @@ import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 
-import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -273,17 +273,7 @@ public class LibraryReferenceTest {
 	private static void _initLibJars() throws IOException {
 		Path libDirPath = Paths.get(LIB_DIR_NAME);
 
-		for (String line :
-				Files.readAllLines(
-					libDirPath.resolve("versions-ignore.txt"),
-					Charset.forName("UTF-8"))) {
-
-			line = line.trim();
-
-			if (!line.isEmpty()) {
-				_excludeJars.add(line);
-			}
-		}
+		_readLines(_excludeJars, libDirPath.resolve("versions-ignore.txt"));
 
 		Files.walkFileTree(
 			libDirPath,
@@ -358,7 +348,7 @@ public class LibraryReferenceTest {
 
 					String dirName = String.valueOf(dirPath.getFileName());
 
-					if (!dirName.equals("util-taglib-compat") &&
+					if (!dirName.endsWith("-compat") &&
 						Files.exists(dirPath.resolve(".lfrbuild-portal-pre"))) {
 
 						Path sourceDirPath = dirPath.resolve(
@@ -433,6 +423,26 @@ public class LibraryReferenceTest {
 			Node node = nodelist.item(i);
 
 			jars.add(node.getTextContent());
+		}
+	}
+
+	private static void _readLines(Set<String> lines, Path path)
+		throws IOException {
+
+		if (Files.notExists(path)) {
+			return;
+		}
+
+		try (UnsyncBufferedReader unsyncBufferedReader =
+				new UnsyncBufferedReader(new FileReader(path.toFile()))) {
+
+			String line = null;
+
+			while ((line = unsyncBufferedReader.readLine()) != null) {
+				if (Validator.isNotNull(line)) {
+					lines.add(line);
+				}
+			}
 		}
 	}
 

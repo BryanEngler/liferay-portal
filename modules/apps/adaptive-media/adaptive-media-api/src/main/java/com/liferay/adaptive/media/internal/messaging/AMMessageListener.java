@@ -40,7 +40,9 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = {"destination.name=" + AMDestinationNames.AM_PROCESSOR},
+	property = {
+		"destination.name=" + AMDestinationNames.ADAPTIVE_MEDIA_PROCESSOR
+	},
 	service = MessageListener.class
 )
 public class AMMessageListener extends BaseMessageListener {
@@ -75,9 +77,9 @@ public class AMMessageListener extends BaseMessageListener {
 		Object model = message.get("model");
 		String modelId = (String)message.get("modelId");
 
-		for (AMProcessor processor : amProcessors) {
+		for (AMProcessor amProcessor : amProcessors) {
 			try {
-				amProcessorCommand.execute(processor, model, modelId);
+				amProcessorCommand.execute(amProcessor, model, modelId);
 			}
 			catch (Exception e) {
 				if (_log.isWarnEnabled()) {

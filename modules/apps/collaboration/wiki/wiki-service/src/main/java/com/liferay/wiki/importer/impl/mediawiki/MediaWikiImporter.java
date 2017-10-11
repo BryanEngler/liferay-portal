@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.ProgressTracker;
 import com.liferay.portal.kernel.util.ProgressTrackerThreadLocal;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -321,7 +320,7 @@ public class MediaWikiImporter implements WikiImporter {
 	}
 
 	protected String normalize(String categoryName, int length) {
-		categoryName = AssetUtil.toWord(categoryName.trim());
+		categoryName = _toWord(categoryName.trim());
 
 		return StringUtil.shorten(categoryName, length);
 	}
@@ -434,9 +433,13 @@ public class MediaWikiImporter implements WikiImporter {
 			for (ObjectValuePair<String, InputStream> inputStreamOVP :
 					inputStreamOVPs) {
 
-				InputStream inputStream = inputStreamOVP.getValue();
-
-				StreamUtil.cleanUp(inputStream);
+				try (InputStream inputStream = inputStreamOVP.getValue()) {
+				}
+				catch (IOException ioe) {
+					if (_log.isWarnEnabled()) {
+						_log.warn(ioe, ioe);
+					}
+				}
 			}
 		}
 
@@ -742,6 +745,28 @@ public class MediaWikiImporter implements WikiImporter {
 		_translator.setStrictImportMode(strictImportMode);
 
 		return _translator.translate(content);
+	}
+
+	private String _toWord(String text) {
+		if (Validator.isNull(text)) {
+			return text;
+		}
+
+		char[] textCharArray = text.toCharArray();
+
+		for (int i = 0; i < textCharArray.length; i++) {
+			char c = textCharArray[i];
+
+			for (char invalidChar : AssetUtil.INVALID_CHARACTERS) {
+				if (c == invalidChar) {
+					textCharArray[i] = CharPool.SPACE;
+
+					break;
+				}
+			}
+		}
+
+		return new String(textCharArray);
 	}
 
 	private static final String _WORK_IN_PROGRESS = "{{Work in progress}}";

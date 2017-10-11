@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="**/.svn/**|.svn/" kind="src" path="definitions"/>
+	<classpathentry excluding="**/.svn/**|.svn/" kind="src" path="modules/apps/foundation/petra/petra-concurrent/src/main/java"/>
+	<classpathentry excluding="**/.svn/**|.svn/" kind="src" path="modules/apps/foundation/petra/petra-lang/src/main/java"/>
+	<classpathentry excluding="**/.svn/**|.svn/" kind="src" path="modules/apps/foundation/petra/petra-memory/src/main/java"/>
 	<classpathentry excluding="**/.svn/**|.svn/" kind="src" path="modules/core/registry-api/src/main/java"/>
 	<classpathentry excluding="**/.svn/**|.svn/" kind="src" path="portal-impl/src"/>
 	<classpathentry excluding="**/.svn/**|.svn/" kind="src" path="portal-impl/test/integration"/>
@@ -138,7 +141,6 @@
 	<classpathentry kind="lib" path="lib/portal/commons-dbcp.jar"/>
 	<classpathentry kind="lib" path="lib/portal/commons-digester.jar"/>
 	<classpathentry kind="lib" path="lib/portal/commons-discovery.jar"/>
-	<classpathentry kind="lib" path="lib/portal/commons-email.jar"/>
 	<classpathentry kind="lib" path="lib/portal/commons-exec.jar"/>
 	<classpathentry kind="lib" path="lib/portal/commons-fileupload.jar"/>
 	<classpathentry kind="lib" path="lib/portal/commons-httpclient.jar"/>

@@ -34,7 +34,6 @@ import com.liferay.portal.kernel.cache.thread.local.ThreadLocalCacheManager;
 import com.liferay.portal.kernel.cluster.ClusterExecutorUtil;
 import com.liferay.portal.kernel.cluster.ClusterInvokeThreadLocal;
 import com.liferay.portal.kernel.cluster.ClusterRequest;
-import com.liferay.portal.kernel.concurrent.ConcurrentHashSet;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
@@ -4566,10 +4565,7 @@ public class PortalImpl implements Portal {
 
 	@Override
 	public String getPortletXmlFileName() {
-		if (PrefsPropsUtil.getBoolean(
-				PropsKeys.AUTO_DEPLOY_CUSTOM_PORTLET_XML,
-				PropsValues.AUTO_DEPLOY_CUSTOM_PORTLET_XML)) {
-
+		if (PropsValues.AUTO_DEPLOY_CUSTOM_PORTLET_XML) {
 			return PORTLET_XML_FILE_NAME_CUSTOM;
 		}
 		else {
@@ -5367,7 +5363,8 @@ public class PortalImpl implements Portal {
 			WebKeys.UNIQUE_ELEMENT_IDS);
 
 		if (uniqueElementIds == null) {
-			uniqueElementIds = new ConcurrentHashSet<>();
+			uniqueElementIds = Collections.newSetFromMap(
+				new ConcurrentHashMap<>());
 
 			request.setAttribute(WebKeys.UNIQUE_ELEMENT_IDS, uniqueElementIds);
 		}
@@ -8125,7 +8122,6 @@ public class PortalImpl implements Portal {
 	protected void setThemeDisplayI18n(
 		ThemeDisplay themeDisplay, Locale locale) {
 
-		String i18nLanguageId = null;
 		String i18nPath = null;
 
 		if ((I18nFilter.getLanguageIds().contains(locale.toString()) &&
@@ -8133,11 +8129,10 @@ public class PortalImpl implements Portal {
 			 !locale.equals(LocaleUtil.getDefault())) ||
 			(PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE == 2)) {
 
-			i18nLanguageId = locale.toString();
 			i18nPath = buildI18NPath(locale);
 		}
 
-		themeDisplay.setI18nLanguageId(i18nLanguageId);
+		themeDisplay.setI18nLanguageId(locale.toString());
 		themeDisplay.setI18nPath(i18nPath);
 		themeDisplay.setLocale(locale);
 	}

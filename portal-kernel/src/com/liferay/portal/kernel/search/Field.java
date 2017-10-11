@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.search.geolocation.GeoLocationPoint;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Serializable;
@@ -216,6 +217,43 @@ public class Field implements Serializable {
 		return name.concat(StringPool.UNDERLINE).concat(SORTABLE_FIELD_SUFFIX);
 	}
 
+	public static String getUID(String portletId, String field1) {
+		return getUID(portletId, field1, null);
+	}
+
+	public static String getUID(
+		String portletId, String field1, String field2) {
+
+		return getUID(portletId, field1, field2, null);
+	}
+
+	public static String getUID(
+		String portletId, String field1, String field2, String field3) {
+
+		return getUID(portletId, field1, field2, field3, null);
+	}
+
+	public static String getUID(
+		String portletId, String field1, String field2, String field3,
+		String field4) {
+
+		String uid = portletId + _UID_PORTLET + field1;
+
+		if (field2 != null) {
+			uid += _UID_FIELD + field2;
+		}
+
+		if (field3 != null) {
+			uid += _UID_FIELD + field3;
+		}
+
+		if (field4 != null) {
+			uid += _UID_FIELD + field4;
+		}
+
+		return uid;
+	}
+
 	public static boolean validateFieldName(String name) {
 		if (name.contains(StringPool.COMMA) ||
 			name.contains(StringPool.PERIOD) ||
@@ -372,8 +410,10 @@ public class Field implements Serializable {
 		}
 		else {
 			setValue(
-				"lat: " + geoLocationPoint.getLatitude() + ", lon: " +
-					geoLocationPoint.getLongitude());
+				StringBundler.concat(
+					"lat: ", String.valueOf(geoLocationPoint.getLatitude()),
+					", lon: ",
+					String.valueOf(geoLocationPoint.getLongitude())));
 		}
 	}
 
@@ -487,35 +527,45 @@ public class Field implements Serializable {
 	protected void validate(String name) {
 		if (name.contains(StringPool.COMMA)) {
 			throw new IllegalArgumentException(
-				"Name must not contain " + StringPool.COMMA + ": " + name);
+				StringBundler.concat(
+					"Name must not contain ", StringPool.COMMA, ": ", name));
 		}
 
 		if (name.contains(StringPool.PERIOD)) {
 			throw new IllegalArgumentException(
-				"Name must not contain " + StringPool.PERIOD + ": " + name);
+				StringBundler.concat(
+					"Name must not contain ", StringPool.PERIOD, ": ", name));
 		}
 
 		if (name.contains(StringPool.POUND)) {
 			throw new IllegalArgumentException(
-				"Name must not contain " + StringPool.POUND + ": " + name);
+				StringBundler.concat(
+					"Name must not contain ", StringPool.POUND, ": ", name));
 		}
 
 		if (name.contains(StringPool.SLASH)) {
 			throw new IllegalArgumentException(
-				"Name must not contain " + StringPool.SLASH + ": " + name);
+				StringBundler.concat(
+					"Name must not contain ", StringPool.SLASH, ": ", name));
 		}
 
 		if (name.contains(StringPool.STAR)) {
 			throw new IllegalArgumentException(
-				"Name must not contain " + StringPool.STAR + ": " + name);
+				StringBundler.concat(
+					"Name must not contain ", StringPool.STAR, ": ", name));
 		}
 
 		if (name.startsWith(StringPool.UNDERLINE)) {
 			throw new IllegalArgumentException(
-				"Name must not start with " + StringPool.UNDERLINE + ": " +
-					name);
+				StringBundler.concat(
+					"Name must not start with ", StringPool.UNDERLINE, ": ",
+					name));
 		}
 	}
+
+	private static final String _UID_FIELD = "_FIELD_";
+
+	private static final String _UID_PORTLET = "_PORTLET_";
 
 	private float _boost = 1;
 	private Date[] _dates;

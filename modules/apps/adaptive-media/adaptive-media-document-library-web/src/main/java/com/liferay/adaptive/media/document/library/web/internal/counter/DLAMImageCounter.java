@@ -14,8 +14,8 @@
 
 package com.liferay.adaptive.media.document.library.web.internal.counter;
 
-import com.liferay.adaptive.media.image.constants.AMImageConstants;
 import com.liferay.adaptive.media.image.counter.AMImageCounter;
+import com.liferay.adaptive.media.image.mime.type.AMImageMimeTypeProvider;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.document.library.kernel.service.DLFileVersionLocalService;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
@@ -60,7 +60,8 @@ public class DLAMImageCounter implements AMImageCounter {
 		Property mimeTypeProperty = PropertyFactoryUtil.forName("mimeType");
 
 		dlFileEntryEntryDynamicQuery.add(
-			mimeTypeProperty.in(AMImageConstants.getSupportedMimeTypes()));
+			mimeTypeProperty.in(
+				_amImageMimeTypeProvider.getSupportedMimeTypes()));
 
 		return (int)_dlFileEntryLocalService.dynamicQueryCount(
 			dlFileEntryEntryDynamicQuery);
@@ -87,7 +88,8 @@ public class DLAMImageCounter implements AMImageCounter {
 		Property mimeTypeProperty = PropertyFactoryUtil.forName("mimeType");
 
 		dlFileVersionDynamicQuery.add(
-			mimeTypeProperty.in(AMImageConstants.getSupportedMimeTypes()));
+			mimeTypeProperty.in(
+				_amImageMimeTypeProvider.getSupportedMimeTypes()));
 
 		Property statusProperty = PropertyFactoryUtil.forName("status");
 
@@ -97,6 +99,9 @@ public class DLAMImageCounter implements AMImageCounter {
 		return (int)_dlFileEntryLocalService.dynamicQueryCount(
 			dlFileVersionDynamicQuery);
 	}
+
+	@Reference
+	private AMImageMimeTypeProvider _amImageMimeTypeProvider;
 
 	@Reference
 	private DLFileEntryLocalService _dlFileEntryLocalService;

@@ -272,7 +272,7 @@ public class AMImageRequestHandlerTest {
 			adaptiveMedia.getValueOptional(
 				AMAttribute.getContentTypeAMAttribute()));
 
-		Optional<Integer> contentLength = adaptiveMedia.getValueOptional(
+		Optional<Long> contentLength = adaptiveMedia.getValueOptional(
 			AMAttribute.getContentLengthAMAttribute());
 
 		Assert.assertEquals(_fileVersion.getSize(), (long)contentLength.get());
@@ -310,7 +310,7 @@ public class AMImageRequestHandlerTest {
 		properties.put(
 			contentTypeAMAttribute.getName(), fileVersion.getMimeType());
 
-		AMAttribute<Object, Integer> contentLengthAMAttribute =
+		AMAttribute<Object, Long> contentLengthAMAttribute =
 			AMAttribute.getContentLengthAMAttribute();
 
 		properties.put(

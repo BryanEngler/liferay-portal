@@ -36,47 +36,65 @@
 		AUI().use(
 			'liferay-ddm-form-renderer',
 			'liferay-ddm-form-renderer-field',
+			'liferay-ddm-soy-template-util',
 			function(A) {lb}
-				setTimeout(function() {lb}
-					Liferay.DDM.Renderer.FieldTypes.register({$fieldTypes});
+				var SoyTemplateUtil = Liferay.DDM.SoyTemplateUtil;
 
-					var form = Liferay.component(
-						'{$containerId}DDMForm',
-						new Liferay.DDM.Renderer.Form(
-							{lb}
-								container: '#{$containerId}',
-								context: {$context},
-								evaluatorURL: '{$evaluatorURL}',
-								portletNamespace: '{$portletNamespace}',
-								readOnly: {if $readOnly}true{else}false{/if}
-							{rb}
-						).render()
-					);
+				SoyTemplateUtil.loadModules(
+					function() {lb}
+						Liferay.DDM.Renderer.FieldTypes.register({$fieldTypes});
 
-					Liferay.fire(
-						'{$containerId}DDMForm:render',
-						{lb}
-							form: form
-						{rb}
-					);
+						{call .render_form data="all" /}
+					{rb}
+				);
 
-					var destroyFormHandle = function(event) {lb}
-						var form = Liferay.component('{$containerId}DDMForm');
+				var destroyFormHandle = function(event) {lb}
+					var form = Liferay.component('{$containerId}DDMForm');
 
-						var portlet = event.portlet;
+					var portlet = event.portlet;
 
-						if (portlet && portlet.contains(form.get('container'))) {lb}
-							form.destroy();
+					if (portlet && portlet.contains(form.get('container'))) {lb}
+						form.destroy();
 
-							Liferay.detach('destroyPortlet', destroyFormHandle);
-						{rb}
-					{rb};
+						Liferay.detach('destroyPortlet', destroyFormHandle);
+					{rb}
+				{rb};
 
-					Liferay.on('destroyPortlet', destroyFormHandle);
-				{rb}, 500);
+				Liferay.on('destroyPortlet', destroyFormHandle);
 			{rb}
 		);
 	</script>
+{/template}
+
+/**
+ * Prints render form script
+ */
+{template .render_form kind="js"}
+	{@param containerId: string}
+	{@param context: ?}
+	{@param evaluatorURL: string}
+	{@param portletNamespace: string}
+	{@param readOnly: bool}
+
+	var form = Liferay.component(
+		'{$containerId}DDMForm',
+		new Liferay.DDM.Renderer.Form(
+			{lb}
+				container: '#{$containerId}',
+				context: {$context},
+				evaluatorURL: '{$evaluatorURL}',
+				portletNamespace: '{$portletNamespace}',
+				readOnly: {if $readOnly}true{else}false{/if}
+			{rb}
+		).render()
+	);
+
+	Liferay.fire(
+	'{$containerId}DDMForm:render',
+		{lb}
+			form: form
+		{rb}
+	);
 {/template}
 
 /**

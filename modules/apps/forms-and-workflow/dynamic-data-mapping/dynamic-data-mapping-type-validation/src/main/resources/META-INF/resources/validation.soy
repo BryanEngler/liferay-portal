@@ -33,7 +33,13 @@
 	<div class="form-group lfr-ddm-form-field-validation" data-fieldname="{$name}">
 		<div class="form-group">
 			<label class="control-label" for="{$name}EnableValidation">
-				<input class="enable-validation toggle-switch" {if $enableValidationValue}checked{/if} id="{$name}EnableValidation" type="checkbox" value="true" />
+				<input
+					class="enable-validation toggle-switch"
+					{if $enableValidationValue}checked{/if}
+					id="{$name}EnableValidation"
+					type="checkbox"
+					value="true"
+				/>
 
 				<span aria-hidden="true" class="toggle-switch-bar">
 					<span class="toggle-switch-handle"></span>
@@ -57,16 +63,30 @@
 			</div>
 
 			<div class="col-md-6">
-				<input class="field form-control {$parameterMessagePlaceholder ? '' : ' hide'} parameter-input" placeholder="{$parameterMessagePlaceholder}" type="text" value="{$parameterValue}" />
+				<input
+					class="field form-control {$parameterMessagePlaceholder ? '' : ' hide'} parameter-input"
+					placeholder="{$parameterMessagePlaceholder}"
+					type="text"
+					value="{$parameterValue}"
+				/>
 			</div>
 		</div>
 
 		<div class="{$enableValidationValue ? '' : 'hide'} row">
 			<div class="col-md-12">
-				<input class="field form-control message-input" placeholder="{$errorMessagePlaceholder}" type="text" value="{$errorMessageValue}" />
+				<input
+					class="field form-control message-input"
+					placeholder="{$errorMessagePlaceholder}"
+					type="text"
+					value="{$errorMessageValue}"
+				/>
 			</div>
 		</div>
 
-		<input name="{$name}" type="hidden" value="{$value}" />
+		<input
+			name="{$name}"
+			type="hidden"
+			value="{$value}"
+		/>
 	</div>
 {/template}

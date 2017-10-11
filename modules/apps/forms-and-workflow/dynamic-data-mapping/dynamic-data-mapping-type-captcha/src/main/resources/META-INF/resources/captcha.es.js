@@ -8,7 +8,24 @@ import templates from './captcha.soy';
  */
 class Captcha extends Component {}
 
+Captcha.STATE = {
+	html: {
+		isHtml: true,
+		value: ''
+	}
+};
+
 // Register component
 Soy.register(Captcha, templates, 'render');
+
+Captcha.Soy = Soy;
+
+if (!window.DDMCaptcha) {
+	window.DDMCaptcha = {
+
+	};
+}
+
+window.DDMCaptcha.render = Captcha;
 
 export default Captcha;

@@ -18,7 +18,6 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.adaptive.media.util.AMAttributeConverterUtil;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -56,7 +55,7 @@ public final class AMAttribute<T, V> {
 	public static final <S> AMAttribute<S, String>
 		getConfigurationUuidAMAttribute() {
 
-		return (AMAttribute<S, String>)_CONFIGURATION_UUID;
+		return (AMAttribute<S, String>)_AM_ATTRIBUTE_CONFIGURATION_UUID;
 	}
 
 	/**
@@ -65,10 +64,8 @@ public final class AMAttribute<T, V> {
 	 *
 	 * @return the content length attribute
 	 */
-	public static final <S>
-		AMAttribute<S, Integer> getContentLengthAMAttribute() {
-
-		return (AMAttribute<S, Integer>)_CONTENT_LENGTH;
+	public static final <S> AMAttribute<S, Long> getContentLengthAMAttribute() {
+		return (AMAttribute<S, Long>)_AM_ATTRIBUTE_CONTENT_LENGTH;
 	}
 
 	/**
@@ -78,7 +75,7 @@ public final class AMAttribute<T, V> {
 	 * @return the content type attribute
 	 */
 	public static final <S> AMAttribute<S, String> getContentTypeAMAttribute() {
-		return (AMAttribute<S, String>)_CONTENT_TYPE;
+		return (AMAttribute<S, String>)_AM_ATTRIBUTE_CONTENT_TYPE;
 	}
 
 	/**
@@ -88,7 +85,7 @@ public final class AMAttribute<T, V> {
 	 * @return the file name attribute
 	 */
 	public static final <S> AMAttribute<S, String> getFileNameAMAttribute() {
-		return (AMAttribute<S, String>)_FILE_NAME;
+		return (AMAttribute<S, String>)_AM_ATTRIBUTE_FILE_NAME;
 	}
 
 	/**
@@ -99,34 +96,39 @@ public final class AMAttribute<T, V> {
 	 *        attribute
 	 * @param converter a function that can convert a <code>String</code> to a
 	 *        value of the correct type; this function should throw an {@link
-	 *        AdaptiveMediaRuntimeException.AdaptiveMediaAttributeFormatException}
+	 *        com.liferay.adaptive.media.exception.AMRuntimeException.AMAttributeFormatException}
 	 *        if it cannot convert the String.
-	 * @param comparator compares its two arguments for order considering the
-	 *        distance between their values; it should return a value between
-	 *        {@link Integer#MIN_VALUE} and {@link Integer#MAX_VALUE} based on
-	 *        the distance of the values.
+	 * @param amDistanceComparator compares its two arguments for order
+	 *        considering the distance between their values; it should return a
+	 *        value between {@link Long#MIN_VALUE} and {@link Long#MAX_VALUE}
+	 *        based on the distance of the values.
+	 *
+	 * @review
 	 */
 	public AMAttribute(
-		String name, Function<String, V> converter, Comparator<V> comparator) {
+		String name, Function<String, V> converter,
+		AMDistanceComparator<V> amDistanceComparator) {
 
 		_name = name;
 		_converterFunction = converter;
-		_comparator = comparator;
+		_amDistanceComparator = amDistanceComparator;
 	}
 
 	/**
-	 * Compares its two arguments for order. Returns a negative integer, zero,
-	 * or a positive integer depending on whether the first argument is less
-	 * than, equal to, or greater than the second argument respectively.
+	 * Compares its two arguments for order. Returns a negative long, zero, or a
+	 * positive long depending on whether the first argument is less than, equal
+	 * to, or greater than the second argument respectively.
 	 *
 	 * @param  value1 The first value to be compared
 	 * @param  value2 The second value to be compared
-	 * @return a negative integer, zero, or a positive integer depending on
-	 *         whether the first argument is less than, equal to, or greater
-	 *         than the second argument respectively.
+	 * @return a negative long, zero, or a positive long depending on whether
+	 *         the first argument is less than, equal to, or greater than the
+	 *         second argument respectively.
+	 *
+	 * @review
 	 */
-	public int compare(V value1, V value2) {
-		return _comparator.compare(value1, value2);
+	public long compare(V value1, V value2) {
+		return _amDistanceComparator.compare(value1, value2);
 	}
 
 	/**
@@ -144,11 +146,12 @@ public final class AMAttribute<T, V> {
 	 *
 	 * @param  value1 the first value
 	 * @param  value2 the second value
-	 * @return a value between 0 and {@link Integer#MAX_VALUE} representing the
+	 * @return a value between 0 and {@link Long#MAX_VALUE} representing the
 	 *         distance between the two values
+	 * @review
 	 */
-	public int distance(V value1, V value2) {
-		return Math.abs(_comparator.compare(value1, value2));
+	public long distance(V value1, V value2) {
+		return Math.abs(_amDistanceComparator.compare(value1, value2));
 	}
 
 	/**
@@ -160,36 +163,38 @@ public final class AMAttribute<T, V> {
 		return _name;
 	}
 
-	private static final AMAttribute<?, String> _CONFIGURATION_UUID =
-		new AMAttribute<>("configuration-uuid", (s) -> s, String::compareTo);
+	private static final AMAttribute<?, String>
+		_AM_ATTRIBUTE_CONFIGURATION_UUID = new AMAttribute<>(
+			"configuration-uuid", (s) -> s, String::compareTo);
 
-	private static final AMAttribute<?, Integer> _CONTENT_LENGTH =
+	private static final AMAttribute<?, Long> _AM_ATTRIBUTE_CONTENT_LENGTH =
 		new AMAttribute<>(
-			"content-length", AMAttributeConverterUtil::parseInt,
-			(value1, value2) -> value1 - value2);
+			"content-length", AMAttributeConverterUtil::parseLong,
+			(Long value1, Long value2) -> value1 - value2);
 
-	private static final AMAttribute<?, String> _CONTENT_TYPE =
+	private static final AMAttribute<?, String> _AM_ATTRIBUTE_CONTENT_TYPE =
 		new AMAttribute<>("content-type", (value) -> value, String::compareTo);
 
-	private static final AMAttribute<?, String> _FILE_NAME = new AMAttribute<>(
-		"file-name", (value) -> value, String::compareTo);
+	private static final AMAttribute<?, String> _AM_ATTRIBUTE_FILE_NAME =
+		new AMAttribute<>("file-name", (value) -> value, String::compareTo);
 
 	private static final Map<String, AMAttribute<?, ?>> _allowedAMAttributes =
 		new HashMap<>();
 
 	static {
 		_allowedAMAttributes.put(
-			AMAttribute._CONFIGURATION_UUID.getName(),
-			AMAttribute._CONFIGURATION_UUID);
+			_AM_ATTRIBUTE_CONFIGURATION_UUID.getName(),
+			_AM_ATTRIBUTE_CONFIGURATION_UUID);
 		_allowedAMAttributes.put(
-			AMAttribute._CONTENT_LENGTH.getName(), AMAttribute._CONTENT_LENGTH);
+			_AM_ATTRIBUTE_CONTENT_LENGTH.getName(),
+			_AM_ATTRIBUTE_CONTENT_LENGTH);
 		_allowedAMAttributes.put(
-			AMAttribute._CONTENT_TYPE.getName(), AMAttribute._CONTENT_TYPE);
+			_AM_ATTRIBUTE_CONTENT_TYPE.getName(), _AM_ATTRIBUTE_CONTENT_TYPE);
 		_allowedAMAttributes.put(
-			AMAttribute._FILE_NAME.getName(), AMAttribute._FILE_NAME);
+			_AM_ATTRIBUTE_FILE_NAME.getName(), _AM_ATTRIBUTE_FILE_NAME);
 	}
 
-	private final Comparator<V> _comparator;
+	private final AMDistanceComparator<V> _amDistanceComparator;
 	private final Function<String, V> _converterFunction;
 	private final String _name;
 

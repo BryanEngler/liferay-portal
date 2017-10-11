@@ -25,6 +25,7 @@ import com.liferay.adaptive.media.image.service.AMImageEntryLocalService;
 import com.liferay.adaptive.media.processor.AMProcessor;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 
 import java.awt.image.RenderedImage;
@@ -101,14 +102,21 @@ public final class AMImageProcessorImpl implements AMImageProcessor {
 			amImageConfigurationEntry.getUUID(),
 			fileVersion.getFileVersionId());
 
-		if (amImageEntry != null) {
-			return;
-		}
-
-		RenderedImage renderedImage = _imageProcessor.scaleImage(
-			fileVersion, amImageConfigurationEntry);
-
 		try {
+			FileEntry fileEntry = fileVersion.getFileEntry();
+
+			if ((amImageEntry != null) && !fileEntry.isCheckedOut()) {
+				return;
+			}
+
+			if ((amImageEntry != null) && fileEntry.isCheckedOut()) {
+				_amImageEntryLocalService.deleteAMImageEntry(
+					amImageEntry.getAmImageEntryId());
+			}
+
+			RenderedImage renderedImage = _imageProcessor.scaleImage(
+				fileVersion, amImageConfigurationEntry);
+
 			byte[] bytes = RenderedImageUtil.getRenderedImageContentStream(
 				renderedImage, fileVersion.getMimeType());
 

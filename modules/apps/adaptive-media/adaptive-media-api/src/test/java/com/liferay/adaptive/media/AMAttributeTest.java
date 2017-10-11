@@ -31,23 +31,6 @@ import org.junit.Test;
 public class AMAttributeTest {
 
 	@Test
-	public void testAllPublicAttributesAreSupported() {
-		Collection<AMAttribute<?, ?>> amAttributes = Arrays.asList(
-			AMAttribute.getConfigurationUuidAMAttribute(),
-			AMAttribute.getContentLengthAMAttribute(),
-			AMAttribute.getContentTypeAMAttribute(),
-			AMAttribute.getFileNameAMAttribute());
-
-		Map<String, AMAttribute<?, ?>> allowedAMAttributesMap =
-			AMAttribute.getAllowedAMAttributes();
-
-		Collection<AMAttribute<?, ?>> allowedAMAttributes =
-			allowedAMAttributesMap.values();
-
-		Assert.assertTrue(allowedAMAttributes.containsAll(amAttributes));
-	}
-
-	@Test
 	public void testConfigurationUuidRecognizesAnyString() {
 		AMAttribute<?, String> configurationUuidAMAttribute =
 			AMAttribute.getConfigurationUuidAMAttribute();
@@ -58,8 +41,8 @@ public class AMAttributeTest {
 	}
 
 	@Test(expected = AMRuntimeException.AMAttributeFormatException.class)
-	public void testContentLengthFailsForNonIntegers() {
-		AMAttribute<?, Integer> contentLengthAMAttribute =
+	public void testContentLengthFailsForNonintegers() {
+		AMAttribute<?, Long> contentLengthAMAttribute =
 			AMAttribute.getContentLengthAMAttribute();
 
 		contentLengthAMAttribute.convert(StringUtil.randomString());
@@ -67,13 +50,14 @@ public class AMAttributeTest {
 
 	@Test
 	public void testContentLengthRecognizesIntegers() {
-		AMAttribute<?, Integer> contentLengthAMAttribute =
+		AMAttribute<?, Long> contentLengthAMAttribute =
 			AMAttribute.getContentLengthAMAttribute();
 
-		Integer value = RandomUtil.nextInt(Integer.MAX_VALUE);
+		long value = RandomUtil.nextInt(Integer.MAX_VALUE);
 
 		Assert.assertEquals(
-			value, contentLengthAMAttribute.convert(String.valueOf(value)));
+			value,
+			(long)contentLengthAMAttribute.convert(String.valueOf(value)));
 	}
 
 	@Test
@@ -94,6 +78,23 @@ public class AMAttributeTest {
 		String value = StringUtil.randomString();
 
 		Assert.assertEquals(value, fileNameAMAttribute.convert(value));
+	}
+
+	@Test
+	public void testGetAllowedAMAttributes() {
+		Collection<AMAttribute<?, ?>> amAttributes = Arrays.asList(
+			AMAttribute.getConfigurationUuidAMAttribute(),
+			AMAttribute.getContentLengthAMAttribute(),
+			AMAttribute.getContentTypeAMAttribute(),
+			AMAttribute.getFileNameAMAttribute());
+
+		Map<String, AMAttribute<?, ?>> allowedAMAttributesMap =
+			AMAttribute.getAllowedAMAttributes();
+
+		Collection<AMAttribute<?, ?>> allowedAMAttributes =
+			allowedAMAttributesMap.values();
+
+		Assert.assertTrue(allowedAMAttributes.containsAll(amAttributes));
 	}
 
 }

@@ -276,6 +276,21 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testJavaTermMetadataIncorrectLineBreaks() throws Exception {
+		test("JavaTermMetadataIncorrectLineBreaks.testjava");
+	}
+
+	@Test
+	public void testJavaVariableFinalableFields1() throws Exception {
+		test("JavaVariableFinalableFields1.testjava");
+	}
+
+	@Test
+	public void testJavaVariableFinalableFields2() throws Exception {
+		test("JavaVariableFinalableFields2.testjava");
+	}
+
+	@Test
 	public void testLogLevels() throws Exception {
 		test(
 			"Levels.testjava",
@@ -315,9 +330,9 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
-	public void testPackagePath() throws Exception {
+	public void testPackageName() throws Exception {
 		test(
-			"PackagePath.testjava",
+			"PackageName.testjava",
 			"The declared package 'com.liferay.source.formatter.hello.world' " +
 				"does not match the expected package");
 	}

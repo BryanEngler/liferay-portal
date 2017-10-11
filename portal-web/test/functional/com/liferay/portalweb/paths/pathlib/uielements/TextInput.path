@@ -225,7 +225,7 @@
 </tr>
 <tr>
 	<td>GOOGLE_CLIENT_ID</td>
-	<td>//div[label[contains(.,'Google Client ID')]]/input[@type='text'] | //input[contains(@id,'google-client-id')]</td>
+	<td>//input[contains(@id,'googleClientId')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -310,7 +310,7 @@
 </tr>
 <tr>
 	<td>NAME</td>
-	<td>//div[label[contains(.,'Name')]]//input[@type='text'] | //input[contains(@id,'name')]</td>
+	<td>//div[label[contains(.,'Name')]]//input[@type='text'] | //div[contains(@class,'form-group')]//input[contains(@id,'name')]</td>
 	<td></td>
 </tr>
 <tr>

@@ -233,7 +233,7 @@ create table Company (
 	accountId LONG,
 	webId VARCHAR(75) null,
 	key_ TEXT null,
-	mx VARCHAR(75) null,
+	mx VARCHAR(200) null,
 	homeURL STRING null,
 	logoId LONG,
 	system BOOLEAN,
@@ -452,15 +452,6 @@ create table DLFolder (
 	statusByUserId LONG,
 	statusByUserName VARCHAR(75) null,
 	statusDate DATE null
-);
-
-create table DLSyncEvent (
-	syncEventId LONG not null primary key,
-	companyId LONG,
-	modifiedTime LONG,
-	event VARCHAR(75) null,
-	type_ VARCHAR(75) null,
-	typePK LONG
 );
 
 create table EmailAddress (
@@ -1637,7 +1628,7 @@ create table VirtualHost (
 	virtualHostId LONG not null primary key,
 	companyId LONG,
 	layoutSetId LONG,
-	hostname VARCHAR(75) null
+	hostname VARCHAR(200) null
 );
 
 create table WebDAVProps (

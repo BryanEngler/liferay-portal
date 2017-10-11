@@ -45,14 +45,15 @@ public final class AMAsyncProcessorImpl<M, T>
 	public void cleanQueue(
 		AMProcessorCommand amProcessorCommand, String modelId) {
 
-		List<String> commandModelIds = _modelIds.get(amProcessorCommand);
+		List<String> modelIds = _modelIds.get(amProcessorCommand);
 
-		commandModelIds.remove(modelId);
+		modelIds.remove(modelId);
 
 		if (_log.isInfoEnabled()) {
 			_log.info(
-				"Cleaned queue for model id " + modelId + " and command " +
-					amProcessorCommand);
+				"Cleaned queue for model ID " + modelId +
+					" and adaptive media processor command " +
+						amProcessorCommand);
 		}
 	}
 
@@ -68,7 +69,7 @@ public final class AMAsyncProcessorImpl<M, T>
 			if (cleanUpModelIds.contains(modelId)) {
 				if (_log.isInfoEnabled()) {
 					_log.info(
-						"Omitted clean up for model id " + modelId +
+						"Omitted clean up for model ID " + modelId +
 							" because it is already in progress");
 				}
 
@@ -79,15 +80,15 @@ public final class AMAsyncProcessorImpl<M, T>
 
 			if (_log.isInfoEnabled()) {
 				_log.info(
-					"Added clean up for model id " + modelId + " to the queue");
+					"Added clean up for model ID " + modelId + " to the queue");
 			}
 		}
 
 		Message message = new Message();
 
 		message.put("className", _clazz.getName());
-		message.put("model", model);
 		message.put("command", AMProcessorCommand.CLEAN_UP);
+		message.put("model", model);
 
 		if (Validator.isNotNull(modelId)) {
 			message.put("modelId", modelId);
@@ -96,7 +97,7 @@ public final class AMAsyncProcessorImpl<M, T>
 		TransactionCommitCallbackUtil.registerCallback(
 			() -> {
 				_messageBus.sendMessage(
-					AMDestinationNames.AM_PROCESSOR, message);
+					AMDestinationNames.ADAPTIVE_MEDIA_PROCESSOR, message);
 
 				return null;
 			});
@@ -114,7 +115,7 @@ public final class AMAsyncProcessorImpl<M, T>
 			if (processModelIds.contains(modelId)) {
 				if (_log.isInfoEnabled()) {
 					_log.info(
-						"Omitted process for model id " + modelId +
+						"Omitted process for model ID " + modelId +
 							" because it is already in progress");
 				}
 
@@ -125,15 +126,15 @@ public final class AMAsyncProcessorImpl<M, T>
 
 			if (_log.isInfoEnabled()) {
 				_log.info(
-					"Added process for model id " + modelId + " to the queue");
+					"Added process for model ID " + modelId + " to the queue");
 			}
 		}
 
 		Message message = new Message();
 
 		message.put("className", _clazz.getName());
-		message.put("model", model);
 		message.put("command", AMProcessorCommand.PROCESS);
+		message.put("model", model);
 
 		if (Validator.isNotNull(modelId)) {
 			message.put("modelId", modelId);
@@ -142,7 +143,7 @@ public final class AMAsyncProcessorImpl<M, T>
 		TransactionCommitCallbackUtil.registerCallback(
 			() -> {
 				_messageBus.sendMessage(
-					AMDestinationNames.AM_PROCESSOR, message);
+					AMDestinationNames.ADAPTIVE_MEDIA_PROCESSOR, message);
 
 				return null;
 			});

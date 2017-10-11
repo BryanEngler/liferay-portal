@@ -118,10 +118,10 @@ public class JournalArticleIndexerSummaryTest {
 
 		Document document = getDocument(title, content);
 
-		String highlightedContent = concat(
+		String highlightedContent = StringBundler.concat(
 			HighlightUtil.HIGHLIGHT_TAG_OPEN, "test",
 			HighlightUtil.HIGHLIGHT_TAG_CLOSE, " content");
-		String highlightedTitle = concat(
+		String highlightedTitle = StringBundler.concat(
 			HighlightUtil.HIGHLIGHT_TAG_OPEN, "test",
 			HighlightUtil.HIGHLIGHT_TAG_CLOSE, " title");
 
@@ -152,16 +152,16 @@ public class JournalArticleIndexerSummaryTest {
 
 		Document document = getDocument(title, content);
 
-		String staleHighlightedContent = concat(
+		String staleHighlightedContent = StringBundler.concat(
 			HighlightUtil.HIGHLIGHT_TAG_OPEN, "test",
 			HighlightUtil.HIGHLIGHT_TAG_CLOSE, " stale content");
-		String staleHighlightedTitle = concat(
+		String staleHighlightedTitle = StringBundler.concat(
 			HighlightUtil.HIGHLIGHT_TAG_OPEN, "test",
 			HighlightUtil.HIGHLIGHT_TAG_CLOSE, " stale title");
 
 		setSnippets(staleHighlightedTitle, staleHighlightedContent, document);
 
-		String highlightedContent = concat(
+		String highlightedContent = StringBundler.concat(
 			HighlightUtil.HIGHLIGHT_TAG_OPEN, "test",
 			HighlightUtil.HIGHLIGHT_TAG_CLOSE, " content");
 
@@ -180,16 +180,6 @@ public class JournalArticleIndexerSummaryTest {
 
 		Assert.assertEquals(content, summary.getContent());
 		Assert.assertEquals(title, summary.getTitle());
-	}
-
-	protected String concat(String s1, String s2, String... stringArray) {
-		StringBundler sb = new StringBundler(2 + stringArray.length);
-
-		sb.append(s1);
-		sb.append(s2);
-		sb.append(stringArray);
-
-		return sb.toString();
 	}
 
 	protected HttpServletRequest createHttpServletRequest(
@@ -271,12 +261,12 @@ public class JournalArticleIndexerSummaryTest {
 	}
 
 	protected String getFieldName(String field) {
-		return concat(
+		return StringBundler.concat(
 			field, StringPool.UNDERLINE, LocaleUtil.toLanguageId(Locale.US));
 	}
 
 	protected String getSnippetFieldName(String field) {
-		return concat(
+		return StringBundler.concat(
 			Field.SNIPPET, StringPool.UNDERLINE, field, StringPool.UNDERLINE,
 			LocaleUtil.toLanguageId(Locale.US));
 	}

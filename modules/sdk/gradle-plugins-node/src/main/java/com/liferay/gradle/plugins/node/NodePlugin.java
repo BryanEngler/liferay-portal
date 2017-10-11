@@ -43,6 +43,7 @@ import org.gradle.api.plugins.PluginContainer;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.Delete;
 import org.gradle.api.tasks.TaskContainer;
+import org.gradle.language.base.plugins.LifecycleBasePlugin;
 import org.gradle.util.VersionNumber;
 
 /**
@@ -234,6 +235,23 @@ public class NodePlugin implements Plugin<Project> {
 
 				});
 		}
+		else if (taskName.equals(_NPM_RUN_TEST_TASK_NAME)) {
+			PluginContainer pluginContainer = project.getPlugins();
+
+			pluginContainer.withType(
+				LifecycleBasePlugin.class,
+				new Action<LifecycleBasePlugin>() {
+
+					@Override
+					public void execute(
+						LifecycleBasePlugin lifecycleBasePlugin) {
+
+						_configureTaskNpmRunTestForLifecycleBasePlugin(
+							executeNpmTask);
+					}
+
+				});
+		}
 
 		return executeNpmTask;
 	}
@@ -274,11 +292,13 @@ public class NodePlugin implements Plugin<Project> {
 	private void _configureTaskDownloadNodeGlobal(
 		DownloadNodeTask downloadNodeTask, NodeExtension nodeExtension) {
 
-		if (!nodeExtension.isDownload() || !nodeExtension.isGlobal()) {
+		Project project = downloadNodeTask.getProject();
+
+		if (!nodeExtension.isDownload() || !nodeExtension.isGlobal() ||
+			(project.getParent() == null)) {
+
 			return;
 		}
-
-		Project project = downloadNodeTask.getProject();
 
 		Project rootProject = project.getRootProject();
 
@@ -458,6 +478,15 @@ public class NodePlugin implements Plugin<Project> {
 		classesTask.dependsOn(executeNpmTask);
 	}
 
+	private void _configureTaskNpmRunTestForLifecycleBasePlugin(
+		ExecuteNpmTask executeNpmTask) {
+
+		Task checkTask = GradleUtil.getTask(
+			executeNpmTask.getProject(), LifecycleBasePlugin.CHECK_TASK_NAME);
+
+		checkTask.dependsOn(executeNpmTask);
+	}
+
 	private void _configureTaskPublishNodeModule(
 		PublishNodeModuleTask publishNodeModuleTask) {
 
@@ -595,6 +624,8 @@ public class NodePlugin implements Plugin<Project> {
 
 			});
 	}
+
+	private static final String _NPM_RUN_TEST_TASK_NAME = "npmRunTest";
 
 	private static final VersionNumber _node8VersionNumber =
 		VersionNumber.version(8);

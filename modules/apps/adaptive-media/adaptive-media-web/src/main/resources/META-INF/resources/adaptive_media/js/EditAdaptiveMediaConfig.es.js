@@ -82,14 +82,6 @@ class EditAdaptiveMediaConfig extends PortletBase {
 		this.eventHandler_.add(saveButton.addEventListener('click', (event) => {
 			this.onSubmitForm_(event);
 		}));
-
-		this.alert_ = new Alert(
-			{
-				elementClasses: 'alert-danger'
-			},
-			this.one(this.errorNode)
-		);
-
 	}
 
 	/**
@@ -177,14 +169,6 @@ class EditAdaptiveMediaConfig extends PortletBase {
 
 		if (form.formValidator.hasErrors()) {
 			event.preventDefault();
-
-			if ((this.maxHeightInput.id || this.maxWidthInput.id) in form.formValidator.errors) {
-				let errorMessage = this.alert_;
-
-				errorMessage.body = Liferay.Language.get('at-least-one-value-of-size-fields-is-required');
-
-				setTimeout(() => errorMessage.show(), 0);
-			}
 		}
 		else {
 			submitForm(form.form);
@@ -205,15 +189,16 @@ class EditAdaptiveMediaConfig extends PortletBase {
 		let nsMaxWidth = this.ns('maxWidth');
 		let nsMaxHeight = this.ns('maxHeight');
 
+		let inputErrorMessage = Liferay.Language.get('at-least-one-value-is-required');
+		let STR_BLANK = ' ';
+
 		if (this.maxWidthInput.value || this.maxHeightInput.value) {
 			form.removeRule(nsMaxWidth, 'required');
 			form.removeRule(nsMaxHeight, 'required');
-
-			this.alert_.hide();
 		}
 		else {
-			form.addRule(nsMaxWidth, 'required');
-			form.addRule(nsMaxHeight, 'required');
+			form.addRule(nsMaxWidth, 'required', inputErrorMessage);
+			form.addRule(nsMaxHeight, 'required', STR_BLANK);
 
 			if (validateFields) {
 				form.formValidator.validateField(nsMaxWidth);

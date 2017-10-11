@@ -30,7 +30,7 @@ import com.liferay.portal.kernel.exception.PortalException;
  * <p>
  * The type parameter <code>M</code> specifies the model used by the processor
  * to generate the media. The type parameter <code>T</code> restricts the valid
- * {@link AMAttribute} set available.
+ * {@link com.liferay.adaptive.media.AMAttribute} set available.
  * </p>
  *
  * @author Sergio González

@@ -21,22 +21,17 @@
 	{@param visible: bool}
 	{@param value: ?}
 
-	{let $checked kind="attributes"}
-		{if $value}
-			checked
-		{/if}
-	{/let}
-
-	{let $disabled kind="attributes"}
-		{if $readOnly}
-			disabled
-		{/if}
-	{/let}
-
 	<div class="form-group{$visible ? '' : ' hide'} liferay-ddm-form-field-checkbox" data-fieldname="{$name}">
 		{if $showAsSwitcher}
 			<label aria-checked="{$value ? 'true' : 'false'}" for="{$name}" role="checkbox">
-				<input class="toggle-switch" {$checked} {$disabled} id="{$name}" name="{$name}" type="checkbox" value="true" />
+				<input class="toggle-switch"
+					{if $value}checked{/if}
+					{if $readOnly}disabled{/if}
+					id="{$name}"
+					name="{$name}"
+					type="checkbox"
+					value="true"
+				/>
 
 				<span aria-hidden="true" class="toggle-switch-bar">
 					<span class="toggle-switch-handle"></span>
@@ -60,7 +55,15 @@
 					<label for="{$name}">
 				{/if}
 
-				<input {$checked} {$disabled} id="{$name}" name="{$name}" type="checkbox" value="true" />{if $showLabel} {$label}{/if}
+				<input {if $value}checked{/if}
+					{if $readOnly}disabled{/if}
+					id="{$name}"
+					name="{$name}"
+					type="checkbox"
+					value="true"
+				/>
+
+				{if $showLabel} {$label} {/if}
 
 				{if $showLabel}
 						{if $required}

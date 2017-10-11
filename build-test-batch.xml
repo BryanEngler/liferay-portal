@@ -437,39 +437,6 @@ app.server.type=@{app.server.type}]]></echo>
 
 			<antcall inheritAll="false" target="compile-test" />
 
-			<echo file="${project.dir}/.gitignore">/.ivy/
-/app.server.*.properties
-/build.*.properties
-/release.*.properties
-/sql/sql.*.properties
-/test.*.properties
-/tools/maven/*.asc
-/tools/node*
-/tools/selenium/*.exe
-/tools/selenium/extensions/ide.*.js
-/tools/tck
-/tools/zip_tmpl/license</echo>
-
-			<delete file="${project.dir}/lib/.gitignore" />
-
-			<echo file="${project.dir}/modules/.gitignore">tmp
-/*/*/ivy.xml.MD5
-/*/*/javadoc
-/*/*/lib
-/*/*/tmp
-/*/*/*/build/node
-/*/*/*/ivy.xml.MD5
-/*/*/*/javadoc
-/*/*/*/lib
-/*/*/*/node_modules
-/*/*/*/tmp
-/*/*/*/*/build/node
-/*/*/*/*/ivy.xml.MD5
-/*/*/*/*/javadoc
-/*/*/*/*/lib
-/*/*/*/*/node_modules
-/*/*/*/*/tmp</echo>
-
 			<delete>
 				<fileset dir="bundles" includes="*.zip" />
 			</delete>
@@ -477,13 +444,12 @@ app.server.type=@{app.server.type}]]></echo>
 			<if>
 				<contains string="@{app.server.type}" substring="tomcat" />
 				<then>
-					<execute>
-						<![CDATA[
-							git add -A
-
-							git diff --cached --name-only -z | grep -E -v -z '^\.gitignore|bundles/|^modules/\.gitignore' | xargs -0 -n 1000 zip -v liferay-portal-source.zip
-						]]>
-					</execute>
+					<zip
+						basedir="${project.dir}"
+						destfile="liferay-portal-source.zip"
+						excludes="${test.batch.dist.source.excludes}"
+						includes="${test.batch.dist.source.includes}"
+					/>
 
 					<prepare-liferay-classes if:true="${test.batch.code.coverage}" merged.jar="${project.dir}/jacoco/merged.jar" portal.bundle.dir="bundles" />
 				</then>
@@ -520,15 +486,19 @@ app.server.type=@{app.server.type}]]></echo>
 		<attribute default="tomcat" name="app.server.type" />
 
 		<sequential>
+			<antcall inheritAll="false" target="setup-sdk" />
+
+			<unzip dest="." src="liferay-portal-source.zip" />
+
 			<execute>
 				<![CDATA[
-					unzip -oq liferay-portal-source.zip
-
 					unzip -oq liferay-portal-bundle-@{app.server.type}.zip
 
 					chmod -R a+x bundles
 				]]>
 			</execute>
+
+			<setup-libs />
 
 			<antcall inheritAll="false" target="install-portal-snapshots" />
 
@@ -732,6 +702,7 @@ app.server.type=@{app.server.type}]]></echo>
 		<attribute name="database.type" />
 		<attribute default="${database.@{database.type}.version}" name="database.version" />
 		<attribute default="true" name="setup.proxy" />
+		<attribute default="true" name="setup.testable.jboss" />
 		<attribute default="true" name="setup.testable.tomcat" />
 		<attribute default="" name="test.build.fix.pack.zip.url" />
 		<attribute default="" name="test.fix.pack.base.url" />
@@ -885,14 +856,23 @@ app.server.type=@{app.server.type}]]></echo>
 
 							<if>
 								<and>
-									<equals arg1="${app.server.type}" arg2="tomcat" />
-									<equals arg1="@{setup.testable.tomcat}" arg2="true" />
+									<equals arg1="@{app.server.type}" arg2="jboss" />
+									<equals arg1="@{setup.testable.jboss}" arg2="true" />
 								</and>
 								<then>
-									<setup-testable-tomcat />
-
-									<setup-test-batch-testable-tomcat setup.proxy="@{setup.proxy}" />
+									<setup-testable-jboss />
 								</then>
+								<elseif>
+									<and>
+										<equals arg1="@{app.server.type}" arg2="tomcat" />
+										<equals arg1="@{setup.testable.tomcat}" arg2="true" />
+									</and>
+									<then>
+										<setup-testable-tomcat />
+
+										<setup-test-batch-testable-tomcat setup.proxy="@{setup.proxy}" />
+									</then>
+								</elseif>
 							</if>
 						</then>
 						<elseif>
@@ -909,8 +889,8 @@ app.server.type=@{app.server.type}]]></echo>
 
 							<if>
 								<or>
-									<equals arg1="${app.server.type}" arg2="weblogic" />
-									<equals arg1="${app.server.type}" arg2="websphere" />
+									<equals arg1="@{app.server.type}" arg2="weblogic" />
+									<equals arg1="@{app.server.type}" arg2="websphere" />
 								</or>
 								<then>
 									<prepare-test-build-custom />
@@ -922,14 +902,23 @@ app.server.type=@{app.server.type}]]></echo>
 
 							<if>
 								<and>
-									<equals arg1="${app.server.type}" arg2="tomcat" />
-									<equals arg1="@{setup.testable.tomcat}" arg2="true" />
+									<equals arg1="@{app.server.type}" arg2="jboss" />
+									<equals arg1="@{setup.testable.jboss}" arg2="true" />
 								</and>
 								<then>
-									<setup-testable-tomcat />
-
-									<setup-test-batch-testable-tomcat setup.proxy="@{setup.proxy}" />
+									<setup-testable-jboss />
 								</then>
+								<elseif>
+									<and>
+										<equals arg1="@{app.server.type}" arg2="tomcat" />
+										<equals arg1="@{setup.testable.tomcat}" arg2="true" />
+									</and>
+									<then>
+										<setup-testable-tomcat />
+
+										<setup-test-batch-testable-tomcat setup.proxy="@{setup.proxy}" />
+									</then>
+								</elseif>
 							</if>
 						</else>
 					</if>
@@ -1014,6 +1003,7 @@ app.server.type=@{app.server.type}]]></echo>
 				app.server.type="tomcat"
 				database.type="@{database.type}"
 				database.version="@{database.version}"
+				setup.testable.jboss="false"
 				setup.testable.tomcat="false"
 				test.build.fix.pack.zip.url="${test.build.fix.pack.zip.url}"
 				test.fix.pack.base.url="${test.fix.pack.base.url}"
@@ -2115,7 +2105,7 @@ app.server.type=@{app.server.type}]]></echo>
 	</target>
 
 	<target name="functional-smoke-jboss70-mysql56-jdk8">
-		<run-functional-test app.server.type="jboss" database.type="mysql" test.portal.log.assert="false" />
+		<run-functional-test app.server.type="jboss" database.type="mysql" test.portal.log.assert="true" />
 	</target>
 
 	<target name="functional-smoke-resin40-mysql56-jdk8">
@@ -2143,7 +2133,7 @@ app.server.type=@{app.server.type}]]></echo>
 	</target>
 
 	<target name="functional-smoke-tomcat80-oracle121-jdk8">
-		<run-functional-test app.server.type="tomcat" database.type="oracle" test.portal.log.assert="false" />
+		<run-functional-test app.server.type="tomcat" database.type="oracle" test.portal.log.assert="true" />
 	</target>
 
 	<target name="functional-smoke-tomcat80-postgresql94-jdk8">
@@ -2155,15 +2145,15 @@ app.server.type=@{app.server.type}]]></echo>
 	</target>
 
 	<target name="functional-smoke-weblogic121-mysql56-jdk8">
-		<run-functional-test app.server.type="weblogic" database.type="mysql" test.portal.log.assert="false" />
+		<run-functional-test app.server.type="weblogic" database.type="mysql" test.portal.log.assert="true" />
 	</target>
 
 	<target name="functional-smoke-websphere85-mysql56-jdk8">
-		<run-functional-test app.server.type="websphere" database.type="mysql" test.portal.log.assert="false" />
+		<run-functional-test app.server.type="websphere" database.type="mysql" test.portal.log.assert="true" />
 	</target>
 
 	<target name="functional-smoke-wildfly100-mariadb100-jdk8">
-		<run-functional-test app.server.type="wildfly" database.type="mariadb" test.portal.log.assert="false" />
+		<run-functional-test app.server.type="wildfly" database.type="mariadb" test.portal.log.assert="true" />
 	</target>
 
 	<target name="functional-tomcat80-hypersonic20-jdk8">
@@ -2352,20 +2342,22 @@ app.server.type=@{app.server.type}]]></echo>
 					<arg value="-Dbuild.exclude.dirs=private/apps/osb-lcs,private/apps/saml,third-party" />
 				</gradle-execute>
 
-				<propertyregex
-					input="${modules.compile.project.paths}"
-					property="modules.compile.task.groups"
-					regexp="(\S+)\r?\n"
-					replace="\1:assemble "
-				/>
+				<loadresource property="modules.compile.task.groups">
+					<filterchain>
+						<linecontainsregexp>
+							<regexp pattern="^:" />
+						</linecontainsregexp>
 
-				<propertyregex
-					input="${modules.compile.task.groups}:assemble"
-					override="true"
-					property="modules.compile.task.groups"
-					regexp="(\S+ ){${test.module.groups.size}}"
-					replace="\0,"
-				/>
+						<suffixlines suffix=":assemble " />
+
+						<striplinebreaks />
+
+						<tokenfilter>
+							<replaceregex flags="g" pattern="(\S+ ){${test.module.groups.size}}" replace="\0," />
+						</tokenfilter>
+					</filterchain>
+					<propertyresource name="modules.compile.project.paths" />
+				</loadresource>
 
 				<for list="${modules.compile.task.groups}" param="modules.compile.task.group" trim="true">
 					<sequential>
@@ -2649,13 +2641,6 @@ ${output.content}</echo>
 					<available file="${release.tool.dir}/git.diff" />
 					<then>
 						<delete file="${release.tool.dir}/git.diff" />
-					</then>
-				</if>
-
-				<if>
-					<available file="../bundles" type="dir" />
-					<then>
-						<delete dir="../bundles" />
 					</then>
 				</if>
 			</test-tear-down>

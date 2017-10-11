@@ -49,6 +49,7 @@ create index IX_14D5A20D on AssetLink (entryId1, type_);
 create index IX_91F132C on AssetLink (entryId2, type_);
 
 create unique index IX_D63322F9 on AssetTag (groupId, name[$COLUMN_LENGTH:75$]);
+create index IX_C43137AF on AssetTag (name[$COLUMN_LENGTH:75$]);
 create index IX_84C501E4 on AssetTag (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_B6ACB166 on AssetTag (uuid_[$COLUMN_LENGTH:75$], groupId);
 
@@ -65,7 +66,7 @@ create unique index IX_E7B95510 on BrowserTracker (userId);
 create unique index IX_B27A301F on ClassName_ (value[$COLUMN_LENGTH:200$]);
 
 create index IX_38EFE3FD on Company (logoId);
-create index IX_12566EC2 on Company (mx[$COLUMN_LENGTH:75$]);
+create index IX_12566EC2 on Company (mx[$COLUMN_LENGTH:200$]);
 create index IX_35E3E7C6 on Company (system);
 create unique index IX_EC00543C on Company (webId[$COLUMN_LENGTH:75$]);
 
@@ -140,9 +141,6 @@ create index IX_6F63F140 on DLFolder (repositoryId, mountPoint);
 create index IX_6747B2BC on DLFolder (repositoryId, parentFolderId);
 create index IX_DA448450 on DLFolder (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_3CC1DED2 on DLFolder (uuid_[$COLUMN_LENGTH:75$], groupId);
-
-create index IX_3D8E1607 on DLSyncEvent (modifiedTime);
-create unique index IX_57D82B06 on DLSyncEvent (typePK);
 
 create index IX_2A2CB130 on EmailAddress (companyId, classNameId, classPK, primary_);
 create index IX_7B43CD8 on EmailAddress (userId);
@@ -536,7 +534,7 @@ create index IX_66FF2503 on Users_UserGroups (userGroupId);
 create index IX_BE8102D6 on Users_UserGroups (userId);
 
 create unique index IX_A083D394 on VirtualHost (companyId, layoutSetId);
-create unique index IX_431A3960 on VirtualHost (hostname[$COLUMN_LENGTH:75$]);
+create unique index IX_431A3960 on VirtualHost (hostname[$COLUMN_LENGTH:200$]);
 
 create unique index IX_97DFA146 on WebDAVProps (classNameId, classPK);
 

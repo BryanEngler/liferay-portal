@@ -3,12 +3,26 @@ import Soy from 'metal-soy';
 
 import templates from './grid.soy';
 
-/**
- * Grid Component
- */
-class Grid extends Component {}
+let GridTemplates = [];
 
-// Register component
-Soy.register(Grid, templates, 'render');
+if (!window.DDMGrid) {
+	window.DDMGrid = {
 
-export default Grid;
+	};
+}
+
+for (let template in templates) {
+	if (template !== 'templates') {
+		class C extends Component {};
+		Soy.register(C, templates, template);
+		GridTemplates.push(
+			{
+				key: template,
+				component: C
+			}
+		);
+		window.DDMGrid[template] = C;
+	}
+}
+
+export default GridTemplates;

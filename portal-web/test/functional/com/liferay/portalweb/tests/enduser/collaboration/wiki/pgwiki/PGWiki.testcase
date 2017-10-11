@@ -45,7 +45,9 @@
 
 		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
 
-		<execute macro="ProductMenu#gotoControlPanelSites">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Sites" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Sites" />
 		</execute>
 
@@ -53,7 +55,9 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelSites">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Sites" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Sites" />
 		</execute>
 
@@ -66,7 +70,9 @@
 			<var name="site" value="Child SiteName" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Wiki" />
 		</execute>
 
@@ -597,7 +603,7 @@
 	</command>
 
 	<command name="AddWikiFrontPageFormatHTML" priority="5">
-		<property name="portal.acceptance" value="pending" />
+		<property name="portal.acceptance" value="true" />
 		<property name="testray.component.names" value="Training" />
 
 		<execute macro="Navigator#gotoPage">
@@ -758,7 +764,9 @@
 		<property name="osgi.app.includes" value="wiki-engine-jspwiki" />
 		<property name="test.assert.warning.exceptions" value="true" />
 
-		<execute macro="ProductMenu#gotoControlPanelApps">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Apps" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="App Manager" />
 		</execute>
 
@@ -770,7 +778,9 @@
 			<var name="appName" value="Creole" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelApps">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Apps" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="App Manager" />
 		</execute>
 
@@ -826,7 +836,7 @@
 	</command>
 
 	<command name="AddWikiPages" priority="5">
-		<property name="portal.acceptance" value="pending" />
+		<property name="portal.acceptance" value="true" />
 		<property name="testray.component.names" value="Training" />
 
 		<execute macro="Navigator#gotoPage">
@@ -1185,6 +1195,10 @@
 		<execute macro="WikiNavigator#gotoEntryEditViaPGTable">
 			<var name="wikiPageTitle" value="Wiki Page Title" />
 		</execute>
+
+		<execute function="Click" locator1="AlloyEditor#CONTENT_FIELD" />
+
+		<execute function="AssertElementPresent" locator1="AlloyEditor#CONTENT_ADD_BUTTON" />
 
 		<execute macro="WikiEntry#addPageContent">
 			<var name="wikiPageContent" value="Edited Wiki Page Content" />

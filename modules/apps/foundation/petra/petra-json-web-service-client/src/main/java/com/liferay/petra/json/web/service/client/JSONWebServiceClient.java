@@ -16,8 +16,11 @@ package com.liferay.petra.json.web.service.client;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.fasterxml.jackson.databind.Module;
+
 import java.security.KeyStore;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,49 +33,99 @@ public interface JSONWebServiceClient {
 	public void destroy();
 
 	public String doDelete(String url, Map<String, String> parameters)
-		throws JSONWebServiceTransportException;
+		throws JSONWebServiceInvocationException,
+			   JSONWebServiceTransportException;
 
 	public String doDelete(
 			String url, Map<String, String> parameters,
 			Map<String, String> headers)
-		throws JSONWebServiceTransportException;
+		throws JSONWebServiceInvocationException,
+			   JSONWebServiceTransportException;
+
+	public String doDelete(String url, String... parametersArray)
+		throws JSONWebServiceInvocationException;
 
 	public String doGet(String url, Map<String, String> parameters)
-		throws JSONWebServiceTransportException;
+		throws JSONWebServiceInvocationException,
+			   JSONWebServiceTransportException;
 
 	public String doGet(
 			String url, Map<String, String> parameters,
 			Map<String, String> headers)
-		throws JSONWebServiceTransportException;
+		throws JSONWebServiceInvocationException,
+			   JSONWebServiceTransportException;
+
+	public String doGet(String url, String... parametersArray)
+		throws JSONWebServiceInvocationException;
+
+	public <V, T> List<V> doGetToList(
+			Class<T> clazz, String url, Map<String, String> parameters,
+			Map<String, String> headers)
+		throws JSONWebServiceInvocationException,
+			   JSONWebServiceSerializeException;
+
+	public <V, T> List<V> doGetToList(
+			Class<T> clazz, String url, String... parametersArray)
+		throws JSONWebServiceInvocationException,
+			   JSONWebServiceSerializeException;
+
+	public <T> T doGetToObject(
+			Class<T> clazz, String url, String... parametersArray)
+		throws JSONWebServiceInvocationException,
+			   JSONWebServiceSerializeException;
 
 	public String doPost(String url, Map<String, String> parameters)
-		throws JSONWebServiceTransportException;
+		throws JSONWebServiceInvocationException,
+			   JSONWebServiceTransportException;
 
 	public String doPost(
 			String url, Map<String, String> parameters,
 			Map<String, String> headers)
-		throws JSONWebServiceTransportException;
+		throws JSONWebServiceInvocationException,
+			   JSONWebServiceTransportException;
+
+	public String doPost(String url, String... parametersArray)
+		throws JSONWebServiceInvocationException;
+
+	public String doPostAsJSON(String url, Object object)
+		throws JSONWebServiceInvocationException,
+			   JSONWebServiceSerializeException,
+			   JSONWebServiceTransportException;
 
 	public String doPostAsJSON(String url, String json)
-		throws JSONWebServiceTransportException;
+		throws JSONWebServiceInvocationException,
+			   JSONWebServiceTransportException;
 
 	public String doPostAsJSON(
 			String url, String json, Map<String, String> headers)
-		throws JSONWebServiceTransportException;
+		throws JSONWebServiceInvocationException,
+			   JSONWebServiceTransportException;
+
+	public <T> T doPostToObject(
+			Class<T> clazz, String url, String... parametersArray)
+		throws JSONWebServiceInvocationException,
+			   JSONWebServiceSerializeException;
 
 	public String doPut(String url, Map<String, String> parameters)
-		throws JSONWebServiceTransportException;
+		throws JSONWebServiceInvocationException,
+			   JSONWebServiceTransportException;
 
 	public String doPut(
 			String url, Map<String, String> parameters,
 			Map<String, String> headers)
-		throws JSONWebServiceTransportException;
+		throws JSONWebServiceInvocationException,
+			   JSONWebServiceTransportException;
+
+	public String doPut(String url, String... parametersArray)
+		throws JSONWebServiceInvocationException;
 
 	public String getHostName();
 
 	public int getHostPort();
 
 	public String getProtocol();
+
+	public void registerModule(Module module);
 
 	public void resetHttpClient();
 
@@ -83,6 +136,14 @@ public interface JSONWebServiceClient {
 	public void setKeyStore(KeyStore keyStore);
 
 	public void setLogin(String login);
+
+	public void setOAuthAccessSecret(String oAuthAccessSecret);
+
+	public void setOAuthAccessToken(String oAuthAccessToken);
+
+	public void setOAuthConsumerKey(String oAuthConsumerKey);
+
+	public void setOAuthConsumerSecret(String oAuthConsumerSecret);
 
 	public void setPassword(String password);
 

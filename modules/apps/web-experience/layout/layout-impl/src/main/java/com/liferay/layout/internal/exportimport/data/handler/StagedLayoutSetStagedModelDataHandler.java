@@ -159,7 +159,7 @@ public class StagedLayoutSetStagedModelDataHandler
 		Stream<Element> layoutElementsStream = layoutElements.stream();
 
 		List<String> sourceLayoutUuids = layoutElementsStream.map(
-			(layoutElement) -> layoutElement.attributeValue("uuid")
+			layoutElement -> layoutElement.attributeValue("uuid")
 		).collect(
 			Collectors.toList()
 		);
@@ -245,6 +245,8 @@ public class StagedLayoutSetStagedModelDataHandler
 			_stagedLayoutSetStagedModelRepository.fetchExistingLayoutSet(
 				portletDataContext.getScopeGroupId(),
 				stagedLayoutSet.isPrivateLayout());
+
+		stagedLayoutSet.setPrivateLayout(portletDataContext.isPrivateLayout());
 
 		StagedLayoutSet importedStagedLayoutSet =
 			(StagedLayoutSet)stagedLayoutSet.clone();
@@ -478,10 +480,6 @@ public class StagedLayoutSetStagedModelDataHandler
 		Element headerElement = rootElement.element("header");
 
 		String logoPath = headerElement.attributeValue("logo-path");
-
-		if (Validator.isNull(logoPath)) {
-			return;
-		}
 
 		byte[] iconBytes = portletDataContext.getZipEntryAsByteArray(logoPath);
 

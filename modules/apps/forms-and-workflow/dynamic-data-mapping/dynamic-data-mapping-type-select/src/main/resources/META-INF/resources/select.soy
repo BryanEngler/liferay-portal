@@ -36,21 +36,14 @@
 			{/if}
 
 			<div class="form-builder-select-field input-group-container">
-
 				{if not $readOnly}
 					{call .hidden_select data="all"/}
 				{/if}
 
 				<div class="form-control select-field-trigger" {if $dir}dir="{$dir}"{/if} id="{$name}" name="{$name}">
-					<a class="select-arrow-down-container" href="javascript:;">
-						{if $selectCaretDoubleIcon}
-							{$selectCaretDoubleIcon}
-						{/if}
-					</a>
-
 					{if $multiple}
 						{if length($value) == 0}
-							<span class="option-selected option-selected-placeholder">{$strings.chooseOptions}</span>
+							<div class="option-selected option-selected-placeholder">{$strings.chooseOptions}</div>
 						{else}
 							<ul class="multiple-badge-list">
 								{foreach $currentValue in $value}
@@ -62,18 +55,23 @@
 								{/foreach}
 							</ul>
 						{/if}
-
 					{else}
 						{if $value and length($value) > 0}
 							{foreach $currentValue in $value}
 								{if $currentValue and $currentValue.label}
-									<span class="option-selected">{$currentValue.label}</span>
+									<div class="option-selected" title="{$currentValue.label}">{$currentValue.label}</div>
 								{/if}
 							{/foreach}
 						{else}
-							<span class="option-selected option-selected-placeholder">{$strings.chooseAnOption}</span>
+							<div class="option-selected option-selected-placeholder">{$strings.chooseAnOption}</div>
 						{/if}
 					{/if}
+
+					<a class="select-arrow-down-container" href="javascript:;">
+						{if $selectCaretDoubleIcon}
+							{$selectCaretDoubleIcon}
+						{/if}
+					</a>
 				</div>
 
 				{if not $readOnly}
@@ -116,10 +114,11 @@
 {template .select_label}
 	{@param? label: string}
 	{@param name: string}
+	{@param? readOnly: bool}
 	{@param? required: bool}
 	{@param? tip: string}
 
-	<label class="control-label" for="{$name}">
+	<label class="control-label{$readOnly ? ' disabled' : ''}" for="{$name}">
 		{$label}
 
 		{if $required}
@@ -206,7 +205,7 @@
 					{if $multiple}
 						<input type="checkbox" value="" {if $selected}checked{/if}>
 					{/if}
-					<span>
+					<span title="{$option.label}">
 						{$option.label}
 					</span>
 				</li>

@@ -175,7 +175,6 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 		ddmFormValuesTransformer.addTransformer(
 			new RadioDDMFormFieldValueTransformer());
-
 		ddmFormValuesTransformer.addTransformer(
 			new SelectDDMFormFieldValueTransformer());
 

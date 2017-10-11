@@ -15,7 +15,3 @@ mergeLang {
 		"src/main/resources/content"
 	]
 }
-
-node {
-	nodeVersion = "8.4.0"
-}

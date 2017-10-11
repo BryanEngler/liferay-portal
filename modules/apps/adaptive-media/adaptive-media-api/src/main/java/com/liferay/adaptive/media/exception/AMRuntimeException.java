@@ -38,7 +38,8 @@ public class AMRuntimeException extends SystemException {
 
 	/**
 	 * This exception is thrown when a value serialized as a
-	 * <code>String</code> cannot be converted by an {@link AMAttribute}.
+	 * <code>String</code> cannot be converted by an {@link
+	 * com.liferay.adaptive.media.AMAttribute}.
 	 */
 	public static final class AMAttributeFormatException
 		extends AMRuntimeException {

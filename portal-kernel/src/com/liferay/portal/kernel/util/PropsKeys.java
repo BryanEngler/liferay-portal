@@ -435,6 +435,10 @@ public interface PropsKeys {
 
 	public static final String CLUSTER_LINK_AUTODETECT_ADDRESS = "cluster.link.autodetect.address";
 
+	public static final String CLUSTER_LINK_CHANNEL_LOGIC_NAME_CONTROL = "cluster.link.channel.logic.name.control";
+
+	public static final String CLUSTER_LINK_CHANNEL_LOGIC_NAME_TRANSPORT = "cluster.link.channel.logic.name.transport";
+
 	public static final String CLUSTER_LINK_CHANNEL_NAME_CONTROL = "cluster.link.channel.name.control";
 
 	public static final String CLUSTER_LINK_CHANNEL_NAME_TRANSPORT = "cluster.link.channel.name.transport";
@@ -731,6 +735,10 @@ public interface PropsKeys {
 
 	public static final String DL_FILE_ENTRY_PREVIEW_VIDEO_WIDTH = "dl.file.entry.preview.video.width";
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	public static final String DL_FILE_ENTRY_PREVIEWABLE_PROCESSOR_MAX_SIZE = "dl.file.entry.previewable.processor.max.size";
 
 	public static final String DL_FILE_ENTRY_PROCESSORS = "dl.file.entry.processors";
@@ -757,6 +765,10 @@ public interface PropsKeys {
 
 	public static final String DL_FILE_ENTRY_VERSION_POLICY = "dl.file.entry.version.policy";
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	public static final String DL_FILE_EXTENSIONS = "dl.file.extensions";
 
 	public static final String DL_FILE_EXTENSIONS_STRICT_CHECK = "dl.file.extensions.strict.check";
@@ -773,6 +785,10 @@ public interface PropsKeys {
 
 	public static final String DL_FILE_INDEXING_MAX_SIZE = "dl.file.indexing.max.size";
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	public static final String DL_FILE_MAX_SIZE = "dl.file.max.size";
 
 	public static final String DL_FILE_RANK_ENABLED = "dl.file.rank.enabled";
@@ -1074,6 +1090,12 @@ public interface PropsKeys {
 
 	public static final String INTRABAND_WELDER_SOCKET_TCP_NO_DELAY = "intraband.welder.socket.tcp.no.delay";
 
+	public static final String INVOKER_FILTER_CHAIN_ENABLED = "invoker.filter.chain.cache.enabled";
+
+	/**
+	 * @deprecated As of 7.0.0, replaced with {@link #INVOKER_FILTER_CHAIN_ENABLED}
+	 */
+	@Deprecated
 	public static final String INVOKER_FILTER_CHAIN_SIZE = "invoker.filter.chain.cache.size";
 
 	public static final String INVOKER_FILTER_URI_MAX_LENGTH = "invoker.filter.uri.max.length";
@@ -1468,6 +1490,12 @@ public interface PropsKeys {
 
 	public static final String MINIFIER_ENABLED = "minifier.enabled";
 
+	public static final String MINIFIER_INLINE_CONTENT_CACHE_ENABLED = "minifier.inline.content.cache.enabled";
+
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #MINIFIER_INLINE_CONTENT_CACHE_ENABLED}
+	 */
+	@Deprecated
 	public static final String MINIFIER_INLINE_CONTENT_CACHE_SIZE = "minifier.inline.content.cache.size";
 
 	public static final String MINIFIER_INLINE_CONTENT_CACHE_SKIP_CSS = "minifier.inline.content.cache.skip.css";

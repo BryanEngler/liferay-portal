@@ -14,7 +14,6 @@
 
 package com.liferay.document.library.internal.verify;
 
-import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.counter.kernel.service.CounterLocalService;
 import com.liferay.document.library.kernel.exception.DuplicateFileEntryException;
 import com.liferay.document.library.kernel.exception.DuplicateFolderNameException;
@@ -36,11 +35,6 @@ import com.liferay.portal.instances.service.PortalInstancesLocalService;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Criterion;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
-import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.Projection;
-import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.Property;
-import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -54,7 +48,6 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LoggingTimer;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -195,12 +188,48 @@ public class DLServiceVerifyProcess extends VerifyProcess {
 
 				@Override
 				public void performAction(DLFileVersion dlFileVersion) {
-					InputStream inputStream = null;
+					String title = DLUtil.getTitleWithExtension(
+						dlFileVersion.getTitle(), dlFileVersion.getExtension());
 
-					try {
-						inputStream = _dlFileEntryLocalService.getFileAsStream(
-							dlFileVersion.getFileEntryId(),
-							dlFileVersion.getVersion(), false);
+					try (InputStream inputStream =
+							_dlFileEntryLocalService.getFileAsStream(
+								dlFileVersion.getFileEntryId(),
+								dlFileVersion.getVersion(), false)) {
+
+						String mimeType = MimeTypesUtil.getContentType(
+							inputStream, title);
+
+						if (mimeType.equals(dlFileVersion.getMimeType())) {
+							return;
+						}
+
+						dlFileVersion.setMimeType(mimeType);
+
+						_dlFileVersionLocalService.updateDLFileVersion(
+							dlFileVersion);
+
+						try {
+							DLFileEntry dlFileEntry =
+								dlFileVersion.getFileEntry();
+
+							if (Objects.equals(
+									dlFileEntry.getVersion(),
+									dlFileVersion.getVersion())) {
+
+								dlFileEntry.setMimeType(mimeType);
+
+								_dlFileEntryLocalService.updateDLFileEntry(
+									dlFileEntry);
+							}
+						}
+						catch (PortalException pe) {
+							if (_log.isWarnEnabled()) {
+								_log.warn(
+									"Unable to get file entry " +
+										dlFileVersion.getFileEntryId(),
+									pe);
+							}
+						}
 					}
 					catch (Exception e) {
 						if (_log.isWarnEnabled()) {
@@ -225,44 +254,6 @@ public class DLServiceVerifyProcess extends VerifyProcess {
 
 								_log.warn(sb.toString(), e);
 							}
-						}
-
-						return;
-					}
-
-					String title = DLUtil.getTitleWithExtension(
-						dlFileVersion.getTitle(), dlFileVersion.getExtension());
-
-					String mimeType = getMimeType(inputStream, title);
-
-					if (mimeType.equals(dlFileVersion.getMimeType())) {
-						return;
-					}
-
-					dlFileVersion.setMimeType(mimeType);
-
-					_dlFileVersionLocalService.updateDLFileVersion(
-						dlFileVersion);
-
-					try {
-						DLFileEntry dlFileEntry = dlFileVersion.getFileEntry();
-
-						if (Objects.equals(
-								dlFileEntry.getVersion(),
-								dlFileVersion.getVersion())) {
-
-							dlFileEntry.setMimeType(mimeType);
-
-							_dlFileEntryLocalService.updateDLFileEntry(
-								dlFileEntry);
-						}
-					}
-					catch (PortalException pe) {
-						if (_log.isWarnEnabled()) {
-							_log.warn(
-								"Unable to get file entry " +
-									dlFileVersion.getFileEntryId(),
-								pe);
 						}
 					}
 				}
@@ -500,19 +491,6 @@ public class DLServiceVerifyProcess extends VerifyProcess {
 		updateFolderAssets();
 	}
 
-	protected String getMimeType(InputStream inputStream, String title) {
-		String mimeType = null;
-
-		try {
-			mimeType = MimeTypesUtil.getContentType(inputStream, title);
-		}
-		finally {
-			StreamUtil.cleanUp(inputStream);
-		}
-
-		return mimeType;
-	}
-
 	protected void renameDuplicateTitle(DLFileEntry dlFileEntry)
 		throws PortalException {
 
@@ -635,7 +613,7 @@ public class DLServiceVerifyProcess extends VerifyProcess {
 	}
 
 	@Reference(
-		target = "(&(release.bundle.symbolic.name=com.liferay.document.library.service)(release.schema.version=1.0.0))",
+		target = "(&(release.bundle.symbolic.name=com.liferay.document.library.service)(release.schema.version=1.0.1))",
 		unbind = "-"
 	)
 	protected void setRelease(Release release) {
@@ -658,76 +636,34 @@ public class DLServiceVerifyProcess extends VerifyProcess {
 
 	protected void updateFileEntryAssets() throws Exception {
 		try (LoggingTimer loggingTimer = new LoggingTimer()) {
-			ActionableDynamicQuery actionableDynamicQuery =
-				_dlFileEntryLocalService.getActionableDynamicQuery();
-
-			actionableDynamicQuery.setAddCriteriaMethod(
-				new ActionableDynamicQuery.AddCriteriaMethod() {
-
-					@Override
-					public void addCriteria(DynamicQuery dynamicQuery) {
-						Property fileEntryIdProperty =
-							PropertyFactoryUtil.forName("fileEntryId");
-
-						DynamicQuery assetEntryDynamicQuery =
-							DynamicQueryFactoryUtil.forClass(AssetEntry.class);
-
-						Property classNameIdProperty =
-							PropertyFactoryUtil.forName("classNameId");
-
-						long classNameId = _portal.getClassNameId(
-							DLFileEntry.class);
-
-						assetEntryDynamicQuery.add(
-							classNameIdProperty.eq(classNameId));
-
-						Projection projection = ProjectionFactoryUtil.property(
-							"classPK");
-
-						assetEntryDynamicQuery.setProjection(projection);
-
-						dynamicQuery.add(
-							fileEntryIdProperty.notIn(assetEntryDynamicQuery));
-					}
-
-				});
+			List<DLFileEntry> dlFileEntries =
+				_dlFileEntryLocalService.getNoAssetFileEntries();
 
 			if (_log.isDebugEnabled()) {
-				long count = actionableDynamicQuery.performCount();
-
 				_log.debug(
-					"Processing " + count + " file entries with no asset");
+					"Processing " + dlFileEntries.size() +
+						" file entries with no asset");
 			}
 
-			actionableDynamicQuery.setPerformActionMethod(
-				new ActionableDynamicQuery.PerformActionMethod<DLFileEntry>() {
+			for (DLFileEntry dlFileEntry : dlFileEntries) {
+				FileEntry fileEntry = new LiferayFileEntry(dlFileEntry);
+				FileVersion fileVersion = new LiferayFileVersion(
+					dlFileEntry.getFileVersion());
 
-					@Override
-					public void performAction(DLFileEntry dlFileEntry)
-						throws PortalException {
-
-						FileEntry fileEntry = new LiferayFileEntry(dlFileEntry);
-						FileVersion fileVersion = new LiferayFileVersion(
-							dlFileEntry.getFileVersion());
-
-						try {
-							_dlAppHelperLocalService.updateAsset(
-								dlFileEntry.getUserId(), fileEntry, fileVersion,
-								null, null, null);
-						}
-						catch (Exception e) {
-							if (_log.isWarnEnabled()) {
-								_log.warn(
-									"Unable to update asset for file entry " +
-										dlFileEntry.getFileEntryId() + ": " +
-											e.getMessage());
-							}
-						}
+				try {
+					_dlAppHelperLocalService.updateAsset(
+						dlFileEntry.getUserId(), fileEntry, fileVersion, null,
+						null, null);
+				}
+				catch (Exception e) {
+					if (_log.isWarnEnabled()) {
+						_log.warn(
+							"Unable to update asset for file entry " +
+								dlFileEntry.getFileEntryId() + ": " +
+									e.getMessage());
 					}
-
-				});
-
-			actionableDynamicQuery.performActions();
+				}
+			}
 
 			if (_log.isDebugEnabled()) {
 				_log.debug("Assets verified for file entries");
@@ -737,72 +673,30 @@ public class DLServiceVerifyProcess extends VerifyProcess {
 
 	protected void updateFolderAssets() throws Exception {
 		try (LoggingTimer loggingTimer = new LoggingTimer()) {
-			ActionableDynamicQuery actionableDynamicQuery =
-				_dlFolderLocalService.getActionableDynamicQuery();
-
-			actionableDynamicQuery.setAddCriteriaMethod(
-				new ActionableDynamicQuery.AddCriteriaMethod() {
-
-					@Override
-					public void addCriteria(DynamicQuery dynamicQuery) {
-						Property folderIdProperty = PropertyFactoryUtil.forName(
-							"folderId");
-
-						DynamicQuery assetEntryDynamicQuery =
-							DynamicQueryFactoryUtil.forClass(AssetEntry.class);
-
-						Property classNameIdProperty =
-							PropertyFactoryUtil.forName("classNameId");
-
-						long classNameId = _portal.getClassNameId(
-							DLFolder.class);
-
-						assetEntryDynamicQuery.add(
-							classNameIdProperty.eq(classNameId));
-
-						Projection projection = ProjectionFactoryUtil.property(
-							"classPK");
-
-						assetEntryDynamicQuery.setProjection(projection);
-
-						dynamicQuery.add(
-							folderIdProperty.notIn(assetEntryDynamicQuery));
-					}
-
-				});
+			List<DLFolder> dlFolders =
+				_dlFolderLocalService.getNoAssetFolders();
 
 			if (_log.isDebugEnabled()) {
-				long count = actionableDynamicQuery.performCount();
-
-				_log.debug("Processing " + count + " folders with no asset");
+				_log.debug(
+					"Processing " + dlFolders.size() +
+						" folders with no asset");
 			}
 
-			actionableDynamicQuery.setPerformActionMethod(
-				new ActionableDynamicQuery.PerformActionMethod<DLFolder>() {
+			for (DLFolder dlFolder : dlFolders) {
+				Folder folder = new LiferayFolder(dlFolder);
 
-					@Override
-					public void performAction(DLFolder dlFolder)
-						throws PortalException {
-
-						Folder folder = new LiferayFolder(dlFolder);
-
-						try {
-							_dlAppHelperLocalService.updateAsset(
-								dlFolder.getUserId(), folder, null, null, null);
-						}
-						catch (Exception e) {
-							if (_log.isWarnEnabled()) {
-								_log.warn(
-									"Unable to update asset for folder " +
-										dlFolder.getFolderId() + ": " +
-											e.getMessage());
-							}
-						}
+				try {
+					_dlAppHelperLocalService.updateAsset(
+						dlFolder.getUserId(), folder, null, null, null);
+				}
+				catch (Exception e) {
+					if (_log.isWarnEnabled()) {
+						_log.warn(
+							"Unable to update asset for folder " +
+								dlFolder.getFolderId() + ": " + e.getMessage());
 					}
-
-				});
-
-			actionableDynamicQuery.performActions();
+				}
+			}
 
 			if (_log.isDebugEnabled()) {
 				_log.debug("Assets verified for folders");

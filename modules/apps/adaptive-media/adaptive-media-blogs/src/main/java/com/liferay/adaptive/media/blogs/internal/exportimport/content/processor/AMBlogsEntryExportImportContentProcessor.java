@@ -57,7 +57,6 @@ public class AMBlogsEntryExportImportContentProcessor
 			_exportImportContentProcessor.replaceExportContentReferences(
 				portletDataContext, stagedModel, content,
 				exportReferencedContent, escapeContent);
-
 		AMReferenceExporter amReferenceExporter = new AMReferenceExporter(
 			portletDataContext, stagedModel, exportReferencedContent);
 
@@ -70,13 +69,12 @@ public class AMBlogsEntryExportImportContentProcessor
 			String content)
 		throws Exception {
 
-		AMEmbeddedReferenceSet amEmbeddedReferenceSet =
-			_amEmbeddedReferenceSetFactory.create(
-				portletDataContext, stagedModel);
-
 		String replacedContent =
 			_exportImportContentProcessor.replaceImportContentReferences(
 				portletDataContext, stagedModel, content);
+		AMEmbeddedReferenceSet amEmbeddedReferenceSet =
+			_amEmbeddedReferenceSetFactory.create(
+				portletDataContext, stagedModel);
 
 		return _replace(replacedContent, amEmbeddedReferenceSet);
 	}
@@ -132,7 +130,7 @@ public class AMBlogsEntryExportImportContentProcessor
 		}
 		catch (PortalException pe) {
 			if (_log.isWarnEnabled()) {
-				_log.warn(pe);
+				_log.warn(pe, pe);
 			}
 
 			return null;
@@ -155,9 +153,9 @@ public class AMBlogsEntryExportImportContentProcessor
 	private Element _parseNode(String tag) {
 		Document document = _parseDocument(tag);
 
-		Element body = document.body();
+		Element bodyElement = document.body();
 
-		return body.child(0);
+		return bodyElement.child(0);
 	}
 
 	private String _replace(
@@ -167,10 +165,10 @@ public class AMBlogsEntryExportImportContentProcessor
 		Document document = _parseDocument(content);
 
 		Elements elements = document.getElementsByAttribute(
-			_EXPORT_IMPORT_PATH_ATTR);
+			_ATTRIBUTE_NAME_EXPORT_IMPORT_PATH);
 
 		for (Element element : elements) {
-			String path = element.attr(_EXPORT_IMPORT_PATH_ATTR);
+			String path = element.attr(_ATTRIBUTE_NAME_EXPORT_IMPORT_PATH);
 
 			if (!amEmbeddedReferenceSet.containsReference(path)) {
 				continue;
@@ -185,21 +183,24 @@ public class AMBlogsEntryExportImportContentProcessor
 			}
 
 			element.attr("data-fileEntryId", String.valueOf(fileEntryId));
-			element.removeAttr(_EXPORT_IMPORT_PATH_ATTR);
+			element.removeAttr(_ATTRIBUTE_NAME_EXPORT_IMPORT_PATH);
 
 			if ("picture".equals(element.tagName())) {
 				Elements imgElements = element.getElementsByTag("img");
 
-				Element img = imgElements.first();
+				Element imgElement = imgElements.first();
 
 				Element picture = _parseNode(
-					_amImageHTMLTagFactory.create(img.toString(), fileEntry));
+					_amImageHTMLTagFactory.create(
+						imgElement.toString(), fileEntry));
 
 				element.html(picture.html());
 			}
 		}
 
-		return document.body().html();
+		Element bodyElement = document.body();
+
+		return bodyElement.html();
 	}
 
 	private String _replace(
@@ -217,16 +218,17 @@ public class AMBlogsEntryExportImportContentProcessor
 
 			element.removeAttr("data-fileEntryId");
 			element.attr(
-				_EXPORT_IMPORT_PATH_ATTR,
+				_ATTRIBUTE_NAME_EXPORT_IMPORT_PATH,
 				ExportImportPathUtil.getModelPath(fileEntry));
 		}
 
-		Element body = document.body();
+		Element bodyElement = document.body();
 
-		return body.html();
+		return bodyElement.html();
 	}
 
-	private static final String _EXPORT_IMPORT_PATH_ATTR = "export-import-path";
+	private static final String _ATTRIBUTE_NAME_EXPORT_IMPORT_PATH =
+		"export-import-path";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		AMBlogsEntryExportImportContentProcessor.class);

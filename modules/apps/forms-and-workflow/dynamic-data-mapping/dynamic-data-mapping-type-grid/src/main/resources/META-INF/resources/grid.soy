@@ -61,20 +61,16 @@
 						<tr name="{$row.value}">
 							<td>{$row.label}</td>
 							{foreach $column in $columns}
-								{let $checked kind="attributes"}
-									{if $column.value == $value[$row.value]}
-										checked
-									{/if}
-								{/let}
-
-								{let $autoFocus kind="attributes"}
-									{if $focusTarget and ($focusTarget.row == $row.value and $focusTarget.index == index($column))}
-										autoFocus
-									{/if}
-								{/let}
-
 								<td>
-									<input {if $autoFocus}autoFocus{/if} {if $checked}checked{/if} class="form-builder-grid-field" data-row-index="{index($column)}" {if $readOnly}disabled{/if} name="{$row.value}" type="radio" value="{$column.value}" />
+									<input {if $focusTarget and ($focusTarget.row == $row.value and $focusTarget.index == index($column))}autoFocus{/if}
+										{if $column.value == $value[$row.value]}checked{/if}
+										class="form-builder-grid-field"
+										data-row-index="{index($column)}"
+										{if $readOnly}disabled{/if}
+										name="{$row.value}"
+										type="radio"
+										value="{$column.value}"
+									/>
 								</td>
 							{/foreach}
 						</tr>
@@ -97,6 +93,12 @@
 	{foreach $row in $rows}
 		{let $inputValue: $value[$row.value] ? $row.value + ';' + $value[$row.value] : '' /}
 
-		<input class="form-control" {if $dir}dir="{$dir}"{/if} name="{$name}" type="hidden" {if $inputValue}value="{$inputValue}"{/if}/>
+		<input
+			class="form-control"
+			{if $dir}dir="{$dir}"{/if}
+			name="{$name}"
+			type="hidden"
+			{if $inputValue}value="{$inputValue}"{/if}
+		/>
 	{/foreach}
 {/template}

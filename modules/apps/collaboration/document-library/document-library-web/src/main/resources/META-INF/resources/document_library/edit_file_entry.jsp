@@ -121,23 +121,7 @@ else {
 
 String defaultLanguageId = themeDisplay.getLanguageId();
 
-Locale[] availableLocales = {LocaleUtil.fromLanguageId(defaultLanguageId)};
-
-if (fileEntryTypeId > 0) {
-	DLFileEntryType fileEntryType = DLFileEntryTypeLocalServiceUtil.getFileEntryType(fileEntryTypeId);
-
-	defaultLanguageId = fileEntryType.getDefaultLanguageId();
-
-	String[] availableLanguageIds = fileEntryType.getAvailableLanguageIds();
-
-	if (availableLanguageIds.length > 0) {
-		availableLocales = new Locale[availableLanguageIds.length];
-
-		for (int i = 0; i < availableLanguageIds.length; i++) {
-			availableLocales[i] = LocaleUtil.fromLanguageId(availableLanguageIds[i]);
-		}
-	}
-}
+Locale[] availableLocales = DLFileEntryTypeUtil.getDLFileEntryTypeAvailableLocales(fileVersion, dlFileEntryType, dlEditFileEntryDisplayContext, defaultLanguageId);
 
 String headerTitle = LanguageUtil.get(request, "new-document");
 
@@ -241,7 +225,7 @@ if (portletTitleBasedNavigation) {
 			</liferay-ui:error>
 
 			<liferay-ui:error exception="<%= FileExtensionException.class %>">
-				<liferay-ui:message key="document-names-must-end-with-one-of-the-following-extensions" /> <%= StringUtil.merge(PrefsPropsUtil.getStringArray(PropsKeys.DL_FILE_EXTENSIONS, StringPool.COMMA), StringPool.COMMA_AND_SPACE) %>.
+				<liferay-ui:message key="document-names-must-end-with-one-of-the-following-extensions" /> <%= StringUtil.merge(dlConfiguration.fileExtensions(), StringPool.COMMA_AND_SPACE) %>.
 			</liferay-ui:error>
 
 			<liferay-ui:error exception="<%= FileMimeTypeException.class %>">

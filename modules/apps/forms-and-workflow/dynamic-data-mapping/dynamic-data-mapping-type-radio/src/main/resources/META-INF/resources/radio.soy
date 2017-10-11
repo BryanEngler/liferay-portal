@@ -26,12 +26,6 @@
 
 	{let $displayValue: $value ? $value : $predefinedValue /}
 
-	{let $disabled kind="attributes"}
-		{if $readOnly}
-			disabled
-		{/if}
-	{/let}
-
 	<div class="form-group{$visible ? '' : ' hide'}" data-fieldname="{$name}">
 		{if $showLabel}
 			<label class="control-label">
@@ -47,18 +41,20 @@
 
 		<div class="clearfix radio radio-options">
 			{foreach $option in $options}
-				{let $checked kind="attributes"}
-					{if $option.value == $displayValue}
-						checked
-					{/if}
-				{/let}
-
 				{if not $inline}
 					<div class="radio">
 				{/if}
 
 				<label class="{$inline ? ' radio-inline' : ''} radio-option-{$option.value}" for="{$name}_{$option.value}">
-					<input {$checked} class="field" dir="{$dir or ''}" {$disabled} id="{$name}_{$option.value}" name="{$name}" type="radio" value="{$option.value}" />
+					<input {if $option.value == $displayValue}checked{/if}
+						class="field"
+						{if $dir}dir="{$dir}"{/if}
+						{if $readOnly}disabled{/if}
+						id="{$name}_{$option.value}"
+						name="{$name}"
+						type="radio"
+						value="{$option.value}"
+					/>
 					<span> {$option.label}</span>
 				</label>
 

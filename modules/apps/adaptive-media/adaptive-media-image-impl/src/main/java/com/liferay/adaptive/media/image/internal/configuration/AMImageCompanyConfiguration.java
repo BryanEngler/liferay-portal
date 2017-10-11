@@ -27,7 +27,7 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
 @Meta.OCD(
 	id = "com.liferay.adaptive.media.image.internal.configuration.AMImageCompanyConfiguration",
 	localization = "content/Language",
-	name = "adaptive-media-image-configuration-name"
+	name = "adaptive-media-image-company-configuration-name"
 )
 public interface AMImageCompanyConfiguration {
 

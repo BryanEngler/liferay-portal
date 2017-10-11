@@ -82,7 +82,7 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 public interface ParagraphDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
 
-	@DDMFormField(predefinedValue = "", required = true)
+	@DDMFormField(predefinedValue = "")
 	public String dataType();
 
 	@DDMFormField(

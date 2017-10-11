@@ -120,13 +120,16 @@ public class JournalContentSearchDisplayContext {
 		renderURL.setParameter("mvcPath", "/search.jsp");
 		renderURL.setParameter("keywords", getKeywords());
 
+		String originalKeywords = ParamUtil.getString(
+			_request, "keywords", getKeywords());
+
 		_searchContainer = new SearchContainer(
 			_liferayPortletRequest, null, null,
 			SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA,
 			renderURL, null,
 			LanguageUtil.format(
 				_request, "no-pages-were-found-that-matched-the-keywords-x",
-				"<strong>" + HtmlUtil.escape(getKeywords()) + "</strong>",
+				"<strong>" + HtmlUtil.escape(originalKeywords) + "</strong>",
 				false));
 
 		Hits hits = getHits();

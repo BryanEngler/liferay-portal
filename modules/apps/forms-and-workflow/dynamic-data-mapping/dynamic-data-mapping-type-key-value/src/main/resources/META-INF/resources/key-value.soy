@@ -37,7 +37,15 @@
 		{/if}
 
 		<div class="input-group-container {if $tooltip}input-group-default{/if}">
-			<input class="field form-control" {if $dir}dir="{$dir}"{/if} id="{$name}" name="{$name}" placeholder="{$placeholder}" type="text" value="{$value}" />
+			<input
+				class="field form-control"
+				{if $dir}dir="{$dir}"{/if}
+				id="{$name}"
+				name="{$name}"
+				placeholder="{$placeholder}"
+				type="text"
+				value="{$value}"
+			/>
 
 			{if $tooltip}
 				<span class="input-group-addon">
@@ -50,7 +58,14 @@
 
 		<div class="active key-value-editor">
 			<label class="control-label key-value-label">{$strings.keyLabel}:</label>
-			<input class="key-value-input" {if not $keyInputEnabled}readonly{/if} size="{$keyInputSize}" tabindex="-1" type="text" value="{$key}" />
+			<input
+				class="key-value-input"
+				{if not $keyInputEnabled}readonly{/if}
+				size="{$keyInputSize}"
+				tabindex="-1"
+				type="text"
+				value="{$key}"
+			/>
 		</div>
 	</div>
 {/template}

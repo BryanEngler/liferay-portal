@@ -310,7 +310,7 @@
 			{
 				"template_ja": {
 					"mapping": {
-						"analyzer": "kuromoji",
+						"analyzer": "liferay_kuromoji",
 						"index": "analyzed",
 						"store": "true",
 						"term_vector": "with_positions_offsets",

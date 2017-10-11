@@ -203,7 +203,27 @@
 
 				placeHolder.addClass('portlet-boundary');
 
-				portletPosition = column.all('.portlet-boundary').indexOf(placeHolder);
+				var columnPortlets = column.all('.portlet-boundary');
+				var nestedPortlets = column.all('.portlet-nested-portlets');
+
+				portletPosition = columnPortlets.indexOf(placeHolder);
+
+				var nestedPortletOffset = 0;
+
+				nestedPortlets.some(
+					function(nestedPortlet) {
+						var nestedPortletIndex = columnPortlets.indexOf(nestedPortlet);
+
+						if ((nestedPortletIndex !== -1) && (nestedPortletIndex < portletPosition)) {
+							nestedPortletOffset += nestedPortlet.all('.portlet-boundary').size();
+						}
+						else if (nestedPortletIndex >= portletPosition) {
+							return true;
+						}
+					}
+				);
+
+				portletPosition -= nestedPortletOffset;
 
 				currentColumnId = Util.getColumnId(column.attr('id'));
 			}
@@ -529,6 +549,7 @@
 			var namespacedId = options.namespacedId;
 			var portletId = options.portletId;
 			var refreshURL = options.refreshURL;
+			var refreshURLData = options.refreshURLData;
 
 			if (isStatic) {
 				instance.registerStatic(portletId);
@@ -542,6 +563,7 @@
 				portlet.columnPos = columnPos;
 				portlet.isStatic = isStatic;
 				portlet.refreshURL = refreshURL;
+				portlet.refreshURLData = refreshURLData;
 
 				// Functions to run on portlet load
 
@@ -601,7 +623,7 @@
 			portlet = A.one(portlet);
 
 			if (portlet) {
-				data = data || {};
+				data = data || portlet.refreshURLData || {};
 
 				if (!data.hasOwnProperty('portletAjaxable')) {
 					data.portletAjaxable = true;

@@ -15,6 +15,7 @@
 package com.liferay.adaptive.media.image.internal.finder;
 
 import com.liferay.adaptive.media.AMAttribute;
+import com.liferay.adaptive.media.AMDistanceComparator;
 import com.liferay.adaptive.media.AdaptiveMedia;
 import com.liferay.adaptive.media.finder.AMQuery;
 import com.liferay.adaptive.media.image.configuration.AMImageConfigurationEntry;
@@ -23,13 +24,14 @@ import com.liferay.adaptive.media.image.finder.AMImageQueryBuilder.Configuration
 import com.liferay.adaptive.media.image.finder.AMImageQueryBuilder.FuzzySortStep;
 import com.liferay.adaptive.media.image.finder.AMImageQueryBuilder.InitialStep;
 import com.liferay.adaptive.media.image.finder.AMImageQueryBuilder.StrictSortStep;
+import com.liferay.adaptive.media.image.internal.util.comparator.AMAttributeDistanceComparator;
+import com.liferay.adaptive.media.image.internal.util.comparator.AMPropertyDistanceComparator;
 import com.liferay.adaptive.media.image.processor.AMImageProcessor;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.util.Validator;
 
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -89,16 +91,18 @@ public class AMImageQueryBuilderImpl
 		return _amAttributes;
 	}
 
-	public Comparator<AdaptiveMedia<AMImageProcessor>> getComparator() {
+	public AMDistanceComparator<AdaptiveMedia<AMImageProcessor>>
+		getAMDistanceComparator() {
+
 		if (!_sortCriteria.isEmpty()) {
-			return new AMAttributeComparator(_sortCriteria);
+			return new AMAttributeDistanceComparator(_sortCriteria);
 		}
 
 		if (!_amAttributes.isEmpty()) {
 			return new AMPropertyDistanceComparator(_amAttributes);
 		}
 
-		return (v1, v2) -> 0;
+		return (v1, v2) -> 0L;
 	}
 
 	public Predicate<AMImageConfigurationEntry> getConfigurationEntryFilter() {

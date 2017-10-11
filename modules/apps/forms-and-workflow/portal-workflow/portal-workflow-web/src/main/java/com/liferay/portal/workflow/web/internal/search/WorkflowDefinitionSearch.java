@@ -18,7 +18,9 @@ import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.workflow.WorkflowDefinition;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
@@ -32,10 +34,14 @@ public class WorkflowDefinitionSearch
 	public static final String EMPTY_RESULTS_MESSAGE = "no-entries-were-found";
 
 	public static List<String> headerNames = new ArrayList<>();
+	public static Map<String, String> orderableHeaders = new HashMap<>();
 
 	static {
-		headerNames.add("name");
 		headerNames.add("title");
+		headerNames.add("description");
+		headerNames.add("modifiedDate");
+
+		orderableHeaders.put("title", "modifiedDate");
 	}
 
 	public WorkflowDefinitionSearch(
@@ -51,9 +57,12 @@ public class WorkflowDefinitionSearch
 			(WorkflowDefinitionDisplayTerms)getDisplayTerms();
 
 		iteratorURL.setParameter(
-			WorkflowDefinitionDisplayTerms.NAME, displayTerms.getName());
+			WorkflowDefinitionDisplayTerms.DESCRIPTION,
+			displayTerms.getDescription());
 		iteratorURL.setParameter(
 			WorkflowDefinitionDisplayTerms.TITLE, displayTerms.getTitle());
+
+		setOrderableHeaders(orderableHeaders);
 	}
 
 }

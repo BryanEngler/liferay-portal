@@ -25,6 +25,7 @@ import com.liferay.adaptive.media.image.service.AMImageEntryLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.image.ImageTool;
 import com.liferay.portal.kernel.image.ImageToolUtil;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.util.StringUtil;
 
@@ -157,10 +158,85 @@ public class AMImageProcessorImplTest {
 			Mockito.mock(AMImageEntry.class)
 		);
 
+		Mockito.when(
+			_fileVersion.getFileEntry()
+		).thenReturn(
+			_fileEntry
+		);
+
+		Mockito.when(
+			_fileEntry.isCheckedOut()
+		).thenReturn(
+			false
+		);
+
 		_amImageProcessorImpl.process(_fileVersion, StringUtil.randomString());
 
 		Mockito.verify(
 			_imageProcessor, Mockito.never()
+		).scaleImage(
+			Mockito.any(FileVersion.class),
+			Mockito.any(AMImageConfigurationEntry.class)
+		);
+	}
+
+	@Test
+	public void testProcessConfigurationWhenFileEntryIsCheckedOut()
+		throws Exception {
+
+		Mockito.when(
+			_imageProcessor.isMimeTypeSupported(Mockito.anyString())
+		).thenReturn(
+			true
+		);
+
+		Mockito.when(
+			_amImageConfigurationHelper.getAMImageConfigurationEntry(
+				Mockito.anyLong(), Mockito.anyString())
+		).thenReturn(
+			Optional.of(
+				new AMImageConfigurationEntryImpl(
+					StringUtil.randomString(), StringUtil.randomString(),
+					Collections.emptyMap()))
+		);
+
+		Mockito.when(
+			_amImageEntryLocalService.fetchAMImageEntry(
+				Mockito.anyString(), Mockito.anyLong())
+		).thenReturn(
+			Mockito.mock(AMImageEntry.class)
+		);
+
+		Mockito.when(
+			_fileVersion.getFileEntry()
+		).thenReturn(
+			_fileEntry
+		);
+
+		Mockito.when(
+			_fileEntry.isCheckedOut()
+		).thenReturn(
+			true
+		);
+
+		Mockito.when(
+			_imageProcessor.scaleImage(
+				Mockito.any(FileVersion.class),
+				Mockito.any(AMImageConfigurationEntry.class))
+		).thenReturn(
+			Mockito.mock(RenderedImage.class)
+		);
+
+		_amImageProcessorImpl.process(_fileVersion, StringUtil.randomString());
+
+		Mockito.verify(
+			_amImageEntryLocalService
+		).deleteAMImageEntry(
+			Mockito.anyLong()
+		);
+
+		Mockito.verify(
+			_imageProcessor
 		).scaleImage(
 			Mockito.any(FileVersion.class),
 			Mockito.any(AMImageConfigurationEntry.class)
@@ -254,7 +330,7 @@ public class AMImageProcessorImplTest {
 		).addAMImageEntry(
 			Mockito.any(AMImageConfigurationEntry.class),
 			Mockito.any(FileVersion.class), Mockito.anyInt(), Mockito.anyInt(),
-			Mockito.any(InputStream.class), Mockito.anyInt()
+			Mockito.any(InputStream.class), Mockito.anyLong()
 		);
 
 		_amImageProcessorImpl.process(_fileVersion);
@@ -308,7 +384,7 @@ public class AMImageProcessorImplTest {
 		).addAMImageEntry(
 			Mockito.any(AMImageConfigurationEntry.class),
 			Mockito.any(FileVersion.class), Mockito.anyInt(), Mockito.anyInt(),
-			Mockito.any(InputStream.class), Mockito.anyInt()
+			Mockito.any(InputStream.class), Mockito.anyLong()
 		);
 	}
 
@@ -411,7 +487,7 @@ public class AMImageProcessorImplTest {
 		).addAMImageEntry(
 			Mockito.any(AMImageConfigurationEntry.class),
 			Mockito.any(FileVersion.class), Mockito.anyInt(), Mockito.anyInt(),
-			Mockito.any(InputStream.class), Mockito.anyInt()
+			Mockito.any(InputStream.class), Mockito.anyLong()
 		);
 
 		_amImageProcessorImpl.process(_fileVersion);
@@ -445,9 +521,8 @@ public class AMImageProcessorImplTest {
 			_amImageEntryLocalService, Mockito.never()
 		).addAMImageEntry(
 			Mockito.any(AMImageConfigurationEntry.class),
-			Mockito.any(FileVersion.class), Mockito.anyInt(),
-			Mockito.any(Integer.class), Mockito.any(InputStream.class),
-			Mockito.any(Integer.class)
+			Mockito.any(FileVersion.class), Mockito.anyInt(), Mockito.anyInt(),
+			Mockito.any(InputStream.class), Mockito.anyLong()
 		);
 	}
 
@@ -474,6 +549,7 @@ public class AMImageProcessorImplTest {
 		Mockito.mock(AMImageEntryLocalService.class);
 	private final AMImageProcessorImpl _amImageProcessorImpl =
 		new AMImageProcessorImpl();
+	private final FileEntry _fileEntry = Mockito.mock(FileEntry.class);
 	private final FileVersion _fileVersion = Mockito.mock(FileVersion.class);
 	private final ImageProcessor _imageProcessor = Mockito.mock(
 		ImageProcessor.class);

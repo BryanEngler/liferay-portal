@@ -16,8 +16,7 @@ package com.liferay.portal.workflow.web.internal.util;
 
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.workflow.WorkflowDefinition;
-import com.liferay.portal.workflow.web.internal.util.comparator.WorkflowDefinitionActiveComparator;
-import com.liferay.portal.workflow.web.internal.util.comparator.WorkflowDefinitionNameComparator;
+import com.liferay.portal.workflow.web.internal.util.comparator.WorkflowDefinitionModifiedDateComparator;
 import com.liferay.portal.workflow.web.internal.util.comparator.WorkflowDefinitionTitleComparator;
 
 import java.util.Locale;
@@ -39,17 +38,13 @@ public class WorkflowDefinitionPortletUtil {
 
 		OrderByComparator<WorkflowDefinition> orderByComparator = null;
 
-		if (orderByCol.equals("active")) {
-			orderByComparator = new WorkflowDefinitionActiveComparator(
-				orderByAsc, locale);
-		}
-		else if (orderByCol.equals("title")) {
-			orderByComparator = new WorkflowDefinitionTitleComparator(
-				orderByAsc, locale);
+		if (orderByCol.equals("last-modified")) {
+			orderByComparator = new WorkflowDefinitionModifiedDateComparator(
+				orderByAsc);
 		}
 		else {
-			orderByComparator = new WorkflowDefinitionNameComparator(
-				orderByAsc);
+			orderByComparator = new WorkflowDefinitionTitleComparator(
+				orderByAsc, locale);
 		}
 
 		return orderByComparator;

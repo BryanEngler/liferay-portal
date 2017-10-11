@@ -29,7 +29,7 @@
 
 	<div class="form-group{$visible ? '' : ' hide'} liferay-ddm-form-field-text {$tip ? 'liferay-ddm-form-field-has-tip' : ''}" data-fieldname="{$name}">
 		{if $showLabel}
-			<label class="control-label" for="{$name}">
+			<label class="control-label{$readOnly ? ' disabled' : ''}" for="{$name}">
 				{$label}
 
 				{if $required}
@@ -42,11 +42,23 @@
 
 		<div class="input-group-container {if $tooltip}input-group-default{/if}">
 			{if $displayStyle == 'multiline'}
-				<textarea class="field form-control" {if $dir}dir="{$dir}"{/if} id="{$name}" name="{$name}" placeholder="{$placeholder}" {if $readOnly}readonly{/if} >
+				<textarea class="field form-control"
+					{if $dir}dir="{$dir}"{/if} id="{$name}"
+					{if $readOnly}disabled{/if}
+					name="{$name}"
+					placeholder="{$placeholder}">
+
 					{$displayValue}
 				</textarea>
 			{else}
-				<input class="field form-control" {if $dir}dir="{$dir}"{/if} id="{$name}" name="{$name}" placeholder="{$placeholder}" {if $readOnly}readonly{/if} type="text" value="{$displayValue}">
+				<input class="field form-control"
+					{if $dir}dir="{$dir}"{/if}
+					{if $readOnly}disabled{/if}
+					id="{$name}"
+					name="{$name}"
+					placeholder="{$placeholder}"
+					type="text"
+					value="{$displayValue}">
 			{/if}
 
 			{if $tooltip}

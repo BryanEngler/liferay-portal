@@ -26,8 +26,8 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.zip.ZipReader;
@@ -40,6 +40,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author James Hinkey
@@ -177,10 +179,8 @@ public class KBArticleImporter {
 	protected Map<String, String> getMetadata(ZipReader zipReader)
 		throws KBArticleImportException {
 
-		InputStream inputStream = null;
-
-		try {
-			inputStream = zipReader.getEntryAsInputStream(".METADATA");
+		try (InputStream inputStream =
+				zipReader.getEntryAsInputStream(".METADATA")) {
 
 			if (inputStream == null) {
 				return Collections.emptyMap();
@@ -205,9 +205,6 @@ public class KBArticleImporter {
 		}
 		catch (IOException ioe) {
 			throw new KBArticleImportException(ioe);
-		}
-		finally {
-			StreamUtil.cleanUp(inputStream);
 		}
 	}
 
@@ -249,11 +246,17 @@ public class KBArticleImporter {
 						parentIntroKBArticle.getResourcePrimKey();
 				}
 
+				String introFileName = introFile.getName();
+
+				if (prioritizeByNumericalPrefix) {
+					introFileName = _mergeFolderPriority(folder, introFileName);
+				}
+
 				introKBArticle = addKBArticleMarkdown(
 					userId, groupId, parentKBFolderId,
 					sectionResourceClassNameId, sectionResourcePrimaryKey,
-					introFile.getContent(), introFile.getName(), zipReader,
-					metadata, prioritizationStrategy, serviceContext);
+					introFile.getContent(), introFileName, zipReader, metadata,
+					prioritizationStrategy, serviceContext);
 
 				importedKBArticlesCount++;
 
@@ -295,8 +298,28 @@ public class KBArticleImporter {
 		return importedKBArticlesCount;
 	}
 
+	private String _mergeFolderPriority(
+		KBArchive.Folder folder, String introFileName) {
+
+		Matcher folderNameMatcher = _priorityPattern.matcher(folder.getName());
+
+		if (!folderNameMatcher.find()) {
+			return introFileName;
+		}
+
+		String folderPrefix = folderNameMatcher.group(1);
+
+		Matcher introFileNameMatcher = _priorityPattern.matcher(introFileName);
+
+		return introFileNameMatcher.replaceFirst(
+			StringPool.SLASH + folderPrefix + "$2");
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		KBArticleImporter.class);
+
+	private static final Pattern _priorityPattern = Pattern.compile(
+		"/(\\d+)(-[^/]+)$");
 
 	private final KBArchiveFactory _kbArchiveFactory;
 	private final KBArticleLocalService _kbArticleLocalService;

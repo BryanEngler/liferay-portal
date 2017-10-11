@@ -85,11 +85,11 @@ public class AMServlet extends HttpServlet {
 			AdaptiveMedia<?> adaptiveMedia = adaptiveMediaOptional.orElseThrow(
 				AMException.AMNotFound::new);
 
-			Optional<Integer> contentLengthOptional =
+			Optional<Long> contentLengthOptional =
 				adaptiveMedia.getValueOptional(
 					AMAttribute.getContentLengthAMAttribute());
 
-			Integer contentLength = contentLengthOptional.orElse(0);
+			long contentLength = contentLengthOptional.orElse(0L);
 
 			Optional<String> contentTypeOptional =
 				adaptiveMedia.getValueOptional(

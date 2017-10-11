@@ -24,11 +24,11 @@
 	{@param value: string}
 	{@param visible: bool}
 
-	{let $displayValue: $value ? $value : $predefinedValue ? $predefinedValue : '' /}
+	{let $displayValue: isNonnull($value) ? $value : $predefinedValue ? $predefinedValue : '' /}
 
 	<div class="form-group{$visible ? '' : ' hide'} liferay-ddm-form-field-numeric {$tip ? 'liferay-ddm-form-field-has-tip' : ''}" data-fieldname="{$name}">
 		{if $showLabel}
-			<label class="control-label" for="{$name}">
+			<label class="control-label{$readOnly ? ' disabled' : ''}" for="{$name}">
 				{$label}
 
 				{if $required}
@@ -40,7 +40,7 @@
 		{/if}
 
 		<div class="input-group-container {if $tooltip}input-group-default{/if}">
-			<input class="field form-control" {if $dir}dir="{$dir}"{/if} id="{$name}" name="{$name}" placeholder="{$placeholder}" {if $readOnly}readonly{/if} type="text" value="{$displayValue}">
+			<input class="field form-control" {if $dir}dir="{$dir}"{/if} {if $readOnly}disabled{/if} id="{$name}" name="{$name}" placeholder="{$placeholder}" type="text" value="{$displayValue}">
 
 			{if $tooltip}
 				<span class="input-group-addon">

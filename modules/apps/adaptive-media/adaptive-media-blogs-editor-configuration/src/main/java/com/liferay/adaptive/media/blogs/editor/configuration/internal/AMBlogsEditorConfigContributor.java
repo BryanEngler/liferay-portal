@@ -64,7 +64,8 @@ public class AMBlogsEditorConfigContributor
 		String allowedContent = jsonObject.getString("allowedContent");
 
 		if (Validator.isNotNull(allowedContent) &&
-			!allowedContent.equals(Boolean.TRUE.toString())) {
+			!allowedContent.equals(Boolean.TRUE.toString()) &&
+			!allowedContent.contains(_IMG_TAG_RULE)) {
 
 			allowedContent += StringPool.SPACE + _IMG_TAG_RULE;
 

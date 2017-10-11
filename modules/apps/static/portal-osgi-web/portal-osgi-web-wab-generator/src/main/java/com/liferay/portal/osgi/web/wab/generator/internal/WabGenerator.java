@@ -18,7 +18,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.util.HashMapDictionary;
-import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.osgi.web.wab.generator.internal.artifact.ArtifactURLUtil;
 import com.liferay.portal.osgi.web.wab.generator.internal.artifact.WarArtifactUrlTransformer;
 import com.liferay.portal.osgi.web.wab.generator.internal.handler.WabURLStreamHandlerService;
@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -92,11 +93,11 @@ public class WabGenerator
 
 		registerArtifactUrlTransformer(bundleContext);
 
-		final Set<String> requiredForStartupLocations =
-			getRequiredForStartupLocations(
+		final Set<String> requiredForStartupContextPaths =
+			getRequiredForStartupContextPaths(
 				Paths.get(PropsValues.LIFERAY_HOME, "osgi/war"));
 
-		if (requiredForStartupLocations.isEmpty()) {
+		if (requiredForStartupContextPaths.isEmpty()) {
 			return;
 		}
 
@@ -107,19 +108,22 @@ public class WabGenerator
 
 			@Override
 			public Void addingBundle(Bundle bundle, BundleEvent bundleEvent) {
-				String location = StringUtil.toLowerCase(bundle.getLocation());
+				String location = bundle.getLocation();
 
 				if (_log.isDebugEnabled()) {
 					_log.debug("Activated bundle " + location);
 				}
 
-				if (requiredForStartupLocations.remove(location)) {
+				if (requiredForStartupContextPaths.remove(
+						_http.getParameter(
+							location, "Web-ContextPath", false))) {
+
 					if (_log.isDebugEnabled()) {
 						_log.debug(
 							"Bundle " + location + " is required for startup");
 					}
 
-					if (requiredForStartupLocations.isEmpty()) {
+					if (requiredForStartupContextPaths.isEmpty()) {
 						countDownLatch.countDown();
 					}
 				}
@@ -131,14 +135,29 @@ public class WabGenerator
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
-				"Bundles required for startup: " + requiredForStartupLocations);
+				"Bundles required for startup: " +
+					requiredForStartupContextPaths);
 		}
 
 		bundleTracker.open();
 
-		countDownLatch.await();
+		while (true) {
+			if (countDownLatch.await(1, TimeUnit.MINUTES)) {
+				break;
+			}
+
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Waiting on startup required bundles to activate: " +
+						requiredForStartupContextPaths);
+			}
+		}
 
 		bundleTracker.close();
+
+		if (_log.isDebugEnabled()) {
+			_log.debug("All startup required bundles are active");
+		}
 	}
 
 	@Deactivate
@@ -148,10 +167,10 @@ public class WabGenerator
 		_serviceRegistration = null;
 	}
 
-	protected Set<String> getRequiredForStartupLocations(Path path)
+	protected Set<String> getRequiredForStartupContextPaths(Path path)
 		throws IOException {
 
-		Set<String> locations = new HashSet<>();
+		Set<String> contextPaths = new HashSet<>();
 
 		try (DirectoryStream<Path> directoryStream =
 				Files.newDirectoryStream(path.toRealPath(), "*.war")) {
@@ -180,12 +199,14 @@ public class WabGenerator
 
 					URL url = ArtifactURLUtil.transform(uri.toURL());
 
-					locations.add(StringUtil.toLowerCase(url.toString()));
+					contextPaths.add(
+						_http.getParameter(
+							url.toString(), "Web-ContextPath", false));
 				}
 			}
 		}
 
-		return locations;
+		return contextPaths;
 	}
 
 	protected void registerArtifactUrlTransformer(BundleContext bundleContext) {
@@ -241,6 +262,9 @@ public class WabGenerator
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(WabGenerator.class);
+
+	@Reference
+	private Http _http;
 
 	private final AtomicBoolean _portalIsReady = new AtomicBoolean();
 	private ServiceRegistration<ArtifactUrlTransformer> _serviceRegistration;

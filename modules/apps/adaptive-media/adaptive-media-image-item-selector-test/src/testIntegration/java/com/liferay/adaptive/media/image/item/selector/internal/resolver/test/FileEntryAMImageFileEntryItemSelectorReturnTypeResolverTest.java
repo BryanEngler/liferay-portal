@@ -21,10 +21,6 @@ import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.item.selector.ItemSelectorReturnTypeResolver;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.messaging.Destination;
-import com.liferay.portal.kernel.messaging.MessageBus;
-import com.liferay.portal.kernel.messaging.MessageBusUtil;
-import com.liferay.portal.kernel.messaging.SynchronousDestination;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -81,56 +77,26 @@ public class FileEntryAMImageFileEntryItemSelectorReturnTypeResolverTest {
 
 	@Test
 	public void testAddingFileEntryWithImageCreatesMedia() throws Exception {
-		try (DestinationReplacer destinationReplacer = new DestinationReplacer(
-				"liferay/am_processor")) {
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				_group, TestPropsValues.getUserId());
 
-			ServiceContext serviceContext =
-				ServiceContextTestUtil.getServiceContext(
-					_group, TestPropsValues.getUserId());
+		final FileEntry fileEntry = _addImageFileEntry(serviceContext);
 
-			final FileEntry fileEntry = _addImageFileEntry(serviceContext);
+		String value = _resolver.getValue(fileEntry, null);
 
-			String value = _resolver.getValue(fileEntry, null);
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(value);
 
-			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(value);
+		String url = jsonObject.getString("url");
+		long fileEntryId = jsonObject.getLong("fileEntryId");
 
-			String url = jsonObject.getString("url");
-			long fileEntryId = jsonObject.getLong("fileEntryId");
+		Assert.assertEquals(
+			DLUtil.getPreviewURL(
+				fileEntry, fileEntry.getFileVersion(), null, StringPool.BLANK,
+				false, false),
+			url);
 
-			Assert.assertEquals(
-				DLUtil.getPreviewURL(
-					fileEntry, fileEntry.getFileVersion(), null,
-					StringPool.BLANK, false, false),
-				url);
-
-			Assert.assertEquals(fileEntry.getFileEntryId(), fileEntryId);
-		}
-	}
-
-	public class DestinationReplacer implements AutoCloseable {
-
-		public DestinationReplacer(String destinationName) {
-			MessageBus messageBus = MessageBusUtil.getMessageBus();
-
-			_destination = messageBus.getDestination(destinationName);
-
-			SynchronousDestination synchronousDestination =
-				new SynchronousDestination();
-
-			synchronousDestination.setName(destinationName);
-
-			messageBus.replace(synchronousDestination);
-		}
-
-		@Override
-		public void close() throws Exception {
-			MessageBus messageBus = MessageBusUtil.getMessageBus();
-
-			messageBus.replace(_destination);
-		}
-
-		private final Destination _destination;
-
+		Assert.assertEquals(fileEntry.getFileEntryId(), fileEntryId);
 	}
 
 	private FileEntry _addImageFileEntry(ServiceContext serviceContext)

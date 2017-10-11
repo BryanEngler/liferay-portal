@@ -15,7 +15,7 @@
 package com.liferay.adaptive.media.image.internal.configuration;
 
 import com.liferay.adaptive.media.image.configuration.AMImageConfigurationEntry;
-import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.Http;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,48 +24,43 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * @author Adolfo Pérez
  */
-@PrepareForTest(HttpUtil.class)
-@RunWith(PowerMockRunner.class)
-public class AMImageConfigurationEntryParserTest {
+public class AMImageConfigurationEntryParserTest extends PowerMockito {
 
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		_http = mock(Http.class);
 
-		PowerMockito.mockStatic(HttpUtil.class);
+		_amImageConfigurationEntryParser = new AMImageConfigurationEntryParser(
+			_http);
 
-		Mockito.when(
-			HttpUtil.encodeURL(Mockito.eq("desc"))
+		when(
+			_http.encodeURL(Mockito.eq("desc"))
 		).thenReturn(
 			"desc"
 		);
 
-		Mockito.when(
-			HttpUtil.decodeURL(Mockito.eq("desc"))
+		when(
+			_http.decodeURL(Mockito.eq("desc"))
 		).thenReturn(
 			"desc"
 		);
 
-		Mockito.when(
-			HttpUtil.encodeURL(Mockito.eq("test"))
+		when(
+			_http.encodeURL(Mockito.eq("test"))
 		).thenReturn(
 			"test"
 		);
 
-		Mockito.when(
-			HttpUtil.decodeURL(Mockito.eq("test"))
+		when(
+			_http.decodeURL(Mockito.eq("test"))
 		).thenReturn(
 			"test"
 		);
@@ -120,14 +115,14 @@ public class AMImageConfigurationEntryParserTest {
 
 	@Test
 	public void testEncodedDescription() {
-		Mockito.when(
-			HttpUtil.encodeURL(Mockito.eq("desc:;"))
+		when(
+			_http.encodeURL(Mockito.eq("desc:;"))
 		).thenReturn(
 			"desc%3A%3B"
 		);
 
-		Mockito.when(
-			HttpUtil.decodeURL(Mockito.eq("desc%3A%3B"))
+		when(
+			_http.decodeURL(Mockito.eq("desc%3A%3B"))
 		).thenReturn(
 			"desc:;"
 		);
@@ -151,14 +146,14 @@ public class AMImageConfigurationEntryParserTest {
 
 	@Test
 	public void testEncodedName() {
-		Mockito.when(
-			HttpUtil.encodeURL(Mockito.eq("test:;"))
+		when(
+			_http.encodeURL(Mockito.eq("test:;"))
 		).thenReturn(
 			"test%3A%3B"
 		);
 
-		Mockito.when(
-			HttpUtil.decodeURL(Mockito.eq("test%3A%3B"))
+		when(
+			_http.decodeURL(Mockito.eq("test%3A%3B"))
 		).thenReturn(
 			"test:;"
 		);
@@ -378,8 +373,7 @@ public class AMImageConfigurationEntryParserTest {
 		Assert.assertEquals(properties.toString(), 2, properties.size());
 	}
 
-	private final AMImageConfigurationEntryParser
-		_amImageConfigurationEntryParser =
-			new AMImageConfigurationEntryParser();
+	private AMImageConfigurationEntryParser _amImageConfigurationEntryParser;
+	private Http _http;
 
 }

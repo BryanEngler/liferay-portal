@@ -51,6 +51,32 @@ public class LiferayTypeMappingsJapaneseTest {
 	}
 
 	@Test
+	public void testNoSpaceSentenceSearch1() throws Exception {
+		String content1 = "すももももももものうち";
+
+		index(content1);
+
+		assertSearch("すもも", content1);
+		assertSearch("もも", content1);
+
+		assertNoHits("も");
+
+	}
+
+	@Test
+	public void testNoSpaceSentenceSearch2() throws Exception {
+		String content1 = "東京特許許可局";
+
+		index(content1);
+
+		assertSearch("東京", content1);
+		assertSearch("特許", content1);
+		assertSearch("許可", content1);
+		assertSearch("許可局",content1);
+
+	}
+
+	@Test
 	public void testSearch1() throws Exception {
 		String content1 = "作戦大成功";
 		String content2 = "新規作戦";

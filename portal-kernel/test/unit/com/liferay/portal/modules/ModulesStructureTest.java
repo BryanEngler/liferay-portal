@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -172,6 +173,19 @@ public class ModulesStructureTest {
 		Files.walkFileTree(
 			_modulesDirPath,
 			new SimpleFileVisitor<Path>() {
+
+				@Override
+				public FileVisitResult preVisitDirectory(
+					Path dirPath, BasicFileAttributes basicFileAttributes) {
+
+					String dirName = String.valueOf(dirPath.getFileName());
+
+					if (dirName.equals("node_modules")) {
+						return FileVisitResult.SKIP_SUBTREE;
+					}
+
+					return FileVisitResult.CONTINUE;
+				}
 
 				@Override
 				public FileVisitResult visitFile(
@@ -320,8 +334,12 @@ public class ModulesStructureTest {
 
 							if (Files.exists(path)) {
 								Assert.fail(
-									"Please rename " + path + " to " +
-										path.resolveSibling(entry.getValue()));
+									StringBundler.concat(
+										"Please rename ", String.valueOf(path),
+										" to ",
+										String.valueOf(
+											path.resolveSibling(
+												entry.getValue()))));
 							}
 						}
 					}
@@ -334,6 +352,8 @@ public class ModulesStructureTest {
 
 	@Test
 	public void testScanMarkerFiles() throws IOException {
+		final Set<String> fileNames = new HashSet<>();
+
 		Files.walkFileTree(
 			_modulesDirPath,
 			new SimpleFileVisitor<Path>() {
@@ -345,8 +365,8 @@ public class ModulesStructureTest {
 
 					String fileName = String.valueOf(path.getFileName());
 
-					if (StringUtil.startsWith(fileName, ".lfrbuild-") ||
-						StringUtil.startsWith(fileName, ".lfrrelease-")) {
+					if (StringUtil.startsWith(fileName, ".lfrbuild-")) {
+						fileNames.add(fileName);
 
 						Assert.assertEquals(
 							"Marker file " + path + " must be empty", 0,
@@ -357,6 +377,18 @@ public class ModulesStructureTest {
 				}
 
 			});
+
+		Path readmePath = _modulesDirPath.resolve("README.markdown");
+
+		String readme = ModulesStructureTestUtil.read(readmePath);
+
+		for (String fileName : fileNames) {
+			Assert.assertTrue(
+				StringBundler.concat(
+					"Please document the \"", fileName, "\" marker file in ",
+					String.valueOf(readmePath)),
+				readme.contains("`" + fileName + "`"));
+		}
 	}
 
 	private void _addGradlePluginNames(
@@ -375,9 +407,9 @@ public class ModulesStructureTest {
 				line = StringUtil.trim(line);
 
 				for (String pluginIdSuffix : pluginIdSuffixes) {
-					String pluginLine =
-						"apply plugin: \"" + pluginIdPrefix + pluginIdSuffix +
-							"\"";
+					String pluginLine = StringBundler.concat(
+						"apply plugin: \"", pluginIdPrefix, pluginIdSuffix,
+						"\"");
 
 					if (line.equals(pluginLine)) {
 						pluginNames.add(pluginNamePrefix + pluginIdSuffix);
@@ -715,7 +747,8 @@ public class ModulesStructureTest {
 				String name = line.substring(2, end);
 
 				Assert.assertTrue(
-					"Incorrect \"" + line + "\" in " + path,
+					StringBundler.concat(
+						"Incorrect \"", line, "\" in ", String.valueOf(path)),
 					Files.exists(dirPath.resolve(name)));
 			}
 		}
@@ -776,8 +809,10 @@ public class ModulesStructureTest {
 			String line = lines[i];
 
 			Assert.assertEquals(
-				"Forbidden leading or trailing whitespaces in line " + (i + 1) +
-					" of " + gradlePropertiesPath,
+				StringBundler.concat(
+					"Forbidden leading or trailing whitespaces in line ",
+					String.valueOf(i + 1), " of ",
+					String.valueOf(gradlePropertiesPath)),
 				line.trim(), line);
 
 			Assert.assertFalse(
@@ -787,8 +822,9 @@ public class ModulesStructureTest {
 			int pos = line.indexOf(CharPool.EQUAL);
 
 			Assert.assertTrue(
-				"Incorrect line \"" + line + "\" in " +
-					gradlePropertiesPath,
+				StringBundler.concat(
+					"Incorrect line \"", line, "\" in ",
+					String.valueOf(gradlePropertiesPath)),
 				pos != -1);
 
 			String key = line.substring(0, pos);
@@ -870,14 +906,15 @@ public class ModulesStructureTest {
 		}
 
 		_testGitRepoProjectGroup(
-			"Property \"" + _GIT_REPO_GRADLE_PROJECT_GROUP_KEY + "\" in " +
-				gradlePropertiesPath,
+			StringBundler.concat(
+				"Property \"", _GIT_REPO_GRADLE_PROJECT_GROUP_KEY, "\" in ",
+				String.valueOf(gradlePropertiesPath)),
 			projectGroup);
 
 		Assert.assertEquals(
-			"Incorrect \"" + _GIT_REPO_GRADLE_PROJECT_PATH_PREFIX_KEY +
-				"\" in " +
-					gradlePropertiesPath,
+			StringBundler.concat(
+				"Incorrect \"", _GIT_REPO_GRADLE_PROJECT_PATH_PREFIX_KEY,
+				"\" in ", String.valueOf(gradlePropertiesPath)),
 			_getProjectPathPrefix(dirPath), projectPathPrefix);
 
 		if (privateRepo) {
@@ -938,8 +975,9 @@ public class ModulesStructureTest {
 
 		for (String prefix : _GIT_REPO_GRADLE_PROJECT_GROUP_RESERVED_PREFIXES) {
 			Assert.assertFalse(
-				messagePrefix + " cannot start with the reserved prefix \"" +
-					prefix + "\"",
+				StringBundler.concat(
+					messagePrefix, " cannot start with the reserved prefix \"",
+					prefix, "\""),
 				StringUtil.startsWith(projectGroup, prefix));
 		}
 
@@ -947,8 +985,9 @@ public class ModulesStructureTest {
 			projectGroup);
 
 		Assert.assertTrue(
-			messagePrefix + " must match pattern \"" +
-				_gitRepoGradleProjectGroupPattern.pattern() + "\"",
+			StringBundler.concat(
+				messagePrefix, " must match pattern \"",
+				_gitRepoGradleProjectGroupPattern.pattern(), "\""),
 			matcher.matches());
 	}
 
@@ -960,7 +999,9 @@ public class ModulesStructureTest {
 
 		if (Validator.isNotNull(expectedValue) && Validator.isNotNull(value)) {
 			Assert.assertEquals(
-				"Incorrect \"" + key + "\" in " + gradlePropertiesPath,
+				StringBundler.concat(
+					"Incorrect \"", key, "\" in ",
+					String.valueOf(gradlePropertiesPath)),
 				expectedValue, value);
 		}
 	}
@@ -969,8 +1010,9 @@ public class ModulesStructureTest {
 		String content = ModulesStructureTestUtil.read(path);
 
 		Assert.assertFalse(
-			"Incorrect repository URL in " + path + ", please use " +
-				_REPOSITORY_URL + " instead",
+			StringBundler.concat(
+				"Incorrect repository URL in ", String.valueOf(path),
+				", please use ", _REPOSITORY_URL, " instead"),
 			content.contains("plugins.gradle.org/m2"));
 
 		Assert.assertFalse(

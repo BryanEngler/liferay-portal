@@ -1630,8 +1630,8 @@ public class DDMStructureLocalServiceImpl
 
 		// Structure layout
 
-		// Explicitly pop uuid from service context to ensure no lingering
-		// values remain there from other components eg.: Journal
+		// Explicitly pop UUID from service context to ensure no lingering
+		// values remain there from other components (e.g. Journal)
 
 		serviceContext.getUuid();
 

@@ -164,7 +164,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Categories" />
 		</execute>
 
@@ -267,7 +269,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Categories" />
 		</execute>
 
@@ -346,14 +350,6 @@
 		<execute macro="WebContentSearchPortlet#viewResultsEntry">
 			<var name="webContentContent" value="WC WebContent Content" />
 			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="&quot;Category Name1&quot;" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm" value="&quot;Category Name1&quot;" />
 		</execute>
 
 		<execute macro="WebContentSearchPortlet#search">
@@ -513,22 +509,6 @@
 		<execute macro="WebContentSearchPortlet#viewNoResults">
 			<var name="webContentSearchTerm" value="&quot;Content1&quot;" />
 		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="&quot;WC WebContent Title1&quot;" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm" value="&quot;WC WebContent Title1&quot;" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="&quot;WC WebContent Content1&quot;" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm" value="&quot;WC WebContent Content1&quot;" />
-		</execute>
 	</command>
 
 	<command name="SearchWebContentTag" priority="5">
@@ -683,14 +663,6 @@
 		<execute macro="WebContentSearchPortlet#viewResultsEntry">
 			<var name="webContentContent" value="WC WebContent Content" />
 			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="&quot;tag name1&quot;" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm" value="&quot;tag name1&quot;" />
 		</execute>
 
 		<execute macro="WebContentSearchPortlet#search">

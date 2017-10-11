@@ -40,6 +40,7 @@ import com.liferay.portal.kernel.util.SocketUtil;
 import com.liferay.portal.kernel.util.SocketUtil.ServerSocketConfigurator;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -1285,11 +1286,13 @@ public class LocalProcessExecutorTest {
 
 			String errLog = errByteArrayOutputStream.toString();
 
-			Assert.assertTrue(
-				errLog.startsWith(
-					"[" + returnWithoutExitProcessCallable.toString() + "]" +
-						new ProcessException(
-							DummyExceptionProcessCallable.class.getName())));
+			String s = StringBundler.concat(
+				"[", returnWithoutExitProcessCallable.toString(), "]",
+				String.valueOf(
+					new ProcessException(
+						DummyExceptionProcessCallable.class.getName())));
+
+			Assert.assertTrue(errLog.startsWith(s));
 		}
 
 		Future<String> processFuture =
@@ -1308,6 +1311,20 @@ public class LocalProcessExecutorTest {
 	}
 
 	@Test
+	public void testProcessConfigDeprecatedMethods() {
+		ProcessConfig processConfig = _createJPDAProcessConfig(_JPDA_OPTIONS1);
+
+		Assert.assertArrayEquals(
+			StringUtil.split(
+				processConfig.getBootstrapClassPath(), File.pathSeparatorChar),
+			processConfig.getBootstrapClassPathElements());
+		Assert.assertArrayEquals(
+			StringUtil.split(
+				processConfig.getRuntimeClassPath(), File.pathSeparatorChar),
+			processConfig.getRuntimeClassPathElements());
+	}
+
+	@Test
 	public void testPropertyPassing() throws Exception {
 		Builder builder = new Builder();
 
@@ -1316,7 +1333,8 @@ public class LocalProcessExecutorTest {
 		String propertyKey = "test-key";
 		String propertyValue = "test-value";
 
-		arguments.add("-D" + propertyKey + "=" + propertyValue);
+		arguments.add(
+			StringBundler.concat("-D", propertyKey, "=", propertyValue));
 
 		builder.setArguments(arguments);
 
