@@ -4,7 +4,35 @@
 			"keyword_lowercase": {
 				"filter": "lowercase",
 				"tokenizer": "keyword"
-			}
-		}
+			},
+            "liferay_kuromoji": {
+                "type": "custom",
+                "tokenizer": "liferay_kuromoji_tokenizer",
+                "char_filter": [
+                  "html_strip",
+                  "kuromoji_iteration_mark"
+                ],
+                "filter": [
+                  "lowercase",
+                  "cjk_width",
+                  "kuromoji_baseform",
+                  "kuromoji_part_of_speech",
+                  "readingform",
+                  "kuromoji_stemmer"
+                ]
+            }
+		},
+        "filter": {
+          "readingform": {
+            "type": "kuromoji_readingform",
+            "use_romaji": "false"
+          }
+        },
+        "tokenizer": {
+          "liferay_kuromoji_tokenizer": {
+            "type": "kuromoji_tokenizer",
+            "mode": "search"
+          }
+        }
 	}
 }
