@@ -30,84 +30,117 @@ import com.liferay.portal.search.elasticsearch.connection.OperationMode;
 )
 public interface ElasticsearchConfiguration {
 
-	@Meta.AD(deflt = "LiferayElasticsearchCluster", required = false)
+	@Meta.AD(
+		deflt = "LiferayElasticsearchCluster", name = "cluster-name",
+		required = false
+	)
 	public String clusterName();
 
-	@Meta.AD(deflt = "EMBEDDED", required = false)
+	@Meta.AD(deflt = "EMBEDDED", name = "operation-mode", required = false)
 	public OperationMode operationMode();
 
 	@Meta.AD(
 		deflt = "liferay-", description = "index-name-prefix-help",
-		required = false
+		name = "index-name-prefix", required = false
 	)
 	public String indexNamePrefix();
 
-	@Meta.AD(deflt = "false", required = false)
+	@Meta.AD(deflt = "false", name = "bootstrap-mlockall", required = false)
 	public boolean bootstrapMlockAll();
 
 	@Meta.AD(
 		deflt = "true", description = "log-exceptions-only-help",
-		required = false
+		name = "log-exceptions-only", required = false
 	)
 	public boolean logExceptionsOnly();
 
-	@Meta.AD(deflt = "5", required = false)
+	@Meta.AD(deflt = "5", name = "retry-on-conflict", required = false)
 	public int retryOnConflict();
 
-	@Meta.AD(deflt = "9300-9400", required = false)
+	@Meta.AD(
+		deflt = "9300-9400", name = "discovery-zen-ping-unicast-hosts-port",
+		required = false
+	)
 	public String discoveryZenPingUnicastHostsPort();
 
-	@Meta.AD(deflt = "", required = false)
+	@Meta.AD(deflt = "", name = "network-host", required = false)
 	public String networkHost();
 
-	@Meta.AD(deflt = "", required = false)
+	@Meta.AD(deflt = "", name = "network-bind-host", required = false)
 	public String networkBindHost();
 
-	@Meta.AD(deflt = "", required = false)
+	@Meta.AD(deflt = "", name = "network-publish-host", required = false)
 	public String networkPublishHost();
 
-	@Meta.AD(deflt = "", required = false)
+	@Meta.AD(deflt = "", name = "transport-tcp-port", required = false)
 	public String transportTcpPort();
 
-	@Meta.AD(deflt = "localhost:9300", required = false)
+	@Meta.AD(
+		deflt = "localhost:9300", name = "transport-addresses", required = false
+	)
 	public String[] transportAddresses();
 
-	@Meta.AD(deflt = "true", required = false)
+	@Meta.AD(deflt = "true", name = "client-transport-sniff", required = false)
 	public boolean clientTransportSniff();
 
-	@Meta.AD(deflt = "false", required = false)
+	@Meta.AD(
+		deflt = "false", name = "client-transport-ignore-cluster-name",
+		required = false
+	)
 	public boolean clientTransportIgnoreClusterName();
 
-	@Meta.AD(deflt = "5s", required = false)
+	@Meta.AD(
+		deflt = "5s", name = "client-transport-nodes-sampler-interval",
+		required = false
+	)
 	public String clientTransportNodesSamplerInterval();
 
-	@Meta.AD(deflt = "true", required = false)
+	@Meta.AD(deflt = "true", name = "http-enabled", required = false)
 	public boolean httpEnabled();
 
-	@Meta.AD(deflt = "true", required = false)
+	@Meta.AD(deflt = "true", name = "http-cors-enabled", required = false)
 	public boolean httpCORSEnabled();
 
-	@Meta.AD(deflt = "/https?:\\/\\/localhost(:[0-9]+)?/", required = false)
+	@Meta.AD(
+		deflt = "/https?:\\/\\/localhost(:[0-9]+)?/",
+		name = "http-cors-allow-origin", required = false
+	)
 	public String httpCORSAllowOrigin();
 
-	@Meta.AD(description = "http-cors-configurations-help", required = false)
+	@Meta.AD(
+		description = "http-cors-configurations-help",
+		name = "http-cors-configurations", required = false
+	)
 	public String httpCORSConfigurations();
 
-	@Meta.AD(description = "additional-configurations-help", required = false)
+	@Meta.AD(
+		description = "additional-configurations-help",
+		name = "additional-configurations", required = false
+	)
 	public String additionalConfigurations();
 
 	@Meta.AD(
-		description = "additional-index-configurations-help", required = false
+		description = "additional-index-configurations-help",
+		name = "additional-index-configurations", required = false
 	)
 	public String additionalIndexConfigurations();
 
-	@Meta.AD(description = "additional-type-mappings-help", required = false)
+	@Meta.AD(
+		description = "additional-type-mappings-help",
+		name = "additional-type-mappings", required = false
+	)
 	public String additionalTypeMappings();
 
-	@Meta.AD(description = "override-type-mappings-help", required = false)
+	@Meta.AD(
+		description = "override-type-mappings-help",
+		name = "override-type-mappings", required = false
+	)
 	public String overrideTypeMappings();
 
-	@Meta.AD(deflt = "true", description = "sync-search", required = false)
+	@Meta.AD(
+		deflt = "true", description = "sync-search-help", name = "sync-search",
+		required = false
+	)
 	public boolean syncSearch();
 
 }
