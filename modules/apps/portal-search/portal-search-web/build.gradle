@@ -17,6 +17,7 @@ dependencies {
 	compileOnly project(":apps:frontend-taglib:frontend-taglib-clay")
 	compileOnly project(":apps:frontend-taglib:frontend-taglib-soy")
 	compileOnly project(":apps:petra:petra-xml")
+	compileOnly project(":apps:portal-search:portal-search")
 	compileOnly project(":apps:portal-search:portal-search-api")
 	compileOnly project(":apps:portal-search:portal-search-web-api")
 	compileOnly project(":apps:portal:portal-instance-lifecycle-api")
@@ -35,5 +36,4 @@ dependencies {
 	testCompile group: "org.jodd", name: "jodd-json", version: "3.6.4"
 	testCompile group: "org.slf4j", name: "slf4j-api", version: "1.7.7"
 	testCompile group: "org.springframework", name: "spring-web", version: "4.1.9.RELEASE"
-	testCompile project(":apps:portal-search:portal-search")
 }
