@@ -20,7 +20,10 @@ import com.liferay.portal.kernel.search.facet.MultiValueFacet;
 
 /**
  * @author André de Oliveira
+ * @deprecated As of 1.4.0, replaced by {@link
+ *             com.liferay.portal.search.facet.user.UserFacetFactory}
  */
+@Deprecated
 public class UserFacetFactory {
 
 	public MultiValueFacet newInstance(SearchContext searchContext) {
