@@ -15,10 +15,10 @@
 package com.liferay.portal.search.web.internal.category.facet.builder;
 
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.facet.Facet;
-import com.liferay.portal.kernel.search.facet.MultiValueFacet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
-import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.search.facet.Facet;
+import com.liferay.portal.search.facet.category.AssetCategoriesFacetFactory;
 
 /**
  * @author Lino Alves
@@ -32,21 +32,15 @@ public class AssetCategoriesFacetBuilder {
 	}
 
 	public Facet build() {
-		MultiValueFacet multiValueFacet =
-			_assetCategoriesFacetFactory.newInstance(_searchContext);
+		Facet facet = _assetCategoriesFacetFactory.newInstance(_searchContext);
 
-		multiValueFacet.setFacetConfiguration(
-			buildFacetConfiguration(multiValueFacet));
+		facet.setFacetConfiguration(buildFacetConfiguration(facet));
 
 		if (_selectedCategoryIds != null) {
-			multiValueFacet.setValues(_selectedCategoryIds);
-
-			_searchContext.setAttribute(
-				multiValueFacet.getFieldName(),
-				StringUtil.merge(_selectedCategoryIds));
+			facet.select(ArrayUtil.toStringArray(_selectedCategoryIds));
 		}
 
-		return multiValueFacet;
+		return facet;
 	}
 
 	public void setFrequencyThreshold(int frequencyThreshold) {
