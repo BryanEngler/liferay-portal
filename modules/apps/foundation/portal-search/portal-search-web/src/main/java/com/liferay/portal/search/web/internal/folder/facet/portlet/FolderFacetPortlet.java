@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.search.facet.folder.FolderFacetFactory;
 import com.liferay.portal.search.web.internal.facet.display.builder.FolderSearchFacetDisplayBuilder;
 import com.liferay.portal.search.web.internal.facet.display.context.FolderSearchFacetDisplayContext;
 import com.liferay.portal.search.web.internal.facet.display.context.FolderTitleLookup;
@@ -182,7 +183,8 @@ public class FolderFacetPortlet
 		return facet.getFieldName();
 	}
 
-	protected FolderFacetFactory folderFacetFactory = new FolderFacetFactory();
+	@Reference
+	protected FolderFacetFactory folderFacetFactory;
 
 	@Reference
 	protected Portal portal;
