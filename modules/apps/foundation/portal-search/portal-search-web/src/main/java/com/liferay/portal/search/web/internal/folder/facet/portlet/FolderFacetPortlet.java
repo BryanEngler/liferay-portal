@@ -15,7 +15,6 @@
 package com.liferay.portal.search.web.internal.folder.facet.portlet;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -172,13 +171,13 @@ public class FolderFacetPortlet
 			parameterValues -> ListUtil.toLongArray(
 				Arrays.asList(parameterValues), GetterUtil::getLong));
 
-		foldersOptional.ifPresent(folderFacetBuilder::setSelectedFolders);
+		foldersOptional.ifPresent(folderFacetBuilder::setSelectedFolderIds);
 
 		return folderFacetBuilder.build();
 	}
 
 	protected String getFieldName() {
-		Facet facet = folderFacetFactory.newInstance(new SearchContext());
+		Facet facet = folderFacetFactory.newInstance(null);
 
 		return facet.getFieldName();
 	}
