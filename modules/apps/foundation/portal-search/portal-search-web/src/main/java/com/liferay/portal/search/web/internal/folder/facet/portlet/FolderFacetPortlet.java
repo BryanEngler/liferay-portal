@@ -176,7 +176,7 @@ public class FolderFacetPortlet
 			parameterValues -> ListUtil.toLongArray(
 				Arrays.asList(parameterValues), GetterUtil::getLong));
 
-		foldersOptional.ifPresent(folderFacetBuilder::setSelectedFolders);
+		foldersOptional.ifPresent(folderFacetBuilder::setSelectedFolderIds);
 
 		return folderFacetBuilder.build();
 	}
