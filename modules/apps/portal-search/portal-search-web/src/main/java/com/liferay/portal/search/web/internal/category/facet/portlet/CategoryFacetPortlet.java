@@ -19,9 +19,9 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.search.facet.category.AssetCategoriesFacetFactory;
 import com.liferay.portal.search.web.internal.category.facet.builder.AssetCategoriesFacetConfiguration;
 import com.liferay.portal.search.web.internal.category.facet.builder.AssetCategoriesFacetConfigurationImpl;
-import com.liferay.portal.search.web.internal.category.facet.builder.AssetCategoriesFacetFactory;
 import com.liferay.portal.search.web.internal.category.facet.constants.CategoryFacetPortletKeys;
 import com.liferay.portal.search.web.internal.facet.display.builder.AssetCategoriesSearchFacetDisplayBuilder;
 import com.liferay.portal.search.web.internal.facet.display.builder.AssetCategoryPermissionCheckerImpl;
@@ -158,8 +158,8 @@ public class CategoryFacetPortlet extends MVCPortlet {
 		return facet.getFieldName();
 	}
 
-	protected AssetCategoriesFacetFactory assetCategoriesFacetFactory =
-		new AssetCategoriesFacetFactory();
+	@Reference
+	protected AssetCategoriesFacetFactory assetCategoriesFacetFactory;
 
 	@Reference
 	protected AssetCategoryLocalService assetCategoryLocalService;

@@ -16,12 +16,11 @@ package com.liferay.portal.search.web.internal.facet;
 
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.facet.MultiValueFacet;
-import com.liferay.portal.kernel.search.facet.MultiValueFacetFactory;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.search.facet.util.FacetFactory;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.search.facet.Facet;
+import com.liferay.portal.search.facet.category.AssetCategoriesFacetFactory;
 import com.liferay.portal.search.web.facet.BaseJSPSearchFacet;
 import com.liferay.portal.search.web.facet.SearchFacet;
 
@@ -74,12 +73,14 @@ public class AssetCategoriesSearchFacet extends BaseJSPSearchFacet {
 
 	@Override
 	public String getFacetClassName() {
-		return MultiValueFacet.class.getName();
+		return assetCategoriesFacetFactory.getFacetClassName();
 	}
 
 	@Override
 	public String getFieldName() {
-		return Field.ASSET_CATEGORY_IDS;
+		Facet facet = assetCategoriesFacetFactory.newInstance(null);
+
+		return facet.getFieldName();
 	}
 
 	@Override
@@ -124,10 +125,10 @@ public class AssetCategoriesSearchFacet extends BaseJSPSearchFacet {
 
 	@Override
 	protected FacetFactory getFacetFactory() {
-		return multiValueFacetFactory;
+		return assetCategoriesFacetFactory;
 	}
 
 	@Reference
-	protected MultiValueFacetFactory multiValueFacetFactory;
+	protected AssetCategoriesFacetFactory assetCategoriesFacetFactory;
 
 }
