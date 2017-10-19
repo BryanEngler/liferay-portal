@@ -15,7 +15,6 @@
 package com.liferay.portal.search.web.internal.site.facet.portlet;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -175,7 +174,7 @@ public class SiteFacetPortlet
 	}
 
 	protected String getFieldName() {
-		Facet facet = scopeFacetFactory.newInstance(new SearchContext());
+		Facet facet = scopeFacetFactory.newInstance(null);
 
 		return facet.getFieldName();
 	}
