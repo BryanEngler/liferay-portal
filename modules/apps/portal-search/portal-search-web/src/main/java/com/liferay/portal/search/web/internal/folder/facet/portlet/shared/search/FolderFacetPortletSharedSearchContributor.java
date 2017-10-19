@@ -17,9 +17,9 @@ package com.liferay.portal.search.web.internal.folder.facet.portlet.shared.searc
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.search.facet.folder.FolderFacetFactory;
 import com.liferay.portal.search.web.internal.folder.facet.constants.FolderFacetPortletKeys;
 import com.liferay.portal.search.web.internal.folder.facet.portlet.FolderFacetBuilder;
-import com.liferay.portal.search.web.internal.folder.facet.portlet.FolderFacetFactory;
 import com.liferay.portal.search.web.internal.folder.facet.portlet.FolderFacetPortletPreferences;
 import com.liferay.portal.search.web.internal.folder.facet.portlet.FolderFacetPortletPreferencesImpl;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Lino Alves
@@ -81,6 +82,7 @@ public class FolderFacetPortletSharedSearchContributor
 		return folderFacetBuilder.build();
 	}
 
-	protected FolderFacetFactory folderFacetFactory = new FolderFacetFactory();
+	@Reference
+	protected FolderFacetFactory folderFacetFactory;
 
 }
