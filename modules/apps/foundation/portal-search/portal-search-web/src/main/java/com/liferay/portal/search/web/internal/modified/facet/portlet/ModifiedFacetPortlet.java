@@ -17,9 +17,9 @@ package com.liferay.portal.search.web.internal.modified.facet.portlet;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.search.facet.Facet;
-import com.liferay.portal.kernel.search.facet.ModifiedFacetFactory;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.search.facet.modified.ModifiedFacetFactory;
 import com.liferay.portal.search.web.internal.display.context.PortletRequestThemeDisplaySupplier;
 import com.liferay.portal.search.web.internal.display.context.ThemeDisplaySupplier;
 import com.liferay.portal.search.web.internal.modified.facet.builder.ModifiedFacetBuilder;
@@ -173,7 +173,7 @@ public class ModifiedFacetPortlet
 	}
 
 	protected String getFieldName() {
-		Facet facet = modifiedFacetFactory.newInstance(new SearchContext());
+		Facet facet = modifiedFacetFactory.newInstance(null);
 
 		return facet.getFieldName();
 	}
