@@ -181,6 +181,13 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 			companyId, className, ResourceConstants.SCOPE_INDIVIDUAL, classPK,
 			viewActionId);
 
+		roles.addAll(
+			_resourcePermissionLocalService.getRoles(
+				companyId, className,
+				ResourceConstants.SCOPE_GROUP_TEMPLATE,
+				String.valueOf(GroupConstants.DEFAULT_PARENT_GROUP_ID),
+				viewActionId));
+
 		if (roles.isEmpty()) {
 			return;
 		}
@@ -300,6 +307,14 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 
 			usersGroupIdsRoles.add(
 				new UsersGroupIdRoles(group.getGroupId(), groupRoles));
+
+			Group stagingGroup = group.getStagingGroup();
+
+			if (stagingGroup != null) {
+				usersGroupIdsRoles.add(
+					new UsersGroupIdRoles(
+						stagingGroup.getGroupId(), groupRoles));
+			}
 
 			termsCount += groupRoles.size();
 
