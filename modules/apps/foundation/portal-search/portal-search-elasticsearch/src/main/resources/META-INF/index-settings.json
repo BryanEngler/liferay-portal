@@ -5,34 +5,34 @@
 				"filter": "lowercase",
 				"tokenizer": "keyword"
 			},
-            "liferay_kuromoji": {
-                "type": "custom",
-                "tokenizer": "liferay_kuromoji_tokenizer",
-                "char_filter": [
-                  "html_strip",
-                  "kuromoji_iteration_mark"
-                ],
-                "filter": [
-                  "lowercase",
-                  "cjk_width",
-                  "kuromoji_baseform",
-                  "kuromoji_part_of_speech",
-                  "readingform",
-                  "kuromoji_stemmer"
-                ]
-            }
+			"liferay_kuromoji": {
+				"char_filter": [
+					"html_strip",
+					"kuromoji_iteration_mark"
+				],
+				"filter": [
+					"cjk_width",
+					"kuromoji_baseform",
+					"kuromoji_part_of_speech",
+					"kuromoji_stemmer",
+					"liferay_kuromoji_readingform",
+					"lowercase"
+				],
+				"tokenizer": "liferay_kuromoji_tokenizer",
+				"type": "custom"
+			}
 		},
-        "filter": {
-          "readingform": {
-            "type": "kuromoji_readingform",
-            "use_romaji": "false"
-          }
-        },
-        "tokenizer": {
-          "liferay_kuromoji_tokenizer": {
-            "type": "kuromoji_tokenizer",
-            "mode": "search"
-          }
-        }
+		"filter": {
+			"liferay_kuromoji_readingform": {
+				"type": "kuromoji_readingform",
+				"use_romaji": "false"
+			}
+		},
+		"tokenizer": {
+			"liferay_kuromoji_tokenizer": {
+				"mode": "search",
+				"type": "kuromoji_tokenizer"
+			}
+		}
 	}
 }
