@@ -14,12 +14,14 @@
 
 package com.liferay.portal.search.elasticsearch.internal.query;
 
+import com.liferay.portal.search.test.util.document.SingleFieldQueryFactory;
+
 import org.elasticsearch.index.query.QueryBuilder;
 
 /**
  * @author André de Oliveira
  */
-public interface QueryBuilderFactory {
+public interface QueryBuilderFactory extends SingleFieldQueryFactory {
 
 	public QueryBuilder create(String name, String text);
 
