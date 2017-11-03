@@ -17,49 +17,56 @@ package com.liferay.portal.search.elasticsearch.internal.document;
 import com.liferay.portal.search.elasticsearch.internal.connection.IndexName;
 import com.liferay.portal.search.elasticsearch.internal.query.QueryBuilderFactory;
 import com.liferay.portal.search.elasticsearch.internal.query.SearchAssert;
+import com.liferay.portal.search.test.util.document.BaseSingleFieldFixture;
 
 import org.elasticsearch.action.index.IndexRequestBuilder;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.QueryBuilder;
 
 /**
  * @author André de Oliveira
  */
-public class SingleFieldFixture {
+public class ElasticsearchSingleFieldFixture extends BaseSingleFieldFixture {
 
-	public SingleFieldFixture(Client client, IndexName indexName, String type) {
+	public ElasticsearchSingleFieldFixture(
+		Client client, IndexName indexName, String type) {
+
 		_client = client;
 		_index = indexName.getName();
 		_type = type;
 	}
 
+	@Override
 	public void assertHighlights(String text, String... expected)
 		throws Exception {
 
 		SearchAssert.assertHighlights(
-			_client, _field, _createQueryBuilder(text), expected);
+			_client, getField(), _createQueryBuilder(text), expected);
 	}
 
+	@Override
 	public void assertNoHits(String text) throws Exception {
-		SearchAssert.assertNoHits(_client, _field, _createQueryBuilder(text));
+		SearchAssert.assertNoHits(
+			_client, getField(), _createQueryBuilder(text));
 	}
 
+	@Override
 	public void assertSearch(String text, String... expected) throws Exception {
 		SearchAssert.assertSearch(
-			_client, _field, _createQueryBuilder(text), expected);
+			_client, getField(), _createQueryBuilder(text), expected);
 	}
 
-	public void indexDocument(String value) {
+	@Override
+	public String indexDocument(String value) {
 		IndexRequestBuilder indexRequestBuilder = _client.prepareIndex(
 			_index, _type);
 
-		indexRequestBuilder.setSource(_field, value);
+		indexRequestBuilder.setSource(getField(), value);
 
-		indexRequestBuilder.get();
-	}
+		IndexResponse indexResponse = indexRequestBuilder.get();
 
-	public void setField(String field) {
-		_field = field;
+		return indexResponse.getId();
 	}
 
 	public void setQueryBuilderFactory(
@@ -69,11 +76,10 @@ public class SingleFieldFixture {
 	}
 
 	private QueryBuilder _createQueryBuilder(String text) {
-		return _queryBuilderFactory.create(_field, text);
+		return _queryBuilderFactory.create(getField(), text);
 	}
 
 	private final Client _client;
-	private String _field;
 	private final String _index;
 	private QueryBuilderFactory _queryBuilderFactory;
 	private final String _type;
