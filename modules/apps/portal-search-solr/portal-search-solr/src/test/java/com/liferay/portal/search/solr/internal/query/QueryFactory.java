@@ -14,12 +14,14 @@
 
 package com.liferay.portal.search.solr.internal.query;
 
+import com.liferay.portal.search.test.util.document.SingleFieldQueryFactory;
+
 import org.apache.lucene.search.Query;
 
 /**
  * @author Bryan Engler
  */
-public interface QueryFactory {
+public interface QueryFactory extends SingleFieldQueryFactory {
 
 	public Query create(String name, String text);
 
