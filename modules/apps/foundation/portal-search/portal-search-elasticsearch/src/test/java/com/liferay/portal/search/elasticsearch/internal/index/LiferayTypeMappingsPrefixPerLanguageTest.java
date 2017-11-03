@@ -15,7 +15,7 @@
 package com.liferay.portal.search.elasticsearch.internal.index;
 
 import com.liferay.portal.search.elasticsearch.internal.connection.IndexName;
-import com.liferay.portal.search.elasticsearch.internal.document.SingleFieldFixture;
+import com.liferay.portal.search.elasticsearch.internal.document.ElasticsearchSingleFieldFixture;
 import com.liferay.portal.search.elasticsearch.internal.query.QueryBuilderFactories;
 
 import org.junit.After;
@@ -37,11 +37,11 @@ public class LiferayTypeMappingsPrefixPerLanguageTest {
 
 		_liferayIndexFixture.setUp();
 
-		_singleFieldFixture = new SingleFieldFixture(
+		_singleFieldFixture = new ElasticsearchSingleFieldFixture(
 			_liferayIndexFixture.getClient(), indexName,
 			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE);
 
-		_singleFieldFixture.setQueryBuilderFactory(
+		_singleFieldFixture.setSingleFieldQueryFactory(
 			QueryBuilderFactories.MATCH_PHRASE_PREFIX);
 	}
 
@@ -115,6 +115,6 @@ public class LiferayTypeMappingsPrefixPerLanguageTest {
 		LiferayTypeMappingsPrefixPerLanguageTest.class.getSimpleName();
 
 	private LiferayIndexFixture _liferayIndexFixture;
-	private SingleFieldFixture _singleFieldFixture;
+	private ElasticsearchSingleFieldFixture _singleFieldFixture;
 
 }

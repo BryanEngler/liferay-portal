@@ -21,7 +21,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.elasticsearch.index.IndexNameBuilder;
 import com.liferay.portal.search.elasticsearch.internal.connection.ElasticsearchFixture;
 import com.liferay.portal.search.elasticsearch.internal.connection.IndexName;
-import com.liferay.portal.search.elasticsearch.internal.document.SingleFieldFixture;
+import com.liferay.portal.search.elasticsearch.internal.document.ElasticsearchSingleFieldFixture;
 import com.liferay.portal.search.elasticsearch.internal.util.ResourceUtil;
 import com.liferay.portal.search.elasticsearch.settings.BaseIndexSettingsContributor;
 import com.liferay.portal.search.elasticsearch.settings.IndexSettingsHelper;
@@ -59,7 +59,7 @@ public class CompanyIndexFactoryTest {
 
 		_elasticsearchFixture.setUp();
 
-		_singleFieldFixture = new SingleFieldFixture(
+		_singleFieldFixture = new ElasticsearchSingleFieldFixture(
 			_elasticsearchFixture.getClient(),
 			new IndexName(getTestIndexName()),
 			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE);
@@ -377,6 +377,6 @@ public class CompanyIndexFactoryTest {
 
 	private CompanyIndexFactory _companyIndexFactory;
 	private ElasticsearchFixture _elasticsearchFixture;
-	private SingleFieldFixture _singleFieldFixture;
+	private ElasticsearchSingleFieldFixture _singleFieldFixture;
 
 }
