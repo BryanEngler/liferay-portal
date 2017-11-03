@@ -60,7 +60,6 @@ public class LiferayTypeMappingsJapaneseTest {
 		assertSearch("もも", content1);
 
 		assertNoHits("も");
-
 	}
 
 	@Test
@@ -72,8 +71,7 @@ public class LiferayTypeMappingsJapaneseTest {
 		assertSearch("東京", content1);
 		assertSearch("特許", content1);
 		assertSearch("許可", content1);
-		assertSearch("許可局",content1);
-
+		assertSearch("許可局", content1);
 	}
 
 	@Test
