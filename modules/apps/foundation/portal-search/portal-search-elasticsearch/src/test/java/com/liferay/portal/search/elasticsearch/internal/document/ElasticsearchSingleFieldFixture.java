@@ -15,9 +15,9 @@
 package com.liferay.portal.search.elasticsearch.internal.document;
 
 import com.liferay.portal.search.elasticsearch.internal.connection.IndexName;
-import com.liferay.portal.search.elasticsearch.internal.query.QueryBuilderFactory;
 import com.liferay.portal.search.elasticsearch.internal.query.SearchAssert;
 import com.liferay.portal.search.test.util.document.BaseSingleFieldFixture;
+import com.liferay.portal.search.test.util.document.SingleFieldQueryFactory;
 
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
@@ -69,19 +69,20 @@ public class ElasticsearchSingleFieldFixture extends BaseSingleFieldFixture {
 		return indexResponse.getId();
 	}
 
-	public void setQueryBuilderFactory(
-		QueryBuilderFactory queryBuilderFactory) {
+	@Override
+	public void setSingleFieldQueryFactory(
+		SingleFieldQueryFactory singleFieldQueryFactory) {
 
-		_queryBuilderFactory = queryBuilderFactory;
+		_singleFieldQueryFactory = singleFieldQueryFactory;
 	}
 
 	private QueryBuilder _createQueryBuilder(String text) {
-		return _queryBuilderFactory.create(getField(), text);
+		return _singleFieldQueryFactory.create(getField(), text);
 	}
 
 	private final Client _client;
 	private final String _index;
-	private QueryBuilderFactory _queryBuilderFactory;
+	private SingleFieldQueryFactory<QueryBuilder> _singleFieldQueryFactory;
 	private final String _type;
 
 }
