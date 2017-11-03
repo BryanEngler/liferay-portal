@@ -16,9 +16,9 @@ package com.liferay.portal.search.solr.internal.document;
 
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.search.solr.internal.query.QueryFactory;
 import com.liferay.portal.search.solr.internal.query.SearchAssert;
 import com.liferay.portal.search.test.util.document.BaseSingleFieldFixture;
+import com.liferay.portal.search.test.util.document.SingleFieldQueryFactory;
 
 import java.util.List;
 
@@ -78,15 +78,18 @@ public class SolrSingleFieldFixture extends BaseSingleFieldFixture {
 		return uid;
 	}
 
-	public void setQueryFactory(QueryFactory queryFactory) {
-		_queryFactory = queryFactory;
+	@Override
+	public void setSingleFieldQueryFactory(
+		SingleFieldQueryFactory singleFieldQueryFactory) {
+
+		_singleFieldQueryFactory = singleFieldQueryFactory;
 	}
 
 	private Query _createQuery(String text) {
-		return _queryFactory.create(getField(), text);
+		return _singleFieldQueryFactory.create(getField(), text);
 	}
 
 	private final SolrClient _client;
-	private QueryFactory _queryFactory;
+	private SingleFieldQueryFactory<Query> _singleFieldQueryFactory;
 
 }
