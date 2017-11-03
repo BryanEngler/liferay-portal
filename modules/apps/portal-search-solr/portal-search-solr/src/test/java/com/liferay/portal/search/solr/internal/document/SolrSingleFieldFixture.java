@@ -16,9 +16,9 @@ package com.liferay.portal.search.solr.internal.document;
 
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.search.solr.internal.query.QueryFactory;
 import com.liferay.portal.search.solr.internal.query.SearchAssert;
+import com.liferay.portal.search.test.util.document.BaseSingleFieldFixture;
 
 import java.util.List;
 
@@ -29,43 +29,47 @@ import org.apache.solr.common.SolrInputDocument;
 /**
  * @author Bryan Engler
  */
-public class SingleFieldFixture {
+public class SolrSingleFieldFixture extends BaseSingleFieldFixture {
 
-	public SingleFieldFixture(SolrClient client) {
+	public SolrSingleFieldFixture(SolrClient client) {
 		_client = client;
 	}
 
+	@Override
 	public void assertHighlights(String text, String... expected)
 		throws Exception {
 
 		SearchAssert.assertHighlights(
-			_client, _field, _createQuery(text), expected);
+			_client, getField(), _createQuery(text), expected);
 	}
 
+	@Override
 	public void assertNoHits(String text) throws Exception {
-		SearchAssert.assertNoHits(_client, _field, _createQuery(text));
+		SearchAssert.assertNoHits(_client, getField(), _createQuery(text));
 	}
 
+	@Override
 	public void assertSearch(String text, String... expected) throws Exception {
 		SearchAssert.assertSearch(
-			_client, _field, _createQuery(text), expected);
+			_client, getField(), _createQuery(text), expected);
 	}
 
+	@Override
 	public void deleteDocuments(List<String> uids) throws Exception {
 		_client.deleteById(uids);
 
 		_client.commit();
 	}
 
-	public String indexDocument(String prefix, String value) throws Exception {
+	@Override
+	public String indexDocument(String value) throws Exception {
 		SolrInputDocument solrInputDocument = new SolrInputDocument();
 
-		String uid =
-			prefix + StringPool.UNDERLINE + RandomTestUtil.randomString();
+		String uid = RandomTestUtil.randomString();
 
 		solrInputDocument.addField(Field.UID, uid);
 
-		solrInputDocument.addField(_field, value);
+		solrInputDocument.addField(getField(), value);
 
 		_client.add(solrInputDocument);
 
@@ -74,20 +78,15 @@ public class SingleFieldFixture {
 		return uid;
 	}
 
-	public void setField(String field) {
-		_field = field;
-	}
-
 	public void setQueryFactory(QueryFactory queryFactory) {
 		_queryFactory = queryFactory;
 	}
 
 	private Query _createQuery(String text) {
-		return _queryFactory.create(_field, text);
+		return _queryFactory.create(getField(), text);
 	}
 
 	private final SolrClient _client;
-	private String _field;
 	private QueryFactory _queryFactory;
 
 }
