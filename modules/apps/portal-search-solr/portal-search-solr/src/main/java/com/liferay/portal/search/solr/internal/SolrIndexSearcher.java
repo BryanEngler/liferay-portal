@@ -340,43 +340,20 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 	}
 
 	protected void addSnippets(
-		SolrDocument solrDocument, Document document, QueryConfig queryConfig,
-		Set<String> queryTerms, QueryResponse queryResponse) {
-
-		Map<String, Map<String, List<String>>> highlights =
-			queryResponse.getHighlighting();
-
-		if (!queryConfig.isHighlightEnabled()) {
-			return;
-		}
-
-		for (String highlightFieldName : queryConfig.getHighlightFieldNames()) {
-			addSnippets(
-				solrDocument, document, queryTerms, highlights,
-				highlightFieldName, queryConfig.getLocale());
-		}
-	}
-
-	protected void addSnippets(
-		SolrDocument solrDocument, Document document, Set<String> queryTerms,
-		Map<String, Map<String, List<String>>> highlights, String fieldName,
-		Locale locale) {
+		Document document, Map<String, List<String>> highlights,
+		String fieldName, Locale locale) {
 
 		if (MapUtil.isEmpty(highlights)) {
 			return;
 		}
 
-		String key = (String)solrDocument.getFieldValue(Field.UID);
-
-		Map<String, List<String>> uidHighlights = highlights.get(key);
-
 		String snippetFieldName = DocumentImpl.getLocalizedName(
 			locale, fieldName);
 
-		List<String> snippets = uidHighlights.get(snippetFieldName);
+		List<String> snippets = highlights.get(snippetFieldName);
 
 		if (snippets == null) {
-			snippets = uidHighlights.get(fieldName);
+			snippets = highlights.get(fieldName);
 
 			snippetFieldName = fieldName;
 		}
@@ -385,15 +362,33 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 
 		if (ListUtil.isNotEmpty(snippets)) {
 			snippet = StringUtil.merge(snippets, StringPool.TRIPLE_PERIOD);
-
-			if (Validator.isNotNull(snippet)) {
-				snippet = snippet.concat(StringPool.TRIPLE_PERIOD);
-			}
 		}
 
 		document.addText(
 			Field.SNIPPET.concat(StringPool.UNDERLINE).concat(snippetFieldName),
 			snippet);
+	}
+
+	protected void addSnippets(
+		SolrDocument solrDocument, Document document, QueryConfig queryConfig,
+		QueryResponse queryResponse) {
+
+		if (!queryConfig.isHighlightEnabled()) {
+			return;
+		}
+
+		Map<String, Map<String, List<String>>> highlightsMap =
+			queryResponse.getHighlighting();
+
+		String uid = (String)solrDocument.getFieldValue(Field.UID);
+
+		Map<String, List<String>> highlights = highlightsMap.get(uid);
+
+		for (String highlightFieldName : queryConfig.getHighlightFieldNames()) {
+			addSnippets(
+				document, highlights, highlightFieldName,
+				queryConfig.getLocale());
+		}
 	}
 
 	protected void addSort(SolrQuery solrQuery, Sort[] sorts) {
@@ -563,15 +558,13 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 		Query query, Hits hits) {
 
 		List<Document> documents = new ArrayList<>();
-		Set<String> queryTerms = new HashSet<>();
 		List<Float> scores = new ArrayList<>();
 
 		processSolrDocumentList(
-			queryResponse, solrDocumentList, query, hits, documents, queryTerms,
-			scores);
+			queryResponse, solrDocumentList, query, hits, documents, scores);
 
 		hits.setDocs(documents.toArray(new Document[documents.size()]));
-		hits.setQueryTerms(queryTerms.toArray(new String[queryTerms.size()]));
+		hits.setQueryTerms(new String[0]);
 		hits.setScores(ArrayUtil.toFloatArray(scores));
 	}
 
@@ -605,8 +598,7 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 
 	protected void processSolrDocumentList(
 		QueryResponse queryResponse, SolrDocumentList solrDocumentList,
-		Query query, Hits hits, List<Document> documents,
-		Set<String> queryTerms, List<Float> scores) {
+		Query query, Hits hits, List<Document> documents, List<Float> scores) {
 
 		if (solrDocumentList == null) {
 			return;
@@ -621,8 +613,7 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 
 			documents.add(document);
 
-			addSnippets(
-				solrDocument, document, queryConfig, queryTerms, queryResponse);
+			addSnippets(solrDocument, document, queryConfig, queryResponse);
 
 			float score = GetterUtil.getFloat(
 				String.valueOf(solrDocument.getFieldValue("score")));

@@ -49,6 +49,7 @@ import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch.facet.FacetProcessor;
@@ -334,36 +335,32 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	}
 
 	protected void addSnippets(
-		Document document, Set<String> queryTerms,
-		Map<String, HighlightField> highlightFields, String fieldName,
-		Locale locale) {
+		Document document, Map<String, HighlightField> highlights,
+		String fieldName, Locale locale) {
 
-		String snippet = StringPool.BLANK;
+		if (MapUtil.isEmpty(highlights)) {
+			return;
+		}
 
 		String snippetFieldName = DocumentImpl.getLocalizedName(
 			locale, fieldName);
 
-		HighlightField highlightField = highlightFields.get(snippetFieldName);
+		HighlightField highlightField = highlights.get(snippetFieldName);
 
 		if (highlightField == null) {
-			highlightField = highlightFields.get(fieldName);
+			highlightField = highlights.get(fieldName);
 
 			snippetFieldName = fieldName;
 		}
 
+		String snippet = StringPool.BLANK;
+
 		if (highlightField != null) {
-			Text[] texts = highlightField.fragments();
+			Text[] fragments = highlightField.fragments();
 
-			StringBundler sb = new StringBundler(texts.length * 2);
-
-			for (Text text : texts) {
-				sb.append(text);
-				sb.append(StringPool.TRIPLE_PERIOD);
+			if (ArrayUtil.isNotEmpty(fragments)) {
+				snippet = StringUtil.merge(fragments, StringPool.TRIPLE_PERIOD);
 			}
-
-			sb.setIndex(sb.index() - 1);
-
-			snippet = sb.toString();
 		}
 
 		document.addText(
@@ -372,18 +369,17 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	}
 
 	protected void addSnippets(
-		SearchHit hit, Document document, QueryConfig queryConfig,
-		Set<String> queryTerms) {
+		SearchHit hit, Document document, QueryConfig queryConfig) {
 
-		Map<String, HighlightField> highlightFields = hit.getHighlightFields();
-
-		if (MapUtil.isEmpty(highlightFields)) {
+		if (!queryConfig.isHighlightEnabled()) {
 			return;
 		}
 
+		Map<String, HighlightField> highlights = hit.getHighlightFields();
+
 		for (String highlightFieldName : queryConfig.getHighlightFieldNames()) {
 			addSnippets(
-				document, queryTerms, highlightFields, highlightFieldName,
+				document, highlights, highlightFieldName,
 				queryConfig.getLocale());
 		}
 	}
@@ -627,7 +623,6 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		SearchHits searchHits, Query query, Hits hits) {
 
 		List<Document> documents = new ArrayList<>();
-		Set<String> queryTerms = new HashSet<>();
 		List<Float> scores = new ArrayList<>();
 
 		if (searchHits.totalHits() > 0) {
@@ -641,15 +636,14 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 				scores.add(searchHit.getScore());
 
-				addSnippets(
-					searchHit, document, query.getQueryConfig(), queryTerms);
+				addSnippets(searchHit, document, query.getQueryConfig());
 			}
 		}
 
 		hits.setDocs(documents.toArray(new Document[documents.size()]));
 		hits.setLength((int)searchHits.getTotalHits());
 		hits.setQuery(query);
-		hits.setQueryTerms(queryTerms.toArray(new String[queryTerms.size()]));
+		hits.setQueryTerms(new String[0]);
 		hits.setScores(ArrayUtil.toFloatArray(scores));
 
 		return hits;
