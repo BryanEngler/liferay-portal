@@ -218,6 +218,9 @@ public class FacetedSearcherImpl
 
 		if (facetBooleanFilter.hasClauses()) {
 			fullQuery.setPostFilter(facetBooleanFilter);
+
+			fullQueryBooleanFilter.add(
+				facetBooleanFilter, BooleanClauseOccur.MUST);
 		}
 
 		if (fullQueryBooleanFilter.hasClauses()) {
