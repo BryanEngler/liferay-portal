@@ -20,7 +20,6 @@ import com.liferay.portal.search.test.util.document.BaseSingleFieldFixture;
 import com.liferay.portal.search.test.util.document.SingleFieldQueryFactory;
 
 import org.elasticsearch.action.index.IndexRequestBuilder;
-import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.QueryBuilder;
 
@@ -58,15 +57,13 @@ public class ElasticsearchSingleFieldFixture extends BaseSingleFieldFixture {
 	}
 
 	@Override
-	public String indexDocument(String value) {
+	public void indexDocument(String value) {
 		IndexRequestBuilder indexRequestBuilder = _client.prepareIndex(
 			_index, _type);
 
 		indexRequestBuilder.setSource(getField(), value);
 
-		IndexResponse indexResponse = indexRequestBuilder.get();
-
-		return indexResponse.getId();
+		indexRequestBuilder.get();
 	}
 
 	@Override

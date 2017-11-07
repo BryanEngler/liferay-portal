@@ -48,8 +48,6 @@ public class LiferayTypeMappingsJapaneseTest
 	@After
 	public void tearDown() throws Exception {
 		_liferayIndexFixture.tearDown();
-
-		super.tearDown();
 	}
 
 	private static final String _PREFIX =
