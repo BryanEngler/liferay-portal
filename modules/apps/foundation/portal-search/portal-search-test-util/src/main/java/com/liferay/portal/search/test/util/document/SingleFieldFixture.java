@@ -14,8 +14,6 @@
 
 package com.liferay.portal.search.test.util.document;
 
-import java.util.List;
-
 /**
  * @author Bryan Engler
  */
@@ -28,9 +26,7 @@ public interface SingleFieldFixture {
 
 	public void assertSearch(String text, String... expected) throws Exception;
 
-	public void deleteDocuments(List<String> uids) throws Exception;
-
-	public String indexDocument(String value) throws Exception;
+	public void indexDocument(String value) throws Exception;
 
 	public void setField(String field);
 

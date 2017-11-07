@@ -18,10 +18,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.search.test.util.document.SingleFieldFixture;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -30,11 +26,6 @@ import org.junit.rules.TestName;
  * @author Bryan Engler
  */
 public abstract class BaseJapaneseSearchTestCase {
-
-	@After
-	public void tearDown() throws Exception {
-		uids.clear();
-	}
 
 	@Test
 	public void testNoSpaceSentenceSearch1() throws Exception {
@@ -152,7 +143,7 @@ public abstract class BaseJapaneseSearchTestCase {
 	protected void index(String... strings) {
 		try {
 			for (String string : strings) {
-				uids.add(singleFieldFixture.indexDocument(string));
+				singleFieldFixture.indexDocument(string);
 			}
 		}
 		catch (Exception e) {
@@ -161,7 +152,6 @@ public abstract class BaseJapaneseSearchTestCase {
 	}
 
 	protected SingleFieldFixture singleFieldFixture;
-	protected List<String> uids = new ArrayList<>();
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		BaseJapaneseSearchTestCase.class);

@@ -14,16 +14,10 @@
 
 package com.liferay.portal.search.test.util.document;
 
-import java.util.List;
-
 /**
  * @author Bryan Engler
  */
 public abstract class BaseSingleFieldFixture implements SingleFieldFixture {
-
-	@Override
-	public void deleteDocuments(List<String> uids) throws Exception {
-	}
 
 	@Override
 	public void setField(String field) {
