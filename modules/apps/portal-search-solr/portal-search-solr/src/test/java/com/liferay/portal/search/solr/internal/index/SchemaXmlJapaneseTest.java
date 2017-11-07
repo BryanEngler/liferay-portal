@@ -14,12 +14,12 @@
 
 package com.liferay.portal.search.solr.internal.index;
 
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.search.solr.internal.connection.SolrFixture;
 import com.liferay.portal.search.solr.internal.document.SolrSingleFieldFixture;
 import com.liferay.portal.search.solr.internal.query.QueryFactories;
 import com.liferay.portal.search.test.util.japanese.BaseJapaneseSearchTestCase;
 
-import org.junit.After;
 import org.junit.Before;
 
 /**
@@ -32,19 +32,13 @@ public class SchemaXmlJapaneseTest extends BaseJapaneseSearchTestCase {
 		singleFieldFixture = new SolrSingleFieldFixture(
 			_solrFixture.getClient());
 
-		singleFieldFixture.setField(_PREFIX + "_ja");
+		singleFieldFixture.setField(
+			_PREFIX + RandomTestUtil.randomString() + "_ja");
 		singleFieldFixture.setSingleFieldQueryFactory(QueryFactories.MATCH);
 	}
 
-	@After
-	public void tearDown() throws Exception {
-		singleFieldFixture.deleteDocuments(uids);
-
-		super.tearDown();
-	}
-
 	private static final String _PREFIX =
-		SchemaXmlJapaneseTest.class.getSimpleName();
+		SchemaXmlJapaneseTest.class.getSimpleName() + "_";
 
 	private final SolrFixture _solrFixture = new SolrFixture();
 

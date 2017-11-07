@@ -20,8 +20,6 @@ import com.liferay.portal.search.solr.internal.query.SearchAssert;
 import com.liferay.portal.search.test.util.document.BaseSingleFieldFixture;
 import com.liferay.portal.search.test.util.document.SingleFieldQueryFactory;
 
-import java.util.List;
-
 import org.apache.lucene.search.Query;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.common.SolrInputDocument;
@@ -55,14 +53,7 @@ public class SolrSingleFieldFixture extends BaseSingleFieldFixture {
 	}
 
 	@Override
-	public void deleteDocuments(List<String> uids) throws Exception {
-		_client.deleteById(uids);
-
-		_client.commit();
-	}
-
-	@Override
-	public String indexDocument(String value) throws Exception {
+	public void indexDocument(String value) throws Exception {
 		SolrInputDocument solrInputDocument = new SolrInputDocument();
 
 		String uid = RandomTestUtil.randomString();
@@ -74,8 +65,6 @@ public class SolrSingleFieldFixture extends BaseSingleFieldFixture {
 		_client.add(solrInputDocument);
 
 		_client.commit();
-
-		return uid;
 	}
 
 	@Override
