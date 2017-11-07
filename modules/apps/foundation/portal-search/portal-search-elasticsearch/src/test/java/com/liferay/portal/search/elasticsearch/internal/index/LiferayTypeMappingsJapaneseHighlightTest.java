@@ -14,21 +14,20 @@
 
 package com.liferay.portal.search.elasticsearch.internal.index;
 
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.search.elasticsearch.internal.connection.IndexName;
 import com.liferay.portal.search.elasticsearch.internal.document.ElasticsearchSingleFieldFixture;
 import com.liferay.portal.search.elasticsearch.internal.query.QueryBuilderFactories;
+import com.liferay.portal.search.test.util.japanese.BaseJapaneseHighlightTestCase;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 
 /**
  * @author André de Oliveira
  */
-public class LiferayTypeMappingsJapaneseHighlightTest {
+public class LiferayTypeMappingsJapaneseHighlightTest
+	extends BaseJapaneseHighlightTestCase {
 
 	@Before
 	public void setUp() throws Exception {
@@ -38,12 +37,12 @@ public class LiferayTypeMappingsJapaneseHighlightTest {
 
 		_liferayIndexFixture.setUp();
 
-		_singleFieldFixture = new ElasticsearchSingleFieldFixture(
+		singleFieldFixture = new ElasticsearchSingleFieldFixture(
 			_liferayIndexFixture.getClient(), indexName,
 			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE);
 
-		_singleFieldFixture.setField(_PREFIX + "_ja");
-		_singleFieldFixture.setSingleFieldQueryFactory(
+		singleFieldFixture.setField(_PREFIX + "_ja");
+		singleFieldFixture.setSingleFieldQueryFactory(
 			QueryBuilderFactories.MATCH);
 	}
 
@@ -53,7 +52,7 @@ public class LiferayTypeMappingsJapaneseHighlightTest {
 	}
 
 	@Test
-	public void testHighlightDM() throws Exception {
+	public void testHighlightDMElastic() throws Exception {
 		String content1 = "あいうえお　かきくけこ　日本語";
 		String content2 = "さしすせそ　たちつてと　日本語";
 		String content3 = "English Japanese\n AND OR NOT";
@@ -67,62 +66,12 @@ public class LiferayTypeMappingsJapaneseHighlightTest {
 			content7);
 
 		assertHighlights(
-			"English Japanese",
-			"<em>English</em> <em>Japanese</em>\n AND OR NOT");
-
-		assertHighlights(
-			"あいうえお　日本語", "<em>あい</em>うえお　かきくけこ　<em>日本語</em>",
-			"さしすせそ　たちつてと　<em>日本</em><em>語</em>");
-
-		assertHighlights("あいう", StringPool.BLANK);
-
-		assertHighlights("サンプル", "<em>サンプル</em>Ｂ");
-
-		assertHighlights("推進", "技術<em>推進</em>部 商品開発部 業務部");
-
-		assertHighlights(
-			"推進部", "技術<em>推進</em><em>部</em> 商品開発<em>部</em> 業務<em>部</em>");
-
-		assertHighlights("品川区", "これは東京都<em>品川</em><em>区</em>で登録したファイルです");
-	}
-
-	@Test
-	public void testHighlightWCM() throws Exception {
-		String content1 = "サンプルコンテンツＢ";
-		String content2 = "技術推進部 商品開発部 業務部";
-		String content3 = "愛知県名古屋市";
-
-		index(content1, content2, content3);
-
-		assertHighlights("サンプル", "<em>サンプル</em>コンテンツＢ");
-
-		assertHighlights("推進", "技術<em>推進</em>部 商品開発部 業務部");
-
-		assertHighlights(
-			"推進部", "技術<em>推進</em><em>部</em> 商品開発<em>部</em> 業務<em>部</em>");
-
-		assertHighlights("名古屋", "愛知県<em>名古屋</em>市");
-	}
-
-	@Rule
-	public TestName testName = new TestName();
-
-	protected void assertHighlights(String query, String... expected)
-		throws Exception {
-
-		_singleFieldFixture.assertHighlights(query, expected);
-	}
-
-	protected void index(String... strings) {
-		for (String string : strings) {
-			_singleFieldFixture.indexDocument(string);
-		}
+			"あいうえお　日本語", "<em>あい</em>うえ<em>お</em>　かきくけこ　<em>日本語</em>");
 	}
 
 	private static final String _PREFIX =
 		LiferayTypeMappingsJapaneseHighlightTest.class.getSimpleName();
 
 	private LiferayIndexFixture _liferayIndexFixture;
-	private ElasticsearchSingleFieldFixture _singleFieldFixture;
 
 }
