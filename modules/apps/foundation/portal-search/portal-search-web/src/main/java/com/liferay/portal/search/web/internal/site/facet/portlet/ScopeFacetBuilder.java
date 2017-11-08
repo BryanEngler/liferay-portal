@@ -15,14 +15,9 @@
 package com.liferay.portal.search.web.internal.site.facet.portlet;
 
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.facet.Facet;
-import com.liferay.portal.kernel.search.facet.ScopeFacet;
-import com.liferay.portal.kernel.search.facet.ScopeFacetFactory;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.ListUtil;
-
-import java.util.Arrays;
+import com.liferay.portal.search.facet.Facet;
+import com.liferay.portal.search.facet.scope.ScopeFacetFactory;
 
 /**
  * @author André de Oliveira
@@ -38,15 +33,13 @@ public class ScopeFacetBuilder {
 
 		facet.setFacetConfiguration(buildFacetConfiguration(facet));
 
-		if (_selectedSites != null) {
-			ScopeFacet scopeFacet = (ScopeFacet)facet;
-
-			scopeFacet.setValues(
-				ListUtil.toLongArray(
-					Arrays.asList(_selectedSites), GetterUtil::getLong));
-		}
+		facet.select(_selectedSites);
 
 		return facet;
+	}
+
+	public void setFilterAggregations(boolean filterAggregations) {
+		_filterAggregations = filterAggregations;
 	}
 
 	public void setFrequencyThreshold(int frequencyThreshold) {
@@ -79,10 +72,12 @@ public class ScopeFacetBuilder {
 
 		scopeFacetConfiguration.setFrequencyThreshold(_frequencyThreshold);
 		scopeFacetConfiguration.setMaxTerms(_maxTerms);
+		scopeFacetConfiguration.setFilterAggregations(_filterAggregations);
 
 		return facetConfiguration;
 	}
 
+	private boolean _filterAggregations;
 	private int _frequencyThreshold;
 	private int _maxTerms;
 	private final ScopeFacetFactory _scopeFacetFactory;

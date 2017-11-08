@@ -37,6 +37,8 @@ import com.liferay.portal.kernel.search.Stats;
 import com.liferay.portal.kernel.search.StatsResults;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
+import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
+import com.liferay.portal.kernel.search.facet.util.RangeParserUtil;
 import com.liferay.portal.kernel.search.filter.FilterTranslator;
 import com.liferay.portal.kernel.search.geolocation.GeoLocationPoint;
 import com.liferay.portal.kernel.search.highlight.HighlightUtil;
@@ -61,6 +63,7 @@ import com.liferay.portal.search.elasticsearch.stats.StatsTranslator;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -78,6 +81,7 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.Aggregation;
@@ -242,12 +246,16 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		Map<String, Facet> facetsMap = searchContext.getFacets();
 
+		Map<String, List<QueryBuilder>> filterAggregationQueryBuilders =
+			getFilterAggregationQueryBuilders(facetsMap);
+
 		for (Facet facet : facetsMap.values()) {
 			if (facet.isStatic()) {
 				continue;
 			}
 
-			facetProcessor.processFacet(searchRequestBuilder, facet);
+			facetProcessor.processFacet(
+				searchRequestBuilder, facet, filterAggregationQueryBuilders);
 		}
 	}
 
@@ -567,6 +575,78 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			searchContext, query, start, end, false);
 
 		return processResponse(searchResponse, searchContext, query);
+	}
+
+	protected Map<String, List<QueryBuilder>> getFilterAggregationQueryBuilders(
+		Map<String, Facet> facetsMap) {
+
+		Map<String, String[]> selectedFacetValues = getSelectedFacetValues(
+			facetsMap);
+
+		Map<String, List<QueryBuilder>> filterAggregationQueryBuilders =
+			new HashMap<>();
+
+		for (String selectedFacetFieldName : selectedFacetValues.keySet()) {
+			String[] values = selectedFacetValues.get(selectedFacetFieldName);
+
+			if (ArrayUtil.isNotEmpty(values)) {
+				List<QueryBuilder> queryBuilders = new ArrayList<>();
+
+				if (selectedFacetFieldName.equals(Field.MODIFIED_DATE)) {
+					for (String value : values) {
+						String[] ranges = RangeParserUtil.parserRange(value);
+
+						RangeQueryBuilder rangeQuery = QueryBuilders.rangeQuery(
+							Field.MODIFIED_DATE);
+
+						rangeQuery.gte(ranges[0]);
+						rangeQuery.lte(ranges[1]);
+
+						queryBuilders.add(rangeQuery);
+					}
+				}
+				else {
+					queryBuilders.add(
+						QueryBuilders.termsQuery(
+							selectedFacetFieldName, values));
+				}
+
+				filterAggregationQueryBuilders.put(
+					selectedFacetFieldName, queryBuilders);
+			}
+		}
+
+		return filterAggregationQueryBuilders;
+	}
+
+	protected Map<String, String[]> getSelectedFacetValues(
+		Map<String, Facet> facetsMap) {
+
+		Map<String, String[]> aggregationFilters = new HashMap<>();
+
+		for (Facet facet : facetsMap.values()) {
+			if (facet.isStatic() ||
+				!(facet instanceof com.liferay.portal.search.facet.Facet)) {
+
+				continue;
+			}
+
+			com.liferay.portal.search.facet.Facet searchFacet =
+				(com.liferay.portal.search.facet.Facet)facet;
+
+			FacetConfiguration facetConfiguration =
+				searchFacet.getFacetConfiguration();
+
+			String fieldName = facetConfiguration.getFieldName();
+
+			String[] selectedValues = searchFacet.getSelections();
+
+			if (ArrayUtil.isNotEmpty(selectedValues)) {
+				aggregationFilters.put(fieldName, selectedValues);
+			}
+		}
+
+		return aggregationFilters;
 	}
 
 	protected String[] getSelectedIndexNames(

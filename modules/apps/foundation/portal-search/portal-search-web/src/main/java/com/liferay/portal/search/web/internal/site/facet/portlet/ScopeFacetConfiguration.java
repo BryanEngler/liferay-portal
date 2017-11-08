@@ -23,6 +23,8 @@ public interface ScopeFacetConfiguration {
 
 	public int getMaxTerms();
 
+	public void setFilterAggregations(boolean filterAggregations);
+
 	public void setFrequencyThreshold(int frequencyThreshold);
 
 	public void setMaxTerms(int maxTerms);

@@ -15,12 +15,11 @@
 package com.liferay.portal.search.web.internal.site.facet.portlet;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.Facet;
-import com.liferay.portal.kernel.search.facet.ScopeFacetFactory;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.search.facet.scope.ScopeFacetFactory;
 import com.liferay.portal.search.web.internal.facet.display.builder.ScopeSearchFacetDisplayBuilder;
 import com.liferay.portal.search.web.internal.facet.display.context.ScopeSearchFacetDisplayContext;
 import com.liferay.portal.search.web.internal.site.facet.constants.SiteFacetPortletKeys;
@@ -124,6 +123,8 @@ public class SiteFacetPortlet
 			new ScopeSearchFacetDisplayBuilder();
 
 		scopeSearchFacetDisplayBuilder.setFacet(facet);
+		scopeSearchFacetDisplayBuilder.setFilterBySite(
+			facet.getSearchContext());
 		scopeSearchFacetDisplayBuilder.setFrequencyThreshold(
 			siteFacetConfiguration.getFrequencyThreshold());
 		scopeSearchFacetDisplayBuilder.setFrequenciesVisible(
@@ -158,6 +159,8 @@ public class SiteFacetPortlet
 			siteFacetPortletPreferences.getFrequencyThreshold());
 		scopeFacetBuilder.setMaxTerms(
 			siteFacetPortletPreferences.getMaxTerms());
+		scopeFacetBuilder.setFilterAggregations(
+			siteFacetPortletPreferences.isFilterAggregations());
 		scopeFacetBuilder.setSearchContext(
 			portletSharedSearchSettings.getSearchContext());
 
@@ -171,7 +174,7 @@ public class SiteFacetPortlet
 	}
 
 	protected String getFieldName() {
-		Facet facet = scopeFacetFactory.newInstance(new SearchContext());
+		Facet facet = scopeFacetFactory.newInstance(null);
 
 		return facet.getFieldName();
 	}
