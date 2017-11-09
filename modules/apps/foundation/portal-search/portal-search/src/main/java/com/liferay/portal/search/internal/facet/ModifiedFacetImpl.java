@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.search.facet.util.RangeParserUtil;
+import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.RangeTermFilter;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -54,48 +55,52 @@ public class ModifiedFacetImpl extends FacetImpl {
 			return null;
 		}
 
-		String rangeString = selections[0]; //see ModifiedFacetBuilder._applySelectedRanges()
+		BooleanFilter facetFilter = new BooleanFilter();
+
+		for (String selection : selections) {
+			String start = StringPool.BLANK;
+			String end = StringPool.BLANK;
+
+			if (!isStatic() && Validator.isNotNull(selection)) {
+				String[] range = RangeParserUtil.parserRange(selection);
+
+				start = range[0];
+				end = range[1];
+			}
+
+			if (Validator.isNull(start) && Validator.isNull(end)) {
+				return null;
+			}
+
+			if (Validator.isNotNull(start) && Validator.isNotNull(end) &&
+				(start.compareTo(end) > 0)) {
+
+				throw new IllegalArgumentException(
+					"End value must be greater than start value");
+			}
+
+			String startString = StringPool.STAR;
+
+			if (Validator.isNotNull(start)) {
+				startString = start;
+			}
+
+			String endString = StringPool.STAR;
+
+			if (Validator.isNotNull(end)) {
+				endString = end;
+			}
+
+			RangeTermFilter rangeTermFilter = new RangeTermFilter(
+				getFieldName(), true, true, startString, endString);
+
+			facetFilter.add(rangeTermFilter);
+		}
 
 		SearchContext searchContext = getSearchContext();
 
-		String start = StringPool.BLANK;
-		String end = StringPool.BLANK;
-
-		if (!isStatic() && Validator.isNotNull(rangeString)) {
-			String[] range = RangeParserUtil.parserRange(rangeString);
-
-			start = range[0];
-			end = range[1];
-		}
-
-		if (Validator.isNull(start) && Validator.isNull(end)) {
-			return null;
-		}
-
-		if (Validator.isNotNull(start) && Validator.isNotNull(end) &&
-			(start.compareTo(end) > 0)) {
-
-			throw new IllegalArgumentException(
-				"End value must be greater than start value");
-		}
-
-		String startString = StringPool.STAR;
-
-		if (Validator.isNotNull(start)) {
-			startString = start;
-		}
-
-		String endString = StringPool.STAR;
-
-		if (Validator.isNotNull(end)) {
-			endString = end;
-		}
-
-		RangeTermFilter rangeTermFilter = new RangeTermFilter(
-			getFieldName(), true, true, startString, endString);
-
 		return BooleanClauseFactoryUtil.createFilter(
-			searchContext, rangeTermFilter, BooleanClauseOccur.MUST);
+			searchContext, facetFilter, BooleanClauseOccur.MUST);
 	}
 
 	protected void normalizeDates(FacetConfiguration facetConfiguration) {
