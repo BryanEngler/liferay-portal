@@ -19,10 +19,14 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.search.facet.Facet;
 import com.liferay.portal.search.facet.modified.ModifiedFacetFactory;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Lino Alves
@@ -90,14 +94,14 @@ public class ModifiedFacetBuilder {
 			return;
 		}
 
-		String label = _selectedRanges[_selectedRanges.length - 1];
-		//what if more than one selection and mutually exclusive?
-		// ie past years 2016, 2015, 2014
+		List<String> rangeStrings = new ArrayList<>();
 
-		String rangeString = _dateRangeFactory.getRangeString(label);
+		for (String selectedRange : _selectedRanges) {
+			rangeStrings.add(_dateRangeFactory.getRangeString(selectedRange));
+		}
 
-		if (rangeString != null) {
-			facet.select(rangeString);
+		if (ListUtil.isNotEmpty(rangeStrings)) {
+			facet.select(ArrayUtil.toStringArray(rangeStrings));
 		}
 	}
 
