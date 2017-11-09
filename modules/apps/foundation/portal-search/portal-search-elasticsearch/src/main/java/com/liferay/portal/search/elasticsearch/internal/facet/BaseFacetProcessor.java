@@ -14,6 +14,8 @@
 
 package com.liferay.portal.search.elasticsearch.internal.facet;
 
+import com.liferay.portal.kernel.search.Field;
+
 import java.util.List;
 import java.util.Map;
 
@@ -46,10 +48,26 @@ public abstract class BaseFacetProcessor
 				List<QueryBuilder> filterAggregationQueryBuilders =
 					filterAggregationQueryBuildersMap.get(filterFieldName);
 
-				for (QueryBuilder filterAggregationQueryBuilder :
-						filterAggregationQueryBuilders) {
+				if (filterFieldName.equals(Field.MODIFIED_DATE)) {
+					BoolQueryBuilder modifiedBoolQueryBuilder =
+						QueryBuilders.boolQuery();
 
-					filterBoolQueryBuilder.must(filterAggregationQueryBuilder);
+					for (QueryBuilder filterAggregationQueryBuilder :
+							filterAggregationQueryBuilders) {
+
+						modifiedBoolQueryBuilder.should(
+							filterAggregationQueryBuilder);
+					}
+
+					filterBoolQueryBuilder.must(modifiedBoolQueryBuilder);
+				}
+				else {
+					for (QueryBuilder filterAggregationQueryBuilder :
+							filterAggregationQueryBuilders) {
+
+						filterBoolQueryBuilder.must(
+							filterAggregationQueryBuilder);
+					}
 				}
 			}
 		}
