@@ -19,7 +19,7 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.search.facet.Facet;
 import com.liferay.portal.search.facet.FacetFactory;
 import com.liferay.portal.search.facet.modified.ModifiedFacetFactory;
-import com.liferay.portal.search.internal.facet.FacetImpl;
+import com.liferay.portal.search.internal.facet.ModifiedFacetImpl;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -38,7 +38,7 @@ public class ModifiedFacetFactoryImpl implements ModifiedFacetFactory {
 
 	@Override
 	public Facet newInstance(SearchContext searchContext) {
-		return new FacetImpl(Field.MODIFIED_DATE, searchContext);
+		return new ModifiedFacetImpl(Field.MODIFIED_DATE, searchContext);
 	}
 
 }
