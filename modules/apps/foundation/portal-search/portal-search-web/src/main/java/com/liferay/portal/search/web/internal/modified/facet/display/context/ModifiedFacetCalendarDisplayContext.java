@@ -21,12 +21,24 @@ import java.io.Serializable;
  */
 public class ModifiedFacetCalendarDisplayContext implements Serializable {
 
+	public int getFromAmPmValue() {
+		return _fromAmPmValue;
+	}
+
 	public int getFromDayValue() {
 		return _fromDayValue;
 	}
 
 	public int getFromFirstDayOfWeek() {
 		return _fromFirstDayOfWeek;
+	}
+
+	public int getFromHourValue() {
+		return _fromHourValue;
+	}
+
+	public int getFromMinuteValue() {
+		return _fromMinuteValue;
 	}
 
 	public int getFromMonthValue() {
@@ -37,12 +49,24 @@ public class ModifiedFacetCalendarDisplayContext implements Serializable {
 		return _fromYearValue;
 	}
 
+	public int getToAmPmValue() {
+		return _toAmPmValue;
+	}
+
 	public int getToDayValue() {
 		return _toDayValue;
 	}
 
 	public int getToFirstDayOfWeek() {
 		return _toFirstDayOfWeek;
+	}
+
+	public int getToHourValue() {
+		return _toHourValue;
+	}
+
+	public int getToMinuteValue() {
+		return _toMinuteValue;
 	}
 
 	public int getToMonthValue() {
@@ -61,6 +85,10 @@ public class ModifiedFacetCalendarDisplayContext implements Serializable {
 		return _selected;
 	}
 
+	public void setFromAmPmValue(int fromAmPmValue) {
+		_fromAmPmValue = fromAmPmValue;
+	}
+
 	public void setFromBeforeTo(boolean fromBeforeTo) {
 		_fromBeforeTo = fromBeforeTo;
 	}
@@ -71,6 +99,14 @@ public class ModifiedFacetCalendarDisplayContext implements Serializable {
 
 	public void setFromFirstDayOfWeek(int fromFirstDayOfWeek) {
 		_fromFirstDayOfWeek = fromFirstDayOfWeek;
+	}
+
+	public void setFromHourValue(int fromHourValue) {
+		_fromHourValue = fromHourValue;
+	}
+
+	public void setFromMinuteValue(int fromMinuteValue) {
+		_fromMinuteValue = fromMinuteValue;
 	}
 
 	public void setFromMonthValue(int fromMonthValue) {
@@ -85,12 +121,24 @@ public class ModifiedFacetCalendarDisplayContext implements Serializable {
 		_selected = selected;
 	}
 
+	public void setToAmPmValue(int toAmPmValue) {
+		_toAmPmValue = toAmPmValue;
+	}
+
 	public void setToDayValue(int toDayValue) {
 		_toDayValue = toDayValue;
 	}
 
 	public void setToFirstDayOfWeek(int toFirstDayOfWeek) {
 		_toFirstDayOfWeek = toFirstDayOfWeek;
+	}
+
+	public void setToHourValue(int toHourValue) {
+		_toHourValue = toHourValue;
+	}
+
+	public void setToMinuteValue(int toMinuteValue) {
+		_toMinuteValue = toMinuteValue;
 	}
 
 	public void setToMonthValue(int toMonthValue) {
@@ -101,14 +149,20 @@ public class ModifiedFacetCalendarDisplayContext implements Serializable {
 		_toYearValue = toYearValue;
 	}
 
+	private int _fromAmPmValue;
 	private boolean _fromBeforeTo;
 	private int _fromDayValue;
 	private int _fromFirstDayOfWeek;
+	private int _fromHourValue;
+	private int _fromMinuteValue;
 	private int _fromMonthValue;
 	private int _fromYearValue;
 	private boolean _selected;
+	private int _toAmPmValue;
 	private int _toDayValue;
 	private int _toFirstDayOfWeek;
+	private int _toHourValue;
+	private int _toMinuteValue;
 	private int _toMonthValue;
 	private int _toYearValue;
 

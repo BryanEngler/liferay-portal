@@ -33,8 +33,14 @@ public class DateRangeFactory {
 		return _ranges.keySet();
 	}
 
-	public String getRangeString(String label) {
-		return _normalizeDates(_ranges.get(label));
+	public String getRangeString(String selectedRange) {
+		String rangeString = _ranges.get(selectedRange);
+
+		if (rangeString != null) {
+			return _normalizeDates(rangeString);
+		}
+
+		return selectedRange;
 	}
 
 	private static String _normalizeDates(String rangeString) {

@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.web.internal.modified.facet.builder;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -21,6 +22,7 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.facet.Facet;
 import com.liferay.portal.search.facet.modified.ModifiedFacetFactory;
 
@@ -96,12 +98,27 @@ public class ModifiedFacetBuilder {
 
 		List<String> rangeStrings = new ArrayList<>();
 
+		String customRangeString = StringPool.BLANK;
+
 		for (String selectedRange : _selectedRanges) {
-			rangeStrings.add(_dateRangeFactory.getRangeString(selectedRange));
+			String rangeString = _dateRangeFactory.getRangeString(
+				selectedRange);
+
+			if (Validator.isNotNull(rangeString)) {
+				rangeStrings.add(rangeString);
+
+				if (Validator.isNull(customRangeString) &&
+					selectedRange.startsWith(StringPool.OPEN_BRACKET)) {
+
+					customRangeString = rangeString;
+				}
+			}
 		}
 
 		if (ListUtil.isNotEmpty(rangeStrings)) {
 			facet.select(ArrayUtil.toStringArray(rangeStrings));
+
+			_searchContext.setAttribute(facet.getFieldId(), customRangeString);
 		}
 	}
 

@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
@@ -94,7 +95,7 @@ public class ModifiedFacetDisplayBuilder implements Serializable {
 		Stream<String> selectedRangesStream = _selectedRanges.stream();
 
 		selectedRangesStream.filter(
-			s -> s.startsWith(StringPool.OPEN_CURLY_BRACE)
+			s -> s.startsWith(StringPool.OPEN_BRACKET)
 		).findAny(
 		).ifPresent(
 			modifiedFacetCalendarDisplayBuilder::setRangeString
@@ -109,7 +110,19 @@ public class ModifiedFacetDisplayBuilder implements Serializable {
 	protected ModifiedFacetTermDisplayContext
 		buildCustomRangeTermDisplayContext() {
 
-		boolean selected = true;
+		String label = "custom-range";
+
+		String customRangeSelection = StringPool.BLANK;
+
+		for (String selection  : _selectedRanges) {
+			if (selection.startsWith(StringPool.OPEN_BRACKET)) {
+				customRangeSelection = selection;
+
+				break;
+			}
+		}
+
+		boolean selected = Validator.isNotNull(customRangeSelection);
 
 		Map<String, Object> data = new HashMap<>();
 
@@ -118,22 +131,19 @@ public class ModifiedFacetDisplayBuilder implements Serializable {
 		TermCollector termCollector = null;
 
 		if (selected) {
-			String term = "";
-
-			termCollector = facetCollector.getTermCollector(term);
+			termCollector = facetCollector.getTermCollector(
+				customRangeSelection);
 		}
 
 		ModifiedFacetTermDisplayContext customRangeTermDisplayContext =
 			buildTermDisplay(
-				StringPool.BLANK, StringPool.BLANK, selected, data,
+				customRangeSelection, label, selected, data,
 				getFrequency(termCollector));
 
 		return customRangeTermDisplayContext;
 	}
 
-	protected ModifiedFacetTermDisplayContext
-		buildDefaultTermDisplay() {
-
+	protected ModifiedFacetTermDisplayContext buildDefaultTermDisplay() {
 		Map<String, Object> data = new HashMap<>();
 
 		data.put("selection", 0);

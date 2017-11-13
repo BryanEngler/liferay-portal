@@ -43,16 +43,24 @@ ModifiedFacetDisplayContext modifiedFacetDisplayContext = (ModifiedFacetDisplayC
 ModifiedFacetTermDisplayContext customRangeTermDisplayContext = modifiedFacetDisplayContext.getCustomRangeTermDisplayContext();
 
 ModifiedFacetCalendarDisplayContext modifiedFacetCalendarDisplayContext = modifiedFacetDisplayContext.getModifiedFacetCalendarDisplayContext();
-
-// Because of JavaScript?!?!?
-
-int i = 0;
 %>
 
-<liferay-ui:panel-container extended="<%= true %>" id='<%= renderResponse.getNamespace() + "facetModifiedPanelContainer" %>' markupView="lexicon" persistState="<%= true %>">
-	<liferay-ui:panel collapsible="<%= true %>" cssClass="search-facet" id='<%= renderResponse.getNamespace() + "facetModifiedPanel" %>' markupView="lexicon" persistState="<%= true %>" title="last-modified">
+<liferay-ui:panel-container
+	extended="<%= true %>"
+	id='<%= renderResponse.getNamespace() + "facetModifiedPanelContainer" %>'
+	markupView="lexicon"
+	persistState="<%= true %>"
+>
+	<liferay-ui:panel
+		collapsible="<%= true %>"
+		cssClass="search-facet"
+		id='<%= renderResponse.getNamespace() + "facetModifiedPanel" %>'
+		markupView="lexicon"
+		persistState="<%= true %>"
+		title="last-modified"
+	>
 		<aui:form method="post" name="modifiedFacetForm">
-			<aui:input autocomplete="off" name="inputFacetName" type="hidden" value="modified" />
+			<aui:input autocomplete="off" name="inputFacetName" type="hidden" value="<%= modifiedFacetDisplayContext.getParameterName() %>" />
 			<aui:input cssClass="facet-parameter-name" name="facet-parameter-name" type="hidden" value="<%= modifiedFacetDisplayContext.getParameterName() %>" />
 
 			<aui:field-wrapper cssClass='<%= renderResponse.getNamespace() + "calendar calendar_" %>' label="" name="<%= HtmlUtil.escapeAttribute(modifiedFacetDisplayContext.getParameterName()) %>">
@@ -60,27 +68,18 @@ int i = 0;
 
 					<%
 					for (ModifiedFacetTermDisplayContext modifiedFacetTermDisplayContext : modifiedFacetDisplayContext.getTermDisplayContexts()) {
-						i++;
 					%>
 
-						<li class="facet-value" name="<%= renderResponse.getNamespace() + "ranger_"+i %>">
-
-							<%
-							String rangeCssClass = " text-default ";
-
-							if (modifiedFacetTermDisplayContext.isSelected()) {
-								rangeCssClass = " text-primary ";
-							}
-							%>
-
+						<li class="facet-value" name="<%= renderResponse.getNamespace() + "range_" + modifiedFacetTermDisplayContext.getLabel() %>">
 							<input
 								class="facet-term"
 								data-term-id="<%= modifiedFacetTermDisplayContext.getRange() %>"
 								id="<portlet:namespace /><%= modifiedFacetTermDisplayContext.getLabel() %>"
 								name="<portlet:namespace /><%= modifiedFacetTermDisplayContext.getLabel() %>"
-								onChange='Liferay.Search.FacetUtil.changeSelection(event);'
+								onChange="Liferay.Search.FacetUtil.changeSelection(event);"
 								type="checkbox"
-								<%= modifiedFacetTermDisplayContext.isSelected() ? "checked" : StringPool.BLANK %>
+								<%= modifiedFacetTermDisplayContext.getFrequency() != 0 && modifiedFacetTermDisplayContext.isSelected() ? "checked" : StringPool.BLANK %>
+								<%= modifiedFacetTermDisplayContext.getFrequency() == 0 ? "disabled" : StringPool.BLANK %>
 							/>
 
 							<span class="term-name">
@@ -96,27 +95,27 @@ int i = 0;
 					}
 					%>
 
-					<li class="facet-value">
+					<li class="facet-value" name="<%= renderResponse.getNamespace() + "range_" + customRangeTermDisplayContext.getLabel() %>">
+						<input
+							class="facet-term"
+							data-term-id="<%= customRangeTermDisplayContext.getRange() %>"
+							id="<portlet:namespace /><%= customRangeTermDisplayContext.getLabel() %>"
+							name="<portlet:namespace /><%= customRangeTermDisplayContext.getLabel() %>"
+							onChange="<portlet:namespace />searchCustomRange();"
+							type="checkbox"
+							<%= customRangeTermDisplayContext.isSelected() ? "checked" : StringPool.BLANK %>
+						/>
 
-						<%
-						String customRangeCssClass = renderResponse.getNamespace() + "custom-range-toggle";
+						<aui:a href="javascript:;" id='<%= customRangeTermDisplayContext.getLabel() + "-toggleLink" %>'>
+							<liferay-ui:message key="<%= customRangeTermDisplayContext.getLabel() %>" />&hellip;
 
-						if (customRangeTermDisplayContext.isSelected()) {
-							customRangeCssClass += " text-primary";
-						}
-						else {
-							customRangeCssClass += " text-default";
-						}
-						%>
-
-						<aui:a cssClass="<%= customRangeCssClass %>" href="javascript:;">
-							<liferay-ui:message key="custom-range" />&hellip;
-
-							<span class="frequency">(<%= customRangeTermDisplayContext.getFrequency() %>)</span>
+							<c:if test="<%= customRangeTermDisplayContext.isSelected() %>">
+								<span class="<%= customRangeTermDisplayContext.getLabel() %>-frequency frequency">(<%= customRangeTermDisplayContext.getFrequency() %>)</span>
+							</c:if>
 						</aui:a>
 					</li>
 
-					<div class="<%= !modifiedFacetCalendarDisplayContext.isSelected() ? "hide" : StringPool.BLANK %> modified-custom-range" id="<portlet:namespace />customRange">
+					<div class="<%= !customRangeTermDisplayContext.isSelected() ? "hide" : StringPool.BLANK %> <%= modifiedFacetDisplayContext.getParameterName() %>-<%= customRangeTermDisplayContext.getLabel() %>" id="<portlet:namespace />customRangePickers">
 						<div class="col-md-6" id="<portlet:namespace />customRangeFrom">
 							<aui:field-wrapper label="from">
 								<liferay-ui:input-date
@@ -126,9 +125,20 @@ int i = 0;
 									firstDayOfWeek="<%= modifiedFacetCalendarDisplayContext.getFromFirstDayOfWeek() %>"
 									monthParam="fromMonth"
 									monthValue="<%= modifiedFacetCalendarDisplayContext.getFromMonthValue() %>"
-									name="fromInput"
+									name="fromInputDate"
 									yearParam="fromYear"
 									yearValue="<%= modifiedFacetCalendarDisplayContext.getFromYearValue() %>"
+								/>
+
+								<liferay-ui:input-time
+									amPmParam="fromAmPm"
+									amPmValue="<%= modifiedFacetCalendarDisplayContext.getFromAmPmValue() %>"
+									disabled="<%= false %>"
+									hourParam="fromHour"
+									hourValue="<%= modifiedFacetCalendarDisplayContext.getFromHourValue() %>"
+									minuteParam="fromMinute"
+									minuteValue="<%= modifiedFacetCalendarDisplayContext.getFromMinuteValue() %>"
+									name="fromInputTime"
 								/>
 							</aui:field-wrapper>
 						</div>
@@ -142,38 +152,29 @@ int i = 0;
 									firstDayOfWeek="<%= modifiedFacetCalendarDisplayContext.getToFirstDayOfWeek() %>"
 									monthParam="toMonth"
 									monthValue="<%= modifiedFacetCalendarDisplayContext.getToMonthValue() %>"
-									name="toInput"
+									name="toInputDate"
 									yearParam="toYear"
 									yearValue="<%= modifiedFacetCalendarDisplayContext.getToYearValue() %>"
 								/>
+
+								<liferay-ui:input-time
+									amPmParam="toAmPm"
+									amPmValue="<%= modifiedFacetCalendarDisplayContext.getToAmPmValue() %>"
+									disabled="<%= false %>"
+									hourParam="toHour"
+									hourValue="<%= modifiedFacetCalendarDisplayContext.getToHourValue() %>"
+									minuteParam="toMinute"
+									minuteValue="<%= modifiedFacetCalendarDisplayContext.getToMinuteValue() %>"
+									name="toInputTime"
+								/>
 							</aui:field-wrapper>
 						</div>
-
-							<input
-								class="DELETETHIS-facet-term"
-								data-term-id=""
-								id="<portlet:namespace /><%= "customRange" %>"
-								name="<portlet:namespace /><%= "customRange" %>"
-								onChange='Liferay.Search.FacetUtil.changeSelection(event);'
-								type="hidden"
-								<%= modifiedFacetCalendarDisplayContext.isSelected() ? "checked" : StringPool.BLANK %>
-							/>
-
-						<%
-						String taglibSearchCustomRange = "window['" + renderResponse.getNamespace() + HtmlUtil.escapeJS(modifiedFacetDisplayContext.getParameterName()) + "searchCustomRange'](event);";
-						%>
-
-						<aui:button disabled="<%= (!modifiedFacetCalendarDisplayContext.isFromBeforeTo()) %>" name="searchCustomRangeButton" onClick="<%= taglibSearchCustomRange %>" value="search" />
 					</div>
 				</ul>
 			</aui:field-wrapper>
 
 			<c:if test="<%= !modifiedFacetDisplayContext.isNothingSelected() %>">
-				<aui:a
-					cssClass="text-default"
-					href="javascript:;"
-					onClick="Liferay.Search.FacetUtil.clearSelections(event);"
-				>
+				<aui:a cssClass="text-default" href="javascript:;" onClick="Liferay.Search.FacetUtil.clearSelections(event);">
 					<small><liferay-ui:message key="clear" /></small>
 				</aui:a>
 			</c:if>
@@ -181,42 +182,66 @@ int i = 0;
 	</liferay-ui:panel>
 </liferay-ui:panel-container>
 
-<aui:script use="liferay-search-facet-util">
-	function <portlet:namespace /><%= HtmlUtil.escapeJS(modifiedFacetDisplayContext.getParameterName()) %>searchCustomRange(event) {
+<aui:script>
+	function <portlet:namespace />searchCustomRange() {
 		var A = AUI();
 		var Lang = A.Lang;
 		var LString = Lang.String;
 
-		var form = $(event.currentTarget).closest('form')[0];
+		var form = AUI.$(document.<portlet:namespace />modifiedFacetForm);
 
 		var dayFrom = form.fm('fromDay').val();
 		var monthFrom = Lang.toInt(form.fm('fromMonth').val()) + 1;
 		var yearFrom = form.fm('fromYear').val();
+		var amPmFrom = form.fm('fromAmPm').val();
+		var hourFrom = Lang.toInt(form.fm('fromHour').val());
+		var minuteFrom = form.fm('fromMinute').val();
+
+		if (amPmFrom == '1') {
+			hourFrom = hourFrom + 12;
+		}
 
 		var dayTo = form.fm('toDay').val();
 		var monthTo = Lang.toInt(form.fm('toMonth').val()) + 1;
 		var yearTo = form.fm('toYear').val();
+		var amPmTo = form.fm('toAmPm').val();
+		var hourTo = Lang.toInt(form.fm('toHour').val());
+		var minuteTo = form.fm('toMinute').val();
 
-		var range = '[' + yearFrom + LString.padNumber(monthFrom, 2) + LString.padNumber(dayFrom, 2) + '000000 TO ' + yearTo + LString.padNumber(monthTo, 2) + LString.padNumber(dayTo, 2) + '235959]';
+		if (amPmTo == '1') {
+			hourTo = hourTo + 12;
+		}
 
-		form.fm('customRange').val(range);
-		form.fm('customRange').attr("checked", true);
-		form.fm('customRange').attr("data-term-id", range);
-		form.fm('<%= HtmlUtil.escapeAttribute(modifiedFacetDisplayContext.getParameterName()) + "selection" %>').val('<%= i + 1 %>');
-		form.fm('<%= HtmlUtil.escapeAttribute(modifiedFacetDisplayContext.getParameterName()) %>').val(range);
+		var range = '[' + yearFrom + LString.padNumber(monthFrom, 2) + LString.padNumber(dayFrom, 2) + LString.padNumber(hourFrom, 2) + LString.padNumber(minuteFrom, 2) + '00 TO ' + yearTo + LString.padNumber(monthTo, 2) + LString.padNumber(dayTo, 2) + LString.padNumber(hourTo, 2) + LString.padNumber(minuteTo, 2) + '59]';
 
-		var selections = [range];
+		A.one('#<portlet:namespace /><%= customRangeTermDisplayContext.getLabel() %>')._node.setAttribute('data-term-id', range)
 
-		FacetUtil.setURLParameters(form, selections);
+		form = AUI.$('#<portlet:namespace /><%= customRangeTermDisplayContext.getLabel() %>').closest('form')[0];
+
+		var formCheckboxes = $('#' + form.id + ' input.facet-term');
+
+		var selections = [];
+
+		formCheckboxes.each(
+			function(index, value) {
+				if (value.checked) {
+					selections.push(value.getAttribute('data-term-id'));
+				}
+			}
+		);
+
+		Liferay.Search.FacetUtil.setURLParameters(form, selections);
 	}
 </aui:script>
 
 <aui:script use="aui-form-validator">
 	var Util = Liferay.Util;
 
-	var customRangeFrom = Liferay.component('<%= renderResponse.getNamespace() %>modifiedfromDatePicker');
-	var customRangeTo = Liferay.component('<%= renderResponse.getNamespace() %>modifiedtoDatePicker');
-	var searchButton = A.one('#<portlet:namespace />searchCustomRangeButton');
+	var customRangeFromDate = Liferay.component('<%= renderResponse.getNamespace() %>fromInputDateDatePicker');
+	var customRangeFromTime = Liferay.component('<%= renderResponse.getNamespace() %>fromInputTimeTimePicker');
+	var customRangeToDate = Liferay.component('<%= renderResponse.getNamespace() %>toInputDateDatePicker');
+	var customRangeToTime = Liferay.component('<%= renderResponse.getNamespace() %>toInputTimeTimePicker');
+	var checkbox = A.one('#<portlet:namespace /><%= customRangeTermDisplayContext.getLabel() %>');
 
 	var preventKeyboardDateChange = function(event) {
 		if (!event.isKey('TAB')) {
@@ -224,8 +249,8 @@ int i = 0;
 		}
 	};
 
-	A.one('#<portlet:namespace /><%= HtmlUtil.escapeJS(modifiedFacetDisplayContext.getParameterName()) %>from').on('keydown', preventKeyboardDateChange);
-	A.one('#<portlet:namespace /><%= HtmlUtil.escapeJS(modifiedFacetDisplayContext.getParameterName()) %>to').on('keydown', preventKeyboardDateChange);
+	A.one('#<portlet:namespace />fromInputDate').on('keydown', preventKeyboardDateChange);
+	A.one('#<portlet:namespace />toInputDate').on('keydown', preventKeyboardDateChange);
 
 	var DEFAULTS_FORM_VALIDATOR = A.config.FormValidator;
 
@@ -241,7 +266,19 @@ int i = 0;
 		DEFAULTS_FORM_VALIDATOR.RULES,
 		{
 			<portlet:namespace />dateRange: function(val, fieldNode, ruleValue) {
-				return A.Date.isGreaterOrEqual(customRangeTo.getDate(), customRangeFrom.getDate());
+				var fromDate = customRangeFromDate.getDate();
+				var fromTime = customRangeFromTime.getTime();
+
+				fromDate.setHours(fromTime.getHours());
+				fromDate.setMinutes(fromTime.getMinutes());
+
+				var toDate = customRangeToDate.getDate();
+				var toTime = customRangeToTime.getTime();
+
+				toDate.setHours(toTime.getHours());
+				toDate.setMinutes(toTime.getMinutes());
+
+				return A.Date.isGreaterOrEqual(toDate, fromDate);
 			}
 		},
 		true
@@ -249,21 +286,21 @@ int i = 0;
 
 	var customRangeValidator = new A.FormValidator(
 		{
-			boundingBox: document.<portlet:namespace />fm,
+			boundingBox: document.<portlet:namespace />modifiedFacetForm,
 			fieldContainer: 'div',
 			on: {
 				errorField: function(event) {
-					Util.toggleDisabled(searchButton, true);
+					Util.toggleDisabled(checkbox, true);
 				},
 				validField: function(event) {
-					Util.toggleDisabled(searchButton, false);
+					Util.toggleDisabled(checkbox, false);
 				}
 			},
 			rules: {
-				'<portlet:namespace /><%= HtmlUtil.escapeJS(modifiedFacetDisplayContext.getParameterName()) %>from': {
+				'<portlet:namespace />fromInputTime': {
 					<portlet:namespace />dateRange: true
 				},
-				'<portlet:namespace /><%= HtmlUtil.escapeJS(modifiedFacetDisplayContext.getParameterName()) %>to': {
+				'<portlet:namespace />toInputTime': {
 					<portlet:namespace />dateRange: true
 				}
 			}
@@ -274,15 +311,69 @@ int i = 0;
 		customRangeValidator.validate();
 	};
 
-	customRangeFrom.on('selectionChange', onRangeSelectionChange);
-	customRangeTo.on('selectionChange', onRangeSelectionChange);
+	customRangeFromDate.on('selectionChange', onRangeSelectionChange);
+	customRangeFromTime.on('selectionChange', onRangeSelectionChange);
+	customRangeToDate.on('selectionChange', onRangeSelectionChange);
+	customRangeToTime.on('selectionChange', onRangeSelectionChange);
 
-	A.one('.<portlet:namespace />custom-range-toggle').on(
+	A.one('#<portlet:namespace /><%= customRangeTermDisplayContext.getLabel() %>-toggleLink').on(
 		'click',
 		function(event) {
 			event.halt();
 
-			A.one('#<%= renderResponse.getNamespace() + "customRange" %>').toggle();
+			A.one('#<portlet:namespace /><%= "customRangePickers" %>').toggle();
+		}
+	);
+
+	A.one('#<portlet:namespace /><%= "fromInputDate" %>').on(
+		'click',
+		function(event) {
+			A.one('#<portlet:namespace /><%= customRangeTermDisplayContext.getLabel() %>')._node.checked=false;
+
+			var label = A.one('.<%= customRangeTermDisplayContext.getLabel() %>-frequency');
+
+			if (label != null) {
+				label._node.innerHTML='';
+			}
+		}
+	);
+
+	A.one('#<portlet:namespace /><%= "fromInputTime" %>').on(
+		'click',
+		function(event) {
+			A.one('#<portlet:namespace /><%= customRangeTermDisplayContext.getLabel() %>')._node.checked=false;
+
+			var label = A.one('.<%= customRangeTermDisplayContext.getLabel() %>-frequency');
+
+			if (label != null) {
+				label._node.innerHTML='';
+			}
+		}
+	);
+
+	A.one('#<portlet:namespace /><%= "toInputDate" %>').on(
+		'click',
+		function(event) {
+			A.one('#<portlet:namespace /><%= customRangeTermDisplayContext.getLabel() %>')._node.checked=false;
+
+			var label = A.one('.<%= customRangeTermDisplayContext.getLabel() %>-frequency');
+
+			if (label != null) {
+				label._node.innerHTML='';
+			}
+		}
+	);
+
+	A.one('#<portlet:namespace /><%= "toInputTime" %>').on(
+		'click',
+		function(event) {
+			A.one('#<portlet:namespace /><%= customRangeTermDisplayContext.getLabel() %>')._node.checked=false;
+
+			var label = A.one('.<%= customRangeTermDisplayContext.getLabel() %>-frequency');
+
+			if (label != null) {
+				label._node.innerHTML='';
+			}
 		}
 	);
 </aui:script>

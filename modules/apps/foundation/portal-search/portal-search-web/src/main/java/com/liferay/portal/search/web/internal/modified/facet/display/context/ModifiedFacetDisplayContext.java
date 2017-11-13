@@ -23,15 +23,11 @@ import java.util.List;
  */
 public class ModifiedFacetDisplayContext implements Serializable {
 
-	public ModifiedFacetTermDisplayContext
-		getCustomRangeTermDisplayContext() {
-
+	public ModifiedFacetTermDisplayContext getCustomRangeTermDisplayContext() {
 		return _customRangeTermDisplayContext;
 	}
 
-	public ModifiedFacetTermDisplayContext
-		getDefaultTermDisplayContext() {
-
+	public ModifiedFacetTermDisplayContext getDefaultTermDisplayContext() {
 		return _defaultTermDisplayContext;
 	}
 

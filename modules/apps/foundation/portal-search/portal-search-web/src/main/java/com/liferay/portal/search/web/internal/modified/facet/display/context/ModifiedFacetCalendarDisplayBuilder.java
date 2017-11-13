@@ -14,6 +14,9 @@
 
 package com.liferay.portal.search.web.internal.modified.facet.display.context;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -30,25 +33,50 @@ public class ModifiedFacetCalendarDisplayBuilder {
 
 	public ModifiedFacetCalendarDisplayContext build() {
 		if (_rangeString != null) {
-			int[] from = parseDate(_rangeString.substring(1, 9));
+			int[] from = parseDate(_rangeString.substring(1, 15));
 
 			_fromDay = from[0];
 			_fromMonth = from[1] - 1;
 			_fromYear = from[2];
+			_fromHour = from[3];
+			_fromMinute = from[4];
 
-			int[] to = parseDate(_rangeString.substring(10, 18));
+			int[] to = parseDate(_rangeString.substring(19, 33));
 
 			_toDay = to[0];
 			_toMonth = to[1] - 1;
 			_toYear = to[2];
+			_toHour = to[3];
+			_toMinute = to[4];
 		}
 
 		ModifiedFacetCalendarDisplayContext
 			modifiedFacetCalendarDisplayContext =
 				new ModifiedFacetCalendarDisplayContext();
 
-		Date fromDate = PortalUtil.getDate(_fromMonth, _fromDay, _fromYear);
-		Date toDate = PortalUtil.getDate(_toMonth, _toDay, _toYear);
+		Date fromDate = null;
+
+		try {
+			fromDate = PortalUtil.getDate(
+				_fromMonth, _fromDay, _fromYear, _fromHour, _fromMinute, null);
+		}
+		catch (PortalException pe) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(pe, pe);
+			}
+		}
+
+		Date toDate = null;
+
+		try {
+			toDate = PortalUtil.getDate(
+				_toMonth, _toDay, _toYear, _toHour, _toMinute, null);
+		}
+		catch (PortalException pe) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(pe, pe);
+			}
+		}
 
 		Calendar fromCalendar = CalendarFactoryUtil.getCalendar(
 			_timeZone, _locale);
@@ -79,6 +107,12 @@ public class ModifiedFacetCalendarDisplayBuilder {
 			fromCalendar.get(Calendar.MONTH));
 		modifiedFacetCalendarDisplayContext.setFromYearValue(
 			fromCalendar.get(Calendar.YEAR));
+		modifiedFacetCalendarDisplayContext.setFromAmPmValue(
+			fromCalendar.get(Calendar.AM_PM));
+		modifiedFacetCalendarDisplayContext.setFromHourValue(
+			fromCalendar.get(Calendar.HOUR));
+		modifiedFacetCalendarDisplayContext.setFromMinuteValue(
+			fromCalendar.get(Calendar.MINUTE));
 
 		modifiedFacetCalendarDisplayContext.setToDayValue(
 			toCalendar.get(Calendar.DATE));
@@ -88,6 +122,12 @@ public class ModifiedFacetCalendarDisplayBuilder {
 			toCalendar.get(Calendar.MONTH));
 		modifiedFacetCalendarDisplayContext.setToYearValue(
 			toCalendar.get(Calendar.YEAR));
+		modifiedFacetCalendarDisplayContext.setToAmPmValue(
+			toCalendar.get(Calendar.AM_PM));
+		modifiedFacetCalendarDisplayContext.setToHourValue(
+			toCalendar.get(Calendar.HOUR));
+		modifiedFacetCalendarDisplayContext.setToMinuteValue(
+			toCalendar.get(Calendar.MINUTE));
 
 		boolean fromBeforeTo = false;
 
@@ -102,6 +142,14 @@ public class ModifiedFacetCalendarDisplayBuilder {
 
 	public void setFromDay(int fromDay) {
 		_fromDay = fromDay;
+	}
+
+	public void setFromHour(int fromHour) {
+		_fromHour = fromHour;
+	}
+
+	public void setFromMinute(int fromMinute) {
+		_fromMinute = fromMinute;
 	}
 
 	public void setFromMonth(int fromMonth) {
@@ -128,6 +176,14 @@ public class ModifiedFacetCalendarDisplayBuilder {
 		_toDay = toDay;
 	}
 
+	public void setToHour(int toHour) {
+		_toHour = toHour;
+	}
+
+	public void setToMinute(int toMinute) {
+		_toMinute = toMinute;
+	}
+
 	public void setToMonth(int toMonth) {
 		_toMonth = toMonth;
 	}
@@ -140,17 +196,26 @@ public class ModifiedFacetCalendarDisplayBuilder {
 		int day = Integer.valueOf(string.substring(6, 8));
 		int month = Integer.valueOf(string.substring(4, 6));
 		int year = Integer.valueOf(string.substring(0, 4));
+		int hour = Integer.valueOf(string.substring(8, 10));
+		int minute = Integer.valueOf(string.substring(10, 12));
 
-		return new int[] {day, month, year};
+		return new int[] {day, month, year, hour, minute};
 	}
 
+	private static final Log _log = LogFactoryUtil.getLog(
+		ModifiedFacetCalendarDisplayBuilder.class);
+
 	private int _fromDay;
+	private int _fromHour;
+	private int _fromMinute;
 	private int _fromMonth;
 	private int _fromYear;
 	private Locale _locale;
 	private String _rangeString;
 	private TimeZone _timeZone;
 	private int _toDay;
+	private int _toHour;
+	private int _toMinute;
 	private int _toMonth;
 	private int _toYear;
 
