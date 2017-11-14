@@ -1,8 +1,8 @@
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 
-String elasticsearchVersion = "5.4.1"
-String luceneVersion = "6.5.1"
+String elasticsearchVersion = "5.6.4"
+String luceneVersion = "6.6.1"
 
 configurations {
 	elasticsearchPlugins {
