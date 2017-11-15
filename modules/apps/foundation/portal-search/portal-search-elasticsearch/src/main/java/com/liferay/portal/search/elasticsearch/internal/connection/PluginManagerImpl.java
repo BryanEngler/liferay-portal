@@ -29,10 +29,8 @@ import java.nio.file.Path;
 import org.elasticsearch.cli.Terminal;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.env.Environment;
-import org.elasticsearch.plugins.PluginInfo;
-import org.elasticsearch.plugins.PluginManager.OutputMode;
-import org.elasticsearch.plugins.PluginCli;
-import org.elasticsearch.plugins.PluginInfo;
+//import org.elasticsearch.plugins.PluginInfo;
+//import org.elasticsearch.plugins.PluginCli;
 
 /**
  * @author Artur Aquino
@@ -55,6 +53,7 @@ public class PluginManagerImpl implements PluginManager {
 			String name, Terminal terminal, boolean batch)
 		throws IOException {
 
+		/*
 		try {
 			PluginCli pluginCli = getPluginCli();
 
@@ -69,6 +68,7 @@ public class PluginManagerImpl implements PluginManager {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 
 	@Override
@@ -86,6 +86,8 @@ public class PluginManagerImpl implements PluginManager {
 
 	@Override
 	public boolean isCurrentVersion(Path path) throws IOException {
+		return true;
+		/*
 		try {
 			PluginInfo.readFromProperties(path);
 
@@ -100,12 +102,14 @@ public class PluginManagerImpl implements PluginManager {
 
 			throw iae;
 		}
+		*/
 	}
 
 	@Override
 	public void removePlugin(String name, Terminal terminal)
 		throws IOException {
 
+		/*
 		try {
 			PluginCli pluginCli = getPluginCli();
 
@@ -120,6 +124,7 @@ public class PluginManagerImpl implements PluginManager {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 
 	public enum OutputMode {
@@ -127,6 +132,7 @@ public class PluginManagerImpl implements PluginManager {
 		DEFAULT, SILENT, VERBOSE
 	}
 
+	/*
 	protected PluginCli getPluginCli() throws Exception {
 		Constructor<PluginCli> constructor =
 			PluginCli.class.getDeclaredConstructor();
@@ -135,6 +141,7 @@ public class PluginManagerImpl implements PluginManager {
 
 		return constructor.newInstance();
 	}
+	*/
 
 	private final Environment _environment;
 	private final OutputMode _outputMode;
