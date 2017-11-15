@@ -57,6 +57,9 @@ public class IndexCreator {
 
 		Settings.Builder builder = Settings.builder();
 
+		builder.put("index.number_of_replicas", 0);
+		builder.put("index.number_of_shards", 1);
+
 		indexCreationHelper.contributeIndexSettings(builder);
 
 		createIndexRequestBuilder.setSettings(builder);
