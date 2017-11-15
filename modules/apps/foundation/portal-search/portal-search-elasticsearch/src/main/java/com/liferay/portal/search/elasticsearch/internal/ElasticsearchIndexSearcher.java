@@ -711,7 +711,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		Terms terms = (Terms)aggregationsMap.get(
 			GroupByTranslator.GROUP_BY_AGGREGATION_PREFIX + groupBy.getField());
 
-		List<Terms.Bucket> buckets = terms.getBuckets();
+		List<? extends Terms.Bucket> buckets = terms.getBuckets();
 
 		for (Terms.Bucket bucket : buckets) {
 			Aggregations bucketAggregations = bucket.getAggregations();
