@@ -39,7 +39,7 @@ import java.util.stream.Stream;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 
@@ -109,7 +109,7 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 		InetAddress inetAddress = InetAddress.getByName(host);
 
 		transportClient.addTransportAddress(
-			new InetSocketTransportAddress(inetAddress, port));
+			new TransportAddress(inetAddress, port));
 	}
 
 	@Override
