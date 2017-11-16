@@ -43,7 +43,7 @@ import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.IndicesAdminClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.settings.Settings.Builder;
-
+import org.elasticsearch.common.xcontent.XContentType;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -51,6 +51,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
+
+
 
 /**
  * @author Michael C. Han
@@ -158,8 +160,9 @@ public class CompanyIndexFactory implements IndexFactory {
 			String mappingDefinition = ResourceUtil.getResourceAsString(
 				getClass(), entry.getValue());
 
-			createIndexRequestBuilder.addMapping(
-				entry.getKey(), mappingDefinition);
+			//use same type or different indicies?
+			//createIndexRequestBuilder.addMapping(
+			//	entry.getKey(), mappingDefinition, XContentType.JSON);
 		}
 	}
 

@@ -37,7 +37,7 @@
 			},
 			"priority": {
 				"index": "true",
-				"store": "yes",
+				"store": "true",
 				"type": "double"
 			},
 			"uid": {

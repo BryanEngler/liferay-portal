@@ -28,7 +28,7 @@
 				"template_geolocation": {
 					"mapping": {
 						"index": "true",
-						"store": true,
+						"store": "true",
 						"type": "geo_point"
 					},
 					"match": "*_geolocation"
@@ -801,8 +801,8 @@
 				"type": "keyword"
 			},
 			"priority": {
-				"index": "not_analyzed",
-				"store": "yes",
+				"index": "true",
+				"store": "true",
 				"type": "double"
 			},
 			"properties": {

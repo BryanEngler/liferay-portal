@@ -289,7 +289,7 @@ public class EmbeddedElasticsearchConnection
 			settingsBuilder.put("transport.tcp.port", transportTcpPort);
 		}
 
-		settingsBuilder.put("transport.type", "local");
+		settingsBuilder.put("transport.type", "netty4");
 	}
 
 	protected void configurePaths() {
@@ -498,7 +498,7 @@ public class EmbeddedElasticsearchConnection
 	private void _replaceTransportRequestHandler(
 		TransportService transportService, SearchService searchService) {
 
-		String action = SearchTransportService.QUERY_FETCH_ACTION_NAME;
+		String action = SearchTransportService.QUERY_ACTION_NAME;
 
 //		transportService.removeHandler(action);
 
