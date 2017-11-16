@@ -48,6 +48,7 @@ import org.apache.commons.lang.time.StopWatch;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.inject.Injector;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.node.InternalSettingsPreparer;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeValidationException;
@@ -218,7 +219,8 @@ public class EmbeddedElasticsearchConnection
 			elasticsearchConfiguration.httpCORSConfigurations();
 
 		if (Validator.isNotNull(httpCORSConfigurations)) {
-			settingsBuilder.loadFromSource(httpCORSConfigurations);
+			settingsBuilder.loadFromSource(
+				httpCORSConfigurations, XContentType.YAML);
 		}
 	}
 
