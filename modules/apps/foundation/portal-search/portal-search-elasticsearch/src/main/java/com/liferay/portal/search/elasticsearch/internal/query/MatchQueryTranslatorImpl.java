@@ -21,11 +21,12 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch.query.MatchQueryTranslator;
 
 import org.elasticsearch.common.unit.Fuzziness;
+import org.elasticsearch.index.query.MatchPhrasePrefixQueryBuilder;
+import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.search.MatchQuery.Type;
 import org.elasticsearch.index.search.MatchQuery.ZeroTermsQuery;
 
 import org.osgi.service.component.annotations.Component;
@@ -39,7 +40,86 @@ public class MatchQueryTranslatorImpl
 
 	@Override
 	public QueryBuilder translate(MatchQuery matchQuery) {
-		MatchQueryBuilder matchQueryBuilder = translateMatchQuery(matchQuery);
+		MatchQuery.Type type = matchQuery.getType();
+		String value = matchQuery.getValue();
+
+		if (value.startsWith(StringPool.QUOTE) &&
+			value.endsWith(StringPool.QUOTE)) {
+
+			type = MatchQuery.Type.PHRASE;
+
+			value = StringUtil.unquote(value);
+
+			if (value.endsWith(StringPool.STAR)) {
+				type = MatchQuery.Type.PHRASE_PREFIX;
+			}
+		}
+
+		if ((type == null) || (type == MatchQuery.Type.BOOLEAN)) {
+			return translateMatchQuery(matchQuery);
+		}
+		else if (type == MatchQuery.Type.PHRASE) {
+			return translateMatchPhraseQuery(matchQuery);
+		}
+		else if (type == MatchQuery.Type.PHRASE_PREFIX) {
+			return translateMatchPhrasePrefixQuery(matchQuery);
+		}
+
+		throw new IllegalArgumentException("Invalid match query type: " + type);
+	}
+
+	public MatchPhrasePrefixQueryBuilder translateMatchPhrasePrefixQuery(
+		MatchQuery matchQuery) {
+
+		MatchPhrasePrefixQueryBuilder matchPhrasePrefixQueryBuilder =
+			QueryBuilders.matchPhrasePrefixQuery(
+				matchQuery.getField(), matchQuery.getValue());
+
+		if (Validator.isNotNull(matchQuery.getAnalyzer())) {
+			matchPhrasePrefixQueryBuilder.analyzer(matchQuery.getAnalyzer());
+		}
+
+		if (matchQuery.getMaxExpansions() != null) {
+			matchPhrasePrefixQueryBuilder.maxExpansions(
+				matchQuery.getMaxExpansions());
+		}
+
+		if (matchQuery.getSlop() != null) {
+			matchPhrasePrefixQueryBuilder.slop(matchQuery.getSlop());
+		}
+
+		if (!matchQuery.isDefaultBoost()) {
+			matchPhrasePrefixQueryBuilder.boost(matchQuery.getBoost());
+		}
+
+		return matchPhrasePrefixQueryBuilder;
+	}
+
+	public MatchPhraseQueryBuilder translateMatchPhraseQuery(
+		MatchQuery matchQuery) {
+
+		MatchPhraseQueryBuilder matchPhraseQueryBuilder =
+			QueryBuilders.matchPhraseQuery(
+				matchQuery.getField(), matchQuery.getValue());
+
+		if (Validator.isNotNull(matchQuery.getAnalyzer())) {
+			matchPhraseQueryBuilder.analyzer(matchQuery.getAnalyzer());
+		}
+
+		if (matchQuery.getSlop() != null) {
+			matchPhraseQueryBuilder.slop(matchQuery.getSlop());
+		}
+
+		if (!matchQuery.isDefaultBoost()) {
+			matchPhraseQueryBuilder.boost(matchQuery.getBoost());
+		}
+
+		return matchPhraseQueryBuilder;
+	}
+
+	public MatchQueryBuilder translateMatchQuery(MatchQuery matchQuery) {
+		MatchQueryBuilder matchQueryBuilder = QueryBuilders.matchQuery(
+			matchQuery.getField(), matchQuery.getValue());
 
 		if (Validator.isNotNull(matchQuery.getAnalyzer())) {
 			matchQueryBuilder.analyzer(matchQuery.getAnalyzer());
@@ -80,10 +160,6 @@ public class MatchQueryTranslatorImpl
 			matchQueryBuilder.prefixLength(matchQuery.getPrefixLength());
 		}
 
-		if (matchQuery.getSlop() != null) {
-			matchQueryBuilder.slop(matchQuery.getSlop());
-		}
-
 		if (matchQuery.getZeroTermsQuery() != null) {
 			ZeroTermsQuery matchQueryBuilderZeroTermsQuery = translate(
 				matchQuery.getZeroTermsQuery());
@@ -101,49 +177,7 @@ public class MatchQueryTranslatorImpl
 		}
 
 		if (matchQuery.isLenient() != null) {
-			matchQueryBuilder.setLenient(matchQuery.isLenient());
-		}
-
-		return matchQueryBuilder;
-	}
-
-	protected Type translate(MatchQuery.Type matchQueryType) {
-		if (matchQueryType == MatchQuery.Type.BOOLEAN) {
-			return Type.BOOLEAN;
-		}
-		else if (matchQueryType == MatchQuery.Type.PHRASE) {
-			return Type.PHRASE;
-		}
-		else if (matchQueryType == MatchQuery.Type.PHRASE_PREFIX) {
-			return Type.PHRASE_PREFIX;
-		}
-
-		throw new IllegalArgumentException(
-			"Invalid match query type: " + matchQueryType);
-	}
-
-	protected MatchQueryBuilder translateMatchQuery(MatchQuery matchQuery) {
-		String field = matchQuery.getField();
-		MatchQuery.Type matchQueryType = matchQuery.getType();
-		String value = matchQuery.getValue();
-
-		if (value.startsWith(StringPool.QUOTE) &&
-			value.endsWith(StringPool.QUOTE)) {
-
-			matchQueryType = MatchQuery.Type.PHRASE;
-
-			value = StringUtil.unquote(value);
-
-			if (value.endsWith(StringPool.STAR)) {
-				matchQueryType = MatchQuery.Type.PHRASE_PREFIX;
-			}
-		}
-
-		MatchQueryBuilder matchQueryBuilder = QueryBuilders.matchQuery(
-			field, value);
-
-		if (matchQueryType != null) {
-			matchQueryBuilder.type(translate(matchQueryType));
+			matchQueryBuilder.lenient(matchQuery.isLenient());
 		}
 
 		return matchQueryBuilder;
