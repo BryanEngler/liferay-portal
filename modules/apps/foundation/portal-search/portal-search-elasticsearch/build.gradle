@@ -1,8 +1,8 @@
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 
-String elasticsearchVersion = "5.6.4"
-String luceneVersion = "6.6.1"
+String elasticsearchVersion = "6.0.0"
+String luceneVersion = "7.0.1"
 
 configurations {
 	elasticsearchPlugins {
@@ -47,6 +47,7 @@ dependencies {
 	compileInclude group: "org.elasticsearch", name: "elasticsearch", version: elasticsearchVersion
 	compileInclude group: "org.elasticsearch.client", name: "transport", version: elasticsearchVersion
 	compileInclude group: "org.elasticsearch.plugin", name: "lang-mustache-client", version: elasticsearchVersion
+	compileInclude group: "org.elasticsearch.plugin", name: "parent-join-client", version: elasticsearchVersion
 	compileInclude group: "org.elasticsearch.plugin", name: "percolator-client", version: elasticsearchVersion
 	compileInclude group: "org.elasticsearch.plugin", name: "reindex-client", version: elasticsearchVersion
 	compileInclude group: "org.elasticsearch.plugin", name: "transport-netty4-client", version: elasticsearchVersion

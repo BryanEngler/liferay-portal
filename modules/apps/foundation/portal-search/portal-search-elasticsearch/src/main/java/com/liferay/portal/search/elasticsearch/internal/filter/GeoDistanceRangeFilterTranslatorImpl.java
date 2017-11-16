@@ -15,12 +15,14 @@
 package com.liferay.portal.search.elasticsearch.internal.filter;
 
 import com.liferay.portal.kernel.search.filter.GeoDistanceRangeFilter;
+import com.liferay.portal.kernel.search.geolocation.GeoDistance;
 import com.liferay.portal.kernel.search.geolocation.GeoLocationPoint;
 import com.liferay.portal.search.elasticsearch.filter.GeoDistanceRangeFilterTranslator;
 
-import org.elasticsearch.index.query.GeoDistanceRangeQueryBuilder;
+import org.elasticsearch.common.geo.GeoPoint;
+import org.elasticsearch.common.unit.DistanceUnit;
+import org.elasticsearch.index.query.GeoDistanceQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -38,23 +40,32 @@ public class GeoDistanceRangeFilterTranslatorImpl
 		GeoLocationPoint pinGeoLocationPoint =
 			geoDistanceRangeFilter.getPinGeoLocationPoint();
 
-		GeoDistanceRangeQueryBuilder geoDistanceRangeQueryBuilder =
-			QueryBuilders.geoDistanceRangeQuery(
-				geoDistanceRangeFilter.getField(),
-				pinGeoLocationPoint.getLatitude(),
-				pinGeoLocationPoint.getLongitude());
+		//GeoDistanceRangeQueryBuilder has been removed
+		//https://www.elastic.co/guide/en/elasticsearch/reference/current/
+		//query-dsl-geo-distance-range-query.html
+		GeoDistanceQueryBuilder geoDistanceQueryBuilder =
+			new GeoDistanceQueryBuilder(geoDistanceRangeFilter.getField());
 
-		geoDistanceRangeQueryBuilder.from(
-			String.valueOf(geoDistanceRangeFilter.getLowerBoundGeoDistance()));
-		geoDistanceRangeQueryBuilder.includeLower(
-			geoDistanceRangeFilter.isIncludesLower());
-		geoDistanceRangeQueryBuilder.includeUpper(
-			geoDistanceRangeFilter.isIncludesUpper());
+		GeoPoint geoPoint = new GeoPoint(
+			pinGeoLocationPoint.getLatitude(),
+			pinGeoLocationPoint.getLongitude());
 
-		geoDistanceRangeQueryBuilder.to(
-			String.valueOf(geoDistanceRangeFilter.getUpperBoundGeoDistance()));
+		geoDistanceQueryBuilder.point(geoPoint);
 
-		return geoDistanceRangeQueryBuilder;
+		GeoDistance geoDistance =
+			geoDistanceRangeFilter.getUpperBoundGeoDistance();
+
+		//no lower bound any more. ranges can be acquired through pagination or
+		//aggregation instead
+		//https://www.elastic.co/guide/en/elasticsearch/reference/current/
+		//search-aggregations-bucket-geodistance-aggregation.html
+
+		geoDistanceQueryBuilder.distance(
+			String.valueOf(geoDistance.getDistance()),
+			DistanceUnit.fromString(
+				String.valueOf(geoDistance.getDistanceUnit())));
+
+		return geoDistanceQueryBuilder;
 	}
 
 }

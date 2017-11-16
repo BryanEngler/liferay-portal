@@ -639,7 +639,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		List<Document> documents = new ArrayList<>();
 		List<Float> scores = new ArrayList<>();
 
-		if (searchHits.totalHits() > 0) {
+		if (searchHits.getTotalHits() > 0) {
 			SearchHit[] searchHitsArray = searchHits.getHits();
 
 			for (SearchHit searchHit : searchHitsArray) {

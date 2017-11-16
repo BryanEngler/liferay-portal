@@ -47,6 +47,7 @@ import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.action.update.UpdateRequestBuilder;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.xcontent.XContentType;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -140,7 +141,7 @@ public class ElasticsearchUpdateDocumentCommandImpl
 		String elasticSearchDocument =
 			elasticsearchDocumentFactory.getElasticsearchDocument(document);
 
-		updateRequestBuilder.setDoc(elasticSearchDocument);
+		updateRequestBuilder.setDoc(elasticSearchDocument, XContentType.JSON);
 
 		updateRequestBuilder.setDocAsUpsert(true);
 		updateRequestBuilder.setRetryOnConflict(
