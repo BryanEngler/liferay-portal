@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.web.internal.facet.display.builder;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.SearchContext;
@@ -201,7 +202,13 @@ public class ScopeSearchFacetDisplayBuilder {
 		}
 
 		try {
-			return group.getDescriptiveName(_locale);
+			String name = group.getDescriptiveName(_locale);
+
+			if (group.isStagingGroup() || group.isStagedRemotely()) {
+				name = name + StringPool.SPACE + "(Staged)"; //add lang key
+			}
+
+			return name;
 		}
 		catch (PortalException pe) {
 			throw new RuntimeException(pe);
