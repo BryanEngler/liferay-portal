@@ -30,6 +30,9 @@ public interface PluginManager {
 			String name, Terminal terminal, boolean batch)
 		throws IOException;
 
+	public void extract(Terminal terminal, PluginZip pluginZip)
+		throws IOException;
+
 	public Path[] getInstalledPluginsPaths() throws IOException;
 
 	public boolean isCurrentVersion(Path path) throws IOException;

@@ -54,7 +54,7 @@ public class EmbeddedElasticsearchPluginManager {
 		PluginZip pluginZip = createPluginZip();
 
 		try {
-			downloadAndExtract(pluginZip);
+			extract(pluginZip);
 		}
 		finally {
 			pluginZip.delete();
@@ -95,6 +95,24 @@ public class EmbeddedElasticsearchPluginManager {
 
 		try {
 			pluginManager.downloadAndExtract(_pluginName, getTerminal(), true);
+		}
+		catch (IOException ioe) {
+			if (!handle(ioe)) {
+				throw ioe;
+			}
+		}
+	}
+
+	protected void extract(PluginZip pluginZip) throws IOException {
+		File file = new File(_pluginsPathString);
+
+		file.mkdirs();
+
+		PluginManager pluginManager = _pluginManagerFactory.createPluginManager(
+			pluginZip);
+
+		try {
+			pluginManager.extract(getTerminal(), pluginZip);
 		}
 		catch (IOException ioe) {
 			if (!handle(ioe)) {
