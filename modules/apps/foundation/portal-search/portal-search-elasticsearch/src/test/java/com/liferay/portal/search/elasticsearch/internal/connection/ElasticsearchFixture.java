@@ -110,7 +110,7 @@ public class ElasticsearchFixture implements IndicesAdminClientSupplier {
 		ClusterHealthRequest clusterHealthRequest =
 			clusterHealthRequestBuilder.request();
 
-		clusterHealthRequest.timeout(new TimeValue(1, TimeUnit.SECONDS));
+		clusterHealthRequest.timeout(new TimeValue(4, TimeUnit.SECONDS));
 		clusterHealthRequest.waitForActiveShards(
 			healthExpectations.activeShards);
 		clusterHealthRequest.waitForNodes(
