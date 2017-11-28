@@ -1,8 +1,3 @@
-#
-# See http://elasticsearch.org/guide/en/elasticsearch/reference/current/setup-configuration.html
-# for more information.
-#
-
 http.host: _local_
 
 index.indexing.slowlog.threshold.index.debug: 2s
@@ -20,14 +15,10 @@ index.search.slowlog.threshold.query.info: 5s
 index.search.slowlog.threshold.query.trace: 500ms
 index.search.slowlog.threshold.query.warn: 10s
 
-monitor.jvm.gc.old.debug: 2s
-monitor.jvm.gc.old.info: 5s
-monitor.jvm.gc.old.warn: 10s
+monitor.jvm.gc.overhead.debug: 40
+monitor.jvm.gc.overhead.info: 70
+monitor.jvm.gc.overhead.warn: 90
 
-monitor.jvm.gc.young.debug: 400ms
-monitor.jvm.gc.young.info: 700ms
-monitor.jvm.gc.young.warn: 1000ms
-
-threadpool:
+thread_pool:
     bulk:
         queue_size: 100
