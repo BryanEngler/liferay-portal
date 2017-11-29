@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnection;
 import com.liferay.portal.search.elasticsearch.connection.OperationMode;
@@ -36,13 +35,14 @@ import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.plugins.Plugin;
-
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -138,13 +138,16 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 	}
 
 	protected TransportClient createTransportClient() {
-		Class[] classes = new Class[transportClientPlugins.size()];
+		Stream<String> stream = transportClientPlugins.stream();
 
-		for (int i = 0; i < transportClientPlugins.size(); i++){
-			classes[i] = getPluginClass(transportClientPlugins.get(i));
-		}
+		Class<? extends Plugin>[] classes = stream.map(
+			this::getPluginClass
+		).toArray(
+			Class[]::new
+		);
 
-		return  new PreBuiltTransportClient(settingsBuilder.build(), classes);
+		return new PreBuiltTransportClient(
+			settingsBuilder.build(), (Class<? extends Plugin>[])classes);
 	}
 
 	@Deactivate
@@ -177,12 +180,11 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 		settingsBuilder.put(
 			"cluster.name", elasticsearchConfiguration.clusterName());
 		settingsBuilder.put("http.enabled", false);
-		settingsBuilder.put("node.client", true);
 		settingsBuilder.put("node.data", false);
+		settingsBuilder.put("node.ingest", false);
+		settingsBuilder.put("node.master", false);
 		settingsBuilder.put(
 			"path.logs", props.get(PropsKeys.LIFERAY_HOME) + "/logs");
-		settingsBuilder.put(
-			"path.work", SystemProperties.get(SystemProperties.TMP_DIR));
 		settingsBuilder.put(
 			"request.headers.X-Found-Cluster",
 			elasticsearchConfiguration.clusterName());
