@@ -429,13 +429,6 @@ public class EmbeddedElasticsearchConnection
 		configurePlugins();
 
 		if (PortalRunMode.isTestMode()) {
-			settingsBuilder.put("index.refresh_interval", "1ms");
-			settingsBuilder.put(
-				"index.search.slowlog.threshold.fetch.warn", "-1");
-			settingsBuilder.put(
-				"index.search.slowlog.threshold.query.warn", "-1");
-			settingsBuilder.put("index.translog.flush_threshold_ops", "1");
-			settingsBuilder.put("index.translog.interval", "1ms");
 			settingsBuilder.put(
 				"monitor.jvm.enabled", Boolean.FALSE.toString());
 		}
