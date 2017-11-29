@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.util.PortalRunMode;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnection;
@@ -32,11 +31,15 @@ import com.liferay.portal.search.elasticsearch.index.IndexFactory;
 import com.liferay.portal.search.elasticsearch.internal.cluster.ClusterSettingsContext;
 import com.liferay.portal.search.elasticsearch.settings.SettingsContributor;
 
+import io.netty.buffer.ByteBufUtil;
+
 import java.io.IOException;
 
 import java.net.InetAddress;
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
@@ -52,19 +55,25 @@ import org.elasticsearch.discovery.DiscoveryService;
 import org.elasticsearch.index.IndexService;
 import org.elasticsearch.index.settings.IndexSettingsService;
 import org.elasticsearch.indices.IndicesService;
+import org.elasticsearch.node.InternalSettingsPreparer;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.search.SearchService;
 import org.elasticsearch.search.action.SearchServiceTransportAction;
 import org.elasticsearch.search.internal.ShardSearchTransportRequest;
 import org.elasticsearch.threadpool.ThreadPool;
+import org.elasticsearch.transport.Netty4Plugin;
 import org.elasticsearch.transport.TransportChannel;
 import org.elasticsearch.transport.TransportRequestHandler;
 import org.elasticsearch.transport.TransportService;
 
-import org.jboss.netty.util.internal.ByteBufferUtil;
+import org.elasticsearch.node.NodeValidationException;
 
 import org.osgi.framework.BundleContext;
+import org.elasticsearch.node.NodeValidationException;
+import org.elasticsearch.node.internal.InternalSettingsPreparer;
+import org.elasticsearch.plugins.Plugin;
+import org.elasticsearch.transport.Netty4Plugin;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -94,14 +103,13 @@ public class EmbeddedElasticsearchConnection
 		}
 
 		try {
-			Class.forName(ByteBufferUtil.class.getName());
+			Class.forName(ByteBufUtil.class.getName());
 		}
 		catch (ClassNotFoundException cnfe) {
 			if (_log.isWarnEnabled()) {
 				_log.warn(
 					StringBundler.concat(
-						"Unable to preload ",
-						String.valueOf(ByteBufferUtil.class),
+						"Unable to preload ", String.valueOf(ByteBufUtil.class),
 						" to prevent Netty shutdown concurrent class loading ",
 						"interruption issue"),
 					cnfe);
@@ -159,7 +167,12 @@ public class EmbeddedElasticsearchConnection
 			}
 		}
 
-		_node.close();
+		try {
+			_node.close();
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 
 		_node = null;
 
@@ -212,7 +225,7 @@ public class EmbeddedElasticsearchConnection
 			"cluster.name", elasticsearchConfiguration.clusterName());
 		settingsBuilder.put(
 			"cluster.routing.allocation.disk.threshold_enabled", false);
-		settingsBuilder.put("discovery.zen.ping.multicast.enabled", false);
+		settingsBuilder.put("discovery.type", "zen");
 	}
 
 	protected void configureHttp() {
@@ -279,6 +292,8 @@ public class EmbeddedElasticsearchConnection
 		if (Validator.isNotNull(transportTcpPort)) {
 			settingsBuilder.put("transport.tcp.port", transportTcpPort);
 		}
+
+		settingsBuilder.put("transport.type", "netty4");
 	}
 
 	protected void configurePaths() {
@@ -291,13 +306,8 @@ public class EmbeddedElasticsearchConnection
 		settingsBuilder.put(
 			"path.logs", props.get(PropsKeys.LIFERAY_HOME) + "/logs");
 		settingsBuilder.put(
-			"path.plugins",
-			props.get(PropsKeys.LIFERAY_HOME) + "/data/elasticsearch/plugins");
-		settingsBuilder.put(
 			"path.repo",
 			props.get(PropsKeys.LIFERAY_HOME) + "/data/elasticsearch/repo");
-		settingsBuilder.put(
-			"path.work", SystemProperties.get(SystemProperties.TMP_DIR));
 	}
 
 	protected void configurePlugin(String name, Settings settings) {
@@ -357,7 +367,12 @@ public class EmbeddedElasticsearchConnection
 
 		_node = createNode(settingsBuilder.build());
 
-		_node.start();
+		try {
+			_node.start();
+		}
+		catch (NodeValidationException nve) {
+			throw new RuntimeException(nve);
+		}
 
 		Client client = _node.client();
 
@@ -372,6 +387,14 @@ public class EmbeddedElasticsearchConnection
 		}
 
 		return client;
+	}
+
+	protected EmbeddedElasticsearchNode createEmbeddedElasticsearchNode(
+		Settings settings) {
+
+		return new EmbeddedElasticsearchNode(
+			InternalSettingsPreparer.prepareEnvironment(settings, null),
+			Arrays.asList(Netty4Plugin.class));
 	}
 
 	protected EmbeddedElasticsearchPluginManager
@@ -397,13 +420,7 @@ public class EmbeddedElasticsearchConnection
 		System.setProperty("jna.tmpdir", _jnaTmpDirName);
 
 		try {
-			NodeBuilder nodeBuilder = new NodeBuilder();
-
-			nodeBuilder.settings(settings);
-
-			nodeBuilder.local(true);
-
-			Node node = nodeBuilder.build();
+			Node node = createEmbeddedElasticsearchNode(settings);
 
 			if (elasticsearchConfiguration.syncSearch()) {
 				Injector injector = node.injector();
@@ -436,7 +453,7 @@ public class EmbeddedElasticsearchConnection
 	protected void loadRequiredDefaultConfigurations() {
 		settingsBuilder.put("action.auto_create_index", false);
 		settingsBuilder.put(
-			"bootstrap.mlockall",
+			"bootstrap.memory_lock",
 			elasticsearchConfiguration.bootstrapMlockAll());
 
 		configureClustering();
@@ -448,8 +465,10 @@ public class EmbeddedElasticsearchConnection
 
 		configureNetworking();
 
-		settingsBuilder.put("node.client", false);
 		settingsBuilder.put("node.data", true);
+		settingsBuilder.put("node.ingest", true);
+		settingsBuilder.put("node.master", true);
+
 		settingsBuilder.put(
 			DiscoveryService.SETTING_DISCOVERY_SEED,
 			SecureRandomUtil.nextLong());
