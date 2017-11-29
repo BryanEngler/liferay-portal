@@ -532,6 +532,31 @@
 			}
 		],
 		"properties": {
+			"spellCheckWord_en_US":{
+				"index": "true",
+				"store": "true",
+				"type": "keyword"
+			},
+			"spellCheckWord_ja_JP":{
+				"index": "true",
+				"store": "true",
+				"type": "keyword"
+			},
+			"spellCheckWord_es_ES":{
+				"index": "true",
+				"store": "true",
+				"type": "keyword"
+			},
+			"spellCheckWord_pt_BR":{
+				"index": "true",
+				"store": "true",
+				"type": "keyword"
+			},
+			"spellCheckWord_hu_HU":{
+				"index": "true",
+				"store": "true",
+				"type": "keyword"
+			},
 			"ancestorOrganizationIds": {
 				"index": "true",
 				"store": "true",

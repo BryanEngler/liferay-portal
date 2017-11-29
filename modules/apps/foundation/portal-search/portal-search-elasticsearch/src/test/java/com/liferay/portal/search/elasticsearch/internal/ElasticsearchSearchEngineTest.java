@@ -25,6 +25,7 @@ import com.liferay.portal.search.elasticsearch.internal.index.CompanyIndexFactor
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -45,6 +46,7 @@ public class ElasticsearchSearchEngineTest {
 		_elasticsearchFixture.tearDown();
 	}
 
+	@Ignore
 	@Test
 	public void testInitializeAfterReconnect() {
 		ElasticsearchConnectionManager elasticsearchConnectionManager =
