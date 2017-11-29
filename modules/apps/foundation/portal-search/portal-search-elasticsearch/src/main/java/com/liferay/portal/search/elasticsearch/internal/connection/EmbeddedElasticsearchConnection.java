@@ -17,7 +17,6 @@ package com.liferay.portal.search.elasticsearch.internal.connection;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.security.SecureRandomUtil;
 import com.liferay.portal.kernel.util.File;
 import com.liferay.portal.kernel.util.PortalRunMode;
 import com.liferay.portal.kernel.util.Props;
@@ -39,7 +38,6 @@ import java.net.InetAddress;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
@@ -51,29 +49,17 @@ import org.apache.commons.lang.time.StopWatch;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.inject.Injector;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.discovery.DiscoveryService;
 import org.elasticsearch.index.IndexService;
-import org.elasticsearch.index.settings.IndexSettingsService;
 import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.node.InternalSettingsPreparer;
 import org.elasticsearch.node.Node;
+import org.elasticsearch.node.NodeValidationException;
 import org.elasticsearch.search.SearchService;
-import org.elasticsearch.search.action.SearchServiceTransportAction;
-import org.elasticsearch.search.internal.ShardSearchTransportRequest;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.Netty4Plugin;
-import org.elasticsearch.transport.TransportChannel;
-import org.elasticsearch.transport.TransportRequestHandler;
 import org.elasticsearch.transport.TransportService;
 
-import org.elasticsearch.node.NodeValidationException;
-
 import org.osgi.framework.BundleContext;
-import org.elasticsearch.node.NodeValidationException;
-import org.elasticsearch.node.internal.InternalSettingsPreparer;
-import org.elasticsearch.plugins.Plugin;
-import org.elasticsearch.transport.Netty4Plugin;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -134,12 +120,12 @@ public class EmbeddedElasticsearchConnection
 			while (iterator.hasNext()) {
 				IndexService indexService = iterator.next();
 
-				injector = indexService.injector();
+				/*injector = indexService.injector();
 
 				IndexSettingsService indexSettingsService =
 					injector.getInstance(IndexSettingsService.class);
 
-				indexSettingsService.refreshSettings(settings);
+				indexSettingsService.refreshSettings(settings);*/
 			}
 
 			ThreadPool threadPool = injector.getInstance(ThreadPool.class);
@@ -466,9 +452,9 @@ public class EmbeddedElasticsearchConnection
 		settingsBuilder.put("node.ingest", true);
 		settingsBuilder.put("node.master", true);
 
-		settingsBuilder.put(
+		/*settingsBuilder.put(
 			DiscoveryService.SETTING_DISCOVERY_SEED,
-			SecureRandomUtil.nextLong());
+			SecureRandomUtil.nextLong());*/
 
 		configurePaths();
 
@@ -506,6 +492,10 @@ public class EmbeddedElasticsearchConnection
 	private void _replaceTransportRequestHandler(
 		TransportService transportService, SearchService searchService) {
 
+		String.valueOf(searchService);
+		String.valueOf(transportService);
+
+		/*
 		String action = SearchServiceTransportAction.QUERY_FETCH_ACTION_NAME;
 
 		transportService.removeHandler(action);
@@ -526,6 +516,7 @@ public class EmbeddedElasticsearchConnection
 				}
 
 			});
+		 */
 	}
 
 	/**
