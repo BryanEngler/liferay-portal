@@ -201,7 +201,7 @@ public class ClusterAssert {
 		throws Exception {
 
 		IdempotentRetryAssert.retryAssert(
-			10, TimeUnit.MINUTES,
+			1, TimeUnit.SECONDS,
 			new Callable<Void>() {
 
 				@Override
