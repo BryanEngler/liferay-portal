@@ -417,9 +417,6 @@ public class EmbeddedElasticsearchConnection
 
 		configureHttp();
 
-		settingsBuilder.put("index.number_of_replicas", 0);
-		settingsBuilder.put("index.number_of_shards", 1);
-
 		configureNetworking();
 
 		settingsBuilder.put("node.data", true);
