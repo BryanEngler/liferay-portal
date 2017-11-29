@@ -18,6 +18,7 @@ import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.PortalRunMode;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch.index.IndexFactory;
@@ -266,6 +267,13 @@ public class CompanyIndexFactory implements IndexFactory {
 		}
 	}
 
+	protected void loadTestModeIndexSettings(Settings.Builder builder) {
+		if (PortalRunMode.isTestMode()) {
+			builder.put("index.refresh_interval", "1ms");
+			builder.put("index.translog.sync_interval", "100ms");
+		}
+	}
+
 	protected void loadTypeMappingsContributors(
 		String indexName,
 		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
@@ -309,6 +317,8 @@ public class CompanyIndexFactory implements IndexFactory {
 		liferayDocumentTypeFactory.createRequiredDefaultAnalyzers(builder);
 
 		loadDefaultIndexSettings(builder);
+
+		loadTestModeIndexSettings(builder);
 
 		loadAdditionalIndexConfigurations(builder);
 

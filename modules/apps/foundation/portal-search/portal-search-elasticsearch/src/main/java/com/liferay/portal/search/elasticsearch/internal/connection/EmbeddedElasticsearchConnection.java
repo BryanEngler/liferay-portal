@@ -476,12 +476,6 @@ public class EmbeddedElasticsearchConnection
 		configurePaths();
 
 		configurePlugins();
-
-		if (PortalRunMode.isTestMode()) {
-			settingsBuilder.put("index.refresh_interval", "1ms");
-			settingsBuilder.put("index.translog.flush_threshold_ops", "1");
-			settingsBuilder.put("index.translog.interval", "1ms");
-		}
 	}
 
 	protected void removeObsoletePlugin(String name, Settings settings) {
