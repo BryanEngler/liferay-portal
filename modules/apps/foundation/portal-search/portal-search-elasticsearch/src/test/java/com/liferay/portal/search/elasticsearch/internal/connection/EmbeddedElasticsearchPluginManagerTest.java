@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 import org.elasticsearch.Version;
-import org.elasticsearch.common.cli.Terminal;
+import org.elasticsearch.cli.Terminal;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -146,7 +146,7 @@ public class EmbeddedElasticsearchPluginManagerTest {
 		return path;
 	}
 
-	protected void install() throws IOException {
+	protected void install() throws Exception {
 		EmbeddedElasticsearchPluginManager embeddedElasticsearchPluginManager =
 			new EmbeddedElasticsearchPluginManager(
 				_PLUGIN_NAME, _PLUGINS_PATH_STRING, _pluginManagerFactory,
