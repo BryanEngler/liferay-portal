@@ -41,8 +41,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.time.StopWatch;
 
-import org.elasticsearch.action.suggest.SuggestRequestBuilder;
-import org.elasticsearch.action.suggest.SuggestResponse;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.search.suggest.Suggest;
@@ -50,6 +50,7 @@ import org.elasticsearch.search.suggest.Suggest.Suggestion;
 import org.elasticsearch.search.suggest.Suggest.Suggestion.Entry;
 import org.elasticsearch.search.suggest.Suggest.Suggestion.Entry.Option;
 import org.elasticsearch.search.suggest.SuggestBuilder;
+import org.elasticsearch.search.suggest.SuggestionBuilder;
 import org.elasticsearch.search.suggest.term.TermSuggestion;
 
 import org.osgi.service.component.annotations.Component;
@@ -222,26 +223,33 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 
 		Client client = elasticsearchConnectionManager.getClient();
 
-		SuggestRequestBuilder suggestRequestBuilder = client.prepareSuggest(
-			indexNameBuilder.getIndexName(searchContext.getCompanyId()));
-
 		SuggestBuilder suggestBuilder = suggesterTranslator.translate(
 			suggester, searchContext);
-
-		for (SuggestBuilder.SuggestionBuilder<?> suggestionBuilder :
-				suggestBuilder.getSuggestion()) {
-
-			suggestRequestBuilder.addSuggestion(suggestionBuilder);
-		}
 
 		if (suggester instanceof AggregateSuggester) {
 			AggregateSuggester aggregateSuggester =
 				(AggregateSuggester)suggester;
 
-			suggestRequestBuilder.setSuggestText(aggregateSuggester.getValue());
+			suggestBuilder.setGlobalText(aggregateSuggester.getValue());
 		}
 
-		SuggestResponse suggestResponse = suggestRequestBuilder.get();
+		SearchRequestBuilder searchRequestBuilder = client.prepareSearch(
+			indexNameBuilder.getIndexName(searchContext.getCompanyId()));
+
+		Map<String, SuggestionBuilder<?>> suggestionBuilders =
+			suggestBuilder.getSuggestions();
+
+		for (Map.Entry<String, SuggestionBuilder<?>> entry :
+				suggestionBuilders.entrySet()) {
+
+			SuggestBuilder suggestBuilder2 = new SuggestBuilder();
+
+			searchRequestBuilder.suggest(
+				suggestBuilder2.addSuggestion(
+					entry.getKey(), entry.getValue()));
+		}
+
+		SearchResponse suggestResponse = searchRequestBuilder.get();
 
 		Suggest suggest = suggestResponse.getSuggest();
 
