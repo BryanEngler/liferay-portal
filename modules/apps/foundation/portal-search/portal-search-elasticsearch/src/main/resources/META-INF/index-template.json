@@ -5,6 +5,8 @@
 		"indexing.slowlog.threshold.index.trace": "500ms",
 		"indexing.slowlog.threshold.index.warn": "10s",
 
+		"mapping.total_fields.limit": 7500,
+
 		"search.slowlog.threshold.fetch.debug": "500ms",
 		"search.slowlog.threshold.fetch.info": "800ms",
 		"search.slowlog.threshold.fetch.trace": "200ms",
