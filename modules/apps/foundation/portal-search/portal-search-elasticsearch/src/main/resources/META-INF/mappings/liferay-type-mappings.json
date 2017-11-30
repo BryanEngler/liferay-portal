@@ -471,6 +471,22 @@
 					"match": "expando__*",
 					"match_mapping_type": "string"
 				}
+			},
+			{
+				"template_": {
+					"mapping": {
+						"fields": {
+							"keyword": {
+								"type": "keyword"
+							}
+						},
+						"index": "true",
+						"store": "true",
+						"type": "text"
+					},
+					"match": "*",
+					"match_mapping_type": "string"
+				}
 			}
 		],
 		"properties": {
