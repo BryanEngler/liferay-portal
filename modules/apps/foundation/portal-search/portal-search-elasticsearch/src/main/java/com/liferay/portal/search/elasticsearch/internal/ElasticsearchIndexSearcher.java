@@ -296,6 +296,8 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		HighlightBuilder highlightBuilder = new HighlightBuilder();
 
+		highlightBuilder.highlighterType("unified");
+
 		for (String highlightFieldName : queryConfig.getHighlightFieldNames()) {
 			addHighlightedField(
 				searchRequestBuilder, highlightBuilder, queryConfig,
