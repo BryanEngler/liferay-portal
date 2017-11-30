@@ -40,6 +40,7 @@ import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.compress.CompressedXContent;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.xcontent.XContentType;
 
 /**
  * @author André de Oliveira
@@ -61,7 +62,8 @@ public class LiferayDocumentTypeFactory implements TypeMappingsHelper {
 		putMappingRequestBuilder.setSource(
 			mergeDynamicTemplates(
 				source, indexName,
-				LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE));
+				LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE),
+			XContentType.JSON);
 		putMappingRequestBuilder.setType(
 			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE);
 
@@ -79,7 +81,8 @@ public class LiferayDocumentTypeFactory implements TypeMappingsHelper {
 		CreateIndexRequestBuilder createIndexRequestBuilder, String mappings) {
 
 		createIndexRequestBuilder.addMapping(
-			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE, mappings);
+			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE, mappings,
+			XContentType.JSON);
 	}
 
 	public void createOptionalDefaultTypeMappings(String indexName) {
@@ -98,7 +101,7 @@ public class LiferayDocumentTypeFactory implements TypeMappingsHelper {
 		String requiredDefaultAnalyzers = ResourceUtil.getResourceAsString(
 			getClass(), IndexSettingsConstants.INDEX_SETTINGS_FILE_NAME);
 
-		builder.loadFromSource(requiredDefaultAnalyzers);
+		builder.loadFromSource(requiredDefaultAnalyzers, XContentType.JSON);
 	}
 
 	public void createRequiredDefaultTypeMappings(
