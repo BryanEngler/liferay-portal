@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.util.PortalRunMode;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnection;
@@ -316,6 +317,8 @@ public class EmbeddedElasticsearchConnection
 			"analysis-icu", "analysis-kuromoji", "analysis-smartcn",
 			"analysis-stempel"
 		};
+
+		System.setProperty("es.path.conf", StringPool.BLANK);
 
 		for (String plugin : plugins) {
 			removeObsoletePlugin(plugin, settings);
