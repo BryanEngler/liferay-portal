@@ -75,7 +75,7 @@ public class LiferayDocumentTypeFactory implements TypeMappingsHelper {
 		String optionalDefaultTypeMappings = ResourceUtil.getResourceAsString(
 			getClass(), name);
 
-		addTypeMappings(indexName, optionalDefaultTypeMappings);
+		//addTypeMappings(indexName, optionalDefaultTypeMappings);
 	}
 
 	public void createRequiredDefaultAnalyzers(Settings.Builder builder) {
