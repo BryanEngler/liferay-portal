@@ -64,6 +64,26 @@
 				}
 			},
 			{
+				"template_keywordSearch": {
+					"mapping": {
+						"index": "true",
+						"type": "text"
+					},
+					"match": "keywordSearch_*",
+					"match_mapping_type": "string"
+				}
+			},
+			{
+				"template_spellCheckWord": {
+					"mapping": {
+						"index": "true",
+						"type": "text"
+					},
+					"match": "spellCheckWord_*",
+					"match_mapping_type": "string"
+				}
+			},
+			{
 				"template_ar": {
 					"mapping": {
 						"analyzer": "arabic",
