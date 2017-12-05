@@ -21,6 +21,4 @@ public class DocumentTypes {
 
 	public static final String LIFERAY = "LiferayDocumentType";
 
-	public static final String SPELL_CHECK = "SpellCheckDocumentType";
-
 }
