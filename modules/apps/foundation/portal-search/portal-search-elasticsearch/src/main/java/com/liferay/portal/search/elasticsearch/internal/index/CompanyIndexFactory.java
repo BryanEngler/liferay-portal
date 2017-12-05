@@ -57,10 +57,7 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
  */
 @Component(
 	configurationPid = "com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration",
-	immediate = true,
-	property = {
-		"typeMappings.SpellCheckDocumentType=/META-INF/mappings/spellcheck-type-mappings.json"
-	}
+	immediate = true
 )
 public class CompanyIndexFactory implements IndexFactory {
 
