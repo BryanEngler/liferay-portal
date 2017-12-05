@@ -158,8 +158,9 @@ public class CompanyIndexFactory implements IndexFactory {
 			String mappingDefinition = ResourceUtil.getResourceAsString(
 				getClass(), entry.getValue());
 
-			createIndexRequestBuilder.addMapping(
-				entry.getKey(), mappingDefinition);
+			//use same type or different indicies?
+			//createIndexRequestBuilder.addMapping(
+			//	entry.getKey(), mappingDefinition, XContentType.JSON);
 		}
 	}
 
