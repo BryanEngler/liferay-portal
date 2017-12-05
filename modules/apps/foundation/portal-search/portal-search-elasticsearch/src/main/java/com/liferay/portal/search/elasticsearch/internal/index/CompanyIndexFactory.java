@@ -156,6 +156,11 @@ public class CompanyIndexFactory implements IndexFactory {
 			CreateIndexRequestBuilder createIndexRequestBuilder)
 		throws Exception {
 
+		// TODO Remove multi type infrastructure completely
+		if (true) {
+			return;
+		}
+
 		for (Map.Entry<String, String> entry : _typeMappings.entrySet()) {
 			String mappingDefinition = ResourceUtil.getResourceAsString(
 				getClass(), entry.getValue());
