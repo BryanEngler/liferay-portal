@@ -97,10 +97,6 @@ public class CompanyIndexFactory implements IndexFactory {
 		LogUtil.logActionResponse(_log, deleteIndexResponse);
 	}
 
-	public void setTypeMappings(Map<String, String> typeMappings) {
-		_typeMappings = typeMappings;
-	}
-
 	@Activate
 	@Modified
 	protected void activate(Map<String, Object> properties) {
@@ -114,10 +110,6 @@ public class CompanyIndexFactory implements IndexFactory {
 			elasticsearchConfiguration.additionalTypeMappings());
 		setOverrideTypeMappings(
 			elasticsearchConfiguration.overrideTypeMappings());
-
-		Map<String, String> typeMappings = getTypeMappings(properties);
-
-		setTypeMappings(typeMappings);
 	}
 
 	@Reference(
@@ -146,20 +138,6 @@ public class CompanyIndexFactory implements IndexFactory {
 		}
 	}
 
-	protected void addTypeMappings(
-			CreateIndexRequestBuilder createIndexRequestBuilder)
-		throws Exception {
-
-		for (Map.Entry<String, String> entry : _typeMappings.entrySet()) {
-			String mappingDefinition = ResourceUtil.getResourceAsString(
-				getClass(), entry.getValue());
-
-			//use same type or different indicies?
-			//createIndexRequestBuilder.addMapping(
-			//	entry.getKey(), mappingDefinition, XContentType.JSON);
-		}
-	}
-
 	protected void createIndex(
 			String indexName, IndicesAdminClient indicesAdminClient)
 		throws Exception {
@@ -170,7 +148,6 @@ public class CompanyIndexFactory implements IndexFactory {
 		LiferayDocumentTypeFactory liferayDocumentTypeFactory =
 			new LiferayDocumentTypeFactory(indicesAdminClient);
 
-		addTypeMappings(createIndexRequestBuilder);
 		setSettings(createIndexRequestBuilder, liferayDocumentTypeFactory);
 
 		addLiferayDocumentTypeMappings(
@@ -186,23 +163,6 @@ public class CompanyIndexFactory implements IndexFactory {
 
 	protected String getIndexName(long companyId) {
 		return indexNameBuilder.getIndexName(companyId);
-	}
-
-	protected Map<String, String> getTypeMappings(
-		Map<String, Object> properties) {
-
-		Map<String, String> typeMappings = new HashMap<>();
-
-		for (String key : properties.keySet()) {
-			if (key.startsWith(_TYPE_MAPPINGS_PREFIX)) {
-				String value = MapUtil.getString(properties, key);
-
-				typeMappings.put(
-					key.substring(_TYPE_MAPPINGS_PREFIX.length()), value);
-			}
-		}
-
-		return typeMappings;
 	}
 
 	protected boolean hasIndex(
@@ -342,8 +302,6 @@ public class CompanyIndexFactory implements IndexFactory {
 	@Reference
 	protected IndexNameBuilder indexNameBuilder;
 
-	private static final String _TYPE_MAPPINGS_PREFIX = "typeMappings.";
-
 	private static final Log _log = LogFactoryUtil.getLog(
 		CompanyIndexFactory.class);
 
@@ -352,6 +310,5 @@ public class CompanyIndexFactory implements IndexFactory {
 	private final Set<IndexSettingsContributor> _indexSettingsContributors =
 		new ConcurrentSkipListSet<>();
 	private String _overrideTypeMappings;
-	private Map<String, String> _typeMappings = new HashMap<>();
 
 }
