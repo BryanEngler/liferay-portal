@@ -59,7 +59,6 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 	configurationPid = "com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration",
 	immediate = true,
 	property = {
-		"typeMappings.KeywordQueryDocumentType=/META-INF/mappings/keyword-query-type-mappings.json",
 		"typeMappings.SpellCheckDocumentType=/META-INF/mappings/spellcheck-type-mappings.json"
 	}
 )
