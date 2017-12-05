@@ -133,9 +133,6 @@ public class CompanyIndexFactoryTest {
 			new HashMap<String, Object>() {
 				{
 					put(
-						"typeMappings.KeywordQueryDocumentType",
-						"/META-INF/mappings/keyword-query-type-mappings.json");
-					put(
 						"typeMappings.SpellCheckDocumentType",
 						"/META-INF/mappings/spellcheck-type-mappings.json");
 				}
@@ -145,7 +142,7 @@ public class CompanyIndexFactoryTest {
 
 		assertIndicesExist(
 			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE,
-			"KeywordQueryDocumentType", "SpellCheckDocumentType");
+			"SpellCheckDocumentType");
 	}
 
 	@Test
