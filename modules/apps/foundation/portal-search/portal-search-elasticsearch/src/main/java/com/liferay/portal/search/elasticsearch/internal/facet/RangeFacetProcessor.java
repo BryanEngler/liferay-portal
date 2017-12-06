@@ -107,7 +107,7 @@ public class RangeFacetProcessor
 	protected Range createRange(String key, String[] range) {
 		return new Range(
 			key, Double.valueOf(range[0]), range[0], Double.valueOf(range[1]),
-			range[1]) {};
+			range[1]);
 	}
 
 }
