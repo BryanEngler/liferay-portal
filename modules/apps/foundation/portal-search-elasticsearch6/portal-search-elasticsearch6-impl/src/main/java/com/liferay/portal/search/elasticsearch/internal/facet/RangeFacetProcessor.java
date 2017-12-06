@@ -21,10 +21,14 @@ import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.search.facet.util.RangeParserUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch.facet.FacetProcessor;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.range.RangeAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.range.RangeAggregator.Range;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -46,23 +50,23 @@ public class RangeFacetProcessor
 
 		FacetConfiguration facetConfiguration = facet.getFacetConfiguration();
 
-		DefaultRangeBuilder defaultRangeBuilder = new DefaultRangeBuilder(
-			facetConfiguration.getFieldName());
+		RangeAggregationBuilder rangeAggregationBuilder =
+			AggregationBuilders.range(facetConfiguration.getFieldName());
 
-		defaultRangeBuilder.field(facetConfiguration.getFieldName());
+		rangeAggregationBuilder.field(facetConfiguration.getFieldName());
 
-		addConfigurationRanges(facetConfiguration, defaultRangeBuilder);
+		addConfigurationRanges(facetConfiguration, rangeAggregationBuilder);
 
-		addCustomRange(facet, defaultRangeBuilder);
+		addCustomRange(facet, rangeAggregationBuilder);
 
-		if (defaultRangeBuilder.hasRanges()) {
-			searchRequestBuilder.addAggregation(defaultRangeBuilder);
+		if (ListUtil.isNotEmpty(rangeAggregationBuilder.ranges())) {
+			searchRequestBuilder.addAggregation(rangeAggregationBuilder);
 		}
 	}
 
 	protected void addConfigurationRanges(
 		FacetConfiguration facetConfiguration,
-		DefaultRangeBuilder defaultRangeBuilder) {
+		RangeAggregationBuilder rangeAggregationBuilder) {
 
 		JSONObject jsonObject = facetConfiguration.getData();
 
@@ -79,12 +83,12 @@ public class RangeFacetProcessor
 
 			String[] range = RangeParserUtil.parserRange(rangeString);
 
-			defaultRangeBuilder.addRange(range[0], range[1]);
+			rangeAggregationBuilder.addRange(createRange(rangeString, range));
 		}
 	}
 
 	protected void addCustomRange(
-		Facet facet, DefaultRangeBuilder defaultRangeBuilder) {
+		Facet facet, RangeAggregationBuilder rangeAggregationBuilder) {
 
 		SearchContext searchContext = facet.getSearchContext();
 
@@ -97,7 +101,13 @@ public class RangeFacetProcessor
 
 		String[] range = RangeParserUtil.parserRange(rangeString);
 
-		defaultRangeBuilder.addRange(range[0], range[1]);
+		rangeAggregationBuilder.addRange(createRange(rangeString, range));
+	}
+
+	protected Range createRange(String key, String[] range) {
+		return new Range(
+			key, Double.valueOf(range[0]), range[0], Double.valueOf(range[1]),
+			range[1]);
 	}
 
 }
