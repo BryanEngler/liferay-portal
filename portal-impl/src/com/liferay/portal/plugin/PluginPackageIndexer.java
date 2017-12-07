@@ -156,9 +156,9 @@ public class PluginPackageIndexer extends BaseIndexer<PluginPackage> {
 
 		List<String> types = pluginPackage.getTypes();
 
-		document.addKeyword("type", types.toArray(new String[types.size()]));
+		document.addKeyword(Field.TYPE, types.toArray(new String[types.size()]));
 
-		document.addKeyword("version", pluginPackage.getVersion());
+		document.addKeyword(Field.VERSION, pluginPackage.getVersion());
 
 		return document;
 	}
