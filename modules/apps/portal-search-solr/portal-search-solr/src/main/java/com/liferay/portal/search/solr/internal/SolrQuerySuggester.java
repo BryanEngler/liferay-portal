@@ -314,10 +314,8 @@ public class SolrQuerySuggester extends BaseQuerySuggester {
 
 				String suggestion = suggestions.get(0);
 
-				List<String> weights = (List<String>)solrDocument.get(
-					Field.PRIORITY);
-
-				float weight = GetterUtil.getFloat(weights.get(0));
+				float weight = GetterUtil.getFloat(
+					solrDocument.get(Field.PRIORITY));
 
 				if (suggestion.equals(input)) {
 					weight = _INFINITE_WEIGHT;
