@@ -59,13 +59,8 @@ import org.elasticsearch.node.InternalSettingsPreparer;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeValidationException;
 import org.elasticsearch.search.SearchService;
-import org.elasticsearch.search.action.SearchServiceTransportAction;
-import org.elasticsearch.search.internal.ShardSearchTransportRequest;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.Netty4Plugin;
-import org.elasticsearch.transport.TransportChannel;
-import org.elasticsearch.transport.TransportRequestHandler;
-import org.elasticsearch.transport.TransportService;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
@@ -414,17 +409,7 @@ public class EmbeddedElasticsearchConnection
 		System.setProperty("jna.tmpdir", _jnaTmpDirName);
 
 		try {
-			Node node = createEmbeddedElasticsearchNode(settings);
-
-			if (elasticsearchConfiguration.syncSearch()) {
-				Injector injector = node.injector();
-
-				_replaceTransportRequestHandler(
-					injector.getInstance(TransportService.class),
-					injector.getInstance(SearchService.class));
-			}
-
-			return node;
+			return createEmbeddedElasticsearchNode(settings);
 		}
 		finally {
 			thread.setContextClassLoader(contextClassLoader);
@@ -511,31 +496,6 @@ public class EmbeddedElasticsearchConnection
 
 	@Reference
 	protected Props props;
-
-	private void _replaceTransportRequestHandler(
-		TransportService transportService, SearchService searchService) {
-
-		String action = SearchServiceTransportAction.QUERY_FETCH_ACTION_NAME;
-
-		transportService.removeHandler(action);
-
-		transportService.registerRequestHandler(
-			action, ShardSearchTransportRequest.class, ThreadPool.Names.SAME,
-			new TransportRequestHandler<ShardSearchTransportRequest>() {
-
-				@Override
-				public void messageReceived(
-						ShardSearchTransportRequest shardSearchTransportRequest,
-						TransportChannel transportChannel)
-					throws Exception {
-
-					transportChannel.sendResponse(
-						searchService.executeFetchPhase(
-							shardSearchTransportRequest));
-				}
-
-			});
-	}
 
 	/**
 	 * Keep this as a static field to avoid the class loading failure during
