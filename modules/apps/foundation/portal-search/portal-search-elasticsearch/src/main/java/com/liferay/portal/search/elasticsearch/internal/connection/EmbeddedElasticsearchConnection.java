@@ -35,7 +35,6 @@ import java.io.IOException;
 
 import java.net.InetAddress;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
@@ -47,9 +46,6 @@ import org.apache.commons.lang.time.StopWatch;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.inject.Injector;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.index.IndexService;
-import org.elasticsearch.index.settings.IndexSettingsService;
-import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.threadpool.ThreadPool;
@@ -108,23 +104,9 @@ public class EmbeddedElasticsearchConnection
 
 			Settings settings = settingsBuilder.build();
 
+			// TODO Use IndicesAdminClient.prepareUpdateSettings
+
 			Injector injector = _node.injector();
-
-			IndicesService indicesService = injector.getInstance(
-				IndicesService.class);
-
-			Iterator<IndexService> iterator = indicesService.iterator();
-
-			while (iterator.hasNext()) {
-				IndexService indexService = iterator.next();
-
-				injector = indexService.injector();
-
-				IndexSettingsService indexSettingsService =
-					injector.getInstance(IndexSettingsService.class);
-
-				indexSettingsService.refreshSettings(settings);
-			}
 
 			ThreadPool threadPool = injector.getInstance(ThreadPool.class);
 
