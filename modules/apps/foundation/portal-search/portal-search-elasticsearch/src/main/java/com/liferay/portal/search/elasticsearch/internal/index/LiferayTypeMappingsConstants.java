@@ -14,12 +14,14 @@
 
 package com.liferay.portal.search.elasticsearch.internal.index;
 
+import com.liferay.portal.search.elasticsearch.internal.util.DocumentTypes;
+
 /**
  * @author André de Oliveira
  */
 public class LiferayTypeMappingsConstants {
 
-	public static final String LIFERAY_DOCUMENT_TYPE = "LiferayDocumentType";
+	public static final String LIFERAY_DOCUMENT_TYPE = DocumentTypes.LIFERAY;
 
 	public static final String LIFERAY_DOCUMENT_TYPE_MAPPING_FILE_NAME =
 		"/META-INF/mappings/liferay-type-mappings.json";
