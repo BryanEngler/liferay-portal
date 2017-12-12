@@ -86,7 +86,8 @@ public abstract class BaseGenericSpellCheckIndexWriter
 		document.addKeyword(Field.SPELL_CHECK_WORD, true);
 		document.addKeyword(keywordFieldName, keywords);
 		document.addKeyword(Field.TYPE, typeFieldValue);
-		document.addKeyword(Field.UID, getUID(companyId, languageId, keywords));
+		document.addKeyword(Field.UID, getUID(
+			companyId, keywordFieldName, languageId, keywords));
 
 		NGramHolder nGramHolder = NGramHolderBuilderUtil.buildNGramHolder(
 			keywords, maxNGramLength);
