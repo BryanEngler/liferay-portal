@@ -113,6 +113,7 @@ public class ElasticsearchSpellCheckIndexWriter
 
 		document.addKeyword(localizedName, keywords);
 
+		document.addKeyword(Field.LANGUAGE_ID, languageId);
 		document.addKeyword(Field.PRIORITY, String.valueOf(weight));
 		document.addKeyword(Field.SPELL_CHECK_WORD, true);
 		document.addKeyword(Field.TYPE, typeFieldValue);
