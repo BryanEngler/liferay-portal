@@ -52,6 +52,7 @@ import com.liferay.portal.search.solr.internal.query.TermQueryTranslatorImpl;
 import com.liferay.portal.search.solr.internal.query.TermRangeQueryTranslatorImpl;
 import com.liferay.portal.search.solr.internal.query.WildcardQueryTranslatorImpl;
 import com.liferay.portal.search.solr.internal.stats.DefaultStatsTranslator;
+import com.liferay.portal.search.solr.internal.suggest.NGramHolderBuilderImpl;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 
 import java.util.HashMap;
@@ -174,10 +175,20 @@ public class SolrIndexingFixture implements IndexingFixture {
 				}
 			};
 
+		final SolrSpellCheckIndexWriter solrSpellCheckIndexWriter =
+			new SolrSpellCheckIndexWriter() {
+				{
+					setSolrClientManager(solrClientManager);
+					setSolrUpdateDocumentCommand(updateDocumentCommand);
+					nGramHolderBuilder = new NGramHolderBuilderImpl();
+				}
+			};
+
 		return new SolrIndexWriter() {
 			{
 				setSolrClientManager(solrClientManager);
 				setSolrUpdateDocumentCommand(updateDocumentCommand);
+				setSpellCheckIndexWriter(solrSpellCheckIndexWriter);
 			}
 		};
 	}

@@ -14,67 +14,99 @@
 
 package com.liferay.portal.search.solr.internal.suggest;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.search.IndexWriter;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.suggest.SuggestionConstants;
+import com.liferay.portal.kernel.util.DigesterUtil;
+import com.liferay.portal.kernel.util.Props;
+import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.search.internal.DefaultCollatorImpl;
 import com.liferay.portal.search.solr.connection.TestSolrClientManager;
+import com.liferay.portal.search.solr.internal.SolrIndexingFixture;
 import com.liferay.portal.search.solr.internal.SolrQuerySuggester;
 import com.liferay.portal.search.solr.internal.SolrUnitTestRequirements;
+import com.liferay.portal.search.test.util.suggest.BaseQuerySuggesterTestCase;
+import com.liferay.portal.util.DigesterImpl;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.mockito.Mockito;
+
 /**
  * @author André de Oliveira
  * @author Wade Cao
  */
-public class SolrQuerySuggesterTest {
+public class SolrQuerySuggesterTest extends BaseQuerySuggesterTestCase {
 
 	@Before
+	@Override
 	public void setUp() throws Exception {
 		Assume.assumeTrue(
 			SolrUnitTestRequirements.isSolrExternallyStartedByDeveloper());
 
-		_solrQuerySuggester = _createSolrQuerySuggester();
+		PropsUtil.setProps(Mockito.mock(Props.class));
+
+		DigesterUtil digesterUtil = new DigesterUtil();
+
+		digesterUtil.setDigester(new DigesterImpl());
+
+		super.setUp();
 	}
 
+	@Override
 	@Test
-	public void testJapaneseIdeographicSpace() throws Exception {
-		String ideographicSpace = "\u3000";
-
-		spellCheckKeywords("あ" + ideographicSpace + "い");
-		spellCheckKeywords("あ" + ideographicSpace + ideographicSpace + "い");
-		spellCheckKeywords("A" + ideographicSpace + "B");
+	public void testSpellCheckJapaneseIdeographicSpace() throws Exception {
+		super.testSpellCheckJapaneseIdeographicSpace();
 	}
 
+	@Override
 	@Test
-	public void testLuceneUnfriendlyTerms() throws Exception {
-		spellCheckKeywords("+alpha AND -bravo");
+	public void testSpellCheckLuceneUnfriendlyTerms() throws Exception {
+		super.testSpellCheckLuceneUnfriendlyTerms();
 	}
 
+	@Override
 	@Test
-	public void testShortTerms() throws Exception {
-		spellCheckKeywords("1 2");
-		spellCheckKeywords("A B");
-		spellCheckKeywords("A  B");
+	public void testSpellCheckShortTerms() throws Exception {
+		super.testSpellCheckShortTerms();
 	}
 
+	@Override
 	@Test
-	public void testWhitespace() throws Exception {
-		spellCheckKeywords("Liferay Search");
-		spellCheckKeywords(" Liferay Search   ");
-		spellCheckKeywords("Liferay    Search");
-		spellCheckKeywords("L ife  ray    Searc h");
+	public void testSpellCheckWhitespace() throws Exception {
+		super.testSpellCheckWhitespace();
 	}
 
-	protected Map<String, List<String>> spellCheckKeywords(String keywords)
-		throws Exception {
+	@Override
+	protected SolrQuerySuggester createQuerySuggester() throws Exception {
+		return new SolrQuerySuggester() {
+			{
+				collator = new DefaultCollatorImpl();
 
-		return _solrQuerySuggester.spellCheckKeywords(
-			_createSearchContext(keywords), 1);
+				setNGramQueryBuilder(_createNGramQueryBuilder());
+
+				setSolrClientManager(
+					new TestSolrClientManager(_getProperties()));
+			}
+		};
+	}
+
+	@Override
+	protected void indexKeywordSearch(String value) {
+		_index(value, SuggestionConstants.TYPE_QUERY_SUGGESTION);
+	}
+
+	@Override
+	protected void indexSpellCheckWord(String value) {
+		_index(value, SuggestionConstants.TYPE_SPELL_CHECKER);
 	}
 
 	private NGramQueryBuilderImpl _createNGramQueryBuilder() {
@@ -85,24 +117,38 @@ public class SolrQuerySuggesterTest {
 		};
 	}
 
-	private SearchContext _createSearchContext(String keywords) {
-		return new SearchContext() {
-			{
-				setKeywords(keywords);
-			}
-		};
+	private Map<String, Object> _getProperties() {
+		Map<String, Object> properties = new HashMap<>();
+
+		properties.put("logExceptionsOnly", false);
+		properties.put("readURL", "http://localhost:8983/solr/liferay");
+		properties.put("writeURL", "http://localhost:8983/solr/liferay");
+
+		return properties;
 	}
 
-	private SolrQuerySuggester _createSolrQuerySuggester() throws Exception {
-		return new SolrQuerySuggester() {
-			{
-				setNGramQueryBuilder(_createNGramQueryBuilder());
-				setSolrClientManager(
-					new TestSolrClientManager(Collections.emptyMap()));
-			}
-		};
+	private void _index(String value, String type) {
+		try {
+			SolrIndexingFixture solrIndexingFixture = new SolrIndexingFixture();
+
+			solrIndexingFixture.setUp();
+
+			IndexWriter indexWriter = solrIndexingFixture.getIndexWriter();
+
+			SearchContext searchContext = new SearchContext();
+
+			searchContext.setCompanyId(getCompanyId());
+			searchContext.setKeywords(value);
+			searchContext.setLocale(Locale.US);
+
+			indexWriter.indexKeyword(searchContext, 0.0F, type);
+		}
+		catch (Exception e) {
+			_log.error("Unable to index value: " + value);
+		}
 	}
 
-	private SolrQuerySuggester _solrQuerySuggester;
+	private static final Log _log = LogFactoryUtil.getLog(
+		SolrQuerySuggesterTest.class);
 
 }
