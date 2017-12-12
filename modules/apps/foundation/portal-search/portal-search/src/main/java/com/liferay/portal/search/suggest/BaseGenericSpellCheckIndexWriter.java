@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.kernel.search.suggest;
+package com.liferay.portal.search.suggest;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -21,6 +21,10 @@ import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
+import com.liferay.portal.kernel.search.suggest.DictionaryEntry;
+import com.liferay.portal.kernel.search.suggest.DictionaryReader;
+import com.liferay.portal.kernel.search.suggest.NGramHolder;
+import com.liferay.portal.kernel.search.suggest.NGramHolderBuilderUtil;
 import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.InputStream;
