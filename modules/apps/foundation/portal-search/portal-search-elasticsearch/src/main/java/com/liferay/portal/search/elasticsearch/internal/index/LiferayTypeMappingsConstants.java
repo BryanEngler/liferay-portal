@@ -21,9 +21,13 @@ import com.liferay.portal.search.elasticsearch.internal.util.DocumentTypes;
  */
 public class LiferayTypeMappingsConstants {
 
+	public static final String DYNAMIC_TEMPLATES = "dynamic_templates";
+
 	public static final String LIFERAY_DOCUMENT_TYPE = DocumentTypes.LIFERAY;
 
 	public static final String LIFERAY_DOCUMENT_TYPE_MAPPING_FILE_NAME =
 		"/META-INF/mappings/liferay-type-mappings.json";
+
+	public static final String PROPERTIES = "properties";
 
 }
