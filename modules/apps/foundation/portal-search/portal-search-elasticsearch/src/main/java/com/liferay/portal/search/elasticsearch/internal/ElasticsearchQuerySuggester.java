@@ -17,7 +17,6 @@ package com.liferay.portal.search.elasticsearch.internal;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.suggest.AggregateSuggester;
@@ -28,6 +27,7 @@ import com.liferay.portal.kernel.search.suggest.SuggesterResult;
 import com.liferay.portal.kernel.search.suggest.SuggesterResults;
 import com.liferay.portal.kernel.search.suggest.SuggesterTranslator;
 import com.liferay.portal.kernel.search.suggest.TermSuggester;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch.index.IndexNameBuilder;
 import com.liferay.portal.search.suggest.BaseQuerySuggester;
@@ -63,8 +63,14 @@ public class ElasticsearchQuerySuggester extends BaseQuerySuggester {
 	public Map<String, List<String>> spellCheckKeywords(
 		SearchContext searchContext, int max) {
 
-		String field = DocumentImpl.getLocalizedName(
-			searchContext.getLocale(), Field.SPELL_CHECK_WORD);
+		String field = Field.SPELL_CHECK_WORD;
+
+		if (searchContext.getLocale() != null) {
+			String languageId = LocaleUtil.toLanguageId(
+				searchContext.getLocale());
+
+			field = field.concat(StringPool.UNDERLINE).concat(languageId);
+		}
 
 		TermSuggester termSuggester = new TermSuggester(
 			"spellCheckRequest", field, searchContext.getKeywords());
@@ -138,6 +144,10 @@ public class ElasticsearchQuerySuggester extends BaseQuerySuggester {
 
 		SuggesterResults suggesterResults = new SuggesterResults();
 
+		if (suggest == null) {
+			return suggesterResults;
+		}
+
 		for (Suggest.Suggestion
 				<? extends Suggest.Suggestion.Entry
 					<? extends Suggest.Suggestion.Entry.Option>> suggestion :
@@ -162,8 +172,14 @@ public class ElasticsearchQuerySuggester extends BaseQuerySuggester {
 	public String[] suggestKeywordQueries(
 		SearchContext searchContext, int max) {
 
-		String field = DocumentImpl.getLocalizedName(
-			searchContext.getLocale(), Field.KEYWORD_SEARCH);
+		String field = Field.KEYWORD_SEARCH;
+
+		if (searchContext.getLocale() != null) {
+			String languageId = LocaleUtil.toLanguageId(
+				searchContext.getLocale());
+
+			field = field.concat(StringPool.UNDERLINE).concat(languageId);
+		}
 
 		PhraseSuggester phraseSuggester = new PhraseSuggester(
 			"keywordQueryRequest", field, searchContext.getKeywords());
