@@ -174,10 +174,19 @@ public class SolrIndexingFixture implements IndexingFixture {
 				}
 			};
 
+		final SolrSpellCheckIndexWriter solrSpellCheckIndexWriter =
+			new SolrSpellCheckIndexWriter() {
+				{
+					setSolrClientManager(solrClientManager);
+					setSolrUpdateDocumentCommand(updateDocumentCommand);
+				}
+			};
+
 		return new SolrIndexWriter() {
 			{
 				setSolrClientManager(solrClientManager);
 				setSolrUpdateDocumentCommand(updateDocumentCommand);
+				setSpellCheckIndexWriter(solrSpellCheckIndexWriter);
 			}
 		};
 	}
