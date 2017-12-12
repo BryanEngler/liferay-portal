@@ -105,14 +105,13 @@ public class ElasticsearchSpellCheckIndexWriter
 
 		Document document = createDocument();
 
-		document.addKeyword(Field.COMPANY_ID, companyId);
-		document.addKeyword(Field.GROUP_ID, groupId);
-
-		String localizedName = DocumentImpl.getLocalizedName(
+		String localizedKeywordFieldName = DocumentImpl.getLocalizedName(
 			languageId, keywordFieldName);
 
-		document.addKeyword(localizedName, keywords);
+		document.addKeyword(localizedKeywordFieldName, keywords);
 
+		document.addKeyword(Field.COMPANY_ID, companyId);
+		document.addKeyword(Field.GROUP_ID, groupId);
 		document.addKeyword(Field.LANGUAGE_ID, languageId);
 		document.addKeyword(Field.PRIORITY, String.valueOf(weight));
 		document.addKeyword(Field.SPELL_CHECK_WORD, true);
