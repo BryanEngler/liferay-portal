@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.time.StopWatch;
-
+import org.elasticsearch.action.search.SearchPhaseExecutionException;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
@@ -138,9 +138,24 @@ public class ElasticsearchQuerySuggester extends BaseQuerySuggester {
 					entry.getKey(), entry.getValue()));
 		}
 
-		SearchResponse suggestResponse = searchRequestBuilder.get();
+		Suggest suggest = null;
 
-		Suggest suggest = suggestResponse.getSuggest();
+		try {
+			SearchResponse suggestResponse = searchRequestBuilder.get();
+
+			suggest = suggestResponse.getSuggest();
+		}
+		catch (SearchPhaseExecutionException spee) {
+			if (_log.isErrorEnabled()) {
+				Throwable cause = spee.getCause();
+
+				String message = cause.getMessage();
+
+				_log.error("Unable to retrieve suggestions from search index." +
+					" Make sure suggestion type documents have been indexed " +
+						message);
+			}
+		}
 
 		SuggesterResults suggesterResults = new SuggesterResults();
 
