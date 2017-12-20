@@ -58,29 +58,25 @@ public class NGramQueryBuilderImpl implements NGramQueryBuilder {
 
 		Map<String, List<String>> nGrams = nGramHolder.getNGrams();
 
-		addNGramsListQuery(sb, nGrams);
-
-		if (!nGrams.isEmpty()) {
-			addOrQuerySeparator(sb);
-		}
-
 		Map<String, String> nGramEnds = nGramHolder.getNGramEnds();
-
-		addNGramsQuery(sb, nGramEnds);
-
-		if (!nGramEnds.isEmpty()) {
-			addOrQuerySeparator(sb);
-		}
 
 		Map<String, String> nGramStarts = nGramHolder.getNGramStarts();
 
-		addNGramsQuery(sb, nGramStarts);
+		addNGramsListQuery(sb, nGrams);
 
-		if (!nGramStarts.isEmpty()) {
+		if (!nGrams.isEmpty() &&
+			(!nGramEnds.isEmpty() || !nGramStarts.isEmpty())) {
+
 			addOrQuerySeparator(sb);
 		}
 
-		addQuery(sb, Field.SPELL_CHECK_WORD, input);
+		addNGramsQuery(sb, nGramEnds);
+
+		if (!nGramEnds.isEmpty() && !nGramStarts.isEmpty()) {
+			addOrQuerySeparator(sb);
+		}
+
+		addNGramsQuery(sb, nGramStarts);
 
 		solrQuery.setQuery(sb.toString());
 
