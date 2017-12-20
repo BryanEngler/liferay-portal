@@ -15,7 +15,6 @@
 package com.liferay.portal.search.solr.internal.suggest;
 
 import com.liferay.petra.string.CharPool;
-import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.suggest.NGramHolder;
 import com.liferay.portal.kernel.search.suggest.NGramHolderBuilder;
@@ -58,29 +57,25 @@ public class NGramQueryBuilderImpl implements NGramQueryBuilder {
 
 		Map<String, List<String>> nGrams = nGramHolder.getNGrams();
 
-		addNGramsListQuery(sb, nGrams);
-
-		if (!nGrams.isEmpty()) {
-			addOrQuerySeparator(sb);
-		}
-
 		Map<String, String> nGramEnds = nGramHolder.getNGramEnds();
-
-		addNGramsQuery(sb, nGramEnds);
-
-		if (!nGramEnds.isEmpty()) {
-			addOrQuerySeparator(sb);
-		}
 
 		Map<String, String> nGramStarts = nGramHolder.getNGramStarts();
 
-		addNGramsQuery(sb, nGramStarts);
+		addNGramsListQuery(sb, nGrams);
 
-		if (!nGramStarts.isEmpty()) {
+		if (!nGrams.isEmpty() &&
+			(!nGramEnds.isEmpty() || !nGramStarts.isEmpty())) {
+
 			addOrQuerySeparator(sb);
 		}
 
-		addQuery(sb, Field.SPELL_CHECK_WORD, input);
+		addNGramsQuery(sb, nGramEnds);
+
+		if (!nGramEnds.isEmpty() && !nGramStarts.isEmpty()) {
+			addOrQuerySeparator(sb);
+		}
+
+		addNGramsQuery(sb, nGramStarts);
 
 		solrQuery.setQuery(sb.toString());
 

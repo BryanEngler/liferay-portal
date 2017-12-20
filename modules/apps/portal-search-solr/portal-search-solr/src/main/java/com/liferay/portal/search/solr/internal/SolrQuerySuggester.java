@@ -102,26 +102,12 @@ public class SolrQuerySuggester extends BaseQuerySuggester {
 
 		SolrClient solrClient = _solrClientManager.getSolrClient();
 
-		SolrQuery solrQuery = new SolrQuery();
+		SolrQuery solrQuery = _nGramQueryBuilder.getNGramQuery(
+			searchContext.getKeywords());
 
 		solrQuery.setFilterQueries(
 			getFilterQueries(
 				searchContext, SuggestionConstants.TYPE_QUERY_SUGGESTION));
-
-		StringBundler sb = new StringBundler(6);
-
-		sb.append("start");
-
-		String keywords = searchContext.getKeywords();
-
-		sb.append(keywords.length());
-
-		sb.append(StringPool.COLON);
-		sb.append(StringPool.QUOTE);
-		sb.append(keywords);
-		sb.append(StringPool.QUOTE);
-
-		solrQuery.setQuery(sb.toString());
 
 		solrQuery.setRows(max);
 
