@@ -82,12 +82,13 @@ public abstract class BaseGenericSpellCheckIndexWriter
 
 		Document document = createDocument();
 
+		document.addKeyword(keywordFieldName, keywords);
+
 		document.addKeyword(Field.COMPANY_ID, companyId);
 		document.addKeyword(Field.GROUP_ID, groupId);
 		document.addKeyword(Field.LANGUAGE_ID, languageId);
 		document.addKeyword(Field.PRIORITY, String.valueOf(weight));
 		document.addKeyword(Field.SPELL_CHECK_WORD, true);
-		document.addKeyword(keywordFieldName, keywords);
 		document.addKeyword(Field.TYPE, typeFieldValue);
 		document.addKeyword(
 			Field.UID,
