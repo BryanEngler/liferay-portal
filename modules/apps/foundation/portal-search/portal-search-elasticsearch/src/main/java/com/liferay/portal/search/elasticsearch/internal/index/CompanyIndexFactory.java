@@ -183,7 +183,8 @@ public class CompanyIndexFactory implements IndexFactory {
 			return;
 		}
 
-		builder.loadFromSource(_additionalIndexConfigurations);
+		builder.loadFromSource(
+			_additionalIndexConfigurations, XContentType.JSON);
 	}
 
 	protected void loadAdditionalTypeMappings(
@@ -202,8 +203,7 @@ public class CompanyIndexFactory implements IndexFactory {
 		String defaultIndexSettings = ResourceUtil.getResourceAsString(
 			getClass(), "/META-INF/index-template.json");
 
-		builder.loadFromSource(
-			defaultIndexSettings, XContentType.JSON);
+		builder.loadFromSource(defaultIndexSettings, XContentType.JSON);
 	}
 
 	protected void loadIndexSettingsContributors(
