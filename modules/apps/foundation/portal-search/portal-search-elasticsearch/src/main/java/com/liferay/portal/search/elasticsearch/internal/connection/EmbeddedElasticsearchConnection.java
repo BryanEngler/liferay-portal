@@ -436,7 +436,7 @@ public class EmbeddedElasticsearchConnection
 
 		if (PortalRunMode.isTestMode()) {
 			settingsBuilder.put(
-				"monitor.jvm.enabled", Boolean.FALSE.toString());
+				"monitor.jvm.gc.enabled", Boolean.FALSE.toString());
 		}
 	}
 
