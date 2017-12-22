@@ -44,6 +44,7 @@ import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.IndicesAdminClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.settings.Settings.Builder;
+import org.elasticsearch.common.xcontent.XContentType;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -160,7 +161,7 @@ public class CompanyIndexFactory implements IndexFactory {
 				getClass(), entry.getValue());
 
 			createIndexRequestBuilder.addMapping(
-				entry.getKey(), mappingDefinition);
+				entry.getKey(), mappingDefinition, XContentType.JSON);
 		}
 	}
 
@@ -227,7 +228,8 @@ public class CompanyIndexFactory implements IndexFactory {
 			return;
 		}
 
-		builder.loadFromSource(_additionalIndexConfigurations);
+		builder.loadFromSource(
+			_additionalIndexConfigurations, XContentType.JSON);
 	}
 
 	protected void loadAdditionalTypeMappings(
@@ -246,8 +248,7 @@ public class CompanyIndexFactory implements IndexFactory {
 		String defaultIndexSettings = ResourceUtil.getResourceAsString(
 			getClass(), "/META-INF/index-template.json");
 
-		builder.loadFromSource(
-			defaultIndexSettings, XContentType.JSON);
+		builder.loadFromSource(defaultIndexSettings, XContentType.JSON);
 	}
 
 	protected void loadIndexSettingsContributors(
