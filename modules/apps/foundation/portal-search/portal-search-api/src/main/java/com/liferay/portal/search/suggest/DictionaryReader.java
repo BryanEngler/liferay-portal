@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.kernel.search.suggest;
+package com.liferay.portal.search.suggest;
 
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
