@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.kernel.search.suggest;
+package com.liferay.portal.search.web.internal.search.suggest;
 
 import com.liferay.portal.kernel.util.Validator;
 
