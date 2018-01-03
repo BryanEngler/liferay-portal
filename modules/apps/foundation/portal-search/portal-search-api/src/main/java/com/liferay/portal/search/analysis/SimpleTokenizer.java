@@ -12,8 +12,9 @@
  * details.
  */
 
-package com.liferay.portal.kernel.search.analysis;
+package com.liferay.portal.search.analysis;
 
+import com.liferay.portal.kernel.search.analysis.Tokenizer;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 
