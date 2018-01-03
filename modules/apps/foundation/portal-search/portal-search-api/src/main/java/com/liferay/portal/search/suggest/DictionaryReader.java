@@ -69,7 +69,7 @@ public class DictionaryReader {
 				}
 			}
 
-			if (Validator.isNotNull(_line)) {
+			if (!Validator.isBlank(_line)) {
 				return true;
 			}
 

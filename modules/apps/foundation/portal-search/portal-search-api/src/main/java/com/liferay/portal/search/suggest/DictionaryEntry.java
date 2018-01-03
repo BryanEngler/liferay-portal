@@ -16,7 +16,6 @@ package com.liferay.portal.search.suggest;
 
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
 
 /**
  * @author Michael C. Han
@@ -24,14 +23,14 @@ import com.liferay.portal.kernel.util.StringUtil;
 public class DictionaryEntry {
 
 	public DictionaryEntry(String line) {
-		String[] values = StringUtil.split(line, StringPool.SPACE);
+		int index = line.indexOf(StringPool.SPACE);
 
-		_word = values[0];
-
-		if (values.length == 2) {
-			_weight = GetterUtil.getFloat(values[1]);
+		if (index > 0) {
+			_word = line.substring(0, index);
+			_weight = GetterUtil.getFloat(line.substring(index + 1));
 		}
 		else {
+			_word = line;
 			_weight = 0;
 		}
 	}
