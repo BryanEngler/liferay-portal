@@ -12,12 +12,16 @@
  * details.
  */
 
-package com.liferay.portal.kernel.search.suggest;
+package com.liferay.portal.search.suggest;
 
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.analysis.TokenizerUtil;
+import com.liferay.portal.kernel.search.suggest.CollatorUtil;
+import com.liferay.portal.kernel.search.suggest.QuerySuggester;
+import com.liferay.portal.kernel.search.suggest.Suggester;
+import com.liferay.portal.kernel.search.suggest.SuggesterResults;
 
 import java.util.List;
 import java.util.Map;
