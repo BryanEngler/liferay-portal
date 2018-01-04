@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.io.InputStream;
 
@@ -141,19 +142,21 @@ public abstract class BaseGenericSpellCheckIndexWriter
 
 				DictionaryEntry dictionaryEntry = iterator.next();
 
-				Document document = createDocument(
-					searchContext.getCompanyId(), groupId, languageId,
-					dictionaryEntry.getWord(), dictionaryEntry.getWeight(),
-					keywordFieldName, typeFieldValue, maxNGramLength);
+				if (!Validator.isBlank(dictionaryEntry.getWord())) {
+					Document document = createDocument(
+						searchContext.getCompanyId(), groupId, languageId,
+						dictionaryEntry.getWord(), dictionaryEntry.getWeight(),
+						keywordFieldName, typeFieldValue, maxNGramLength);
 
-				documents.add(document);
+					documents.add(document);
 
-				if ((counter == _batchSize) || !iterator.hasNext()) {
-					addDocuments(typeFieldValue, searchContext, documents);
+					if ((counter == _batchSize) || !iterator.hasNext()) {
+						addDocuments(typeFieldValue, searchContext, documents);
 
-					documents.clear();
+						documents.clear();
 
-					counter = 0;
+						counter = 0;
+					}
 				}
 			}
 		}
