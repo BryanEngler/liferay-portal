@@ -30,7 +30,8 @@ public class SimpleTokenizer implements Tokenizer {
 	public List<String> tokenize(
 		String fieldName, String input, String languageId) {
 
-		return Arrays.asList(StringUtil.split(input, StringPool.SPACE));
+		return Arrays.asList(
+			StringUtil.split(StringUtil.unquote(input), StringPool.SPACE));
 	}
 
 }
