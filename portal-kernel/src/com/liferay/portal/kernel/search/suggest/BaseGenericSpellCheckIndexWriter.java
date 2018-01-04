@@ -158,7 +158,6 @@ public abstract class BaseGenericSpellCheckIndexWriter
 						counter = 0;
 					}
 				}
-
 			}
 		}
 		catch (Exception e) {
