@@ -138,11 +138,11 @@ public abstract class BaseGenericSpellCheckIndexWriter
 			int counter = 0;
 
 			while (iterator.hasNext()) {
-				counter++;
-
 				DictionaryEntry dictionaryEntry = iterator.next();
 
 				if (!Validator.isBlank(dictionaryEntry.getWord())) {
+					counter++;
+
 					Document document = createDocument(
 						searchContext.getCompanyId(), groupId, languageId,
 						dictionaryEntry.getWord(), dictionaryEntry.getWeight(),
@@ -158,6 +158,7 @@ public abstract class BaseGenericSpellCheckIndexWriter
 						counter = 0;
 					}
 				}
+
 			}
 		}
 		catch (Exception e) {
