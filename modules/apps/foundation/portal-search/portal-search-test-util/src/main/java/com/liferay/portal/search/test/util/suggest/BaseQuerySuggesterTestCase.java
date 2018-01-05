@@ -95,6 +95,27 @@ public abstract class BaseQuerySuggesterTestCase {
 		spellCheckKeywords("L ife  ray    Searc h");
 	}
 
+	public void testSuggestKeywordResults() throws Exception {
+		indexKeywordSearch("indexed this phrase");
+
+		IdempotentRetryAssert.retryAssert(
+			3, TimeUnit.SECONDS,
+			() -> {
+				String[] suggestions = suggestKeywordQueries(
+					"indexef this phrasd");
+
+				String suggestion = StringPool.BLANK;
+
+				if (suggestions.length > 0) {
+					suggestion = suggestions[0];
+				}
+
+				Assert.assertEquals("indexed this phrase", suggestion);
+
+				return null;
+			});
+	}
+
 	protected Localization createLocalization() {
 		Localization localization = Mockito.mock(Localization.class);
 
