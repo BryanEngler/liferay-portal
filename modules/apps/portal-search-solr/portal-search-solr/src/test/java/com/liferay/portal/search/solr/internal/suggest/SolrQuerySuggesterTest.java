@@ -92,6 +92,12 @@ public class SolrQuerySuggesterTest extends BaseQuerySuggesterTestCase {
 	}
 
 	@Override
+	@Test
+	public void testSuggestKeywordResults() throws Exception {
+		super.testSuggestKeywordResults();
+	}
+
+	@Override
 	protected SolrQuerySuggester createQuerySuggester() throws Exception {
 		return new SolrQuerySuggester() {
 			{
