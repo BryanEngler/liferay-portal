@@ -90,6 +90,12 @@ public class ElasticsearchQuerySuggesterTest
 		super.testSpellCheckWhitespace();
 	}
 
+	@Override
+	@Test
+	public void testSuggestKeywordResults() throws Exception {
+		super.testSuggestKeywordResults();
+	}
+
 	@Rule
 	public TestName testName = new TestName();
 
