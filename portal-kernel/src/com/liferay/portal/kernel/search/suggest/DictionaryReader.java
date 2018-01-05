@@ -15,6 +15,7 @@
 package com.liferay.portal.kernel.search.suggest;
 
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -84,6 +85,7 @@ public class DictionaryReader {
 			_calledHasNext = false;
 
 			if (StringPool.UTF8.equals(_encoding) &&
+				!Validator.isBlank(_line) &&
 				(_line.charAt(0) == _UNICODE_BYTE_ORDER_MARK)) {
 
 				_line = _line.substring(1);
