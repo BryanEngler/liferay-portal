@@ -20,9 +20,12 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.Localization;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.search.test.util.IdempotentRetryAssert;
 
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
+import org.junit.Assert;
 import org.junit.Before;
 
 import org.mockito.Mockito;
@@ -59,6 +62,20 @@ public abstract class BaseQuerySuggesterTestCase {
 		indexSpellCheckWord(RandomTestUtil.randomString());
 
 		spellCheckKeywords("+alpha AND -bravo");
+	}
+
+	public void testSpellCheckResultsMisspelledWord() throws Exception {
+		indexSpellCheckWord("indexed");
+
+		IdempotentRetryAssert.retryAssert(
+			3, TimeUnit.SECONDS,
+			() -> {
+				String suggestion = spellCheckKeywords("indexef");
+
+				Assert.assertEquals("indexed", suggestion);
+
+				return null;
+			});
 	}
 
 	public void testSpellCheckShortTerms() throws Exception {
