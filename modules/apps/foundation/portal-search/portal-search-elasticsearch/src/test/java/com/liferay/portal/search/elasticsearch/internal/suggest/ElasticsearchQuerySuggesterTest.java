@@ -74,6 +74,12 @@ public class ElasticsearchQuerySuggesterTest
 
 	@Override
 	@Test
+	public void testSpellCheckResultsMisspelledWord() throws Exception {
+		super.testSpellCheckResultsMisspelledWord();
+	}
+
+	@Override
+	@Test
 	public void testSpellCheckShortTerms() throws Exception {
 		super.testSpellCheckShortTerms();
 	}
