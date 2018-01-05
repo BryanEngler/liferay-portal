@@ -149,14 +149,14 @@ public abstract class BaseGenericSpellCheckIndexWriter
 						keywordFieldName, typeFieldValue, maxNGramLength);
 
 					documents.add(document);
+				}
 
-					if ((counter == _batchSize) || !iterator.hasNext()) {
-						addDocuments(typeFieldValue, searchContext, documents);
+				if ((counter == _batchSize) || !iterator.hasNext()) {
+					addDocuments(typeFieldValue, searchContext, documents);
 
-						documents.clear();
+					documents.clear();
 
-						counter = 0;
-					}
+					counter = 0;
 				}
 			}
 		}
