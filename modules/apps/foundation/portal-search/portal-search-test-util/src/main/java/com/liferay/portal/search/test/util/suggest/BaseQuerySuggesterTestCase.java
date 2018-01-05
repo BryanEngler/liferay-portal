@@ -78,6 +78,21 @@ public abstract class BaseQuerySuggesterTestCase {
 			});
 	}
 
+	public void testSpellCheckResultsMultipleWords() throws Exception {
+		indexSpellCheckWord("indexed");
+		indexSpellCheckWord("liferay");
+
+		IdempotentRetryAssert.retryAssert(
+			3, TimeUnit.SECONDS,
+			() -> {
+				String suggestion = spellCheckKeywords("indexef liferay");
+
+				Assert.assertEquals("indexed liferay", suggestion);
+
+				return null;
+			});
+	}
+
 	public void testSpellCheckShortTerms() throws Exception {
 		indexSpellCheckWord(RandomTestUtil.randomString());
 
