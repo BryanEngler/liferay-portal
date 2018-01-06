@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.internal.hits;
 
+import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.IndexSearcherHelperUtil;
@@ -21,6 +22,7 @@ import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.hits.HitsProcessor;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -53,7 +55,21 @@ public class CollatedSpellCheckHitsProcessor implements HitsProcessor {
 		String collatedKeywords = IndexSearcherHelperUtil.spellCheckKeywords(
 			searchContext);
 
-		if (collatedKeywords.equals(searchContext.getKeywords())) {
+		String keywords = searchContext.getKeywords();
+
+		if ((keywords.charAt(0) == CharPool.APOSTROPHE) &&
+			(keywords.charAt(keywords.length() - 1) == CharPool.APOSTROPHE)) {
+
+			collatedKeywords = StringUtil.quote(collatedKeywords);
+		}
+		else if ((keywords.charAt(0) == CharPool.QUOTE) &&
+				 (keywords.charAt(keywords.length() - 1) == CharPool.QUOTE)) {
+
+			collatedKeywords = StringUtil.quote(
+				collatedKeywords, CharPool.QUOTE);
+		}
+
+		if (collatedKeywords.equals(keywords)) {
 			collatedKeywords = StringPool.BLANK;
 		}
 
