@@ -18,8 +18,11 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.search.solr.connection.SolrClientManager;
 import com.liferay.portal.search.solr.internal.SolrQuerySuggester;
+import com.liferay.portal.search.solr.suggest.NGramQueryBuilder;
 
 import java.util.Arrays;
+
+import org.apache.solr.client.solrj.SolrQuery;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -42,6 +45,21 @@ public class SolrQuerySuggesterSafeguardsTest {
 			Arrays.toString(querySuggestions), 0, querySuggestions.length);
 	}
 
+	protected NGramQueryBuilder createNGramQueryBuilder() throws Exception {
+		NGramQueryBuilder nGramQueryBuilder = Mockito.mock(
+			NGramQueryBuilder.class);
+
+		Mockito.doReturn(
+			new SolrQuery()
+		).when(
+			nGramQueryBuilder
+		).getNGramQuery(
+			Mockito.anyString()
+		);
+
+		return nGramQueryBuilder;
+	}
+
 	protected SearchContext createSearchContext() {
 		return new SearchContext() {
 			{
@@ -50,9 +68,10 @@ public class SolrQuerySuggesterSafeguardsTest {
 		};
 	}
 
-	protected SolrQuerySuggester createSolrQuerySuggester() {
+	protected SolrQuerySuggester createSolrQuerySuggester() throws Exception {
 		return new SolrQuerySuggester() {
 			{
+				setNGramQueryBuilder(createNGramQueryBuilder());
 				setSolrClientManager(Mockito.mock(SolrClientManager.class));
 			}
 		};
