@@ -93,6 +93,20 @@ public abstract class BaseQuerySuggesterTestCase {
 			});
 	}
 
+	public void testSpellCheckResultsQuotedWords() throws Exception {
+		indexSpellCheckWord("indexed");
+
+		IdempotentRetryAssert.retryAssert(
+			3, TimeUnit.SECONDS,
+			() -> {
+				String suggestion = spellCheckKeywords("\"indexef\"");
+
+				Assert.assertEquals("indexed", suggestion);
+
+				return null;
+			});
+	}
+
 	public void testSpellCheckShortTerms() throws Exception {
 		indexSpellCheckWord(RandomTestUtil.randomString());
 
