@@ -1,0 +1,6 @@
+test 1.0
+one
+
+null 0.5
+two 2.2
+three 3.0
