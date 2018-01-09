@@ -86,6 +86,12 @@ public class ElasticsearchQuerySuggesterTest
 
 	@Override
 	@Test
+	public void testSpellCheckResultsQuotedWords() throws Exception {
+		super.testSpellCheckResultsQuotedWords();
+	}
+
+	@Override
+	@Test
 	public void testSpellCheckShortTerms() throws Exception {
 		super.testSpellCheckShortTerms();
 	}
