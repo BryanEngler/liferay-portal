@@ -19,11 +19,10 @@ import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.geolocation.GeoLocationPoint;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.Collection;
 import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
 
 import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.search.SearchHit;
@@ -54,31 +53,25 @@ public class SearchHitDocumentTranslatorImpl
 		Document document, String fieldName,
 		Map<String, DocumentField> documentFields) {
 
-		String baseFieldName = removeSuffixes(fieldName, ".lat", ".lon");
-
-		if (document.hasField(baseFieldName)) {
+		if (fieldName.endsWith(".geopoint")) {
 			return;
 		}
 
-		DocumentField documentField = documentFields.get(baseFieldName);
+		DocumentField documentField = documentFields.get(fieldName);
 
-		Field field = translateGeoPoint(
-			documentField, documentFields.get(baseFieldName + ".lat"),
-			documentFields.get(baseFieldName + ".lon"));
+		DocumentField geoPointField = documentFields.get(
+			fieldName.concat(".geopoint"));
 
-		if (field == null) {
+		Field field;
+
+		if (geoPointField != null) {
+			field = translateGeoPoint(documentField);
+		}
+		else {
 			field = translate(documentField);
 		}
 
 		document.add(field);
-	}
-
-	protected String removeSuffixes(String fieldName, String... suffixes) {
-		for (String suffix : suffixes) {
-			fieldName = StringUtils.removeEnd(fieldName, suffix);
-		}
-
-		return fieldName;
 	}
 
 	protected Field translate(DocumentField documentField) {
@@ -93,20 +86,14 @@ public class SearchHitDocumentTranslatorImpl
 		return field;
 	}
 
-	protected Field translateGeoPoint(
-		DocumentField documentField, DocumentField latDocumentField,
-		DocumentField lonDocumentField) {
-
-		if ((latDocumentField == null) || (lonDocumentField == null)) {
-			return null;
-		}
-
+	protected Field translateGeoPoint(DocumentField documentField) {
 		Field field = new Field(documentField.getName());
+
+		String[] values = StringUtil.split(documentField.getValue());
 
 		field.setGeoLocationPoint(
 			new GeoLocationPoint(
-				(Double)latDocumentField.getValue(),
-				(Double)lonDocumentField.getValue()));
+				Double.valueOf(values[0]), Double.valueOf(values[1])));
 
 		return field;
 	}

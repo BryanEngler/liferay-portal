@@ -25,6 +25,12 @@
 			{
 				"template_geolocation": {
 					"mapping": {
+						"fields": {
+							"geopoint" : {
+								"store": true,
+								"type": "keyword"
+							}
+						},
 						"store": true,
 						"type": "geo_point"
 					},
@@ -612,6 +618,12 @@
 				"type": "keyword"
 			},
 			"geoLocation": {
+				"fields": {
+					"geopoint" : {
+						"store": true,
+						"type": "keyword"
+					}
+				},
 				"store": true,
 				"type": "geo_point"
 			},
