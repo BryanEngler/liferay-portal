@@ -22,9 +22,7 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.search.elasticsearch.internal.ElasticsearchIndexingFixture;
 import com.liferay.portal.search.elasticsearch.internal.connection.ElasticsearchFixture;
 import com.liferay.portal.search.elasticsearch.internal.connection.IndexCreator;
-import com.liferay.portal.search.elasticsearch.internal.connection.IndicesAdminClientSupplier;
 import com.liferay.portal.search.elasticsearch.internal.connection.LiferayIndexCreationHelper;
-import com.liferay.portal.search.elasticsearch.internal.index.LiferayDocumentTypeFactory;
 import com.liferay.portal.search.test.util.IdempotentRetryAssert;
 import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
 import com.liferay.portal.search.test.util.indexing.DocumentCreationHelpers;
@@ -44,7 +42,7 @@ public class GeoLocationPointFieldTest extends BaseIndexingTestCase {
 
 	@Test
 	public void testCustomField() throws Exception {
-		assertGeoLocationPointField(_CUSTOM_FIELD);
+		assertGeoLocationPointField(_CUSTOM_FIELD.concat("_geolocation"));
 	}
 
 	@Test
@@ -89,7 +87,7 @@ public class GeoLocationPointFieldTest extends BaseIndexingTestCase {
 		IndexCreator indexCreator = new IndexCreator(elasticsearchFixture);
 
 		indexCreator.setIndexCreationHelper(
-			new CustomFieldLiferayIndexCreationHelper(elasticsearchFixture));
+			new LiferayIndexCreationHelper(elasticsearchFixture));
 
 		return new ElasticsearchIndexingFixture(
 			elasticsearchFixture, BaseIndexingTestCase.COMPANY_ID,
@@ -115,30 +113,5 @@ public class GeoLocationPointFieldTest extends BaseIndexingTestCase {
 	}
 
 	private static final String _CUSTOM_FIELD = "customField";
-
-	private static class CustomFieldLiferayIndexCreationHelper
-		extends LiferayIndexCreationHelper {
-
-		public CustomFieldLiferayIndexCreationHelper(
-			IndicesAdminClientSupplier indicesAdminClientSupplier) {
-
-			super(indicesAdminClientSupplier);
-		}
-
-		@Override
-		public void whenIndexCreated(String indexName) {
-			super.whenIndexCreated(indexName);
-
-			LiferayDocumentTypeFactory liferayDocumentTypeFactory =
-				getLiferayDocumentTypeFactory();
-
-			String source =
-				"{properties: { " + _CUSTOM_FIELD + " : {lat_lon: true, " +
-					"store: true, type: \"geo_point\"}}}";
-
-			liferayDocumentTypeFactory.addTypeMappings(indexName, source);
-		}
-
-	}
 
 }
