@@ -146,7 +146,12 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 			Class[]::new
 		);
 
-		return new PreBuiltTransportClient(
+		if (transportClientFactory == null) {
+			return new PreBuiltTransportClient(
+				settingsBuilder.build(), (Class<? extends Plugin>[])classes);
+		}
+
+		return transportClientFactory.createTransportClient(
 			settingsBuilder.build(), (Class<? extends Plugin>[])classes);
 	}
 
@@ -222,6 +227,9 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 
 	@Reference
 	protected Props props;
+
+	@Reference
+	protected TransportClientFactory transportClientFactory;
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		RemoteElasticsearchConnection.class);
