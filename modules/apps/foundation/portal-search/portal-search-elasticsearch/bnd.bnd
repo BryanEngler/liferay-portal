@@ -64,6 +64,7 @@ Import-Package:\
 	!org.apache.http.*,\
 	!org.apache.ivy.*,\
 	!org.apache.kafka.clients.producer.*,\
+	!org.apache.logging.log4j.*,\
 	!org.apache.lucene.expressions.*,\
 	!org.apache.lucene.geo3d.*,\
 	!org.apache.lucene.spatial.*,\
@@ -90,9 +91,12 @@ Import-Package:\
 	\
 	!org.jctools.queues.*,\
 	\
+	!org.joda.convert.*,\
 	!org.joda.time.*,\
 	\
 	!org.junit.*,\
+	\
+	!org.noggit.*,\
 	\
 	!org.zeromq.*,\
 	\
