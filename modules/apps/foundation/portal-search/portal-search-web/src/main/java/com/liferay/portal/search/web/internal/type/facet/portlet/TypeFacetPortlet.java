@@ -196,7 +196,7 @@ public class TypeFacetPortlet
 	}
 
 	protected String getFieldName() {
-		Facet facet = assetEntriesFacetFactory.newInstance(new SearchContext());
+		Facet facet = assetEntriesFacetFactory.newInstance(null);
 
 		return facet.getFieldName();
 	}
