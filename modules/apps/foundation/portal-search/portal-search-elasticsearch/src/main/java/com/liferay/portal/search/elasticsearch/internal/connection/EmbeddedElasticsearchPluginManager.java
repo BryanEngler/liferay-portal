@@ -23,6 +23,8 @@ import java.io.IOException;
 
 import java.nio.file.Path;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -80,8 +82,8 @@ public class EmbeddedElasticsearchPluginManager {
 	protected PluginZip createPluginZip() throws IOException {
 		return _pluginZipFactory.createPluginZip(
 			StringBundler.concat(
-				"/plugins/", _pluginName, "-", String.valueOf(Version.CURRENT),
-				".zip"));
+				"/plugins/", getPluginZipFileName(_pluginName), "-",
+				String.valueOf(Version.CURRENT), ".zip"));
 	}
 
 	protected void downloadAndExtract(PluginZip pluginZip) throws Exception {
@@ -111,6 +113,10 @@ public class EmbeddedElasticsearchPluginManager {
 		return stream.filter(
 			path -> path.endsWith(_pluginName)
 		).findAny();
+	}
+
+	protected String getPluginZipFileName(String pluginName) {
+		return _pluginZipFileNames.get(pluginName);
 	}
 
 	protected boolean handle(IOException ioe) {
@@ -156,5 +162,20 @@ public class EmbeddedElasticsearchPluginManager {
 	private final String _pluginName;
 	private final String _pluginsPathString;
 	private final PluginZipFactory _pluginZipFactory;
+	private final Map<String, String> _pluginZipFileNames =
+		new HashMap<String, String>() {
+			{
+				put("analysis-icu", "org.elasticsearch.plugin.analysis.icu");
+				put(
+					"analysis-kuromoji",
+					"org.elasticsearch.plugin.analysis.kuromoji");
+				put(
+					"analysis-smartcn",
+					"org.elasticsearch.plugin.analysis.smartcn");
+				put(
+					"analysis-stempel",
+					"org.elasticsearch.plugin.analysis.stempel");
+			}
+		};
 
 }

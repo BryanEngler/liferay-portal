@@ -108,7 +108,7 @@ public class PluginManagerImpl implements PluginManager {
 
 		String[] args = {
 			"remove", name, "-Epath.home=" + settings.get("path.home"),
-			"--batch", "--silent"
+			"--silent"
 		};
 
 		main(args);
