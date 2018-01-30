@@ -24,8 +24,14 @@ import com.liferay.portal.search.engine.SearchEngineInformation;
 
 import org.elasticsearch.Version;
 
+import org.elasticsearch.action.admin.cluster.node.info.NodeInfo;
+import org.elasticsearch.action.admin.cluster.node.info.NodesInfoRequestBuilder;
+import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
+import org.elasticsearch.client.ClusterAdminClient;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import java.util.List;
 
 /**
  * @author Adam Brandizzi
@@ -40,7 +46,7 @@ public class ElasticsearchSearchEngineInformation
 
 		sb.append(elasticsearchSearchEngine.getVendor());
 		sb.append(CharPool.SPACE);
-		sb.append(Version.CURRENT);
+		sb.append(getVersion());
 
 		ElasticsearchConnection elasticsearchConnection =
 			elasticsearchConnectionManager.getElasticsearchConnection();
@@ -52,6 +58,24 @@ public class ElasticsearchSearchEngineInformation
 		}
 
 		return sb.toString();
+	}
+
+	protected String getVersion() {
+		ClusterAdminClient clusterAdminClient =
+			elasticsearchConnectionManager.getClusterAdminClient();
+
+		NodesInfoRequestBuilder nodesInfoRequestBuilder =
+			clusterAdminClient.prepareNodesInfo("*");
+
+		NodesInfoResponse nodesInfoResponse = nodesInfoRequestBuilder.get();
+
+		List<NodeInfo> nodes = nodesInfoResponse.getNodes();
+
+		NodeInfo nodeInfo = nodes.get(0);
+
+		Version version = nodeInfo.getVersion();
+
+		return version.toString();
 	}
 
 	@Reference
