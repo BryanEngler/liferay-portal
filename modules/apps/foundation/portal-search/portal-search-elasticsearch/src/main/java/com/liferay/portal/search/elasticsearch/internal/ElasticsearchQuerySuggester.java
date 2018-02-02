@@ -73,6 +73,10 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 
 		Suggest suggest = doSuggest(suggester, searchContext);
 
+		if (suggest == null) {
+			return StringPool.BLANK;
+		}
+
 		List<String> words = new ArrayList<>();
 
 		for (Suggest.Suggestion
@@ -100,6 +104,10 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 		Suggester suggester = createSpellCheckSuggester(searchContext, max);
 
 		Suggest suggest = doSuggest(suggester, searchContext);
+
+		if (suggest == null) {
+			return new LinkedHashMap<>();
+		}
 
 		Map<String, List<String>> suggestionsMap = new LinkedHashMap<>();
 
@@ -137,6 +145,10 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 
 		Suggest suggest = doSuggest(suggester, searchContext);
 
+		if (suggest == null) {
+			return new SuggesterResults();
+		}
+
 		SuggesterResults suggesterResults = new SuggesterResults();
 
 		for (Suggest.Suggestion
@@ -157,6 +169,10 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 		Suggester suggester = createQuerySuggester(searchContext, max);
 
 		Suggest suggest = doSuggest(suggester, searchContext);
+
+		if (suggest == null) {
+			return StringPool.EMPTY_ARRAY;
+		}
 
 		Suggestion<? extends Entry<? extends Option>> suggestion =
 			suggest.getSuggestion(suggester.getName());
