@@ -183,10 +183,11 @@ public class CompanyIndexFactoryTest {
 			new BaseIndexSettingsContributor(1) {
 
 				@Override
-				public void contribute(TypeMappingsHelper typeMappingsHelper) {
+				public void contribute(
+					String indexName, TypeMappingsHelper typeMappingsHelper) {
+
 					typeMappingsHelper.addTypeMappings(
-						getTestIndexName(),
-						replaceAnalyzer(mappings, "brazilian"));
+						indexName, replaceAnalyzer(mappings, "brazilian"));
 				}
 
 			});
@@ -250,9 +251,10 @@ public class CompanyIndexFactoryTest {
 			new BaseIndexSettingsContributor(1) {
 
 				@Override
-				public void contribute(TypeMappingsHelper typeMappingsHelper) {
-					typeMappingsHelper.addTypeMappings(
-						getTestIndexName(), mappings);
+				public void contribute(
+					String indexName, TypeMappingsHelper typeMappingsHelper) {
+
+					typeMappingsHelper.addTypeMappings(indexName, mappings);
 				}
 
 			});
