@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.internal;
+package com.liferay.portal.search.elasticsearch6.internal;
 
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
@@ -50,15 +50,15 @@ import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
-import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectionManager;
-import com.liferay.portal.search.elasticsearch.facet.FacetProcessor;
-import com.liferay.portal.search.elasticsearch.groupby.GroupByTranslator;
-import com.liferay.portal.search.elasticsearch.index.IndexNameBuilder;
-import com.liferay.portal.search.elasticsearch.internal.facet.CompositeFacetProcessor;
-import com.liferay.portal.search.elasticsearch.internal.facet.FacetCollectorFactory;
-import com.liferay.portal.search.elasticsearch.internal.util.DocumentTypes;
-import com.liferay.portal.search.elasticsearch.stats.StatsTranslator;
+import com.liferay.portal.search.elasticsearch6.configuration.ElasticsearchConfiguration;
+import com.liferay.portal.search.elasticsearch6.connection.ElasticsearchConnectionManager;
+import com.liferay.portal.search.elasticsearch6.facet.FacetProcessor;
+import com.liferay.portal.search.elasticsearch6.groupby.GroupByTranslator;
+import com.liferay.portal.search.elasticsearch6.index.IndexNameBuilder;
+import com.liferay.portal.search.elasticsearch6.internal.facet.CompositeFacetProcessor;
+import com.liferay.portal.search.elasticsearch6.internal.facet.FacetCollectorFactory;
+import com.liferay.portal.search.elasticsearch6.internal.util.DocumentTypes;
+import com.liferay.portal.search.elasticsearch6.stats.StatsTranslator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -104,7 +104,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Milen Dyankov
  */
 @Component(
-	configurationPid = "com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration",
+	configurationPid = "com.liferay.portal.search.elasticsearch6.configuration.ElasticsearchConfiguration",
 	immediate = true, property = {"search.engine.impl=Elasticsearch"},
 	service = IndexSearcher.class
 )

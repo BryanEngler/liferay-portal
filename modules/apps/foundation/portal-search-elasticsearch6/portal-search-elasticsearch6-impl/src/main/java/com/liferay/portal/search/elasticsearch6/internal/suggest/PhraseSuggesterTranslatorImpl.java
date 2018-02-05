@@ -12,12 +12,12 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.internal.suggest;
+package com.liferay.portal.search.elasticsearch6.internal.suggest;
 
 import com.liferay.portal.kernel.search.query.QueryTranslator;
 import com.liferay.portal.kernel.search.suggest.PhraseSuggester;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.elasticsearch.suggest.PhraseSuggesterTranslator;
+import com.liferay.portal.search.elasticsearch6.suggest.PhraseSuggesterTranslator;
 
 import java.util.Set;
 

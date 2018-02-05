@@ -12,12 +12,12 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.internal.query;
+package com.liferay.portal.search.elasticsearch6.internal.query;
 
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.generic.DisMaxQuery;
 import com.liferay.portal.kernel.search.query.QueryVisitor;
-import com.liferay.portal.search.elasticsearch.query.DisMaxQueryTranslator;
+import com.liferay.portal.search.elasticsearch6.query.DisMaxQueryTranslator;
 
 import org.elasticsearch.index.query.DisMaxQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;

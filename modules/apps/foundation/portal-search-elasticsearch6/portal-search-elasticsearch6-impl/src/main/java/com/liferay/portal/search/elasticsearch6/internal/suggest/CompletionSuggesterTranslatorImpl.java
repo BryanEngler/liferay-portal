@@ -12,11 +12,11 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.internal.suggest;
+package com.liferay.portal.search.elasticsearch6.internal.suggest;
 
 import com.liferay.portal.kernel.search.suggest.CompletionSuggester;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.elasticsearch.suggest.CompletionSuggesterTranslator;
+import com.liferay.portal.search.elasticsearch6.suggest.CompletionSuggesterTranslator;
 
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilders;

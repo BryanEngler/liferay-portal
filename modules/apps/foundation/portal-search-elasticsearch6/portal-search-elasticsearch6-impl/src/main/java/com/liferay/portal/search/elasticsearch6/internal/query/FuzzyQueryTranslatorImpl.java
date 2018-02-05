@@ -12,10 +12,10 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.internal.query;
+package com.liferay.portal.search.elasticsearch6.internal.query;
 
 import com.liferay.portal.kernel.search.generic.FuzzyQuery;
-import com.liferay.portal.search.elasticsearch.query.FuzzyQueryTranslator;
+import com.liferay.portal.search.elasticsearch6.query.FuzzyQueryTranslator;
 
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.FuzzyQueryBuilder;

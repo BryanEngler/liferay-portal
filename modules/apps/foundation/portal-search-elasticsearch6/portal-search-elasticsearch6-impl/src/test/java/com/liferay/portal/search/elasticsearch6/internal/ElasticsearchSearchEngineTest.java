@@ -12,17 +12,17 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.internal;
+package com.liferay.portal.search.elasticsearch6.internal;
 
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnection;
-import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectionManager;
-import com.liferay.portal.search.elasticsearch.connection.TestElasticsearchConnectionManager;
-import com.liferay.portal.search.elasticsearch.index.IndexNameBuilder;
-import com.liferay.portal.search.elasticsearch.internal.connection.ElasticsearchFixture;
-import com.liferay.portal.search.elasticsearch.internal.index.CompanyIdIndexNameBuilder;
-import com.liferay.portal.search.elasticsearch.internal.index.CompanyIndexFactory;
+import com.liferay.portal.search.elasticsearch6.connection.ElasticsearchConnection;
+import com.liferay.portal.search.elasticsearch6.connection.ElasticsearchConnectionManager;
+import com.liferay.portal.search.elasticsearch6.connection.TestElasticsearchConnectionManager;
+import com.liferay.portal.search.elasticsearch6.index.IndexNameBuilder;
+import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchFixture;
+import com.liferay.portal.search.elasticsearch6.internal.index.CompanyIdIndexNameBuilder;
+import com.liferay.portal.search.elasticsearch6.internal.index.CompanyIndexFactory;
 
 import org.junit.After;
 import org.junit.Before;

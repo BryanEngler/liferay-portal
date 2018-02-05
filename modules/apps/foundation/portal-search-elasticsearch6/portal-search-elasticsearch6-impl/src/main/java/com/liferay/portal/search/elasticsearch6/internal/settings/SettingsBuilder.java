@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.internal.settings;
+package com.liferay.portal.search.elasticsearch6.internal.settings;
 
 import org.apache.commons.lang.StringUtils;
 

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.internal.query;
+package com.liferay.portal.search.elasticsearch6.internal.query;
 
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Query;
@@ -30,18 +30,18 @@ import com.liferay.portal.kernel.search.generic.NestedQuery;
 import com.liferay.portal.kernel.search.generic.StringQuery;
 import com.liferay.portal.kernel.search.query.QueryTranslator;
 import com.liferay.portal.kernel.search.query.QueryVisitor;
-import com.liferay.portal.search.elasticsearch.query.BooleanQueryTranslator;
-import com.liferay.portal.search.elasticsearch.query.DisMaxQueryTranslator;
-import com.liferay.portal.search.elasticsearch.query.FuzzyQueryTranslator;
-import com.liferay.portal.search.elasticsearch.query.MatchAllQueryTranslator;
-import com.liferay.portal.search.elasticsearch.query.MatchQueryTranslator;
-import com.liferay.portal.search.elasticsearch.query.MoreLikeThisQueryTranslator;
-import com.liferay.portal.search.elasticsearch.query.MultiMatchQueryTranslator;
-import com.liferay.portal.search.elasticsearch.query.NestedQueryTranslator;
-import com.liferay.portal.search.elasticsearch.query.StringQueryTranslator;
-import com.liferay.portal.search.elasticsearch.query.TermQueryTranslator;
-import com.liferay.portal.search.elasticsearch.query.TermRangeQueryTranslator;
-import com.liferay.portal.search.elasticsearch.query.WildcardQueryTranslator;
+import com.liferay.portal.search.elasticsearch6.query.BooleanQueryTranslator;
+import com.liferay.portal.search.elasticsearch6.query.DisMaxQueryTranslator;
+import com.liferay.portal.search.elasticsearch6.query.FuzzyQueryTranslator;
+import com.liferay.portal.search.elasticsearch6.query.MatchAllQueryTranslator;
+import com.liferay.portal.search.elasticsearch6.query.MatchQueryTranslator;
+import com.liferay.portal.search.elasticsearch6.query.MoreLikeThisQueryTranslator;
+import com.liferay.portal.search.elasticsearch6.query.MultiMatchQueryTranslator;
+import com.liferay.portal.search.elasticsearch6.query.NestedQueryTranslator;
+import com.liferay.portal.search.elasticsearch6.query.StringQueryTranslator;
+import com.liferay.portal.search.elasticsearch6.query.TermQueryTranslator;
+import com.liferay.portal.search.elasticsearch6.query.TermRangeQueryTranslator;
+import com.liferay.portal.search.elasticsearch6.query.WildcardQueryTranslator;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;

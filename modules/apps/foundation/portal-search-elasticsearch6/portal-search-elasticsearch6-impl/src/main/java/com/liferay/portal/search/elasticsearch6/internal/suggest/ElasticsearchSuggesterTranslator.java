@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.internal.suggest;
+package com.liferay.portal.search.elasticsearch6.internal.suggest;
 
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.suggest.AggregateSuggester;
@@ -22,10 +22,10 @@ import com.liferay.portal.kernel.search.suggest.Suggester;
 import com.liferay.portal.kernel.search.suggest.SuggesterTranslator;
 import com.liferay.portal.kernel.search.suggest.SuggesterVisitor;
 import com.liferay.portal.kernel.search.suggest.TermSuggester;
-import com.liferay.portal.search.elasticsearch.suggest.AggregateSuggesterTranslator;
-import com.liferay.portal.search.elasticsearch.suggest.CompletionSuggesterTranslator;
-import com.liferay.portal.search.elasticsearch.suggest.PhraseSuggesterTranslator;
-import com.liferay.portal.search.elasticsearch.suggest.TermSuggesterTranslator;
+import com.liferay.portal.search.elasticsearch6.suggest.AggregateSuggesterTranslator;
+import com.liferay.portal.search.elasticsearch6.suggest.CompletionSuggesterTranslator;
+import com.liferay.portal.search.elasticsearch6.suggest.PhraseSuggesterTranslator;
+import com.liferay.portal.search.elasticsearch6.suggest.TermSuggesterTranslator;
 
 import org.elasticsearch.search.suggest.SuggestBuilder;
 

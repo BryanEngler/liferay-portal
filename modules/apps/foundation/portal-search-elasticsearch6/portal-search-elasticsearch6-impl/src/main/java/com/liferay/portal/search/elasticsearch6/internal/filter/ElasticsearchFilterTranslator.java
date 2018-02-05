@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.internal.filter;
+package com.liferay.portal.search.elasticsearch6.internal.filter;
 
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
@@ -31,19 +31,19 @@ import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.filter.RangeTermFilter;
 import com.liferay.portal.kernel.search.filter.TermFilter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
-import com.liferay.portal.search.elasticsearch.filter.BooleanFilterTranslator;
-import com.liferay.portal.search.elasticsearch.filter.DateRangeTermFilterTranslator;
-import com.liferay.portal.search.elasticsearch.filter.ExistsFilterTranslator;
-import com.liferay.portal.search.elasticsearch.filter.GeoBoundingBoxFilterTranslator;
-import com.liferay.portal.search.elasticsearch.filter.GeoDistanceFilterTranslator;
-import com.liferay.portal.search.elasticsearch.filter.GeoDistanceRangeFilterTranslator;
-import com.liferay.portal.search.elasticsearch.filter.GeoPolygonFilterTranslator;
-import com.liferay.portal.search.elasticsearch.filter.MissingFilterTranslator;
-import com.liferay.portal.search.elasticsearch.filter.PrefixFilterTranslator;
-import com.liferay.portal.search.elasticsearch.filter.QueryFilterTranslator;
-import com.liferay.portal.search.elasticsearch.filter.RangeTermFilterTranslator;
-import com.liferay.portal.search.elasticsearch.filter.TermFilterTranslator;
-import com.liferay.portal.search.elasticsearch.filter.TermsFilterTranslator;
+import com.liferay.portal.search.elasticsearch6.filter.BooleanFilterTranslator;
+import com.liferay.portal.search.elasticsearch6.filter.DateRangeTermFilterTranslator;
+import com.liferay.portal.search.elasticsearch6.filter.ExistsFilterTranslator;
+import com.liferay.portal.search.elasticsearch6.filter.GeoBoundingBoxFilterTranslator;
+import com.liferay.portal.search.elasticsearch6.filter.GeoDistanceFilterTranslator;
+import com.liferay.portal.search.elasticsearch6.filter.GeoDistanceRangeFilterTranslator;
+import com.liferay.portal.search.elasticsearch6.filter.GeoPolygonFilterTranslator;
+import com.liferay.portal.search.elasticsearch6.filter.MissingFilterTranslator;
+import com.liferay.portal.search.elasticsearch6.filter.PrefixFilterTranslator;
+import com.liferay.portal.search.elasticsearch6.filter.QueryFilterTranslator;
+import com.liferay.portal.search.elasticsearch6.filter.RangeTermFilterTranslator;
+import com.liferay.portal.search.elasticsearch6.filter.TermFilterTranslator;
+import com.liferay.portal.search.elasticsearch6.filter.TermsFilterTranslator;
 
 import org.elasticsearch.index.query.QueryBuilder;
 

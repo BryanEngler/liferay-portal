@@ -12,10 +12,10 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.internal.filter;
+package com.liferay.portal.search.elasticsearch6.internal.filter;
 
 import com.liferay.portal.kernel.search.filter.TermFilter;
-import com.liferay.portal.search.elasticsearch.filter.TermFilterTranslator;
+import com.liferay.portal.search.elasticsearch6.filter.TermFilterTranslator;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;

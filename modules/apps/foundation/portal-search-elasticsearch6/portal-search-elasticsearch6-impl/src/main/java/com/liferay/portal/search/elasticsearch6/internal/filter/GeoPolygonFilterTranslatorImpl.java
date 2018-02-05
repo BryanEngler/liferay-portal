@@ -12,11 +12,11 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.internal.filter;
+package com.liferay.portal.search.elasticsearch6.internal.filter;
 
 import com.liferay.portal.kernel.search.filter.GeoPolygonFilter;
 import com.liferay.portal.kernel.search.geolocation.GeoLocationPoint;
-import com.liferay.portal.search.elasticsearch.filter.GeoPolygonFilterTranslator;
+import com.liferay.portal.search.elasticsearch6.filter.GeoPolygonFilterTranslator;
 
 import java.util.ArrayList;
 import java.util.List;

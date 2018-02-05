@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.internal.groupby;
+package com.liferay.portal.search.elasticsearch6.internal.groupby;
 
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.GeoDistanceSort;
@@ -23,7 +23,7 @@ import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.geolocation.GeoLocationPoint;
 import com.liferay.portal.kernel.search.highlight.HighlightUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.search.elasticsearch.groupby.GroupByTranslator;
+import com.liferay.portal.search.elasticsearch6.groupby.GroupByTranslator;
 
 import java.util.ArrayList;
 import java.util.Collection;

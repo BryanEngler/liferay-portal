@@ -12,10 +12,10 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.internal.query;
+package com.liferay.portal.search.elasticsearch6.internal.query;
 
 import com.liferay.portal.kernel.search.TermRangeQuery;
-import com.liferay.portal.search.elasticsearch.query.TermRangeQueryTranslator;
+import com.liferay.portal.search.elasticsearch6.query.TermRangeQueryTranslator;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;

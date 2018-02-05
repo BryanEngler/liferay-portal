@@ -12,10 +12,10 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.internal.filter;
+package com.liferay.portal.search.elasticsearch6.internal.filter;
 
 import com.liferay.portal.kernel.search.filter.MissingFilter;
-import com.liferay.portal.search.elasticsearch.filter.MissingFilterTranslator;
+import com.liferay.portal.search.elasticsearch6.filter.MissingFilterTranslator;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.ExistsQueryBuilder;

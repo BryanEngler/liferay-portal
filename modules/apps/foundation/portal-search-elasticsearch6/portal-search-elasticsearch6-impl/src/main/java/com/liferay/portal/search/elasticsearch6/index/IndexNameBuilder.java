@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.index;
+package com.liferay.portal.search.elasticsearch6.index;
 
 /**
  * @author Michael C. Han

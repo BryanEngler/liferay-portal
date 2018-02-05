@@ -12,11 +12,11 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.internal.filter;
+package com.liferay.portal.search.elasticsearch6.internal.filter;
 
 import com.liferay.portal.kernel.search.filter.DateRangeTermFilter;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
-import com.liferay.portal.search.elasticsearch.filter.DateRangeTermFilterTranslator;
+import com.liferay.portal.search.elasticsearch6.filter.DateRangeTermFilterTranslator;
 
 import java.text.Format;
 import java.text.ParseException;

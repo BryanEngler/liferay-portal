@@ -12,19 +12,19 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.configuration;
+package com.liferay.portal.search.elasticsearch6.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
-import com.liferay.portal.search.elasticsearch.connection.OperationMode;
+import com.liferay.portal.search.elasticsearch6.connection.OperationMode;
 
 /**
  * @author Michael C. Han
  */
 @ExtendedObjectClassDefinition(category = "foundation")
 @Meta.OCD(
-	id = "com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration",
+	id = "com.liferay.portal.search.elasticsearch6.configuration.ElasticsearchConfiguration",
 	localization = "content/Language",
 	name = "elasticsearch6-configuration-name"
 )

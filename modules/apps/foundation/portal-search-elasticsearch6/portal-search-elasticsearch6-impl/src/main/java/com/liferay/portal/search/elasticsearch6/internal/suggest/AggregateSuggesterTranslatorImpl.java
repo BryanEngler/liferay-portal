@@ -12,12 +12,12 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.internal.suggest;
+package com.liferay.portal.search.elasticsearch6.internal.suggest;
 
 import com.liferay.portal.kernel.search.suggest.AggregateSuggester;
 import com.liferay.portal.kernel.search.suggest.Suggester;
 import com.liferay.portal.kernel.search.suggest.SuggesterTranslator;
-import com.liferay.portal.search.elasticsearch.suggest.AggregateSuggesterTranslator;
+import com.liferay.portal.search.elasticsearch6.suggest.AggregateSuggesterTranslator;
 
 import java.util.Map;
 

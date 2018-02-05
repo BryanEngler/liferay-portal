@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch.query;
+package com.liferay.portal.search.elasticsearch6.query;
 
 import com.liferay.portal.kernel.search.TermQuery;
 
