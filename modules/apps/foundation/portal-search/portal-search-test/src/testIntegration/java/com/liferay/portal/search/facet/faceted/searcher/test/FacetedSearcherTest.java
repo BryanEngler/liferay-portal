@@ -15,21 +15,25 @@
 package com.liferay.portal.search.facet.faceted.searcher.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.facet.MultiValueFacet;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.search.facet.Facet;
+import com.liferay.portal.search.facet.type.AssetEntriesFacetFactory;
 import com.liferay.portal.search.test.util.SearchMapUtil;
+import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.util.Collections;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -90,41 +94,46 @@ public class FacetedSearcherTest extends BaseFacetedSearcherTestCase {
 	public void testSearchByPostFilter() throws Exception {
 		Group group = userSearchFixture.addGroup();
 
-		String tag = RandomTestUtil.randomString();
+		User user = userSearchFixture.addUser(
+			RandomTestUtil.randomString(), group);
 
-		User user = addUser(group, tag);
+		addBlogsEntry(group, user, RandomTestUtil.randomString());
+		addJournalArticle(group, user, RandomTestUtil.randomString());
 
-		SearchContext searchContext = getSearchContext(tag);
-		//add userId facet for postFilter
-		MultiValueFacet multiValueFacet = new MultiValueFacet(searchContext);
+		SearchContext searchContext = new SearchContext();
 
-		multiValueFacet.setFieldName(Field.USER_ID);
-		multiValueFacet.setStatic(true);
-		multiValueFacet.setValues(new long[] {user.getUserId()});
-		searchContext.addFacet(multiValueFacet);
+		searchContext.setCompanyId(TestPropsValues.getCompanyId());
+
+		Facet facet = assetEntriesFacetFactory.newInstance(searchContext);
+
+		facet.select(JournalArticle.class.getName());
+
+		searchContext.addFacet(facet);
 
 		Hits hits = search(searchContext);
 
-		assertTags(tag, hits, toMap(user, tag));
+		Assert.assertEquals(hits.toString(), 1, hits.getLength());
 	}
 
 	@Test
 	public void testSearchByPreBooleanFilter() throws Exception {
 		Group group = userSearchFixture.addGroup();
 
-		String tag = RandomTestUtil.randomString();
+		User user = userSearchFixture.addUser(
+			RandomTestUtil.randomString(), group);
 
-		User user = addUser(group, tag);
+		addBlogsEntry(group, user, RandomTestUtil.randomString());
+		addJournalArticle(group, user, RandomTestUtil.randomString());
 
-		SearchContext searchContext = getSearchContext(tag);
-		//add an entryClassName for preBooleanFilter
-		String[] entryClassName = {"com.liferay.portal.kernel.model.User"};
+		SearchContext searchContext = new SearchContext();
 
-		searchContext.setEntryClassNames(entryClassName);
+		searchContext.setCompanyId(TestPropsValues.getCompanyId());
+		searchContext.setEntryClassNames(
+			new String[] {JournalArticle.class.getName()});
 
 		Hits hits = search(searchContext);
 
-		assertTags(tag, hits, toMap(user, tag));
+		Assert.assertEquals(hits.toString(), 1, hits.getLength());
 	}
 
 	protected void assertSearch(String keywords, Map<String, String> expected)
@@ -142,5 +151,8 @@ public class FacetedSearcherTest extends BaseFacetedSearcherTestCase {
 
 		GroupLocalServiceUtil.updateGroup(group);
 	}
+
+	@Inject
+	protected AssetEntriesFacetFactory assetEntriesFacetFactory;
 
 }
