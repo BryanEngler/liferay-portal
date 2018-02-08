@@ -15,9 +15,14 @@
 package com.liferay.portal.search.facet.faceted.searcher.test;
 
 import com.liferay.asset.kernel.model.AssetTag;
+import com.liferay.blogs.model.BlogsEntry;
+import com.liferay.blogs.service.BlogsEntryLocalServiceUtil;
+import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.SearchContext;
@@ -25,15 +30,24 @@ import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcher;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcherManager;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowThreadLocal;
 import com.liferay.portal.search.test.internal.util.UserSearchFixture;
+import com.liferay.portal.search.test.journal.util.JournalArticleBuilder;
+import com.liferay.portal.search.test.journal.util.JournalArticleContent;
 import com.liferay.portal.search.test.journal.util.JournalArticleSearchFixture;
+import com.liferay.portal.search.test.journal.util.JournalArticleTitle;
 import com.liferay.portal.search.test.util.AssertUtils;
 import com.liferay.portal.search.test.util.TermCollectorUtil;
 import com.liferay.portal.test.rule.Inject;
+import com.liferay.portlet.documentlibrary.util.test.DLAppTestUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -62,10 +76,80 @@ public abstract class BaseFacetedSearcherTestCase {
 	public void tearDown() throws Exception {
 		journalArticleSearchFixture.tearDown();
 		userSearchFixture.tearDown();
+
+		for (FileEntry fileEntry : _fileEntries) {
+			DLAppLocalServiceUtil.deleteFileEntry(fileEntry.getFileEntryId());
+		}
+
+		_fileEntries.clear();
 	}
 
 	@Rule
 	public TestName testName = new TestName();
+
+	protected BlogsEntry addBlogsEntry(Group group, User user, String keyword)
+		throws Exception {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(group.getGroupId());
+
+		BlogsEntry blogsEntry = BlogsEntryLocalServiceUtil.addEntry(
+			user.getUserId(), keyword, RandomTestUtil.randomString(),
+			serviceContext);
+
+		_blogsEntries.add(blogsEntry);
+
+		return blogsEntry;
+	}
+
+	protected FileEntry addFileEntry(Group group, User user, String keyword)
+		throws Exception {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(group.getGroupId());
+
+		String title =
+			keyword + StringPool.SPACE + RandomTestUtil.randomString();
+
+		FileEntry fileEntry = DLAppTestUtil.addFileEntryWithWorkflow(
+			user.getUserId(), group.getGroupId(), 0, StringPool.BLANK, title,
+			true, serviceContext);
+
+		_fileEntries.add(fileEntry);
+
+		return fileEntry;
+	}
+
+	protected JournalArticle addJournalArticle(
+			Group group, User user, String keyword)
+		throws Exception {
+
+		JournalArticleBuilder journalArticleBuilder =
+			new JournalArticleBuilder();
+
+		journalArticleBuilder.setContent(
+			new JournalArticleContent() {
+				{
+					name = "content";
+					defaultLocale = LocaleUtil.US;
+
+					put(LocaleUtil.US, RandomTestUtil.randomString());
+				}
+			});
+		journalArticleBuilder.setGroupId(group.getGroupId());
+		journalArticleBuilder.setTitle(
+			new JournalArticleTitle() {
+				{
+					put(LocaleUtil.US, keyword);
+				}
+			});
+		journalArticleBuilder.setUserId(user.getUserId());
+
+		JournalArticle journalArticle = journalArticleSearchFixture.addArticle(
+			journalArticleBuilder);
+
+		return journalArticle;
+	}
 
 	protected User addUser(Group group, String... assetTagNames)
 		throws Exception {
@@ -164,6 +248,11 @@ public abstract class BaseFacetedSearcherTestCase {
 
 	@DeleteAfterTestRun
 	private List<AssetTag> _assetTags;
+
+	@DeleteAfterTestRun
+	private final List<BlogsEntry> _blogsEntries = new ArrayList<>();
+
+	private final List<FileEntry> _fileEntries = new ArrayList<>();
 
 	@DeleteAfterTestRun
 	private List<Group> _groups;
