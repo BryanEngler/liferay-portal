@@ -262,9 +262,12 @@ public class FacetedSearcherImpl
 				BooleanFilter preBooleanFilter =
 					fullQuery.getPreBooleanFilter();
 
+				Filter postFilter = fullQuery.getPostFilter();
+
 				fullQuery = new MatchAllQuery();
 
 				fullQuery.setPreBooleanFilter(preBooleanFilter);
+				fullQuery.setPostFilter(postFilter);
 			}
 
 			QueryConfig queryConfig = searchContext.getQueryConfig();
