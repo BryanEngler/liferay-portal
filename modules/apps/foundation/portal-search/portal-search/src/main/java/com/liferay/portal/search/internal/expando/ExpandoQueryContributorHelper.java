@@ -30,6 +30,8 @@ import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Set;
 
@@ -55,36 +57,8 @@ public class ExpandoQueryContributorHelper {
 			return;
 		}
 
-		ExpandoBridge expandoBridge = _expandoBridgeFactory.getExpandoBridge(
-			_companyId, _className);
-
-		Set<String> attributeNames = SetUtil.fromEnumeration(
-			expandoBridge.getAttributeNames());
-
-		for (String attributeName : attributeNames) {
-			UnicodeProperties properties = expandoBridge.getAttributeProperties(
-				attributeName);
-
-			int indexType = GetterUtil.getInteger(
-				properties.getProperty(ExpandoColumnConstants.INDEX_TYPE));
-
-			if (indexType != ExpandoColumnConstants.INDEX_TYPE_NONE) {
-				String fieldName = getExpandoFieldName(
-					attributeName, expandoBridge);
-
-				boolean like = false;
-
-				if (indexType == ExpandoColumnConstants.INDEX_TYPE_TEXT) {
-					like = true;
-				}
-
-				if (_andSearch) {
-					_booleanQuery.addRequiredTerm(fieldName, _keywords, like);
-				}
-				else {
-					_addTerm(_booleanQuery, fieldName, _keywords, like);
-				}
-			}
+		for (String className : _classNames) {
+			contribute(className);
 		}
 	}
 
@@ -96,8 +70,8 @@ public class ExpandoQueryContributorHelper {
 		_booleanQuery = booleanQuery;
 	}
 
-	public void setClassName(String className) {
-		_className = className;
+	public void setClassNames(Collection<String> classNames) {
+		_classNames = classNames;
 	}
 
 	public void setCompanyId(long companyId) {
@@ -110,6 +84,47 @@ public class ExpandoQueryContributorHelper {
 
 	public void setLocale(Locale locale) {
 		_locale = locale;
+	}
+
+	protected void contribute(String className) {
+		ExpandoBridge expandoBridge = _expandoBridgeFactory.getExpandoBridge(
+			_companyId, className);
+
+		Set<String> attributeNames = SetUtil.fromEnumeration(
+			expandoBridge.getAttributeNames());
+
+		for (String attributeName : attributeNames) {
+			contribute(attributeName, expandoBridge);
+		}
+	}
+
+	protected void contribute(
+		String attributeName, ExpandoBridge expandoBridge) {
+
+		UnicodeProperties properties = expandoBridge.getAttributeProperties(
+			attributeName);
+
+		int indexType = GetterUtil.getInteger(
+			properties.getProperty(ExpandoColumnConstants.INDEX_TYPE));
+
+		if (indexType == ExpandoColumnConstants.INDEX_TYPE_NONE) {
+			return;
+		}
+
+		String fieldName = getExpandoFieldName(attributeName, expandoBridge);
+
+		boolean like = false;
+
+		if (indexType == ExpandoColumnConstants.INDEX_TYPE_TEXT) {
+			like = true;
+		}
+
+		if (_andSearch) {
+			_booleanQuery.addRequiredTerm(fieldName, _keywords, like);
+		}
+		else {
+			_addTerm(_booleanQuery, fieldName, _keywords, like);
+		}
 	}
 
 	protected String getExpandoFieldName(
@@ -161,7 +176,7 @@ public class ExpandoQueryContributorHelper {
 
 	private boolean _andSearch;
 	private BooleanQuery _booleanQuery;
-	private String _className;
+	private Collection<String> _classNames = Collections.emptyList();
 	private long _companyId;
 	private final ExpandoBridgeFactory _expandoBridgeFactory;
 	private final ExpandoBridgeIndexer _expandoBridgeIndexer;

@@ -23,6 +23,8 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.util.Localization;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 
+import java.util.Arrays;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -45,8 +47,10 @@ public class BaseIndexerExpandoQueryContributor
 
 		expandoQueryContributorHelper.setAndSearch(searchContext.isAndSearch());
 		expandoQueryContributorHelper.setBooleanQuery(booleanQuery);
-		expandoQueryContributorHelper.setClassName(
-			(String)searchContext.getAttribute("BaseIndexer.className"));
+		expandoQueryContributorHelper.setClassNames(
+			Arrays.asList(
+				(String[])searchContext.getAttribute(
+					"BaseIndexer.searchClassNames")));
 		expandoQueryContributorHelper.setCompanyId(
 			searchContext.getCompanyId());
 		expandoQueryContributorHelper.setKeywords(keywords);

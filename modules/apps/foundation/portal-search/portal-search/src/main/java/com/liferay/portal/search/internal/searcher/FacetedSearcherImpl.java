@@ -80,13 +80,13 @@ public class FacetedSearcherImpl
 
 	protected void addSearchExpando(
 			BooleanQuery booleanQuery, SearchContext searchContext,
-			String keywords, String className)
+			String keywords, Collection<String> classNames)
 		throws Exception {
 
 		_expandoQueryContributorHelper.setAndSearch(
 			searchContext.isAndSearch());
 		_expandoQueryContributorHelper.setBooleanQuery(booleanQuery);
-		_expandoQueryContributorHelper.setClassName(className);
+		_expandoQueryContributorHelper.setClassNames(classNames);
 		_expandoQueryContributorHelper.setCompanyId(
 			searchContext.getCompanyId());
 		_expandoQueryContributorHelper.setKeywords(keywords);
@@ -116,10 +116,9 @@ public class FacetedSearcherImpl
 
 			searchQuery.addTerms(Field.KEYWORDS, keywords);
 
-			for (String entryClassName : entryClassNameIndexerMap.keySet()) {
-				addSearchExpando(
-					searchQuery, searchContext, keywords, entryClassName);
-			}
+			addSearchExpando(
+				searchQuery, searchContext, keywords,
+				entryClassNameIndexerMap.keySet());
 		}
 	}
 
