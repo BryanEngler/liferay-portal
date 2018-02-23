@@ -306,6 +306,7 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 		searchContext.setCompanyId(companyId);
 		searchContext.setSearchEngineId(searchEngineId);
 
+		//indexWriter.clearQuerySuggestionDictionaryIndexes(searchContext);
 		indexWriter.indexQuerySuggestionDictionaries(searchContext);
 	}
 
@@ -361,6 +362,7 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 		searchContext.setCompanyId(companyId);
 		searchContext.setSearchEngineId(searchEngineId);
 
+		//indexWriter.clearSpellCheckerDictionaryIndexes(searchContext);
 		indexWriter.indexSpellCheckerDictionaries(searchContext);
 	}
 
