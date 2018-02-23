@@ -32,9 +32,8 @@ import com.liferay.portal.search.suggest.BaseGenericSpellCheckIndexWriter;
 import java.util.Collection;
 
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.reindex.DeleteByQueryAction;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -129,31 +128,15 @@ public class ElasticsearchSpellCheckIndexWriter
 			SearchContext searchContext, String typeFieldValue)
 		throws Exception {
 
-		if (_searchHitsProcessor == null) {
-			throw new IllegalStateException("Module not properly initialized");
-		}
+		Client client = elasticsearchConnectionManager.getClient();
 
-		SearchResponseScroller searchResponseScroller = null;
+		String index = indexNameBuilder.getIndexName(
+			searchContext.getCompanyId());
 
-		try {
-			Client client = elasticsearchConnectionManager.getClient();
-
-			MatchQueryBuilder matchQueryBuilder = QueryBuilders.matchQuery(
-				Field.TYPE, typeFieldValue);
-
-			searchResponseScroller = new SearchResponseScroller(
-				client, searchContext, indexNameBuilder, matchQueryBuilder,
-				TimeValue.timeValueSeconds(30), DocumentTypes.LIFERAY);
-
-			searchResponseScroller.prepare();
-
-			searchResponseScroller.scroll(_searchHitsProcessor);
-		}
-		finally {
-			if (searchResponseScroller != null) {
-				searchResponseScroller.close();
-			}
-		}
+		DeleteByQueryAction.INSTANCE.newRequestBuilder(client)
+			.filter(QueryBuilders.matchQuery(Field.TYPE, typeFieldValue))
+			.source(index)
+			.get();
 	}
 
 	protected Localization getLocalization() {
