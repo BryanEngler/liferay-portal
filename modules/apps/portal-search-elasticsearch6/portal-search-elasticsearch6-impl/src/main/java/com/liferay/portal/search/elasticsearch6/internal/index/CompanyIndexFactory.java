@@ -18,6 +18,8 @@ import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.suggest.SpellCheckIndexWriter;
 import com.liferay.portal.kernel.util.PortalRunMode;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch6.configuration.ElasticsearchConfiguration;
@@ -72,6 +74,15 @@ public class CompanyIndexFactory implements IndexFactory {
 		}
 
 		createIndex(indexName, indicesAdminClient);
+
+		if (companyId != 0) {
+			SearchContext searchContext = new SearchContext();
+
+			searchContext.setCompanyId(companyId);
+
+			elasticsearchSpellCheckIndexWriter.indexSpellCheckerDictionaries(
+				searchContext);
+		}
 	}
 
 	@Override
@@ -319,6 +330,9 @@ public class CompanyIndexFactory implements IndexFactory {
 
 		liferayDocumentTypeFactory.createOptionalDefaultTypeMappings(indexName);
 	}
+
+	@Reference
+	protected SpellCheckIndexWriter elasticsearchSpellCheckIndexWriter;
 
 	@Reference
 	protected IndexNameBuilder indexNameBuilder;
