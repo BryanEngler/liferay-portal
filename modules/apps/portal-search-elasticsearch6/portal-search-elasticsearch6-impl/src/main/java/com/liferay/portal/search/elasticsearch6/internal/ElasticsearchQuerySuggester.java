@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.search.suggest.SuggesterResult;
 import com.liferay.portal.kernel.search.suggest.SuggesterResults;
 import com.liferay.portal.kernel.search.suggest.SuggesterTranslator;
 import com.liferay.portal.kernel.search.suggest.TermSuggester;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Localization;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -35,8 +36,10 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import com.liferay.portal.search.elasticsearch6.internal.index.IndexNameBuilder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.time.StopWatch;
@@ -227,7 +230,10 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 		TermSuggester termSuggester = new TermSuggester(
 			"spellCheckRequest", field, searchContext.getKeywords());
 
+		termSuggester.setAnalyzer(
+			getAnalyzerName(searchContext.getLanguageId()));
 		termSuggester.setSize(max);
+		termSuggester.setSuggestMode(Suggester.SuggestMode.ALWAYS);
 
 		return termSuggester;
 	}
@@ -284,6 +290,16 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 		}
 
 		return suggest;
+	}
+
+	protected String getAnalyzerName(String languageId) {
+		if (languageId.equals("pt_BR")) {
+			return _analyzerNames.get("pt_br");
+		}
+
+		Locale locale = LocaleUtil.fromLanguageId(languageId);
+
+		return _analyzerNames.get(locale.getLanguage());
 	}
 
 	protected Localization getLocalization() {
@@ -417,5 +433,41 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ElasticsearchQuerySuggester.class);
+
+	private final Map<String, String> _analyzerNames =
+		new HashMap<String, String>() {
+			{
+				put("ar", "arabic");
+				put("bg", "bulgarian");
+				put("ca", "catalan");
+				put("cs", "czech");
+				put("da", "danish");
+				put("de", "german");
+				put("el", "greek");
+				put("en", "english");
+				put("es", "spanish");
+				put("eu", "basque");
+				put("fi", "finnish");
+				put("fr", "french");
+				put("hi", "hindi");
+				put("hu", "hungarian");
+				put("hy", "armenian");
+				put("id", "indonesian");
+				put("it", "italian");
+				put("ja", "kuromoji");
+				put("ko", "cjk");
+				put("nl", "dutch");
+				put("nb", "norwegian");
+				put("pl", "polish");
+				put("pt", "portuguese");
+				put("pt_br", "brazilian");
+				put("ro", "romanian");
+				put("ru", "russian");
+				put("sv", "swedish");
+				put("th", "thai");
+				put("tr", "turkish");
+				put("zh", "smartcn");
+			}
+		};
 
 }
