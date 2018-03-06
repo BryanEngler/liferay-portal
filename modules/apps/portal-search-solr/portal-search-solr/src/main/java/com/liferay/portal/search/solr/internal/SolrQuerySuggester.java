@@ -368,7 +368,7 @@ public class SolrQuerySuggester implements QuerySuggester {
 					solrDocument.get(Field.PRIORITY));
 
 				if (suggestion.equals(input)) {
-					weight = _INFINITE_WEIGHT;
+					weight = 0F;
 				}
 				else {
 					String inputLowerCase = StringUtil.toLowerCase(input);
@@ -415,8 +415,6 @@ public class SolrQuerySuggester implements QuerySuggester {
 	protected Localization localization;
 
 	private static final long _GLOBAL_GROUP_ID = 0;
-
-	private static final float _INFINITE_WEIGHT = 100F;
 
 	private static final int _MAX_QUERY_RESULTS = 500;
 
