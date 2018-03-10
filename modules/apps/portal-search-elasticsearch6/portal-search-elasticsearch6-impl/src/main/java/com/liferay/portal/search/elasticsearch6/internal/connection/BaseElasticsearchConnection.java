@@ -60,6 +60,8 @@ public abstract class BaseElasticsearchConnection
 
 		loadSettingsContributors();
 
+		configureLogging();
+
 		_client = createClient();
 	}
 
@@ -111,6 +113,11 @@ public abstract class BaseElasticsearchConnection
 		SettingsContributor settingsContributor) {
 
 		_settingsContributors.add(settingsContributor);
+	}
+
+	protected void configureLogging() {
+		System.setProperty(
+			"log4j.configurationFile", "/META-INF/log4j2.properties");
 	}
 
 	protected abstract Client createClient();
