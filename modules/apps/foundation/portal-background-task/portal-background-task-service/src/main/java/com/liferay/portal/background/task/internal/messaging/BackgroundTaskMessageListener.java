@@ -14,6 +14,7 @@
 
 package com.liferay.portal.background.task.internal.messaging;
 
+import com.liferay.portal.background.task.internal.serial.SerialBackgroundTaskExecutor;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskConstants;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskExecutor;
@@ -25,10 +26,10 @@ import com.liferay.portal.kernel.backgroundtask.BackgroundTaskStatusRegistry;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskThreadLocal;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskThreadLocalManager;
 import com.liferay.portal.kernel.backgroundtask.ClassLoaderAwareBackgroundTaskExecutor;
-import com.liferay.portal.kernel.backgroundtask.SerialBackgroundTaskExecutor;
 import com.liferay.portal.kernel.backgroundtask.ThreadLocalAwareBackgroundTaskExecutor;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lock.DuplicateLockException;
+import com.liferay.portal.kernel.lock.LockManager;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.BaseMessageListener;
@@ -55,13 +56,15 @@ public class BackgroundTaskMessageListener extends BaseMessageListener {
 		BackgroundTaskManager backgroundTaskManager,
 		BackgroundTaskStatusRegistry backgroundTaskStatusRegistry,
 		BackgroundTaskThreadLocalManager backgroundTaskThreadLocalManager,
-		CompanyLocalService companyLocalService, MessageBus messageBus) {
+		CompanyLocalService companyLocalService, LockManager lockManager,
+		MessageBus messageBus) {
 
 		_backgroundTaskExecutorRegistry = backgroundTaskExecutorRegistry;
 		_backgroundTaskManager = backgroundTaskManager;
 		_backgroundTaskStatusRegistry = backgroundTaskStatusRegistry;
 		_backgroundTaskThreadLocalManager = backgroundTaskThreadLocalManager;
 		_companyLocalService = companyLocalService;
+		_lockManager = lockManager;
 		_messageBus = messageBus;
 	}
 
@@ -293,7 +296,7 @@ public class BackgroundTaskMessageListener extends BaseMessageListener {
 
 		if (backgroundTaskExecutor.isSerial()) {
 			backgroundTaskExecutor = new SerialBackgroundTaskExecutor(
-				backgroundTaskExecutor);
+				backgroundTaskExecutor, _lockManager);
 		}
 
 		backgroundTaskExecutor = new ThreadLocalAwareBackgroundTaskExecutor(
@@ -312,6 +315,7 @@ public class BackgroundTaskMessageListener extends BaseMessageListener {
 	private final BackgroundTaskThreadLocalManager
 		_backgroundTaskThreadLocalManager;
 	private final CompanyLocalService _companyLocalService;
+	private final LockManager _lockManager;
 	private final MessageBus _messageBus;
 
 }
