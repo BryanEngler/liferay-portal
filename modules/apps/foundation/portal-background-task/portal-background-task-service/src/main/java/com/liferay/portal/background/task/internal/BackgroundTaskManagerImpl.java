@@ -404,6 +404,7 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 		return translate(backgroundTasks);
 	}
 
+	@Override
 	public List<BackgroundTask> getBackgroundTasks(
 		long[] groupIds, String name, String[] taskExecutorClassNames,
 		int start, int end,
@@ -574,6 +575,7 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 			groupIds, name, taskExecutorClassName, completed);
 	}
 
+	@Override
 	public int getBackgroundTasksCount(
 		long[] groupIds, String name, String[] taskExecutorClassNames) {
 
@@ -610,7 +612,7 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 				_backgroundTaskExecutorRegistry, this,
 				_backgroundTaskStatusRegistry,
 				_backgroundTaskThreadLocalManager, _companyLocalService,
-				_messageBus);
+				_lockManager, _messageBus);
 
 		backgroundTaskDestination.register(backgroundTaskMessageListener);
 
@@ -753,6 +755,9 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 
 	@Reference
 	private DestinationFactory _destinationFactory;
+
+	@Reference
+	private LockManager _lockManager;
 
 	@Reference
 	private MessageBus _messageBus;
