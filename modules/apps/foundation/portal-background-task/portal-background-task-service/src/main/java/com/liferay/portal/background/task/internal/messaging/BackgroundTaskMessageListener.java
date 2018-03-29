@@ -35,6 +35,8 @@ import com.liferay.portal.kernel.messaging.BaseMessageListener;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBus;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ClassLoaderUtil;
 import com.liferay.portal.kernel.util.InstanceFactory;
@@ -53,12 +55,13 @@ public class BackgroundTaskMessageListener extends BaseMessageListener {
 		BackgroundTaskManager backgroundTaskManager,
 		BackgroundTaskStatusRegistry backgroundTaskStatusRegistry,
 		BackgroundTaskThreadLocalManager backgroundTaskThreadLocalManager,
-		MessageBus messageBus) {
+		CompanyLocalService companyLocalService, MessageBus messageBus) {
 
 		_backgroundTaskExecutorRegistry = backgroundTaskExecutorRegistry;
 		_backgroundTaskManager = backgroundTaskManager;
 		_backgroundTaskStatusRegistry = backgroundTaskStatusRegistry;
 		_backgroundTaskThreadLocalManager = backgroundTaskThreadLocalManager;
+		_companyLocalService = companyLocalService;
 		_messageBus = messageBus;
 	}
 
@@ -80,6 +83,18 @@ public class BackgroundTaskMessageListener extends BaseMessageListener {
 			if (_log.isDebugEnabled()) {
 				_log.debug(
 					"Unable to find background task " + backgroundTaskId);
+			}
+
+			return;
+		}
+
+		Company company = _companyLocalService.fetchCompany(
+			backgroundTask.getCompanyId());
+
+		if (company == null) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Unable to find company: " + backgroundTask.getCompanyId());
 			}
 
 			return;
@@ -296,6 +311,7 @@ public class BackgroundTaskMessageListener extends BaseMessageListener {
 	private final BackgroundTaskStatusRegistry _backgroundTaskStatusRegistry;
 	private final BackgroundTaskThreadLocalManager
 		_backgroundTaskThreadLocalManager;
+	private final CompanyLocalService _companyLocalService;
 	private final MessageBus _messageBus;
 
 }
