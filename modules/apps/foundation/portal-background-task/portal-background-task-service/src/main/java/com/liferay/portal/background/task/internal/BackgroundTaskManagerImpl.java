@@ -603,7 +603,7 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 
 		Destination backgroundTaskDestination = registerDestination(
 			bundleContext, DestinationConfiguration.DESTINATION_TYPE_PARALLEL,
-			DestinationNames.BACKGROUND_TASK, 5, 10);
+			DestinationNames.BACKGROUND_TASK, 10, 25);
 
 		BackgroundTaskMessageListener backgroundTaskMessageListener =
 			new BackgroundTaskMessageListener(
