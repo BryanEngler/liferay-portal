@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.messaging.DestinationConfiguration;
 import com.liferay.portal.kernel.messaging.DestinationFactory;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.MessageBus;
+import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ClassUtil;
 import com.liferay.portal.kernel.util.HashMapDictionary;
@@ -608,7 +609,8 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 			new BackgroundTaskMessageListener(
 				_backgroundTaskExecutorRegistry, this,
 				_backgroundTaskStatusRegistry,
-				_backgroundTaskThreadLocalManager, _messageBus);
+				_backgroundTaskThreadLocalManager, _companyLocalService,
+				_messageBus);
 
 		backgroundTaskDestination.register(backgroundTaskMessageListener);
 
@@ -745,6 +747,9 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 
 	@Reference
 	private ClusterMasterExecutor _clusterMasterExecutor;
+
+	@Reference
+	private CompanyLocalService _companyLocalService;
 
 	@Reference
 	private DestinationFactory _destinationFactory;
