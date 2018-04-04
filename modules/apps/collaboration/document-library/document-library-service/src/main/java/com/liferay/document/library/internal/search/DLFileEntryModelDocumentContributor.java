@@ -108,7 +108,7 @@ public class DLFileEntryModelDocumentContributor
 							dlFileEntry.getGroupId());
 
 						String localizedField = Field.getLocalizedName(
-							Field.CONTENT, defaultLocale.toString());
+							defaultLocale.toString(), Field.CONTENT);
 
 						document.addFile(
 							localizedField, is, dlFileEntry.getTitle(),
