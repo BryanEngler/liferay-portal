@@ -17,6 +17,7 @@ package com.liferay.portal.kernel.security.auth;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.petra.lang.CentralizedThreadLocal;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
@@ -54,20 +55,33 @@ public class CompanyThreadLocal {
 			_log.debug("setCompanyId " + companyId);
 		}
 
+		Company company = null;
+
 		if (companyId > 0) {
+			company = CompanyLocalServiceUtil.fetchCompany(companyId);
+		}
+
+		if (company != null) {
 			_companyId.set(companyId);
 
 			try {
-				Company company = CompanyLocalServiceUtil.getCompany(companyId);
-
 				LocaleThreadLocal.setDefaultLocale(company.getLocale());
 				TimeZoneThreadLocal.setDefaultTimeZone(company.getTimeZone());
 			}
-			catch (Exception e) {
-				_log.error(e, e);
+			catch (PortalException e) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("Error setting default timezone and locale", e);
+				}
+
+				LocaleThreadLocal.setDefaultLocale(null);
+				TimeZoneThreadLocal.setDefaultTimeZone(null);
 			}
 		}
 		else {
+			if (_log.isDebugEnabled()) {
+				_log.debug("No company found, using System");
+			}
+
 			_companyId.set(CompanyConstants.SYSTEM);
 
 			LocaleThreadLocal.setDefaultLocale(null);

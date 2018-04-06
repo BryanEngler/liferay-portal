@@ -31,11 +31,13 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserConstants;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.repository.model.Folder;
+import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -643,6 +645,19 @@ public class BackgroundTaskLocalServiceImpl
 			return;
 		}
 
+		Company company = _companyLocalService.fetchCompany(
+			backgroundTask.getCompanyId());
+
+		if (company == null) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"No background task found with queued status for " +
+						"background task ID " + backgroundTaskId);
+			}
+
+			return;
+		}
+
 		if (_log.isDebugEnabled()) {
 			_log.debug(
 				"Attempting to resume background task " + backgroundTaskId);
@@ -752,6 +767,9 @@ public class BackgroundTaskLocalServiceImpl
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		BackgroundTaskLocalServiceImpl.class);
+
+	@ServiceReference(type = CompanyLocalService.class)
+	private CompanyLocalService _companyLocalService;
 
 	@ServiceReference(type = BackgroundTaskStatusRegistry.class)
 	private BackgroundTaskStatusRegistry _backgroundTaskStatusRegistry;
