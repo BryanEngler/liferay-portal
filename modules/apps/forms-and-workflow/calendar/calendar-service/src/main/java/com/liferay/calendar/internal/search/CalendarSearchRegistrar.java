@@ -52,6 +52,8 @@ public class CalendarSearchRegistrar {
 
 				modelSearchDefinition.setModelSummaryContributor(
 					modelSummaryContributor);
+
+				modelSearchDefinition.setWorkflowAware(false);
 			});
 	}
 
