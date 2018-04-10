@@ -62,6 +62,11 @@ public class ModelSearchSettingsImpl implements ModelSearchSettings {
 	}
 
 	@Override
+	public boolean isPermissionAware() {
+		return _permissionAware;
+	}
+
+	@Override
 	public boolean isSelectAllLocales() {
 		return _selectAllLocales;
 	}
@@ -69,6 +74,11 @@ public class ModelSearchSettingsImpl implements ModelSearchSettings {
 	@Override
 	public boolean isStagingAware() {
 		return _stagingAware;
+	}
+
+	@Override
+	public boolean isWorkflowAware() {
+		return _workflowAware;
 	}
 
 	public void setCommitImmediately(boolean commitImmediately) {
@@ -88,6 +98,10 @@ public class ModelSearchSettingsImpl implements ModelSearchSettings {
 			defaultSelectedLocalizedFieldNames;
 	}
 
+	public void setPermissionAware(boolean permissionAware) {
+		_permissionAware = permissionAware;
+	}
+
 	public void setSearchClassNames(String... searchClassNames) {
 		_searchClassNames = searchClassNames;
 	}
@@ -104,13 +118,19 @@ public class ModelSearchSettingsImpl implements ModelSearchSettings {
 		_stagingAware = stagingAware;
 	}
 
+	public void setWorkflowAware(boolean workflowAware) {
+		_workflowAware = workflowAware;
+	}
+
 	private final String _className;
 	private boolean _commitImmediately;
 	private String[] _defaultSelectedFieldNames;
 	private String[] _defaultSelectedLocalizedFieldNames;
+	private boolean _permissionAware = true;
 	private String[] _searchClassNames;
 	private String _searchEngineId = SearchEngineHelper.SYSTEM_ENGINE_ID;
 	private boolean _selectAllLocales;
 	private boolean _stagingAware = true;
+	private boolean _workflowAware = true;
 
 }
