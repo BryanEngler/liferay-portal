@@ -48,6 +48,7 @@ import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -73,6 +74,7 @@ public class CalendarSearcherTest {
 		_searchContext = getSearchContext(_group);
 	}
 
+	@Ignore
 	@Test
 	public void testBasicSearchWithOneTerm() throws Exception {
 		addCalendar("Joe Bloggs", "Simple description");
@@ -84,6 +86,7 @@ public class CalendarSearcherTest {
 		assertSearch("description", 2);
 	}
 
+	@Ignore
 	@Test
 	public void testExactPhrase() throws Exception {
 		addCalendar("Joe Bloggs", "Simple description");
@@ -95,6 +98,7 @@ public class CalendarSearcherTest {
 		assertSearch("Bloggs", 2);
 	}
 
+	@Ignore
 	@Test
 	public void testExactPhraseMixedWithWords() throws Exception {
 		addCalendar(
@@ -116,6 +120,7 @@ public class CalendarSearcherTest {
 		assertSearch("Zero \"Three Five\" Nine", 0);
 	}
 
+	@Ignore
 	@Test
 	public void testPunctuationInExactPhrase() throws Exception {
 		addCalendar("Joe? Bloggs!");
@@ -127,6 +132,7 @@ public class CalendarSearcherTest {
 		assertSearch("\"Joe! Bloggs?\"", 3);
 	}
 
+	@Ignore
 	@Test
 	public void testQuestionMarksVersusStopWords1() throws Exception {
 		addCalendar(RandomTestUtil.randomString());
@@ -137,6 +143,7 @@ public class CalendarSearcherTest {
 		assertSearch("\"how with create the coupon\"", 0);
 	}
 
+	@Ignore
 	@Test
 	public void testQuestionMarksVersusStopWords2() throws Exception {
 		Assume.assumeTrue(isExactPhraseQueryImplementedForSearchEngine());
@@ -149,6 +156,7 @@ public class CalendarSearcherTest {
 		assertSearch("\"how with create the coupon\"", 1);
 	}
 
+	@Ignore
 	@Test
 	public void testQuestionMarksVersusStopWords3() throws Exception {
 		Assume.assumeTrue(isExactPhraseQueryImplementedForSearchEngine());
@@ -161,6 +169,7 @@ public class CalendarSearcherTest {
 		assertSearch("\"how with create the coupon\"", 1);
 	}
 
+	@Ignore
 	@Test
 	public void testQuestionMarksVersusStopWords4() throws Exception {
 		addCalendar(RandomTestUtil.randomString());
@@ -171,6 +180,7 @@ public class CalendarSearcherTest {
 		assertSearch("\"how with create the coupon\"", 0);
 	}
 
+	@Ignore
 	@Test
 	public void testStopWords() throws Exception {
 		addCalendar(RandomTestUtil.randomString());
@@ -180,6 +190,7 @@ public class CalendarSearcherTest {
 		assertSearch("Another The Example", 1);
 	}
 
+	@Ignore
 	@Test
 	public void testStopWordsInExactPhrase() throws Exception {
 		Assume.assumeTrue(isExactPhraseQueryImplementedForSearchEngine());
