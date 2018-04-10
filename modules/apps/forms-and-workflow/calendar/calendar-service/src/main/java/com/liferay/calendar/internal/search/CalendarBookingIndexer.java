@@ -54,8 +54,6 @@ import java.util.Locale;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 
-import org.osgi.service.component.annotations.Reference;
-
 /**
  * @deprecated As of 3.0.0, since 7.1.0
  * @author Adam Victor Brandizzi
@@ -353,14 +351,12 @@ public class CalendarBookingIndexer extends BaseIndexer<CalendarBooking> {
 		indexableActionableDynamicQuery.performActions();
 	}
 
-	@Reference(unbind = "-")
 	protected void setCalendarBookingLocalService(
 		CalendarBookingLocalService calendarBookingLocalService) {
 
 		_calendarBookingLocalService = calendarBookingLocalService;
 	}
 
-	@Reference(unbind = "-")
 	protected void setClassNameLocalService(
 		ClassNameLocalService classNameLocalService) {
 
@@ -372,11 +368,7 @@ public class CalendarBookingIndexer extends BaseIndexer<CalendarBooking> {
 
 	private CalendarBookingLocalService _calendarBookingLocalService;
 	private ClassNameLocalService _classNameLocalService;
-
-	@Reference
 	private IndexWriterHelper _indexWriterHelper;
-
-	@Reference
 	private TrashHelper _trashHelper;
 
 }
