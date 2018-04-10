@@ -30,9 +30,7 @@ import org.osgi.service.component.annotations.Component;
  */
 @Component(
 	immediate = true,
-	property = {
-		"indexer.class.name=com.liferay.document.library.kernel.model.DLFileEntry"
-	},
+	property = "indexer.class.name=com.liferay.document.library.kernel.model.DLFileEntry",
 	service = ModelSummaryContributor.class
 )
 public class DLFileEntryModelSummaryContributor
