@@ -41,6 +41,14 @@ public interface ModelSearchDefinition {
 	public void setModelVisibilityContributor(
 		ModelVisibilityContributor modelVisibilityContributor);
 
+	public void setPermissionAware(boolean permissionAware);
+
+	public void setSearchClassNames(String... searchClassNames);
+
 	public void setSelectAllLocales(boolean selectAllLocales);
+
+	public void setStagingAware(boolean stagingAware);
+
+	public void setWorkflowAware(boolean workflowAware);
 
 }
