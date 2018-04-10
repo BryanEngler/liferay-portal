@@ -29,7 +29,7 @@ import org.osgi.service.component.annotations.Component;
  */
 @Component(
 	immediate = true,
-	property = {"indexer.class.name=com.liferay.calendar.model.Calendar"},
+	property = "indexer.class.name=com.liferay.calendar.model.Calendar",
 	service = ModelSummaryContributor.class
 )
 public class CalendarModelSummaryContributor
