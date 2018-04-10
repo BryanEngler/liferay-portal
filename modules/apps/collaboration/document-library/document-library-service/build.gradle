@@ -32,7 +32,7 @@ dependencies {
 	compileOnly project(":core:petra:petra-function")
 	compileOnly project(":core:petra:petra-string")
 
+	testCompile project(":apps:foundation:portal-search:portal-search")
 	testCompile project(":core:petra:petra-lang")
 	testCompile project(":core:registry-api")
-	testCompile project(":apps:foundation:portal-search:portal-search")
 }
