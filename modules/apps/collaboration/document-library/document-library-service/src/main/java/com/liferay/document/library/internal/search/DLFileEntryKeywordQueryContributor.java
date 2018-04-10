@@ -73,7 +73,6 @@ public class DLFileEntryKeywordQueryContributor
 
 			if (Validator.isNotNull(expandoAttributes)) {
 				System.out.println("DLFileEntry expando");
-				//addSearchExpando(searchQuery, searchContext, expandoAttributes);
 			}
 		}
 	}

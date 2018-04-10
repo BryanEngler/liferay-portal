@@ -29,7 +29,7 @@ import org.osgi.service.component.annotations.Component;
  */
 @Component(immediate = true, service = QueryPreFilterContributor.class)
 public class ClassTypeIdsQueryPreFilterContributor
-	implements QueryPreFilterContributor { //ModelQPFC?
+	implements QueryPreFilterContributor {
 
 	@Override
 	public void contribute(

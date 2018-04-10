@@ -34,7 +34,7 @@ public class UserIdQueryPreFilterContributor
 		BooleanFilter fullQueryBooleanFilter, SearchContext searchContext) {
 
 		long userId = GetterUtil.getLong(
-			searchContext.getAttribute(Field.USER_ID)); //change usages to ownerUserId?
+			searchContext.getAttribute(Field.USER_ID));
 
 		if (userId > 0) {
 			fullQueryBooleanFilter.addRequiredTerm(Field.USER_ID, userId);
