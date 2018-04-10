@@ -17,7 +17,8 @@ package com.liferay.document.library.internal.search;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
-import com.liferay.portal.search.spi.model.query.contributor.QueryPreFilterContributor;
+import com.liferay.portal.search.spi.model.query.contributor.ModelQueryPreFilterContributor;
+import com.liferay.portal.search.spi.model.registrar.ModelSearchSettings;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -26,17 +27,16 @@ import org.osgi.service.component.annotations.Component;
  */
 @Component(
 	immediate = true,
-	property = {
-		"indexer.class.name=com.liferay.document.library.kernel.model.DLFolder"
-	},
-	service = QueryPreFilterContributor.class
+	property = "indexer.class.name=com.liferay.document.library.kernel.model.DLFolder",
+	service = ModelQueryPreFilterContributor.class
 )
-public class DLFolderQueryPreFilterContributor
-	implements QueryPreFilterContributor {
+public class DLFolderModelQueryPreFilterContributor
+	implements ModelQueryPreFilterContributor {
 
 	@Override
 	public void contribute(
-		BooleanFilter fullQueryBooleanFilter, SearchContext searchContext) {
+		BooleanFilter fullQueryBooleanFilter,
+		ModelSearchSettings modelSearchSettings, SearchContext searchContext) {
 
 		fullQueryBooleanFilter.addRequiredTerm(Field.HIDDEN, false);
 	}

@@ -20,7 +20,8 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.search.spi.model.query.contributor.QueryPreFilterContributor;
+import com.liferay.portal.search.spi.model.query.contributor.ModelQueryPreFilterContributor;
+import com.liferay.portal.search.spi.model.registrar.ModelSearchSettings;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -29,17 +30,16 @@ import org.osgi.service.component.annotations.Component;
  */
 @Component(
 	immediate = true,
-	property = {
-		"indexer.class.name=com.liferay.document.library.kernel.model.DLFileEntry"
-	},
-	service = QueryPreFilterContributor.class
+	property = "indexer.class.name=com.liferay.document.library.kernel.model.DLFileEntry",
+	service = ModelQueryPreFilterContributor.class
 )
-public class DLFileEntryMimeTypeQueryPreFilterContributor
-	implements QueryPreFilterContributor {
+public class DLFileEntryMimeTypeModelQueryPreFilterContributor
+	implements ModelQueryPreFilterContributor {
 
 	@Override
 	public void contribute(
-		BooleanFilter booleanFilter, SearchContext searchContext) {
+		BooleanFilter booleanFilter, ModelSearchSettings modelSearchSettings,
+		SearchContext searchContext) {
 
 		String[] mimeTypes = (String[])searchContext.getAttribute("mimeTypes");
 

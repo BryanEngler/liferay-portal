@@ -31,7 +31,8 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.spi.model.query.contributor.QueryPreFilterContributor;
+import com.liferay.portal.search.spi.model.query.contributor.ModelQueryPreFilterContributor;
+import com.liferay.portal.search.spi.model.registrar.ModelSearchSettings;
 
 import java.io.Serializable;
 
@@ -43,17 +44,16 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = {
-		"indexer.class.name=com.liferay.document.library.kernel.model.DLFileEntry"
-	},
-	service = QueryPreFilterContributor.class
+	property = "indexer.class.name=com.liferay.document.library.kernel.model.DLFileEntry",
+	service = ModelQueryPreFilterContributor.class
 )
-public class DLFileEntryQueryDDMFieldPreFilterContributor
-	implements QueryPreFilterContributor {
+public class DLFileEntryDDMFieldModelQueryPreFilterContributor
+	implements ModelQueryPreFilterContributor {
 
 	@Override
 	public void contribute(
-		BooleanFilter booleanFilter, SearchContext searchContext) {
+		BooleanFilter booleanFilter, ModelSearchSettings modelSearchSettings,
+		SearchContext searchContext) {
 
 		try {
 			String ddmStructureFieldName = (String)searchContext.getAttribute(
@@ -109,6 +109,6 @@ public class DLFileEntryQueryDDMFieldPreFilterContributor
 	protected DDMStructureManager ddmStructureManager;
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		DLFileEntryQueryDDMFieldPreFilterContributor.class);
+		DLFileEntryDDMFieldModelQueryPreFilterContributor.class);
 
 }
