@@ -134,6 +134,7 @@ public class DLFileEntryModelDocumentContributor
 			document.addKeyword(Field.HIDDEN, dlFileEntry.isInHiddenFolder());
 			document.addText(
 				Field.PROPERTIES, dlFileEntry.getLuceneProperties());
+			document.addKeyword(Field.STATUS, dlFileVersion.getStatus());
 
 			String title = dlFileEntry.getTitle();
 

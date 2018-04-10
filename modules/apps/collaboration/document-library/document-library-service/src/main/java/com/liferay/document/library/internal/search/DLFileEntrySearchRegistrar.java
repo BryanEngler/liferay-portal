@@ -54,6 +54,10 @@ public class DLFileEntrySearchRegistrar {
 
 				modelSearchDefinition.setModelSummaryContributor(
 					modelSummaryContributor);
+
+				modelSearchDefinition.setSearchClassNames(
+					DLFileEntry.class.getName());
+
 			});
 	}
 
