@@ -65,7 +65,6 @@ dependencies {
 	compileOnly group: "com.ibm.icu", name: "icu4j", version: "54.1.1"
 	compileOnly group: "com.liferay", name: "com.liferay.petra.string", version: "1.0.0"
 	compileOnly group: "com.liferay", name: "com.liferay.portal.configuration.metatype", version: "2.0.0"
-	compileOnly group: "com.liferay", name: "com.liferay.portal.search.api", version: "1.1.0"
 	compileOnly group: "com.liferay", name: "com.liferay.portal.search.elasticsearch6.api", version: "1.0.0"
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.impl", version: "2.0.0"
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "2.49.0"
@@ -77,6 +76,8 @@ dependencies {
 	elasticsearchPlugins ext: "zip", group: "com.liferay", name: "org.elasticsearch.plugin.analysis.kuromoji", version: elasticsearchVersion
 	elasticsearchPlugins ext: "zip", group: "com.liferay", name: "org.elasticsearch.plugin.analysis.smartcn", version: elasticsearchVersion
 	elasticsearchPlugins ext: "zip", group: "com.liferay", name: "org.elasticsearch.plugin.analysis.stempel", version: elasticsearchVersion
+
+	provided project(":apps:foundation:portal-search:portal-search-api")
 
 	testCompile group: "com.liferay", name: "com.liferay.petra.concurrent", version: "1.0.0"
 	testCompile group: "com.liferay", name: "com.liferay.petra.lang", version: "1.0.0"
