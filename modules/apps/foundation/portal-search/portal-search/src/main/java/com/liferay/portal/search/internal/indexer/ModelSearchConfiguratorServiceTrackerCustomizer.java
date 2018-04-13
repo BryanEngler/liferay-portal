@@ -47,6 +47,7 @@ import com.liferay.portal.search.indexer.IndexerWriter;
 import com.liferay.portal.search.permission.SearchPermissionIndexWriter;
 import com.liferay.portal.search.spi.model.index.contributor.ModelDocumentContributor;
 import com.liferay.portal.search.spi.model.query.contributor.KeywordQueryContributor;
+import com.liferay.portal.search.spi.model.query.contributor.ModelQueryPreFilterContributor;
 import com.liferay.portal.search.spi.model.query.contributor.QueryConfigContributor;
 import com.liferay.portal.search.spi.model.query.contributor.QueryPreFilterContributor;
 import com.liferay.portal.search.spi.model.query.contributor.SearchContextContributor;
@@ -174,6 +175,10 @@ public class ModelSearchConfiguratorServiceTrackerCustomizer
 			_bundleContext, KeywordQueryContributor.class,
 			"(!(indexer.class.name=*))");
 
+		_modelQueryPreFilterContributors = ServiceTrackerListFactory.open(
+			bundleContext, ModelQueryPreFilterContributor.class,
+			"(!(indexer.class.name=*))");
+
 		_modelResourcePermissionServiceTrackerMap =
 			ServiceTrackerMapFactory.openSingleValueMap(
 				bundleContext, ModelResourcePermission.class,
@@ -226,7 +231,7 @@ public class ModelSearchConfiguratorServiceTrackerCustomizer
 		IndexerQueryBuilder indexerQueryBuilder = new IndexerQueryBuilderImpl<>(
 			modelSearchConfigurator.getModelSearchSettings(),
 			modelSearchConfigurator.getKeywordQueryContributors(),
-			modelSearchConfigurator.getQueryPreFilterContributors(),
+			_modelQueryPreFilterContributors,
 			modelSearchConfigurator.getSearchContextContributors(),
 			_keywordQueryContributors, _queryPreFilterContributors,
 			_searchContextContributors, indexerPostProcessorsHolder,
@@ -367,6 +372,9 @@ public class ModelSearchConfiguratorServiceTrackerCustomizer
 		_documentContributors;
 	private ServiceTrackerList<KeywordQueryContributor, KeywordQueryContributor>
 		_keywordQueryContributors;
+	private ServiceTrackerList
+		<ModelQueryPreFilterContributor, ModelQueryPreFilterContributor>
+			_modelQueryPreFilterContributors;
 	private ServiceTrackerMap<String, ModelResourcePermission>
 		_modelResourcePermissionServiceTrackerMap;
 	private ServiceTrackerList<QueryConfigContributor, QueryConfigContributor>

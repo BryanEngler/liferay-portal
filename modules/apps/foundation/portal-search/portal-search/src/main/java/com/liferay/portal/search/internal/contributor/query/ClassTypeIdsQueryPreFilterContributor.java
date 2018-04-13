@@ -41,14 +41,11 @@ public class ClassTypeIdsQueryPreFilterContributor
 			return;
 		}
 
-		TermsFilter classTypeIdsTermsFilter = new TermsFilter(
-			Field.CLASS_TYPE_ID);
+		TermsFilter termsFilter = new TermsFilter(Field.CLASS_TYPE_ID);
 
-		classTypeIdsTermsFilter.addValues(
-			ArrayUtil.toStringArray(classTypeIds));
+		termsFilter.addValues(ArrayUtil.toStringArray(classTypeIds));
 
-		fullQueryBooleanFilter.add(
-			classTypeIdsTermsFilter, BooleanClauseOccur.MUST);
+		fullQueryBooleanFilter.add(termsFilter, BooleanClauseOccur.MUST);
 	}
 
 }

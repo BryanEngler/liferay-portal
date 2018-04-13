@@ -22,20 +22,26 @@ import com.liferay.portal.kernel.search.filter.TermsFilter;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.search.spi.model.query.contributor.QueryPreFilterContributor;
+import com.liferay.portal.search.spi.model.query.contributor.ModelQueryPreFilterContributor;
+import com.liferay.portal.search.spi.model.registrar.ModelSearchSettings;
 
 import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Michael C. Han
  */
-@Component(immediate = true, service = QueryPreFilterContributor.class)
-public class StatusQueryPreFilterContributor
-	implements QueryPreFilterContributor {
+@Component(immediate = true, service = ModelQueryPreFilterContributor.class)
+public class StatusModelQueryPreFilterContributor
+	implements ModelQueryPreFilterContributor {
 
 	@Override
 	public void contribute(
-		BooleanFilter booleanFilter, SearchContext searchContext) {
+		BooleanFilter booleanFilter, ModelSearchSettings modelSearchSettings,
+		SearchContext searchContext) {
+
+		if (!modelSearchSettings.isWorkflowAware()) {
+			return;
+		}
 
 		int[] statuses = GetterUtil.getIntegerValues(
 			searchContext.getAttribute(Field.STATUS), null);

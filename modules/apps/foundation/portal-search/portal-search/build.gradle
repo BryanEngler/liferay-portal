@@ -21,7 +21,7 @@ dependencies {
 	compileOnly project(":core:petra:petra-executor")
 	compileOnly project(":core:petra:petra-lang")
 	compileOnly project(":core:petra:petra-string")
+	compileOnly project(":core:registry-api")
 
 	testCompile project(":core:petra:petra-memory")
-	testCompile project(":core:registry-api")
 }

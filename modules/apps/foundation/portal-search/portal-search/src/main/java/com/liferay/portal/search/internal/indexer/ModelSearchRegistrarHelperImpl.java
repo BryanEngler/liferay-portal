@@ -105,8 +105,28 @@ public class ModelSearchRegistrarHelperImpl
 		}
 
 		@Override
+		public void setPermissionAware(boolean permissionAware) {
+			_modelSearchSettingsImpl.setPermissionAware(permissionAware);
+		}
+
+		@Override
+		public void setSearchClassNames(String... searchClassNames) {
+			_modelSearchSettingsImpl.setSearchClassNames(searchClassNames);
+		}
+
+		@Override
 		public void setSelectAllLocales(boolean selectAllLocales) {
 			_modelSearchSettingsImpl.setSelectAllLocales(selectAllLocales);
+		}
+
+		@Override
+		public void setStagingAware(boolean stagingAware) {
+			_modelSearchSettingsImpl.setStagingAware(stagingAware);
+		}
+
+		@Override
+		public void setWorkflowAware(boolean workflowAware) {
+			_modelSearchSettingsImpl.setWorkflowAware(workflowAware);
 		}
 
 		private ModelIndexerWriterContributor<?> _modelIndexWriterContributor;

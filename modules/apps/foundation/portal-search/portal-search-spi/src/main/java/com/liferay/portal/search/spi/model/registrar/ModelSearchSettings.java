@@ -34,8 +34,12 @@ public interface ModelSearchSettings {
 
 	public boolean isCommitImmediately();
 
+	public boolean isPermissionAware();
+
 	public boolean isSelectAllLocales();
 
 	public boolean isStagingAware();
+
+	public boolean isWorkflowAware();
 
 }
