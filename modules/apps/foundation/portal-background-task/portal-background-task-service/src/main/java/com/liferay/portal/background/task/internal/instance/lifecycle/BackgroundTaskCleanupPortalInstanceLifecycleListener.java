@@ -15,12 +15,17 @@
 package com.liferay.portal.background.task.internal.instance.lifecycle;
 
 import com.liferay.portal.instance.lifecycle.BasePortalInstanceLifecycleListener;
+import com.liferay.portal.instance.lifecycle.PortalInstanceLifecycleListener;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManager;
 import com.liferay.portal.kernel.model.Company;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Michael C. Han
  */
+@Component(immediate = true, service = PortalInstanceLifecycleListener.class)
 public class BackgroundTaskCleanupPortalInstanceLifecycleListener
 	extends BasePortalInstanceLifecycleListener {
 
@@ -30,6 +35,7 @@ public class BackgroundTaskCleanupPortalInstanceLifecycleListener
 			company.getCompanyId());
 	}
 
+	@Reference
 	protected BackgroundTaskManager backgroundTaskManager;
 
 }
