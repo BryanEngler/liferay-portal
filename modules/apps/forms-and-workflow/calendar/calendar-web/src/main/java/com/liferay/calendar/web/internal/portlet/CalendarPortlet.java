@@ -436,7 +436,14 @@ public class CalendarPortlet extends MVCPortlet {
 				serviceContext);
 
 			if (defaultCalendarId > 0) {
-				_calendarLocalService.updateCalendar(defaultCalendarId, true);
+				Calendar calendar = _calendarLocalService.fetchCalendar(
+					defaultCalendarId);
+
+				_calendarLocalService.updateCalendar(
+					calendar.getCalendarId(), calendar.getNameMap(),
+					calendar.getDescriptionMap(), calendar.getTimeZoneId(),
+					calendar.getColor(), true, calendar.isEnableComments(),
+					calendar.isEnableRatings(), serviceContext);
 			}
 		}
 	}
