@@ -18,9 +18,17 @@ import com.liferay.portal.instance.lifecycle.BasePortalInstanceLifecycleListener
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.RoleConstants;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserConstants;
 import com.liferay.portal.kernel.search.IndexWriterHelper;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchException;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -41,6 +49,20 @@ public class IndexOnStartupPortalInstanceLifecycleListener
 
 	@Override
 	public void portalInstanceRegistered(Company company) throws Exception {
+		if (_className.equals(User.class.getName())) {
+			Indexer indexer = IndexerRegistryUtil.getIndexer(_className);
+
+			Role role = RoleLocalServiceUtil.getRole(
+				company.getCompanyId(), RoleConstants.ADMINISTRATOR);
+
+			long[] adminUserIds = UserLocalServiceUtil.getRoleUserIds(
+				role.getRoleId());
+
+			if (ArrayUtil.isNotEmpty(adminUserIds)) {
+				indexer.reindex(_className, adminUserIds[0]);
+			}
+		}
+
 		if (!GetterUtil.getBoolean(_props.get(PropsKeys.INDEX_ON_STARTUP))) {
 			return;
 		}
