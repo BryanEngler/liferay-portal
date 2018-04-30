@@ -24,7 +24,12 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.range.RangeAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.range.RangeAggregator.Range;
@@ -38,29 +43,49 @@ import org.osgi.service.component.annotations.Component;
  */
 @Component(
 	immediate = true,
-	property = "class.name=com.liferay.portal.kernel.search.facet.RangeFacet"
+	property = "class.name=com.liferay.portal.kernel.search.facet.RangeFacet",
+	service = FacetProcessor.class
 )
-public class RangeFacetProcessor
-	implements FacetProcessor<SearchRequestBuilder> {
+public class RangeFacetProcessor extends BaseFacetProcessor {
 
 	@Override
 	public void processFacet(
 		SearchRequestBuilder searchRequestBuilder, Facet facet) {
 
+		processFacet(searchRequestBuilder, facet, new HashMap<>());
+	}
+
+	@Override
+	public void processFacet(
+		SearchRequestBuilder searchRequestBuilder, Facet facet,
+		Map<String, List<QueryBuilder>> filterAggregationQueryBuildersMap) {
+
 		FacetConfiguration facetConfiguration = facet.getFacetConfiguration();
 
-		RangeAggregationBuilder rangeAggregationBuilder =
-			AggregationBuilders.range(facetConfiguration.getFieldName());
+		String fieldName = facetConfiguration.getFieldName();
 
-		rangeAggregationBuilder.field(facetConfiguration.getFieldName());
+		RangeAggregationBuilder rangeAggregationBuilder =
+			AggregationBuilders.range(fieldName);
+
+		rangeAggregationBuilder.field(fieldName);
 
 		addConfigurationRanges(facetConfiguration, rangeAggregationBuilder);
 
 		addCustomRange(facet, rangeAggregationBuilder);
 
-		if (ListUtil.isNotEmpty(rangeAggregationBuilder.ranges())) {
-			searchRequestBuilder.addAggregation(rangeAggregationBuilder);
+		if (ListUtil.isEmpty(rangeAggregationBuilder.ranges())) {
+			return;
 		}
+
+		if (filterAggregationQueryBuildersMap.isEmpty()) {
+			searchRequestBuilder.addAggregation(rangeAggregationBuilder);
+
+			return;
+		}
+
+		addFilteredAggregations(
+			searchRequestBuilder, fieldName, rangeAggregationBuilder,
+			filterAggregationQueryBuildersMap);
 	}
 
 	protected void addConfigurationRanges(

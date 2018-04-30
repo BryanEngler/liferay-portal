@@ -18,7 +18,12 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
@@ -28,13 +33,23 @@ import org.osgi.service.component.annotations.Component;
  * @author Michael C. Han
  * @author Milen Dyankov
  */
-@Component(immediate = true, property = "class.name=DEFAULT")
-public class DefaultFacetProcessor
-	implements FacetProcessor<SearchRequestBuilder> {
+@Component(
+	immediate = true, property = "class.name=DEFAULT",
+	service = FacetProcessor.class
+)
+public class DefaultFacetProcessor extends BaseFacetProcessor {
 
 	@Override
 	public void processFacet(
 		SearchRequestBuilder searchRequestBuilder, Facet facet) {
+
+		processFacet(searchRequestBuilder, facet, new HashMap<>());
+	}
+
+	@Override
+	public void processFacet(
+		SearchRequestBuilder searchRequestBuilder, Facet facet,
+		Map<String, List<QueryBuilder>> filterAggregationQueryBuildersMap) {
 
 		FacetConfiguration facetConfiguration = facet.getFacetConfiguration();
 
@@ -59,7 +74,15 @@ public class DefaultFacetProcessor
 			termsAggregationBuilder.size(size);
 		}
 
-		searchRequestBuilder.addAggregation(termsAggregationBuilder);
+		if (filterAggregationQueryBuildersMap.isEmpty()) {
+			searchRequestBuilder.addAggregation(termsAggregationBuilder);
+
+			return;
+		}
+
+		addFilteredAggregations(
+			searchRequestBuilder, fieldName, termsAggregationBuilder,
+			filterAggregationQueryBuildersMap);
 	}
 
 }

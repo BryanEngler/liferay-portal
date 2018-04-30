@@ -18,9 +18,11 @@ import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.util.MapUtil;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -35,12 +37,19 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 	immediate = true,
 	service = {CompositeFacetProcessor.class, FacetProcessor.class}
 )
-public class CompositeFacetProcessor
-	implements FacetProcessor<SearchRequestBuilder> {
+public class CompositeFacetProcessor extends BaseFacetProcessor {
 
 	@Override
 	public void processFacet(
 		SearchRequestBuilder searchRequestBuilder, Facet facet) {
+
+		processFacet(searchRequestBuilder, facet, new HashMap<>());
+	}
+
+	@Override
+	public void processFacet(
+		SearchRequestBuilder searchRequestBuilder, Facet facet,
+		Map<String, List<QueryBuilder>> filterAggregationQueryBuildersMap) {
 
 		Class<?> clazz = facet.getClass();
 
@@ -51,7 +60,8 @@ public class CompositeFacetProcessor
 			facetProcessor = _defaultFacetProcessor;
 		}
 
-		facetProcessor.processFacet(searchRequestBuilder, facet);
+		facetProcessor.processFacet(
+			searchRequestBuilder, facet, filterAggregationQueryBuildersMap);
 	}
 
 	@Reference(
