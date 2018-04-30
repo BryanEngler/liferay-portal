@@ -60,12 +60,4 @@ public class DefaultFacetProcessor
 		searchRequestBuilder.addAggregation(termsAggregationBuilder);
 	}
 
-	protected String getAggregationName(Facet facet) {
-		FacetConfiguration facetConfiguration = facet.getFacetConfiguration();
-
-		JSONObject data = facetConfiguration.getData();
-
-		return data.getString("aggregationName", facet.getFieldName());
-	}
-
 }
