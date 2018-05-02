@@ -30,7 +30,10 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * @author Andrew Betts
+ * @deprecated As of 7.0.0, moved to {@link
+ *             com.liferay.portal.search.internal.batch.IndexableActionableDynamicQueryImpl}
  */
+@Deprecated
 public class IndexableActionableDynamicQuery
 	extends DefaultActionableDynamicQuery {
 
