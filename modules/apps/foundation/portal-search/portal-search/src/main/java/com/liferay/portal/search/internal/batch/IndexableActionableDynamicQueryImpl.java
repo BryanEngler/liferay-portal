@@ -12,28 +12,47 @@
  * details.
  */
 
-package com.liferay.portal.kernel.dao.orm;
+package com.liferay.portal.search.internal.batch;
 
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskThreadLocal;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.IndexWriterHelper;
+import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.SearchEngineHelperUtil;
 import com.liferay.portal.kernel.search.background.task.ReindexStatusMessageSenderUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.ServiceProxyFactory;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.search.batch.IndexableActionableDynamicQuery;
+import com.liferay.portal.search.configuration.ReindexConfiguration;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedDeque;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Andrew Betts
+ * @author Bryan Engler
  */
-public class IndexableActionableDynamicQuery
-	extends DefaultActionableDynamicQuery {
+@Component(
+	configurationPid = "com.liferay.portal.search.configuration.ReindexConfiguration",
+	immediate = true, service = IndexableActionableDynamicQuery.class
+)
+public class IndexableActionableDynamicQueryImpl
+	extends DefaultActionableDynamicQuery
+	implements IndexableActionableDynamicQuery {
 
+	@Override
 	public void addDocuments(Document... documents) throws PortalException {
 		if (ArrayUtil.isEmpty(documents)) {
 			return;
@@ -71,10 +90,6 @@ public class IndexableActionableDynamicQuery
 		}
 	}
 
-	public void setIndexWriterHelper(IndexWriterHelper indexWriterHelper) {
-		_indexWriterHelper = indexWriterHelper;
-	}
-
 	@Override
 	public void setParallel(boolean parallel) {
 		if (isParallel() == parallel) {
@@ -88,6 +103,7 @@ public class IndexableActionableDynamicQuery
 		}
 	}
 
+	@Override
 	public void setSearchEngineId(String searchEngineId) {
 		_searchEngineId = searchEngineId;
 	}
@@ -97,6 +113,13 @@ public class IndexableActionableDynamicQuery
 		if (Validator.isNotNull(_searchEngineId)) {
 			_indexWriterHelper.commit(_searchEngineId, getCompanyId());
 		}
+	}
+
+	@Activate
+	@Modified
+	protected void activate(Map<String, Object> properties) {
+		_reindexConfiguration = ConfigurableUtil.createConfigurable(
+			ReindexConfiguration.class, properties);
 	}
 
 	@Override
@@ -109,6 +132,30 @@ public class IndexableActionableDynamicQuery
 		finally {
 			indexInterval();
 		}
+	}
+
+	protected int getInterval() {
+		if (super.getInterval() != Indexer.DEFAULT_INTERVAL) {
+			return super.getInterval();
+		}
+
+		for (String indexingInterval :
+				_reindexConfiguration.indexingIntervals()) {
+
+			String[] intervalClassNameValuePair = StringUtil.split(
+				indexingInterval, StringPool.EQUAL);
+
+			String intervalClassName = intervalClassNameValuePair[0];
+			String intervalValue = intervalClassNameValuePair[1];
+
+			Class<?> modelClass = getModelClass();
+
+			if (intervalClassName.equals(modelClass.getName())) {
+				return Integer.valueOf(intervalValue);
+			}
+		}
+
+		return Indexer.DEFAULT_INTERVAL;
 	}
 
 	protected String getSearchEngineId() {
@@ -153,14 +200,13 @@ public class IndexableActionableDynamicQuery
 
 	private static final long _STATUS_INTERVAL = 1000;
 
-	private static volatile IndexWriterHelper _indexWriterHelperProxy =
-		ServiceProxyFactory.newServiceTrackedInstance(
-			IndexWriterHelper.class, IndexableActionableDynamicQuery.class,
-			"_indexWriterHelperProxy", false);
-
 	private long _count;
 	private Collection<Document> _documents = new ArrayList<>();
-	private IndexWriterHelper _indexWriterHelper = _indexWriterHelperProxy;
+
+	@Reference
+	private IndexWriterHelper _indexWriterHelper;
+
+	private ReindexConfiguration _reindexConfiguration;
 	private String _searchEngineId;
 	private long _total;
 
