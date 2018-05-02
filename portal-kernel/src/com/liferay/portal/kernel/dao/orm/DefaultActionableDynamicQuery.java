@@ -62,6 +62,18 @@ public class DefaultActionableDynamicQuery implements ActionableDynamicQuery {
 		return _addOrderCriteriaMethod;
 	}
 
+	public BaseLocalService getBaseLocalService() {
+		return _baseLocalService;
+	}
+
+	public ClassLoader getClassLoader() {
+		return _classLoader;
+	}
+
+	public Class<?> getModelClass() {
+		return _modelClass;
+	}
+
 	@Override
 	public PerformActionMethod<?> getPerformActionMethod() {
 		return _performActionMethod;
@@ -70,6 +82,10 @@ public class DefaultActionableDynamicQuery implements ActionableDynamicQuery {
 	@Override
 	public PerformCountMethod getPerformCountMethod() {
 		return _performCountMethod;
+	}
+
+	public String getPrimaryKeyPropertyName() {
+		return _primaryKeyPropertyName;
 	}
 
 	@Override
@@ -262,10 +278,10 @@ public class DefaultActionableDynamicQuery implements ActionableDynamicQuery {
 
 			dynamicQuery.add(property.gt(previousPrimaryKey));
 
-			dynamicQuery.setLimit(0, _interval);
+			dynamicQuery.setLimit(0, getInterval());
 		}
 		else {
-			dynamicQuery.setLimit(_offset, _interval + _offset);
+			dynamicQuery.setLimit(_offset, getInterval() + _offset);
 		}
 
 		addDefaultCriteria(dynamicQuery);
@@ -316,7 +332,7 @@ public class DefaultActionableDynamicQuery implements ActionableDynamicQuery {
 					}
 				}
 
-				if (objects.size() < _interval) {
+				if (objects.size() < getInterval()) {
 					return -1L;
 				}
 
@@ -386,10 +402,6 @@ public class DefaultActionableDynamicQuery implements ActionableDynamicQuery {
 
 	protected int getInterval() {
 		return _interval;
-	}
-
-	protected Class<?> getModelClass() {
-		return _modelClass;
 	}
 
 	protected TransactionConfig getTransactionConfig() {
