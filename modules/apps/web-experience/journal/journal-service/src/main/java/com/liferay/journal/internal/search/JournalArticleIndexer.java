@@ -34,7 +34,6 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
@@ -78,6 +77,8 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.search.batch.IndexableActionableDynamicQuery;
+import com.liferay.portal.search.batch.IndexableActionableDynamicQueryFactory;
 import com.liferay.portal.search.index.IndexStatusManager;
 import com.liferay.trash.TrashHelper;
 
@@ -856,8 +857,10 @@ public class JournalArticleIndexer
 
 		if (isIndexAllArticleVersions()) {
 			indexableActionableDynamicQuery =
-				_journalArticleLocalService.
-					getIndexableActionableDynamicQuery();
+				indexableActionableDynamicQueryFactory.
+					getIndexableActionableDynamicQuery(
+						_journalArticleLocalService.
+							getIndexableActionableDynamicQuery());
 
 			indexableActionableDynamicQuery.setPerformActionMethod(
 				new ActionableDynamicQuery.
@@ -885,8 +888,10 @@ public class JournalArticleIndexer
 		}
 		else {
 			indexableActionableDynamicQuery =
-				_journalArticleResourceLocalService.
-					getIndexableActionableDynamicQuery();
+				indexableActionableDynamicQueryFactory.
+					getIndexableActionableDynamicQuery(
+						_journalArticleResourceLocalService.
+							getIndexableActionableDynamicQuery());
 
 			indexableActionableDynamicQuery.setPerformActionMethod(
 				new ActionableDynamicQuery.
@@ -988,6 +993,10 @@ public class JournalArticleIndexer
 	protected void setJournalConverter(JournalConverter journalConverter) {
 		_journalConverter = journalConverter;
 	}
+
+	@Reference
+	protected IndexableActionableDynamicQueryFactory
+		indexableActionableDynamicQueryFactory;
 
 	private String _stripAndHighlight(String text) {
 		text = StringUtil.replace(
