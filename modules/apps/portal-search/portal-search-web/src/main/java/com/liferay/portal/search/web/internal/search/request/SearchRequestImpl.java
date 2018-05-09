@@ -88,6 +88,10 @@ public class SearchRequestImpl implements SearchRequest {
 		return searchResponseImpl;
 	}
 
+	/**
+	 * @deprecated As of 3.0.0
+	 */
+	@Deprecated
 	protected void addScopeFacet(SearchContext searchContext) {
 		Facet scopeFacet = new ScopeFacet(searchContext);
 
@@ -106,8 +110,6 @@ public class SearchRequestImpl implements SearchRequest {
 		SearchContext searchContext = _searchContextBuilder.getSearchContext();
 
 		searchContext.setAttribute("paginationType", "more");
-
-		addScopeFacet(searchContext);
 
 		return searchContext;
 	}
