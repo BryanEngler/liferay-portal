@@ -147,20 +147,6 @@ public class FacetedSearcherImpl
 			searchQuery, fullQueryBooleanFilter, luceneSyntax,
 			entryClassNameIndexerMap, searchContext);
 
-		List<Group> inactiveGroups = _groupLocalService.getActiveGroups(
-			searchContext.getCompanyId(), false);
-
-		if (ListUtil.isNotEmpty(inactiveGroups)) {
-			TermsFilter groupIdTermsFilter = new TermsFilter(Field.GROUP_ID);
-
-			groupIdTermsFilter.addValues(
-				ArrayUtil.toStringArray(
-					ListUtil.toArray(inactiveGroups, Group.GROUP_ID_ACCESSOR)));
-
-			fullQueryBooleanFilter.add(
-				groupIdTermsFilter, BooleanClauseOccur.MUST_NOT);
-		}
-
 		_addPreFilters(
 			fullQueryBooleanFilter, entryClassNameIndexerMap, searchContext);
 
@@ -272,6 +258,24 @@ public class FacetedSearcherImpl
 		return super.isFilterSearch();
 	}
 
+	private void _addInactiveGroupsBooleanFilter(
+		BooleanFilter fullQueryPreBooleanFilter, SearchContext searchContext) {
+
+		List<Group> inactiveGroups = _groupLocalService.getActiveGroups(
+			searchContext.getCompanyId(), false);
+
+		if (ListUtil.isNotEmpty(inactiveGroups)) {
+			TermsFilter groupIdTermsFilter = new TermsFilter(Field.GROUP_ID);
+
+			groupIdTermsFilter.addValues(
+				ArrayUtil.toStringArray(
+					ListUtil.toArray(inactiveGroups, Group.GROUP_ID_ACCESSOR)));
+
+			fullQueryPreBooleanFilter.add(
+				groupIdTermsFilter, BooleanClauseOccur.MUST_NOT);
+		}
+	}
+
 	private void _addIndexerProvidedPreFilters(
 			BooleanFilter booleanFilter, Indexer<?> indexer,
 			SearchContext searchContext)
@@ -337,6 +341,8 @@ public class FacetedSearcherImpl
 		throws Exception {
 
 		BooleanFilter preFilterBooleanFilter = new BooleanFilter();
+
+		_addInactiveGroupsBooleanFilter(preFilterBooleanFilter, searchContext);
 
 		for (Entry<String, Indexer<?>> entry :
 				entryClassNameIndexerMap.entrySet()) {
