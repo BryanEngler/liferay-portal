@@ -147,16 +147,6 @@ public class FacetedSearcherImpl
 			searchQuery, fullQueryBooleanFilter, luceneSyntax,
 			entryClassNameIndexerMap, searchContext);
 
-		if (Validator.isNotNull(keywords)) {
-			int groupId = GetterUtil.getInteger(
-				searchContext.getAttribute(Field.GROUP_ID));
-
-			if (groupId == 0) {
-				fullQueryBooleanFilter.addTerm(
-					Field.STAGING_GROUP, "true", BooleanClauseOccur.MUST_NOT);
-			}
-		}
-
 		List<Group> inactiveGroups = _groupLocalService.getActiveGroups(
 			searchContext.getCompanyId(), false);
 
