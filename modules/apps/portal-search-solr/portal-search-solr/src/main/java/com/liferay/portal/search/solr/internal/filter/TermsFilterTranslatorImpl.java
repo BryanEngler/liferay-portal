@@ -24,6 +24,7 @@ import org.apache.lucene.queries.TermsQuery;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
+import org.apache.solr.client.solrj.util.ClientUtils;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -40,7 +41,7 @@ public class TermsFilterTranslatorImpl implements TermsFilterTranslator {
 		ArrayList<Term> terms = new ArrayList<>();
 
 		for (String value : termsFilter.getValues()) {
-			terms.add(new Term(field, value));
+			terms.add(new Term(field, ClientUtils.escapeQueryChars(value)));
 		}
 
 		TermsQuery termsQuery = new TermsQuery(terms);
