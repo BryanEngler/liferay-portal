@@ -21,7 +21,7 @@ import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
-import com.liferay.portal.kernel.search.filter.TermsFilter;
+import com.liferay.portal.kernel.search.filter.TermFilter;
 import com.liferay.portal.search.test.util.DocumentsAssert;
 import com.liferay.portal.search.test.util.IdempotentRetryAssert;
 import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
@@ -35,71 +35,56 @@ import org.junit.Test;
 
 /**
  * @author André de Oliveira
+ * @author Eric Yan
  */
-public abstract class BaseTermsFilterTestCase extends BaseIndexingTestCase {
+public abstract class BaseTermFilterTestCase extends BaseIndexingTestCase {
 
 	@Test
 	public void testKeywordField() throws Exception {
 		String fieldName = Field.FOLDER_ID;
+		String value = "One";
 
-		addDocuments(
-			value -> DocumentCreationHelpers.singleKeyword(fieldName, value),
-			Arrays.asList("One", "Two", "Three"));
+		addDocument(DocumentCreationHelpers.singleKeyword(fieldName, value));
 
-		TermsFilter termsFilter = new TermsFilter(fieldName);
+		TermFilter termFilter = new TermFilter(fieldName, value);
 
-		termsFilter.addValues("Two", "Three");
-
-		assertSearch(termsFilter, fieldName, Arrays.asList("Two", "Three"));
+		assertSearch(termFilter, fieldName, Arrays.asList(value));
 	}
 
 	@Test
 	public void testLuceneSpecialCharacters() throws Exception {
 		String fieldName = Field.FOLDER_ID;
+		String value = "One\\+-!():^[]\"{}~*?|&/Two";
 
-		addDocuments(
-			value -> DocumentCreationHelpers.singleKeyword(fieldName, value),
-			Arrays.asList("One\\+-!():^[]\"{}~*?|&/Two", "Three"));
+		addDocument(DocumentCreationHelpers.singleKeyword(fieldName, value));
 
-		TermsFilter termsFilter = new TermsFilter(fieldName);
+		TermFilter termFilter = new TermFilter(fieldName, value);
 
-		termsFilter.addValues("One\\+-!():^[]\"{}~*?|&/Two", "Three");
-
-		assertSearch(
-			termsFilter, fieldName,
-			Arrays.asList("One\\+-!():^[]\"{}~*?|&/Two", "Three"));
+		assertSearch(termFilter, fieldName, Arrays.asList(value));
 	}
 
 	@Test
 	public void testSolrSpecialCharacters() throws Exception {
 		String fieldName = Field.FOLDER_ID;
+		String value = "One\\+-!():^[]\"{}~*?|&/; Two";
 
-		addDocuments(
-			value -> DocumentCreationHelpers.singleKeyword(fieldName, value),
-			Arrays.asList("One\\+-!():^[]\"{}~*?|&/; Two", "Three"));
+		addDocument(DocumentCreationHelpers.singleKeyword(fieldName, value));
 
-		TermsFilter termsFilter = new TermsFilter(fieldName);
+		TermFilter termFilter = new TermFilter(fieldName, value);
 
-		termsFilter.addValues("One\\+-!():^[]\"{}~*?|&/; Two", "Three");
-
-		assertSearch(
-			termsFilter, fieldName,
-			Arrays.asList("One\\+-!():^[]\"{}~*?|&/; Two", "Three"));
+		assertSearch(termFilter, fieldName, Arrays.asList(value));
 	}
 
 	@Test
 	public void testSpaces() throws Exception {
 		String fieldName = Field.FOLDER_ID;
+		String value = "One Two";
 
-		addDocuments(
-			value -> DocumentCreationHelpers.singleKeyword(fieldName, value),
-			Arrays.asList("One Two", "Three"));
+		addDocument(DocumentCreationHelpers.singleKeyword(fieldName, value));
 
-		TermsFilter termsFilter = new TermsFilter(fieldName);
+		TermFilter termFilter = new TermFilter(fieldName, value);
 
-		termsFilter.addValues("One Two", "Three");
-
-		assertSearch(termsFilter, fieldName, Arrays.asList("One Two", "Three"));
+		assertSearch(termFilter, fieldName, Arrays.asList(value));
 	}
 
 	protected void assertSearch(
