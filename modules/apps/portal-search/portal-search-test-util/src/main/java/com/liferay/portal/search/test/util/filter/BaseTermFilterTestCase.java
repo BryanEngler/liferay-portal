@@ -14,22 +14,12 @@
 
 package com.liferay.portal.search.test.util.filter;
 
-import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.Hits;
-import com.liferay.portal.kernel.search.Query;
-import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.filter.BooleanFilter;
-import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.TermFilter;
-import com.liferay.portal.search.test.util.DocumentsAssert;
-import com.liferay.portal.search.test.util.IdempotentRetryAssert;
 import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
 import com.liferay.portal.search.test.util.indexing.DocumentCreationHelpers;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
@@ -85,40 +75,6 @@ public abstract class BaseTermFilterTestCase extends BaseIndexingTestCase {
 		TermFilter termFilter = new TermFilter(fieldName, value);
 
 		assertSearch(termFilter, fieldName, Arrays.asList(value));
-	}
-
-	protected void assertSearch(
-			Filter filter, String fieldName, List<String> expectedValues)
-		throws Exception {
-
-		IdempotentRetryAssert.retryAssert(
-			10, TimeUnit.SECONDS,
-			() -> doAssertSearch(filter, fieldName, expectedValues));
-	}
-
-	protected Void doAssertSearch(
-			Filter filter, String fieldName, List<String> expectedValues)
-		throws Exception {
-
-		SearchContext searchContext = createSearchContext();
-
-		Hits hits = search(
-			searchContext,
-			booleanQuery -> setPreBooleanFilter(filter, booleanQuery));
-
-		DocumentsAssert.assertValues(
-			(String)searchContext.getAttribute("queryString"), hits.getDocs(),
-			fieldName, expectedValues);
-
-		return null;
-	}
-
-	protected void setPreBooleanFilter(Filter filter, Query query) {
-		BooleanFilter booleanFilter = new BooleanFilter();
-
-		booleanFilter.add(filter, BooleanClauseOccur.MUST);
-
-		query.setPreBooleanFilter(booleanFilter);
 	}
 
 }

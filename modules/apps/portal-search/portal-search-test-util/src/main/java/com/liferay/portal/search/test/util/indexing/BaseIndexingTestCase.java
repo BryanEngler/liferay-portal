@@ -26,15 +26,21 @@ import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
+import com.liferay.portal.kernel.search.filter.BooleanFilter;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.search.test.util.DocumentsAssert;
+import com.liferay.portal.search.test.util.IdempotentRetryAssert;
 import com.liferay.portal.search.test.util.SearchMapUtil;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import org.junit.After;
@@ -126,7 +132,33 @@ public abstract class BaseIndexingTestCase {
 		}
 	}
 
+	protected void assertSearch(
+			Filter filter, String fieldName, List<String> expectedValues)
+		throws Exception {
+
+		IdempotentRetryAssert.retryAssert(
+			10, TimeUnit.SECONDS,
+			() -> doAssertSearch(filter, fieldName, expectedValues));
+	}
+
 	protected abstract IndexingFixture createIndexingFixture() throws Exception;
+
+	protected Void doAssertSearch(
+			Filter filter, String fieldName, List<String> expectedValues)
+		throws Exception {
+
+		SearchContext searchContext = createSearchContext();
+
+		Hits hits = search(
+			searchContext,
+			booleanQuery -> setPreBooleanFilter(filter, booleanQuery));
+
+		DocumentsAssert.assertValues(
+			(String)searchContext.getAttribute("queryString"), hits.getDocs(),
+			fieldName, expectedValues);
+
+		return null;
+	}
 
 	protected Query getDefaultQuery() throws Exception {
 		Map<String, String> map = SearchMapUtil.join(
@@ -165,6 +197,14 @@ public abstract class BaseIndexingTestCase {
 		throws Exception {
 
 		return search(searchContext, _getQuery(queryContributor));
+	}
+
+	protected void setPreBooleanFilter(Filter filter, Query query) {
+		BooleanFilter booleanFilter = new BooleanFilter();
+
+		booleanFilter.add(filter, BooleanClauseOccur.MUST);
+
+		query.setPreBooleanFilter(booleanFilter);
 	}
 
 	protected static final long COMPANY_ID = RandomTestUtil.randomLong();
