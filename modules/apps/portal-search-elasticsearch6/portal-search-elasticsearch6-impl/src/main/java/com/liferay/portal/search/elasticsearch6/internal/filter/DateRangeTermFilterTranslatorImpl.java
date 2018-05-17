@@ -15,10 +15,8 @@
 package com.liferay.portal.search.elasticsearch6.internal.filter;
 
 import com.liferay.portal.kernel.search.filter.DateRangeTermFilter;
-import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 
-import java.text.Format;
-import java.text.ParseException;
+import java.util.TimeZone;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -38,24 +36,16 @@ public class DateRangeTermFilterTranslatorImpl
 		RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery(
 			dateRangeTermFilter.getField());
 
-		Format format = FastDateFormatFactoryUtil.getSimpleDateFormat(
-			dateRangeTermFilter.getDateFormat(),
-			dateRangeTermFilter.getTimeZone());
+		rangeQueryBuilder.format(dateRangeTermFilter.getDateFormat());
+		rangeQueryBuilder.from(dateRangeTermFilter.getLowerBound());
+		rangeQueryBuilder.includeLower(dateRangeTermFilter.isIncludesLower());
+		rangeQueryBuilder.includeUpper(dateRangeTermFilter.isIncludesUpper());
 
-		try {
-			rangeQueryBuilder.from(
-				format.parseObject(dateRangeTermFilter.getLowerBound()));
-			rangeQueryBuilder.includeLower(
-				dateRangeTermFilter.isIncludesLower());
-			rangeQueryBuilder.includeUpper(
-				dateRangeTermFilter.isIncludesUpper());
-			rangeQueryBuilder.to(
-				format.parseObject(dateRangeTermFilter.getUpperBound()));
-		}
-		catch (ParseException pe) {
-			throw new IllegalArgumentException(
-				"Invalid date range " + dateRangeTermFilter, pe);
-		}
+		TimeZone timeZone = dateRangeTermFilter.getTimeZone();
+
+		rangeQueryBuilder.timeZone(timeZone.getID());
+
+		rangeQueryBuilder.to(dateRangeTermFilter.getUpperBound());
 
 		return rangeQueryBuilder;
 	}
