@@ -31,6 +31,11 @@ public class DateRangeTermFilter extends RangeTermFilter {
 		super(field, includesLower, includesUpper, startDate, endDate);
 	}
 
+	@Override
+	public <T> T accept(FilterVisitor<T> filterVisitor) {
+		return filterVisitor.visit(this);
+	}
+
 	public String getDateFormat() {
 		return _dateFormat;
 	}
