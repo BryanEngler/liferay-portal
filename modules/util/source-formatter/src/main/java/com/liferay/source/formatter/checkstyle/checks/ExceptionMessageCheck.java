@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author Hugo Huijser
  */
-public class ExceptionMessageCheck extends BaseCheck {
+public class ExceptionMessageCheck extends MessageCheck {
 
 	@Override
 	public int[] getDefaultTokens() {
@@ -33,36 +33,22 @@ public class ExceptionMessageCheck extends BaseCheck {
 
 	@Override
 	protected void doVisitToken(DetailAST detailAST) {
-		DetailAST firstChild = detailAST.getFirstChild();
+		DetailAST firstChildAST = detailAST.getFirstChild();
 
-		firstChild = firstChild.getFirstChild();
+		firstChildAST = firstChildAST.getFirstChild();
 
-		if (firstChild.getType() != TokenTypes.LITERAL_NEW) {
+		if (firstChildAST.getType() != TokenTypes.LITERAL_NEW) {
 			return;
 		}
 
-		DetailAST elistAST = firstChild.findFirstToken(TokenTypes.ELIST);
+		DetailAST elistAST = firstChildAST.findFirstToken(TokenTypes.ELIST);
 
 		List<DetailAST> exprASTList = DetailASTUtil.getAllChildTokens(
 			elistAST, false, TokenTypes.EXPR);
 
 		for (DetailAST exprAST : exprASTList) {
-			firstChild = exprAST.getFirstChild();
-
-			if (firstChild.getType() != TokenTypes.STRING_LITERAL) {
-				return;
-			}
-
-			String text = firstChild.getText();
-
-			if (text.matches("\"[A-Z][^.]+\\.\"") ||
-				text.matches("\"[A-Z][^.]+\\. [A-Z][^.]+\"")) {
-
-				log(firstChild.getLineNo(), _MSG_INCORRECT_MESSAGE);
-			}
+			checkMessage(getLiteralStringValue(exprAST), exprAST.getLineNo());
 		}
 	}
-
-	private static final String _MSG_INCORRECT_MESSAGE = "message.incorrect";
 
 }
