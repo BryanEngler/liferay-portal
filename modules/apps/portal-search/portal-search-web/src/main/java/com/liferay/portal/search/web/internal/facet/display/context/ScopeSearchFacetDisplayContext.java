@@ -37,12 +37,20 @@ public class ScopeSearchFacetDisplayContext {
 		return _scopeSearchFacetTermDisplayContexts;
 	}
 
+	public boolean isFilterBySite() {
+		return _filterBySite;
+	}
+
 	public boolean isNothingSelected() {
 		return _nothingSelected;
 	}
 
 	public boolean isRenderNothing() {
 		return _renderNothing;
+	}
+
+	public void setFilterBySite(boolean filterBySite) {
+		_filterBySite = filterBySite;
 	}
 
 	public void setNothingSelected(boolean nothingSelected) {
@@ -73,6 +81,7 @@ public class ScopeSearchFacetDisplayContext {
 			scopeSearchFacetTermDisplayContexts;
 	}
 
+	private boolean _filterBySite;
 	private boolean _nothingSelected;
 	private String _parameterName;
 	private String _parameterValue;

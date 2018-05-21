@@ -14,6 +14,8 @@
 
 package com.liferay.portal.search.internal.searcher;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.BaseSearcher;
 import com.liferay.portal.kernel.search.BooleanClause;
@@ -147,30 +149,6 @@ public class FacetedSearcherImpl
 			searchQuery, fullQueryBooleanFilter, luceneSyntax,
 			entryClassNameIndexerMap, searchContext);
 
-		if (Validator.isNotNull(keywords)) {
-			int groupId = GetterUtil.getInteger(
-				searchContext.getAttribute(Field.GROUP_ID));
-
-			if (groupId == 0) {
-				fullQueryBooleanFilter.addTerm(
-					Field.STAGING_GROUP, "true", BooleanClauseOccur.MUST_NOT);
-			}
-		}
-
-		List<Group> inactiveGroups = _groupLocalService.getActiveGroups(
-			searchContext.getCompanyId(), false);
-
-		if (ListUtil.isNotEmpty(inactiveGroups)) {
-			TermsFilter groupIdTermsFilter = new TermsFilter(Field.GROUP_ID);
-
-			groupIdTermsFilter.addValues(
-				ArrayUtil.toStringArray(
-					ListUtil.toArray(inactiveGroups, Group.GROUP_ID_ACCESSOR)));
-
-			fullQueryBooleanFilter.add(
-				groupIdTermsFilter, BooleanClauseOccur.MUST_NOT);
-		}
-
 		_addPreFilters(
 			fullQueryBooleanFilter, entryClassNameIndexerMap, searchContext);
 
@@ -282,6 +260,24 @@ public class FacetedSearcherImpl
 		return super.isFilterSearch();
 	}
 
+	private void _addInactiveGroupsBooleanFilter(
+		BooleanFilter fullQueryPreBooleanFilter, SearchContext searchContext) {
+
+		List<Group> inactiveGroups = _groupLocalService.getActiveGroups(
+			searchContext.getCompanyId(), false);
+
+		if (ListUtil.isNotEmpty(inactiveGroups)) {
+			TermsFilter groupIdTermsFilter = new TermsFilter(Field.GROUP_ID);
+
+			groupIdTermsFilter.addValues(
+				ArrayUtil.toStringArray(
+					ListUtil.toArray(inactiveGroups, Group.GROUP_ID_ACCESSOR)));
+
+			fullQueryPreBooleanFilter.add(
+				groupIdTermsFilter, BooleanClauseOccur.MUST_NOT);
+		}
+	}
+
 	private void _addIndexerProvidedPreFilters(
 			BooleanFilter booleanFilter, Indexer<?> indexer,
 			SearchContext searchContext)
@@ -313,6 +309,16 @@ public class FacetedSearcherImpl
 
 			indexerPostProcessor.postProcessSearchQuery(
 				searchQuery, booleanFilter, searchContext);
+		}
+	}
+
+	private void _addOwnerBooleanFilter(
+		BooleanFilter facetBooleanFilter, SearchContext searchContext) {
+
+		long ownerUserId = searchContext.getOwnerUserId();
+
+		if (ownerUserId > 0) {
+			facetBooleanFilter.addRequiredTerm(Field.USER_ID, ownerUserId);
 		}
 	}
 
@@ -348,6 +354,9 @@ public class FacetedSearcherImpl
 
 		BooleanFilter preFilterBooleanFilter = new BooleanFilter();
 
+		_addInactiveGroupsBooleanFilter(preFilterBooleanFilter, searchContext);
+		_addScopeBooleanFilter(preFilterBooleanFilter, searchContext);
+
 		for (Entry<String, Indexer<?>> entry :
 				entryClassNameIndexerMap.entrySet()) {
 
@@ -364,6 +373,74 @@ public class FacetedSearcherImpl
 			queryBooleanFilter.add(
 				preFilterBooleanFilter, BooleanClauseOccur.MUST);
 		}
+	}
+
+	private void _addScopeBooleanFilter(
+		BooleanFilter fullQueryPreBooleanFilter, SearchContext searchContext) {
+
+		long[] groupIds = searchContext.getGroupIds();
+
+		if (ArrayUtil.isEmpty(groupIds) ||
+			((groupIds.length == 1) && (groupIds[0] == 0))) {
+
+			return;
+		}
+
+		BooleanFilter facetBooleanFilter = new BooleanFilter();
+
+		_addOwnerBooleanFilter(facetBooleanFilter, searchContext);
+
+		TermsFilter groupIdsTermsFilter = new TermsFilter(Field.GROUP_ID);
+		TermsFilter scopeGroupIdsTermsFilter = new TermsFilter(
+			Field.SCOPE_GROUP_ID);
+
+		for (int i = 0; i < groupIds.length; i++) {
+			long groupId = groupIds[i];
+
+			if (groupId <= 0) {
+				continue;
+			}
+
+			try {
+				Group group = _groupLocalService.getGroup(groupId);
+
+				if (!_groupLocalService.isLiveGroupActive(group)) {
+					continue;
+				}
+
+				long parentGroupId = groupId;
+
+				if (group.isLayout()) {
+					parentGroupId = group.getParentGroupId();
+				}
+
+				groupIdsTermsFilter.addValue(String.valueOf(parentGroupId));
+
+				groupIds[i] = parentGroupId;
+
+				if (group.isLayout() || searchContext.isScopeStrict()) {
+					scopeGroupIdsTermsFilter.addValue(String.valueOf(groupId));
+				}
+			}
+			catch (Exception e) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(e, e);
+				}
+			}
+		}
+
+		if (!groupIdsTermsFilter.isEmpty()) {
+			facetBooleanFilter.add(
+				groupIdsTermsFilter, BooleanClauseOccur.MUST);
+		}
+
+		if (!scopeGroupIdsTermsFilter.isEmpty()) {
+			facetBooleanFilter.add(
+				scopeGroupIdsTermsFilter, BooleanClauseOccur.MUST);
+		}
+
+		fullQueryPreBooleanFilter.add(
+			facetBooleanFilter, BooleanClauseOccur.MUST);
 	}
 
 	private void _addSearchTerms(
@@ -485,6 +562,9 @@ public class FacetedSearcherImpl
 			}
 		};
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		FacetedSearcherImpl.class);
 
 	private final ExpandoQueryContributorHelper _expandoQueryContributorHelper;
 	private final GroupLocalService _groupLocalService;
