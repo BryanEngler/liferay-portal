@@ -71,7 +71,7 @@ public class TagFacetPortletSharedSearchContributor
 				tagFacetPortletPreferences.getParameterName());
 
 		parameterValuesOptional.ifPresent(
-			assetTagsFacetBuilder::setSelectedTags);
+			assetTagsFacetBuilder::setSelectedTagNames);
 
 		return assetTagsFacetBuilder.build();
 	}

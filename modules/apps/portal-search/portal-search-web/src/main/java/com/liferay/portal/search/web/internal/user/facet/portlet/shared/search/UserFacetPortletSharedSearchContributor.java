@@ -69,7 +69,8 @@ public class UserFacetPortletSharedSearchContributor
 			portletSharedSearchSettings.getParameterValues(
 				userFacetPortletPreferences.getParameterName());
 
-		parameterValuesOptional.ifPresent(userFacetBuilder::setSelectedUsers);
+		parameterValuesOptional.ifPresent(
+			userFacetBuilder::setSelectedUserNames);
 
 		return userFacetBuilder.build();
 	}
