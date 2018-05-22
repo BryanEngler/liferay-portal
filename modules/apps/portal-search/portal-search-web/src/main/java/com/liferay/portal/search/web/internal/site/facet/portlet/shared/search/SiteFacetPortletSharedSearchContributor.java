@@ -70,7 +70,8 @@ public class SiteFacetPortletSharedSearchContributor
 			portletSharedSearchSettings.getParameterValues(
 				siteFacetPortletPreferences.getParameterName());
 
-		parameterValuesOptional.ifPresent(scopeFacetBuilder::setSelectedSites);
+		parameterValuesOptional.ifPresent(
+			scopeFacetBuilder::setSelectedGroupIds);
 
 		return scopeFacetBuilder.build();
 	}

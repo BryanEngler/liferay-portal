@@ -35,7 +35,7 @@ public class AssetTagsFacetBuilder {
 
 		facet.setFacetConfiguration(buildFacetConfiguration(facet));
 
-		facet.select(_selectedTags);
+		facet.select(_selectedTagNames);
 
 		return facet;
 	}
@@ -52,8 +52,8 @@ public class AssetTagsFacetBuilder {
 		_searchContext = searchContext;
 	}
 
-	public void setSelectedTags(String... selectedTags) {
-		_selectedTags = selectedTags;
+	public void setSelectedTagNames(String... selectedTagNames) {
+		_selectedTagNames = selectedTagNames;
 	}
 
 	protected FacetConfiguration buildFacetConfiguration(Facet facet) {
@@ -78,6 +78,6 @@ public class AssetTagsFacetBuilder {
 	private int _frequencyThreshold;
 	private int _maxTerms;
 	private SearchContext _searchContext;
-	private String[] _selectedTags;
+	private String[] _selectedTagNames;
 
 }

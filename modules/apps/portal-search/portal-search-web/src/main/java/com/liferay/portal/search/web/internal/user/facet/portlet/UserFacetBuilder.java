@@ -33,7 +33,7 @@ public class UserFacetBuilder {
 
 		facet.setFacetConfiguration(buildFacetConfiguration(facet));
 
-		facet.select(_selectedUsers);
+		facet.select(_selectedUserNames);
 
 		return facet;
 	}
@@ -50,8 +50,8 @@ public class UserFacetBuilder {
 		_searchContext = searchContext;
 	}
 
-	public void setSelectedUsers(String... selectedUsers) {
-		_selectedUsers = selectedUsers;
+	public void setSelectedUserNames(String... selectedUserNames) {
+		_selectedUserNames = selectedUserNames;
 	}
 
 	protected FacetConfiguration buildFacetConfiguration(Facet facet) {
@@ -75,7 +75,7 @@ public class UserFacetBuilder {
 	private int _frequencyThreshold;
 	private int _maxTerms;
 	private SearchContext _searchContext;
-	private String[] _selectedUsers;
+	private String[] _selectedUserNames;
 	private final UserFacetFactory _userFacetFactory;
 
 }

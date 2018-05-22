@@ -34,8 +34,8 @@ public class FolderFacetBuilder {
 
 		facet.setFacetConfiguration(buildFacetConfiguration(facet));
 
-		if (_selectedFolders != null) {
-			facet.select(ArrayUtil.toStringArray(_selectedFolders));
+		if (_selectedFolderIds != null) {
+			facet.select(ArrayUtil.toStringArray(_selectedFolderIds));
 		}
 
 		return facet;
@@ -53,8 +53,8 @@ public class FolderFacetBuilder {
 		_searchContext = searchContext;
 	}
 
-	public void setSelectedFolders(long... selectedFolders) {
-		_selectedFolders = selectedFolders;
+	public void setSelectedFolderIds(long... selectedFolderIds) {
+		_selectedFolderIds = selectedFolderIds;
 	}
 
 	protected FacetConfiguration buildFacetConfiguration(Facet facet) {
@@ -79,6 +79,6 @@ public class FolderFacetBuilder {
 	private int _frequencyThreshold;
 	private int _maxTerms;
 	private SearchContext _searchContext;
-	private long[] _selectedFolders;
+	private long[] _selectedFolderIds;
 
 }

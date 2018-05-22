@@ -33,7 +33,7 @@ public class ScopeFacetBuilder {
 
 		facet.setFacetConfiguration(buildFacetConfiguration(facet));
 
-		facet.select(_selectedSites);
+		facet.select(_selectedGroupIds);
 
 		return facet;
 	}
@@ -50,8 +50,8 @@ public class ScopeFacetBuilder {
 		_searchContext = searchContext;
 	}
 
-	public void setSelectedSites(String... selectedSites) {
-		_selectedSites = selectedSites;
+	public void setSelectedGroupIds(String... selectedGroupIds) {
+		_selectedGroupIds = selectedGroupIds;
 	}
 
 	protected FacetConfiguration buildFacetConfiguration(Facet facet) {
@@ -76,6 +76,6 @@ public class ScopeFacetBuilder {
 	private int _maxTerms;
 	private final ScopeFacetFactory _scopeFacetFactory;
 	private SearchContext _searchContext;
-	private String[] _selectedSites;
+	private String[] _selectedGroupIds;
 
 }
