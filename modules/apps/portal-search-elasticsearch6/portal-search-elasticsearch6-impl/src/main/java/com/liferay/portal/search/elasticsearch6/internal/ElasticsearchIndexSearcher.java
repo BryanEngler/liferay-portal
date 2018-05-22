@@ -14,6 +14,10 @@
 
 package com.liferay.portal.search.elasticsearch6.internal;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
@@ -583,7 +587,8 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		searchRequestBuilder.setQuery(queryBuilder);
 
-		String searchRequestBuilderString = searchRequestBuilder.toString();
+		String searchRequestBuilderString =
+			getSearchRequestBuilderString(searchRequestBuilder);
 
 		searchContext.setAttribute("queryString", searchRequestBuilderString);
 
@@ -661,6 +666,23 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		}
 
 		return boolQueryBuilder;
+	}
+
+	protected String getSearchRequestBuilderString(
+		SearchRequestBuilder searchRequestBuilder) {
+
+		GsonBuilder gsonBuilder = new GsonBuilder();
+
+		gsonBuilder.setPrettyPrinting();
+
+		Gson gson = gsonBuilder.create();
+
+		JsonParser jsonParser = new JsonParser();
+
+		JsonElement jsonElement = jsonParser.parse(
+			searchRequestBuilder.toString());
+
+		return gson.toJson(jsonElement);
 	}
 
 	protected String[] getSelectedIndexNames(
