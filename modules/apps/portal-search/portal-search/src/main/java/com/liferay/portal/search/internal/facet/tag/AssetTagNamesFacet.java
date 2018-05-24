@@ -21,7 +21,9 @@ import com.liferay.portal.kernel.search.facet.MultiValueFacet;
 
 /**
  * @author André de Oliveira
+ * @deprecated As of 3.10.0, with no direct replacement
  */
+@Deprecated
 public class AssetTagNamesFacet extends MultiValueFacet implements Facet {
 
 	public AssetTagNamesFacet(SearchContext searchContext) {

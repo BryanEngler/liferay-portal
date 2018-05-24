@@ -14,6 +14,11 @@
 
 package com.liferay.portal.search.elasticsearch6.internal;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
@@ -41,6 +46,7 @@ import com.liferay.portal.kernel.search.StatsResults;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
+import com.liferay.portal.kernel.search.facet.util.RangeParserUtil;
 import com.liferay.portal.kernel.search.filter.FilterTranslator;
 import com.liferay.portal.kernel.search.geolocation.GeoLocationPoint;
 import com.liferay.portal.kernel.search.highlight.HighlightUtil;
@@ -66,6 +72,7 @@ import com.liferay.portal.search.elasticsearch6.internal.util.DocumentTypes;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -84,6 +91,7 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.Aggregation;
@@ -249,12 +257,16 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		Map<String, Facet> facetsMap = searchContext.getFacets();
 
+		Map<String, List<QueryBuilder>> filterAggregationQueryBuilders =
+			getFilterAggregationQueryBuilders(facetsMap);
+
 		for (Facet facet : facetsMap.values()) {
 			if (facet.isStatic()) {
 				continue;
 			}
 
-			facetProcessor.processFacet(searchRequestBuilder, facet);
+			facetProcessor.processFacet(
+				searchRequestBuilder, facet, filterAggregationQueryBuilders);
 		}
 	}
 
@@ -540,7 +552,8 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		searchRequestBuilder.setQuery(queryBuilder);
 
-		String searchRequestBuilderString = searchRequestBuilder.toString();
+		String searchRequestBuilderString = getSearchRequestBuilderString(
+			searchRequestBuilder);
 
 		searchContext.setAttribute("queryString", searchRequestBuilderString);
 
@@ -598,6 +611,72 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		return facetCollectorFactory.getFacetCollector(
 			aggregationsMap.get(getAggregationName(facet)));
+	}
+
+	protected Map<String, List<QueryBuilder>> getFilterAggregationQueryBuilders(
+		Map<String, Facet> facetsMap) {
+
+		Map<String, List<QueryBuilder>> filterAggregationQueryBuilders =
+			new HashMap<>();
+
+		for (Facet facet : facetsMap.values()) {
+			if (facet.isStatic() ||
+				!(facet instanceof com.liferay.portal.search.facet.Facet)) {
+
+				continue;
+			}
+
+			com.liferay.portal.search.facet.Facet searchFacet =
+				(com.liferay.portal.search.facet.Facet)facet;
+
+			String[] selectedValues = searchFacet.getSelections();
+
+			if (ArrayUtil.isNotEmpty(selectedValues)) {
+				List<QueryBuilder> queryBuilders = new ArrayList<>();
+
+				String fieldName = facet.getFieldName();
+
+				if (fieldName.equals(Field.MODIFIED_DATE)) {
+					for (String value : selectedValues) {
+						String[] ranges = RangeParserUtil.parserRange(value);
+
+						RangeQueryBuilder rangeQuery = QueryBuilders.rangeQuery(
+							Field.MODIFIED_DATE);
+
+						rangeQuery.gte(ranges[0]);
+						rangeQuery.lte(ranges[1]);
+
+						queryBuilders.add(rangeQuery);
+					}
+				}
+				else {
+					queryBuilders.add(
+						QueryBuilders.termsQuery(fieldName, selectedValues));
+				}
+
+				filterAggregationQueryBuilders.put(
+					getAggregationName(facet), queryBuilders);
+			}
+		}
+
+		return filterAggregationQueryBuilders;
+	}
+
+	protected String getSearchRequestBuilderString(
+		SearchRequestBuilder searchRequestBuilder) {
+
+		GsonBuilder gsonBuilder = new GsonBuilder();
+
+		gsonBuilder.setPrettyPrinting();
+
+		Gson gson = gsonBuilder.create();
+
+		JsonParser jsonParser = new JsonParser();
+
+		JsonElement jsonElement = jsonParser.parse(
+			searchRequestBuilder.toString());
+
+		return gson.toJson(jsonElement);
 	}
 
 	protected String[] getSelectedIndexNames(

@@ -80,7 +80,7 @@ public class TypeFacetPortletSharedSearchContributor
 				typeFacetPortletPreferences.getParameterName());
 
 		parameterValuesOptional.ifPresent(
-			assetEntriesFacetBuilder::setSelectedTypes);
+			assetEntriesFacetBuilder::setSelectedEntryClassNames);
 
 		return assetEntriesFacetBuilder.build();
 	}
