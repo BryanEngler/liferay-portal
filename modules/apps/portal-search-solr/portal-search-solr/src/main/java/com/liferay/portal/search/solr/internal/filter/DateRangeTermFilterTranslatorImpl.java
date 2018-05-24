@@ -42,34 +42,22 @@ public class DateRangeTermFilterTranslatorImpl
 
 	@Override
 	public Query translate(DateRangeTermFilter dateRangeTermFilter) {
-		String dateFormat = dateRangeTermFilter.getDateFormat();
-		String lowerBound = dateRangeTermFilter.getLowerBound();
+		String[] dateFormats = StringUtil.split(
+			dateRangeTermFilter.getDateFormat(), _DATE_FORMAT_SEPARATOR);
+
 		TimeZone timeZone = dateRangeTermFilter.getTimeZone();
-		String upperBound = dateRangeTermFilter.getUpperBound();
 
-		try {
-			String[] dateFormats = StringUtil.split(
-				dateFormat, _DATE_FORMAT_SEPARATOR);
+		ZoneId fromTimeZoneId = timeZone.toZoneId();
 
-			ZoneId fromTimeZoneId = timeZone.toZoneId();
-			ZoneId toTimeZoneId = _TIME_ZONE.toZoneId();
+		ZoneId toTimeZoneId = _DEFAULT_TIME_ZONE.toZoneId();
 
-			if (lowerBound != null) {
-				lowerBound = ZonedDateTimeUtil.formatDate(
-					dateFormats, _dateFormatPattern, lowerBound, fromTimeZoneId,
-					toTimeZoneId);
-			}
+		String lowerBound = ZonedDateTimeUtil.formatDate(
+			dateFormats, _dateFormatPattern,
+			dateRangeTermFilter.getLowerBound(), fromTimeZoneId, toTimeZoneId);
 
-			if (upperBound != null) {
-				upperBound = ZonedDateTimeUtil.formatDate(
-					dateFormats, _dateFormatPattern, upperBound, fromTimeZoneId,
-					toTimeZoneId);
-			}
-		}
-		catch (Exception e) {
-			throw new IllegalArgumentException(
-				"Invalid date range " + dateRangeTermFilter, e);
-		}
+		String upperBound = ZonedDateTimeUtil.formatDate(
+			dateFormats, _dateFormatPattern,
+			dateRangeTermFilter.getUpperBound(), fromTimeZoneId, toTimeZoneId);
 
 		TermRangeQuery termRangeQuery = TermRangeQuery.newStringRange(
 			dateRangeTermFilter.getField(), lowerBound, upperBound,
@@ -89,7 +77,8 @@ public class DateRangeTermFilterTranslatorImpl
 
 	private static final String _DATE_FORMAT_SEPARATOR = "||";
 
-	private static final TimeZone _TIME_ZONE = TimeZoneUtil.getDefault();
+	private static final TimeZone _DEFAULT_TIME_ZONE =
+		TimeZoneUtil.getDefault();
 
 	private String _dateFormatPattern;
 

@@ -14,7 +14,6 @@
 
 package com.liferay.portal.search.solr.internal.filter;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.search.solr.internal.SolrIndexingFixture;
 import com.liferay.portal.search.test.util.filter.BaseDateRangeTermFilterTestCase;
@@ -33,12 +32,8 @@ public class SolrDateRangeTermFilterTest
 	public void testDateFormat() throws Exception {
 		expectedException.expect(SearchException.class);
 		expectedException.expectMessage(
-			StringBundler.concat(
-				"Invalid date range {",
-				"({(11212000000000>expirationDate<11232000000000), ",
-				"(cached=null, executionOption=null)}), yyyyMMddHHmmss, ",
-				"sun.util.calendar.ZoneInfo[id=\"UTC\",offset=0,dstSavings=0,",
-				"useDaylight=false,transitions=0,lastRule=null])}"));
+			"Invalid date string: Text '11212000000000' could not be parsed: " +
+				"Invalid value for MonthOfYear (valid values 1 - 12): 20");
 
 		super.testDateFormat();
 	}
@@ -47,11 +42,8 @@ public class SolrDateRangeTermFilterTest
 	public void testDateFormatWithMultiplePatterns() throws Exception {
 		expectedException.expect(SearchException.class);
 		expectedException.expectMessage(
-			StringBundler.concat(
-				"Invalid date range {({(2000>expirationDate<11232000000000), ",
-				"(cached=null, executionOption=null)}), yyyyMMddHHmmss, ",
-				"sun.util.calendar.ZoneInfo[id=\"UTC\",offset=0,dstSavings=0,",
-				"useDaylight=false,transitions=0,lastRule=null])}"));
+			"Invalid date string: Text '2000' could not be parsed, unparsed " +
+				"text found at index 0");
 
 		super.testDateFormatWithMultiplePatterns();
 	}

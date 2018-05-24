@@ -32,15 +32,25 @@ public class ZonedDateTimeUtil {
 		String[] fromPatterns, String toPattern, String dateString,
 		ZoneId fromTimeZoneId, ZoneId toTimeZoneId) {
 
-		ZonedDateTime zonedDateTime = parseDate(
-			fromPatterns, dateString, fromTimeZoneId);
+		if (dateString == null) {
+			return null;
+		}
 
-		zonedDateTime = zonedDateTime.withZoneSameInstant(toTimeZoneId);
+		try {
+			ZonedDateTime zonedDateTime = parseDate(
+				fromPatterns, dateString, fromTimeZoneId);
 
-		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(
-			toPattern);
+			zonedDateTime = zonedDateTime.withZoneSameInstant(toTimeZoneId);
 
-		return zonedDateTime.format(dateTimeFormatter);
+			DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(
+				toPattern);
+
+			return zonedDateTime.format(dateTimeFormatter);
+		}
+		catch (Exception e) {
+			throw new IllegalArgumentException(
+				"Invalid date string: " + e.getMessage(), e);
+		}
 	}
 
 	public static DateTimeFormatter getLocalDateTimeFormatter(
