@@ -75,8 +75,9 @@ public class UpdateDocumentRequestExecutorImpl
 
 		Document document = updateDocumentRequest.getDocument();
 
-		updateRequestBuilder.setIndex(updateDocumentRequest.getIndexName());
 		updateRequestBuilder.setId(document.getUID());
+
+		updateRequestBuilder.setIndex(updateDocumentRequest.getIndexName());
 		updateRequestBuilder.setType(document.get(Field.TYPE));
 
 		ElasticsearchDocumentFactory elasticsearchDocumentFactory =

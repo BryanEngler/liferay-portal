@@ -75,8 +75,9 @@ public class IndexDocumentRequestExecutorImpl
 
 		Document document = indexDocumentRequest.getDocument();
 
-		indexRequestBuilder.setIndex(indexDocumentRequest.getIndexName());
 		indexRequestBuilder.setId(document.getUID());
+
+		indexRequestBuilder.setIndex(indexDocumentRequest.getIndexName());
 		indexRequestBuilder.setType(document.get(Field.TYPE));
 
 		ElasticsearchDocumentFactory elasticsearchDocumentFactory =

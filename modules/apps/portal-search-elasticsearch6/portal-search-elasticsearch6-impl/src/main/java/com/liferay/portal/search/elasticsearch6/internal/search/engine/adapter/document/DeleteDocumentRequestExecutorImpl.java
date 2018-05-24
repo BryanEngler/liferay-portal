@@ -59,9 +59,9 @@ public class DeleteDocumentRequestExecutorImpl
 		DeleteRequestBuilder deleteRequestBuilder =
 			DeleteAction.INSTANCE.newRequestBuilder(client);
 
+		deleteRequestBuilder.setId(deleteDocumentRequest.getUid());
 		deleteRequestBuilder.setIndex(deleteDocumentRequest.getIndexName());
 		deleteRequestBuilder.setType(deleteDocumentRequest.getType());
-		deleteRequestBuilder.setId(deleteDocumentRequest.getUid());
 
 		return deleteRequestBuilder;
 	}
