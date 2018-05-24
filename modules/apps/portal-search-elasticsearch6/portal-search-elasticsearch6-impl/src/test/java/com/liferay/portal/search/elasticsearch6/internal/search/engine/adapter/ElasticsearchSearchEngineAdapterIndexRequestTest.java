@@ -203,7 +203,6 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 			_indicesAdminClient.preparePutMapping(_INDEX_NAME);
 
 		putMappingRequestBuilder.setSource(mappingSource, XContentType.JSON);
-
 		putMappingRequestBuilder.setType(mappingName);
 
 		putMappingRequestBuilder.get();

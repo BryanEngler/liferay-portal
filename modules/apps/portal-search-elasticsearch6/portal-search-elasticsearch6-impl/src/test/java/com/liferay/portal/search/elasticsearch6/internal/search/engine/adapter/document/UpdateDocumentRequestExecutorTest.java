@@ -70,8 +70,8 @@ public class UpdateDocumentRequestExecutorTest {
 
 		Document document = new DocumentImpl();
 
-		document.addKeyword(Field.UID, id);
 		document.addKeyword(Field.TYPE, _MAPPING_NAME);
+		document.addKeyword(Field.UID, id);
 
 		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest(
 			_INDEX_NAME, id, document);
