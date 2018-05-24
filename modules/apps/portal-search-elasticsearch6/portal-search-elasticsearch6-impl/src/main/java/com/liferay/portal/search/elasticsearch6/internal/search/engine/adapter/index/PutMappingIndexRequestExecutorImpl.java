@@ -60,7 +60,6 @@ public class PutMappingIndexRequestExecutorImpl
 
 		putMappingRequestBuilder.setSource(
 			putMappingIndexRequest.getMapping(), XContentType.JSON);
-
 		putMappingRequestBuilder.setType(
 			putMappingIndexRequest.getMappingName());
 
