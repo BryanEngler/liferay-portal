@@ -75,7 +75,6 @@ public class DeleteByQueryDocumentRequestExecutorImpl
 
 		deleteByQueryRequestBuilder.refresh(
 			deleteByQueryDocumentRequest.isRefresh());
-
 		deleteByQueryRequestBuilder.source(
 			deleteByQueryDocumentRequest.getIndexNames());
 
