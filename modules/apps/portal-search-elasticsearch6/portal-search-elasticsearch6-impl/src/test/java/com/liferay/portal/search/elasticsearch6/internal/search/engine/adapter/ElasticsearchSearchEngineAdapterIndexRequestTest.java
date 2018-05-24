@@ -141,7 +141,7 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 		PutMappingIndexResponse putMappingIndexResponse =
 			_searchEngineAdapter.execute(putMappingIndexRequest);
 
-		Assert.assertTrue(putMappingIndexResponse.getAcknowledged());
+		Assert.assertTrue(putMappingIndexResponse.isAcknowledged());
 
 		GetMappingsRequestBuilder getMappingsRequestBuilder =
 			_indicesAdminClient.prepareGetMappings(_INDEX_NAME);
