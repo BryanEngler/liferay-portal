@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.service.permission.ModelPermissions;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.Inject;
@@ -134,7 +135,12 @@ public class SearchPermissionCheckerFacetedSearcherTest
 	protected ServiceContext createServiceContext(Group group, User user)
 		throws Exception {
 
-		ServiceContext serviceContext = new ServiceContext();
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				group.getCompanyId(), group.getGroupId(), user.getUserId());
+
+		serviceContext.setAddGroupPermissions(false);
+		serviceContext.setAddGuestPermissions(false);
 
 		ModelPermissions modelPermissions = new ModelPermissions();
 
@@ -142,12 +148,6 @@ public class SearchPermissionCheckerFacetedSearcherTest
 			RoleConstants.OWNER, ActionKeys.VIEW);
 
 		serviceContext.setModelPermissions(modelPermissions);
-
-		serviceContext.setAddGroupPermissions(false);
-		serviceContext.setAddGuestPermissions(false);
-		serviceContext.setCompanyId(group.getCompanyId());
-		serviceContext.setScopeGroupId(group.getGroupId());
-		serviceContext.setUserId(user.getUserId());
 
 		return serviceContext;
 	}

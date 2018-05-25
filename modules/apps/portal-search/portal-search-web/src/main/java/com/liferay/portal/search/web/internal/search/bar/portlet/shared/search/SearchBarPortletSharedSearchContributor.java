@@ -14,14 +14,11 @@
 
 package com.liferay.portal.search.web.internal.search.bar.portlet.shared.search;
 
-import com.liferay.portal.kernel.search.BooleanClauseOccur;
-import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.generic.BooleanClauseImpl;
-import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.search.web.internal.display.context.Keywords;
 import com.liferay.portal.search.web.internal.display.context.SearchScope;
+import com.liferay.portal.search.web.internal.display.context.SearchScopePreference;
 import com.liferay.portal.search.web.internal.search.bar.constants.SearchBarPortletKeys;
 import com.liferay.portal.search.web.internal.search.bar.portlet.SearchBarPortletPreferences;
 import com.liferay.portal.search.web.internal.search.bar.portlet.SearchBarPortletPreferencesImpl;
@@ -63,13 +60,12 @@ public class SearchBarPortletSharedSearchContributor
 		Optional<Long> groupIdOptional = getThisSiteGroupId(
 			searchBarPortletPreferences, portletSharedSearchSettings);
 
+		SearchContext searchContext =
+			portletSharedSearchSettings.getSearchContext();
+
 		groupIdOptional.ifPresent(
 			groupId -> {
-				portletSharedSearchSettings.addCondition(
-					new BooleanClauseImpl(
-						new TermQueryImpl(
-							Field.GROUP_ID, String.valueOf(groupId)),
-						BooleanClauseOccur.MUST));
+				searchContext.setGroupIds(new long[] {groupId});
 			});
 	}
 
@@ -86,14 +82,22 @@ public class SearchBarPortletSharedSearchContributor
 		SearchBarPortletPreferences searchBarPortletPreferences,
 		PortletSharedSearchSettings portletSharedSearchSettings) {
 
-		String parameterName =
-			searchBarPortletPreferences.getScopeParameterName();
+		SearchScopePreference searchScopePreference =
+			searchBarPortletPreferences.getSearchScopePreference();
 
-		Optional<String> parameterValueOptional =
-			portletSharedSearchSettings.getParameter(parameterName);
+		Optional<SearchScope> searchScopeOptional = Optional.ofNullable(
+			searchScopePreference.getSearchScope());
 
-		Optional<SearchScope> searchScopeOptional = parameterValueOptional.map(
-			SearchScope::getSearchScope);
+		if (!searchScopeOptional.isPresent()) {
+			String parameterName =
+				searchBarPortletPreferences.getScopeParameterName();
+
+			Optional<String> parameterValueOptional =
+				portletSharedSearchSettings.getParameter(parameterName);
+
+			searchScopeOptional = parameterValueOptional.map(
+				SearchScope::getSearchScope);
+		}
 
 		return searchScopeOptional;
 	}

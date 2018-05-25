@@ -51,11 +51,11 @@ SearchBarPortletDisplayContext searchBarPortletDisplayContext = (SearchBarPortle
 						<c:when test="<%= searchBarPortletDisplayContext.isLetTheUserChooseTheSearchScope() %>">
 							<aui:field-wrapper inlineField="<%= true %>">
 								<aui:select cssClass="search-bar-scope-select search-select" label="" name="<%= searchBarPortletDisplayContext.getScopeParameterName() %>" title="scope" useNamespace="<%= false %>">
-									<c:if test="<%= searchBarPortletDisplayContext.isAvailableEverythingSearchScope() %>">
-										<aui:option label="all-sites" selected="<%= searchBarPortletDisplayContext.isSelectedEverythingSearchScope() %>" value="<%= searchBarPortletDisplayContext.getEverythingSearchScopeParameterString() %>" />
-									</c:if>
-
 									<aui:option label="this-site" selected="<%= searchBarPortletDisplayContext.isSelectedCurrentSiteSearchScope() %>" value="<%= searchBarPortletDisplayContext.getCurrentSiteSearchScopeParameterString() %>" />
+
+									<c:if test="<%= searchBarPortletDisplayContext.isAvailableEverythingSearchScope() %>">
+										<aui:option label="everything" selected="<%= searchBarPortletDisplayContext.isSelectedEverythingSearchScope() %>" value="<%= searchBarPortletDisplayContext.getEverythingSearchScopeParameterString() %>" />
+									</c:if>
 								</aui:select>
 							</aui:field-wrapper>
 						</c:when>

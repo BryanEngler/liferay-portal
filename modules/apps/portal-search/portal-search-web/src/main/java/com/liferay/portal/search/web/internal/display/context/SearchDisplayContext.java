@@ -18,17 +18,13 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.Document;
-import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchContextFactory;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcherManager;
-import com.liferay.portal.kernel.search.generic.BooleanClauseImpl;
-import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Html;
@@ -46,8 +42,11 @@ import com.liferay.portal.search.web.internal.search.request.SearchRequestImpl;
 import com.liferay.portal.search.web.internal.search.request.SearchResponseImpl;
 import com.liferay.portal.search.web.search.request.SearchSettings;
 
+import java.io.Serializable;
+
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -116,6 +115,8 @@ public class SearchDisplayContext {
 			_renderRequest, getPortletURL(), null, emptyResultMessage);
 
 		SearchContext searchContext = SearchContextFactory.getInstance(request);
+
+		_resetScope(searchContext);
 
 		boolean luceneSyntax = isUseAdvancedSearchSyntax();
 
@@ -546,13 +547,11 @@ public class SearchDisplayContext {
 	protected void filterByThisSite(SearchSettings searchSettings) {
 		Optional<Long> groupIdOptional = getThisSiteGroupId();
 
+		SearchContext searchContext = searchSettings.getSearchContext();
+
 		groupIdOptional.ifPresent(
 			groupId -> {
-				searchSettings.addCondition(
-					new BooleanClauseImpl<>(
-						new TermQueryImpl(
-							Field.GROUP_ID, String.valueOf(groupId)),
-						BooleanClauseOccur.MUST));
+				searchContext.setGroupIds(new long[] {groupId});
 			});
 	}
 
@@ -595,6 +594,14 @@ public class SearchDisplayContext {
 		}
 
 		return Optional.of(searchScopeGroupId);
+	}
+
+	private void _resetScope(SearchContext searchContext) {
+		searchContext.setGroupIds(null);
+
+		Map<String, Serializable> attributes = searchContext.getAttributes();
+
+		attributes.remove("groupId", "0");
 	}
 
 	private Integer _collatedSpellCheckResultDisplayThreshold;
