@@ -29,23 +29,23 @@ public class SolrDateRangeTermFilterTest
 	extends BaseDateRangeTermFilterTestCase {
 
 	@Override
-	public void testDateFormat() throws Exception {
+	public void testDateFormatException() throws Exception {
 		expectedException.expect(SearchException.class);
 		expectedException.expectMessage(
 			"Invalid date string: Text '11212000000000' could not be parsed: " +
 				"Invalid value for MonthOfYear (valid values 1 - 12): 20");
 
-		super.testDateFormat();
+		super.testDateFormatException();
 	}
 
 	@Override
-	public void testDateFormatWithMultiplePatterns() throws Exception {
+	public void testDateFormatWithMultiplePatternsException() throws Exception {
 		expectedException.expect(SearchException.class);
 		expectedException.expectMessage(
 			"Invalid date string: Text '2000' could not be parsed, unparsed " +
 				"text found at index 0");
 
-		super.testDateFormatWithMultiplePatterns();
+		super.testDateFormatWithMultiplePatternsException();
 	}
 
 	@Rule
