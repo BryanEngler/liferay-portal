@@ -32,19 +32,19 @@ public class ElasticsearchDateRangeTermFilterTest
 	extends BaseDateRangeTermFilterTestCase {
 
 	@Override
-	public void testDateFormat() throws Exception {
+	public void testDateFormatException() throws Exception {
 		expectedException.expect(SearchException.class);
 		expectedException.expectMessage("all shards failed");
 
-		super.testDateFormat();
+		super.testDateFormatException();
 	}
 
 	@Override
-	public void testDateFormatWithMultiplePatterns() throws Exception {
+	public void testDateFormatWithMultiplePatternsException() throws Exception {
 		expectedException.expect(SearchException.class);
 		expectedException.expectMessage("all shards failed");
 
-		super.testDateFormatWithMultiplePatterns();
+		super.testDateFormatWithMultiplePatternsException();
 	}
 
 	@Rule
