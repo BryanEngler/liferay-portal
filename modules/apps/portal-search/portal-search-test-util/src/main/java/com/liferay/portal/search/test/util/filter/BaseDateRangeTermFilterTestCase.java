@@ -127,7 +127,30 @@ public abstract class BaseDateRangeTermFilterTestCase
 
 		addDocument(DocumentCreationHelpers.singleDate(FIELD, date));
 
+		String lowerBoundDate = "11212000000000";
+		String upperBoundDate = "11232000000000";
+
+		boolean lowerBoundInclusive = false;
+		boolean upperBoundInclusive = false;
+
+		DateRangeTermFilter dateRangeTermFilter = new DateRangeTermFilter(
+			FIELD, lowerBoundInclusive, upperBoundInclusive, lowerBoundDate,
+			upperBoundDate);
+
 		String dateFormat = "MMddyyyyHHmmss";
+
+		dateRangeTermFilter.setDateFormat(dateFormat);
+
+		List<String> expectedValues = Arrays.asList("20001122000000");
+
+		assertSearch(dateRangeTermFilter, FIELD, expectedValues);
+	}
+
+	@Test
+	public void testDateFormatException() throws Exception {
+		Date date = getDate(2000, 11, 22, 0, 0, 0);
+
+		addDocument(DocumentCreationHelpers.singleDate(FIELD, date));
 
 		String lowerBoundDate = "11212000000000";
 		String upperBoundDate = "11232000000000";
@@ -142,12 +165,6 @@ public abstract class BaseDateRangeTermFilterTestCase
 		List<String> expectedValues = Arrays.asList();
 
 		assertSearch(dateRangeTermFilter, FIELD, expectedValues);
-
-		dateRangeTermFilter.setDateFormat(dateFormat);
-
-		expectedValues = Arrays.asList("20001122000000");
-
-		assertSearch(dateRangeTermFilter, FIELD, expectedValues);
 	}
 
 	@Test
@@ -156,7 +173,30 @@ public abstract class BaseDateRangeTermFilterTestCase
 
 		addDocument(DocumentCreationHelpers.singleDate(FIELD, date));
 
+		String lowerBoundDate = "2000";
+		String upperBoundDate = "11232000000000";
+
+		boolean lowerBoundInclusive = false;
+		boolean upperBoundInclusive = false;
+
+		DateRangeTermFilter dateRangeTermFilter = new DateRangeTermFilter(
+			FIELD, lowerBoundInclusive, upperBoundInclusive, lowerBoundDate,
+			upperBoundDate);
+
 		String dateFormat = "MMddyyyyHHmmss || yyyy";
+
+		dateRangeTermFilter.setDateFormat(dateFormat);
+
+		List<String> expectedValues = Arrays.asList("20001122000000");
+
+		assertSearch(dateRangeTermFilter, FIELD, expectedValues);
+	}
+
+	@Test
+	public void testDateFormatWithMultiplePatternsException() throws Exception {
+		Date date = getDate(2000, 11, 22, 0, 0, 0);
+
+		addDocument(DocumentCreationHelpers.singleDate(FIELD, date));
 
 		String lowerBoundDate = "2000";
 		String upperBoundDate = "11232000000000";
@@ -169,12 +209,6 @@ public abstract class BaseDateRangeTermFilterTestCase
 			upperBoundDate);
 
 		List<String> expectedValues = Arrays.asList();
-
-		assertSearch(dateRangeTermFilter, FIELD, expectedValues);
-
-		dateRangeTermFilter.setDateFormat(dateFormat);
-
-		expectedValues = Arrays.asList("20001122000000");
 
 		assertSearch(dateRangeTermFilter, FIELD, expectedValues);
 	}
