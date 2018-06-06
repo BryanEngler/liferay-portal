@@ -20,16 +20,14 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.Facet;
-import com.liferay.portal.kernel.search.facet.MultiValueFacet;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.search.facet.user.UserFacetFactory;
 import com.liferay.portal.search.test.internal.util.DummyPermissionChecker;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -84,7 +82,7 @@ public class UserFacetedSearcherTest extends BaseFacetedSearcherTestCase {
 		search(searchContext);
 
 		Map<String, Integer> frequencies = Collections.singletonMap(
-			StringUtil.toLowerCase(user.getFullName()), 2);
+			String.valueOf(user.getUserId()), 2);
 
 		assertFrequencies(facet.getFieldName(), searchContext, frequencies);
 	}
@@ -117,11 +115,7 @@ public class UserFacetedSearcherTest extends BaseFacetedSearcherTestCase {
 	}
 
 	protected Facet createUserFacet(SearchContext searchContext) {
-		Facet facet = new MultiValueFacet(searchContext);
-
-		facet.setFieldName(Field.USER_NAME);
-
-		return facet;
+		return _userFacetFactory.newInstance(searchContext);
 	}
 
 	protected void setUpPermissionChecker(long companyId) {
@@ -145,6 +139,9 @@ public class UserFacetedSearcherTest extends BaseFacetedSearcherTestCase {
 	private static JournalArticleLocalService _journalArticleLocalService;
 
 	private static final Locale _locale = LocaleUtil.US;
+
+	@Inject
+	private static UserFacetFactory _userFacetFactory;
 
 	@DeleteAfterTestRun
 	private final List<JournalArticle> _articles = new ArrayList<>();

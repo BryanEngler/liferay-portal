@@ -32,7 +32,6 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.facet.Facet;
 import com.liferay.portal.search.facet.site.SiteFacetFactory;
 import com.liferay.portal.search.facet.type.AssetEntriesFacetFactory;
@@ -246,13 +245,13 @@ public class AggregationFilteringTest extends BaseFacetedSearcherTestCase {
 		);
 	}
 
-	protected static String[] getUserFullNames(User... users) {
+	protected static String[] getUserIds(User... users) {
 		Stream<User> stream = Arrays.stream(users);
 
 		return stream.map(
-			User::getFullName
+			User::getUserId
 		).map(
-			StringUtil::toLowerCase
+			String::valueOf
 		).toArray(
 			String[]::new
 		);
@@ -356,11 +355,10 @@ public class AggregationFilteringTest extends BaseFacetedSearcherTestCase {
 		Map<String, Integer> userFrequencies =
 			userFrequenciesEntrySet.stream().collect(
 				Collectors.toMap(
-					entry -> StringUtil.toLowerCase(
-						entry.getKey().getFullName()),
+					entry -> String.valueOf(entry.getKey().getUserId()),
 					Map.Entry::getValue));
 
-		assertFrequencies(Field.USER_NAME, searchContext, userFrequencies);
+		assertFrequencies(Field.USER_ID, searchContext, userFrequencies);
 	}
 
 	protected Facet createSiteFacet(
@@ -386,7 +384,7 @@ public class AggregationFilteringTest extends BaseFacetedSearcherTestCase {
 	protected Facet createUserFacet(User[] users, SearchContext searchContext) {
 		Facet facet = userFacetFactory.newInstance(searchContext);
 
-		facet.select(getUserFullNames(users));
+		facet.select(getUserIds(users));
 
 		return facet;
 	}
