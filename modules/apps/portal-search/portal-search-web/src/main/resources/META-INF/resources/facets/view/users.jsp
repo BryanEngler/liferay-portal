@@ -25,6 +25,7 @@ userSearchFacetDisplayBuilder.setFrequencyThreshold(dataJSONObject.getInt("frequ
 userSearchFacetDisplayBuilder.setMaxTerms(dataJSONObject.getInt("maxTerms", 10));
 userSearchFacetDisplayBuilder.setParamName(facet.getFieldId());
 userSearchFacetDisplayBuilder.setParamValue(fieldParam);
+userSearchFacetDisplayBuilder.setUserLocalService(UserLocalServiceUtil.getService());
 
 UserSearchFacetDisplayContext userSearchFacetDisplayContext = userSearchFacetDisplayBuilder.build();
 %>
@@ -58,8 +59,8 @@ UserSearchFacetDisplayContext userSearchFacetDisplayContext = userSearchFacetDis
 						%>
 
 							<li class="facet-value">
-								<a class="<%= userSearchFacetTermDisplayContext.isSelected() ? "facet-term-selected" : "facet-term-unselected" %>" data-value="<%= HtmlUtil.escapeAttribute(userSearchFacetTermDisplayContext.getUserName()) %>" href="javascript:;">
-									<%= HtmlUtil.escape(userSearchFacetTermDisplayContext.getUserName()) %>
+								<a class="<%= userSearchFacetTermDisplayContext.isSelected() ? "facet-term-selected" : "facet-term-unselected" %>" data-value="<%= HtmlUtil.escapeAttribute(userSearchFacetTermDisplayContext.getUserId()) %>" href="javascript:;">
+									<%= HtmlUtil.escape(userSearchFacetTermDisplayContext.getDisplayName()) %>
 
 									<c:if test="<%= userSearchFacetTermDisplayContext.isFrequencyVisible() %>">
 										<span class="frequency">(<%= userSearchFacetTermDisplayContext.getFrequency() %>)</span>

@@ -21,12 +21,16 @@ import java.io.Serializable;
  */
 public class UserSearchFacetTermDisplayContext implements Serializable {
 
+	public String getDisplayName() {
+		return _displayName;
+	}
+
 	public int getFrequency() {
 		return _frequency;
 	}
 
-	public String getUserName() {
-		return _userName;
+	public String getUserId() {
+		return _userId;
 	}
 
 	public boolean isFrequencyVisible() {
@@ -35,6 +39,10 @@ public class UserSearchFacetTermDisplayContext implements Serializable {
 
 	public boolean isSelected() {
 		return _selected;
+	}
+
+	public void setDisplayName(String displayName) {
+		_displayName = displayName;
 	}
 
 	public void setFrequency(int frequency) {
@@ -49,13 +57,14 @@ public class UserSearchFacetTermDisplayContext implements Serializable {
 		_selected = selected;
 	}
 
-	public void setUserName(String userName) {
-		_userName = userName;
+	public void setUserId(String userId) {
+		_userId = userId;
 	}
 
+	private String _displayName;
 	private int _frequency;
 	private boolean _frequencyVisible;
 	private boolean _selected;
-	private String _userName;
+	private String _userId;
 
 }

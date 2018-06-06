@@ -16,6 +16,7 @@ package com.liferay.portal.search.web.internal.user.facet.portlet;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.search.facet.Facet;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.facet.user.UserFacetFactory;
 import com.liferay.portal.search.web.internal.facet.display.builder.UserSearchFacetDisplayBuilder;
@@ -108,6 +109,7 @@ public class UserFacetPortlet extends MVCPortlet {
 		UserSearchFacetDisplayBuilder userSearchFacetDisplayBuilder =
 			new UserSearchFacetDisplayBuilder();
 
+		userSearchFacetDisplayBuilder.setUserLocalService(userLocalService);
 		userSearchFacetDisplayBuilder.setFacet(facet);
 		userSearchFacetDisplayBuilder.setFrequenciesVisible(
 			userFacetPortletPreferences.isFrequenciesVisible());
@@ -151,5 +153,8 @@ public class UserFacetPortlet extends MVCPortlet {
 
 	@Reference
 	protected UserFacetFactory userFacetFactory;
+
+	@Reference
+	protected UserLocalService userLocalService;
 
 }
