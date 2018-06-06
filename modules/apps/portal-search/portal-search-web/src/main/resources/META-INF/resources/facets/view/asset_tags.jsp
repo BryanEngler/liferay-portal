@@ -19,6 +19,7 @@
 <%
 AssetTagsSearchFacetDisplayBuilder assetTagsSearchFacetDisplayBuilder = new AssetTagsSearchFacetDisplayBuilder();
 
+assetTagsSearchFacetDisplayBuilder.setAssetTagLocalService(AssetTagLocalServiceUtil.getService());
 assetTagsSearchFacetDisplayBuilder.setDisplayStyle(dataJSONObject.getString("displayStyle", "cloud"));
 assetTagsSearchFacetDisplayBuilder.setFacet(facet);
 assetTagsSearchFacetDisplayBuilder.setFrequenciesVisible(dataJSONObject.getBoolean("showAssetCount", true));

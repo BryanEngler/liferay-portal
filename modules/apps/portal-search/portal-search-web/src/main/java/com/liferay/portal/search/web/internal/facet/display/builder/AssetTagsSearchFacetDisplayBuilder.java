@@ -14,11 +14,14 @@
 
 package com.liferay.portal.search.web.internal.facet.display.builder;
 
+import com.liferay.asset.kernel.model.AssetTag;
+import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.web.internal.facet.display.context.AssetTagsSearchFacetDisplayContext;
 import com.liferay.portal.search.web.internal.facet.display.context.AssetTagsSearchFacetTermDisplayContext;
@@ -52,6 +55,12 @@ public class AssetTagsSearchFacetDisplayBuilder {
 			buildTermDisplayContexts());
 
 		return assetTagsSearchFacetDisplayContext;
+	}
+
+	public void setAssetTagLocalService(
+		AssetTagLocalService assetTagLocalService) {
+
+		_assetTagLocalService = assetTagLocalService;
 	}
 
 	public void setDisplayStyle(String displayStyle) {
@@ -108,6 +117,8 @@ public class AssetTagsSearchFacetDisplayBuilder {
 			assetTagsSearchFacetTermDisplayContext =
 				new AssetTagsSearchFacetTermDisplayContext();
 
+		assetTagsSearchFacetTermDisplayContext.setDisplayName(
+			_getDisplayName(value));
 		assetTagsSearchFacetTermDisplayContext.setFrequency(frequency);
 		assetTagsSearchFacetTermDisplayContext.setFrequencyVisible(
 			_frequenciesVisible);
@@ -216,6 +227,8 @@ public class AssetTagsSearchFacetDisplayBuilder {
 		assetTagsSearchFacetTermDisplayContext.setPopularity(0);
 		assetTagsSearchFacetTermDisplayContext.setSelected(true);
 		assetTagsSearchFacetTermDisplayContext.setValue(_selectedTags.get(0));
+		assetTagsSearchFacetTermDisplayContext.setDisplayName(
+			_getDisplayName(_selectedTags.get(0)));
 
 		return Collections.singletonList(
 			assetTagsSearchFacetTermDisplayContext);
@@ -289,6 +302,18 @@ public class AssetTagsSearchFacetDisplayBuilder {
 		return false;
 	}
 
+	private String _getDisplayName(String assetTagId) {
+		AssetTag assetTag = _assetTagLocalService.fetchAssetTag(
+			GetterUtil.getLong(assetTagId));
+
+		if (assetTag == null) {
+			return "[" + assetTagId + "]";
+		}
+
+		return assetTag.getName();
+	}
+
+	private AssetTagLocalService _assetTagLocalService;
 	private String _displayStyle;
 	private Facet _facet;
 	private boolean _frequenciesVisible;

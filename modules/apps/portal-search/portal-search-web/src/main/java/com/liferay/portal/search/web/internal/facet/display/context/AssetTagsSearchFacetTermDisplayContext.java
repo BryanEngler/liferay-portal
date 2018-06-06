@@ -20,7 +20,7 @@ package com.liferay.portal.search.web.internal.facet.display.context;
 public class AssetTagsSearchFacetTermDisplayContext {
 
 	public String getDisplayName() {
-		return _value;
+		return _displayName;
 	}
 
 	public int getFrequency() {
@@ -43,6 +43,10 @@ public class AssetTagsSearchFacetTermDisplayContext {
 		return _selected;
 	}
 
+	public void setDisplayName(String displayName) {
+		_displayName = displayName;
+	}
+
 	public void setFrequency(int frequency) {
 		_frequency = frequency;
 	}
@@ -63,6 +67,7 @@ public class AssetTagsSearchFacetTermDisplayContext {
 		_value = value;
 	}
 
+	private String _displayName;
 	private int _frequency;
 	private boolean _frequencyVisible;
 	private int _popularity;
