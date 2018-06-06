@@ -481,7 +481,6 @@
 		<copyField dest="all" source="title*" />
 		<copyField dest="all" source="type" />
 		<copyField dest="all" source="userName" />
-		<copyField dest="assetTagNames.raw" source="assetTagNames" />
 		<field indexed="true" multiValued="false" name="_version_" stored="true" type="long" />
 		<field indexed="true" multiValued="true" name="all" stored="false" type="text" />
 		<field indexed="true" multiValued="true" name="ancestorOrganizationIds" stored="true" type="string" />
@@ -492,7 +491,6 @@
 		<field docValues="true" indexed="true" name="assetTagId" stored="true" type="string" />
 		<field indexed="true" multiValued="true" name="assetTagIds" stored="true" type="string" />
 		<field indexed="true" multiValued="true" name="assetTagNames" stored="true" termPositions="true" termVectors="true" type="text" />
-		<field indexed="true" multiValued="true" name="assetTagNames.raw" stored="false" type="string" />
 		<field docValues="true" indexed="true" name="assetVocabularyId" stored="true" type="string" />
 		<field indexed="true" multiValued="true" name="assetVocabularyIds" stored="true" type="string" />
 		<field indexed="true" name="classTypeId" stored="true" type="string" />
