@@ -14,10 +14,12 @@
 
 package com.liferay.portal.search.web.internal.facet.display.context;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.search.web.internal.facet.display.builder.UserSearchFacetDisplayBuilder;
 
@@ -71,9 +73,9 @@ public class UserSearchFacetDisplayContextTest {
 
 	@Test
 	public void testEmptySearchResultsWithPreviousSelection() throws Exception {
-		String userName = RandomTestUtil.randomString();
+		String userId = RandomTestUtil.randomString();
 
-		String paramValue = userName;
+		String paramValue = userId;
 
 		UserSearchFacetDisplayContext userSearchFacetDisplayContext =
 			createDisplayContext(paramValue);
@@ -90,9 +92,12 @@ public class UserSearchFacetDisplayContextTest {
 			userSearchFacetTermDisplayContexts.get(0);
 
 		Assert.assertEquals(
+			_USER_DISPLAY_NAME,
+			userSearchFacetTermDisplayContext.getDisplayName());
+		Assert.assertEquals(
 			0, userSearchFacetTermDisplayContext.getFrequency());
 		Assert.assertEquals(
-			userName, userSearchFacetTermDisplayContext.getUserName());
+			userId, userSearchFacetTermDisplayContext.getUserId());
 		Assert.assertTrue(userSearchFacetTermDisplayContext.isSelected());
 		Assert.assertTrue(
 			userSearchFacetTermDisplayContext.isFrequencyVisible());
@@ -105,13 +110,13 @@ public class UserSearchFacetDisplayContextTest {
 
 	@Test
 	public void testOneTerm() throws Exception {
-		String userName = RandomTestUtil.randomString();
+		String userId = RandomTestUtil.randomString();
 
 		int count = RandomTestUtil.randomInt();
 
-		setUpOneTermCollector(userName, count);
+		setUpOneTermCollector(userId, count);
 
-		String paramValue = "";
+		String paramValue = StringPool.BLANK;
 
 		UserSearchFacetDisplayContext userSearchFacetDisplayContext =
 			createDisplayContext(paramValue);
@@ -128,9 +133,12 @@ public class UserSearchFacetDisplayContextTest {
 			userSearchFacetTermDisplayContexts.get(0);
 
 		Assert.assertEquals(
+			_USER_DISPLAY_NAME,
+			userSearchFacetTermDisplayContext.getDisplayName());
+		Assert.assertEquals(
 			count, userSearchFacetTermDisplayContext.getFrequency());
 		Assert.assertEquals(
-			userName, userSearchFacetTermDisplayContext.getUserName());
+			userId, userSearchFacetTermDisplayContext.getUserId());
 		Assert.assertFalse(userSearchFacetTermDisplayContext.isSelected());
 		Assert.assertTrue(
 			userSearchFacetTermDisplayContext.isFrequencyVisible());
@@ -143,13 +151,13 @@ public class UserSearchFacetDisplayContextTest {
 
 	@Test
 	public void testOneTermWithPreviousSelection() throws Exception {
-		String userName = RandomTestUtil.randomString();
+		String userId = RandomTestUtil.randomString();
 
 		int count = RandomTestUtil.randomInt();
 
-		setUpOneTermCollector(userName, count);
+		setUpOneTermCollector(userId, count);
 
-		String paramValue = userName;
+		String paramValue = userId;
 
 		UserSearchFacetDisplayContext userSearchFacetDisplayContext =
 			createDisplayContext(paramValue);
@@ -166,9 +174,12 @@ public class UserSearchFacetDisplayContextTest {
 			userSearchFacetTermDisplayContexts.get(0);
 
 		Assert.assertEquals(
+			_USER_DISPLAY_NAME,
+			userSearchFacetTermDisplayContext.getDisplayName());
+		Assert.assertEquals(
 			count, userSearchFacetTermDisplayContext.getFrequency());
 		Assert.assertEquals(
-			userName, userSearchFacetTermDisplayContext.getUserName());
+			userId, userSearchFacetTermDisplayContext.getUserId());
 		Assert.assertTrue(userSearchFacetTermDisplayContext.isSelected());
 		Assert.assertTrue(
 			userSearchFacetTermDisplayContext.isFrequencyVisible());
@@ -188,6 +199,8 @@ public class UserSearchFacetDisplayContextTest {
 
 		userSearchFacetDisplayBuilder.setFacet(_facet);
 		userSearchFacetDisplayBuilder.setParamValue(paramValue);
+		userSearchFacetDisplayBuilder.setUserLocalService(
+			createUserLocalService());
 		userSearchFacetDisplayBuilder.setFrequenciesVisible(true);
 		userSearchFacetDisplayBuilder.setFrequencyThreshold(0);
 		userSearchFacetDisplayBuilder.setMaxTerms(0);
@@ -195,7 +208,7 @@ public class UserSearchFacetDisplayContextTest {
 		return userSearchFacetDisplayBuilder.build();
 	}
 
-	protected TermCollector createTermCollector(String userName, int count) {
+	protected TermCollector createTermCollector(String userId, int count) {
 		TermCollector termCollector = Mockito.mock(TermCollector.class);
 
 		Mockito.doReturn(
@@ -205,7 +218,7 @@ public class UserSearchFacetDisplayContextTest {
 		).getFrequency();
 
 		Mockito.doReturn(
-			userName
+			userId
 		).when(
 			termCollector
 		).getTerm();
@@ -213,25 +226,38 @@ public class UserSearchFacetDisplayContextTest {
 		return termCollector;
 	}
 
-	protected User createUser(String userName) throws Exception {
+	protected UserLocalService createUserLocalService() throws Exception {
 		User user = Mockito.mock(User.class);
 
 		Mockito.doReturn(
-			userName
+			_USER_DISPLAY_NAME
 		).when(
 			user
 		).getFullName();
 
-		return user;
+		UserLocalService userLocalService = Mockito.mock(
+			UserLocalService.class);
+
+		Mockito.doReturn(
+			user
+		).when(
+			userLocalService
+		).fetchUser(
+			Mockito.anyLong()
+		);
+
+		return userLocalService;
 	}
 
-	protected void setUpOneTermCollector(String userName, int count) {
+	protected void setUpOneTermCollector(String userId, int count) {
 		Mockito.doReturn(
-			Collections.singletonList(createTermCollector(userName, count))
+			Collections.singletonList(createTermCollector(userId, count))
 		).when(
 			_facetCollector
 		).getTermCollectors();
 	}
+
+	private static final String _USER_DISPLAY_NAME = "user display name";
 
 	@Mock
 	private Facet _facet;
