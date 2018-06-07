@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.web.internal.tag.facet.portlet;
 
+import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -108,6 +109,8 @@ public class TagFacetPortlet extends MVCPortlet {
 		AssetTagsSearchFacetDisplayBuilder assetTagsSearchFacetDisplayBuilder =
 			new AssetTagsSearchFacetDisplayBuilder();
 
+		assetTagsSearchFacetDisplayBuilder.setAssetTagLocalService(
+			assetTagLocalService);
 		assetTagsSearchFacetDisplayBuilder.setDisplayStyle(
 			tagFacetPortletPreferences.getDisplayStyle());
 		assetTagsSearchFacetDisplayBuilder.setFacet(facet);
@@ -137,6 +140,9 @@ public class TagFacetPortlet extends MVCPortlet {
 
 		return facet.getFieldName();
 	}
+
+	@Reference
+	protected AssetTagLocalService assetTagLocalService;
 
 	@Reference
 	protected AssetTagNamesFacetFactory assetTagNamesFacetFactory;

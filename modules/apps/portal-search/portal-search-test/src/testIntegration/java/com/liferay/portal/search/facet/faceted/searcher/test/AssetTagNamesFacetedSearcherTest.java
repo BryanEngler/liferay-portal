@@ -15,6 +15,7 @@
 package com.liferay.portal.search.facet.faceted.searcher.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
@@ -24,7 +25,6 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.facet.Facet;
 import com.liferay.portal.search.facet.tag.AssetTagNamesFacetFactory;
 import com.liferay.portal.search.test.journal.util.JournalArticleBlueprint;
@@ -37,6 +37,7 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.ClassRule;
@@ -82,8 +83,12 @@ public class AssetTagNamesFacetedSearcherTest
 			Arrays.asList(JournalArticle.class.getName(), User.class.getName()),
 			hits, keyword);
 
+		List<AssetTag> tags = userSearchFixture.getAssetTags();
+
+		AssetTag assetTag = tags.get(0);
+
 		Map<String, Integer> frequencies = Collections.singletonMap(
-			StringUtil.toLowerCase(tag), 1);
+			String.valueOf(assetTag.getTagId()), 1);
 
 		assertFrequencies(facet.getFieldName(), searchContext, frequencies);
 	}
@@ -102,7 +107,12 @@ public class AssetTagNamesFacetedSearcherTest
 
 		search(searchContext);
 
-		Map<String, Integer> frequencies = Collections.singletonMap(tag, 1);
+		List<AssetTag> tags = userSearchFixture.getAssetTags();
+
+		AssetTag assetTag = tags.get(0);
+
+		Map<String, Integer> frequencies = Collections.singletonMap(
+			String.valueOf(assetTag.getTagId()), 1);
 
 		assertFrequencies(facet.getFieldName(), searchContext, frequencies);
 	}
@@ -140,9 +150,13 @@ public class AssetTagNamesFacetedSearcherTest
 
 		Facet facet = _assetTagNamesFacetFactory.newInstance(searchContext);
 
-		String tagToLowerCase = StringUtil.toLowerCase(tag);
+		List<AssetTag> tags = userSearchFixture.getAssetTags();
 
-		facet.select(tagToLowerCase);
+		AssetTag assetTag = tags.get(0);
+
+		String tagId = String.valueOf(assetTag.getTagId());
+
+		facet.select(tagId);
 
 		searchContext.addFacet(facet);
 
@@ -151,8 +165,7 @@ public class AssetTagNamesFacetedSearcherTest
 		assertEntryClassNames(
 			Arrays.asList(User.class.getName()), hits, keyword);
 
-		Map<String, Integer> frequencies = Collections.singletonMap(
-			tagToLowerCase, 1);
+		Map<String, Integer> frequencies = Collections.singletonMap(tagId, 1);
 
 		assertFrequencies(facet.getFieldName(), searchContext, frequencies);
 	}

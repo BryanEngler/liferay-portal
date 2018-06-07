@@ -14,6 +14,8 @@
 
 package com.liferay.portal.search.web.internal.facet.display.context;
 
+import com.liferay.asset.kernel.model.AssetTag;
+import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
@@ -92,7 +94,8 @@ public class AssetTagsSearchFacetDisplayContextTest {
 				assetTagsSearchFacetTermDisplayContexts.get(0);
 
 		Assert.assertEquals(
-			term, assetTagsSearchFacetTermDisplayContext.getDisplayName());
+			_TAG_DISPLAY_NAME,
+			assetTagsSearchFacetTermDisplayContext.getDisplayName());
 		Assert.assertEquals(
 			0, assetTagsSearchFacetTermDisplayContext.getFrequency());
 		Assert.assertEquals(
@@ -134,7 +137,8 @@ public class AssetTagsSearchFacetDisplayContextTest {
 				assetTagsSearchFacetTermDisplayContexts.get(0);
 
 		Assert.assertEquals(
-			term, assetTagsSearchFacetTermDisplayContext.getDisplayName());
+			_TAG_DISPLAY_NAME,
+			assetTagsSearchFacetTermDisplayContext.getDisplayName());
 		Assert.assertEquals(
 			frequency, assetTagsSearchFacetTermDisplayContext.getFrequency());
 		Assert.assertEquals(
@@ -176,7 +180,8 @@ public class AssetTagsSearchFacetDisplayContextTest {
 				assetTagsSearchFacetTermDisplayContexts.get(0);
 
 		Assert.assertEquals(
-			term, assetTagsSearchFacetTermDisplayContext.getDisplayName());
+			_TAG_DISPLAY_NAME,
+			assetTagsSearchFacetTermDisplayContext.getDisplayName());
 		Assert.assertEquals(
 			frequency, assetTagsSearchFacetTermDisplayContext.getFrequency());
 		Assert.assertEquals(
@@ -193,12 +198,37 @@ public class AssetTagsSearchFacetDisplayContextTest {
 			assetTagsSearchFacetDisplayContext.isRenderNothing());
 	}
 
+	protected AssetTagLocalService createAssetTagLocalService() {
+		AssetTag assetTag = Mockito.mock(AssetTag.class);
+
+		Mockito.doReturn(
+			_TAG_DISPLAY_NAME
+		).when(
+			assetTag
+		).getName();
+
+		AssetTagLocalService assetTagLocalService = Mockito.mock(
+			AssetTagLocalService.class);
+
+		Mockito.doReturn(
+			assetTag
+		).when(
+			assetTagLocalService
+		).fetchAssetTag(
+			Mockito.anyLong()
+		);
+
+		return assetTagLocalService;
+	}
+
 	protected AssetTagsSearchFacetDisplayContext createDisplayContext(
 		String facetParam) {
 
 		AssetTagsSearchFacetDisplayBuilder assetTagsSearchFacetDisplayBuilder =
 			new AssetTagsSearchFacetDisplayBuilder();
 
+		assetTagsSearchFacetDisplayBuilder.setAssetTagLocalService(
+			createAssetTagLocalService());
 		assetTagsSearchFacetDisplayBuilder.setDisplayStyle("cloud");
 		assetTagsSearchFacetDisplayBuilder.setFacet(_facet);
 		assetTagsSearchFacetDisplayBuilder.setFrequenciesVisible(true);
@@ -240,6 +270,8 @@ public class AssetTagsSearchFacetDisplayContextTest {
 			_facetCollector
 		).getTermCollectors();
 	}
+
+	private static final String _TAG_DISPLAY_NAME = "tag display name";
 
 	@Mock
 	private Facet _facet;

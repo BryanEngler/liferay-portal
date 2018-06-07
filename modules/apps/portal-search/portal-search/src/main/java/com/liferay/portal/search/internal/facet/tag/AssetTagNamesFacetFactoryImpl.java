@@ -35,12 +35,12 @@ public class AssetTagNamesFacetFactoryImpl
 
 	@Override
 	public String getFacetClassName() {
-		return Field.ASSET_TAG_NAMES + ".raw";
+		return Field.ASSET_TAG_IDS;
 	}
 
 	@Override
 	public Facet newInstance(SearchContext searchContext) {
-		return new FacetImpl(Field.ASSET_TAG_NAMES + ".raw", searchContext);
+		return new FacetImpl(Field.ASSET_TAG_IDS, searchContext);
 	}
 
 }
