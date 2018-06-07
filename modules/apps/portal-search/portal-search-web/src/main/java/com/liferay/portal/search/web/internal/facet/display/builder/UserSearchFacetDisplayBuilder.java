@@ -15,9 +15,11 @@
 package com.liferay.portal.search.web.internal.facet.display.builder;
 
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.web.internal.facet.display.context.UserSearchFacetDisplayContext;
@@ -92,6 +94,10 @@ public class UserSearchFacetDisplayBuilder {
 		_paramValues = paramValues;
 	}
 
+	public void setUserLocalService(UserLocalService userLocalService) {
+		_userLocalService = userLocalService;
+	}
+
 	protected UserSearchFacetTermDisplayContext buildTermDisplayContext(
 		TermCollector termCollector) {
 
@@ -105,7 +111,8 @@ public class UserSearchFacetDisplayBuilder {
 		userSearchFacetTermDisplayContext.setFrequencyVisible(
 			_frequenciesVisible);
 		userSearchFacetTermDisplayContext.setSelected(isSelected(term));
-		userSearchFacetTermDisplayContext.setUserName(term);
+		userSearchFacetTermDisplayContext.setUserId(term);
+		userSearchFacetTermDisplayContext.setDisplayName(_getDisplayName(term));
 
 		return userSearchFacetTermDisplayContext;
 	}
@@ -152,7 +159,9 @@ public class UserSearchFacetDisplayBuilder {
 		userSearchFacetTermDisplayContext.setFrequencyVisible(
 			_frequenciesVisible);
 		userSearchFacetTermDisplayContext.setSelected(true);
-		userSearchFacetTermDisplayContext.setUserName(_paramValues.get(0));
+		userSearchFacetTermDisplayContext.setUserId(_paramValues.get(0));
+		userSearchFacetTermDisplayContext.setDisplayName(
+			_getDisplayName(_paramValues.get(0)));
 
 		return Collections.singletonList(userSearchFacetTermDisplayContext);
 	}
@@ -191,11 +200,22 @@ public class UserSearchFacetDisplayBuilder {
 		return false;
 	}
 
+	private String _getDisplayName(String userId) {
+		User user = _userLocalService.fetchUser(GetterUtil.getLong(userId));
+
+		if (user == null) {
+			return "[" + userId + "]";
+		}
+
+		return user.getFullName();
+	}
+
 	private Facet _facet;
 	private boolean _frequenciesVisible;
 	private int _frequencyThreshold;
 	private int _maxTerms;
 	private String _paramName;
 	private List<String> _paramValues = Collections.emptyList();
+	private UserLocalService _userLocalService;
 
 }
