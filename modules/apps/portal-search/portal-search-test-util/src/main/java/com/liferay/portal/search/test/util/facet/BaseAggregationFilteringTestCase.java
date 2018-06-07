@@ -273,7 +273,7 @@ public abstract class BaseAggregationFilteringTestCase
 
 		addDocument(
 			document -> {
-				document.addKeyword(Field.ASSET_TAG_NAMES, tag);
+				document.addKeyword(Field.ASSET_TAG_IDS, tag);
 				document.addKeyword(Field.MODIFIED_DATE, modified);
 				document.addNumber(Field.GROUP_ID, site);
 				document.addKeyword(Field.USER_NAME, user);
