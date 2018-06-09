@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.solr.internal;
 
+import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
@@ -56,6 +57,7 @@ import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.URLCodec;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.constants.SearchContextAttributes;
 import com.liferay.portal.search.solr.configuration.SolrConfiguration;
@@ -526,13 +528,16 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 			_log.debug("Search query " + solrQueryString);
 		}
 
+		String decodedSolrQueryString = _getDecodedQueryString(
+			solrQueryString);
+
 		QueryResponse queryResponse = executeSearchRequest(solrQuery);
 
 		if (_log.isInfoEnabled()) {
 			_log.info(
 				StringBundler.concat(
-					"The search engine processed ", solrQueryString, " in ",
-					queryResponse.getElapsedTime(), " ms"));
+					"The search engine processed ", decodedSolrQueryString,
+					" in ", queryResponse.getElapsedTime(), " ms"));
 		}
 
 		return queryResponse;
@@ -855,6 +860,16 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 
 	@Reference
 	protected Props props;
+
+	private String _getDecodedQueryString(String queryString) {
+		queryString = URLCodec.decodeURL(queryString);
+
+		queryString = StringUtil.replace(
+			queryString, CharPool.AMPERSAND,
+			StringPool.NEW_LINE + StringPool.AMPERSAND);
+
+		return queryString;
+	}
 
 	private static final String _VERSION_FIELD = "_version_";
 
