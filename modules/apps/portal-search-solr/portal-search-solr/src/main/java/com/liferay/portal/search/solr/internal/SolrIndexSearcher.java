@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.dao.search.SearchPaginationUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BaseIndexSearcher;
+import com.liferay.portal.kernel.search.BooleanClause;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
@@ -39,6 +40,8 @@ import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.RangeFacet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
+import com.liferay.portal.kernel.search.filter.BooleanFilter;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.FilterTranslator;
 import com.liferay.portal.kernel.search.highlight.HighlightUtil;
 import com.liferay.portal.kernel.search.query.QueryTranslator;
@@ -65,6 +68,7 @@ import com.liferay.portal.search.solr.stats.StatsTranslator;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -235,6 +239,8 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 	protected void addFacets(SolrQuery solrQuery, SearchContext searchContext) {
 		Map<String, Facet> facets = searchContext.getFacets();
 
+		List<String> postFilterQueries = new ArrayList<>();
+
 		for (Facet facet : facets.values()) {
 			if (facet.isStatic()) {
 				continue;
@@ -256,7 +262,35 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 			solrQuery.add(
 				"f." + facetConfiguration.getFieldName() + ".facet.sort",
 				facetSort);
+
+			BooleanClause<Filter> facetClause =
+				facet.getFacetFilterBooleanClause();
+
+			if (facetClause != null) {
+				BooleanFilter facetBooleanFilter = new BooleanFilter();
+
+				facetBooleanFilter.add(
+					facetClause.getClause(),
+					facetClause.getBooleanClauseOccur());
+
+				String postFilterQuery = _filterTranslator.translate(
+					facetBooleanFilter, searchContext);
+
+				StringBundler sb = new StringBundler(6);
+
+				sb.append(StringPool.OPEN_CURLY_BRACE);
+				sb.append("!tag");
+				sb.append(StringPool.EQUAL);
+				sb.append(facet.getFieldName());
+				sb.append(StringPool.CLOSE_CURLY_BRACE);
+				sb.append(postFilterQuery);
+
+				postFilterQueries.add(sb.toString());
+			}
 		}
+
+		solrQuery.setFilterQueries(
+			postFilterQueries.toArray(new String[postFilterQueries.size()]));
 
 		solrQuery.setFacetLimit(-1);
 	}
@@ -466,12 +500,9 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 			filterQueries.add(filterQuery);
 		}
 
-		if (query.getPostFilter() != null) {
-			String filterQuery = _filterTranslator.translate(
-				query.getPostFilter(), searchContext);
+		String[] postFilterQueries = solrQuery.getFilterQueries();
 
-			filterQueries.add(filterQuery);
-		}
+		Collections.addAll(filterQueries, postFilterQueries);
 
 		if (!filterQueries.isEmpty()) {
 			solrQuery.setFilterQueries(
