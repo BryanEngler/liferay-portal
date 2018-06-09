@@ -15,7 +15,6 @@
 package com.liferay.portal.search.solr.internal.filter;
 
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.DateRangeTermFilter;
@@ -32,8 +31,6 @@ import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.filter.RangeTermFilter;
 import com.liferay.portal.kernel.search.filter.TermFilter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.filter.DateRangeFilter;
 import com.liferay.portal.search.filter.FilterVisitor;
 import com.liferay.portal.search.filter.TermsSetFilter;
@@ -76,10 +73,6 @@ public class SolrFilterTranslator
 			if (luceneQuery != null) {
 				filterString = luceneQuery.toString();
 			}
-		}
-
-		if (searchContext != null) {
-			filterString = includeCompanyId(filterString, searchContext);
 		}
 
 		return filterString;
@@ -159,34 +152,6 @@ public class SolrFilterTranslator
 	@Override
 	public Query visit(TermsSetFilter termsSetFilter) {
 		throw new UnsupportedOperationException();
-	}
-
-	protected String includeCompanyId(
-		String filterString, SearchContext searchContext) {
-
-		StringBundler sb = null;
-
-		if (Validator.isNotNull(filterString)) {
-			sb = new StringBundler(11);
-
-			sb.append(StringPool.PLUS);
-			sb.append(StringPool.OPEN_PARENTHESIS);
-			sb.append(filterString);
-			sb.append(StringPool.CLOSE_PARENTHESIS);
-			sb.append(StringPool.SPACE);
-		}
-		else {
-			sb = new StringBundler(6);
-		}
-
-		sb.append(StringPool.PLUS);
-		sb.append(StringPool.OPEN_PARENTHESIS);
-		sb.append(Field.COMPANY_ID);
-		sb.append(StringPool.COLON);
-		sb.append(searchContext.getCompanyId());
-		sb.append(StringPool.CLOSE_PARENTHESIS);
-
-		return sb.toString();
 	}
 
 	@Reference(unbind = "-")
