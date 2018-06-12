@@ -19,7 +19,6 @@ import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.portal.kernel.search.geolocation.GeoLocationPoint;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
-import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -37,7 +36,6 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 
 import java.text.DateFormat;
-import java.text.Format;
 import java.text.ParseException;
 
 import java.util.Arrays;
@@ -120,26 +118,7 @@ public class DocumentImpl implements Document {
 
 	@Override
 	public void addDate(String name, Date[] values) {
-		if (values == null) {
-			return;
-		}
-
-		String[] datesString = new String[values.length];
-		Long[] datesTime = new Long[values.length];
-
-		for (int i = 0; i < values.length; i++) {
-			Format dateFormat = _getDateFormat();
-
-			datesString[i] = dateFormat.format(values[i]);
-
-			datesTime[i] = values[i].getTime();
-		}
-
-		createSortableNumericField(name, false, datesTime);
-
-		Field field = createField(name, datesString);
-
-		field.setDates(values);
+		_addDate(name, false, values);
 	}
 
 	@Override
@@ -153,24 +132,7 @@ public class DocumentImpl implements Document {
 
 	@Override
 	public void addDateSortable(String name, Date[] values) {
-		if (values == null) {
-			return;
-		}
-
-		String[] datesString = new String[values.length];
-		Long[] datesTime = new Long[values.length];
-
-		for (int i = 0; i < values.length; i++) {
-			Format dateFormat = _getDateFormat();
-
-			datesString[i] = dateFormat.format(values[i]);
-
-			datesTime[i] = values[i].getTime();
-		}
-
-		createSortableNumericField(name, true, datesTime);
-
-		addKeyword(name, datesString);
+		_addDate(name, true, values);
 	}
 
 	@Override
@@ -1128,6 +1090,30 @@ public class DocumentImpl implements Document {
 		sb.append(StringPool.CLOSE_CURLY_BRACE);
 	}
 
+	private void _addDate(String name, boolean typify, Date[] dates) {
+		if (dates == null) {
+			return;
+		}
+
+		Long[] datesAsLongs = new Long[dates.length];
+
+		Date maxDate = new Date(_MAX_DATE_IN_MILLISECONDS);
+
+		for (int i = 0; i < dates.length; i++) {
+			if (dates[i].after(maxDate)) {
+				dates[i] = maxDate;
+			}
+
+			datesAsLongs[i] = dates[i].getTime();
+		}
+
+		createSortableNumericField(name, typify, datesAsLongs);
+
+		Field field = createField(name);
+
+		field.setDates(dates);
+	}
+
 	private void _createSortableTextField(
 		String name, boolean typify, String value) {
 
@@ -1157,17 +1143,10 @@ public class DocumentImpl implements Document {
 			name, typify, Collections.min(Arrays.<String>asList(values)));
 	}
 
-	private Format _getDateFormat() {
-		if (_dateFormat == null) {
-			_dateFormat = FastDateFormatFactoryUtil.getSimpleDateFormat(
-				_INDEX_DATE_FORMAT_PATTERN);
-		}
-
-		return _dateFormat;
-	}
-
 	private static final String _INDEX_DATE_FORMAT_PATTERN = PropsUtil.get(
 		PropsKeys.INDEX_DATE_FORMAT_PATTERN);
+
+	private static final Long _MAX_DATE_IN_MILLISECONDS = 253402300799999L;
 
 	private static final int _SORTABLE_TEXT_FIELDS_TRUNCATED_LENGTH =
 		GetterUtil.getInteger(
@@ -1176,7 +1155,6 @@ public class DocumentImpl implements Document {
 
 	private static final String _UID_PORTLET = "_PORTLET_";
 
-	private static Format _dateFormat;
 	private static final Set<String> _defaultSortableTextFields =
 		SetUtil.fromArray(
 			PropsUtil.getArray(PropsKeys.INDEX_SORTABLE_TEXT_FIELDS));
