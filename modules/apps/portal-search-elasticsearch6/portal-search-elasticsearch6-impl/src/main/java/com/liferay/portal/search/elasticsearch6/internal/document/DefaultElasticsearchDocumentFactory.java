@@ -19,6 +19,8 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.geolocation.GeoLocationPoint;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.IOException;
@@ -46,11 +48,6 @@ import org.osgi.service.component.annotations.Component;
 public class DefaultElasticsearchDocumentFactory
 	implements ElasticsearchDocumentFactory {
 
-	public static final FastDateFormat DATE_FORMAT = FastDateFormat.getInstance(
-		"yyyyMMddHHmmss");
-
-	public static final String DATE_MAX_VALUE = "99950812133000";
-
 	@Override
 	public String getElasticsearchDocument(Document document)
 		throws IOException {
@@ -71,17 +68,24 @@ public class DefaultElasticsearchDocumentFactory
 	protected void addDates(XContentBuilder xContentBuilder, Field field)
 		throws IOException {
 
-		for (Date date : field.getDates()) {
-			String value;
+		Date[] dates = field.getDates();
 
-			if (date.getTime() == Long.MAX_VALUE) {
-				value = DATE_MAX_VALUE;
-			}
-			else {
-				value = DATE_FORMAT.format(date);
-			}
+		if (field.isArray() || (dates.length > 1)) {
+			xContentBuilder.startArray();
+		}
+
+		xContentBuilder.field(field.getName());
+
+		FastDateFormat dateFormat = _getDateFormat();
+
+		for (Date date : dates) {
+			String value = dateFormat.format(date);
 
 			xContentBuilder.value(value);
+		}
+
+		if (field.isArray() || (dates.length > 1)) {
+			xContentBuilder.endArray();
 		}
 	}
 
@@ -90,7 +94,10 @@ public class DefaultElasticsearchDocumentFactory
 
 		String name = field.getName();
 
-		if (!field.isLocalized()) {
+		if (field.isDate()) {
+			addDates(xContentBuilder, field);
+		}
+		else if (!field.isLocalized()) {
 			String[] values = field.getValues();
 
 			if (ArrayUtil.isEmpty(values)) {
@@ -178,9 +185,6 @@ public class DefaultElasticsearchDocumentFactory
 
 			xContentBuilder.value(geoPoint);
 		}
-		else if (field.isDate()) {
-			addDates(xContentBuilder, field);
-		}
 		else {
 			for (String value : values) {
 				xContentBuilder.value(translateValue(field, value));
@@ -253,5 +257,18 @@ public class DefaultElasticsearchDocumentFactory
 
 		return Double.valueOf(value);
 	}
+
+	private FastDateFormat _getDateFormat() {
+		if (_dateFormat != null) {
+			return _dateFormat;
+		}
+
+		_dateFormat = FastDateFormat.getInstance(
+			PropsUtil.get(PropsKeys.INDEX_DATE_FORMAT_PATTERN));
+
+		return _dateFormat;
+	}
+
+	private FastDateFormat _dateFormat;
 
 }
