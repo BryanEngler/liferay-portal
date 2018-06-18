@@ -82,11 +82,12 @@ public class RangeFacetProcessor
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject rangeJSONObject = jsonArray.getJSONObject(i);
 
+			String label = rangeJSONObject.getString("label");
 			String rangeString = rangeJSONObject.getString("range");
 
 			String[] range = RangeParserUtil.parserRange(rangeString);
 
-			rangeAggregationBuilder.addRange(createRange(rangeString, range));
+			rangeAggregationBuilder.addRange(createRange(label, range));
 		}
 	}
 
@@ -104,7 +105,7 @@ public class RangeFacetProcessor
 
 		String[] range = RangeParserUtil.parserRange(rangeString);
 
-		rangeAggregationBuilder.addRange(createRange(rangeString, range));
+		rangeAggregationBuilder.addRange(createRange("custom-range", range));
 	}
 
 	protected Range createRange(String key, String[] range) {
