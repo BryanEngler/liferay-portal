@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.solr.internal.facet;
 
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.search.solr.facet.FacetProcessor;
@@ -39,7 +40,7 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 public class CompositeFacetProcessor implements FacetProcessor<SolrQuery> {
 
 	@Override
-	public void processFacet(SolrQuery searchQuery, Facet facet) {
+	public void processFacet(JSONObject jsonFacetProperties, Facet facet) {
 		Class<?> clazz = facet.getClass();
 
 		FacetProcessor<SolrQuery> facetProcessor = _facetProcessors.get(
@@ -49,7 +50,16 @@ public class CompositeFacetProcessor implements FacetProcessor<SolrQuery> {
 			facetProcessor = _defaultFacetProcessor;
 		}
 
-		facetProcessor.processFacet(searchQuery, facet);
+		facetProcessor.processFacet(jsonFacetProperties, facet);
+	}
+
+	/**
+	 * @deprecated As of 2.0.0, replaced by {@link #processFacet(JSONObject,
+	 *             Facet)}
+	 */
+	@Deprecated
+	@Override
+	public void processFacet(SolrQuery searchQuery, Facet facet) {
 	}
 
 	@Reference(

@@ -14,15 +14,23 @@
 
 package com.liferay.portal.search.solr.internal.facet;
 
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.DefaultTermCollector;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
+import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.solr.common.util.SimpleOrderedMap;
 
 /**
  * @author Raymond Augé
@@ -30,15 +38,30 @@ import java.util.Map;
 public class SolrFacetQueryCollector implements FacetCollector {
 
 	public SolrFacetQueryCollector(
-		String fieldName, Map<String, Integer> facetQueries) {
+		Facet facet, Map<String, SimpleOrderedMap> responseFacetsMap) {
 
-		_fieldName = fieldName;
+		_fieldName = facet.getFieldName();
 
-		for (Map.Entry<String, Integer> entry : facetQueries.entrySet()) {
-			String term = _getTerm(entry.getKey());
-			Integer count = entry.getValue();
+		Map<String, String> rangeMap = _getRangeMap(facet);
 
-			_counts.put(term, count);
+		for (Map.Entry<String, SimpleOrderedMap> entry :
+				responseFacetsMap.entrySet()) {
+
+			String facetName = entry.getKey();
+
+			if (!facetName.startsWith(_fieldName)) {
+				continue;
+			}
+
+			SimpleOrderedMap value = entry.getValue();
+
+			int count = (int)value.get("count");
+
+			String[] nameLabelArray = StringUtil.split(facetName, "_");
+
+			String label = nameLabelArray[1];
+
+			_addCount(label, rangeMap, count);
 		}
 	}
 
@@ -75,8 +98,41 @@ public class SolrFacetQueryCollector implements FacetCollector {
 		return _termCollectors;
 	}
 
-	private String _getTerm(String term) {
-		return term.substring(_fieldName.length() + 1);
+	private void _addCount(
+		String label, Map<String, String> rangeMap, int count) {
+
+		if (label.equals("custom-range")) {
+			_counts.put("custom-range", count);
+
+			return;
+		}
+
+		_counts.put(rangeMap.get(label), count);
+	}
+
+	private Map<String, String> _getRangeMap(Facet facet) {
+		FacetConfiguration facetConfiguration = facet.getFacetConfiguration();
+
+		JSONObject jsonObject = facetConfiguration.getData();
+
+		JSONArray jsonArray = jsonObject.getJSONArray("ranges");
+
+		if (jsonArray == null) {
+			return Collections.emptyMap();
+		}
+
+		Map<String, String> rangeMap = new HashMap<>();
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject rangeJSONObject = jsonArray.getJSONObject(i);
+
+			String label = rangeJSONObject.getString("label");
+			String range = rangeJSONObject.getString("range");
+
+			rangeMap.put(label, range);
+		}
+
+		return rangeMap;
 	}
 
 	private final Map<String, Integer> _counts = new HashMap<>();

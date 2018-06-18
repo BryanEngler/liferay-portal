@@ -16,11 +16,13 @@ package com.liferay.portal.search.solr.internal.facet;
 
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.solr.facet.FacetProcessor;
 
@@ -39,18 +41,25 @@ import org.osgi.service.component.annotations.Component;
 public class RangeFacetProcessor implements FacetProcessor<SolrQuery> {
 
 	@Override
-	public void processFacet(SolrQuery solrQuery, Facet facet) {
+	public void processFacet(JSONObject jsonFacetProperties, Facet facet) {
 		FacetConfiguration facetConfiguration = facet.getFacetConfiguration();
 
-		solrQuery.addFacetField(facetConfiguration.getFieldName());
+		addConfigurationRanges(jsonFacetProperties, facetConfiguration);
 
-		addConfigurationRanges(facetConfiguration, solrQuery);
+		addCustomRange(jsonFacetProperties, facet);
+	}
 
-		addCustomRange(facet, solrQuery);
+	/**
+	 * @deprecated As of 2.0.0, replaced by {@link #processFacet(JSONObject,
+	 *             Facet)}
+	 */
+	@Deprecated
+	@Override
+	public void processFacet(SolrQuery solrQuery, Facet facet) {
 	}
 
 	protected void addConfigurationRanges(
-		FacetConfiguration facetConfiguration, SolrQuery solrQuery) {
+		JSONObject jsonFacetProperties, FacetConfiguration facetConfiguration) {
 
 		JSONObject jsonObject = facetConfiguration.getData();
 
@@ -63,16 +72,22 @@ public class RangeFacetProcessor implements FacetProcessor<SolrQuery> {
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject rangeJSONObject = jsonArray.getJSONObject(i);
 
+			String label = rangeJSONObject.getString("label");
 			String range = rangeJSONObject.getString("range");
 
-			String facetQuery =
-				facetConfiguration.getFieldName() + StringPool.COLON + range;
+			JSONObject facetJSONObject = JSONFactoryUtil.createJSONObject();
 
-			solrQuery.addFacetQuery(facetQuery);
+			_addParameters(facetJSONObject, facetConfiguration, range);
+
+			String facetName =
+				facetConfiguration.getFieldName() + StringPool.UNDERLINE +
+					label;
+
+			jsonFacetProperties.put(facetName, facetJSONObject);
 		}
 	}
 
-	protected void addCustomRange(Facet facet, SolrQuery solrQuery) {
+	protected void addCustomRange(JSONObject jsonFacetProperties, Facet facet) {
 		SearchContext searchContext = facet.getSearchContext();
 
 		String range = GetterUtil.getString(
@@ -84,10 +99,29 @@ public class RangeFacetProcessor implements FacetProcessor<SolrQuery> {
 
 		FacetConfiguration facetConfiguration = facet.getFacetConfiguration();
 
+		JSONObject facetJSONObject = JSONFactoryUtil.createJSONObject();
+
+		_addParameters(facetJSONObject, facetConfiguration, range);
+
+		String facetName =
+			facetConfiguration.getFieldName() + StringPool.UNDERLINE +
+				"custom-range";
+
+		jsonFacetProperties.put(facetName, facetJSONObject);
+	}
+
+	private void _addParameters(
+		JSONObject facetJSONObject, FacetConfiguration facetConfiguration,
+		String range) {
+
+		facetJSONObject.put("excludeTags", facetConfiguration.getFieldName());
+
 		String facetQuery =
 			facetConfiguration.getFieldName() + StringPool.COLON + range;
 
-		solrQuery.addFacetQuery(facetQuery);
+		facetJSONObject.put("q", StringUtil.quote(facetQuery, StringPool.AT));
+
+		facetJSONObject.put("type", "query");
 	}
 
 }

@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.solr.facet;
 
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.facet.Facet;
 
 /**
@@ -21,6 +22,13 @@ import com.liferay.portal.kernel.search.facet.Facet;
  */
 public interface FacetProcessor<T> {
 
+	public void processFacet(JSONObject jsonFacetProperties, Facet facet);
+
+	/**
+	 * @deprecated As of 2.0.0, replaced by {@link #processFacet(JSONObject,
+	 *             Facet)}
+	 */
+	@Deprecated
 	public void processFacet(T searchQuery, Facet facet);
 
 }

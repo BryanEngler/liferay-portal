@@ -17,33 +17,26 @@ package com.liferay.portal.search.solr.internal.facet;
 import com.liferay.portal.kernel.search.facet.collector.DefaultTermCollector;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
-import com.liferay.portal.kernel.util.ListUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.apache.solr.client.solrj.response.FacetField;
-import org.apache.solr.client.solrj.response.FacetField.Count;
+import org.apache.solr.common.util.SimpleOrderedMap;
 
 /**
  * @author Raymond Augé
  */
 public class SolrFacetFieldCollector implements FacetCollector {
 
-	public SolrFacetFieldCollector(String fieldName, FacetField facetField) {
+	public SolrFacetFieldCollector(String fieldName, Object bucketList) {
 		_fieldName = fieldName;
 
-		List<Count> counts = facetField.getValues();
-
-		if (ListUtil.isNotEmpty(counts)) {
-			for (Count count : counts) {
-				if (count.getCount() > 0) {
-					_counts.put(count.getName(), count);
-				}
-			}
-		}
+		_counts.putAll(getCounts((SimpleOrderedMap)bucketList));
 	}
 
 	@Override
@@ -53,15 +46,15 @@ public class SolrFacetFieldCollector implements FacetCollector {
 
 	@Override
 	public TermCollector getTermCollector(String term) {
-		Count count = _counts.get(term);
+		int count = 0;
 
-		int occurences = 0;
-
-		if (count != null) {
-			occurences = (int)count.getCount();
+		try {
+			count = _counts.get(term);
+		}
+		catch (Exception e) {
 		}
 
-		return new DefaultTermCollector(term, occurences);
+		return new DefaultTermCollector(term, count);
 	}
 
 	@Override
@@ -72,11 +65,11 @@ public class SolrFacetFieldCollector implements FacetCollector {
 
 		List<TermCollector> termCollectors = new ArrayList<>();
 
-		for (Map.Entry<String, Count> entry : _counts.entrySet()) {
-			Count count = entry.getValue();
+		for (Map.Entry<String, Integer> entry : _counts.entrySet()) {
+			int count = entry.getValue();
 
 			TermCollector termCollector = new DefaultTermCollector(
-				entry.getKey(), (int)count.getCount());
+				entry.getKey(), count);
 
 			termCollectors.add(termCollector);
 		}
@@ -86,7 +79,22 @@ public class SolrFacetFieldCollector implements FacetCollector {
 		return _termCollectors;
 	}
 
-	private final Map<String, Count> _counts = new LinkedHashMap<>();
+	protected Map<String, Integer> getCounts(SimpleOrderedMap bucketList) {
+		Map<String, Integer> bucketValueCountsMap = new HashMap<>();
+
+		List<SimpleOrderedMap> buckets = (ArrayList)bucketList.get("buckets");
+
+		Stream<SimpleOrderedMap> stream = buckets.stream();
+
+		bucketValueCountsMap = stream.collect(
+			Collectors.toMap(
+				bucket -> (String)bucket.get("val"),
+				bucket -> (Integer)bucket.get("count")));
+
+		return bucketValueCountsMap;
+	}
+
+	private final Map<String, Integer> _counts = new LinkedHashMap<>();
 	private final String _fieldName;
 	private List<TermCollector> _termCollectors;
 

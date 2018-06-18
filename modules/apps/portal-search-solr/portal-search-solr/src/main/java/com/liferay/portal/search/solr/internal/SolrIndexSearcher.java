@@ -14,10 +14,13 @@
 
 package com.liferay.portal.search.solr.internal;
 
+import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.search.SearchPaginationUtil;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BaseIndexSearcher;
@@ -39,7 +42,6 @@ import com.liferay.portal.kernel.search.StatsResults;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.RangeFacet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
-import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.FilterTranslator;
@@ -69,7 +71,6 @@ import com.liferay.portal.search.solr.stats.StatsTranslator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -83,7 +84,6 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrQuery.SortClause;
 import org.apache.solr.client.solrj.SolrRequest.METHOD;
-import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FieldStatsInfo;
 import org.apache.solr.client.solrj.response.Group;
 import org.apache.solr.client.solrj.response.GroupCommand;
@@ -91,7 +91,8 @@ import org.apache.solr.client.solrj.response.GroupResponse;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.apache.solr.common.params.FacetParams;
+import org.apache.solr.common.util.NamedList;
+import org.apache.solr.common.util.SimpleOrderedMap;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -239,6 +240,7 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 	protected void addFacets(SolrQuery solrQuery, SearchContext searchContext) {
 		Map<String, Facet> facets = searchContext.getFacets();
 
+		JSONObject jsonFacetProperties = JSONFactoryUtil.createJSONObject();
 		List<String> postFilterQueries = new ArrayList<>();
 
 		for (Facet facet : facets.values()) {
@@ -246,22 +248,7 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 				continue;
 			}
 
-			FacetConfiguration facetConfiguration =
-				facet.getFacetConfiguration();
-
-			_facetProcessor.processFacet(solrQuery, facet);
-
-			String facetSort = FacetParams.FACET_SORT_COUNT;
-
-			String order = facetConfiguration.getOrder();
-
-			if (order.equals("OrderValueAsc")) {
-				facetSort = FacetParams.FACET_SORT_INDEX;
-			}
-
-			solrQuery.add(
-				"f." + facetConfiguration.getFieldName() + ".facet.sort",
-				facetSort);
+			_facetProcessor.processFacet(jsonFacetProperties, facet);
 
 			BooleanClause<Filter> facetClause =
 				facet.getFacetFilterBooleanClause();
@@ -289,10 +276,18 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 			}
 		}
 
+		if (jsonFacetProperties.length() > 0) {
+			String jsonString = StringUtil.removeChars(
+				jsonFacetProperties.toString(), CharPool.QUOTE);
+
+			jsonString = StringUtil.replace(
+				jsonString, CharPool.AT, CharPool.QUOTE);
+
+			solrQuery.add("json.facet", jsonString);
+		}
+
 		solrQuery.setFilterQueries(
 			postFilterQueries.toArray(new String[postFilterQueries.size()]));
-
-		solrQuery.setFacetLimit(-1);
 	}
 
 	protected void addGroupBy(
@@ -566,20 +561,19 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 	}
 
 	protected FacetCollector getFacetCollector(
-		Facet facet, Map<String, FacetField> facetFieldsMap,
-		QueryResponse queryResponse) {
-
-		String fieldName = facet.getFieldName();
+		Facet facet, Map responseFacetsMap) {
 
 		FacetCollector facetCollector = null;
 
 		if (facet instanceof RangeFacet) {
 			facetCollector = new SolrFacetQueryCollector(
-				fieldName, queryResponse.getFacetQuery());
+				facet, responseFacetsMap);
 		}
 		else {
+			String fieldName = facet.getFieldName();
+
 			facetCollector = new SolrFacetFieldCollector(
-				fieldName, facetFieldsMap.get(fieldName));
+				fieldName, responseFacetsMap.get(fieldName));
 		}
 
 		return facetCollector;
@@ -721,24 +715,19 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 	protected void updateFacetCollectors(
 		QueryResponse queryResponse, SearchContext searchContext) {
 
-		List<FacetField> facetFields = queryResponse.getFacetFields();
+		NamedList response = queryResponse.getResponse();
 
-		if (ListUtil.isEmpty(facetFields)) {
-			return;
-		}
+		SimpleOrderedMap responseFacets = (SimpleOrderedMap)response.get(
+			"facets");
 
-		Map<String, FacetField> facetFieldsMap = new HashMap<>();
-
-		for (FacetField facetField : facetFields) {
-			facetFieldsMap.put(facetField.getName(), facetField);
-		}
+		Map responseFacetsMap = responseFacets.asMap(0);
 
 		Map<String, Facet> facetsMap = searchContext.getFacets();
 
 		for (Facet facet : facetsMap.values()) {
 			if (!facet.isStatic()) {
 				facet.setFacetCollector(
-					getFacetCollector(facet, facetFieldsMap, queryResponse));
+					getFacetCollector(facet, responseFacetsMap));
 			}
 		}
 	}
