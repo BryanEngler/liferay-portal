@@ -25,7 +25,6 @@ import com.liferay.portal.kernel.util.CalendarFactory;
 import com.liferay.portal.kernel.util.DateFormatFactory;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.web.internal.modified.facet.builder.DateRangeFactory;
 
 import java.io.Serializable;
 
@@ -54,8 +53,6 @@ public class ModifiedFacetDisplayBuilder implements Serializable {
 		_calendarFactory = calendarFactory;
 		_dateFormatFactory = dateFormatFactory;
 		_http = http;
-
-		_dateRangeFactory = new DateRangeFactory(dateFormatFactory);
 	}
 
 	public ModifiedFacetDisplayContext build() {
@@ -181,7 +178,7 @@ public class ModifiedFacetDisplayBuilder implements Serializable {
 			new ModifiedFacetTermDisplayContext();
 
 		modifiedFacetTermDisplayContext.setFrequency(
-			getFrequency(getTermCollector(range)));
+			getFrequency(getTermCollector(label)));
 		modifiedFacetTermDisplayContext.setLabel(label);
 		modifiedFacetTermDisplayContext.setRange(range);
 		modifiedFacetTermDisplayContext.setRangeURL(getLabeledRangeURL(label));
@@ -216,8 +213,7 @@ public class ModifiedFacetDisplayBuilder implements Serializable {
 
 		FacetCollector facetCollector = _facet.getFacetCollector();
 
-		return facetCollector.getTermCollector(
-			_dateRangeFactory.getRangeString(_from, _to));
+		return facetCollector.getTermCollector("custom-range");
 	}
 
 	protected String getCustomRangeURL() {
@@ -261,14 +257,14 @@ public class ModifiedFacetDisplayBuilder implements Serializable {
 		return dataJSONObject.getJSONArray("ranges");
 	}
 
-	protected TermCollector getTermCollector(String range) {
+	protected TermCollector getTermCollector(String key) {
 		FacetCollector facetCollector = _facet.getFacetCollector();
 
 		if (facetCollector == null) {
 			return null;
 		}
 
-		return facetCollector.getTermCollector(range);
+		return facetCollector.getTermCollector(key);
 	}
 
 	protected boolean isCustomRangeSelected() {
@@ -302,7 +298,6 @@ public class ModifiedFacetDisplayBuilder implements Serializable {
 	private final CalendarFactory _calendarFactory;
 	private String _currentURL;
 	private final DateFormatFactory _dateFormatFactory;
-	private final DateRangeFactory _dateRangeFactory;
 	private Facet _facet;
 	private String _from;
 	private final Http _http;
