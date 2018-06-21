@@ -53,6 +53,7 @@ public class ModifiedFacetBuilder {
 		String rangeString = _getSelectedRangeString();
 
 		if (!Validator.isBlank(rangeString)) {
+			_searchContext.setAttribute(facet.getFieldName(), rangeString);
 			facet.select(rangeString);
 		}
 
