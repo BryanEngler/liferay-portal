@@ -502,7 +502,7 @@
 		<field indexed="true" name="configurationModelFactoryPid" stored="true" type="string" />
 		<field indexed="true" name="configurationModelId" stored="true" type="string" />
 		<field indexed="true" name="content" stored="true" termPositions="true" termVectors="true" type="text" />
-		<field indexed="true" name="createDate" stored="true" type="string" />
+		<field indexed="true" name="createDate" stored="true" type="date" />
 		<field indexed="true" name="dataRepositoryId" stored="true" type="string" />
 		<field indexed="true" name="ddmContent" stored="true" termPositions="true" termVectors="true" type="text" />
 		<field docValues="true" indexed="true" name="ddmStructureKey" stored="true" type="string" />
@@ -510,12 +510,12 @@
 		<field indexed="true" name="defaultLanguageId" stored="true" type="string" />
 		<field indexed="true" name="description" stored="true" termPositions="true" termVectors="true" type="text" />
 		<field indexed="true" name="discussion" stored="true" type="string" />
-		<field docValues="true" indexed="true" name="displayDate" stored="true" type="string" />
+		<field docValues="true" indexed="true" name="displayDate" stored="true" type="date" />
 		<field indexed="true" name="emailAddress" stored="true" type="string" />
 		<field docValues="true" indexed="true" name="endTime" stored="true" type="string" />
 		<field docValues="true" indexed="true" name="entryClassName" stored="true" type="string" />
 		<field docValues="true" indexed="true" name="entryClassPK" stored="true" type="string" />
-		<field docValues="true" indexed="true" name="expirationDate" stored="true" type="string" />
+		<field docValues="true" indexed="true" name="expirationDate" stored="true" type="date" />
 		<field indexed="true" name="extension" stored="true" type="string" />
 		<field indexed="true" name="fileEntryTypeId" stored="true" type="string" />
 		<field indexed="true" name="firstName" stored="true" type="text_lowercase" />
@@ -533,7 +533,7 @@
 		<field indexed="true" name="leftOrganizationId" stored="true" type="tlong" />
 		<field indexed="true" name="middleName" stored="true" type="text_lowercase" />
 		<field indexed="true" name="mimeType" stored="true" type="string" />
-		<field docValues="true" indexed="true" name="modified" stored="true" type="string" />
+		<field docValues="true" indexed="true" name="modified" stored="true" type="date" />
 		<field docValues="true" indexed="true" name="modified_sortable" stored="true" type="long" />
 		<field indexed="true" name="name" stored="true" termPositions="true" termVectors="true" type="text" />
 		<field indexed="true" name="nodeId" stored="true" type="string" />
@@ -544,11 +544,11 @@
 		<field indexed="true" name="path" stored="true" type="string" />
 		<field indexed="true" name="portletId" stored="true" type="string" />
 		<field docValues="true" indexed="true" name="priority" stored="true" type="double" />
-		<field docValues="true" indexed="true" name="publishDate" stored="true" type="string" />
+		<field docValues="true" indexed="true" name="publishDate" stored="true" type="date" />
 		<field indexed="true" name="readCount" stored="true" type="string" />
 		<field indexed="true" name="recordSetId" stored="true" type="string" />
 		<field docValues="true" indexed="true" name="removedByUser" stored="true" type="string" />
-		<field docValues="true" indexed="true" name="removedDate" stored="true" type="string" />
+		<field docValues="true" indexed="true" name="removedDate" stored="true" type="date" />
 		<field indexed="true" name="rightOrganizationId" stored="true" type="tlong" />
 		<field docValues="true" indexed="true" multiValued="true" name="roleId" stored="true" type="string" />
 		<field indexed="true" multiValued="true" name="roleIds" stored="true" type="string" />
