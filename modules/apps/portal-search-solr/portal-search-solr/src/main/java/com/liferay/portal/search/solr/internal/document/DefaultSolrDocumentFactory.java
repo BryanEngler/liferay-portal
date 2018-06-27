@@ -22,9 +22,11 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.solr.document.SolrDocumentFactory;
 
+import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.solr.common.SolrInputDocument;
 
 import org.osgi.service.component.annotations.Component;
@@ -35,6 +37,9 @@ import org.osgi.service.component.annotations.Component;
 @Component(immediate = true, service = SolrDocumentFactory.class)
 public class DefaultSolrDocumentFactory implements SolrDocumentFactory {
 
+	public static final FastDateFormat DATE_FORMAT = FastDateFormat.getInstance(
+		"yyyyMMddHHmmss");
+
 	@Override
 	public SolrInputDocument getSolrInputDocument(Document document) {
 		SolrInputDocument solrInputDocument = new SolrInputDocument();
@@ -44,7 +49,14 @@ public class DefaultSolrDocumentFactory implements SolrDocumentFactory {
 		for (Field field : fields.values()) {
 			String name = field.getName();
 
-			if (!field.isLocalized()) {
+			if (field.isDate()) {
+				for (Date date : field.getDates()) {
+					String value = DATE_FORMAT.format(date);
+
+					addField(solrInputDocument, field, value, name);
+				}
+			}
+			else if (!field.isLocalized()) {
 				for (String value : field.getValues()) {
 					if (value == null) {
 						continue;
