@@ -103,7 +103,7 @@ public class RangeFacetProcessor
 		SearchContext searchContext = facet.getSearchContext();
 
 		String rangeString = GetterUtil.getString(
-			searchContext.getAttribute(facet.getFieldId()));
+			searchContext.getAttribute(facet.getFieldId() + "_custom-range"));
 
 		if (Validator.isNull(rangeString)) {
 			return;
