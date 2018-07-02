@@ -96,14 +96,14 @@ public class RangeFacetProcessor implements FacetProcessor<SolrQuery> {
 	protected void addCustomRange(Map<String, JSONObject> map, Facet facet) {
 		SearchContext searchContext = facet.getSearchContext();
 
-		String range = GetterUtil.getString(
-			searchContext.getAttribute(facet.getFieldId()));
+		String rangeString = GetterUtil.getString(
+			searchContext.getAttribute(facet.getFieldId() + "_custom-range"));
 
-		if (Validator.isNull(range)) {
+		if (Validator.isNull(rangeString)) {
 			return;
 		}
 
-		putFacetParameters(map, facet, "custom-range", range);
+		putFacetParameters(map, facet, "custom-range", rangeString);
 	}
 
 	protected JSONObject getFacetParameters(Facet facet, String range) {
