@@ -151,7 +151,7 @@ public class ModifiedFacetBuilderTest {
 		String from, String to, SearchContext searchContext) {
 
 		assertRange(from, to, (String)searchContext.getAttribute(
-			Field.MODIFIED_DATE));
+			Field.MODIFIED_DATE + "_custom-range"));
 	}
 
 	protected void assertRange(String from, String to, String range) {
