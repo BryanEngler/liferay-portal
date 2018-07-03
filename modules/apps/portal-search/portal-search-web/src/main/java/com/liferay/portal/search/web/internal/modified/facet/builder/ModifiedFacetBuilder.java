@@ -146,7 +146,7 @@ public class ModifiedFacetBuilder {
 			!Validator.isBlank(_customRangeTo)) {
 
 			String rangeString = _dateRangeFactory.getRangeString(
-				_customRangeFrom, _customRangeTo);
+				_customRangeFrom, _customRangeTo, _searchContext.getTimeZone());
 
 			_searchContext.setAttribute(
 				facet.getFieldId() + "_custom-range", rangeString);

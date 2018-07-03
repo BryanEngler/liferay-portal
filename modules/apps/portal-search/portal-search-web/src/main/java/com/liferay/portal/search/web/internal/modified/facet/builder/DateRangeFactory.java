@@ -23,9 +23,12 @@ import com.liferay.portal.kernel.util.StringUtil;
 
 import java.text.DateFormat;
 
+import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * @author Adam Brandizzi
@@ -41,13 +44,36 @@ public class DateRangeFactory {
 		return replaceAliases(_rangeMap.get(label), calendar);
 	}
 
-	public String getRangeString(String from, String to) {
+	public String getRangeString(String from, String to, TimeZone timeZone) {
 		StringBundler sb = new StringBundler(5);
 
+		DateFormat localDateFormat = _dateFormatFactory.getSimpleDateFormat(
+			"yyyyMMddHHmmss", timeZone);
+
+		DateFormat utcDateFormat = _dateFormatFactory.getSimpleDateFormat(
+			"yyyyMMddHHmmss");
+
+		String fromDayString = _normalizeRangeBoundary(from, "000000");
+		String toDayString =_normalizeRangeBoundary(to, "235959");
+
+		Date fromUTCDate = null;
+		Date toUTCDate = null;
+
+		try {
+			fromUTCDate = localDateFormat.parse(fromDayString);
+			toUTCDate = localDateFormat.parse(toDayString);
+		}
+		catch (ParseException e) {
+
+		}
+
+		String fromUTC = utcDateFormat.format(fromUTCDate);
+		String toUTC = utcDateFormat.format(toUTCDate);
+
 		sb.append("[");
-		sb.append(_normalizeRangeBoundary(from, "000000"));
+		sb.append(fromUTC);
 		sb.append(" TO ");
-		sb.append(_normalizeRangeBoundary(to, "235959"));
+		sb.append(toUTC);
 		sb.append("]");
 
 		return sb.toString();

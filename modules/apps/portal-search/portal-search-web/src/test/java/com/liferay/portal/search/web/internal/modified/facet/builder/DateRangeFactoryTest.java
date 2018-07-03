@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.web.internal.modified.facet.builder;
 
+import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.portal.util.DateFormatFactoryImpl;
 
 import java.util.Calendar;
@@ -31,7 +32,8 @@ public class DateRangeFactoryTest {
 	public void testBoundedRange() {
 		Assert.assertEquals(
 			"[20180131000000 TO 20180228235959]",
-			_dateRangeFactory.getRangeString("2018-01-31", "2018-02-28"));
+			_dateRangeFactory.getRangeString("2018-01-31", "2018-02-28",
+				TimeZoneUtil.GMT));
 	}
 
 	@Test
