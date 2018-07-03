@@ -15,7 +15,6 @@
 package com.liferay.portal.search.document.internal;
 
 import com.liferay.portal.kernel.search.DocumentImpl;
-import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.search.test.util.indexing.DocumentFixture;
 
@@ -44,21 +43,12 @@ public class DocumentImplTest {
 
 	@Test
 	public void testAddDate() throws Exception {
-		clearDateFormat();
-
 		documentImpl.addDate(RandomTestUtil.randomString(), new Date());
 	}
 
 	@Test
 	public void testAddDateSortable() throws Exception {
-		clearDateFormat();
-
 		documentImpl.addDateSortable(RandomTestUtil.randomString(), new Date());
-	}
-
-	protected void clearDateFormat() {
-		ReflectionTestUtil.setFieldValue(
-			DocumentImpl.class, "_dateFormat", null);
 	}
 
 	protected DocumentFixture documentFixture = new DocumentFixture();
