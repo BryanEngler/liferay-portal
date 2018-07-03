@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.solr.internal.facet;
 
+import com.liferay.portal.search.solr.internal.util.DateFormatUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -21,7 +22,9 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
+import com.liferay.portal.kernel.search.facet.util.RangeParserUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
@@ -109,7 +112,24 @@ public class RangeFacetProcessor implements FacetProcessor<SolrQuery> {
 	protected JSONObject getFacetParameters(Facet facet, String range) {
 		JSONObject jsonObject = jsonFactory.createJSONObject();
 
-		jsonObject.put("q", facet.getFieldName() + StringPool.COLON + range);
+		String query = facet.getFieldName() + StringPool.COLON + range;
+
+		String format = getFormat();
+
+		if (format != null) {
+			String[] ranges = RangeParserUtil.parserRange(range);
+
+			String from =
+				DateFormatUtil.getFormattedDateString(format, ranges[0]);
+			String to =
+				DateFormatUtil.getFormattedDateString(format, ranges[1]);
+
+			query = StringBundler.concat(facet.getFieldName(),
+				StringPool.COLON, StringPool.OPEN_BRACKET, from, " TO ", to,
+				StringPool.CLOSE_BRACKET);
+		}
+
+		jsonObject.put("q", query);
 
 		jsonObject.put("type", "query");
 
@@ -125,6 +145,10 @@ public class RangeFacetProcessor implements FacetProcessor<SolrQuery> {
 		JSONObject jsonObject = getFacetParameters(facet, range);
 
 		map.put(name, jsonObject);
+	}
+
+	protected String getFormat() {
+		return null;
 	}
 
 	@Reference

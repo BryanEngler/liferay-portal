@@ -25,4 +25,9 @@ import org.osgi.service.component.annotations.Component;
 	service = FacetProcessor.class
 )
 public class DateRangeFacetProcessor extends RangeFacetProcessor {
+
+	protected String getFormat() {
+		return "yyyyMMddHHmmss";
+	}
+
 }

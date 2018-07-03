@@ -15,6 +15,7 @@
 package com.liferay.portal.search.solr.internal.filter;
 
 import com.liferay.portal.search.filter.DateRangeFilter;
+import com.liferay.portal.search.solr.internal.util.DateFormatUtil;
 
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermRangeQuery;
@@ -30,9 +31,15 @@ public class DateRangeFilterTranslatorImpl
 
 	@Override
 	public Query translate(DateRangeFilter dateRangeFilter) {
+		String from = DateFormatUtil.getFormattedDateString(
+			dateRangeFilter.getFormat(), dateRangeFilter.getFrom());
+
+		String to = DateFormatUtil.getFormattedDateString(
+			dateRangeFilter.getFormat(), dateRangeFilter.getTo());
+
 		return TermRangeQuery.newStringRange(
-			dateRangeFilter.getFieldName(), dateRangeFilter.getFrom(),
-			dateRangeFilter.getTo(), dateRangeFilter.isIncludeLower(),
+			dateRangeFilter.getFieldName(), from, to,
+			dateRangeFilter.isIncludeLower(),
 			dateRangeFilter.isIncludeUpper());
 	}
 
