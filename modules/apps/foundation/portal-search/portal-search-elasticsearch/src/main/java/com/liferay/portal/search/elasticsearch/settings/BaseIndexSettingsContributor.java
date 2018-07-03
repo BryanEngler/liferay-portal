@@ -44,7 +44,7 @@ public class BaseIndexSettingsContributor implements IndexSettingsContributor {
 	}
 
 	/**
-	 * @deprecated As of Judson, replaced by {@link #contribute(String,
+	 * @deprecated As of Judson (7.1.x), replaced by {@link #contribute(String,
 	 *             TypeMappingsHelper)}
 	 */
 	@Deprecated
