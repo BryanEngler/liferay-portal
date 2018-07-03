@@ -73,6 +73,7 @@ import com.liferay.portal.search.solr.stats.StatsTranslator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -85,6 +86,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -693,10 +695,31 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 			Collection<Object> fieldValues = solrDocument.getFieldValues(
 				fieldName);
 
-			Field field = new Field(
-				fieldName,
-				ArrayUtil.toStringArray(
-					fieldValues.toArray(new Object[fieldValues.size()])));
+			String[] fieldValuesStringArray = new String[fieldValues.size()];
+
+			int i = 0;
+
+			for (Object value : fieldValues) {
+				String stringValue;
+
+				if (value instanceof Date) {
+					Date date = (Date)value;
+
+					FastDateFormat dateFormat = FastDateFormat.getInstance(
+						"yyyyMMddHHmmss");
+
+					stringValue = dateFormat.format(date);
+				}
+				else {
+					stringValue = String.valueOf(value);
+				}
+
+				fieldValuesStringArray[i] = stringValue;
+
+				i++;
+			}
+
+			Field field = new Field(fieldName, fieldValuesStringArray);
 
 			document.add(field);
 		}
