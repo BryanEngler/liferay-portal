@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
+import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.search.constants.SearchContextAttributes;
 import com.liferay.portal.search.facet.Facet;
 import com.liferay.portal.search.facet.FacetFactory;
@@ -41,13 +42,17 @@ import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
 
 import java.io.Serializable;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+import com.liferay.portal.util.DateFormatFactoryImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,6 +68,7 @@ public abstract class BaseAggregationFilteringTestCase
 	public void setUp() throws Exception {
 		super.setUp();
 
+		setUpDateFormatFactoryUtil();
 		setUpJSONFactoryUtil();
 	}
 
@@ -292,14 +298,24 @@ public abstract class BaseAggregationFilteringTestCase
 		dataJSONObject.put("ranges", jsonArray);
 	}
 
+	protected Date getDate(String modified) throws Exception {
+		DateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+
+		Date date = format.parse(modified);
+
+		return date;
+	}
+
 	protected void addDocument(
 			String tag, String modified, long site, String user)
 		throws Exception {
 
+		Date date = getDate(modified);
+
 		addDocument(
 			document -> {
 				document.addKeyword(Field.ASSET_TAG_NAMES, tag);
-				document.addKeyword(Field.MODIFIED_DATE, modified);
+				document.addDate(Field.MODIFIED_DATE, date);
 				document.addNumber(Field.GROUP_ID, site);
 				document.addKeyword(Field.USER_NAME, user);
 			});
@@ -328,6 +344,13 @@ public abstract class BaseAggregationFilteringTestCase
 
 	protected Hits doSearch(SearchContext searchContext) {
 		return search(searchContext);
+	}
+
+	protected void setUpDateFormatFactoryUtil() {
+		DateFormatFactoryUtil dateFormatFactoryUtil =
+			new DateFormatFactoryUtil();
+
+		dateFormatFactoryUtil.setDateFormatFactory(new DateFormatFactoryImpl());
 	}
 
 	protected void setUpJSONFactoryUtil() {
