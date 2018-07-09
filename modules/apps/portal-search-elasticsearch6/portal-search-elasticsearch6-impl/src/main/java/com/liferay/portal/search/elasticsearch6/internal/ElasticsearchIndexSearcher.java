@@ -720,7 +720,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		if (message.contains(
 				"Fielddata is disabled on text fields by default.")) {
 
-			_log.error("Unable to aggregate facet on a non-keyword field", e);
+			_log.error("Unable to aggregate facet on a nonkeyword field", e);
 
 			return true;
 		}
