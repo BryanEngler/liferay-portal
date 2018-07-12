@@ -17,7 +17,7 @@
 		<fieldType class="solr.StrField" indexed="false" name="ignored" stored="false" />
 		<fieldType class="solr.TrieIntField" name="integer" omitNorms="true" positionIncrementGap="0" precisionStep="0" />
 		<fieldType class="solr.TrieLongField" name="long" omitNorms="true" positionIncrementGap="0" precisionStep="0" />
-		<fieldType class="solr.StrField" name="string" omitNorms="true" sortMissingLast="true" />
+		<fieldType class="solr.StrField" name="keyword" omitNorms="true" sortMissingLast="true" />
 		<fieldType class="solr.TextField" name="string_keyword_lowercase" omitNorms="true" sortMissingLast="true">
 			<analyzer>
 				<tokenizer class="solr.KeywordTokenizerFactory" />
