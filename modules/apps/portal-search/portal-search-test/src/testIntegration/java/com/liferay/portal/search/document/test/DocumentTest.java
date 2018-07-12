@@ -419,14 +419,14 @@ public class DocumentTest {
 
 	protected void populateNumbers() {
 		populateNumbers(
-			"firstuser", 1e-11, 8e-5F, Integer.MAX_VALUE, Long.MIN_VALUE);
+			"firstuser", 1e-11, 8e-2F, Integer.MAX_VALUE, Long.MIN_VALUE);
 		populateNumberArrays(
 			"firstuser", new Double[] {1e-11, 2e-11, 3e-11},
 			new Float[] {8e-5F, 8e-5F, 8e-5F}, new Integer[] {1, 2, 3},
 			new Long[] {-3L, -2L, -1L});
 
 		populateNumbers(
-			"seconduser", 3e-11, 7e-5F, Integer.MAX_VALUE - 1,
+			"seconduser", 3e3, 3e-3F, Integer.MAX_VALUE - 1,
 			Long.MIN_VALUE + 1L);
 		populateNumberArrays(
 			"seconduser", new Double[] {1e-11, 2e-11, 5e-11},
@@ -434,7 +434,7 @@ public class DocumentTest {
 			new Long[] {-3L, -2L, -2L});
 
 		populateNumbers(
-			"thirduser", 5e-11, 6e-5F, Integer.MAX_VALUE - 2,
+			"thirduser", 5e-12, 6e-5F, Integer.MAX_VALUE - 2,
 			Long.MIN_VALUE + 2L);
 		populateNumberArrays(
 			"thirduser", new Double[] {1e-11, 3e-11, 2e-11},
@@ -458,7 +458,7 @@ public class DocumentTest {
 			new Long[] {-4L, -2L, -1L});
 
 		populateNumbers(
-			"sixthuser", 6e-11, 3e-5F, Integer.MAX_VALUE - 5,
+			"sixthuser", 6e-4, 3e-12F, Integer.MAX_VALUE - 5,
 			Long.MIN_VALUE + 5L);
 		populateNumberArrays(
 			"sixthuser", new Double[] {2e-11, 1e-11, 1e-11},
@@ -517,8 +517,8 @@ public class DocumentTest {
 	};
 
 	private static final String[] _SCREEN_NAMES_MIXED = {
-		"firstuser", "fourthuser", "seconduser", "fifthuser", "thirduser",
-		"sixthuser"
+		"thirduser", "firstuser", "fourthuser", "fifthuser", "sixthuser",
+		"seconduser"
 	};
 
 	private static final String[] _SCREEN_NAMES_ODD_ASCENDING =
@@ -528,7 +528,7 @@ public class DocumentTest {
 		{"fifthuser", "thirduser", "firstuser"};
 
 	private static final String[] _SCREEN_NAMES_ODD_MIXED =
-		{"firstuser", "fifthuser", "thirduser"};
+		{"thirduser", "firstuser", "fifthuser"};
 
 	private final Map<String, Double[]> _doubleArrays = new HashMap<>();
 	private final Map<String, Double> _doubles = new HashMap<>();
