@@ -484,104 +484,104 @@
 		<copyField dest="assetTagNames.raw" source="assetTagNames" />
 		<field indexed="true" multiValued="false" name="_version_" stored="true" type="long" />
 		<field indexed="true" multiValued="true" name="all" stored="false" type="text" />
-		<field indexed="true" multiValued="true" name="ancestorOrganizationIds" stored="true" type="string" />
+		<field indexed="true" multiValued="true" name="ancestorOrganizationIds" stored="true" type="keyword" />
 		<field indexed="true" name="articleId" stored="true" type="string_keyword_lowercase" />
-		<field docValues="true" indexed="true" name="assetCategoryId" stored="true" type="string" />
-		<field indexed="true" multiValued="true" name="assetCategoryIds" stored="true" type="string" />
+		<field docValues="true" indexed="true" name="assetCategoryId" stored="true" type="keyword" />
+		<field indexed="true" multiValued="true" name="assetCategoryIds" stored="true" type="keyword" />
 		<field indexed="true" name="assetCategoryTitle" stored="true" termPositions="true" termVectors="true" type="text" />
-		<field docValues="true" indexed="true" name="assetTagId" stored="true" type="string" />
-		<field indexed="true" multiValued="true" name="assetTagIds" stored="true" type="string" />
+		<field docValues="true" indexed="true" name="assetTagId" stored="true" type="keyword" />
+		<field indexed="true" multiValued="true" name="assetTagIds" stored="true" type="keyword" />
 		<field indexed="true" multiValued="true" name="assetTagNames" stored="true" termPositions="true" termVectors="true" type="text" />
-		<field indexed="true" multiValued="true" name="assetTagNames.raw" stored="false" type="string" />
-		<field docValues="true" indexed="true" name="assetVocabularyId" stored="true" type="string" />
-		<field indexed="true" multiValued="true" name="assetVocabularyIds" stored="true" type="string" />
-		<field indexed="true" name="classTypeId" stored="true" type="string" />
+		<field indexed="true" multiValued="true" name="assetTagNames.raw" stored="false" type="keyword" />
+		<field docValues="true" indexed="true" name="assetVocabularyId" stored="true" type="keyword" />
+		<field indexed="true" multiValued="true" name="assetVocabularyIds" stored="true" type="keyword" />
+		<field indexed="true" name="classTypeId" stored="true" type="keyword" />
 		<field indexed="true" name="comments" stored="true" type="text" />
 		<field indexed="true" name="companyId" stored="true" type="long" />
-		<field indexed="true" multiValued="true" name="configurationModelAttributeName" stored="true" type="string" />
-		<field indexed="true" name="configurationModelFactoryPid" stored="true" type="string" />
-		<field indexed="true" name="configurationModelId" stored="true" type="string" />
+		<field indexed="true" multiValued="true" name="configurationModelAttributeName" stored="true" type="keyword" />
+		<field indexed="true" name="configurationModelFactoryPid" stored="true" type="keyword" />
+		<field indexed="true" name="configurationModelId" stored="true" type="keyword" />
 		<field indexed="true" name="content" stored="true" termPositions="true" termVectors="true" type="text" />
 		<field indexed="true" name="createDate" stored="true" type="date" />
-		<field indexed="true" name="dataRepositoryId" stored="true" type="string" />
+		<field indexed="true" name="dataRepositoryId" stored="true" type="keyword" />
 		<field indexed="true" name="ddmContent" stored="true" termPositions="true" termVectors="true" type="text" />
-		<field docValues="true" indexed="true" name="ddmStructureKey" stored="true" type="string" />
-		<field indexed="true" name="ddmTemplateKey" stored="true" type="string" />
-		<field indexed="true" name="defaultLanguageId" stored="true" type="string" />
+		<field docValues="true" indexed="true" name="ddmStructureKey" stored="true" type="keyword" />
+		<field indexed="true" name="ddmTemplateKey" stored="true" type="keyword" />
+		<field indexed="true" name="defaultLanguageId" stored="true" type="keyword" />
 		<field indexed="true" name="description" stored="true" termPositions="true" termVectors="true" type="text" />
-		<field indexed="true" name="discussion" stored="true" type="string" />
+		<field indexed="true" name="discussion" stored="true" type="keyword" />
 		<field docValues="true" indexed="true" name="displayDate" stored="true" type="date" />
-		<field indexed="true" name="emailAddress" stored="true" type="string" />
-		<field docValues="true" indexed="true" name="endTime" stored="true" type="string" />
-		<field docValues="true" indexed="true" name="entryClassName" stored="true" type="string" />
-		<field docValues="true" indexed="true" name="entryClassPK" stored="true" type="string" />
+		<field indexed="true" name="emailAddress" stored="true" type="keyword" />
+		<field docValues="true" indexed="true" name="endTime" stored="true" type="keyword" />
+		<field docValues="true" indexed="true" name="entryClassName" stored="true" type="keyword" />
+		<field docValues="true" indexed="true" name="entryClassPK" stored="true" type="keyword" />
 		<field docValues="true" indexed="true" name="expirationDate" stored="true" type="date" />
-		<field indexed="true" name="extension" stored="true" type="string" />
-		<field indexed="true" name="fileEntryTypeId" stored="true" type="string" />
+		<field indexed="true" name="extension" stored="true" type="keyword" />
+		<field indexed="true" name="fileEntryTypeId" stored="true" type="keyword" />
 		<field indexed="true" name="firstName" stored="true" type="text_lowercase" />
-		<field docValues="true" indexed="true" name="folderId" stored="true" type="string" />
+		<field docValues="true" indexed="true" name="folderId" stored="true" type="keyword" />
 		<field indexed="true" name="fullName" stored="true" termPositions="true" termVectors="true" type="text" />
 		<field indexed="true" name="geoLocation" stored="true" type="location" />
-		<field docValues="true" indexed="true" multiValued="true" name="groupId" stored="true" type="string" />
-		<field indexed="true" multiValued="true" name="groupIds" stored="true" type="string" />
-		<field indexed="true" multiValued="true" name="groupRoleId" stored="true" type="string" />
-		<field indexed="true" name="hidden" stored="true" type="string" />
-		<field indexed="true" name="id" stored="true" type="string" />
+		<field docValues="true" indexed="true" multiValued="true" name="groupId" stored="true" type="keyword" />
+		<field indexed="true" multiValued="true" name="groupIds" stored="true" type="keyword" />
+		<field indexed="true" multiValued="true" name="groupRoleId" stored="true" type="keyword" />
+		<field indexed="true" name="hidden" stored="true" type="keyword" />
+		<field indexed="true" name="id" stored="true" type="keyword" />
 		<field indexed="true" name="keywordSearch" omitNorms="true" omitTermFreqAndPositions="true" stored="true" type="textAuto" />
-		<field docValues="true" indexed="true" name="languageId" stored="true" type="string" />
+		<field docValues="true" indexed="true" name="languageId" stored="true" type="keyword" />
 		<field indexed="true" name="lastName" stored="true" type="text_lowercase" />
 		<field indexed="true" name="leftOrganizationId" stored="true" type="tlong" />
 		<field indexed="true" name="middleName" stored="true" type="text_lowercase" />
-		<field indexed="true" name="mimeType" stored="true" type="string" />
+		<field indexed="true" name="mimeType" stored="true" type="keyword" />
 		<field docValues="true" indexed="true" name="modified" stored="true" type="date" />
 		<field indexed="true" name="name" stored="true" termPositions="true" termVectors="true" type="text" />
-		<field indexed="true" name="nodeId" stored="true" type="string" />
-		<field docValues="true" indexed="true" name="organizationId" stored="true" type="string" />
-		<field indexed="true" multiValued="true" name="organizationIds" stored="true" type="string" />
-		<field indexed="true" name="parentCategoryId" stored="true" type="string" />
-		<field indexed="true" multiValued="true" name="parentCategoryIds" stored="true" type="string" />
-		<field indexed="true" name="path" stored="true" type="string" />
-		<field indexed="true" name="portletId" stored="true" type="string" />
+		<field indexed="true" name="nodeId" stored="true" type="keyword" />
+		<field docValues="true" indexed="true" name="organizationId" stored="true" type="keyword" />
+		<field indexed="true" multiValued="true" name="organizationIds" stored="true" type="keyword" />
+		<field indexed="true" name="parentCategoryId" stored="true" type="keyword" />
+		<field indexed="true" multiValued="true" name="parentCategoryIds" stored="true" type="keyword" />
+		<field indexed="true" name="path" stored="true" type="keyword" />
+		<field indexed="true" name="portletId" stored="true" type="keyword" />
 		<field docValues="true" indexed="true" name="priority" stored="true" type="double" />
 		<field docValues="true" indexed="true" name="publishDate" stored="true" type="date" />
-		<field indexed="true" name="readCount" stored="true" type="string" />
-		<field indexed="true" name="recordSetId" stored="true" type="string" />
-		<field docValues="true" indexed="true" name="removedByUser" stored="true" type="string" />
+		<field indexed="true" name="readCount" stored="true" type="keyword" />
+		<field indexed="true" name="recordSetId" stored="true" type="keyword" />
+		<field docValues="true" indexed="true" name="removedByUser" stored="true" type="keyword" />
 		<field docValues="true" indexed="true" name="removedDate" stored="true" type="date" />
 		<field indexed="true" name="rightOrganizationId" stored="true" type="tlong" />
-		<field docValues="true" indexed="true" multiValued="true" name="roleId" stored="true" type="string" />
-		<field indexed="true" multiValued="true" name="roleIds" stored="true" type="string" />
-		<field docValues="true" indexed="true" name="rootEntryClassName" stored="true" type="string" />
-		<field docValues="true" indexed="true" name="rootEntryClassPK" stored="true" type="string" />
-		<field docValues="true" indexed="true" multiValued="true" name="scopeGroupId" stored="true" type="string" />
-		<field docValues="true" indexed="true" name="screenName" stored="true" type="string" />
-		<field indexed="true" name="size" stored="true" type="string" />
-		<field indexed="true" name="spellCheckWeight" stored="true" type="string" />
+		<field docValues="true" indexed="true" multiValued="true" name="roleId" stored="true" type="keyword" />
+		<field indexed="true" multiValued="true" name="roleIds" stored="true" type="keyword" />
+		<field docValues="true" indexed="true" name="rootEntryClassName" stored="true" type="keyword" />
+		<field docValues="true" indexed="true" name="rootEntryClassPK" stored="true" type="keyword" />
+		<field docValues="true" indexed="true" multiValued="true" name="scopeGroupId" stored="true" type="keyword" />
+		<field docValues="true" indexed="true" name="screenName" stored="true" type="keyword" />
+		<field indexed="true" name="size" stored="true" type="keyword" />
+		<field indexed="true" name="spellCheckWeight" stored="true" type="keyword" />
 		<field indexed="true" multiValued="true" name="spellCheckWord" stored="true" type="textSpell" />
 		<field docValues="true" indexed="true" name="startTime" stored="true" type="long" />
-		<field indexed="true" name="status" stored="true" type="string" />
+		<field indexed="true" name="status" stored="true" type="keyword" />
 		<field indexed="true" name="subtitle" stored="true" type="text" />
-		<field indexed="true" multiValued="true" name="teamIds" stored="true" type="string" />
-		<field indexed="true" name="threadId" stored="true" type="string" />
+		<field indexed="true" multiValued="true" name="teamIds" stored="true" type="keyword" />
+		<field indexed="true" name="threadId" stored="true" type="keyword" />
 		<field indexed="true" name="title" stored="true" termPositions="true" termVectors="true" type="text" />
-		<field indexed="true" multiValued="true" name="treePath" stored="true" type="string" />
-		<field docValues="true" indexed="true" name="type" stored="true" type="string" />
-		<field indexed="true" name="uid" stored="true" type="string" />
-		<field docValues="true" indexed="true" name="userGroupId" stored="true" type="string" />
-		<field indexed="true" multiValued="true" name="userGroupIds" stored="true" type="string" />
-		<field docValues="true" indexed="true" name="userId" stored="true" type="string" />
-		<field docValues="true" indexed="true" name="userName" stored="true" type="string" />
-		<field indexed="true" name="version" stored="true" type="string" />
-		<field indexed="true" name="visible" stored="true" type="string" />
+		<field indexed="true" multiValued="true" name="treePath" stored="true" type="keyword" />
+		<field docValues="true" indexed="true" name="type" stored="true" type="keyword" />
+		<field indexed="true" name="uid" stored="true" type="keyword" />
+		<field docValues="true" indexed="true" name="userGroupId" stored="true" type="keyword" />
+		<field indexed="true" multiValued="true" name="userGroupIds" stored="true" type="keyword" />
+		<field docValues="true" indexed="true" name="userId" stored="true" type="keyword" />
+		<field docValues="true" indexed="true" name="userName" stored="true" type="keyword" />
+		<field indexed="true" name="version" stored="true" type="keyword" />
+		<field indexed="true" name="visible" stored="true" type="keyword" />
 		<dynamicField docValues="true" indexed="true" name="*_coordinate" stored="false" type="double" />
 		<dynamicField docValues="true" indexed="true" multiValued="false" name="*_double_sortable" stored="true" type="double" />
 		<dynamicField docValues="true" indexed="true" multiValued="false" name="*_float_sortable" stored="true" type="float" />
 		<dynamicField docValues="true" indexed="true" multiValued="false" name="*_integer_sortable" stored="true" type="integer" />
 		<dynamicField docValues="true" indexed="true" multiValued="false" name="*_long_sortable" stored="true" type="long" />
-		<dynamicField docValues="true" indexed="true" multiValued="false" name="*_sortable" stored="true" type="string" />
+		<dynamicField docValues="true" indexed="true" multiValued="false" name="*_sortable" stored="true" type="keyword" />
 		<dynamicField indexed="true" multiValued="false" name="*_geolocation" stored="true" type="location" />
 		<dynamicField indexed="true" multiValued="true" name="assetCategoryTitles*" stored="true" termPositions="true" termVectors="true" type="text" />
-		<dynamicField indexed="true" multiValued="true" name="ddm__keyword__*" stored="true" type="string" />
+		<dynamicField indexed="true" multiValued="true" name="ddm__keyword__*" stored="true" type="keyword" />
 		<dynamicField indexed="true" multiValued="true" name="expando__keyword__*" stored="true" type="string_keyword_lowercase" />
 		<dynamicField indexed="true" multiValued="true" name="*_ar" stored="true" termOffsets="true" termPositions="true" termVectors="true" type="text_ar" />
 		<dynamicField indexed="true" multiValued="true" name="*_ar_BH" stored="true" termOffsets="true" termPositions="true" termVectors="true" type="text_ar" />
@@ -680,7 +680,7 @@
 		This must be the last entry since the fields element is an ordered set.
 		-->
 
-		<dynamicField docValues="true" indexed="true" multiValued="true" name="*" stored="true" type="string" />
+		<dynamicField docValues="true" indexed="true" multiValued="true" name="*" stored="true" type="keyword" />
 	</fields>
 	<uniqueKey>uid</uniqueKey>
 	<solrQueryParser defaultOperator="OR" />
