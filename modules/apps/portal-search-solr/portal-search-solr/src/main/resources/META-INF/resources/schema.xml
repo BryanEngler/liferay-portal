@@ -644,7 +644,7 @@
 		This must be the last entry since the fields element is an ordered set.
 		-->
 
-		<dynamicField docValues="true" indexed="true" multiValued="true" name="*" stored="true" type="keyword" />
+		<dynamicField indexed="true" multiValued="true" name="*" stored="true" type="text" />
 	</fields>
 	<uniqueKey>uid</uniqueKey>
 	<solrQueryParser defaultOperator="OR" />
