@@ -251,7 +251,7 @@
 		</arr>
 	</requestHandler>
 	<searchComponent class="solr.QueryElevationComponent" name="elevator">
-		<str name="queryFieldType">string</str>
+		<str name="queryFieldType">keyword</str>
 		<str name="config-file">elevate.xml</str>
 	</searchComponent>
 	<requestHandler class="solr.SearchHandler" name="/elevate" startup="lazy">
