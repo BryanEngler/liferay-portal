@@ -530,7 +530,7 @@
 		<field indexed="true" name="keywordSearch" omitNorms="true" omitTermFreqAndPositions="true" stored="true" type="textAuto" />
 		<field docValues="true" indexed="true" name="languageId" stored="true" type="keyword" />
 		<field indexed="true" name="lastName" stored="true" type="text_lowercase" />
-		<field indexed="true" name="leftOrganizationId" stored="true" type="tlong" />
+		<field indexed="true" name="leftOrganizationId" stored="true" type="keyword" />
 		<field indexed="true" name="middleName" stored="true" type="text_lowercase" />
 		<field indexed="true" name="mimeType" stored="true" type="keyword" />
 		<field docValues="true" indexed="true" name="modified" stored="true" type="date" />
@@ -548,7 +548,7 @@
 		<field indexed="true" name="recordSetId" stored="true" type="keyword" />
 		<field docValues="true" indexed="true" name="removedByUser" stored="true" type="keyword" />
 		<field docValues="true" indexed="true" name="removedDate" stored="true" type="date" />
-		<field indexed="true" name="rightOrganizationId" stored="true" type="tlong" />
+		<field indexed="true" name="rightOrganizationId" stored="true" type="keyword" />
 		<field docValues="true" indexed="true" multiValued="true" name="roleId" stored="true" type="keyword" />
 		<field indexed="true" multiValued="true" name="roleIds" stored="true" type="keyword" />
 		<field docValues="true" indexed="true" name="rootEntryClassName" stored="true" type="keyword" />
