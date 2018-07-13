@@ -485,7 +485,7 @@
 		<field indexed="true" multiValued="false" name="_version_" stored="true" type="long" />
 		<field indexed="true" multiValued="true" name="all" stored="false" type="text" />
 		<field indexed="true" multiValued="true" name="ancestorOrganizationIds" stored="true" type="keyword" />
-		<field indexed="true" name="articleId" stored="true" type="string_keyword_lowercase" />
+		<field indexed="true" name="articleId" stored="true" type="keyword_lowercase" />
 		<field docValues="true" indexed="true" name="assetCategoryId" stored="true" type="keyword" />
 		<field indexed="true" multiValued="true" name="assetCategoryIds" stored="true" type="keyword" />
 		<field indexed="true" name="assetCategoryTitle" stored="true" termPositions="true" termVectors="true" type="text" />
@@ -582,7 +582,7 @@
 		<dynamicField indexed="true" multiValued="false" name="*_geolocation" stored="true" type="location" />
 		<dynamicField indexed="true" multiValued="true" name="assetCategoryTitles*" stored="true" termPositions="true" termVectors="true" type="text" />
 		<dynamicField indexed="true" multiValued="true" name="ddm__keyword__*" stored="true" type="keyword" />
-		<dynamicField indexed="true" multiValued="true" name="expando__keyword__*" stored="true" type="string_keyword_lowercase" />
+		<dynamicField indexed="true" multiValued="true" name="expando__keyword__*" stored="true" type="keyword_lowercase" />
 		<dynamicField indexed="true" multiValued="true" name="*_ar" stored="true" termOffsets="true" termPositions="true" termVectors="true" type="text_ar" />
 		<dynamicField indexed="true" multiValued="true" name="*_ar_BH" stored="true" termOffsets="true" termPositions="true" termVectors="true" type="text_ar" />
 		<dynamicField indexed="true" multiValued="true" name="*_ar_DZ" stored="true" termOffsets="true" termPositions="true" termVectors="true" type="text_ar" />
