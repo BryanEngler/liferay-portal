@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch.internal.groupby;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.GeoDistanceSort;
 import com.liferay.portal.kernel.search.GroupBy;
@@ -100,6 +101,21 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 		topHitsBuilder.setHighlighterPreTags(HighlightUtil.HIGHLIGHT_TAG_OPEN);
 		topHitsBuilder.setHighlighterRequireFieldMatch(
 			queryConfig.isHighlightRequireFieldMatch());
+	}
+
+	protected void addSelectedFields(
+		TopHitsBuilder topHitsBuilder, QueryConfig queryConfig) {
+
+		String[] selectedFieldNames = queryConfig.getSelectedFieldNames();
+
+		if (ArrayUtil.isEmpty(selectedFieldNames)) {
+			topHitsBuilder.addField(StringPool.STAR);
+		}
+		else {
+			for (String selectedFieldName : selectedFieldNames) {
+				topHitsBuilder.addField(selectedFieldName);
+			}
+		}
 	}
 
 	protected void addSorts(TopHitsBuilder topHitsBuilder, Sort[] sorts) {
@@ -197,6 +213,7 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 		topHitsBuilder.setSize(groupBySize);
 
 		addHighlights(topHitsBuilder, searchContext.getQueryConfig());
+		addSelectedFields(topHitsBuilder, searchContext.getQueryConfig());
 		addSorts(topHitsBuilder, searchContext.getSorts());
 
 		return topHitsBuilder;
