@@ -250,19 +250,6 @@
 			<str>terms</str>
 		</arr>
 	</requestHandler>
-	<searchComponent class="solr.QueryElevationComponent" name="elevator">
-		<str name="queryFieldType">string</str>
-		<str name="config-file">elevate.xml</str>
-	</searchComponent>
-	<requestHandler class="solr.SearchHandler" name="/elevate" startup="lazy">
-		<lst name="defaults">
-			<str name="echoParams">explicit</str>
-			<str name="df">all</str>
-		</lst>
-		<arr name="last-components">
-			<str>elevator</str>
-		</arr>
-	</requestHandler>
 	<searchComponent class="solr.HighlightComponent" name="highlight">
 		<highlighting>
 			<fragmenter class="solr.highlight.GapFragmenter" default="true" name="gap">
