@@ -33,18 +33,18 @@ public class MissingFilterTranslatorImpl implements MissingFilterTranslator {
 
 	@Override
 	public Query translate(MissingFilter missingFilter) {
-		BooleanQuery booleanQuery = new BooleanQuery();
+		BooleanQuery.Builder builder = new BooleanQuery.Builder();
 
 		MatchAllDocsQuery matchAllDocsQuery = new MatchAllDocsQuery();
 
-		booleanQuery.add(matchAllDocsQuery, BooleanClause.Occur.SHOULD);
+		builder.add(matchAllDocsQuery, BooleanClause.Occur.SHOULD);
 
 		TermRangeQuery termRangeQuery = TermRangeQuery.newStringRange(
 			missingFilter.getField(), "*", "*", true, true);
 
-		booleanQuery.add(termRangeQuery, BooleanClause.Occur.MUST_NOT);
+		builder.add(termRangeQuery, BooleanClause.Occur.MUST_NOT);
 
-		return booleanQuery;
+		return builder.build();
 	}
 
 }

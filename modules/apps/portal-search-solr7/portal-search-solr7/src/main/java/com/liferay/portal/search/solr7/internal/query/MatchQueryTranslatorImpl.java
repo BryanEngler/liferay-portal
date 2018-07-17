@@ -22,6 +22,7 @@ import com.liferay.portal.search.solr7.query.MatchQueryTranslator;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
@@ -40,7 +41,7 @@ public class MatchQueryTranslatorImpl implements MatchQueryTranslator {
 		Query query = translateMatchQuery(matchQuery);
 
 		if (!matchQuery.isDefaultBoost()) {
-			query.setBoost(matchQuery.getBoost());
+			return new BoostQuery(query, matchQuery.getBoost());
 		}
 
 		return query;
@@ -97,12 +98,13 @@ public class MatchQueryTranslatorImpl implements MatchQueryTranslator {
 	protected Query translateQueryTypePhrase(
 		String field, String value, Integer slop) {
 
-		PhraseQuery phraseQuery = new PhraseQuery();
-
-		phraseQuery.add(new Term(field, value));
+		PhraseQuery phraseQuery;
 
 		if (slop != null) {
-			phraseQuery.setSlop(slop);
+			phraseQuery = new PhraseQuery(slop, field, value);
+		}
+		else {
+			phraseQuery = new PhraseQuery(field, value);
 		}
 
 		return phraseQuery;

@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.search.query.QueryVisitor;
 import com.liferay.portal.search.solr7.query.BooleanQueryTranslator;
 
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.BoostQuery;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -37,23 +38,25 @@ public class BooleanQueryTranslatorImpl implements BooleanQueryTranslator {
 		BooleanQuery booleanQuery,
 		QueryVisitor<org.apache.lucene.search.Query> queryVisitor) {
 
-		org.apache.lucene.search.BooleanQuery luceneBooleanQuery =
-			new org.apache.lucene.search.BooleanQuery();
+		org.apache.lucene.search.BooleanQuery.Builder builder =
+			new org.apache.lucene.search.BooleanQuery.Builder();
 
 		for (BooleanClause<Query> booleanClause : booleanQuery.clauses()) {
-			_addClause(booleanClause, luceneBooleanQuery, queryVisitor);
+			_addClause(booleanClause, builder, queryVisitor);
 		}
+
+		org.apache.lucene.search.Query query = builder.build();
 
 		if (!booleanQuery.isDefaultBoost()) {
-			luceneBooleanQuery.setBoost(booleanQuery.getBoost());
+			query = new BoostQuery(query, booleanQuery.getBoost());
 		}
 
-		return luceneBooleanQuery;
+		return query;
 	}
 
 	private void _addClause(
 		BooleanClause<Query> booleanClause,
-		org.apache.lucene.search.BooleanQuery booleanQuery,
+		org.apache.lucene.search.BooleanQuery.Builder builder,
 		QueryVisitor<org.apache.lucene.search.Query> queryVisitor) {
 
 		BooleanClauseOccur booleanClauseOccur =
@@ -64,19 +67,19 @@ public class BooleanQueryTranslatorImpl implements BooleanQueryTranslator {
 		org.apache.lucene.search.Query luceneQuery = query.accept(queryVisitor);
 
 		if (booleanClauseOccur.equals(BooleanClauseOccur.MUST)) {
-			booleanQuery.add(luceneQuery, Occur.MUST);
+			builder.add(luceneQuery, Occur.MUST);
 
 			return;
 		}
 
 		if (booleanClauseOccur.equals(BooleanClauseOccur.MUST_NOT)) {
-			booleanQuery.add(luceneQuery, Occur.MUST_NOT);
+			builder.add(luceneQuery, Occur.MUST_NOT);
 
 			return;
 		}
 
 		if (booleanClauseOccur.equals(BooleanClauseOccur.SHOULD)) {
-			booleanQuery.add(luceneQuery, Occur.SHOULD);
+			builder.add(luceneQuery, Occur.SHOULD);
 
 			return;
 		}

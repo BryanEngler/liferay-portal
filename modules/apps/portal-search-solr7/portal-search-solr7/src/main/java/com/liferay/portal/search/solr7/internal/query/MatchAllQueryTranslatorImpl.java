@@ -17,6 +17,7 @@ package com.liferay.portal.search.solr7.internal.query;
 import com.liferay.portal.kernel.search.generic.MatchAllQuery;
 import com.liferay.portal.search.solr7.query.MatchAllQueryTranslator;
 
+import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 
@@ -33,7 +34,7 @@ public class MatchAllQueryTranslatorImpl implements MatchAllQueryTranslator {
 		MatchAllDocsQuery matchAllDocsQuery = new MatchAllDocsQuery();
 
 		if (!matchAllQuery.isDefaultBoost()) {
-			matchAllDocsQuery.setBoost(matchAllQuery.getBoost());
+			return new BoostQuery(matchAllDocsQuery, matchAllQuery.getBoost());
 		}
 
 		return matchAllDocsQuery;

@@ -17,6 +17,8 @@ package com.liferay.portal.search.solr7.internal.query;
 import com.liferay.portal.kernel.search.generic.StringQuery;
 import com.liferay.portal.search.solr7.query.StringQueryTranslator;
 
+import java.util.Objects;
+
 import org.apache.lucene.search.Query;
 
 import org.osgi.service.component.annotations.Component;
@@ -30,6 +32,18 @@ public class StringQueryTranslatorImpl implements StringQueryTranslator {
 	@Override
 	public Query translate(StringQuery stringQuery) {
 		return new Query() {
+
+			@Override
+			public boolean equals(Object o) {
+				String query = stringQuery.getQuery();
+
+				return query.equals(o);
+			}
+
+			@Override
+			public int hashCode() {
+				return Objects.hashCode(stringQuery.getQuery());
+			}
 
 			@Override
 			public String toString(String field) {

@@ -59,13 +59,19 @@ public class ReplicatedSolrClientFactory implements SolrClientFactory {
 
 		HttpClient readerHttpClient = httpClientFactory.createInstance();
 
-		LBHttpSolrClient readerLBHttpSolrClient = new LBHttpSolrClient(
-			readerHttpClient, readURLs);
+		LBHttpSolrClient.Builder builder = new LBHttpSolrClient.Builder();
+
+		builder.withBaseSolrUrls(readURLs);
+		builder.withHttpClient(readerHttpClient);
+
+		LBHttpSolrClient readerLBHttpSolrClient = builder.build();
 
 		HttpClient writerHttpClient = httpClientFactory.createInstance();
 
-		LBHttpSolrClient writerLBHttpSolrClient = new LBHttpSolrClient(
-			writerHttpClient, writeURLs);
+		builder.withBaseSolrUrls(writeURLs);
+		builder.withHttpClient(writerHttpClient);
+
+		LBHttpSolrClient writerLBHttpSolrClient = builder.build();
 
 		ReadWriteSolrClient readWriteSolrClient = new ReadWriteSolrClient(
 			readerLBHttpSolrClient, writerLBHttpSolrClient);

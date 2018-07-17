@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.PrefixQuery;
 import org.apache.lucene.search.Query;
@@ -38,7 +39,7 @@ public class MultiMatchQueryTranslatorImpl
 
 	@Override
 	public Query translate(MultiMatchQuery multiMatchQuery) {
-		BooleanQuery booleanQuery = new BooleanQuery();
+		BooleanQuery.Builder builder = new BooleanQuery.Builder();
 
 		MultiMatchQuery.Type multiMatchQueryType = multiMatchQuery.getType();
 
@@ -50,12 +51,16 @@ public class MultiMatchQueryTranslatorImpl
 			Query query = null;
 
 			if (multiMatchQueryType == MultiMatchQuery.Type.PHRASE) {
-				PhraseQuery phraseQuery = new PhraseQuery();
-
-				phraseQuery.add(term);
+				PhraseQuery phraseQuery;
 
 				if (multiMatchQuery.getSlop() != null) {
-					phraseQuery.setSlop(multiMatchQuery.getSlop());
+					phraseQuery = new PhraseQuery(
+						multiMatchQuery.getSlop(), field,
+						multiMatchQuery.getValue());
+				}
+				else {
+					phraseQuery = new PhraseQuery(
+						field, multiMatchQuery.getValue());
 				}
 
 				query = phraseQuery;
@@ -72,13 +77,13 @@ public class MultiMatchQueryTranslatorImpl
 			if (fieldBoosts.containsKey(field)) {
 				Float fieldBoost = fieldBoosts.get(field);
 
-				query.setBoost(fieldBoost);
+				query = new BoostQuery(query, fieldBoost);
 			}
 
-			booleanQuery.add(query, BooleanClause.Occur.SHOULD);
+			builder.add(query, BooleanClause.Occur.SHOULD);
 		}
 
-		return booleanQuery;
+		return builder.build();
 	}
 
 }

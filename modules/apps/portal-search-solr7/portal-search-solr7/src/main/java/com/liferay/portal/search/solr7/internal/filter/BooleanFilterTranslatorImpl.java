@@ -35,14 +35,14 @@ public class BooleanFilterTranslatorImpl implements BooleanFilterTranslator {
 	public Query translate(
 		BooleanFilter booleanFilter, FilterVisitor<Query> filterVisitor) {
 
-		BooleanQuery booleanQuery = new BooleanQuery();
+		BooleanQuery.Builder builder = new BooleanQuery.Builder();
 
 		for (BooleanClause<Filter> booleanClause :
 				booleanFilter.getMustBooleanClauses()) {
 
 			Query luceneQuery = translate(booleanClause, filterVisitor);
 
-			booleanQuery.add(
+			builder.add(
 				luceneQuery, org.apache.lucene.search.BooleanClause.Occur.MUST);
 		}
 
@@ -51,7 +51,7 @@ public class BooleanFilterTranslatorImpl implements BooleanFilterTranslator {
 
 			Query luceneQuery = translate(booleanClause, filterVisitor);
 
-			booleanQuery.add(
+			builder.add(
 				luceneQuery,
 				org.apache.lucene.search.BooleanClause.Occur.MUST_NOT);
 		}
@@ -61,12 +61,12 @@ public class BooleanFilterTranslatorImpl implements BooleanFilterTranslator {
 
 			Query luceneQuery = translate(booleanClause, filterVisitor);
 
-			booleanQuery.add(
+			builder.add(
 				luceneQuery,
 				org.apache.lucene.search.BooleanClause.Occur.SHOULD);
 		}
 
-		return booleanQuery;
+		return builder.build();
 	}
 
 	protected Query translate(

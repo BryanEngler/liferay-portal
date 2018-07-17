@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
+import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.Query;
 
 import org.osgi.service.component.annotations.Component;
@@ -58,14 +59,15 @@ public class MoreLikeThisQueryTranslatorImpl
 				moreLikeThisQuery.getMinTermFrequency());
 		}
 
-		if (!moreLikeThisQuery.isDefaultBoost()) {
-			luceneMoreLikeThisQuery.setBoost(moreLikeThisQuery.getBoost());
-		}
-
 		Set<String> stopWords = moreLikeThisQuery.getStopWords();
 
 		if (!stopWords.isEmpty()) {
 			luceneMoreLikeThisQuery.setStopWords(stopWords);
+		}
+
+		if (!moreLikeThisQuery.isDefaultBoost()) {
+			return new BoostQuery(
+				luceneMoreLikeThisQuery, moreLikeThisQuery.getBoost());
 		}
 
 		return luceneMoreLikeThisQuery;

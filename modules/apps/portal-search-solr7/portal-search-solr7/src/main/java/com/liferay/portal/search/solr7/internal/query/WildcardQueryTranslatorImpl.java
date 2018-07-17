@@ -21,6 +21,7 @@ import com.liferay.portal.search.solr7.query.WildcardQueryTranslator;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.Query;
 
 import org.osgi.service.component.annotations.Component;
@@ -41,7 +42,8 @@ public class WildcardQueryTranslatorImpl implements WildcardQueryTranslator {
 				new Term(queryTerm.getField(), escape(queryTerm.getValue())));
 
 		if (!wildcardQuery.isDefaultBoost()) {
-			luceneWildcardQuery.setBoost(wildcardQuery.getBoost());
+			return new BoostQuery(
+				luceneWildcardQuery, wildcardQuery.getBoost());
 		}
 
 		return luceneWildcardQuery;
