@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.stats;
+package com.liferay.portal.search.solr7.stats;
 
 import com.liferay.portal.kernel.search.Stats;
 import com.liferay.portal.kernel.search.StatsResults;

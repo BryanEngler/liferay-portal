@@ -12,10 +12,10 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.filter;
+package com.liferay.portal.search.solr7.internal.filter;
 
 import com.liferay.portal.kernel.search.filter.DateRangeTermFilter;
-import com.liferay.portal.search.solr.filter.DateRangeTermFilterTranslator;
+import com.liferay.portal.search.solr7.filter.DateRangeTermFilterTranslator;
 
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermRangeQuery;

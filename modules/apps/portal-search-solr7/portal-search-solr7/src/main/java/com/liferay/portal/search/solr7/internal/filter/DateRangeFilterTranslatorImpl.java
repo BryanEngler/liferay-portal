@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.filter;
+package com.liferay.portal.search.solr7.internal.filter;
 
 import com.liferay.portal.search.filter.DateRangeFilter;
 

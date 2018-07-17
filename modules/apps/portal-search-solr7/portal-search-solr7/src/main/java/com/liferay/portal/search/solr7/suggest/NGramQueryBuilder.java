@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.suggest;
+package com.liferay.portal.search.solr7.suggest;
 
 import com.liferay.portal.kernel.search.SearchException;
 

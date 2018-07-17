@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.filter;
+package com.liferay.portal.search.solr7.filter;
 
 import com.liferay.portal.kernel.search.filter.GeoPolygonFilter;
 

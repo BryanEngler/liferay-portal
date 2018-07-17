@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.facet;
+package com.liferay.portal.search.solr7.internal.facet;
 
 import org.osgi.service.component.annotations.Component;
 

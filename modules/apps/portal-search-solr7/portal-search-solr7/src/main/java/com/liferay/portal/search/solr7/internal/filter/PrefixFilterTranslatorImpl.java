@@ -12,10 +12,10 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.filter;
+package com.liferay.portal.search.solr7.internal.filter;
 
 import com.liferay.portal.kernel.search.filter.PrefixFilter;
-import com.liferay.portal.search.solr.filter.PrefixFilterTranslator;
+import com.liferay.portal.search.solr7.filter.PrefixFilterTranslator;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.PrefixQuery;

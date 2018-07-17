@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal;
+package com.liferay.portal.search.solr7.internal;
 
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
@@ -34,8 +34,8 @@ import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.solr.connection.SolrClientManager;
-import com.liferay.portal.search.solr.suggest.NGramQueryBuilder;
+import com.liferay.portal.search.solr7.connection.SolrClientManager;
+import com.liferay.portal.search.solr7.suggest.NGramQueryBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;

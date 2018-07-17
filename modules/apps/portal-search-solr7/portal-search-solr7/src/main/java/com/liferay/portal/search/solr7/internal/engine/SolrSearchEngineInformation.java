@@ -12,10 +12,10 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.engine;
+package com.liferay.portal.search.solr7.internal.engine;
 
 import com.liferay.portal.search.engine.SearchEngineInformation;
-import com.liferay.portal.search.solr.internal.SolrSearchEngine;
+import com.liferay.portal.search.solr7.internal.SolrSearchEngine;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

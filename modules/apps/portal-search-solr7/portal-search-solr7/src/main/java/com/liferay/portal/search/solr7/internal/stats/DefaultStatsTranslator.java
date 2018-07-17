@@ -12,12 +12,12 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.stats;
+package com.liferay.portal.search.solr7.internal.stats;
 
 import com.liferay.portal.kernel.search.Stats;
 import com.liferay.portal.kernel.search.StatsResults;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.search.solr.stats.StatsTranslator;
+import com.liferay.portal.search.solr7.stats.StatsTranslator;
 
 import java.util.ArrayList;
 import java.util.List;

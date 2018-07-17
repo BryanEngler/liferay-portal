@@ -12,12 +12,12 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.suggest;
+package com.liferay.portal.search.solr7.internal.suggest;
 
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.search.solr.connection.SolrClientManager;
-import com.liferay.portal.search.solr.internal.SolrQuerySuggester;
+import com.liferay.portal.search.solr7.connection.SolrClientManager;
+import com.liferay.portal.search.solr7.internal.SolrQuerySuggester;
 
 import java.util.Arrays;
 

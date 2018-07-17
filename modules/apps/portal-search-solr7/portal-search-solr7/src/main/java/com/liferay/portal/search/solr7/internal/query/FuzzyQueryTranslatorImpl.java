@@ -12,11 +12,11 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.query;
+package com.liferay.portal.search.solr7.internal.query;
 
 import com.liferay.portal.kernel.search.generic.FuzzyQuery;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.search.solr.query.FuzzyQueryTranslator;
+import com.liferay.portal.search.solr7.query.FuzzyQueryTranslator;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Query;

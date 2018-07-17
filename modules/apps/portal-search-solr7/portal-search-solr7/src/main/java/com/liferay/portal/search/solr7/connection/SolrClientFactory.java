@@ -12,10 +12,10 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.connection;
+package com.liferay.portal.search.solr7.connection;
 
-import com.liferay.portal.search.solr.configuration.SolrConfiguration;
-import com.liferay.portal.search.solr.http.HttpClientFactory;
+import com.liferay.portal.search.solr7.configuration.SolrConfiguration;
+import com.liferay.portal.search.solr7.http.HttpClientFactory;
 
 import org.apache.solr.client.solrj.SolrClient;
 

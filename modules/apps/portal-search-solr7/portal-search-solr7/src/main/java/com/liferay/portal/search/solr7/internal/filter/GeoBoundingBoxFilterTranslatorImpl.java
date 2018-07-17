@@ -12,10 +12,10 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.filter;
+package com.liferay.portal.search.solr7.internal.filter;
 
 import com.liferay.portal.kernel.search.filter.GeoBoundingBoxFilter;
-import com.liferay.portal.search.solr.filter.GeoBoundingBoxFilterTranslator;
+import com.liferay.portal.search.solr7.filter.GeoBoundingBoxFilterTranslator;
 
 import org.apache.lucene.search.Query;
 

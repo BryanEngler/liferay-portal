@@ -12,10 +12,10 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.filter;
+package com.liferay.portal.search.solr7.internal.filter;
 
 import com.liferay.portal.kernel.search.filter.TermFilter;
-import com.liferay.portal.search.solr.filter.TermFilterTranslator;
+import com.liferay.portal.search.solr7.filter.TermFilterTranslator;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Query;

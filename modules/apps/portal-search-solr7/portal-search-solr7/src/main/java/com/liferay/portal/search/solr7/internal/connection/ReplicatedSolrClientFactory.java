@@ -12,14 +12,14 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.connection;
+package com.liferay.portal.search.solr7.internal.connection;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.search.solr.configuration.SolrConfiguration;
-import com.liferay.portal.search.solr.connection.SolrClientFactory;
-import com.liferay.portal.search.solr.http.HttpClientFactory;
+import com.liferay.portal.search.solr7.configuration.SolrConfiguration;
+import com.liferay.portal.search.solr7.connection.SolrClientFactory;
+import com.liferay.portal.search.solr7.http.HttpClientFactory;
 
 import org.apache.http.client.HttpClient;
 import org.apache.solr.client.solrj.SolrClient;

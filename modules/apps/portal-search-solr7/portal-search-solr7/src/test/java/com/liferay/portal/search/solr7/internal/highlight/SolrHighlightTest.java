@@ -12,9 +12,9 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.highlight;
+package com.liferay.portal.search.solr7.internal.highlight;
 
-import com.liferay.portal.search.solr.internal.SolrIndexingFixture;
+import com.liferay.portal.search.solr7.internal.SolrIndexingFixture;
 import com.liferay.portal.search.test.util.highlight.BaseHighlightTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 

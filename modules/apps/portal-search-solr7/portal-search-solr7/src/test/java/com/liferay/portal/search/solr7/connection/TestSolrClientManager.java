@@ -12,12 +12,12 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.connection;
+package com.liferay.portal.search.solr7.connection;
 
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
-import com.liferay.portal.search.solr.configuration.SolrConfiguration;
-import com.liferay.portal.search.solr.internal.connection.ReplicatedSolrClientFactory;
-import com.liferay.portal.search.solr.internal.http.BasicAuthPoolingHttpClientFactory;
+import com.liferay.portal.search.solr7.configuration.SolrConfiguration;
+import com.liferay.portal.search.solr7.internal.connection.ReplicatedSolrClientFactory;
+import com.liferay.portal.search.solr7.internal.http.BasicAuthPoolingHttpClientFactory;
 
 import java.util.Collections;
 import java.util.Map;

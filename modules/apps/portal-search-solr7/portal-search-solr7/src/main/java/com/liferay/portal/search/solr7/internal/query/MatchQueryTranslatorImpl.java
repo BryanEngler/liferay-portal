@@ -12,13 +12,13 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.query;
+package com.liferay.portal.search.solr7.internal.query;
 
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.generic.MatchQuery;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.search.solr.query.MatchQueryTranslator;
+import com.liferay.portal.search.solr7.query.MatchQueryTranslator;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.http;
+package com.liferay.portal.search.solr7.http;
 
 import java.security.KeyStore;
 

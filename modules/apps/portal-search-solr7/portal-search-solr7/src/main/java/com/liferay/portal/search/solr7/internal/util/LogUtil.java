@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.util;
+package com.liferay.portal.search.solr7.internal.util;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.util.StringBundler;

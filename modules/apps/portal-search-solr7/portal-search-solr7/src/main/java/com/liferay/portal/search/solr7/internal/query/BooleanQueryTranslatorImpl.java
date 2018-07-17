@@ -12,14 +12,14 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.query;
+package com.liferay.portal.search.solr7.internal.query;
 
 import com.liferay.portal.kernel.search.BooleanClause;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.query.QueryVisitor;
-import com.liferay.portal.search.solr.query.BooleanQueryTranslator;
+import com.liferay.portal.search.solr7.query.BooleanQueryTranslator;
 
 import org.apache.lucene.search.BooleanClause.Occur;
 

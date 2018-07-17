@@ -12,10 +12,10 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.filter;
+package com.liferay.portal.search.solr7.internal.filter;
 
 import com.liferay.portal.kernel.search.filter.ExistsFilter;
-import com.liferay.portal.search.solr.filter.ExistsFilterTranslator;
+import com.liferay.portal.search.solr7.filter.ExistsFilterTranslator;
 
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;

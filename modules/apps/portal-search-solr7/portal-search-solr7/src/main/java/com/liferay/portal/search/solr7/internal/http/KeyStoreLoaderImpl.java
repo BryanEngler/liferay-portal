@@ -12,13 +12,13 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.http;
+package com.liferay.portal.search.solr7.internal.http;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.log.SanitizerLogWrapper;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.search.solr.http.KeyStoreLoader;
+import com.liferay.portal.search.solr7.http.KeyStoreLoader;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

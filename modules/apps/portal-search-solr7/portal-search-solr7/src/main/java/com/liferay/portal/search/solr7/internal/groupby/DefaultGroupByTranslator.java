@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.groupby;
+package com.liferay.portal.search.solr7.internal.groupby;
 
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.GroupBy;
@@ -21,7 +21,7 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.highlight.HighlightUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.search.solr.groupby.GroupByTranslator;
+import com.liferay.portal.search.solr7.groupby.GroupByTranslator;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -12,12 +12,12 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.http;
+package com.liferay.portal.search.solr7.internal.http;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.search.solr.http.HttpClientFactory;
+import com.liferay.portal.search.solr7.http.HttpClientFactory;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -12,9 +12,9 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.filter;
+package com.liferay.portal.search.solr7.internal.filter;
 
-import com.liferay.portal.search.solr.internal.SolrIndexingFixture;
+import com.liferay.portal.search.solr7.internal.SolrIndexingFixture;
 import com.liferay.portal.search.test.util.filter.BaseTermsFilterTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 

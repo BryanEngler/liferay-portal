@@ -12,10 +12,10 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.filter;
+package com.liferay.portal.search.solr7.internal.filter;
 
 import com.liferay.portal.kernel.search.filter.GeoPolygonFilter;
-import com.liferay.portal.search.solr.filter.GeoPolygonFilterTranslator;
+import com.liferay.portal.search.solr7.filter.GeoPolygonFilterTranslator;
 
 import org.apache.lucene.search.Query;
 

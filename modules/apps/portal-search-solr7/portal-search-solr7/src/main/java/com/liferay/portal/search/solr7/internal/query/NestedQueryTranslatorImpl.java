@@ -12,11 +12,11 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.query;
+package com.liferay.portal.search.solr7.internal.query;
 
 import com.liferay.portal.kernel.search.generic.NestedQuery;
 import com.liferay.portal.kernel.search.query.QueryVisitor;
-import com.liferay.portal.search.solr.query.NestedQueryTranslator;
+import com.liferay.portal.search.solr7.query.NestedQueryTranslator;
 
 import org.apache.lucene.search.Query;
 

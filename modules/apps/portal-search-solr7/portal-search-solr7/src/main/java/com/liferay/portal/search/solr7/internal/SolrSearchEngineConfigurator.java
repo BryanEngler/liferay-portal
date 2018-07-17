@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal;
+package com.liferay.portal.search.solr7.internal;
 
 import com.liferay.portal.kernel.search.AbstractSearchEngineConfigurator;
 import com.liferay.portal.kernel.search.IndexSearcher;

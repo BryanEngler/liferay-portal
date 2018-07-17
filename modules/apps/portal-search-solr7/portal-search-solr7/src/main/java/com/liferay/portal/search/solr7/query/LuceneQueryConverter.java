@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.query;
+package com.liferay.portal.search.solr7.query;
 
 import com.liferay.portal.kernel.search.Query;
 

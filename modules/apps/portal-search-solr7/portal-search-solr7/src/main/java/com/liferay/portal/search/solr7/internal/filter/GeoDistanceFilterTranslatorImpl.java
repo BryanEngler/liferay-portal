@@ -12,10 +12,10 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.filter;
+package com.liferay.portal.search.solr7.internal.filter;
 
 import com.liferay.portal.kernel.search.filter.GeoDistanceFilter;
-import com.liferay.portal.search.solr.filter.GeoDistanceFilterTranslator;
+import com.liferay.portal.search.solr7.filter.GeoDistanceFilterTranslator;
 
 import org.apache.lucene.search.Query;
 

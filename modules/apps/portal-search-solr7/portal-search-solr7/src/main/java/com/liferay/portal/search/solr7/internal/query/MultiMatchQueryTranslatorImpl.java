@@ -12,10 +12,10 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal.query;
+package com.liferay.portal.search.solr7.internal.query;
 
 import com.liferay.portal.kernel.search.generic.MultiMatchQuery;
-import com.liferay.portal.search.solr.query.MultiMatchQueryTranslator;
+import com.liferay.portal.search.solr7.query.MultiMatchQueryTranslator;
 
 import java.util.Map;
 

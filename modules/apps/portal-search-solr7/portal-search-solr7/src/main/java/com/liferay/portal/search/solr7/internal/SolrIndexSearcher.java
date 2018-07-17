@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr.internal;
+package com.liferay.portal.search.solr7.internal;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -58,15 +58,15 @@ import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.constants.SearchContextAttributes;
-import com.liferay.portal.search.solr.configuration.SolrConfiguration;
-import com.liferay.portal.search.solr.connection.SolrClientManager;
-import com.liferay.portal.search.solr.groupby.GroupByTranslator;
-import com.liferay.portal.search.solr.internal.facet.CompositeFacetProcessor;
-import com.liferay.portal.search.solr.internal.facet.FacetProcessor;
-import com.liferay.portal.search.solr.internal.facet.FacetUtil;
-import com.liferay.portal.search.solr.internal.facet.SolrFacetFieldCollector;
-import com.liferay.portal.search.solr.internal.facet.SolrFacetQueryCollector;
-import com.liferay.portal.search.solr.stats.StatsTranslator;
+import com.liferay.portal.search.solr7.configuration.SolrConfiguration;
+import com.liferay.portal.search.solr7.connection.SolrClientManager;
+import com.liferay.portal.search.solr7.groupby.GroupByTranslator;
+import com.liferay.portal.search.solr7.internal.facet.CompositeFacetProcessor;
+import com.liferay.portal.search.solr7.internal.facet.FacetProcessor;
+import com.liferay.portal.search.solr7.internal.facet.FacetUtil;
+import com.liferay.portal.search.solr7.internal.facet.SolrFacetFieldCollector;
+import com.liferay.portal.search.solr7.internal.facet.SolrFacetQueryCollector;
+import com.liferay.portal.search.solr7.stats.StatsTranslator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -108,7 +108,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Raymond Augé
  */
 @Component(
-	configurationPid = "com.liferay.portal.search.solr.configuration.SolrConfiguration",
+	configurationPid = "com.liferay.portal.search.solr7.configuration.SolrConfiguration",
 	immediate = true, property = "search.engine.impl=Solr",
 	service = IndexSearcher.class
 )
