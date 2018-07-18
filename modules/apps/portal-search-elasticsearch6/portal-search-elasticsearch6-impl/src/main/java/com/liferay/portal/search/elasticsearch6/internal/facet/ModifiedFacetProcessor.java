@@ -25,5 +25,5 @@ import org.osgi.service.component.annotations.Component;
 	property = "class.name=com.liferay.portal.search.internal.facet.ModifiedFacetImpl",
 	service = FacetProcessor.class
 )
-public class ModifiedFacetProcessor extends RangeFacetProcessor {
+public class ModifiedFacetProcessor extends DateRangeFacetProcessor {
 }

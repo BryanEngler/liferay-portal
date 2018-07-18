@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch6.internal.facet;
 
+import com.liferay.portal.kernel.search.facet.DateRangeFacet;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.RangeFacet;
 import com.liferay.portal.kernel.search.facet.util.RangeParserUtil;
@@ -70,7 +71,8 @@ public class AggregationFilteringFacetProcessorContext
 		if (facet instanceof RangeFacet) {
 			for (String value : facet.getSelections()) {
 				queryBuilders.add(
-					rangeQuery(fieldName, RangeParserUtil.parserRange(value)));
+					rangeQuery(fieldName, RangeParserUtil.parserRange(value),
+						facet instanceof DateRangeFacet));
 			}
 		}
 		else {
@@ -105,10 +107,14 @@ public class AggregationFilteringFacetProcessorContext
 	}
 
 	protected static QueryBuilder rangeQuery(
-		String fieldName, String[] ranges) {
+		String fieldName, String[] ranges, boolean dateRange) {
 
 		RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery(
 			fieldName);
+
+		if (dateRange) {
+			rangeQueryBuilder.format("yyyyMMddHHmmss");
+		}
 
 		rangeQueryBuilder.gte(ranges[0]);
 		rangeQueryBuilder.lte(ranges[1]);
