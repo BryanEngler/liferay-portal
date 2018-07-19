@@ -86,8 +86,7 @@ public class ModifiedFacetDisplayBuilderTest {
 		String from = "2018-01-01";
 		String to = "2018-01-31";
 
-		TermCollector termCollector = mockTermCollector(
-			_dateRangeFactory.getRangeString(from, to));
+		TermCollector termCollector = mockTermCollector("custom-range");
 
 		int frequency = RandomTestUtil.randomInt();
 
