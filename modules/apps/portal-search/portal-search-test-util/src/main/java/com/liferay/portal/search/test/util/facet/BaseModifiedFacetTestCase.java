@@ -59,7 +59,7 @@ public abstract class BaseModifiedFacetTestCase extends BaseFacetTestCase {
 
 				helper.assertFrequencies(
 					facet,
-					Arrays.asList("[20170101000000 TO 20170105000000]=2"));
+					Arrays.asList("custom-range=2"));
 			});
 	}
 
@@ -68,16 +68,16 @@ public abstract class BaseModifiedFacetTestCase extends BaseFacetTestCase {
 		addDocument("20170102000000");
 
 		String[] configRanges = {
-			"[11110101010101 TO 19990101010101]",
-			"[19990202020202 TO 22220202020202]"
+			"range-one", "[11110101010101 TO 19990101010101]",
+			"range-two", "[19990202020202 TO 22220202020202]"
 		};
 
 		String customRange = "[11110101010101 TO 22220202020202]";
 
 		List<String> expectedRanges = Arrays.asList(
-			"[11110101010101 TO 19990101010101]=0",
-			"[11110101010101 TO 22220202020202]=1",
-			"[19990202020202 TO 22220202020202]=1");
+			"range-one=0",
+			"custom-range=1",
+			"range-two=1");
 
 		assertSearchFacet(
 			helper -> {
@@ -122,16 +122,17 @@ public abstract class BaseModifiedFacetTestCase extends BaseFacetTestCase {
 	protected JSONArray createRangeArray(String... ranges) {
 		JSONArray jsonArray = jsonFactory.createJSONArray();
 
-		for (String range : ranges) {
-			jsonArray.put(createRangeArrayElement(range));
+		for (int i = 0; i < ranges.length - 1; i = i + 2) {
+			jsonArray.put(createRangeArrayElement(ranges[i], ranges[i + 1]));
 		}
 
 		return jsonArray;
 	}
 
-	protected JSONObject createRangeArrayElement(String range) {
+	protected JSONObject createRangeArrayElement(String label, String range) {
 		JSONObject jsonObject = jsonFactory.createJSONObject();
 
+		jsonObject.put("label", label);
 		jsonObject.put("range", range);
 
 		return jsonObject;
@@ -147,7 +148,8 @@ public abstract class BaseModifiedFacetTestCase extends BaseFacetTestCase {
 
 				Facet facet = createFacet(searchContext);
 
-				setConfigurationRanges(facet, new String[] {range});
+				setConfigurationRanges(
+					facet, new String[] {"rangeLabel", range});
 
 				facet.select(range);
 
@@ -167,7 +169,7 @@ public abstract class BaseModifiedFacetTestCase extends BaseFacetTestCase {
 
 				FacetsAssert.assertFrequencies(
 					facet.getFieldName(), searchContext,
-					Arrays.asList(range + "=" + frequency));
+					Arrays.asList("rangeLabel=" + frequency));
 
 				return null;
 			});
@@ -189,7 +191,8 @@ public abstract class BaseModifiedFacetTestCase extends BaseFacetTestCase {
 	protected void setCustomRange(Facet facet, String customRange) {
 		SearchContext searchContext = facet.getSearchContext();
 
-		searchContext.setAttribute(facet.getFieldId(), customRange);
+		searchContext.setAttribute(
+			facet.getFieldId() + "_custom-range", customRange);
 	}
 
 }
