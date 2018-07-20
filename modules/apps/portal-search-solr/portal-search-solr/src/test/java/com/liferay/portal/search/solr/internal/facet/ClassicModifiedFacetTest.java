@@ -15,9 +15,14 @@
 package com.liferay.portal.search.solr.internal.facet;
 
 import com.liferay.portal.json.JSONFactoryImpl;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.search.solr.internal.SolrIndexingFixture;
+import com.liferay.portal.search.solr.internal.util.DateFormatUtil;
 import com.liferay.portal.search.test.util.facet.BaseClassicModifiedFacetTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author André de Oliveira
@@ -36,6 +41,18 @@ public class ClassicModifiedFacetTest extends BaseClassicModifiedFacetTestCase {
 			});
 
 		return solrIndexingFixture;
+	}
+
+	@Override
+	protected void addDocument(String... values) throws Exception {
+		List<String> formattedStrings = new ArrayList<>();
+
+		for (String value : values) {
+			formattedStrings.add(
+				DateFormatUtil.getFormattedDateString("yyyyMMddHHmmss", value));
+		}
+
+		super.addDocument(ArrayUtil.toStringArray(formattedStrings));
 	}
 
 }
