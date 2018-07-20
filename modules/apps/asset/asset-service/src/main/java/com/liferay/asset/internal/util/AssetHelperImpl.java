@@ -547,19 +547,6 @@ public class AssetHelperImpl implements AssetHelper {
 			sb.append(sortField);
 			sb.append(StringPool.UNDERLINE);
 			sb.append(LocaleUtil.toLanguageId(locale));
-			sb.append(StringPool.UNDERLINE);
-
-			String suffix = "String";
-
-			if (!fieldType.equals("ddm-date") &&
-				((sortType == Sort.DOUBLE_TYPE) ||
-				 (sortType == Sort.FLOAT_TYPE) || (sortType == Sort.INT_TYPE) ||
-				 (sortType == Sort.LONG_TYPE))) {
-
-				suffix = "Number";
-			}
-
-			sb.append(suffix);
 
 			sortField = Field.getSortableFieldName(sb.toString());
 		}
