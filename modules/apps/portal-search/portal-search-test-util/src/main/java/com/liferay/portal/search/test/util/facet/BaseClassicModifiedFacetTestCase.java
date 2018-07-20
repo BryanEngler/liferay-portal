@@ -52,8 +52,9 @@ public abstract class BaseClassicModifiedFacetTestCase
 		addDocument("27760704000000");
 
 		String[] configRanges = {
-			"[past-hour TO *]", "[past-24-hours TO *]", "[past-week TO *]",
-			"[past-month TO *]", "[past-year TO *]"
+			"past-hour", "[past-hour TO *]", "past-24-hours",
+			"[past-24-hours TO *]",  "past-week", "[past-week TO *]",
+			 "past-month", "[past-month TO *]", "past-year","[past-year TO *]"
 		};
 
 		assertSearchFacet(
@@ -72,13 +73,13 @@ public abstract class BaseClassicModifiedFacetTestCase
 				Assert.assertNotNull(termCollectors);
 
 				Assert.assertEquals(
-					termCollectors.toString(), configRanges.length,
+					termCollectors.toString(), (configRanges.length / 2),
 					termCollectors.size());
 
 				for (TermCollector termCollector : termCollectors) {
 					String term = termCollector.getTerm();
 
-					Assert.assertTrue(term.contains("00 TO 20"));
+					Assert.assertTrue(term.contains("past-"));
 				}
 			});
 	}
@@ -96,16 +97,17 @@ public abstract class BaseClassicModifiedFacetTestCase
 	protected JSONArray createRangeArray(String... ranges) {
 		JSONArray jsonArray = jsonFactory.createJSONArray();
 
-		for (String range : ranges) {
-			jsonArray.put(createRangeArrayElement(range));
+		for (int i = 0; i < ranges.length - 1; i = i + 2) {
+			jsonArray.put(createRangeArrayElement(ranges[i], ranges[i + 1]));
 		}
 
 		return jsonArray;
 	}
 
-	protected JSONObject createRangeArrayElement(String range) {
+	protected JSONObject createRangeArrayElement(String label, String range) {
 		JSONObject jsonObject = jsonFactory.createJSONObject();
 
+		jsonObject.put("label", label);
 		jsonObject.put("range", range);
 
 		return jsonObject;
