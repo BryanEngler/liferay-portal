@@ -187,10 +187,10 @@ public class CalendarBookingIndexerIndexedFieldsTest
 			String.valueOf(calendarBooking.getCalendarBookingId()));
 		map.put("endTime", String.valueOf(calendarBooking.getEndTime()));
 		map.put(
-			"endTime_sortable", String.valueOf(calendarBooking.getEndTime()));
+			"endTime_long_sortable", String.valueOf(calendarBooking.getEndTime()));
 		map.put("startTime", String.valueOf(calendarBooking.getStartTime()));
 		map.put(
-			"startTime_sortable",
+			"startTime_long_sortable",
 			String.valueOf(calendarBooking.getStartTime()));
 
 		populateDates(calendarBooking, map);
