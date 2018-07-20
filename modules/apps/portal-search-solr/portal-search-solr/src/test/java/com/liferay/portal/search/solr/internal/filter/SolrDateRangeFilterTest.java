@@ -14,16 +14,30 @@
 
 package com.liferay.portal.search.solr.internal.filter;
 
+import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.search.solr.internal.SolrIndexingFixture;
 import com.liferay.portal.search.test.util.filter.BaseDateRangeFilterTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 
+import com.liferay.portal.util.DateFormatFactoryImpl;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  * @author Eric Yan
  */
 public class SolrDateRangeFilterTest extends BaseDateRangeFilterTestCase {
+
+	@Before
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+
+		setUpDateFormatFactoryUtil();
+	}
 
 	@Test
 	public void testMalformed() throws Exception {
@@ -37,6 +51,9 @@ public class SolrDateRangeFilterTest extends BaseDateRangeFilterTestCase {
 
 	@Test
 	public void testMalformedMultiple() throws Exception {
+		expectedException.expect(HttpSolrClient.RemoteSolrException.class);
+		expectedException.expectMessage("Invalid Date String:'2000'");
+
 		addDocument(getDate(2000, 11, 22));
 
 		dateRangeFilterBuilder.setFrom("2000");
@@ -49,5 +66,16 @@ public class SolrDateRangeFilterTest extends BaseDateRangeFilterTestCase {
 	protected IndexingFixture createIndexingFixture() throws Exception {
 		return new SolrIndexingFixture();
 	}
+
+	protected void setUpDateFormatFactoryUtil() {
+		DateFormatFactoryUtil dateFormatFactoryUtil =
+			new DateFormatFactoryUtil();
+
+		dateFormatFactoryUtil.setDateFormatFactory(new DateFormatFactoryImpl());
+	}
+
+	@Rule
+	public ExpectedException expectedException = ExpectedException.none();
+
 
 }
