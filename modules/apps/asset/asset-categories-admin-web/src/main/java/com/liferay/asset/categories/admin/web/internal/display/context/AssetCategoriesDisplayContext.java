@@ -413,7 +413,7 @@ public class AssetCategoriesDisplayContext {
 			Sort sort = null;
 
 			if (isFlattenedNavigationAllowed()) {
-				sort = new Sort("leftCategoryId", Sort.INT_TYPE, orderByAsc);
+				sort = new Sort("leftCategoryId", Sort.STRING_TYPE, orderByAsc);
 			}
 			else {
 				sort = new Sort("createDate", Sort.LONG_TYPE, orderByAsc);
