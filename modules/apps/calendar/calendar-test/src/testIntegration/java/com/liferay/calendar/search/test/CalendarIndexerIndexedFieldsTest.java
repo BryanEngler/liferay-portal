@@ -157,7 +157,7 @@ public class CalendarIndexerIndexedFieldsTest
 		DateFormat dateFormat) {
 
 		map.put(name, dateFormat.format(date));
-		map.put(name.concat("_sortable"), String.valueOf(date.getTime()));
+		map.put(name.concat("_long_sortable"), String.valueOf(date.getTime()));
 	}
 
 	protected void populateCalendarResource(
