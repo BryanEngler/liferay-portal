@@ -706,6 +706,8 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 		Query query, Hits hits, List<Document> documents, List<Float> scores) {
 
 		if (solrDocumentList == null) {
+			documents.addAll(ListUtil.fromArray(hits.getDocs()));
+
 			return;
 		}
 
@@ -818,6 +820,8 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 					queryResponse, group.getResult(), query, groupedHits);
 
 				hits.addGroupedHits(group.getGroupValue(), groupedHits);
+
+				hits.setDocs(groupedHits.getDocs());
 			}
 		}
 	}
