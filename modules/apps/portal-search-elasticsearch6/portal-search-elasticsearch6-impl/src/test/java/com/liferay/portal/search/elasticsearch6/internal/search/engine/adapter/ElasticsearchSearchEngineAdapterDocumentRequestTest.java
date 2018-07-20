@@ -99,14 +99,14 @@ public class ElasticsearchSearchEngineAdapterDocumentRequestTest {
 
 	@Test
 	public void testExecuteBulkDocumentRequest() {
-		Document document = new DocumentImpl();
+		Document document1 = new DocumentImpl();
 
-		document.addKeyword(Field.TYPE, _MAPPING_NAME);
-		document.addKeyword(Field.UID, "1");
-		document.addKeyword(_FIELD_NAME, Boolean.TRUE.toString());
+		document1.addKeyword(Field.TYPE, _MAPPING_NAME);
+		document1.addKeyword(Field.UID, "1");
+		document1.addKeyword(_FIELD_NAME, Boolean.TRUE.toString());
 
 		IndexDocumentRequest indexDocumentRequest = new IndexDocumentRequest(
-			_INDEX_NAME, document);
+			_INDEX_NAME, document1);
 
 		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
 
