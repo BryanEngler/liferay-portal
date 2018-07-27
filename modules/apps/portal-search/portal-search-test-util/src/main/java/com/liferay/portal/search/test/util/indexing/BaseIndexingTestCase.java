@@ -83,6 +83,12 @@ public abstract class BaseIndexingTestCase {
 		try {
 			_indexWriter.deleteEntityDocuments(
 				createSearchContext(), _entryClassName);
+
+			_indexWriter.clearSpellCheckerDictionaryIndexes(
+				createSearchContext());
+
+			_indexWriter.clearQuerySuggestionDictionaryIndexes(
+				createSearchContext());
 		}
 		catch (SearchException se) {
 		}

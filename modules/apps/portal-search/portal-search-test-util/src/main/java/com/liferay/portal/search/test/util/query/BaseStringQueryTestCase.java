@@ -14,8 +14,11 @@
 
 package com.liferay.portal.search.test.util.query;
 
+import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.filter.BooleanFilter;
+import com.liferay.portal.kernel.search.filter.TermFilter;
 import com.liferay.portal.kernel.search.generic.StringQuery;
 import com.liferay.portal.search.test.util.DocumentsAssert;
 import com.liferay.portal.search.test.util.IdempotentRetryAssert;
@@ -172,6 +175,15 @@ public abstract class BaseStringQueryTestCase extends BaseIndexingTestCase {
 		StringQuery stringQuery = new StringQuery(query);
 
 		stringQuery.setQueryConfig(searchContext.getQueryConfig());
+
+		BooleanFilter booleanFilter = new BooleanFilter();
+
+		TermFilter termFilter =
+			new TermFilter("companyId", String.valueOf(COMPANY_ID));
+
+		booleanFilter.add(termFilter, BooleanClauseOccur.MUST);
+
+		stringQuery.setPreBooleanFilter(booleanFilter);
 
 		return stringQuery;
 	}
