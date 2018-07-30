@@ -110,6 +110,14 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	}
 
 	@Test
+	public void testOrderByDDMDateField() throws Exception {
+		TestOrderHelper testOrderHelper = new DLFileEntrySearchTestOrderHelper(
+			_ddmIndexer, group);
+
+		testOrderHelper.testOrderByDDMDateField();
+	}
+
+	@Test
 	public void testOrderByDDMIntegerField() throws Exception {
 		TestOrderHelper testOrderHelper = new DLFileEntrySearchTestOrderHelper(
 			_ddmIndexer, group);
