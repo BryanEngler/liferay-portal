@@ -57,12 +57,8 @@ public class IndexedFieldsFixture {
 		map.put(field.concat("_sortable"), String.valueOf(value.getTime()));
 	}
 
-	public void populateExpirationDateWithForever(Map<String, String> map) {
-		populateDate(Field.EXPIRATION_DATE, new Date(Long.MAX_VALUE), map);
-
-		if (_isSearchEngineElasticsearch()) {
-			map.put(Field.EXPIRATION_DATE, "99950812133000");
-		}
+	public void populateExpirationDateWithMaxDate(Map<String, String> map) {
+		populateDate(Field.EXPIRATION_DATE, new Date(253402300799999L), map);
 	}
 
 	public void populatePriority(String priority, Map<String, String> map) {
@@ -132,10 +128,6 @@ public class IndexedFieldsFixture {
 			_searchEngineHelper.getDefaultSearchEngineId());
 
 		return vendor.equals(searchEngine.getVendor());
-	}
-
-	private boolean _isSearchEngineElasticsearch() {
-		return _isSearchEngine("Elasticsearch");
 	}
 
 	private boolean _isSearchEngineSolr() {
