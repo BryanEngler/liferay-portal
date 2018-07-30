@@ -107,7 +107,7 @@ public class DLFolderIndexerIndexedFieldsTest extends BaseDLIndexerTestCase {
 		indexedFieldsFixture.populateDate(
 			Field.PUBLISH_DATE, dlFolder.getCreateDate(), map);
 
-		indexedFieldsFixture.populateExpirationDateWithForever(map);
+		indexedFieldsFixture.populateExpirationDateWithMaxDate(map);
 	}
 
 	protected Map<String, String> populateExpectedFieldValues(

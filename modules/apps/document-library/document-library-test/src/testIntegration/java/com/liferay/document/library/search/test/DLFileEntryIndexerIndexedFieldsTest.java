@@ -128,7 +128,7 @@ public class DLFileEntryIndexerIndexedFieldsTest extends BaseDLIndexerTestCase {
 		indexedFieldsFixture.populateDate(
 			Field.PUBLISH_DATE, fileEntry.getCreateDate(), map);
 
-		indexedFieldsFixture.populateExpirationDateWithForever(map);
+		indexedFieldsFixture.populateExpirationDateWithMaxDate(map);
 	}
 
 	protected void populateExpectedFieldValues(
