@@ -54,7 +54,7 @@ public class IndexedFieldsFixture {
 
 		map.put(field, _dateFormat.format(value));
 
-		map.put(field.concat("_sortable"), String.valueOf(value.getTime()));
+		map.put(field.concat("_long_sortable"), String.valueOf(value.getTime()));
 	}
 
 	public void populateExpirationDateWithMaxDate(Map<String, String> map) {
@@ -63,10 +63,6 @@ public class IndexedFieldsFixture {
 
 	public void populatePriority(String priority, Map<String, String> map) {
 		map.put(Field.PRIORITY, priority);
-
-		if (_isSearchEngineSolr()) {
-			map.put(Field.PRIORITY.concat("_sortable"), priority);
-		}
 	}
 
 	public void populateRoleIdFields(
