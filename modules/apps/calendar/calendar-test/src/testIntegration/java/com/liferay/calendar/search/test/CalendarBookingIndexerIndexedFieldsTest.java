@@ -216,7 +216,7 @@ public class CalendarBookingIndexerIndexedFieldsTest
 			Field.MODIFIED_DATE, calendarBooking.getModifiedDate(), map);
 		indexedFieldsFixture.populateDate(Field.PUBLISH_DATE, new Date(0), map);
 
-		indexedFieldsFixture.populateExpirationDateWithForever(map);
+		indexedFieldsFixture.populateExpirationDateWithMaxDate(map);
 	}
 
 	protected void populateTitle(String title, Map<String, String> map) {
