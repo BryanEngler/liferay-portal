@@ -15,14 +15,31 @@
 package com.liferay.portal.search.solr.internal.facet;
 
 import com.liferay.portal.json.JSONFactoryImpl;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.search.solr.internal.SolrIndexingFixture;
+import com.liferay.portal.search.solr.internal.util.DateFormatUtil;
 import com.liferay.portal.search.test.util.facet.BaseModifiedFacetTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
+import com.liferay.portal.util.DateFormatFactoryImpl;
+import org.junit.Before;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Bryan Engler
  */
 public class ModifiedFacetTest extends BaseModifiedFacetTestCase {
+
+	@Before
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+
+		setUpDateFormatFactoryUtil();
+	}
 
 	@Override
 	protected IndexingFixture createIndexingFixture() {
@@ -38,4 +55,32 @@ public class ModifiedFacetTest extends BaseModifiedFacetTestCase {
 		return solrIndexingFixture;
 	}
 
+	@Override
+	protected void addDocument(String... values) throws Exception {
+		List<String> formattedStrings = new ArrayList<>();
+
+		for (String value : values) {
+			formattedStrings.add(
+				DateFormatUtil.getFormattedDateString("yyyyMMddHHmmss", value));
+		}
+
+		super.addDocument(ArrayUtil.toStringArray(formattedStrings));
+	}
+
+	protected void setUpDateFormatFactoryUtil() {
+		DateFormatFactoryUtil dateFormatFactoryUtil =
+			new DateFormatFactoryUtil();
+
+		dateFormatFactoryUtil.setDateFormatFactory(new DateFormatFactoryImpl());
+	}
+
+	@Override
+	protected List<String> getExpectedRanges() {
+		return Arrays.asList("custom-range=1", "range-one=0", "range-two=1");
+	}
+
+	@Override
+	protected String getDateMathString() {
+		return "[NOW-500YEARS TO NOW]";
+	}
 }
