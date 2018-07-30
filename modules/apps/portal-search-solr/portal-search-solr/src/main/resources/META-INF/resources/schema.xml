@@ -495,7 +495,7 @@
 		<field indexed="true" name="leftOrganizationId" stored="true" type="keyword" />
 		<field indexed="true" name="middleName" stored="true" type="text_lowercase" />
 		<field indexed="true" name="mimeType" stored="true" type="keyword" />
-		<field docValues="true" indexed="true" name="modified" stored="true" type="date" />
+		<field docValues="true" indexed="true" name="modifiedDate" stored="true" type="date" />
 		<field indexed="true" name="name" stored="true" termPositions="true" termVectors="true" type="text" />
 		<field indexed="true" name="nodeId" stored="true" type="keyword" />
 		<field docValues="true" indexed="true" name="organizationId" stored="true" type="keyword" />
