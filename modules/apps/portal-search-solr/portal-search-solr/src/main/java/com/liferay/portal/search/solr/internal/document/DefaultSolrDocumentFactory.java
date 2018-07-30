@@ -105,7 +105,7 @@ public class DefaultSolrDocumentFactory implements SolrDocumentFactory {
 
 	protected void addField(
 		SolrInputDocument solrInputDocument, Field field, String value,
-		String localizedName) {
+		String name) {
 
 		GeoLocationPoint geoLocationPoint = field.getGeoLocationPoint();
 
@@ -115,11 +115,10 @@ public class DefaultSolrDocumentFactory implements SolrDocumentFactory {
 					geoLocationPoint.getLongitude();
 		}
 
-		solrInputDocument.addField(localizedName, value);
+		solrInputDocument.addField(name, value);
 
 		if (field.isSortable()) {
-			String sortableFieldName = Field.getSortableFieldName(
-				localizedName);
+			String sortableFieldName = Field.getSortableFieldName(name);
 
 			solrInputDocument.addField(sortableFieldName, value);
 		}

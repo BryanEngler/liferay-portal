@@ -534,7 +534,6 @@
 		<field indexed="true" name="middleName" stored="true" type="text_lowercase" />
 		<field indexed="true" name="mimeType" stored="true" type="string" />
 		<field docValues="true" indexed="true" name="modified" stored="true" type="date" />
-		<field docValues="true" indexed="true" name="modified_sortable" stored="true" type="long" />
 		<field indexed="true" name="name" stored="true" termPositions="true" termVectors="true" type="text" />
 		<field indexed="true" name="nodeId" stored="true" type="string" />
 		<field docValues="true" indexed="true" name="organizationId" stored="true" type="string" />
@@ -575,9 +574,10 @@
 		<field indexed="true" name="version" stored="true" type="string" />
 		<field indexed="true" name="visible" stored="true" type="string" />
 		<dynamicField docValues="true" indexed="true" name="*_coordinate" stored="false" type="double" />
-		<dynamicField docValues="true" indexed="true" multiValued="false" name="*Date_sortable" stored="true" type="long" />
-		<dynamicField docValues="true" indexed="true" multiValued="false" name="*Number_sortable" stored="true" type="double" />
-		<dynamicField docValues="true" indexed="true" multiValued="false" name="*String_sortable" stored="true" type="string" />
+		<dynamicField docValues="true" indexed="true" multiValued="false" name="*_double_sortable" stored="true" type="double" />
+		<dynamicField docValues="true" indexed="true" multiValued="false" name="*_float_sortable" stored="true" type="float" />
+		<dynamicField docValues="true" indexed="true" multiValued="false" name="*_integer_sortable" stored="true" type="integer" />
+		<dynamicField docValues="true" indexed="true" multiValued="false" name="*_long_sortable" stored="true" type="long" />
 		<dynamicField docValues="true" indexed="true" multiValued="false" name="*_sortable" stored="true" type="string" />
 		<dynamicField indexed="true" multiValued="false" name="*_geolocation" stored="true" type="location" />
 		<dynamicField indexed="true" multiValued="true" name="assetCategoryTitles*" stored="true" termPositions="true" termVectors="true" type="text" />
