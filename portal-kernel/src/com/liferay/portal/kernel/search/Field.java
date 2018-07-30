@@ -117,7 +117,7 @@ public class Field implements Serializable {
 
 	public static final String LAYOUT_UUID = "layoutUuid";
 
-	public static final String MODIFIED_DATE = "modified";
+	public static final String MODIFIED_DATE = "modifiedDate";
 
 	public static final String NAME = "name";
 
