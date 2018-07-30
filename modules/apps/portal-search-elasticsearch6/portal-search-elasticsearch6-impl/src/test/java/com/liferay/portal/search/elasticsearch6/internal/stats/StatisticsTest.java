@@ -16,6 +16,10 @@ package com.liferay.portal.search.elasticsearch6.internal.stats;
 
 import com.liferay.portal.search.elasticsearch6.internal.ElasticsearchIndexingFixture;
 import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchFixture;
+import com.liferay.portal.search.elasticsearch6.internal.connection.IndexCreator;
+import com.liferay.portal.search.elasticsearch6.internal.connection.IndicesAdminClientSupplier;
+import com.liferay.portal.search.elasticsearch6.internal.connection.LiferayIndexCreationHelper;
+import com.liferay.portal.search.elasticsearch6.internal.index.LiferayDocumentTypeFactory;
 import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 import com.liferay.portal.search.test.util.stats.BaseStatisticsTestCase;
@@ -35,9 +39,42 @@ public class StatisticsTest extends BaseStatisticsTestCase {
 
 	@Override
 	protected IndexingFixture createIndexingFixture() {
+		ElasticsearchFixture elasticsearchFixture = new ElasticsearchFixture(
+			StatisticsTest.class.getSimpleName());
+
+		IndexCreator indexCreator = new IndexCreator(elasticsearchFixture);
+
+		indexCreator.setIndexCreationHelper(
+			new PriorityFieldLiferayIndexCreationHelper(elasticsearchFixture));
+
 		return new ElasticsearchIndexingFixture(
-			new ElasticsearchFixture(StatisticsTest.class.getSimpleName()),
-			BaseIndexingTestCase.COMPANY_ID);
+			elasticsearchFixture, BaseIndexingTestCase.COMPANY_ID,
+			indexCreator);
+	}
+
+	private static class PriorityFieldLiferayIndexCreationHelper
+		extends LiferayIndexCreationHelper {
+
+		public PriorityFieldLiferayIndexCreationHelper(
+			IndicesAdminClientSupplier indicesAdminClientSupplier) {
+
+			super(indicesAdminClientSupplier);
+		}
+
+		@Override
+		public void whenIndexCreated(String indexName) {
+			super.whenIndexCreated(indexName);
+
+			LiferayDocumentTypeFactory liferayDocumentTypeFactory =
+				getLiferayDocumentTypeFactory();
+
+			String source =
+				"{ \"properties\": { \"priority\": { \"store\": true, " +
+				"\"type\": \"double\" } } }";
+
+			liferayDocumentTypeFactory.addTypeMappings(indexName, source);
+		}
+
 	}
 
 }
