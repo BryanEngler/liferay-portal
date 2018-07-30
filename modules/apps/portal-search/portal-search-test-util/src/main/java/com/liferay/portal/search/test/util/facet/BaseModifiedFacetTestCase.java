@@ -74,10 +74,7 @@ public abstract class BaseModifiedFacetTestCase extends BaseFacetTestCase {
 
 		String customRange = "[11110101010101 TO 22220202020202]";
 
-		List<String> expectedRanges = Arrays.asList(
-			"range-one=0",
-			"custom-range=1",
-			"range-two=1");
+		List<String> expectedRanges = getExpectedRanges();
 
 		assertSearchFacet(
 			helper -> {
@@ -98,11 +95,14 @@ public abstract class BaseModifiedFacetTestCase extends BaseFacetTestCase {
 		addDocument("27760704000000");
 
 		String dateMathExpressionWithAlphabeticalOrderSwitched =
-			"[now-500y TO now]";
+			getDateMathString();
 
 		doTestSearchEngineDateMath(
 			dateMathExpressionWithAlphabeticalOrderSwitched, 1);
 	}
+
+	protected abstract List<String> getExpectedRanges();
+	protected abstract String getDateMathString();
 
 	protected Facet createFacet(SearchContext searchContext) {
 		ModifiedFacetFactory modifiedFacetFactory =
