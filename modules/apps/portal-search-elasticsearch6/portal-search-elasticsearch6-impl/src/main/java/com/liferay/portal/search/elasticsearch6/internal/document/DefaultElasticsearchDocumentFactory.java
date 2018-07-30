@@ -187,7 +187,7 @@ public class DefaultElasticsearchDocumentFactory
 		}
 		else {
 			for (String value : values) {
-				xContentBuilder.value(translateValue(field, value));
+				xContentBuilder.value(value);
 			}
 		}
 
@@ -233,29 +233,6 @@ public class DefaultElasticsearchDocumentFactory
 		else {
 			xContentBuilder.endObject();
 		}
-	}
-
-	protected Object translateValue(Field field, String value) {
-		if (!field.isNumeric()) {
-			return value;
-		}
-
-		Class<? extends Number> clazz = field.getNumericClass();
-
-		if (clazz.equals(Float.class)) {
-			return Float.valueOf(value);
-		}
-		else if (clazz.equals(Integer.class)) {
-			return Integer.valueOf(value);
-		}
-		else if (clazz.equals(Long.class)) {
-			return Long.valueOf(value);
-		}
-		else if (clazz.equals(Short.class)) {
-			return Short.valueOf(value);
-		}
-
-		return Double.valueOf(value);
 	}
 
 	private FastDateFormat _getDateFormat() {

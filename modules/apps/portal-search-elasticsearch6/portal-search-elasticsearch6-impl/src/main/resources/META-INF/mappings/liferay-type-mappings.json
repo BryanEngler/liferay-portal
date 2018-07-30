@@ -3,23 +3,48 @@
 		"date_detection": false,
 		"dynamic_templates": [
 			{
+				"template_double_sortable": {
+					"mapping": {
+						"store": true,
+						"type": "double"
+					},
+					"match": "*_double_sortable"
+				}
+			},
+			{
+				"template_float_sortable": {
+					"mapping": {
+						"store": true,
+						"type": "float"
+					},
+					"match": "*_float_sortable"
+				}
+			},
+			{
+				"template_integer_sortable": {
+					"mapping": {
+						"store": true,
+						"type": "integer"
+					},
+					"match": "*_integer_sortable"
+				}
+			},
+			{
 				"template_long_sortable": {
 					"mapping": {
 						"store": true,
 						"type": "long"
 					},
-					"match": "*_sortable",
-					"match_mapping_type": "long"
+					"match": "*_long_sortable"
 				}
 			},
 			{
-				"template_string_sortable": {
+				"template_sortable": {
 					"mapping": {
 						"store": true,
 						"type": "keyword"
 					},
-					"match": "*_sortable",
-					"match_mapping_type": "string"
+					"match": "*_sortable"
 				}
 			},
 			{
