@@ -30,7 +30,7 @@ public class ExpandoFieldQueryBuilderFactory
 
 	@Override
 	public FieldQueryBuilder getQueryBuilder(String field) {
-		if (field.startsWith("expando__keyword__")) {
+		if (field.startsWith("exp__keyword__")) {
 			return substringQueryBuilder;
 		}
 
