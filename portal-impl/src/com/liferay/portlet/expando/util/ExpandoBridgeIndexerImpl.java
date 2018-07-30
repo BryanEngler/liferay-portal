@@ -74,17 +74,16 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 	public String encodeFieldName(String columnName, int indexType) {
 		StringBundler sb = new StringBundler(7);
 
-		sb.append(FIELD_NAMESPACE);
-		sb.append(StringPool.DOUBLE_UNDERLINE);
+		sb.append(EXPANDO_FIELD_PREFIX);
 
 		if (indexType == ExpandoColumnConstants.INDEX_TYPE_KEYWORD) {
 			sb.append("keyword");
-			sb.append(StringPool.DOUBLE_UNDERLINE);
+			sb.append(EXPANDO_FIELD_SEPARATOR);
 		}
 
 		sb.append(
 			StringUtil.toLowerCase(ExpandoTableConstants.DEFAULT_TABLE_NAME));
-		sb.append(StringPool.DOUBLE_UNDERLINE);
+		sb.append(EXPANDO_FIELD_SEPARATOR);
 		sb.append(columnName);
 
 		return sb.toString();
@@ -304,8 +303,6 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 			}
 		}
 	}
-
-	protected static final String FIELD_NAMESPACE = "expando";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ExpandoBridgeIndexerImpl.class);
