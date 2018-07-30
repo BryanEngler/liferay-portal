@@ -90,7 +90,7 @@
 						"store": true,
 						"type": "text"
 					},
-					"match": "expando__keyword__*",
+					"match": "exp__keyword__*",
 					"match_mapping_type": "string"
 				}
 			},
@@ -481,26 +481,6 @@
 					"match": "\\w+_zh\\b|\\w+_zh_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
 					"match_pattern": "regex"
-				}
-			},
-			{
-				"template_ddm": {
-					"mapping": {
-						"store": true,
-						"type": "text"
-					},
-					"match": "ddm__*",
-					"match_mapping_type": "string"
-				}
-			},
-			{
-				"template_expando": {
-					"mapping": {
-						"store": true,
-						"type": "text"
-					},
-					"match": "expando__*",
-					"match_mapping_type": "string"
 				}
 			}
 		],
