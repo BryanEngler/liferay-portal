@@ -335,9 +335,9 @@ public abstract class BaseExpandoTestCase extends BaseIndexingTestCase {
 		RandomTestUtil.randomString();
 
 	private static final String _FIELD_KEYWORD =
-		"expando__keyword__custom_fields__testColumnName";
+		"exp__keyword__custom_fields__testColumnName";
 
 	private static final String _FIELD_TEXT =
-		"expando__custom_fields__testColumnName";
+		"exp__custom_fields__testColumnName";
 
 }
