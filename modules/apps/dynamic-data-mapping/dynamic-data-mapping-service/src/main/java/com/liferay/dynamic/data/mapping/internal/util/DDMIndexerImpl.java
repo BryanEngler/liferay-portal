@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -49,8 +50,10 @@ import java.io.Serializable;
 
 import java.math.BigDecimal;
 
+import java.text.DateFormat;
 import java.text.Format;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
@@ -101,8 +104,21 @@ public class DDMIndexerImpl implements DDMIndexer {
 					else if (value instanceof Boolean[]) {
 						document.addKeywordSortable(name, (Boolean[])value);
 					}
-					else if (value instanceof Date) {
-						document.addDateSortable(name, (Date)value);
+					else if (field.getType().equals(DDMFormFieldType.DATE)) {
+						DateFormat dateFormat =
+							DateFormatFactoryUtil.getSimpleDateFormat(
+								"yyyyMMddHHmmss");
+
+						Date date = null;
+
+						try {
+							date = dateFormat.parse(String.valueOf(value));
+						}
+						catch (ParseException pe) {
+							date = new Date();
+						}
+
+						document.addDateSortable(name, date);
 					}
 					else if (value instanceof Date[]) {
 						document.addDateSortable(name, (Date[])value);
