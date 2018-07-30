@@ -63,7 +63,7 @@ public class LiferayTypeMappingsModifiedDateFieldTest {
 	public void testLong() throws Exception {
 		index(20171115050402L);
 
-		_liferayIndexFixture.assertType("modified", "date");
+		_liferayIndexFixture.assertType(Field.MODIFIED_DATE, "date");
 	}
 
 	@Test
@@ -79,7 +79,7 @@ public class LiferayTypeMappingsModifiedDateFieldTest {
 	public void testString() throws Exception {
 		index("20171115050402");
 
-		_liferayIndexFixture.assertType("modified", "date");
+		_liferayIndexFixture.assertType(Field.MODIFIED_DATE, "date");
 	}
 
 	@Test

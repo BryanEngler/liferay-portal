@@ -21,6 +21,9 @@ import com.liferay.portal.search.test.util.facet.BaseModifiedFacetTestCase;
 import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author Bryan Engler
  */
@@ -42,4 +45,13 @@ public class ModifiedFacetTest extends BaseModifiedFacetTestCase {
 		return elasticsearchIndexingFixture;
 	}
 
+	@Override
+	protected String getDateMathString() {
+		return "[now-500y TO now]";
+	}
+
+	@Override
+	protected List<String> getExpectedRanges() {
+		return Arrays.asList("range-one=0", "custom-range=1", "range-two=1");
+	}
 }
