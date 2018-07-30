@@ -17,6 +17,7 @@ package com.liferay.expando.kernel.util;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.expando.kernel.model.ExpandoBridge;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.Document;
 
 /**
@@ -24,6 +25,14 @@ import com.liferay.portal.kernel.search.Document;
  */
 @ProviderType
 public interface ExpandoBridgeIndexer {
+
+	public static final String EXPANDO_FIELD_NAMESPACE = "exp";
+
+	public static final String EXPANDO_FIELD_PREFIX =
+		EXPANDO_FIELD_NAMESPACE + ExpandoBridgeIndexer.EXPANDO_FIELD_SEPARATOR;
+
+	public static final String EXPANDO_FIELD_SEPARATOR =
+		StringPool.DOUBLE_UNDERLINE;
 
 	public void addAttributes(Document document, ExpandoBridge expandoBridge);
 
