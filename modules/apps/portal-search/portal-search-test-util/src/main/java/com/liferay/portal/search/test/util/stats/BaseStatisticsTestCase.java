@@ -70,7 +70,7 @@ public abstract class BaseStatisticsTestCase extends BaseIndexingTestCase {
 	}
 
 	protected void assertStats() throws Exception {
-		String field = STAT_SORTABLE_FIELD;
+		String field = STAT_FIELD;
 
 		SearchContext searchContext = createSearchContext();
 
@@ -127,8 +127,5 @@ public abstract class BaseStatisticsTestCase extends BaseIndexingTestCase {
 	}
 
 	protected static final String STAT_FIELD = Field.PRIORITY;
-
-	protected static final String STAT_SORTABLE_FIELD =
-		STAT_FIELD + "_Number_sortable";
 
 }
