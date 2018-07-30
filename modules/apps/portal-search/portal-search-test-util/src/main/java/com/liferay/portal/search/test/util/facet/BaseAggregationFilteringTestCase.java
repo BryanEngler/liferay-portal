@@ -284,6 +284,7 @@ public abstract class BaseAggregationFilteringTestCase
 			JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
 			jsonObject.put("range", range);
+			jsonObject.put("label", range);
 
 			jsonArray.put(jsonObject);
 		}
