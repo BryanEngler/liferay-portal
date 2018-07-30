@@ -23,6 +23,7 @@ import com.liferay.expando.kernel.model.ExpandoColumnConstants;
 import com.liferay.expando.kernel.model.ExpandoTable;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
+import com.liferay.expando.kernel.util.ExpandoBridgeIndexer;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
@@ -431,7 +432,9 @@ public class ExpandoSearchTest {
 		Map<String, Field> fields = document.getFields();
 
 		for (Field field : fields.values()) {
-			if (StringUtil.startsWith(field.getName(), "expando")) {
+			if (StringUtil.startsWith(field.getName(),
+				ExpandoBridgeIndexer.EXPANDO_FIELD_PREFIX)) {
+
 				return field.getValue();
 			}
 		}
