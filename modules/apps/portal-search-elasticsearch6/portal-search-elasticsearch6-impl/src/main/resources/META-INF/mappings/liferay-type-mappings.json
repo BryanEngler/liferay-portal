@@ -696,7 +696,7 @@
 				"store": true,
 				"type": "keyword"
 			},
-			"modified": {
+			"modifiedDate": {
 				"format": "yyyyMMddHHmmss",
 				"store": true,
 				"type": "date"
