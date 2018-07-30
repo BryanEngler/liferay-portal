@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.Serializable;
 
@@ -227,6 +228,23 @@ public class Field implements Serializable {
 		String fieldName = sort.getFieldName();
 
 		if (isSortableFieldName(fieldName)) {
+			if ((sort.getType() == Sort.DOUBLE_TYPE) && !fieldName.endsWith("double_sortable")) {
+				fieldName = StringUtil.replace(
+					fieldName, SORTABLE_FIELD_SUFFIX, "double_sortable");
+			}
+			else if ((sort.getType() == Sort.FLOAT_TYPE) && !fieldName.endsWith("float_sortable")) {
+				fieldName = StringUtil.replace(
+					fieldName, SORTABLE_FIELD_SUFFIX, "float_sortable");
+			}
+			else if ((sort.getType() == Sort.INT_TYPE) && !fieldName.endsWith("integer_sortable")) {
+				fieldName = StringUtil.replace(
+					fieldName, SORTABLE_FIELD_SUFFIX, "integer_sortable");
+			}
+			else if ((sort.getType() == Sort.LONG_TYPE) && !fieldName.endsWith("long_sortable")) {
+				fieldName = StringUtil.replace(
+					fieldName, SORTABLE_FIELD_SUFFIX, "long_sortable");
+			}
+
 			return fieldName;
 		}
 
@@ -234,6 +252,19 @@ public class Field implements Serializable {
 			!DocumentImpl.isSortableTextField(fieldName)) {
 
 			return scoreFieldName;
+		}
+
+		if ((sort.getType() == Sort.DOUBLE_TYPE)) {
+			fieldName = fieldName.concat("_double");
+		}
+		else if ((sort.getType() == Sort.FLOAT_TYPE)) {
+			fieldName = fieldName.concat("_float");
+		}
+		else if ((sort.getType() == Sort.INT_TYPE)) {
+			fieldName = fieldName.concat("_integer");
+		}
+		else if ((sort.getType() == Sort.LONG_TYPE)) {
+			fieldName = fieldName.concat("_long");
 		}
 
 		return getSortableFieldName(fieldName);

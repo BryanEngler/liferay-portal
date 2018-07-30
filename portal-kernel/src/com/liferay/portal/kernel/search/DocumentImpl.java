@@ -1013,8 +1013,20 @@ public class DocumentImpl implements Document {
 		String name, boolean typify, String value,
 		Class<? extends Number> clazz) {
 
-		if (typify) {
-			name = name.concat(StringPool.UNDERLINE).concat("Number");
+		if (name.equals(Field.PRIORITY)) {
+			return;
+		}
+
+		String simpleName = clazz.getSimpleName();
+
+		if (simpleName.equals(BigDecimal.class.getSimpleName())) {
+			name = name.concat(
+				StringPool.UNDERLINE).concat(
+					StringUtil.lowerCase(Double.class.getSimpleName()));
+		}
+		else {
+			name = name.concat(StringPool.UNDERLINE).concat(
+				StringUtil.lowerCase(simpleName));
 		}
 
 		Field field = createField(Field.getSortableFieldName(name), value);
@@ -1116,10 +1128,6 @@ public class DocumentImpl implements Document {
 
 	private void _createSortableTextField(
 		String name, boolean typify, String value) {
-
-		if (typify) {
-			name = name.concat(StringPool.UNDERLINE).concat("String");
-		}
 
 		String truncatedValue = value;
 
