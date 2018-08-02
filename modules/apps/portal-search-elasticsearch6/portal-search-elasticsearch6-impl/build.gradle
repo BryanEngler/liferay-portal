@@ -81,7 +81,7 @@ dependencies {
 	elasticsearchPlugins ext: "zip", group: "com.liferay", name: "org.elasticsearch.plugin.analysis.smartcn", version: elasticsearchVersion
 	elasticsearchPlugins ext: "zip", group: "com.liferay", name: "org.elasticsearch.plugin.analysis.stempel", version: elasticsearchVersion
 
-	testCompile group: "com.liferay.portal", name: "com.liferay.util.java", version: "3.0.0"
+	testCompile group: "com.liferay.portal", name: "com.liferay.util.java", version: "default"
 	testCompile group: "easyconf", name: "easyconf", version: "0.9.5"
 	testCompile group: "javax.servlet", name: "javax.servlet-api", version: "3.0.1"
 	testCompile group: "log4j", name: "log4j", version: "1.2.17"
