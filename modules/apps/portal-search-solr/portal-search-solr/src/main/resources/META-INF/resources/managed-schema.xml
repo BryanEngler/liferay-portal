@@ -3,8 +3,6 @@
 <schema name="liferay" version="7.0">
 	<uniqueKey>uid</uniqueKey>
 	<solrQueryParser defaultOperator="OR" />
-	<fieldType name="_bbox_coord" class="solr.TrieDoubleField" stored="false" docValues="true" precisionStep="8" />
-	<fieldType name="bbox" class="solr.BBoxField" geo="true" numberType="_bbox_coord" distanceUnits="kilometers" />
 	<fieldType name="boolean" class="solr.BoolField" omitNorms="true" sortMissingLast="true" />
 	<fieldType name="date" class="solr.TrieDateField" omitNorms="true" positionIncrementGap="0" precisionStep="0" />
 	<fieldType name="double" class="solr.TrieDoubleField" omitNorms="true" positionIncrementGap="0" precisionStep="0" />
@@ -17,10 +15,7 @@
 			<filter class="solr.LowerCaseFilterFactory" />
 		</analyzer>
 	</fieldType>
-	<fieldType name="location" class="solr.LatLonType" subFieldSuffix="_coordinate" />
-	<fieldType name="location_rpt" class="solr.SpatialRecursivePrefixTreeFieldType" geo="true" maxDistErr="0.001" distErrPct="0.025" distanceUnits="kilometers" />
 	<fieldType name="long" class="solr.TrieLongField" omitNorms="true" positionIncrementGap="0" precisionStep="0" />
-	<fieldType name="point" class="solr.PointType" subFieldSuffix="_d" dimension="2" />
 	<fieldType name="text" class="solr.TextField" positionIncrementGap="100">
 		<analyzer type="index">
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -62,6 +57,15 @@
 			<filter class="solr.SynonymFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt" />
 		</analyzer>
 	</fieldType>
+	<fieldType name="text_lowercase" class="solr.TextField" omitNorms="true" sortMissingLast="true">
+		<analyzer>
+			<tokenizer class="solr.WhitespaceTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+		</analyzer>
+	</fieldType>
+
+	<!-- Arabic -->
+
 	<fieldType name="text_ar" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -71,6 +75,9 @@
 			<filter class="solr.ArabicStemFilterFactory" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Bulgarian -->
+
 	<fieldType name="text_bg" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -79,6 +86,9 @@
 			<filter class="solr.BulgarianStemFilterFactory" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Catalan -->
+
 	<fieldType name="text_ca" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -88,6 +98,9 @@
 			<filter class="solr.SnowballPorterFilterFactory" language="Catalan" />
 		</analyzer>
 	</fieldType>
+
+	<!-- CJK bigram (for Korean and Chinese) -->
+
 	<fieldType name="text_cjk" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -96,6 +109,9 @@
 			<filter class="solr.CJKBigramFilterFactory" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Czech -->
+
 	<fieldType name="text_cz" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -104,6 +120,9 @@
 			<filter class="solr.CzechStemFilterFactory" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Danish -->
+
 	<fieldType name="text_da" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -112,6 +131,9 @@
 			<filter class="solr.SnowballPorterFilterFactory" language="Danish" />
 		</analyzer>
 	</fieldType>
+
+	<!-- German -->
+
 	<fieldType name="text_de" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -121,6 +143,9 @@
 			<filter class="solr.GermanLightStemFilterFactory" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Greek -->
+
 	<fieldType name="text_el" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -129,6 +154,9 @@
 			<filter class="solr.GreekStemFilterFactory" />
 		</analyzer>
 	</fieldType>
+
+	<!-- English -->
+
 	<fieldType name="text_en" class="solr.TextField" positionIncrementGap="100">
 		<analyzer type="index">
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -148,6 +176,9 @@
 			<filter class="solr.PorterStemFilterFactory" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Spanish -->
+
 	<fieldType name="text_es" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -156,6 +187,9 @@
 			<filter class="solr.SpanishLightStemFilterFactory" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Basque -->
+
 	<fieldType name="text_eu" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -164,6 +198,9 @@
 			<filter class="solr.SnowballPorterFilterFactory" language="Basque" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Persian -->
+
 	<fieldType name="text_fa" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<charFilter class="solr.PersianCharFilterFactory" />
@@ -174,6 +211,9 @@
 			<filter class="solr.StopFilterFactory" words="lang/stopwords_fa.txt" ignoreCase="true" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Finnish -->
+
 	<fieldType name="text_fi" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -182,6 +222,9 @@
 			<filter class="solr.SnowballPorterFilterFactory" language="Finnish" />
 		</analyzer>
 	</fieldType>
+
+	<!-- French -->
+
 	<fieldType name="text_fr" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -191,6 +234,9 @@
 			<filter class="solr.FrenchLightStemFilterFactory" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Gaelic-->
+
 	<fieldType name="text_ga" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -201,6 +247,9 @@
 			<filter class="solr.SnowballPorterFilterFactory" language="Irish" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Galician -->
+
 	<fieldType name="text_gl" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -209,6 +258,9 @@
 			<filter class="solr.GalicianStemFilterFactory" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Hindi -->
+
 	<fieldType name="text_hi" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -219,6 +271,9 @@
 			<filter class="solr.HindiStemFilterFactory" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Hungarian -->
+
 	<fieldType name="text_hu" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -227,6 +282,9 @@
 			<filter class="solr.SnowballPorterFilterFactory" language="Hungarian" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Armenian -->
+
 	<fieldType name="text_hy" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -235,6 +293,9 @@
 			<filter class="solr.SnowballPorterFilterFactory" language="Armenian" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Indonesian -->
+
 	<fieldType name="text_id" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -243,6 +304,9 @@
 			<filter class="solr.IndonesianStemFilterFactory" stemDerivational="false" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Italian -->
+
 	<fieldType name="text_it" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -252,6 +316,9 @@
 			<filter class="solr.ItalianLightStemFilterFactory" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Japanese -->
+
 	<fieldType name="text_ja" class="solr.TextField" autoGeneratePhraseQueries="false" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.JapaneseTokenizerFactory" mode="search" />
@@ -263,12 +330,9 @@
 			<filter class="solr.LowerCaseFilterFactory" />
 		</analyzer>
 	</fieldType>
-	<fieldType name="text_lowercase" class="solr.TextField" omitNorms="true" sortMissingLast="true">
-		<analyzer>
-			<tokenizer class="solr.WhitespaceTokenizerFactory" />
-			<filter class="solr.LowerCaseFilterFactory" />
-		</analyzer>
-	</fieldType>
+
+	<!-- Dutch -->
+
 	<fieldType name="text_nl" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -278,6 +342,9 @@
 			<filter class="solr.SnowballPorterFilterFactory" language="Dutch" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Norwegian -->
+
 	<fieldType name="text_no" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -286,6 +353,9 @@
 			<filter class="solr.SnowballPorterFilterFactory" language="Norwegian" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Portuguese -->
+
 	<fieldType name="text_pt" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -294,6 +364,9 @@
 			<filter class="solr.SnowballPorterFilterFactory" language="Portuguese" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Romanian -->
+
 	<fieldType name="text_ro" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -302,6 +375,9 @@
 			<filter class="solr.SnowballPorterFilterFactory" language="Romanian" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Russian -->
+
 	<fieldType name="text_ru" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -310,6 +386,9 @@
 			<filter class="solr.SnowballPorterFilterFactory" language="Russian" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Swedish -->
+
 	<fieldType name="text_sv" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -318,6 +397,9 @@
 			<filter class="solr.SnowballPorterFilterFactory" language="Swedish" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Thai -->
+
 	<fieldType name="text_th" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.ThaiTokenizerFactory" />
@@ -325,6 +407,9 @@
 			<filter class="solr.StopFilterFactory" words="lang/stopwords_th.txt" ignoreCase="true" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Turkish -->
+
 	<fieldType name="text_tr" class="solr.TextField" positionIncrementGap="100">
 		<analyzer>
 			<tokenizer class="solr.StandardTokenizerFactory" />
@@ -333,6 +418,16 @@
 			<filter class="solr.SnowballPorterFilterFactory" language="Turkish" />
 		</analyzer>
 	</fieldType>
+
+	<!-- Geo Location -->
+
+	<fieldType name="_bbox_coord" class="solr.TrieDoubleField" stored="false" docValues="true" precisionStep="8" />
+	<fieldType name="bbox" class="solr.BBoxField" geo="true" numberType="_bbox_coord" distanceUnits="kilometers" />
+	<fieldType name="location" class="solr.LatLonType" subFieldSuffix="_coordinate" />
+	<fieldType name="location_rpt" class="solr.SpatialRecursivePrefixTreeFieldType" geo="true" maxDistErr="0.001" distErrPct="0.025" distanceUnits="kilometers" />
+	<fieldType name="point" class="solr.PointType" subFieldSuffix="_d" dimension="2" />
+
+
 	<field name="_version_" type="long" multiValued="false" indexed="true" stored="true" />
 	<field name="all" type="text" multiValued="true" indexed="true" stored="false" />
 	<field name="ancestorOrganizationIds" type="keyword" multiValued="true" indexed="true" stored="true" />
@@ -424,6 +519,13 @@
 	<field name="userName" type="keyword" docValues="true" indexed="true" stored="true" />
 	<field name="version" type="keyword" indexed="true" stored="true" />
 	<field name="visible" type="keyword" indexed="true" stored="true" />
+
+	<!--
+		Longer patterns will be matched first. If equal size patterns both match, the first appearing in the schema will be used.
+
+		https://wiki.apache.org/solr/SchemaXml
+	-->
+
 	<dynamicField name="assetCategoryTitles*" type="text" termPositions="true" termVectors="true" multiValued="true" indexed="true" stored="true" />
 	<dynamicField name="*_integer_sortable" type="integer" docValues="true" multiValued="false" indexed="true" stored="true" />
 	<dynamicField name="*_double_sortable" type="double" docValues="true" multiValued="false" indexed="true" stored="true" />
