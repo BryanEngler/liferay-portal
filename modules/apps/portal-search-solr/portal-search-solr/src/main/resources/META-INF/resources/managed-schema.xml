@@ -1,545 +1,545 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <schema name="liferay" version="7.0">
-  <uniqueKey>uid</uniqueKey>
-  <solrQueryParser defaultOperator="OR"/>
-  <fieldType name="_bbox_coord" class="solr.TrieDoubleField" stored="false" docValues="true" precisionStep="8"/>
-  <fieldType name="bbox" class="solr.BBoxField" geo="true" numberType="_bbox_coord" distanceUnits="kilometers"/>
-  <fieldType name="boolean" class="solr.BoolField" omitNorms="true" sortMissingLast="true"/>
-  <fieldType name="date" class="solr.TrieDateField" omitNorms="true" positionIncrementGap="0" precisionStep="0"/>
-  <fieldType name="double" class="solr.TrieDoubleField" omitNorms="true" positionIncrementGap="0" precisionStep="0"/>
-  <fieldType name="float" class="solr.TrieFloatField" omitNorms="true" positionIncrementGap="0" precisionStep="0"/>
-  <fieldType name="integer" class="solr.TrieIntField" omitNorms="true" positionIncrementGap="0" precisionStep="0"/>
-  <fieldType name="keyword" class="solr.StrField" omitNorms="true" sortMissingLast="true"/>
-  <fieldType name="keyword_lowercase" class="solr.TextField" omitNorms="true" sortMissingLast="true">
-    <analyzer>
-      <tokenizer class="solr.KeywordTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="location" class="solr.LatLonType" subFieldSuffix="_coordinate"/>
-  <fieldType name="location_rpt" class="solr.SpatialRecursivePrefixTreeFieldType" geo="true" maxDistErr="0.001" distErrPct="0.025" distanceUnits="kilometers"/>
-  <fieldType name="long" class="solr.TrieLongField" omitNorms="true" positionIncrementGap="0" precisionStep="0"/>
-  <fieldType name="point" class="solr.PointType" subFieldSuffix="_d" dimension="2"/>
-  <fieldType name="text" class="solr.TextField" positionIncrementGap="100">
-    <analyzer type="index">
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true"/>
-    </analyzer>
-    <analyzer type="query">
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true"/>
-      <filter class="solr.SynonymFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="textAuto" class="solr.TextField" positionIncrementGap="100">
-    <analyzer type="index">
-      <tokenizer class="solr.KeywordTokenizerFactory"/>
-      <filter class="solr.EdgeNGramFilterFactory" maxGramSize="25" minGramSize="1"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-    </analyzer>
-    <analyzer type="query">
-      <tokenizer class="solr.KeywordTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="textSpell" class="solr.TextField" omitNorms="true" positionIncrementGap="100">
-    <analyzer type="index">
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StandardFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true"/>
-    </analyzer>
-    <analyzer type="query">
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StandardFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true"/>
-      <filter class="solr.SynonymFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_ar" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_ar.txt" ignoreCase="true"/>
-      <filter class="solr.ArabicNormalizationFilterFactory"/>
-      <filter class="solr.ArabicStemFilterFactory"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_bg" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_bg.txt" ignoreCase="true"/>
-      <filter class="solr.BulgarianStemFilterFactory"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_ca" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.ElisionFilterFactory" articles="lang/contractions_ca.txt" ignoreCase="true"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_ca.txt" ignoreCase="true"/>
-      <filter class="solr.SnowballPorterFilterFactory" language="Catalan"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_cjk" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.CJKWidthFilterFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.CJKBigramFilterFactory"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_cz" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_cz.txt" ignoreCase="true"/>
-      <filter class="solr.CzechStemFilterFactory"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_da" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_da.txt" ignoreCase="true"/>
-      <filter class="solr.SnowballPorterFilterFactory" language="Danish"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_de" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_de.txt" ignoreCase="true"/>
-      <filter class="solr.GermanNormalizationFilterFactory"/>
-      <filter class="solr.GermanLightStemFilterFactory"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_el" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.GreekLowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_el.txt" ignoreCase="false"/>
-      <filter class="solr.GreekStemFilterFactory"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_en" class="solr.TextField" positionIncrementGap="100">
-    <analyzer type="index">
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_en.txt" ignoreCase="true"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.EnglishPossessiveFilterFactory"/>
-      <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
-      <filter class="solr.PorterStemFilterFactory"/>
-    </analyzer>
-    <analyzer type="query">
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.SynonymFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_en.txt" ignoreCase="true"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.EnglishPossessiveFilterFactory"/>
-      <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
-      <filter class="solr.PorterStemFilterFactory"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_es" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_es.txt" ignoreCase="true"/>
-      <filter class="solr.SpanishLightStemFilterFactory"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_eu" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_eu.txt" ignoreCase="true"/>
-      <filter class="solr.SnowballPorterFilterFactory" language="Basque"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_fa" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <charFilter class="solr.PersianCharFilterFactory"/>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.ArabicNormalizationFilterFactory"/>
-      <filter class="solr.PersianNormalizationFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_fa.txt" ignoreCase="true"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_fi" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_fi.txt" ignoreCase="true"/>
-      <filter class="solr.SnowballPorterFilterFactory" language="Finnish"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_fr" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.ElisionFilterFactory" articles="lang/contractions_fr.txt" ignoreCase="true"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_fr.txt" ignoreCase="true"/>
-      <filter class="solr.FrenchLightStemFilterFactory"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_ga" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.ElisionFilterFactory" articles="lang/contractions_ga.txt" ignoreCase="true"/>
-      <filter class="solr.StopFilterFactory" words="lang/hyphenations_ga.txt" ignoreCase="true"/>
-      <filter class="solr.IrishLowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_ga.txt" ignoreCase="true"/>
-      <filter class="solr.SnowballPorterFilterFactory" language="Irish"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_gl" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_gl.txt" ignoreCase="true"/>
-      <filter class="solr.GalicianStemFilterFactory"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_hi" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.IndicNormalizationFilterFactory"/>
-      <filter class="solr.HindiNormalizationFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_hi.txt" ignoreCase="true"/>
-      <filter class="solr.HindiStemFilterFactory"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_hu" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_hu.txt" ignoreCase="true"/>
-      <filter class="solr.SnowballPorterFilterFactory" language="Hungarian"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_hy" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_hy.txt" ignoreCase="true"/>
-      <filter class="solr.SnowballPorterFilterFactory" language="Armenian"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_id" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_id.txt" ignoreCase="true"/>
-      <filter class="solr.IndonesianStemFilterFactory" stemDerivational="false"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_it" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.ElisionFilterFactory" articles="lang/contractions_it.txt" ignoreCase="true"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_it.txt" ignoreCase="true"/>
-      <filter class="solr.ItalianLightStemFilterFactory"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_ja" class="solr.TextField" autoGeneratePhraseQueries="false" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.JapaneseTokenizerFactory" mode="search"/>
-      <filter class="solr.JapaneseBaseFormFilterFactory"/>
-      <filter class="solr.JapanesePartOfSpeechStopFilterFactory" tags="lang/stoptags_ja.txt"/>
-      <filter class="solr.CJKWidthFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_ja.txt" ignoreCase="true"/>
-      <filter class="solr.JapaneseKatakanaStemFilterFactory" minimumLength="4"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_lowercase" class="solr.TextField" omitNorms="true" sortMissingLast="true">
-    <analyzer>
-      <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_nl" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_nl.txt" ignoreCase="true"/>
-      <filter class="solr.StemmerOverrideFilterFactory" dictionary="lang/stemdict_nl.txt" ignoreCase="false"/>
-      <filter class="solr.SnowballPorterFilterFactory" language="Dutch"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_no" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_no.txt" ignoreCase="true"/>
-      <filter class="solr.SnowballPorterFilterFactory" language="Norwegian"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_pt" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_pt.txt" ignoreCase="true"/>
-      <filter class="solr.SnowballPorterFilterFactory" language="Portuguese"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_ro" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_ro.txt" ignoreCase="true"/>
-      <filter class="solr.SnowballPorterFilterFactory" language="Romanian"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_ru" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_ru.txt" ignoreCase="true"/>
-      <filter class="solr.SnowballPorterFilterFactory" language="Russian"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_sv" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_sv.txt" ignoreCase="true"/>
-      <filter class="solr.SnowballPorterFilterFactory" language="Swedish"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_th" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.ThaiTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_th.txt" ignoreCase="true"/>
-    </analyzer>
-  </fieldType>
-  <fieldType name="text_tr" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.TurkishLowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_tr.txt" ignoreCase="false"/>
-      <filter class="solr.SnowballPorterFilterFactory" language="Turkish"/>
-    </analyzer>
-  </fieldType>
-  <field name="_version_" type="long" multiValued="false" indexed="true" stored="true"/>
-  <field name="all" type="text" multiValued="true" indexed="true" stored="false"/>
-  <field name="ancestorOrganizationIds" type="keyword" multiValued="true" indexed="true" stored="true"/>
-  <field name="articleId" type="keyword_lowercase" indexed="true" stored="true"/>
-  <field name="assetCategoryId" type="keyword" docValues="true" indexed="true" stored="true"/>
-  <field name="assetCategoryIds" type="keyword" multiValued="true" indexed="true" stored="true"/>
-  <field name="assetCategoryTitle" type="text" termPositions="true" termVectors="true" indexed="true" stored="true"/>
-  <field name="assetTagId" type="keyword" docValues="true" indexed="true" stored="true"/>
-  <field name="assetTagIds" type="keyword" multiValued="true" indexed="true" stored="true"/>
-  <field name="assetTagNames" type="text" termPositions="true" termVectors="true" multiValued="true" indexed="true" stored="true"/>
-  <field name="assetTagNames.raw" type="keyword" multiValued="true" indexed="true" stored="false"/>
-  <field name="assetVocabularyId" type="keyword" docValues="true" indexed="true" stored="true"/>
-  <field name="assetVocabularyIds" type="keyword" multiValued="true" indexed="true" stored="true"/>
-  <field name="classTypeId" type="keyword" indexed="true" stored="true"/>
-  <field name="comments" type="text" indexed="true" stored="true"/>
-  <field name="companyId" type="long" indexed="true" stored="true"/>
-  <field name="configurationModelAttributeName" type="keyword" multiValued="true" indexed="true" stored="true"/>
-  <field name="configurationModelFactoryPid" type="keyword" indexed="true" stored="true"/>
-  <field name="configurationModelId" type="keyword" indexed="true" stored="true"/>
-  <field name="content" type="text" termPositions="true" termVectors="true" indexed="true" stored="true"/>
-  <field name="createDate" type="date" indexed="true" stored="true"/>
-  <field name="dataRepositoryId" type="keyword" indexed="true" stored="true"/>
-  <field name="ddmContent" type="text" termPositions="true" termVectors="true" indexed="true" stored="true"/>
-  <field name="ddmStructureKey" type="keyword" docValues="true" indexed="true" stored="true"/>
-  <field name="ddmTemplateKey" type="keyword" indexed="true" stored="true"/>
-  <field name="defaultLanguageId" type="keyword" indexed="true" stored="true"/>
-  <field name="description" type="text" termPositions="true" termVectors="true" indexed="true" stored="true"/>
-  <field name="discussion" type="keyword" indexed="true" stored="true"/>
-  <field name="displayDate" type="date" docValues="true" indexed="true" stored="true"/>
-  <field name="emailAddress" type="keyword" indexed="true" stored="true"/>
-  <field name="endTime" type="keyword" docValues="true" indexed="true" stored="true"/>
-  <field name="entryClassName" type="keyword" docValues="true" indexed="true" stored="true"/>
-  <field name="entryClassPK" type="keyword" docValues="true" indexed="true" stored="true"/>
-  <field name="expirationDate" type="date" docValues="true" indexed="true" stored="true"/>
-  <field name="extension" type="keyword" indexed="true" stored="true"/>
-  <field name="fileEntryTypeId" type="keyword" indexed="true" stored="true"/>
-  <field name="firstName" type="text_lowercase" indexed="true" stored="true"/>
-  <field name="folderId" type="keyword" docValues="true" indexed="true" stored="true"/>
-  <field name="fullName" type="text" termPositions="true" termVectors="true" indexed="true" stored="true"/>
-  <field name="geoLocation" type="location" indexed="true" stored="true"/>
-  <field name="groupId" type="keyword" docValues="true" multiValued="true" indexed="true" stored="true"/>
-  <field name="groupIds" type="keyword" multiValued="true" indexed="true" stored="true"/>
-  <field name="groupRoleId" type="keyword" multiValued="true" indexed="true" stored="true"/>
-  <field name="hidden" type="keyword" indexed="true" stored="true"/>
-  <field name="id" type="keyword" indexed="true" stored="true"/>
-  <field name="keywordSearch" type="textAuto" omitNorms="true" omitTermFreqAndPositions="true" indexed="true" stored="true"/>
-  <field name="languageId" type="keyword" docValues="true" indexed="true" stored="true"/>
-  <field name="lastName" type="text_lowercase" indexed="true" stored="true"/>
-  <field name="leftOrganizationId" type="keyword" indexed="true" stored="true"/>
-  <field name="middleName" type="text_lowercase" indexed="true" stored="true"/>
-  <field name="mimeType" type="keyword" indexed="true" stored="true"/>
-  <field name="modifiedDate" type="date" docValues="true" indexed="true" stored="true"/>
-  <field name="name" type="text" termPositions="true" termVectors="true" indexed="true" stored="true"/>
-  <field name="nodeId" type="keyword" indexed="true" stored="true"/>
-  <field name="organizationId" type="keyword" docValues="true" indexed="true" stored="true"/>
-  <field name="organizationIds" type="keyword" multiValued="true" indexed="true" stored="true"/>
-  <field name="parentCategoryId" type="keyword" indexed="true" stored="true"/>
-  <field name="parentCategoryIds" type="keyword" multiValued="true" indexed="true" stored="true"/>
-  <field name="path" type="keyword" indexed="true" stored="true"/>
-  <field name="portletId" type="keyword" indexed="true" stored="true"/>
-  <field name="priority" type="double" docValues="true" indexed="true" stored="true"/>
-  <field name="publishDate" type="date" docValues="true" indexed="true" stored="true"/>
-  <field name="readCount" type="keyword" indexed="true" stored="true"/>
-  <field name="recordSetId" type="keyword" indexed="true" stored="true"/>
-  <field name="removedByUser" type="keyword" docValues="true" indexed="true" stored="true"/>
-  <field name="removedDate" type="date" docValues="true" indexed="true" stored="true"/>
-  <field name="rightOrganizationId" type="keyword" indexed="true" stored="true"/>
-  <field name="roleId" type="keyword" docValues="true" multiValued="true" indexed="true" stored="true"/>
-  <field name="roleIds" type="keyword" multiValued="true" indexed="true" stored="true"/>
-  <field name="rootEntryClassName" type="keyword" docValues="true" indexed="true" stored="true"/>
-  <field name="rootEntryClassPK" type="keyword" docValues="true" indexed="true" stored="true"/>
-  <field name="scopeGroupId" type="keyword" docValues="true" multiValued="true" indexed="true" stored="true"/>
-  <field name="screenName" type="keyword" docValues="true" indexed="true" stored="true"/>
-  <field name="size" type="keyword" indexed="true" stored="true"/>
-  <field name="spellCheckWeight" type="keyword" indexed="true" stored="true"/>
-  <field name="spellCheckWord" type="textSpell" multiValued="true" indexed="true" stored="true"/>
-  <field name="startTime" type="long" docValues="true" indexed="true" stored="true"/>
-  <field name="status" type="keyword" indexed="true" stored="true"/>
-  <field name="subtitle" type="text" indexed="true" stored="true"/>
-  <field name="teamIds" type="keyword" multiValued="true" indexed="true" stored="true"/>
-  <field name="threadId" type="keyword" indexed="true" stored="true"/>
-  <field name="title" type="text" termPositions="true" termVectors="true" indexed="true" stored="true"/>
-  <field name="treePath" type="keyword" multiValued="true" indexed="true" stored="true"/>
-  <field name="type" type="keyword" docValues="true" indexed="true" stored="true"/>
-  <field name="uid" type="keyword" indexed="true" stored="true"/>
-  <field name="userGroupId" type="keyword" docValues="true" indexed="true" stored="true"/>
-  <field name="userGroupIds" type="keyword" multiValued="true" indexed="true" stored="true"/>
-  <field name="userId" type="keyword" docValues="true" indexed="true" stored="true"/>
-  <field name="userName" type="keyword" docValues="true" indexed="true" stored="true"/>
-  <field name="version" type="keyword" indexed="true" stored="true"/>
-  <field name="visible" type="keyword" indexed="true" stored="true"/>
-  <dynamicField name="assetCategoryTitles*" type="text" termPositions="true" termVectors="true" multiValued="true" indexed="true" stored="true"/>
-  <dynamicField name="*_integer_sortable" type="integer" docValues="true" multiValued="false" indexed="true" stored="true"/>
-  <dynamicField name="*_double_sortable" type="double" docValues="true" multiValued="false" indexed="true" stored="true"/>
-  <dynamicField name="*_float_sortable" type="float" docValues="true" multiValued="false" indexed="true" stored="true"/>
-  <dynamicField name="*_long_sortable" type="long" docValues="true" multiValued="false" indexed="true" stored="true"/>
-  <dynamicField name="*_geolocation" type="location" multiValued="false" indexed="true" stored="true"/>
-  <dynamicField name="*_coordinate" type="double" docValues="true" indexed="true" stored="false"/>
-  <dynamicField name="*_sortable" type="keyword" docValues="true" multiValued="false" indexed="true" stored="true"/>
-  <dynamicField name="ddm__key*" type="keyword" multiValued="true" indexed="true" stored="true"/>
-  <dynamicField name="exp__key*" type="keyword_lowercase" multiValued="true" indexed="true" stored="true"/>
-  <dynamicField name="*_ar_BH" type="text_ar" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_ar_DZ" type="text_ar" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_ar_EG" type="text_ar" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_ar_JO" type="text_ar" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_ar_KW" type="text_ar" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_ar_SA" type="text_ar" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_ar_TN" type="text_ar" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_bg_BG" type="text_bg" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_cs_CZ" type="text_cz" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_de_CH" type="text_de" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_de_DE" type="text_de" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_de_AT" type="text_de" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_el_GR" type="text_el" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_en_AU" type="text_en" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_en_CA" type="text_en" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_en_IE" type="text_en" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_en_GB" type="text_en" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_en_US" type="text_en" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_en_NZ" type="text_en" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_es_AR" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_es_CL" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_es_CO" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_es_CR" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_es_DO" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_es_EC" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_es_ES" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_es_GT" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_es_HN" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_es_MX" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_es_NI" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_es_PA" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_es_PE" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_es_SV" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_eu_ES" type="text_eu" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_fi_FI" type="text_fi" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_fr_BE" type="text_fr" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_fr_CA" type="text_fr" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_fr_CH" type="text_fr" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_fr_FR" type="text_fr" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_gl_ES" type="text_gl" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_hi_HI" type="text_hi" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_hu_HU" type="text_hu" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_hy_AR" type="text_hy" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_id_ID" type="text_id" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_it_IT" type="text_it" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_ja_JP" type="text_ja" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_ko_KR" type="text_cjk" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_nl_BE" type="text_nl" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_nl_NL" type="text_nl" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_nb_NO" type="text_no" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_nn_NO" type="text_no" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_pt_BR" type="text_pt" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_pt_PT" type="text_pt" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_ro_RO" type="text_ro" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_ru_RU" type="text_ru" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_sv_SE" type="text_sv" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_th_TH" type="text_th" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_tr_TR" type="text_tr" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_zh_CN" type="text_cjk" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_zh_HK" type="text_cjk" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_zh_SG" type="text_cjk" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_zh_TW" type="text_cjk" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_ar" type="text_ar" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_bg" type="text_bg" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_ca" type="text_ca" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_cs" type="text_cz" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_da" type="text_da" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_de" type="text_de" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_el" type="text_el" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_en" type="text_en" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_es" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_eu" type="text_eu" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_fi" type="text_fi" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_fr" type="text_fr" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_hi" type="text_hi" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_hu" type="text_hu" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_hy" type="text_hy" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_id" type="text_id" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_it" type="text_it" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_ja" type="text_ja" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_ko" type="text_cjk" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_nl" type="text_nl" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_no" type="text_no" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_pt" type="text_pt" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_ro" type="text_ro" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_ru" type="text_ru" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_sv" type="text_sv" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_th" type="text_th" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_tr" type="text_tr" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*_zh" type="text_cjk" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true"/>
-  <dynamicField name="*" type="text" multiValued="true" indexed="true" stored="true"/>
-  <copyField source="assetCategoryTitle" dest="all"/>
-  <copyField source="assetTagNames" dest="all"/>
-  <copyField source="assetTagNames" dest="assetTagNames.raw"/>
-  <copyField source="comments" dest="all"/>
-  <copyField source="ddmContent" dest="all"/>
-  <copyField source="firstName" dest="all"/>
-  <copyField source="lastName" dest="all"/>
-  <copyField source="middleName" dest="all"/>
-  <copyField source="mimeType" dest="all"/>
-  <copyField source="name" dest="all"/>
-  <copyField source="screenName" dest="all"/>
-  <copyField source="subtitle" dest="all"/>
-  <copyField source="type" dest="all"/>
-  <copyField source="userName" dest="all"/>
-  <copyField source="content*" dest="all"/>
-  <copyField source="description*" dest="all"/>
-  <copyField source="title*" dest="all"/>
+	<uniqueKey>uid</uniqueKey>
+	<solrQueryParser defaultOperator="OR" />
+	<fieldType name="_bbox_coord" class="solr.TrieDoubleField" stored="false" docValues="true" precisionStep="8" />
+	<fieldType name="bbox" class="solr.BBoxField" geo="true" numberType="_bbox_coord" distanceUnits="kilometers" />
+	<fieldType name="boolean" class="solr.BoolField" omitNorms="true" sortMissingLast="true" />
+	<fieldType name="date" class="solr.TrieDateField" omitNorms="true" positionIncrementGap="0" precisionStep="0" />
+	<fieldType name="double" class="solr.TrieDoubleField" omitNorms="true" positionIncrementGap="0" precisionStep="0" />
+	<fieldType name="float" class="solr.TrieFloatField" omitNorms="true" positionIncrementGap="0" precisionStep="0" />
+	<fieldType name="integer" class="solr.TrieIntField" omitNorms="true" positionIncrementGap="0" precisionStep="0" />
+	<fieldType name="keyword" class="solr.StrField" omitNorms="true" sortMissingLast="true" />
+	<fieldType name="keyword_lowercase" class="solr.TextField" omitNorms="true" sortMissingLast="true">
+		<analyzer>
+			<tokenizer class="solr.KeywordTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="location" class="solr.LatLonType" subFieldSuffix="_coordinate" />
+	<fieldType name="location_rpt" class="solr.SpatialRecursivePrefixTreeFieldType" geo="true" maxDistErr="0.001" distErrPct="0.025" distanceUnits="kilometers" />
+	<fieldType name="long" class="solr.TrieLongField" omitNorms="true" positionIncrementGap="0" precisionStep="0" />
+	<fieldType name="point" class="solr.PointType" subFieldSuffix="_d" dimension="2" />
+	<fieldType name="text" class="solr.TextField" positionIncrementGap="100">
+		<analyzer type="index">
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true" />
+		</analyzer>
+		<analyzer type="query">
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true" />
+			<filter class="solr.SynonymFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="textAuto" class="solr.TextField" positionIncrementGap="100">
+		<analyzer type="index">
+			<tokenizer class="solr.KeywordTokenizerFactory" />
+			<filter class="solr.EdgeNGramFilterFactory" maxGramSize="25" minGramSize="1" />
+			<filter class="solr.LowerCaseFilterFactory" />
+		</analyzer>
+		<analyzer type="query">
+			<tokenizer class="solr.KeywordTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="textSpell" class="solr.TextField" omitNorms="true" positionIncrementGap="100">
+		<analyzer type="index">
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StandardFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true" />
+		</analyzer>
+		<analyzer type="query">
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StandardFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true" />
+			<filter class="solr.SynonymFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_ar" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="lang/stopwords_ar.txt" ignoreCase="true" />
+			<filter class="solr.ArabicNormalizationFilterFactory" />
+			<filter class="solr.ArabicStemFilterFactory" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_bg" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="lang/stopwords_bg.txt" ignoreCase="true" />
+			<filter class="solr.BulgarianStemFilterFactory" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_ca" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.ElisionFilterFactory" articles="lang/contractions_ca.txt" ignoreCase="true" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="lang/stopwords_ca.txt" ignoreCase="true" />
+			<filter class="solr.SnowballPorterFilterFactory" language="Catalan" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_cjk" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.CJKWidthFilterFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.CJKBigramFilterFactory" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_cz" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="lang/stopwords_cz.txt" ignoreCase="true" />
+			<filter class="solr.CzechStemFilterFactory" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_da" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_da.txt" ignoreCase="true" />
+			<filter class="solr.SnowballPorterFilterFactory" language="Danish" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_de" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_de.txt" ignoreCase="true" />
+			<filter class="solr.GermanNormalizationFilterFactory" />
+			<filter class="solr.GermanLightStemFilterFactory" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_el" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.GreekLowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="lang/stopwords_el.txt" ignoreCase="false" />
+			<filter class="solr.GreekStemFilterFactory" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_en" class="solr.TextField" positionIncrementGap="100">
+		<analyzer type="index">
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.StopFilterFactory" words="lang/stopwords_en.txt" ignoreCase="true" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.EnglishPossessiveFilterFactory" />
+			<filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
+			<filter class="solr.PorterStemFilterFactory" />
+		</analyzer>
+		<analyzer type="query">
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.SynonymFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt" />
+			<filter class="solr.StopFilterFactory" words="lang/stopwords_en.txt" ignoreCase="true" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.EnglishPossessiveFilterFactory" />
+			<filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
+			<filter class="solr.PorterStemFilterFactory" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_es" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_es.txt" ignoreCase="true" />
+			<filter class="solr.SpanishLightStemFilterFactory" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_eu" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="lang/stopwords_eu.txt" ignoreCase="true" />
+			<filter class="solr.SnowballPorterFilterFactory" language="Basque" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_fa" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<charFilter class="solr.PersianCharFilterFactory" />
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.ArabicNormalizationFilterFactory" />
+			<filter class="solr.PersianNormalizationFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="lang/stopwords_fa.txt" ignoreCase="true" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_fi" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_fi.txt" ignoreCase="true" />
+			<filter class="solr.SnowballPorterFilterFactory" language="Finnish" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_fr" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.ElisionFilterFactory" articles="lang/contractions_fr.txt" ignoreCase="true" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_fr.txt" ignoreCase="true" />
+			<filter class="solr.FrenchLightStemFilterFactory" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_ga" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.ElisionFilterFactory" articles="lang/contractions_ga.txt" ignoreCase="true" />
+			<filter class="solr.StopFilterFactory" words="lang/hyphenations_ga.txt" ignoreCase="true" />
+			<filter class="solr.IrishLowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="lang/stopwords_ga.txt" ignoreCase="true" />
+			<filter class="solr.SnowballPorterFilterFactory" language="Irish" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_gl" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="lang/stopwords_gl.txt" ignoreCase="true" />
+			<filter class="solr.GalicianStemFilterFactory" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_hi" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.IndicNormalizationFilterFactory" />
+			<filter class="solr.HindiNormalizationFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="lang/stopwords_hi.txt" ignoreCase="true" />
+			<filter class="solr.HindiStemFilterFactory" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_hu" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_hu.txt" ignoreCase="true" />
+			<filter class="solr.SnowballPorterFilterFactory" language="Hungarian" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_hy" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="lang/stopwords_hy.txt" ignoreCase="true" />
+			<filter class="solr.SnowballPorterFilterFactory" language="Armenian" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_id" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="lang/stopwords_id.txt" ignoreCase="true" />
+			<filter class="solr.IndonesianStemFilterFactory" stemDerivational="false" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_it" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.ElisionFilterFactory" articles="lang/contractions_it.txt" ignoreCase="true" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_it.txt" ignoreCase="true" />
+			<filter class="solr.ItalianLightStemFilterFactory" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_ja" class="solr.TextField" autoGeneratePhraseQueries="false" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.JapaneseTokenizerFactory" mode="search" />
+			<filter class="solr.JapaneseBaseFormFilterFactory" />
+			<filter class="solr.JapanesePartOfSpeechStopFilterFactory" tags="lang/stoptags_ja.txt" />
+			<filter class="solr.CJKWidthFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="lang/stopwords_ja.txt" ignoreCase="true" />
+			<filter class="solr.JapaneseKatakanaStemFilterFactory" minimumLength="4" />
+			<filter class="solr.LowerCaseFilterFactory" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_lowercase" class="solr.TextField" omitNorms="true" sortMissingLast="true">
+		<analyzer>
+			<tokenizer class="solr.WhitespaceTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_nl" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_nl.txt" ignoreCase="true" />
+			<filter class="solr.StemmerOverrideFilterFactory" dictionary="lang/stemdict_nl.txt" ignoreCase="false" />
+			<filter class="solr.SnowballPorterFilterFactory" language="Dutch" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_no" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_no.txt" ignoreCase="true" />
+			<filter class="solr.SnowballPorterFilterFactory" language="Norwegian" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_pt" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_pt.txt" ignoreCase="true" />
+			<filter class="solr.SnowballPorterFilterFactory" language="Portuguese" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_ro" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="lang/stopwords_ro.txt" ignoreCase="true" />
+			<filter class="solr.SnowballPorterFilterFactory" language="Romanian" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_ru" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_ru.txt" ignoreCase="true" />
+			<filter class="solr.SnowballPorterFilterFactory" language="Russian" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_sv" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_sv.txt" ignoreCase="true" />
+			<filter class="solr.SnowballPorterFilterFactory" language="Swedish" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_th" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.ThaiTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="lang/stopwords_th.txt" ignoreCase="true" />
+		</analyzer>
+	</fieldType>
+	<fieldType name="text_tr" class="solr.TextField" positionIncrementGap="100">
+		<analyzer>
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.TurkishLowerCaseFilterFactory" />
+			<filter class="solr.StopFilterFactory" words="lang/stopwords_tr.txt" ignoreCase="false" />
+			<filter class="solr.SnowballPorterFilterFactory" language="Turkish" />
+		</analyzer>
+	</fieldType>
+	<field name="_version_" type="long" multiValued="false" indexed="true" stored="true" />
+	<field name="all" type="text" multiValued="true" indexed="true" stored="false" />
+	<field name="ancestorOrganizationIds" type="keyword" multiValued="true" indexed="true" stored="true" />
+	<field name="articleId" type="keyword_lowercase" indexed="true" stored="true" />
+	<field name="assetCategoryId" type="keyword" docValues="true" indexed="true" stored="true" />
+	<field name="assetCategoryIds" type="keyword" multiValued="true" indexed="true" stored="true" />
+	<field name="assetCategoryTitle" type="text" termPositions="true" termVectors="true" indexed="true" stored="true" />
+	<field name="assetTagId" type="keyword" docValues="true" indexed="true" stored="true" />
+	<field name="assetTagIds" type="keyword" multiValued="true" indexed="true" stored="true" />
+	<field name="assetTagNames" type="text" termPositions="true" termVectors="true" multiValued="true" indexed="true" stored="true" />
+	<field name="assetTagNames.raw" type="keyword" multiValued="true" indexed="true" stored="false" />
+	<field name="assetVocabularyId" type="keyword" docValues="true" indexed="true" stored="true" />
+	<field name="assetVocabularyIds" type="keyword" multiValued="true" indexed="true" stored="true" />
+	<field name="classTypeId" type="keyword" indexed="true" stored="true" />
+	<field name="comments" type="text" indexed="true" stored="true" />
+	<field name="companyId" type="long" indexed="true" stored="true" />
+	<field name="configurationModelAttributeName" type="keyword" multiValued="true" indexed="true" stored="true" />
+	<field name="configurationModelFactoryPid" type="keyword" indexed="true" stored="true" />
+	<field name="configurationModelId" type="keyword" indexed="true" stored="true" />
+	<field name="content" type="text" termPositions="true" termVectors="true" indexed="true" stored="true" />
+	<field name="createDate" type="date" indexed="true" stored="true" />
+	<field name="dataRepositoryId" type="keyword" indexed="true" stored="true" />
+	<field name="ddmContent" type="text" termPositions="true" termVectors="true" indexed="true" stored="true" />
+	<field name="ddmStructureKey" type="keyword" docValues="true" indexed="true" stored="true" />
+	<field name="ddmTemplateKey" type="keyword" indexed="true" stored="true" />
+	<field name="defaultLanguageId" type="keyword" indexed="true" stored="true" />
+	<field name="description" type="text" termPositions="true" termVectors="true" indexed="true" stored="true" />
+	<field name="discussion" type="keyword" indexed="true" stored="true" />
+	<field name="displayDate" type="date" docValues="true" indexed="true" stored="true" />
+	<field name="emailAddress" type="keyword" indexed="true" stored="true" />
+	<field name="endTime" type="keyword" docValues="true" indexed="true" stored="true" />
+	<field name="entryClassName" type="keyword" docValues="true" indexed="true" stored="true" />
+	<field name="entryClassPK" type="keyword" docValues="true" indexed="true" stored="true" />
+	<field name="expirationDate" type="date" docValues="true" indexed="true" stored="true" />
+	<field name="extension" type="keyword" indexed="true" stored="true" />
+	<field name="fileEntryTypeId" type="keyword" indexed="true" stored="true" />
+	<field name="firstName" type="text_lowercase" indexed="true" stored="true" />
+	<field name="folderId" type="keyword" docValues="true" indexed="true" stored="true" />
+	<field name="fullName" type="text" termPositions="true" termVectors="true" indexed="true" stored="true" />
+	<field name="geoLocation" type="location" indexed="true" stored="true" />
+	<field name="groupId" type="keyword" docValues="true" multiValued="true" indexed="true" stored="true" />
+	<field name="groupIds" type="keyword" multiValued="true" indexed="true" stored="true" />
+	<field name="groupRoleId" type="keyword" multiValued="true" indexed="true" stored="true" />
+	<field name="hidden" type="keyword" indexed="true" stored="true" />
+	<field name="id" type="keyword" indexed="true" stored="true" />
+	<field name="keywordSearch" type="textAuto" omitNorms="true" omitTermFreqAndPositions="true" indexed="true" stored="true" />
+	<field name="languageId" type="keyword" docValues="true" indexed="true" stored="true" />
+	<field name="lastName" type="text_lowercase" indexed="true" stored="true" />
+	<field name="leftOrganizationId" type="keyword" indexed="true" stored="true" />
+	<field name="middleName" type="text_lowercase" indexed="true" stored="true" />
+	<field name="mimeType" type="keyword" indexed="true" stored="true" />
+	<field name="modifiedDate" type="date" docValues="true" indexed="true" stored="true" />
+	<field name="name" type="text" termPositions="true" termVectors="true" indexed="true" stored="true" />
+	<field name="nodeId" type="keyword" indexed="true" stored="true" />
+	<field name="organizationId" type="keyword" docValues="true" indexed="true" stored="true" />
+	<field name="organizationIds" type="keyword" multiValued="true" indexed="true" stored="true" />
+	<field name="parentCategoryId" type="keyword" indexed="true" stored="true" />
+	<field name="parentCategoryIds" type="keyword" multiValued="true" indexed="true" stored="true" />
+	<field name="path" type="keyword" indexed="true" stored="true" />
+	<field name="portletId" type="keyword" indexed="true" stored="true" />
+	<field name="priority" type="double" docValues="true" indexed="true" stored="true" />
+	<field name="publishDate" type="date" docValues="true" indexed="true" stored="true" />
+	<field name="readCount" type="keyword" indexed="true" stored="true" />
+	<field name="recordSetId" type="keyword" indexed="true" stored="true" />
+	<field name="removedByUser" type="keyword" docValues="true" indexed="true" stored="true" />
+	<field name="removedDate" type="date" docValues="true" indexed="true" stored="true" />
+	<field name="rightOrganizationId" type="keyword" indexed="true" stored="true" />
+	<field name="roleId" type="keyword" docValues="true" multiValued="true" indexed="true" stored="true" />
+	<field name="roleIds" type="keyword" multiValued="true" indexed="true" stored="true" />
+	<field name="rootEntryClassName" type="keyword" docValues="true" indexed="true" stored="true" />
+	<field name="rootEntryClassPK" type="keyword" docValues="true" indexed="true" stored="true" />
+	<field name="scopeGroupId" type="keyword" docValues="true" multiValued="true" indexed="true" stored="true" />
+	<field name="screenName" type="keyword" docValues="true" indexed="true" stored="true" />
+	<field name="size" type="keyword" indexed="true" stored="true" />
+	<field name="spellCheckWeight" type="keyword" indexed="true" stored="true" />
+	<field name="spellCheckWord" type="textSpell" multiValued="true" indexed="true" stored="true" />
+	<field name="startTime" type="long" docValues="true" indexed="true" stored="true" />
+	<field name="status" type="keyword" indexed="true" stored="true" />
+	<field name="subtitle" type="text" indexed="true" stored="true" />
+	<field name="teamIds" type="keyword" multiValued="true" indexed="true" stored="true" />
+	<field name="threadId" type="keyword" indexed="true" stored="true" />
+	<field name="title" type="text" termPositions="true" termVectors="true" indexed="true" stored="true" />
+	<field name="treePath" type="keyword" multiValued="true" indexed="true" stored="true" />
+	<field name="type" type="keyword" docValues="true" indexed="true" stored="true" />
+	<field name="uid" type="keyword" indexed="true" stored="true" />
+	<field name="userGroupId" type="keyword" docValues="true" indexed="true" stored="true" />
+	<field name="userGroupIds" type="keyword" multiValued="true" indexed="true" stored="true" />
+	<field name="userId" type="keyword" docValues="true" indexed="true" stored="true" />
+	<field name="userName" type="keyword" docValues="true" indexed="true" stored="true" />
+	<field name="version" type="keyword" indexed="true" stored="true" />
+	<field name="visible" type="keyword" indexed="true" stored="true" />
+	<dynamicField name="assetCategoryTitles*" type="text" termPositions="true" termVectors="true" multiValued="true" indexed="true" stored="true" />
+	<dynamicField name="*_integer_sortable" type="integer" docValues="true" multiValued="false" indexed="true" stored="true" />
+	<dynamicField name="*_double_sortable" type="double" docValues="true" multiValued="false" indexed="true" stored="true" />
+	<dynamicField name="*_float_sortable" type="float" docValues="true" multiValued="false" indexed="true" stored="true" />
+	<dynamicField name="*_long_sortable" type="long" docValues="true" multiValued="false" indexed="true" stored="true" />
+	<dynamicField name="*_geolocation" type="location" multiValued="false" indexed="true" stored="true" />
+	<dynamicField name="*_coordinate" type="double" docValues="true" indexed="true" stored="false" />
+	<dynamicField name="*_sortable" type="keyword" docValues="true" multiValued="false" indexed="true" stored="true" />
+	<dynamicField name="ddm__key*" type="keyword" multiValued="true" indexed="true" stored="true" />
+	<dynamicField name="exp__key*" type="keyword_lowercase" multiValued="true" indexed="true" stored="true" />
+	<dynamicField name="*_ar_BH" type="text_ar" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_ar_DZ" type="text_ar" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_ar_EG" type="text_ar" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_ar_JO" type="text_ar" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_ar_KW" type="text_ar" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_ar_SA" type="text_ar" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_ar_TN" type="text_ar" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_bg_BG" type="text_bg" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_cs_CZ" type="text_cz" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_de_CH" type="text_de" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_de_DE" type="text_de" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_de_AT" type="text_de" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_el_GR" type="text_el" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_en_AU" type="text_en" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_en_CA" type="text_en" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_en_IE" type="text_en" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_en_GB" type="text_en" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_en_US" type="text_en" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_en_NZ" type="text_en" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_es_AR" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_es_CL" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_es_CO" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_es_CR" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_es_DO" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_es_EC" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_es_ES" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_es_GT" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_es_HN" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_es_MX" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_es_NI" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_es_PA" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_es_PE" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_es_SV" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_eu_ES" type="text_eu" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_fi_FI" type="text_fi" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_fr_BE" type="text_fr" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_fr_CA" type="text_fr" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_fr_CH" type="text_fr" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_fr_FR" type="text_fr" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_gl_ES" type="text_gl" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_hi_HI" type="text_hi" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_hu_HU" type="text_hu" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_hy_AR" type="text_hy" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_id_ID" type="text_id" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_it_IT" type="text_it" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_ja_JP" type="text_ja" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_ko_KR" type="text_cjk" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_nl_BE" type="text_nl" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_nl_NL" type="text_nl" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_nb_NO" type="text_no" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_nn_NO" type="text_no" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_pt_BR" type="text_pt" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_pt_PT" type="text_pt" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_ro_RO" type="text_ro" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_ru_RU" type="text_ru" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_sv_SE" type="text_sv" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_th_TH" type="text_th" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_tr_TR" type="text_tr" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_zh_CN" type="text_cjk" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_zh_HK" type="text_cjk" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_zh_SG" type="text_cjk" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_zh_TW" type="text_cjk" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_ar" type="text_ar" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_bg" type="text_bg" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_ca" type="text_ca" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_cs" type="text_cz" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_da" type="text_da" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_de" type="text_de" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_el" type="text_el" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_en" type="text_en" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_es" type="text_es" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_eu" type="text_eu" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_fi" type="text_fi" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_fr" type="text_fr" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_hi" type="text_hi" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_hu" type="text_hu" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_hy" type="text_hy" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_id" type="text_id" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_it" type="text_it" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_ja" type="text_ja" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_ko" type="text_cjk" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_nl" type="text_nl" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_no" type="text_no" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_pt" type="text_pt" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_ro" type="text_ro" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_ru" type="text_ru" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_sv" type="text_sv" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_th" type="text_th" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_tr" type="text_tr" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*_zh" type="text_cjk" indexed="true" termOffsets="true" stored="true" termPositions="true" termVectors="true" multiValued="true" />
+	<dynamicField name="*" type="text" multiValued="true" indexed="true" stored="true" />
+	<copyField source="assetCategoryTitle" dest="all" />
+	<copyField source="assetTagNames" dest="all" />
+	<copyField source="assetTagNames" dest="assetTagNames.raw" />
+	<copyField source="comments" dest="all" />
+	<copyField source="ddmContent" dest="all" />
+	<copyField source="firstName" dest="all" />
+	<copyField source="lastName" dest="all" />
+	<copyField source="middleName" dest="all" />
+	<copyField source="mimeType" dest="all" />
+	<copyField source="name" dest="all" />
+	<copyField source="screenName" dest="all" />
+	<copyField source="subtitle" dest="all" />
+	<copyField source="type" dest="all" />
+	<copyField source="userName" dest="all" />
+	<copyField source="content*" dest="all" />
+	<copyField source="description*" dest="all" />
+	<copyField source="title*" dest="all" />
 </schema>
