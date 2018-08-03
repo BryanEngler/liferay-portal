@@ -5,7 +5,10 @@
 	<dataDir>${solr.data.dir:}</dataDir>
 	<directoryFactory class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}" name="DirectoryFactory" />
 	<codecFactory class="solr.SchemaCodecFactory" />
-	<schemaFactory class="ClassicIndexSchemaFactory" />
+	<schemaFactory class="ManagedIndexSchemaFactory">
+		<bool name="mutable">true</bool>
+		<str name="managedSchemaResourceName">managed-schema.xml</str>
+	</schemaFactory>
 	<indexConfig>
 		<lockType>${solr.lock.type:native}</lockType>
 		<infoStream>true</infoStream>
