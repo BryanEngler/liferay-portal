@@ -68,6 +68,12 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 		termsAggregationBuilder = termsAggregationBuilder.field(
 			groupBy.getField());
 
+		int maxTerms = groupBy.getMaxTerms();
+
+		if (maxTerms > 0) {
+			termsAggregationBuilder.size(maxTerms); //number of buckets
+		}
+
 		TopHitsAggregationBuilder topHitsAggregationBuilder = getTopHitsBuilder(
 			groupBy, sorts, selectedFieldNames, locale, highlightFieldNames,
 			highlightEnabled, highlightRequireFieldMatch, highlightFragmentSize,
@@ -229,7 +235,7 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 			groupBySize = end - start + 1;
 		}
 
-		topHitsAggregationBuilder.size(groupBySize);
+		topHitsAggregationBuilder.size(groupBySize); //docs per bucket
 
 		if (highlightEnabled) {
 			addHighlights(

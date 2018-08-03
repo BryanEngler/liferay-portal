@@ -29,7 +29,11 @@ public class GroupBy implements Serializable {
 		return _field;
 	}
 
-	public int getSize() {
+	public int getMaxTerms() { //limit number of buckets
+		return _maxTerms;
+	}
+
+	public int getSize() { //limit documents per bucket
 		return _size;
 	}
 
@@ -45,6 +49,10 @@ public class GroupBy implements Serializable {
 		_field = field;
 	}
 
+	public void setMaxTerms(int maxTerms) {
+		_maxTerms = maxTerms;
+	}
+
 	public void setSize(int size) {
 		_size = size;
 	}
@@ -58,6 +66,7 @@ public class GroupBy implements Serializable {
 	}
 
 	private String _field;
+	private int _maxTerms;
 	private int _size;
 	private Sort[] _sorts;
 	private int _start;

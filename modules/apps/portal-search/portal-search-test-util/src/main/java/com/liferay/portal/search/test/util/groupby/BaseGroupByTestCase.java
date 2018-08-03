@@ -93,6 +93,11 @@ public abstract class BaseGroupByTestCase extends BaseIndexingTestCase {
 	}
 
 	@Test
+	public void testMaxTerms() throws Exception {
+
+	}
+
+	@Test
 	public void testSelectedFieldNames() throws Exception {
 		addDocuments("one", 1);
 

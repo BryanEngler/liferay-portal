@@ -130,7 +130,13 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 			groupBySize = end - start + 1;
 		}
 
-		solrQuery.set(GroupParams.GROUP_LIMIT, groupBySize);
+		solrQuery.set(GroupParams.GROUP_LIMIT, groupBySize); //docs per bucket
+
+		int maxTerms = groupBy.getMaxTerms();
+
+		if (maxTerms > 0) {
+			solrQuery.setRows(maxTerms); //number of buckets
+		}
 
 		addHighlights(solrQuery, searchContext.getQueryConfig());
 		addSorts(solrQuery, searchContext.getSorts());
