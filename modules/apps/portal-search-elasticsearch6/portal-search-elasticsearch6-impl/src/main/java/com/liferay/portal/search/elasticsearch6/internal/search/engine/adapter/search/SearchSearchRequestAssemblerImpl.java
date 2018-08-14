@@ -93,15 +93,13 @@ public class SearchSearchRequestAssemblerImpl
 		}
 
 		groupByTranslator.translate(
-			searchRequestBuilder, groupBy, searchSearchRequest.getSorts(),
-			searchSearchRequest.getLocale(),
+			searchRequestBuilder, groupBy, searchSearchRequest.getLocale(),
 			searchSearchRequest.getSelectedFieldNames(),
 			searchSearchRequest.getHighlightFieldNames(),
 			searchSearchRequest.isHighlightEnabled(),
 			searchSearchRequest.isHighlightRequireFieldMatch(),
 			searchSearchRequest.getHighlightFragmentSize(),
-			searchSearchRequest.getHighlightSnippetSize(),
-			searchSearchRequest.getStart(), searchSearchRequest.getSize());
+			searchSearchRequest.getHighlightSnippetSize());
 	}
 
 	protected void addPagination(
