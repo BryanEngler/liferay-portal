@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.geolocation.GeoLocationPoint;
 import com.liferay.portal.kernel.search.highlight.HighlightUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.search.groupby.GroupBy;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.common.geo.GeoDistance;
 import org.elasticsearch.common.geo.GeoPoint;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.BucketOrder;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.tophits.TopHitsAggregationBuilder;
 import org.elasticsearch.search.aggregations.pipeline.bucketsort.BucketSortPipelineAggregationBuilder;
@@ -58,23 +60,32 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 	@Override
 	public void translate(
 		SearchRequestBuilder searchRequestBuilder, GroupBy groupBy,
-		Sort[] sorts, Locale locale, String[] selectedFieldNames,
+		Locale locale, String[] selectedFieldNames,
 		String[] highlightFieldNames, boolean highlightEnabled,
 		boolean highlightRequireFieldMatch, int highlightFragmentSize,
-		int highlightSnippetSize, int start, int size) {
+		int highlightSnippetSize) {
 
 		TermsAggregationBuilder termsAggregationBuilder =
 			AggregationBuilders.terms(
 				GROUP_BY_AGGREGATION_PREFIX + groupBy.getField());
 
 		termsAggregationBuilder = termsAggregationBuilder.field(
-			groupBy.getField()
-		).size(
-			start + size
-		);
+			groupBy.getField());
 
-		termsAggregationBuilder.subAggregation(
-			getBucketSortPipelineBuilder(start, size));
+		int termsSize = GetterUtil.getInteger(groupBy.getTermsSize());
+
+		if (termsSize > 0) {
+			termsAggregationBuilder.size(termsSize);
+		}
+
+		addTermsSorts(termsAggregationBuilder, groupBy);
+
+		int termsStart = GetterUtil.getInteger(groupBy.getTermsStart());
+
+		if ((termsSize > 0) || (termsStart > 0)) {
+			termsAggregationBuilder.subAggregation(
+				getBucketSortPipelineBuilder(termsStart, termsSize));
+		}
 
 		TopHitsAggregationBuilder topHitsAggregationBuilder = getTopHitsBuilder(
 			groupBy, selectedFieldNames, locale, highlightFieldNames,
@@ -84,6 +95,87 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 		termsAggregationBuilder.subAggregation(topHitsAggregationBuilder);
 
 		searchRequestBuilder.addAggregation(termsAggregationBuilder);
+	}
+
+	protected void addDocsSorts(
+		TopHitsAggregationBuilder topHitsAggregationBuilder, Sort[] sorts) {
+
+		if (ArrayUtil.isEmpty(sorts)) {
+			return;
+		}
+
+		Set<String> sortFieldNames = new HashSet<>(sorts.length);
+
+		for (Sort sort : sorts) {
+			if (sort == null) {
+				continue;
+			}
+
+			String sortFieldName = Field.getSortFieldName(
+				sort, _ELASTICSEARCH_SCORE_FIELD);
+
+			if (sortFieldNames.contains(sortFieldName)) {
+				continue;
+			}
+
+			sortFieldNames.add(sortFieldName);
+
+			SortOrder sortOrder = SortOrder.ASC;
+
+			if (sort.isReverse() ||
+				sortFieldName.equals(_ELASTICSEARCH_SCORE_FIELD)) {
+
+				sortOrder = SortOrder.DESC;
+			}
+
+			SortBuilder sortBuilder = null;
+
+			if (sortFieldName.equals(_ELASTICSEARCH_SCORE_FIELD)) {
+				sortBuilder = SortBuilders.scoreSort();
+			}
+			else if (sort.getType() == Sort.GEO_DISTANCE_TYPE) {
+				GeoDistanceSort geoDistanceSort = (GeoDistanceSort)sort;
+
+				List<GeoPoint> geoPoints = new ArrayList<>();
+
+				for (GeoLocationPoint geoLocationPoint :
+						geoDistanceSort.getGeoLocationPoints()) {
+
+					geoPoints.add(
+						new GeoPoint(
+							geoLocationPoint.getLatitude(),
+							geoLocationPoint.getLongitude()));
+				}
+
+				GeoDistanceSortBuilder geoDistanceSortBuilder =
+					SortBuilders.geoDistanceSort(
+						sortFieldName,
+						geoPoints.toArray(new GeoPoint[geoPoints.size()]));
+
+				geoDistanceSortBuilder.geoDistance(GeoDistance.ARC);
+
+				Collection<String> geoHashes = geoDistanceSort.getGeoHashes();
+
+				if (!geoHashes.isEmpty()) {
+					geoDistanceSort.addGeoHash(
+						geoHashes.toArray(new String[geoHashes.size()]));
+				}
+
+				sortBuilder = geoDistanceSortBuilder;
+			}
+			else {
+				FieldSortBuilder fieldSortBuilder = SortBuilders.fieldSort(
+					sortFieldName);
+
+				fieldSortBuilder.unmappedType("keyword");
+
+				sortBuilder = fieldSortBuilder;
+			}
+
+			sortBuilder.order(sortOrder);
+
+			topHitsAggregationBuilder.sort(sortBuilder);
+		}
 	}
 
 	protected void addHighlightedField(
@@ -136,8 +228,10 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 		}
 	}
 
-	protected void addSorts(
-		TopHitsAggregationBuilder topHitsAggregationBuilder, Sort[] sorts) {
+	protected void addTermsSorts(
+		TermsAggregationBuilder termsAggregationBuilder, GroupBy groupBy) {
+
+		Sort[] sorts = groupBy.getTermsSorts();
 
 		if (ArrayUtil.isEmpty(sorts)) {
 			return;
@@ -145,12 +239,14 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 
 		Set<String> sortFieldNames = new HashSet<>(sorts.length);
 
+		List<BucketOrder> bucketOrders = new ArrayList<>(sorts.length);
+
 		for (Sort sort : sorts) {
 			if (sort == null) {
 				continue;
 			}
 
-			String sortFieldName = Field.getSortFieldName(sort, "_score");
+			String sortFieldName = sort.getFieldName();
 
 			if (sortFieldNames.contains(sortFieldName)) {
 				continue;
@@ -158,59 +254,16 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 
 			sortFieldNames.add(sortFieldName);
 
-			SortOrder sortOrder = SortOrder.ASC;
-
-			if (sort.isReverse() || sortFieldName.equals("_score")) {
-				sortOrder = SortOrder.DESC;
+			if (sortFieldName.equals("_count")) {
+				bucketOrders.add(BucketOrder.count(!sort.isReverse()));
 			}
-
-			SortBuilder sortBuilder = null;
-
-			if (sortFieldName.equals("_score")) {
-				sortBuilder = SortBuilders.scoreSort();
+			else if (sortFieldName.equals("_key")) {
+				bucketOrders.add(BucketOrder.key(!sort.isReverse()));
 			}
-			else if (sort.getType() == Sort.GEO_DISTANCE_TYPE) {
-				GeoDistanceSort geoDistanceSort = (GeoDistanceSort)sort;
+		}
 
-				List<GeoPoint> geoPoints = new ArrayList<>();
-
-				for (GeoLocationPoint geoLocationPoint :
-						geoDistanceSort.getGeoLocationPoints()) {
-
-					geoPoints.add(
-						new GeoPoint(
-							geoLocationPoint.getLatitude(),
-							geoLocationPoint.getLongitude()));
-				}
-
-				GeoDistanceSortBuilder geoDistanceSortBuilder =
-					SortBuilders.geoDistanceSort(
-						sortFieldName,
-						geoPoints.toArray(new GeoPoint[geoPoints.size()]));
-
-				geoDistanceSortBuilder.geoDistance(GeoDistance.ARC);
-
-				Collection<String> geoHashes = geoDistanceSort.getGeoHashes();
-
-				if (!geoHashes.isEmpty()) {
-					geoDistanceSort.addGeoHash(
-						geoHashes.toArray(new String[geoHashes.size()]));
-				}
-
-				sortBuilder = geoDistanceSortBuilder;
-			}
-			else {
-				FieldSortBuilder fieldSortBuilder = SortBuilders.fieldSort(
-					sortFieldName);
-
-				fieldSortBuilder.unmappedType("keyword");
-
-				sortBuilder = fieldSortBuilder;
-			}
-
-			sortBuilder.order(sortOrder);
-
-			topHitsAggregationBuilder.sort(sortBuilder);
+		if (!bucketOrders.isEmpty()) {
+			termsAggregationBuilder.order(bucketOrders);
 		}
 	}
 
@@ -222,8 +275,13 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 				new BucketSortPipelineAggregationBuilder(
 					BUCKET_SORT_AGGREGATION_NAME, Collections.emptyList());
 
-		bucketSortPipelineAggregationBuilder.from(start);
-		bucketSortPipelineAggregationBuilder.size(size);
+		if (start > 0) {
+			bucketSortPipelineAggregationBuilder.from(start);
+		}
+
+		if (size > 0) {
+			bucketSortPipelineAggregationBuilder.size(size);
+		}
 
 		return bucketSortPipelineAggregationBuilder;
 	}
@@ -237,9 +295,19 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 		TopHitsAggregationBuilder topHitsAggregationBuilder =
 			AggregationBuilders.topHits(TOP_HITS_AGGREGATION_NAME);
 
-		topHitsAggregationBuilder.from(groupBy.getStart());
+		int docsStart = GetterUtil.getInteger(groupBy.getDocsStart());
 
-		topHitsAggregationBuilder.size(groupBy.getSize());
+		if (docsStart > 0) {
+			topHitsAggregationBuilder.from(docsStart);
+		}
+
+		int docsSize = GetterUtil.getInteger(groupBy.getDocsSize());
+
+		if (docsSize > 0) {
+			topHitsAggregationBuilder.size(docsSize);
+		}
+
+		addDocsSorts(topHitsAggregationBuilder, groupBy.getDocsSorts());
 
 		if (highlightEnabled) {
 			addHighlights(
@@ -250,9 +318,9 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 
 		addSelectedFields(topHitsAggregationBuilder, selectedFieldNames);
 
-		addSorts(topHitsAggregationBuilder, groupBy.getSorts());
-
 		return topHitsAggregationBuilder;
 	}
+
+	private static final String _ELASTICSEARCH_SCORE_FIELD = "_score";
 
 }

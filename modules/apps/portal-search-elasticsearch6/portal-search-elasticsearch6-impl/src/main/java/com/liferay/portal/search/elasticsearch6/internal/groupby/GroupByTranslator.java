@@ -14,7 +14,6 @@
 
 package com.liferay.portal.search.elasticsearch6.internal.groupby;
 
-import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.search.groupby.GroupBy;
 
 import java.util.Locale;
@@ -34,9 +33,9 @@ public interface GroupByTranslator {
 
 	public void translate(
 		SearchRequestBuilder searchRequestBuilder, GroupBy groupBy,
-		Sort[] sorts, Locale locale, String[] selectedFieldNames,
+		Locale locale, String[] selectedFieldNames,
 		String[] highlightFieldNames, boolean highlightEnabled,
 		boolean highlightRequireFieldMatch, int highlightFragmentSize,
-		int highlightSnippetSize, int start, int end);
+		int highlightSnippetSize);
 
 }
