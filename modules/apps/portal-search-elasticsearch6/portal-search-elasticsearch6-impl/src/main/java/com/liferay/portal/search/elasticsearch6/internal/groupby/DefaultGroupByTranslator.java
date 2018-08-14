@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.geolocation.GeoLocationPoint;
 import com.liferay.portal.kernel.search.highlight.HighlightUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,6 +68,12 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 
 		termsAggregationBuilder = termsAggregationBuilder.field(
 			groupBy.getField());
+
+		int maxTerms = GetterUtil.getInteger(groupBy.getMaxTerms());
+
+		if (maxTerms > 0) {
+			termsAggregationBuilder.size(maxTerms);
+		}
 
 		TopHitsAggregationBuilder topHitsAggregationBuilder = getTopHitsBuilder(
 			groupBy, sorts, selectedFieldNames, locale, highlightFieldNames,
