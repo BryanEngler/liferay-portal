@@ -18,9 +18,12 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.portal.kernel.model.Contact;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerTestRule;
+
+import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -52,19 +55,21 @@ public class ContactIndexerReindexTest extends BaseContactIndexerTestCase {
 
 	@Test
 	public void testIndexedFields() throws Exception {
-		contactFixture.updateDisplaySettings(LocaleUtil.JAPAN);
+		Locale locale = LocaleUtil.US;
+		
+		contactFixture.updateDisplaySettings(locale);
 
-		String firstName = "好きです好きです";
+		String firstName = RandomTestUtil.randomString();
 
 		Contact contact = contactFixture.addContact(firstName);
 
 		String searchTerm = firstName;
 
-		contactIndexerFixture.searchOnlyOne(searchTerm, LocaleUtil.JAPAN);
+		contactIndexerFixture.searchOnlyOne(searchTerm, locale);
 
 		contactIndexerFixture.reindex(contact.getCompanyId());
 
-		contactIndexerFixture.searchOnlyOne(searchTerm, LocaleUtil.JAPAN);
+		contactIndexerFixture.searchOnlyOne(searchTerm, locale);
 	}
 
 }

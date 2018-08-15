@@ -14,18 +14,8 @@
 
 package com.liferay.contacts.uad.search.test;
 
-import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.portal.kernel.model.Contact;
-import com.liferay.portal.kernel.search.Document;
-import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.test.rule.AggregateTestRule;
-import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
-import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.search.test.util.FieldValuesAssert;
-import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.PermissionCheckerTestRule;
-
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
@@ -33,6 +23,18 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.portal.kernel.model.Contact;
+import com.liferay.portal.kernel.search.Document;
+import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.search.test.util.FieldValuesAssert;
+import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.PermissionCheckerTestRule;
 
 /**
  * @author Lucas Marques de Paula
@@ -59,18 +61,20 @@ public class ContactIndexerIndexedFieldsTest
 
 	@Test
 	public void testIndexedFields() throws Exception {
-		contactFixture.updateDisplaySettings(LocaleUtil.JAPAN);
+		Locale locale = LocaleUtil.US;
+		
+		contactFixture.updateDisplaySettings(locale);
 
-		String emailAddress = "test@liferay.com";
+		String emailAddress = RandomTestUtil.randomString() + "@liferay.com";
 
-		String firstName = "好きです好きです";
-		String middleName = "おはようございます";
-		String lastName = "こんにちは";
+		String firstName = RandomTestUtil.randomString();
+		String middleName = RandomTestUtil.randomString();
+		String lastName = RandomTestUtil.randomString();
 
 		String fullName = String.format(
 			"%s %s %s", firstName, middleName, lastName);
 
-		String jobTitle = "じゃあまた";
+		String jobTitle = RandomTestUtil.randomString();
 
 		Contact contact = contactFixture.addContact(
 			emailAddress, firstName, middleName, lastName, fullName, jobTitle);
@@ -78,7 +82,7 @@ public class ContactIndexerIndexedFieldsTest
 		String searchTerm = fullName;
 
 		Document document = contactIndexerFixture.searchOnlyOne(
-			searchTerm, LocaleUtil.JAPAN);
+			searchTerm, locale);
 
 		indexedFieldsFixture.postProcessDocument(document);
 
@@ -111,17 +115,17 @@ public class ContactIndexerIndexedFieldsTest
 		map.put("emailAddress", contact.getEmailAddress());
 
 		map.put("firstName", contact.getFirstName());
-		map.put("firstName_sortable", contact.getFirstName());
+		map.put("firstName_sortable", contact.getFirstName().toLowerCase());
 
 		map.put("middleName", contact.getMiddleName());
 
 		map.put("lastName", contact.getLastName());
-		map.put("lastName_sortable", contact.getLastName());
+		map.put("lastName_sortable", contact.getLastName().toLowerCase());
 
 		map.put("fullName", contact.getFullName());
 
 		map.put("jobTitle", contact.getJobTitle());
-		map.put("jobTitle_sortable", contact.getJobTitle());
+		map.put("jobTitle_sortable", contact.getJobTitle().toLowerCase());
 
 		return map;
 	}
