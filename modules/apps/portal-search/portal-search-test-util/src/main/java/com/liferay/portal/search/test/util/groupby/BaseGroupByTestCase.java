@@ -93,6 +93,34 @@ public abstract class BaseGroupByTestCase extends BaseIndexingTestCase {
 	}
 
 	@Test
+	public void testMaxTerms() throws Exception {
+		addDocuments("sixteen", 16);
+		addDocuments("three", 3);
+		addDocuments("two", 2);
+
+		SearchContext searchContext = createSearchContext();
+
+		GroupBy groupBy = new GroupBy(GROUP_FIELD);
+
+		groupBy.setMaxTerms(1);
+
+		searchContext.setGroupBy(groupBy);
+
+		IdempotentRetryAssert.retryAssert(
+			3, TimeUnit.SECONDS,
+			() -> {
+				Map<String, Hits> groupedHitsMap = searchGroups(searchContext);
+
+				Assert.assertEquals(
+					groupedHitsMap.toString(), 1, groupedHitsMap.size());
+
+				assertGroup("sixteen", 16, groupedHitsMap);
+
+				return null;
+			});
+	}
+
+	@Test
 	public void testSelectedFieldNames() throws Exception {
 		addDocuments("one", 1);
 
