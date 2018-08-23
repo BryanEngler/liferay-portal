@@ -1,0 +1,31 @@
+{
+	"availableLanguageIds": [
+		"ja_JP"
+	],
+	"defaultLanguageId": "ja_JP",
+	"fields": [
+		{
+			"dataType": "string",
+			"indexType": "text",
+			"label": {
+				"ja_JP": "Text"
+			},
+			"localizable": true,
+			"name": "field_text",
+			"predefinedValue": {
+				"ja_JP": ""
+			},
+			"readOnly": false,
+			"repeatable": false,
+			"required": false,
+			"showLabel": true,
+			"style": {
+				"ja_JP": ""
+			},
+			"tip": {
+				"ja_JP": ""
+			},
+			"type": "text"
+		}
+	]
+}
