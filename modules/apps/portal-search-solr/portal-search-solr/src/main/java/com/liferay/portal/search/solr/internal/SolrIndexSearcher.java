@@ -497,16 +497,23 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 		List<String> filterQueries = new ArrayList<>();
 
 		if (query.getPreBooleanFilter() != null) {
-			String filterQuery = _filterTranslator.translate(
+			String queryPreFilterQuery = _filterTranslator.translate(
 				query.getPreBooleanFilter(), searchContext);
 
-			filterQueries.add(filterQuery);
+			filterQueries.add(queryPreFilterQuery);
 		}
 
-		String[] postFilterQueries = solrQuery.getFilterQueries();
+		if (query.getPostFilter() != null) {
+			String queryPostFilterQuery = _filterTranslator.translate(
+				query.getPostFilter(), searchContext);
 
-		if (!ArrayUtil.isEmpty(postFilterQueries)) {
-			Collections.addAll(filterQueries, postFilterQueries);
+			filterQueries.add(queryPostFilterQuery);
+		}
+
+		String[] facetPostFilterQueries = solrQuery.getFilterQueries();
+
+		if (!ArrayUtil.isEmpty(facetPostFilterQueries)) {
+			Collections.addAll(filterQueries, facetPostFilterQueries);
 		}
 
 		if (!filterQueries.isEmpty()) {
