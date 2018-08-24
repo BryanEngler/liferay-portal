@@ -16,6 +16,7 @@ package com.liferay.contacts.service.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.portal.kernel.model.Contact;
+import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -54,9 +55,9 @@ public class ContactIndexerReindexTest extends BaseContactIndexerTestCase {
 	}
 
 	@Test
-	public void testIndexedFields() throws Exception {
+	public void testReindexing() throws Exception {
 		Locale locale = LocaleUtil.US;
-		
+
 		contactFixture.updateDisplaySettings(locale);
 
 		String firstName = RandomTestUtil.randomString();
@@ -65,7 +66,12 @@ public class ContactIndexerReindexTest extends BaseContactIndexerTestCase {
 
 		String searchTerm = firstName;
 
-		contactIndexerFixture.searchOnlyOne(searchTerm, locale);
+		Document document = contactIndexerFixture.searchOnlyOne(
+			searchTerm, locale);
+
+		contactIndexerFixture.deleteDocument(document);
+
+		contactIndexerFixture.searchNoOne(searchTerm, locale);
 
 		contactIndexerFixture.reindex(contact.getCompanyId());
 

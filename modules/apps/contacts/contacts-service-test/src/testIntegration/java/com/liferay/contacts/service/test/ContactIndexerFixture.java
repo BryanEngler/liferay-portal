@@ -15,12 +15,15 @@
 package com.liferay.contacts.service.test;
 
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.search.test.util.HitsAssert;
 
@@ -34,6 +37,14 @@ public class ContactIndexerFixture {
 
 	public ContactIndexerFixture(Indexer<?> indexer) {
 		_indexer = indexer;
+	}
+
+	public void deleteDocument(Document document)
+		throws PortalException, SearchException {
+
+		IndexWriterHelperUtil.deleteDocument(
+			_indexer.getSearchEngineId(), TestPropsValues.getCompanyId(),
+			document.getUID(), true);
 	}
 
 	public SearchContext getSearchContext(String keywords, Locale locale)
@@ -51,6 +62,10 @@ public class ContactIndexerFixture {
 		queryConfig.setSelectedFieldNames(StringPool.STAR);
 
 		return searchContext;
+	}
+
+	public void searchNoOne(String keywords, Locale locale) throws Exception {
+		HitsAssert.assertNoHits(search(getSearchContext(keywords, locale)));
 	}
 
 	public Document searchOnlyOne(String keywords, Locale locale)
