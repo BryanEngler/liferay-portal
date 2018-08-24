@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.contacts.uad.search.test;
+package com.liferay.contacts.service.test;
 
 import com.liferay.portal.kernel.model.Contact;
 import com.liferay.portal.kernel.model.Group;

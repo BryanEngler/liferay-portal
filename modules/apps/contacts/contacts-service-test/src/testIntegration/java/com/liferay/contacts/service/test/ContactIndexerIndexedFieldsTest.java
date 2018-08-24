@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.contacts.uad.search.test;
+package com.liferay.contacts.service.test;
 
 import java.util.HashMap;
 import java.util.Locale;
