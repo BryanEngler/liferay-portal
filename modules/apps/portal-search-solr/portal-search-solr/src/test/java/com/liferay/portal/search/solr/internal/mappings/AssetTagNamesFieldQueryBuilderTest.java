@@ -26,6 +26,49 @@ import org.junit.Test;
 public class AssetTagNamesFieldQueryBuilderTest
 	extends BaseAssetTagNamesFieldQueryBuilderTestCase {
 
+	@Test
+	public void testMultiwordPhrasePrefixesSolr() throws Exception {
+		addDocument("Name Tags");
+		addDocument("Names Tab");
+		addDocument("Tag Names");
+		addDocument("Tabs Names Tags");
+
+		assertSearch("\"name ta*\"", 1);
+		assertSearch("\"name tag*\"", 1);
+		assertSearch("\"name tags*\"", 1);
+		assertSearch("\"names ta*\"", 2);
+		assertSearch("\"names tab*\"", 1);
+		assertSearch("\"names tag*\"", 1);
+		assertSearch("\"names tags*\"", 1);
+		assertSearch("\"tabs name*\"", 1);
+		assertSearch("\"tabs names ta*\"", 1);
+		assertSearch("\"tabs names tag*\"", 1);
+		assertSearch("\"tabs names tags*\"", 1);
+		assertSearch("\"tabs names*\"", 1);
+		assertSearch("\"tag na*\"", 1);
+		assertSearch("\"tag name*\"", 1);
+		assertSearch("\"tag names*\"", 1);
+
+		assertSearchNoHits("\"name tab*\"");
+		assertSearchNoHits("\"name tabs*\"");
+		assertSearchNoHits("\"names tabs*\"");
+		assertSearchNoHits("\"tab na*\"");
+		assertSearchNoHits("\"tab names*\"");
+		assertSearchNoHits("\"tabs na ta*\"");
+		assertSearchNoHits("\"tabs name ta*\"");
+		assertSearchNoHits("\"tags na ta*\"");
+		assertSearchNoHits("\"tags names tabs*\"");
+		assertSearchNoHits("\"tags names*\"");
+		assertSearchNoHits("\"zz na*\"");
+		assertSearchNoHits("\"zz name*\"");
+		assertSearchNoHits("\"zz names*\"");
+		assertSearchNoHits("\"zz ta*\"");
+		assertSearchNoHits("\"zz tab*\"");
+		assertSearchNoHits("\"zz tabs*\"");
+		assertSearchNoHits("\"zz tag*\"");
+		assertSearchNoHits("\"zz tags*\"");
+	}
+
 	@Override
 	protected IndexingFixture createIndexingFixture() throws Exception {
 		return new SolrIndexingFixture();
