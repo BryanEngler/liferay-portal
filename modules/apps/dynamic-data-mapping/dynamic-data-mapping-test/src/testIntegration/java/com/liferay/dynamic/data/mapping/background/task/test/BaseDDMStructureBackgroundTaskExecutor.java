@@ -14,7 +14,15 @@
 
 package com.liferay.dynamic.data.mapping.background.task.test;
 
-import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import com.liferay.dynamic.data.mapping.io.DDMFormDeserializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormDeserializerDeserializeRequest.Builder;
+import com.liferay.dynamic.data.mapping.io.DDMFormDeserializerDeserializeResponse;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
@@ -38,12 +46,6 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 /**
  * @author Lucas Marques de Paula
  */
@@ -55,8 +57,12 @@ public abstract class BaseDDMStructureBackgroundTaskExecutor
 
 		long classNameId = PortalUtil.getClassNameId(JournalArticle.class);
 
-		DDMForm ddmForm = ddmFormJSONDeserializer.deserialize(
-			_getStructureDefinition());
+		Builder builder = Builder.newBuilder(_getStructureDefinition());
+		
+		DDMFormDeserializerDeserializeResponse ddmFormDeserializerDeserializeResponse = ddmFormDeserializer.deserialize(builder.build());
+		
+		DDMForm ddmForm = ddmFormDeserializerDeserializeResponse.getDDMForm();
+		
 
 		DDMStructureTestHelper ddmStructureTestHelper =
 			new DDMStructureTestHelper(classNameId, group);
@@ -126,8 +132,10 @@ public abstract class BaseDDMStructureBackgroundTaskExecutor
 	)
 	protected BackgroundTaskExecutor backgroundTaskExecutor;
 
-	@Inject
-	protected DDMFormJSONDeserializer ddmFormJSONDeserializer;
+	@Inject(
+		filter = "ddm.form.deserializer.type=json"
+	)
+	protected DDMFormDeserializer ddmFormDeserializer;
 
 	private String _getJournalArticleContent() throws Exception {
 		if (_journalArticleContent == null) {
