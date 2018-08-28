@@ -21,6 +21,8 @@ import com.liferay.portal.search.internal.analysis.SimpleKeywordTokenizer;
 
 import java.util.Arrays;
 
+import org.junit.Test;
+
 /**
  * @author André de Oliveira
  * @author Rodrigo Paulino
@@ -28,21 +30,8 @@ import java.util.Arrays;
 public abstract class BaseDescriptionFieldQueryBuilderTestCase
 	extends BaseFieldQueryBuilderTestCase {
 
-	@Override
-	protected FieldQueryBuilder createFieldQueryBuilder() {
-		return new DescriptionFieldQueryBuilder() {
-			{
-				keywordTokenizer = new SimpleKeywordTokenizer();
-			}
-		};
-	}
-
-	@Override
-	protected String getField() {
-		return Field.DESCRIPTION;
-	}
-
-	protected void testBasicWordMatches() throws Exception {
+	@Test
+	public void testBasicWordMatches() throws Exception {
 		addDocument("LOOKing for DOCUments");
 		addDocument("this is a test for description");
 		addDocument("Description Test");
@@ -63,7 +52,8 @@ public abstract class BaseDescriptionFieldQueryBuilderTestCase
 		assertSearchNoHits("\"look\"");
 	}
 
-	protected void testExactMatchBoost() throws Exception {
+	@Test
+	public void testExactMatchBoost() throws Exception {
 		addDocument("one two three four five six seven eight");
 		addDocument("one two three four five six");
 		addDocument("three four five six seven");
@@ -95,7 +85,8 @@ public abstract class BaseDescriptionFieldQueryBuilderTestCase
 				"one two three four five six seven eight"));
 	}
 
-	protected void testMultiwordPhrasePrefixes() throws Exception {
+	@Test
+	public void testMultiwordPhrasePrefixes() throws Exception {
 		addDocument("Name Tags");
 		addDocument("Names Tab");
 		addDocument("Tag Names");
@@ -137,7 +128,8 @@ public abstract class BaseDescriptionFieldQueryBuilderTestCase
 		assertSearchNoHits("\"zz tags*\"");
 	}
 
-	protected void testMultiwordPrefixes() throws Exception {
+	@Test
+	public void testMultiwordPrefixes() throws Exception {
 		addDocument("Name Tags");
 		addDocument("Names Tab");
 		addDocument("Tag Names");
@@ -175,7 +167,8 @@ public abstract class BaseDescriptionFieldQueryBuilderTestCase
 		assertSearchNoHits("zz ta");
 	}
 
-	protected void testNull() throws Exception {
+	@Test
+	public void testNull() throws Exception {
 		addDocument("null");
 		addDocument("anulled");
 		addDocument("The word null is in this sentence");
@@ -186,7 +179,8 @@ public abstract class BaseDescriptionFieldQueryBuilderTestCase
 			"null", Arrays.asList("null", "The word null is in this sentence"));
 	}
 
-	protected void testNumbers() throws Exception {
+	@Test
+	public void testNumbers() throws Exception {
 		addDocument("Description with 1 number");
 		addDocument("Description with NO numbers");
 		addDocument("4ever");
@@ -206,7 +200,8 @@ public abstract class BaseDescriptionFieldQueryBuilderTestCase
 		assertSearchNoHits("FOREVER");
 	}
 
-	protected void testPhrasePrefixes() throws Exception {
+	@Test
+	public void testPhrasePrefixes() throws Exception {
 		addDocument("Nametag");
 		addDocument("NA-META-G");
 		addDocument("Tag Name");
@@ -232,7 +227,8 @@ public abstract class BaseDescriptionFieldQueryBuilderTestCase
 		assertSearchNoHits("\"*Ta\"");
 	}
 
-	protected void testPhrasePrefixRequiresTrailingStar() throws Exception {
+	@Test
+	public void testPhrasePrefixRequiresTrailingStar() throws Exception {
 		addDocument("Nametag");
 		addDocument("NA-META-G");
 		addDocument("Tag Name");
@@ -245,7 +241,8 @@ public abstract class BaseDescriptionFieldQueryBuilderTestCase
 		assertSearchNoHits("\"*NAM\"");
 	}
 
-	protected void testPhrases() throws Exception {
+	@Test
+	public void testPhrases() throws Exception {
 		addDocument("Names of Tags");
 		addDocument("More names of tags here");
 
@@ -267,7 +264,8 @@ public abstract class BaseDescriptionFieldQueryBuilderTestCase
 		assertSearchNoHits("\"name\" of \"tags\"");
 	}
 
-	protected void testStopwords() throws Exception {
+	@Test
+	public void testStopwords() throws Exception {
 		addDocument("Names of Tags");
 		addDocument("More names of tags");
 
@@ -277,7 +275,8 @@ public abstract class BaseDescriptionFieldQueryBuilderTestCase
 		assertSearch("tags names", 2);
 	}
 
-	protected void testWordPrefixes() throws Exception {
+	@Test
+	public void testWordPrefixes() throws Exception {
 		addDocument("Nametag");
 		addDocument("NA-META-G");
 		addDocument("Tag Name");
@@ -305,6 +304,20 @@ public abstract class BaseDescriptionFieldQueryBuilderTestCase
 		assertSearchNoHits("*namet*");
 		assertSearchNoHits("*Ta");
 		assertSearchNoHits("*Ta*");
+	}
+
+	@Override
+	protected FieldQueryBuilder createFieldQueryBuilder() {
+		return new DescriptionFieldQueryBuilder() {
+			{
+				keywordTokenizer = new SimpleKeywordTokenizer();
+			}
+		};
+	}
+
+	@Override
+	protected String getField() {
+		return Field.DESCRIPTION;
 	}
 
 }
