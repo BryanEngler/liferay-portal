@@ -29,6 +29,8 @@ import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.SearchEngine;
+import com.liferay.portal.kernel.search.SearchEngineHelper;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.SortFactoryUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -40,6 +42,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerTestRule;
 
@@ -183,15 +186,18 @@ public class DocumentTest {
 
 	@Test
 	public void testFirstNameSearchSortedBySingleLong() throws Exception {
-		for (String keywords : _KEYWORDS) {
-			checkSearchContext(
-				keywords, _SCREEN_NAMES_ASCENDING, _FIELD_LONG, Sort.LONG_TYPE);
-		}
+		if (!_searchEngineIsSolr()) {
+			for (String keywords : _KEYWORDS) {
+				checkSearchContext(
+					keywords, _SCREEN_NAMES_ASCENDING, _FIELD_LONG,
+					Sort.LONG_TYPE);
+			}
 
-		for (String keywords : _KEYWORDS_ODD) {
-			checkSearchContext(
-				keywords, _SCREEN_NAMES_ODD_ASCENDING, _FIELD_LONG,
-				Sort.LONG_TYPE);
+			for (String keywords : _KEYWORDS_ODD) {
+				checkSearchContext(
+					keywords, _SCREEN_NAMES_ODD_ASCENDING, _FIELD_LONG,
+					Sort.LONG_TYPE);
+			}
 		}
 	}
 
@@ -232,8 +238,10 @@ public class DocumentTest {
 
 	@Test
 	public void testLastNameSearchSortedBySingleLong() throws Exception {
-		checkSearchContext(
-			"Smith", _SCREEN_NAMES_ASCENDING, _FIELD_LONG, Sort.LONG_TYPE);
+		if (!_searchEngineIsSolr()) {
+			checkSearchContext(
+				"Smith", _SCREEN_NAMES_ASCENDING, _FIELD_LONG, Sort.LONG_TYPE);
+		}
 	}
 
 	protected void assertSort(
@@ -474,6 +482,18 @@ public class DocumentTest {
 		_floats.put(screenName, floatNumber);
 		_integers.put(screenName, numberInteger);
 		_longs.put(screenName, longNumber);
+	}
+
+	@Inject
+	protected SearchEngineHelper searchEngineHelper;
+
+	private boolean _searchEngineIsSolr() {
+		SearchEngine searchEngine = searchEngineHelper.getSearchEngine(
+			searchEngineHelper.getDefaultSearchEngineId());
+
+		String vendor = searchEngine.getVendor();
+
+		return vendor.equals("Solr");
 	}
 
 	private static final String _FIELD_DOUBLE = "sd";
