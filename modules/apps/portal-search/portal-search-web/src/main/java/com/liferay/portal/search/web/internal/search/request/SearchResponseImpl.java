@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.search.web.internal.util.SearchStringUtil;
 import com.liferay.portal.search.web.search.request.SearchResponse;
 import com.liferay.portal.search.web.search.request.SearchSettings;
+import com.liferay.portal.search.web.search.result.FederatedSearchResults;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,6 +45,11 @@ public class SearchResponseImpl implements SearchResponse {
 		Map<String, Facet> facets = _searchContext.getFacets();
 
 		return facets.get(name);
+	}
+
+	@Override
+	public FederatedSearchResults getFederatedSearchResults() {
+		return _federatedSearchResults;
 	}
 
 	/**
@@ -143,10 +149,15 @@ public class SearchResponseImpl implements SearchResponse {
 		_searchSettings = searchSettings;
 	}
 
+	public void setFederatedSearchResults(FederatedSearchResults federatedSearchResults) {
+		_federatedSearchResults = federatedSearchResults;
+	}
+
 	public void setTotalHits(int totalHits) {
 		_totalHits = totalHits;
 	}
 
+	private FederatedSearchResults _federatedSearchResults;
 	private List<Document> _documents;
 	private Hits _hits;
 	private String _keywords;

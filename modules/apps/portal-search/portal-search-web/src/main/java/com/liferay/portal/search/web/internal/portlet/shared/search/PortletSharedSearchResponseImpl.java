@@ -23,6 +23,7 @@ import com.liferay.portal.search.web.internal.portlet.shared.task.PortletSharedR
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
 import com.liferay.portal.search.web.search.request.SearchResponse;
 import com.liferay.portal.search.web.search.request.SearchSettings;
+import com.liferay.portal.search.web.search.result.FederatedSearchResults;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +43,11 @@ public class PortletSharedSearchResponseImpl
 
 		_searchResponse = searchResponse;
 		_portletSharedRequestHelper = portletSharedRequestHelper;
+	}
+
+	@Override
+	public FederatedSearchResults getFederatedSearchResults() {
+		return _searchResponse.getFederatedSearchResults();
 	}
 
 	@Override

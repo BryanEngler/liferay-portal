@@ -14,6 +14,8 @@
 
 package com.liferay.portal.search.web.internal.portlet.shared.search;
 
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.portal.kernel.dao.search.DisplayTerms;
@@ -37,6 +39,7 @@ import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchCo
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
 import com.liferay.portal.search.web.portlet.shared.task.PortletSharedTaskExecutor;
+import com.liferay.portal.search.spi.federated.searcher.FederatedSearcher;
 import com.liferay.portal.search.web.search.request.SearchRequest;
 import com.liferay.portal.search.web.search.request.SearchResponse;
 import com.liferay.portal.search.web.search.request.SearchSettings;
@@ -81,6 +84,9 @@ public class PortletSharedSearchRequestImpl
 			ServiceTrackerMapFactory.openSingleValueMap(
 				bundleContext, PortletSharedSearchContributor.class,
 				"javax.portlet.name");
+
+		_federatedSearchers = ServiceTrackerListFactory.open(
+			bundleContext, FederatedSearcher.class);
 	}
 
 	protected SearchContainer<Document> buildSearchContainer(
@@ -138,6 +144,12 @@ public class PortletSharedSearchRequestImpl
 		return searchContext;
 	}
 
+	protected void contributeFederatedSearchers(SearchRequest searchRequest) {
+		for (FederatedSearcher federatedSearcher : _federatedSearchers) {
+			searchRequest.addFederatedSearcher(federatedSearcher);
+		}
+	}
+
 	protected void contributeSearchSettings(
 		SearchRequest searchRequest, Stream<Portlet> portletsStream,
 		ThemeDisplay themeDisplay, RenderRequest renderRequest) {
@@ -155,6 +167,7 @@ public class PortletSharedSearchRequestImpl
 
 	@Deactivate
 	protected void deactivate() {
+		_federatedSearchers.close();
 		_portletSharedSearchContributors.close();
 	}
 
@@ -178,6 +191,8 @@ public class PortletSharedSearchRequestImpl
 
 		contributeSearchSettings(
 			searchRequest, portletsStream, themeDisplay, renderRequest);
+
+		contributeFederatedSearchers(searchRequest);
 
 		SearchResponse searchResponse = searchRequest.search();
 
@@ -253,6 +268,9 @@ public class PortletSharedSearchRequestImpl
 
 	@Reference
 	protected PortletSharedTaskExecutor portletSharedTaskExecutor;
+
+	private ServiceTrackerList<FederatedSearcher, FederatedSearcher>
+		_federatedSearchers;
 
 	private ServiceTrackerMap<String, PortletSharedSearchContributor>
 		_portletSharedSearchContributors;

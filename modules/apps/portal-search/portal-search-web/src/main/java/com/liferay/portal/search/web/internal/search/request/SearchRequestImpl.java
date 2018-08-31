@@ -21,11 +21,18 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcher;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcherManager;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.search.constants.SearchContextAttributes;
+import com.liferay.portal.search.web.internal.search.results.FederatedSearchResultsImpl;
+import com.liferay.portal.search.spi.federated.searcher.FederatedSearcher;
 import com.liferay.portal.search.web.search.request.SearchRequest;
 import com.liferay.portal.search.web.search.request.SearchSettings;
 import com.liferay.portal.search.web.search.request.SearchSettingsContributor;
+import com.liferay.portal.search.web.search.result.FederatedSearchResults;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -51,6 +58,12 @@ public class SearchRequestImpl implements SearchRequest {
 	}
 
 	@Override
+	public void addFederatedSearcher(FederatedSearcher federatedSearcher) {
+		_federatedSearcherMap.put(
+			federatedSearcher.getSourceDisplayName(), federatedSearcher);
+	}
+
+	@Override
 	public void removeSearchSettingsContributor(
 		SearchSettingsContributor searchSettingsContributor) {
 
@@ -69,6 +82,22 @@ public class SearchRequestImpl implements SearchRequest {
 		searchContext.setEnd(searchContainer.getEnd());
 		searchContext.setStart(searchContainer.getStart());
 
+		FederatedSearchResults
+			federatedSearchResults = new FederatedSearchResultsImpl();
+
+		String[] federatedSearchSources = GetterUtil.getStringValues(
+			searchContext.getAttribute(
+				SearchContextAttributes.ATTRIBUTE_KEY_FEDERATED_SEARCH_SOURCES)
+			);
+
+		for (String source : federatedSearchSources) {
+			FederatedSearcher federatedSearcher =
+				_federatedSearcherMap.get(source);
+
+			federatedSearchResults.add(
+				source, federatedSearcher.getHits(searchContext));
+		}
+
 		Hits hits = search(searchContext);
 
 		searchContainer.setResults(hits.toList());
@@ -78,7 +107,8 @@ public class SearchRequestImpl implements SearchRequest {
 		searchContainer.setTotal(hits.getLength());
 
 		SearchResponseImpl searchResponseImpl = buildSearchResponse(
-			hits, searchContext, searchContainer, searchSettingsImpl);
+			hits, federatedSearchResults, searchContext, searchContainer,
+			searchSettingsImpl);
 
 		return searchResponseImpl;
 	}
@@ -99,13 +129,14 @@ public class SearchRequestImpl implements SearchRequest {
 	}
 
 	protected SearchResponseImpl buildSearchResponse(
-		Hits hits, SearchContext searchContext,
-		SearchContainer<Document> searchContainer,
+		Hits hits, FederatedSearchResults federatedSearchResults,
+		SearchContext searchContext, SearchContainer<Document> searchContainer,
 		SearchSettings searchSettings) {
 
 		SearchResponseImpl searchResponseImpl = new SearchResponseImpl();
 
 		searchResponseImpl.setDocuments(hits.toList());
+		searchResponseImpl.setFederatedSearchResults(federatedSearchResults);
 		searchResponseImpl.setHits(hits);
 		searchResponseImpl.setKeywords(searchContext.getKeywords());
 		searchResponseImpl.setPaginationDelta(searchContainer.getDelta());
@@ -154,5 +185,7 @@ public class SearchRequestImpl implements SearchRequest {
 	private final SearchContextBuilder _searchContextBuilder;
 	private final Set<SearchSettingsContributor> _searchSettingsContributors =
 		new HashSet<>();
+	private final Map<String, FederatedSearcher> _federatedSearcherMap =
+		new HashMap<>();
 
 }
