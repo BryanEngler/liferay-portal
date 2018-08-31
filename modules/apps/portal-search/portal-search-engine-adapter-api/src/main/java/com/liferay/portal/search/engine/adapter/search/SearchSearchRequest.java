@@ -88,6 +88,10 @@ public class SearchSearchRequest
 		return _sorts;
 	}
 
+	public String getConnectionId() {
+		return _connectionId;
+	}
+
 	public int getStart() {
 		return _start;
 	}
@@ -178,6 +182,10 @@ public class SearchSearchRequest
 		_sorts = sorts;
 	}
 
+	public void setConnectionId(String connectionId) {
+		_connectionId = connectionId;
+	}
+
 	public void setStart(int start) {
 		_start = start;
 	}
@@ -200,6 +208,7 @@ public class SearchSearchRequest
 	private String[] _selectedFieldNames;
 	private int _size;
 	private Sort[] _sorts;
+	private String _connectionId;
 	private int _start;
 	private Map<String, Stats> _stats;
 
