@@ -15,6 +15,10 @@
 package com.liferay.dynamic.data.mapping.background.task.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.model.DLFileEntryMetadata;
+import com.liferay.document.library.kernel.model.DLFileEntryType;
+import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.journal.model.JournalArticle;
@@ -41,16 +45,53 @@ public final class DDMStructureBackgroundTaskExecutorTest
 	}
 
 	@Test
+	public void testReindexDLFileEntry() throws Exception, PortalException {
+		Group group = addGroup();
+
+		DDMStructure ddmStructure = addDDMStructure(
+			group, DLFileEntryMetadata.class);
+
+		DLFileEntryType dlFileEntryType = addDLFileEntryType(
+			group, ddmStructure);
+
+		DLFolder dlFolder = addDLFolder(group);
+
+		String keywords = "私はプログラミングが大好きです";
+
+		for (int i = 1; i <= NUMBER_OF_SAMPLES; i++) {
+			String title = String.format(
+				"%s - %s - %02d", keywords, RandomTestUtil.randomString(), i);
+
+			addDLFileEntry(group, dlFolder, dlFileEntryType, title);
+		}
+
+		IndexerFixture indexerFixture = new IndexerFixture(DLFileEntry.class);
+
+		Hits hits = indexerFixture.search(keywords);
+
+		assertHitsLength(NUMBER_OF_SAMPLES, hits);
+
+		indexerFixture.deleteDocuments(hits.getDocs());
+
+		assertHitsLength(0, indexerFixture.search(keywords));
+
+		reindex(ddmStructure);
+
+		assertHitsLength(NUMBER_OF_SAMPLES, indexerFixture.search(keywords));
+	}
+
+	@Test
 	public void testReindexJournalArticle() throws Exception, PortalException {
 		Group group = addGroup();
 
-		DDMStructure ddmStructure = addDDMStructure(group);
+		DDMStructure ddmStructure = addDDMStructure(
+			group, JournalArticle.class);
 
 		DDMTemplate template = addDDMTemplate(group, ddmStructure);
 
 		String keywords = "私はプログラミングが大好きです";
 
-		for (int i = 1; i <= NUMBER_OF_JOURNAL_ARTICLES; i++) {
+		for (int i = 1; i <= NUMBER_OF_SAMPLES; i++) {
 			String title = String.format(
 				"%s - %s - %02d", keywords, RandomTestUtil.randomString(), i);
 
@@ -62,7 +103,7 @@ public final class DDMStructureBackgroundTaskExecutorTest
 
 		Hits hits = indexerFixture.search(keywords);
 
-		assertHitsLength(NUMBER_OF_JOURNAL_ARTICLES, hits);
+		assertHitsLength(NUMBER_OF_SAMPLES, hits);
 
 		indexerFixture.deleteDocuments(hits.getDocs());
 
@@ -70,8 +111,7 @@ public final class DDMStructureBackgroundTaskExecutorTest
 
 		reindex(ddmStructure);
 
-		assertHitsLength(
-			NUMBER_OF_JOURNAL_ARTICLES, indexerFixture.search(keywords));
+		assertHitsLength(NUMBER_OF_SAMPLES, indexerFixture.search(keywords));
 	}
 
 }

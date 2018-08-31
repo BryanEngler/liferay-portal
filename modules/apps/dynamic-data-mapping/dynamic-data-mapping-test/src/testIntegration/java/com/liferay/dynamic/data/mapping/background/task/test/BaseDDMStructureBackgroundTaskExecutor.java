@@ -14,12 +14,13 @@
 
 package com.liferay.dynamic.data.mapping.background.task.test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.model.DLFileEntryType;
+import com.liferay.document.library.kernel.model.DLFolder;
+import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
+import com.liferay.document.library.kernel.service.DLFileEntryTypeLocalServiceUtil;
+import com.liferay.document.library.kernel.service.DLFolderLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormDeserializerDeserializeRequest.Builder;
 import com.liferay.dynamic.data.mapping.io.DDMFormDeserializerDeserializeResponse;
@@ -33,18 +34,31 @@ import com.liferay.dynamic.data.mapping.test.util.DDMTemplateTestUtil;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalFolderConstants;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskExecutor;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
+import com.liferay.portal.kernel.test.util.TestDataConstants;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * @author Lucas Marques de Paula
@@ -52,17 +66,18 @@ import com.liferay.portal.test.rule.Inject;
 public abstract class BaseDDMStructureBackgroundTaskExecutor
 	extends BaseBackgroundTaskExecutor {
 
-	protected final DDMStructure addDDMStructure(Group group)
+	protected final DDMStructure addDDMStructure(Group group, Class<?> clazz)
 		throws Exception, PortalException {
 
-		long classNameId = PortalUtil.getClassNameId(JournalArticle.class);
+		long classNameId = PortalUtil.getClassNameId(clazz);
 
 		Builder builder = Builder.newBuilder(_getStructureDefinition());
-		
-		DDMFormDeserializerDeserializeResponse ddmFormDeserializerDeserializeResponse = ddmFormDeserializer.deserialize(builder.build());
-		
+
+		DDMFormDeserializerDeserializeResponse
+			ddmFormDeserializerDeserializeResponse =
+				ddmFormDeserializer.deserialize(builder.build());
+
 		DDMForm ddmForm = ddmFormDeserializerDeserializeResponse.getDDMForm();
-		
 
 		DDMStructureTestHelper ddmStructureTestHelper =
 			new DDMStructureTestHelper(classNameId, group);
@@ -87,6 +102,67 @@ public abstract class BaseDDMStructureBackgroundTaskExecutor
 		_ddmTemplates.add(ddmTemplate);
 
 		return ddmTemplate;
+	}
+
+	protected DLFileEntry addDLFileEntry(
+			Group group, DLFolder dlFolder, DLFileEntryType dlFileEntryType,
+			String title)
+		throws Exception {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(group.getGroupId());
+
+		serviceContext.setAttribute(
+			"fileEntryTypeId", dlFileEntryType.getFileEntryTypeId());
+
+		byte[] bytes = TestDataConstants.TEST_BYTE_ARRAY;
+
+		InputStream inputStream = new ByteArrayInputStream(bytes);
+
+		FileEntry fileEntry = DLAppLocalServiceUtil.addFileEntry(
+			TestPropsValues.getUserId(), dlFolder.getRepositoryId(),
+			dlFolder.getFolderId(), RandomTestUtil.randomString(),
+			ContentTypes.TEXT_PLAIN, title, StringPool.BLANK, StringPool.BLANK,
+			inputStream, bytes.length, serviceContext);
+
+		DLFileEntry dlFileEntry = DLFileEntryLocalServiceUtil.getFileEntry(
+			fileEntry.getFileEntryId());
+
+		_dlFileEntries.add(dlFileEntry);
+
+		return dlFileEntry;
+	}
+
+	protected DLFileEntryType addDLFileEntryType(
+			Group group, DDMStructure ddmStructure)
+		throws Exception {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(group.getGroupId());
+
+		DLFileEntryType dlFileEntryType =
+			DLFileEntryTypeLocalServiceUtil.addFileEntryType(
+				TestPropsValues.getUserId(), group.getGroupId(),
+				RandomTestUtil.randomString(), StringPool.BLANK,
+				new long[] {ddmStructure.getStructureId()}, serviceContext);
+
+		_dlFileEntryTypes .add(dlFileEntryType);
+
+		return dlFileEntryType;
+	}
+
+	protected DLFolder addDLFolder(Group group) throws PortalException {
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(group.getGroupId());
+
+		DLFolder dlFolder = DLFolderLocalServiceUtil.addFolder(
+			TestPropsValues.getUserId(), group.getGroupId(), group.getGroupId(),
+			false, 0L, RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(), false, serviceContext);
+
+		_dlFolders.add(dlFolder);
+
+		return dlFolder;
 	}
 
 	protected final JournalArticle addJournalArticle(
@@ -125,16 +201,14 @@ public abstract class BaseDDMStructureBackgroundTaskExecutor
 		backgroundTaskExecutor.execute(backgroundTask);
 	}
 
-	protected static final int NUMBER_OF_JOURNAL_ARTICLES = 100;
+	protected static final int NUMBER_OF_SAMPLES = 100;
 
 	@Inject(
 		filter = "background.task.executor.class.name=com.liferay.dynamic.data.mapping.background.task.DDMStructureIndexerBackgroundTaskExecutor"
 	)
 	protected BackgroundTaskExecutor backgroundTaskExecutor;
 
-	@Inject(
-		filter = "ddm.form.deserializer.type=json"
-	)
+	@Inject(filter = "ddm.form.deserializer.type=json")
 	protected DDMFormDeserializer ddmFormDeserializer;
 
 	private String _getJournalArticleContent() throws Exception {
@@ -161,11 +235,21 @@ public abstract class BaseDDMStructureBackgroundTaskExecutor
 	@DeleteAfterTestRun
 	private final List<DDMTemplate> _ddmTemplates = new ArrayList<>(1);
 
+	@DeleteAfterTestRun
+	private final List<DLFileEntry> _dlFileEntries = new ArrayList<>(
+		NUMBER_OF_SAMPLES);
+
+	@DeleteAfterTestRun
+	private final List<DLFileEntryType> _dlFileEntryTypes = new ArrayList<>(1);
+
+	@DeleteAfterTestRun
+	private final List<DLFolder> _dlFolders = new ArrayList<>(1);
+
 	private String _journalArticleContent;
 
 	@DeleteAfterTestRun
 	private final List<JournalArticle> _journalArticles = new ArrayList<>(
-		NUMBER_OF_JOURNAL_ARTICLES);
+		NUMBER_OF_SAMPLES);
 
 	private String _structureDefinition;
 
