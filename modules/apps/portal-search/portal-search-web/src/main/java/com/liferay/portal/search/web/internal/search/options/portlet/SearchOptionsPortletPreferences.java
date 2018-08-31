@@ -14,6 +14,11 @@
 
 package com.liferay.portal.search.web.internal.search.options.portlet;
 
+import com.liferay.portal.kernel.util.KeyValuePair;
+
+import java.util.List;
+import java.util.Optional;
+
 /**
  * @author Wade Cao
  */
@@ -24,6 +29,24 @@ public interface SearchOptionsPortletPreferences {
 
 	public static final String PREFERENCE_KEY_BASIC_FACET_SELECTION =
 		"basicFacetSelection";
+
+	public static final String PREFERENCE_KEY_FEDERATED_SEARCH_ENABLED =
+		"federatedSearchEnabled";
+
+	public static final String PREFERENCE_KEY_FEDERATED_SEARCH_SOURCES =
+		"federatedSearchSources";
+
+	public boolean federatedSearchEnabled();
+
+	public List<KeyValuePair> getAvailableFederatedSearchSources();
+
+	public List<KeyValuePair> getCurrentFederatedSearchSources();
+
+	public String[] getCurrentFederatedSearchSourcesArray();
+
+	public Optional<String[]> getFederatedSearchSourcesArray();
+
+	public String getFederatedSearchSourcesString();
 
 	public boolean isAllowEmptySearches();
 
