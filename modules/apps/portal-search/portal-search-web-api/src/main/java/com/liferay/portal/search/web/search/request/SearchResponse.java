@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.facet.Facet;
+import com.liferay.portal.search.web.search.result.FederatedSearchResults;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,8 @@ import java.util.Optional;
  */
 @ProviderType
 public interface SearchResponse {
+
+	public FederatedSearchResults getFederatedSearchResults();
 
 	public List<Document> getDocuments();
 

@@ -14,6 +14,8 @@
 
 package com.liferay.portal.search.web.search.request;
 
+import com.liferay.portal.search.spi.federated.searcher.FederatedSearcher;
+
 import aQute.bnd.annotation.ProviderType;
 
 /**
@@ -24,6 +26,9 @@ public interface SearchRequest {
 
 	public void addSearchSettingsContributor(
 		SearchSettingsContributor searchSettingsContributor);
+
+	public void addFederatedSearcher(
+		FederatedSearcher federatedSearcher);
 
 	public void removeSearchSettingsContributor(
 		SearchSettingsContributor searchSettingsContributor);
