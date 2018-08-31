@@ -27,12 +27,13 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Lucas Marques de Paula
  */
+
 @Component(
 	immediate = true,
 	property = "ddm.structure.indexer.class.name=com.liferay.journal.model.JournalArticle",
 	service = DDMStructureIndexer.class
 )
-public class JournalBatchReindexer implements DDMStructureIndexer {
+public class JournalDDMStructureIndexer implements DDMStructureIndexer {
 
 	@Override
 	public void reindexDDMStructures(List<Long> ddmStructureIds)
