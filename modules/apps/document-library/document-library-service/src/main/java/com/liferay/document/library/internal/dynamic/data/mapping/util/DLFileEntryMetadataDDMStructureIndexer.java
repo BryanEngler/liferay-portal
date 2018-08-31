@@ -14,19 +14,24 @@
 
 package com.liferay.document.library.internal.dynamic.data.mapping.util;
 
-import com.liferay.document.library.kernel.model.DLFileEntryMetadata;
-import com.liferay.portal.kernel.search.DDMStructureIndexer;
-import com.liferay.portal.kernel.search.IndexerRegistry;
-import com.liferay.portal.kernel.search.SearchException;
-import com.liferay.portlet.documentlibrary.util.DLFileEntryMetadataIndexer;
-
 import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.model.DLFileEntryMetadata;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
+import com.liferay.portal.kernel.search.DDMStructureIndexer;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistry;
+import com.liferay.portal.kernel.search.SearchException;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.search.index.IndexStatusManager;
+
 /**
  * @author Lucas Marques de Paula
+ * @author Marcellus Tavares
  */
 @Component(
 	immediate = true,
@@ -40,13 +45,42 @@ public class DLFileEntryMetadataDDMStructureIndexer
 	public void reindexDDMStructures(List<Long> ddmStructureIds)
 		throws SearchException {
 
-		DLFileEntryMetadataIndexer indexer =
-			(DLFileEntryMetadataIndexer)
-				indexerRegistry.nullSafeGetIndexer(DLFileEntryMetadata.class);
+		if (indexStatusManager.isIndexReadOnly(DLFileEntryMetadata.class.getName()) || !isIndexerEnabled()) {
+			return;
+		}
 
-		indexer.reindexDDMStructures(ddmStructureIds);
+		try {
+			Indexer<DLFileEntry> indexer =
+					indexerRegistry.nullSafeGetIndexer(DLFileEntry.class);
+
+			if (indexStatusManager.isIndexReadOnly(indexer.getClassName())) {
+				return;
+			}
+
+			List<DLFileEntry> dlFileEntries =
+				DLFileEntryLocalServiceUtil.getDDMStructureFileEntries(
+					ArrayUtil.toLongArray(ddmStructureIds));
+
+			for (DLFileEntry dlFileEntry : dlFileEntries) {
+				indexer.reindex(dlFileEntry);
+			}
+		}
+		catch (Exception e) {
+			throw new SearchException(e);
+		}
+		
 	}
 
+	private boolean isIndexerEnabled() {
+		Indexer<?> indexer =
+				indexerRegistry.nullSafeGetIndexer(DLFileEntryMetadata.class);
+		
+		return indexer.isIndexerEnabled();
+	}
+
+	@Reference
+	protected IndexStatusManager indexStatusManager;
+	
 	@Reference
 	protected IndexerRegistry indexerRegistry;
 
