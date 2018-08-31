@@ -17,18 +17,25 @@ package com.liferay.portal.search.elasticsearch6.internal.connection;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.search.elasticsearch6.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch6.internal.index.IndexFactory;
 
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import com.liferay.portal.search.elasticsearch6.internal.settings.SettingsBuilder;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.ClusterAdminClient;
 
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.TransportAddress;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -127,6 +134,61 @@ public class ElasticsearchConnectionManager {
 
 		elasticsearchConnection.close();
 	}
+
+	public void addFederatedElasticsearchConnection(
+		Map<String, String> properties) {
+
+		System.out.println(
+			"Adding FederatedElasticsearchConnection for connectionId: " +
+				properties.get("connectionId"));
+
+		SettingsBuilder settingsBuilder = new SettingsBuilder(
+					Settings.builder());
+
+		settingsBuilder.put("cluster.name", properties.get("clusterName"));
+
+		TransportClient transportClient = new
+			PreBuiltTransportClient(settingsBuilder.build());
+
+		InetAddress inetAddress = null;
+
+		try {
+			inetAddress = InetAddress.getByName(properties.get("host"));
+		}
+		catch (Exception e) {
+
+		}
+
+		transportClient.addTransportAddress(
+			new TransportAddress(
+				inetAddress, GetterUtil.getInteger(properties.get("port"))));
+
+		Client client = transportClient;
+
+		_map.put(properties.get("connectionId"), client);
+	}
+
+	public void removeFederatedElasticsearchConnection(
+		Map<String, String> properties) {
+
+		System.out.println(
+			"Removing FederatedElasticsearchConnection for connectionId: " +
+				properties.get("connectionId"));
+
+		Client client = _map.get(properties.get("connectionId"));
+
+		client.close();
+
+		_map.remove(properties.get("connectionId"));
+	}
+
+	public Client getClient(String connectionId) {
+		return _map.get(connectionId);
+	}
+
+	private Map<String, Client>
+		_map = new HashMap();
+
 
 	@Activate
 	protected void activate(Map<String, Object> properties) {

@@ -37,7 +37,12 @@ public class SearchSearchRequestExecutorImpl
 	public SearchSearchResponse execute(
 		SearchSearchRequest searchSearchRequest) {
 
-		Client client = elasticsearchConnectionManager.getClient();
+		Client client = elasticsearchConnectionManager.getClient(
+			searchSearchRequest.getConnectionId());
+
+		if (client == null) {
+			client = elasticsearchConnectionManager.getClient();
+		}
 
 		SearchRequestBuilder searchRequestBuilder =
 			SearchAction.INSTANCE.newRequestBuilder(client);
