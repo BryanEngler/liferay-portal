@@ -33,7 +33,7 @@ import org.osgi.service.component.annotations.Reference;
 	property = "ddm.structure.indexer.class.name=com.liferay.journal.model.JournalArticle",
 	service = DDMStructureIndexer.class
 )
-public class JournalDDMStructureIndexer implements DDMStructureIndexer {
+public class JournalArticleDDMStructureIndexer implements DDMStructureIndexer {
 
 	@Override
 	public void reindexDDMStructures(List<Long> ddmStructureIds)
