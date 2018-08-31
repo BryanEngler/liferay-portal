@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.highlight.HighlightUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.search.solr.groupby.GroupByTranslator;
 
 import java.util.HashSet;
@@ -131,6 +132,12 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 		}
 
 		solrQuery.set(GroupParams.GROUP_LIMIT, groupBySize);
+
+		int maxTerms = GetterUtil.getInteger(groupBy.getMaxTerms());
+
+		if (maxTerms > 0) {
+			solrQuery.setRows(groupBy.getMaxTerms());
+		}
 
 		addHighlights(solrQuery, searchContext.getQueryConfig());
 		addSorts(solrQuery, searchContext.getSorts());
