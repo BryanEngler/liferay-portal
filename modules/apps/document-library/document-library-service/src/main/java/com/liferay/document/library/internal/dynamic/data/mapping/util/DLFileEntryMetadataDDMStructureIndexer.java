@@ -20,14 +20,11 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.liferay.document.library.kernel.model.DLFileEntry;
-import com.liferay.document.library.kernel.model.DLFileEntryMetadata;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
 import com.liferay.portal.kernel.search.DDMStructureIndexer;
-import com.liferay.portal.kernel.search.Indexer;
-import com.liferay.portal.kernel.search.IndexerRegistry;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.search.index.IndexStatusManager;
+import com.liferay.portal.search.indexer.IndexerWriter;
 
 /**
  * @author Lucas Marques de Paula
@@ -45,43 +42,19 @@ public class DLFileEntryMetadataDDMStructureIndexer
 	public void reindexDDMStructures(List<Long> ddmStructureIds)
 		throws SearchException {
 
-		if (indexStatusManager.isIndexReadOnly(DLFileEntryMetadata.class.getName()) || !isIndexerEnabled()) {
-			return;
-		}
-
-		try {
-			Indexer<DLFileEntry> indexer =
-					indexerRegistry.nullSafeGetIndexer(DLFileEntry.class);
-
-			if (indexStatusManager.isIndexReadOnly(indexer.getClassName())) {
-				return;
-			}
-
+			// TODO Use batch pattern
 			List<DLFileEntry> dlFileEntries =
 				DLFileEntryLocalServiceUtil.getDDMStructureFileEntries(
 					ArrayUtil.toLongArray(ddmStructureIds));
 
-			for (DLFileEntry dlFileEntry : dlFileEntries) {
-				indexer.reindex(dlFileEntry);
-			}
-		}
-		catch (Exception e) {
-			throw new SearchException(e);
-		}
+			indexerWriter.reindex(dlFileEntries);
 		
 	}
 
-	private boolean isIndexerEnabled() {
-		Indexer<?> indexer =
-				indexerRegistry.nullSafeGetIndexer(DLFileEntryMetadata.class);
-		
-		return indexer.isIndexerEnabled();
-	}
 
-	@Reference
-	protected IndexStatusManager indexStatusManager;
-	
-	@Reference
-	protected IndexerRegistry indexerRegistry;
+	@Reference(
+		target = "(indexer.class.name=com.liferay.document.library.kernel.model.DLFileEntry)"
+	)	
+	protected IndexerWriter<DLFileEntry> indexerWriter;
 
 }
