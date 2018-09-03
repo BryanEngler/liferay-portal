@@ -14,17 +14,17 @@
 
 package com.liferay.document.library.internal.dynamic.data.mapping.util;
 
-import java.util.List;
-
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 import com.liferay.document.library.kernel.model.DLFileEntry;
-import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.portal.kernel.search.DDMStructureIndexer;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.search.indexer.IndexerWriter;
+
+import java.util.List;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Lucas Marques de Paula
@@ -42,19 +42,21 @@ public class DLFileEntryMetadataDDMStructureIndexer
 	public void reindexDDMStructures(List<Long> ddmStructureIds)
 		throws SearchException {
 
-			// TODO Use batch pattern
-			List<DLFileEntry> dlFileEntries =
-				DLFileEntryLocalServiceUtil.getDDMStructureFileEntries(
-					ArrayUtil.toLongArray(ddmStructureIds));
+		// TODO Use batch pattern
 
-			indexerWriter.reindex(dlFileEntries);
-		
+		List<DLFileEntry> dlFileEntries =
+			dlFileEntryLocalService.getDDMStructureFileEntries(
+				ArrayUtil.toLongArray(ddmStructureIds));
+
+		indexerWriter.reindex(dlFileEntries);
 	}
 
+	@Reference
+	protected DLFileEntryLocalService dlFileEntryLocalService;
 
 	@Reference(
 		target = "(indexer.class.name=com.liferay.document.library.kernel.model.DLFileEntry)"
-	)	
+	)
 	protected IndexerWriter<DLFileEntry> indexerWriter;
 
 }
