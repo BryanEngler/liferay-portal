@@ -49,7 +49,7 @@ public class DDMStructureIndexerServiceUtil {
 				serviceTracker.getService();
 
 			if (ddmStructureIndexer == null) {
-				throw new PortalException("Indexer not found");
+				throw new PortalException("DDMStructureIndexer not found");
 			}
 
 			return ddmStructureIndexer;
