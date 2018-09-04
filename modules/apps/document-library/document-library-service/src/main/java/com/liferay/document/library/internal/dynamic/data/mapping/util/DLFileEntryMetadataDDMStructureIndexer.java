@@ -42,8 +42,6 @@ public class DLFileEntryMetadataDDMStructureIndexer
 	public void reindexDDMStructures(List<Long> ddmStructureIds)
 		throws SearchException {
 
-		// TODO Use batch pattern
-
 		List<DLFileEntry> dlFileEntries =
 			dlFileEntryLocalService.getDDMStructureFileEntries(
 				ArrayUtil.toLongArray(ddmStructureIds));
