@@ -101,7 +101,7 @@ public class ElasticsearchEngineConfigurator
 		}
 		catch (InterruptedException ie) {
 			throw new RuntimeException(
-				"Unable to initialize elastic search engine", ie);
+				"Unable to initialize Elasticsearch engine", ie);
 		}
 
 		super.initialize();
