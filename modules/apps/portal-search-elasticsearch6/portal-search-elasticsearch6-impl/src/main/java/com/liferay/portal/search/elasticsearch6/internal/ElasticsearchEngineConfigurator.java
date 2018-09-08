@@ -90,7 +90,7 @@ public class ElasticsearchEngineConfigurator
 			() -> {
 				_elasticsearchConnectionManager.connect();
 			},
-			"Elastic search initialization thread");
+			"Elasticsearch initialization thread");
 
 		thread.setDaemon(true);
 
