@@ -20,14 +20,15 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import com.liferay.portal.search.engine.adapter.index.GetIndexIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.GetIndexIndexResponse;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.elasticsearch.action.admin.indices.get.GetIndexAction;
-import org.elasticsearch.action.admin.indices.get.GetIndexRequestBuilder;
+import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
 import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.compress.CompressedXContent;
@@ -47,10 +48,21 @@ public class GetIndexIndexRequestExecutorImpl
 	public GetIndexIndexResponse execute(
 		GetIndexIndexRequest getIndexIndexRequest) {
 
-		GetIndexRequestBuilder getIndexRequestBuilder =
-			createGetIndexRequestBuilder(getIndexIndexRequest);
+		GetIndexRequest getIndexRequest =
+			createGetIndexRequest(getIndexIndexRequest);
 
-		GetIndexResponse getIndexResponse = getIndexRequestBuilder.get();
+		IndicesClient indicesClient =
+			elasticsearchConnectionManager.getIndicesClient();
+
+		GetIndexResponse getIndexResponse = null;
+
+		try {
+			getIndexResponse =
+				indicesClient.get(getIndexRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+
+		}
 
 		GetIndexIndexResponse getIndexIndexResponse =
 			new GetIndexIndexResponse();
@@ -135,17 +147,15 @@ public class GetIndexIndexRequestExecutorImpl
 		return indicesSettingsMap;
 	}
 
-	protected GetIndexRequestBuilder createGetIndexRequestBuilder(
+	protected GetIndexRequest createGetIndexRequest(
 		GetIndexIndexRequest getIndexIndexRequest) {
 
-		Client client = elasticsearchConnectionManager.getClient();
+		GetIndexRequest getIndexRequest =
+			new GetIndexRequest();
 
-		GetIndexRequestBuilder getIndexRequestBuilder =
-			GetIndexAction.INSTANCE.newRequestBuilder(client);
+		getIndexRequest.indices(getIndexIndexRequest.getIndexNames());
 
-		getIndexRequestBuilder.setIndices(getIndexIndexRequest.getIndexNames());
-
-		return getIndexRequestBuilder;
+		return getIndexRequest;
 	}
 
 	@Reference

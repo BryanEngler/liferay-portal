@@ -21,13 +21,15 @@ import com.liferay.portal.search.engine.adapter.cluster.StatsClusterResponse;
 
 import java.io.IOException;
 
-import org.elasticsearch.action.admin.cluster.stats.ClusterStatsRequestBuilder;
+import org.elasticsearch.action.admin.cluster.stats.ClusterStatsRequest;
 import org.elasticsearch.action.admin.cluster.stats.ClusterStatsResponse;
-import org.elasticsearch.client.ClusterAdminClient;
+import org.elasticsearch.client.ClusterClient;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestClient;
 import org.elasticsearch.cluster.health.ClusterHealthStatus;
+import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.xpack.watcher.watch.Payload;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -43,11 +45,20 @@ public class StatsClusterRequestExecutorImpl
 	public StatsClusterResponse execute(
 		StatsClusterRequest statsClusterRequest) {
 
-		ClusterStatsRequestBuilder clusterStatsRequestBuilder =
-			createClusterStatsRequestBuilder(statsClusterRequest);
+		ClusterStatsRequest clusterStatsRequest =
+			createClusterStatsRequest(statsClusterRequest);
+
+		ClusterClient clusterClient =
+			elasticsearchConnectionManager.getClusterClient();
 
 		ClusterStatsResponse clusterStatsResponse =
-			clusterStatsRequestBuilder.get();
+			//clusterClient.stats(clusterStatsRequest, RequestOptions.DEFAULT);
+			null;
+
+		//no high level REST api yet. use low level client?
+		RestClient restLowLevelClient =
+			elasticsearchConnectionManager.getRestHighLevelClient()
+				.getLowLevelClient();
 
 		try {
 			XContentBuilder xContentBuilder = XContentFactory.jsonBuilder();
@@ -55,7 +66,7 @@ public class StatsClusterRequestExecutorImpl
 			xContentBuilder.startObject();
 
 			xContentBuilder = clusterStatsResponse.toXContent(
-				xContentBuilder, Payload.XContent.EMPTY_PARAMS);
+				xContentBuilder, ToXContent.EMPTY_PARAMS);
 
 			xContentBuilder.endObject();
 
@@ -65,8 +76,7 @@ public class StatsClusterRequestExecutorImpl
 			StatsClusterResponse statsClusterResponse =
 				new StatsClusterResponse(
 					clusterHealthStatusTranslator.translate(
-						clusterHealthStatus),
-					xContentBuilder.string());
+						clusterHealthStatus), xContentBuilder.toString());
 
 			return statsClusterResponse;
 		}
@@ -75,13 +85,10 @@ public class StatsClusterRequestExecutorImpl
 		}
 	}
 
-	protected ClusterStatsRequestBuilder createClusterStatsRequestBuilder(
+	protected ClusterStatsRequest createClusterStatsRequest(
 		StatsClusterRequest statsClusterRequest) {
 
-		ClusterAdminClient clusterAdminClient =
-			elasticsearchConnectionManager.getClusterAdminClient();
-
-		return clusterAdminClient.prepareClusterStats();
+		return new ClusterStatsRequest();
 	}
 
 	@Reference

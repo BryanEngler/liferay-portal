@@ -18,9 +18,12 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import com.liferay.portal.search.engine.adapter.cluster.HealthClusterRequest;
 import com.liferay.portal.search.engine.adapter.cluster.HealthClusterResponse;
 
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequestBuilder;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.client.ClusterAdminClient;
+import org.elasticsearch.client.ClusterClient;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.cluster.health.ClusterHealthStatus;
 
 import org.osgi.service.component.annotations.Component;
@@ -37,27 +40,33 @@ public class HealthClusterRequestExecutorImpl
 	public HealthClusterResponse execute(
 		HealthClusterRequest healthClusterRequest) {
 
-		ClusterHealthRequestBuilder clusterHealthRequestBuilder =
-			createClusterHealthRequestBuilder(healthClusterRequest);
+		ClusterHealthRequest clusterHealthRequest =
+			createClusterHealthRequest(healthClusterRequest);
 
-		ClusterHealthResponse clusterHealthResponse =
-			clusterHealthRequestBuilder.get();
+		ClusterClient clusterClient =
+			elasticsearchConnectionManager.getClusterClient();
 
-		ClusterHealthStatus clusterHealthStatus =
-			clusterHealthResponse.getStatus();
+		try {
+			ClusterHealthResponse clusterHealthResponse =
+				clusterClient.health(
+					clusterHealthRequest, RequestOptions.DEFAULT);
 
-		return new HealthClusterResponse(
-			clusterHealthStatusTranslator.translate(clusterHealthStatus),
-			clusterHealthResponse.toString());
+			ClusterHealthStatus clusterHealthStatus =
+				clusterHealthResponse.getStatus();
+
+			return new HealthClusterResponse(
+				clusterHealthStatusTranslator.translate(clusterHealthStatus),
+					clusterHealthResponse.toString());
+		}
+		catch (Exception e) {
+			return null;
+		}
 	}
 
-	protected ClusterHealthRequestBuilder createClusterHealthRequestBuilder(
+	protected ClusterHealthRequest createClusterHealthRequest(
 		HealthClusterRequest healthClusterRequest) {
 
-		ClusterAdminClient clusterAdminClient =
-			elasticsearchConnectionManager.getClusterAdminClient();
-
-		return clusterAdminClient.prepareHealth(
+		return new ClusterHealthRequest(
 			healthClusterRequest.getIndexNames());
 	}
 

@@ -39,13 +39,13 @@ import java.util.Map;
 
 import org.elasticsearch.action.ActionResponse;
 import org.elasticsearch.action.bulk.BulkItemResponse;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.delete.DeleteRequestBuilder;
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.support.WriteRequest;
-import org.elasticsearch.action.update.UpdateRequestBuilder;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
 
 import org.osgi.service.component.annotations.Activate;
@@ -128,28 +128,26 @@ public class ElasticsearchUpdateDocumentCommandImpl
 			ElasticsearchConfiguration.class, properties);
 	}
 
-	protected UpdateRequestBuilder buildUpdateRequestBuilder(
+	protected UpdateRequest buildUpdateRequest(
 			String documentType, SearchContext searchContext, Document document)
 		throws IOException {
 
-		Client client = elasticsearchConnectionManager.getClient();
-
-		UpdateRequestBuilder updateRequestBuilder = client.prepareUpdate(
+		UpdateRequest updateRequest = new UpdateRequest(
 			indexNameBuilder.getIndexName(searchContext.getCompanyId()),
-			documentType, document.getUID());
+				documentType, document.getUID());
 
 		String elasticSearchDocument =
 			elasticsearchDocumentFactory.getElasticsearchDocument(document);
 
-		updateRequestBuilder.setDoc(elasticSearchDocument, XContentType.JSON);
+		updateRequest.doc(elasticSearchDocument, XContentType.JSON);
 
-		updateRequestBuilder.setDocAsUpsert(true);
-		updateRequestBuilder.setRetryOnConflict(
+		updateRequest.docAsUpsert(true);
+		updateRequest.retryOnConflict(
 			_elasticsearchConfiguration.retryOnConflict());
 
 		document.get(Field.MODIFIED_DATE);
 
-		return updateRequestBuilder;
+		return updateRequest;
 	}
 
 	protected BulkResponse doUpdateDocuments(
@@ -158,36 +156,37 @@ public class ElasticsearchUpdateDocumentCommandImpl
 		throws SearchException {
 
 		try {
-			Client client = elasticsearchConnectionManager.getClient();
-
-			BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
+			BulkRequest bulkRequest = new BulkRequest();
 
 			for (Document document : documents) {
 				if (deleteFirst) {
-					DeleteRequestBuilder deleteRequestBuilder =
-						client.prepareDelete(
+					DeleteRequest deleteRequest =
+						new DeleteRequest(
 							indexNameBuilder.getIndexName(
 								searchContext.getCompanyId()),
 							DocumentTypes.LIFERAY, document.getUID());
 
-					bulkRequestBuilder.add(deleteRequestBuilder);
+					bulkRequest.add(deleteRequest);
 				}
 
-				UpdateRequestBuilder updateRequestBuilder =
-					buildUpdateRequestBuilder(
+				UpdateRequest updateRequest =
+					buildUpdateRequest(
 						documentType, searchContext, document);
 
-				bulkRequestBuilder.add(updateRequestBuilder);
+				bulkRequest.add(updateRequest);
 			}
 
 			if (PortalRunMode.isTestMode() ||
 				searchContext.isCommitImmediately()) {
 
-				bulkRequestBuilder.setRefreshPolicy(
+				bulkRequest.setRefreshPolicy(
 					WriteRequest.RefreshPolicy.IMMEDIATE);
 			}
 
-			BulkResponse bulkResponse = bulkRequestBuilder.get();
+			RestHighLevelClient restHighLevelClient =
+				elasticsearchConnectionManager.getRestHighLevelClient();
+
+			BulkResponse bulkResponse = restHighLevelClient.bulk(bulkRequest);
 
 			LogUtil.logActionResponse(_log, bulkResponse);
 

@@ -18,14 +18,19 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import com.liferay.portal.search.engine.adapter.index.PutMappingIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.PutMappingIndexResponse;
 
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequestBuilder;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.IndicesAdminClient;
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.xcontent.XContentType;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import java.io.IOException;
 
 /**
  * @author Dylan Rebelak
@@ -38,32 +43,36 @@ public class PutMappingIndexRequestExecutorImpl
 	public PutMappingIndexResponse execute(
 		PutMappingIndexRequest putMappingIndexRequest) {
 
-		PutMappingRequestBuilder putMappingRequestBuilder =
-			createPutMappingRequestBuilder(putMappingIndexRequest);
+		PutMappingRequest putMappingRequest =
+			createPutMappingRequest(putMappingIndexRequest);
 
-		PutMappingResponse putMappingResponse = putMappingRequestBuilder.get();
+		IndicesClient indicesClient =
+			elasticsearchConnectionManager.getIndicesClient();
 
-		return new PutMappingIndexResponse(putMappingResponse.isAcknowledged());
+		try {
+			PutMappingResponse putMappingResponse = indicesClient.putMapping(
+				putMappingRequest, RequestOptions.DEFAULT);
+
+			return new PutMappingIndexResponse(
+				putMappingResponse.isAcknowledged());
+		}
+		catch (IOException ioe) {
+			return null;
+		}
 	}
 
-	protected PutMappingRequestBuilder createPutMappingRequestBuilder(
+	protected PutMappingRequest createPutMappingRequest(
 		PutMappingIndexRequest putMappingIndexRequest) {
 
-		AdminClient adminClient =
-			elasticsearchConnectionManager.getAdminClient();
-
-		IndicesAdminClient indicesAdminClient = adminClient.indices();
-
-		PutMappingRequestBuilder putMappingRequestBuilder =
-			indicesAdminClient.preparePutMapping(
+		PutMappingRequest putMappingRequest = new PutMappingRequest(
 				putMappingIndexRequest.getIndexNames());
 
-		putMappingRequestBuilder.setSource(
+		putMappingRequest.source(
 			putMappingIndexRequest.getMapping(), XContentType.JSON);
-		putMappingRequestBuilder.setType(
+		putMappingRequest.type(
 			putMappingIndexRequest.getMappingName());
 
-		return putMappingRequestBuilder;
+		return putMappingRequest;
 	}
 
 	@Reference

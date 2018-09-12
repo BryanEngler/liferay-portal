@@ -21,13 +21,15 @@ import com.liferay.portal.search.engine.adapter.index.RefreshIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.RefreshIndexResponse;
 
 import org.elasticsearch.action.ShardOperationFailedException;
-import org.elasticsearch.action.admin.indices.refresh.RefreshAction;
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequestBuilder;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
-import org.elasticsearch.client.Client;
 
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import java.io.IOException;
 
 /**
  * @author Michael C. Han
@@ -40,48 +42,56 @@ public class RefreshIndexRequestExecutorImpl
 	public RefreshIndexResponse execute(
 		RefreshIndexRequest refreshIndexRequest) {
 
-		RefreshRequestBuilder refreshRequestBuilder =
-			createRefreshRequestBuilder(refreshIndexRequest);
+		RefreshRequest refreshRequest =
+			createRefreshRequest(refreshIndexRequest);
 
-		RefreshResponse refreshResponse = refreshRequestBuilder.get();
+		IndicesClient indicesClient =
+			elasticsearchConnectionManager.getIndicesClient();
 
-		RefreshIndexResponse refreshIndexResponse = new RefreshIndexResponse();
+		try {
+			RefreshResponse refreshResponse = indicesClient.refresh(
+				refreshRequest, RequestOptions.DEFAULT);
 
-		refreshIndexResponse.setFailedShards(refreshResponse.getFailedShards());
-		refreshIndexResponse.setSuccessfulShards(
-			refreshResponse.getSuccessfulShards());
-		refreshIndexResponse.setTotalShards(refreshResponse.getTotalShards());
+			RefreshIndexResponse refreshIndexResponse =
+				new RefreshIndexResponse();
 
-		ShardOperationFailedException[] shardOperationFailedExceptions =
-			refreshResponse.getShardFailures();
+			refreshIndexResponse.setFailedShards(
+				refreshResponse.getFailedShards());
+			refreshIndexResponse.setSuccessfulShards(
+				refreshResponse.getSuccessfulShards());
+			refreshIndexResponse.setTotalShards(
+				refreshResponse.getTotalShards());
 
-		if (ArrayUtil.isNotEmpty(shardOperationFailedExceptions)) {
-			for (ShardOperationFailedException shardOperationFailedException :
+			ShardOperationFailedException[] shardOperationFailedExceptions =
+				refreshResponse.getShardFailures();
+
+			if (ArrayUtil.isNotEmpty(shardOperationFailedExceptions)) {
+				for (ShardOperationFailedException shardOperationFailedException :
 					shardOperationFailedExceptions) {
 
-				IndexRequestShardFailure indexRequestShardFailure =
-					indexRequestShardFailureTranslator.translate(
-						shardOperationFailedException);
+					IndexRequestShardFailure indexRequestShardFailure =
+						indexRequestShardFailureTranslator.translate(
+							shardOperationFailedException);
 
-				refreshIndexResponse.addIndexRequestShardFailure(
-					indexRequestShardFailure);
+					refreshIndexResponse.addIndexRequestShardFailure(
+						indexRequestShardFailure);
+				}
 			}
-		}
 
-		return refreshIndexResponse;
+			return refreshIndexResponse;
+		}
+		catch (IOException ioe) {
+			return null;
+		}
 	}
 
-	protected RefreshRequestBuilder createRefreshRequestBuilder(
+	protected RefreshRequest createRefreshRequest(
 		RefreshIndexRequest refreshIndexRequest) {
 
-		Client client = elasticsearchConnectionManager.getClient();
+		RefreshRequest refreshRequest = new RefreshRequest(
+			refreshIndexRequest.getIndexNames());
 
-		RefreshRequestBuilder refreshRequestBuilder =
-			RefreshAction.INSTANCE.newRequestBuilder(client);
-
-		refreshRequestBuilder.setIndices(refreshIndexRequest.getIndexNames());
-
-		return refreshRequestBuilder;
+		return refreshRequest;
 	}
 
 	@Reference

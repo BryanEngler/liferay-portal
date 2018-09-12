@@ -21,13 +21,15 @@ import com.liferay.portal.search.engine.adapter.cluster.StateClusterResponse;
 
 import java.io.IOException;
 
-import org.elasticsearch.action.admin.cluster.state.ClusterStateRequestBuilder;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
-import org.elasticsearch.client.ClusterAdminClient;
+import org.elasticsearch.client.ClusterClient;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestClient;
 import org.elasticsearch.cluster.ClusterState;
+import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.xpack.watcher.watch.Payload;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -43,11 +45,20 @@ public class StateClusterRequestExecutorImpl
 	public StateClusterResponse execute(
 		StateClusterRequest stateClusterRequest) {
 
-		ClusterStateRequestBuilder clusterStateRequestBuilder =
-			createClusterStateRequestBuilder(stateClusterRequest);
+		ClusterStateRequest clusterStateRequest =
+			createClusterStateRequest(stateClusterRequest);
+
+		ClusterClient clusterClient =
+			elasticsearchConnectionManager.getClusterClient();
 
 		ClusterStateResponse clusterStateResponse =
-			clusterStateRequestBuilder.get();
+			//clusterClient.state(clusterStateRequest, RequestOptions.DEFAULT);
+			new ClusterStateResponse();
+
+		//no high level REST api yet. use low level client?
+		RestClient restLowLevelClient =
+			elasticsearchConnectionManager.getRestHighLevelClient()
+				.getLowLevelClient();
 
 		try {
 			ClusterState clusterState = clusterStateResponse.getState();
@@ -57,30 +68,26 @@ public class StateClusterRequestExecutorImpl
 			xContentBuilder.startObject();
 
 			xContentBuilder = clusterState.toXContent(
-				xContentBuilder, Payload.XContent.EMPTY_PARAMS);
+				xContentBuilder, ToXContent.EMPTY_PARAMS);
 
 			xContentBuilder.endObject();
 
-			return new StateClusterResponse(xContentBuilder.string());
+			return new StateClusterResponse(xContentBuilder.toString());
 		}
 		catch (IOException ioe) {
 			throw new SystemException(ioe);
 		}
 	}
 
-	protected ClusterStateRequestBuilder createClusterStateRequestBuilder(
+	protected ClusterStateRequest createClusterStateRequest(
 		StateClusterRequest stateClusterRequest) {
 
-		ClusterAdminClient clusterAdminClient =
-			elasticsearchConnectionManager.getClusterAdminClient();
+		ClusterStateRequest clusterStateRequest =
+			new ClusterStateRequest();
 
-		ClusterStateRequestBuilder clusterStateRequestBuilder =
-			clusterAdminClient.prepareState();
+		clusterStateRequest.indices(stateClusterRequest.getIndexNames());
 
-		clusterStateRequestBuilder.setIndices(
-			stateClusterRequest.getIndexNames());
-
-		return clusterStateRequestBuilder;
+		return clusterStateRequest;
 	}
 
 	@Reference

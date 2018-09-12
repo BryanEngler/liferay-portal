@@ -17,7 +17,6 @@ package com.liferay.portal.search.elasticsearch6.internal.search.engine.adapter.
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch6.internal.document.DefaultElasticsearchDocumentFactory;
 import com.liferay.portal.search.elasticsearch6.internal.document.ElasticsearchDocumentFactory;
 import com.liferay.portal.search.engine.adapter.document.BulkableDocumentRequestTranslator;
@@ -27,19 +26,14 @@ import com.liferay.portal.search.engine.adapter.document.UpdateDocumentRequest;
 
 import java.io.IOException;
 
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.delete.DeleteAction;
-import org.elasticsearch.action.delete.DeleteRequestBuilder;
-import org.elasticsearch.action.index.IndexAction;
-import org.elasticsearch.action.index.IndexRequestBuilder;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.support.WriteRequest;
-import org.elasticsearch.action.update.UpdateAction;
-import org.elasticsearch.action.update.UpdateRequestBuilder;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.common.xcontent.XContentType;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Michael C. Han
@@ -50,59 +44,46 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class ElasticsearchBulkableDocumentRequestTranslator
 	implements BulkableDocumentRequestTranslator
-		<DeleteRequestBuilder, IndexRequestBuilder, UpdateRequestBuilder,
-		 BulkRequestBuilder> {
+		<DeleteRequest, IndexRequest, UpdateRequest,
+			BulkRequest> {
 
 	@Override
-	public DeleteRequestBuilder translate(
+	public DeleteRequest translate(
 		DeleteDocumentRequest deleteDocumentRequest,
-		BulkRequestBuilder searchEngineAdapterRequest) {
+		BulkRequest searchEngineAdapterRequest) {
 
-		Client client = elasticsearchConnectionManager.getClient();
-
-		DeleteRequestBuilder deleteRequestBuilder =
-			DeleteAction.INSTANCE.newRequestBuilder(client);
-
-		deleteRequestBuilder.setId(deleteDocumentRequest.getUid());
-		deleteRequestBuilder.setIndex(deleteDocumentRequest.getIndexName());
+		DeleteRequest deleteRequest = new DeleteRequest(
+			deleteDocumentRequest.getIndexName(),
+			deleteDocumentRequest.getType(), deleteDocumentRequest.getUid());
 
 		if (deleteDocumentRequest.isRefresh()) {
-			deleteRequestBuilder.setRefreshPolicy(
-				WriteRequest.RefreshPolicy.IMMEDIATE);
-		}
 
-		deleteRequestBuilder.setType(deleteDocumentRequest.getType());
+			deleteRequest.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
+		}
 
 		if (searchEngineAdapterRequest != null) {
-			searchEngineAdapterRequest.add(deleteRequestBuilder);
+			searchEngineAdapterRequest.add(deleteRequest);
 		}
 
-		return deleteRequestBuilder;
+		return deleteRequest;
 	}
 
 	@Override
-	public IndexRequestBuilder translate(
+	public IndexRequest translate(
 		IndexDocumentRequest indexDocumentRequest,
-		BulkRequestBuilder searchEngineAdapterRequest) {
+		BulkRequest searchEngineAdapterRequest) {
 
 		try {
-			Client client = elasticsearchConnectionManager.getClient();
-
-			IndexRequestBuilder indexRequestBuilder =
-				IndexAction.INSTANCE.newRequestBuilder(client);
-
 			Document document = indexDocumentRequest.getDocument();
 
-			indexRequestBuilder.setId(document.getUID());
-
-			indexRequestBuilder.setIndex(indexDocumentRequest.getIndexName());
+			IndexRequest indexRequest = new IndexRequest(
+				indexDocumentRequest.getIndexName(), document.get(Field.TYPE),
+				document.getUID());
 
 			if (indexDocumentRequest.isRefresh()) {
-				indexRequestBuilder.setRefreshPolicy(
+				indexRequest.setRefreshPolicy(
 					WriteRequest.RefreshPolicy.IMMEDIATE);
 			}
-
-			indexRequestBuilder.setType(document.get(Field.TYPE));
 
 			ElasticsearchDocumentFactory elasticsearchDocumentFactory =
 				new DefaultElasticsearchDocumentFactory();
@@ -110,14 +91,13 @@ public class ElasticsearchBulkableDocumentRequestTranslator
 			String elasticsearchDocument =
 				elasticsearchDocumentFactory.getElasticsearchDocument(document);
 
-			indexRequestBuilder.setSource(
-				elasticsearchDocument, XContentType.JSON);
+			indexRequest.source(elasticsearchDocument, XContentType.JSON);
 
 			if (searchEngineAdapterRequest != null) {
-				searchEngineAdapterRequest.add(indexRequestBuilder);
+				searchEngineAdapterRequest.add(indexRequest);
 			}
 
-			return indexRequestBuilder;
+			return indexRequest;
 		}
 		catch (IOException ioe) {
 			throw new SystemException(ioe);
@@ -125,28 +105,22 @@ public class ElasticsearchBulkableDocumentRequestTranslator
 	}
 
 	@Override
-	public UpdateRequestBuilder translate(
+	public UpdateRequest translate(
 		UpdateDocumentRequest updateDocumentRequest,
-		BulkRequestBuilder searchEngineAdapterRequest) {
+		BulkRequest searchEngineAdapterRequest) {
 
 		try {
-			Client client = elasticsearchConnectionManager.getClient();
-
-			UpdateRequestBuilder updateRequestBuilder =
-				UpdateAction.INSTANCE.newRequestBuilder(client);
-
 			Document document = updateDocumentRequest.getDocument();
 
-			updateRequestBuilder.setId(document.getUID());
-
-			updateRequestBuilder.setIndex(updateDocumentRequest.getIndexName());
+			UpdateRequest updateRequest = new UpdateRequest(
+				updateDocumentRequest.getIndexName(), document.get(Field.TYPE),
+				document.getUID());
 
 			if (updateDocumentRequest.isRefresh()) {
-				updateRequestBuilder.setRefreshPolicy(
+
+				updateRequest.setRefreshPolicy(
 					WriteRequest.RefreshPolicy.IMMEDIATE);
 			}
-
-			updateRequestBuilder.setType(document.get(Field.TYPE));
 
 			ElasticsearchDocumentFactory elasticsearchDocumentFactory =
 				new DefaultElasticsearchDocumentFactory();
@@ -154,21 +128,17 @@ public class ElasticsearchBulkableDocumentRequestTranslator
 			String elasticsearchDocument =
 				elasticsearchDocumentFactory.getElasticsearchDocument(document);
 
-			updateRequestBuilder.setDoc(
-				elasticsearchDocument, XContentType.JSON);
+			updateRequest.doc(elasticsearchDocument, XContentType.JSON);
 
 			if (searchEngineAdapterRequest != null) {
-				searchEngineAdapterRequest.add(updateRequestBuilder);
+				searchEngineAdapterRequest.add(updateRequest);
 			}
 
-			return updateRequestBuilder;
+			return updateRequest;
 		}
 		catch (IOException ioe) {
 			throw new SystemException(ioe);
 		}
 	}
-
-	@Reference
-	protected ElasticsearchConnectionManager elasticsearchConnectionManager;
 
 }

@@ -14,19 +14,24 @@
 
 package com.liferay.portal.search.elasticsearch6.internal.search.engine.adapter.document;
 
+import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.engine.adapter.document.BulkableDocumentRequestTranslator;
 import com.liferay.portal.search.engine.adapter.document.IndexDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.IndexDocumentResponse;
 
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.delete.DeleteRequestBuilder;
-import org.elasticsearch.action.index.IndexRequestBuilder;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.update.UpdateRequestBuilder;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.rest.RestStatus;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import java.io.IOException;
 
 /**
  * @author Dylan Rebelak
@@ -39,23 +44,36 @@ public class IndexDocumentRequestExecutorImpl
 	public IndexDocumentResponse execute(
 		IndexDocumentRequest indexDocumentRequest) {
 
-		IndexRequestBuilder indexRequestBuilder =
+		IndexRequest indexRequest =
 			bulkableDocumentRequestTranslator.translate(
 				indexDocumentRequest, null);
 
-		IndexResponse indexResponse = indexRequestBuilder.get();
+		RestHighLevelClient restHighLevelClient =
+			elasticsearchConnectionManager.getRestHighLevelClient();
 
-		RestStatus restStatus = indexResponse.status();
+		try {
+			IndexResponse indexResponse = restHighLevelClient.index(
+				indexRequest, RequestOptions.DEFAULT);
 
-		IndexDocumentResponse indexDocumentResponse = new IndexDocumentResponse(
-			restStatus.getStatus());
+			RestStatus restStatus = indexResponse.status();
 
-		return indexDocumentResponse;
+			IndexDocumentResponse indexDocumentResponse =
+				new IndexDocumentResponse(
+					restStatus.getStatus());
+
+			return indexDocumentResponse;
+		}
+		catch (IOException ioe) {
+			return null;
+		}
 	}
 
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
+	@Reference(target = "(search.engine.impl=Elasticsearch)") //find usages?
 	protected BulkableDocumentRequestTranslator
-		<DeleteRequestBuilder, IndexRequestBuilder, UpdateRequestBuilder,
-		 BulkRequestBuilder> bulkableDocumentRequestTranslator;
+		<DeleteRequest, IndexRequest, UpdateRequest, BulkRequest>
+			bulkableDocumentRequestTranslator;
+
+	@Reference
+	protected ElasticsearchConnectionManager elasticsearchConnectionManager;
 
 }

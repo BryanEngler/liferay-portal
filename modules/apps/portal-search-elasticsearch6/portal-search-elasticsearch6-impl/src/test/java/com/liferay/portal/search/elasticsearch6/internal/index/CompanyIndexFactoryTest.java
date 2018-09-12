@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
-import org.elasticsearch.client.AdminClient;
+import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.settings.Settings;
@@ -59,7 +59,7 @@ public class CompanyIndexFactoryTest {
 		_elasticsearchFixture.setUp();
 
 		_singleFieldFixture = new SingleFieldFixture(
-			_elasticsearchFixture.getClient(),
+			_elasticsearchFixture.getRestHighLevelClient(),
 			new IndexName(getTestIndexName()),
 			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE);
 	}
@@ -325,7 +325,7 @@ public class CompanyIndexFactoryTest {
 
 		FieldMappingAssert.assertAnalyzer(
 			analyzer, field, LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE,
-			getTestIndexName(), _elasticsearchFixture.getIndicesAdminClient());
+			getTestIndexName(), _elasticsearchFixture.getIndicesClient());
 	}
 
 	protected void assertIndicesExist(String... indexNames) {
@@ -352,7 +352,7 @@ public class CompanyIndexFactoryTest {
 	protected void assertType(String field, String type) throws Exception {
 		FieldMappingAssert.assertType(
 			type, field, LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE,
-			getTestIndexName(), _elasticsearchFixture.getIndicesAdminClient());
+			getTestIndexName(), _elasticsearchFixture.getIndicesClient());
 	}
 
 	protected CompanyIndexFactory createCompanyIndexFactory() {
@@ -365,7 +365,7 @@ public class CompanyIndexFactoryTest {
 	}
 
 	protected void createIndices() throws Exception {
-		AdminClient adminClient = _elasticsearchFixture.getAdminClient();
+		IndicesClient adminClient = _elasticsearchFixture.getIndicesClient();
 
 		_companyIndexFactory.createIndices(
 			adminClient, RandomTestUtil.randomLong());

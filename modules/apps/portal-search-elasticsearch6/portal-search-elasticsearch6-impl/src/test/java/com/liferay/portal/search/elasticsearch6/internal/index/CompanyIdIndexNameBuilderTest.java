@@ -23,7 +23,7 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import java.util.Collections;
 
 import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
-import org.elasticsearch.client.AdminClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.indices.InvalidIndexNameException;
 
 import org.junit.After;
@@ -122,9 +122,11 @@ public class CompanyIdIndexNameBuilderTest {
 			}
 		};
 
-		AdminClient adminClient = _elasticsearchFixture.getAdminClient();
+		RestHighLevelClient restHighLevelClient =
+			_elasticsearchFixture.getRestHighLevelClient();
 
-		companyIndexFactory.createIndices(adminClient, companyId);
+		companyIndexFactory.createIndices(
+			restHighLevelClient.indices(), companyId);
 	}
 
 	private ElasticsearchFixture _elasticsearchFixture;

@@ -31,7 +31,7 @@ import com.liferay.portal.search.suggest.BaseGenericSpellCheckIndexWriter;
 
 import java.util.Collection;
 
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -136,14 +136,16 @@ public class ElasticsearchSpellCheckIndexWriter
 		SearchResponseScroller searchResponseScroller = null;
 
 		try {
-			Client client = elasticsearchConnectionManager.getClient();
+			RestHighLevelClient restHighLevelClient =
+				elasticsearchConnectionManager.getRestHighLevelClient();
 
 			MatchQueryBuilder matchQueryBuilder = QueryBuilders.matchQuery(
 				Field.TYPE, typeFieldValue);
 
 			searchResponseScroller = new SearchResponseScroller(
-				client, searchContext, indexNameBuilder, matchQueryBuilder,
-				TimeValue.timeValueSeconds(30), DocumentTypes.LIFERAY);
+				restHighLevelClient, searchContext, indexNameBuilder,
+				matchQueryBuilder, TimeValue.timeValueSeconds(30),
+				DocumentTypes.LIFERAY);
 
 			searchResponseScroller.prepare();
 

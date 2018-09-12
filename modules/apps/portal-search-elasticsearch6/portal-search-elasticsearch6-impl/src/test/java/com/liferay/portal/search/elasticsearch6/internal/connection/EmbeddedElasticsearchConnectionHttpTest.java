@@ -26,10 +26,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.action.admin.cluster.node.info.NodeInfo;
+import org.elasticsearch.action.admin.cluster.node.info.NodesInfoRequest;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoRequestBuilder;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.ClusterAdminClient;
+import org.elasticsearch.client.ClusterClient;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.transport.BoundTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.http.HttpInfo;
@@ -86,14 +90,21 @@ public class EmbeddedElasticsearchConnectionHttpTest {
 	}
 
 	protected int getHttpPort() {
-		AdminClient adminClient = _elasticsearchFixture.getAdminClient();
+		RestHighLevelClient restHighLevelClient =
+			_elasticsearchFixture.getRestHighLevelClient();
 
-		ClusterAdminClient clusterAdminClient = adminClient.cluster();
+		ClusterClient clusterClient = restHighLevelClient.cluster();
 
-		NodesInfoRequestBuilder nodesInfoRequestBuilder =
-			clusterAdminClient.prepareNodesInfo();
+		NodesInfoRequest nodesInfoRequest = new NodesInfoRequest();
 
-		NodesInfoResponse nodesInfoResponse = nodesInfoRequestBuilder.get();
+		NodesInfoResponse nodesInfoResponse =
+			//clusterClient.nodeInfo(nodesInfoRequest);
+			new NodesInfoResponse();
+
+		//no high level REST api yet. use low level client?
+		RestClient restLowLevelClient =
+			_elasticsearchFixture.getRestHighLevelClient()
+				.getLowLevelClient();
 
 		List<NodeInfo> nodeInfos = nodesInfoResponse.getNodes();
 

@@ -19,13 +19,13 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import com.liferay.portal.search.engine.adapter.document.DeleteByQueryDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.DeleteByQueryDocumentResponse;
 
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.index.reindex.BulkByScrollResponse;
-import org.elasticsearch.index.reindex.DeleteByQueryAction;
-import org.elasticsearch.index.reindex.DeleteByQueryRequestBuilder;
+import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -43,11 +43,17 @@ public class DeleteByQueryDocumentRequestExecutorImpl
 	public DeleteByQueryDocumentResponse execute(
 		DeleteByQueryDocumentRequest deleteByQueryDocumentRequest) {
 
-		DeleteByQueryRequestBuilder deleteByQueryRequestBuilder =
-			createDeleteByQueryRequestBuilder(deleteByQueryDocumentRequest);
+		DeleteByQueryRequest deleteByQueryRequest =
+			createDeleteByQueryRequest(deleteByQueryDocumentRequest);
 
+		RestHighLevelClient restHighLevelClient =
+			elasticsearchConnectionManager.getRestHighLevelClient();
+
+		//no high level REST api yet. coming soon ~6.5.0
 		BulkByScrollResponse bulkByScrollResponse =
-			deleteByQueryRequestBuilder.get();
+			//restHighLevelClient.deleteByQuery(
+			//	deleteByQueryRequest, RequestOptions.DEFAULT);
+			new BulkByScrollResponse();
 
 		TimeValue timeValue = bulkByScrollResponse.getTook();
 
@@ -58,27 +64,25 @@ public class DeleteByQueryDocumentRequestExecutorImpl
 		return deleteByQueryDocumentResponse;
 	}
 
-	protected DeleteByQueryRequestBuilder createDeleteByQueryRequestBuilder(
+	protected DeleteByQueryRequest createDeleteByQueryRequest(
 		DeleteByQueryDocumentRequest deleteByQueryDocumentRequest) {
 
-		Client client = elasticsearchConnectionManager.getClient();
-
-		DeleteByQueryRequestBuilder deleteByQueryRequestBuilder =
-			DeleteByQueryAction.INSTANCE.newRequestBuilder(client);
+		DeleteByQueryRequest deleteByQueryRequest = new DeleteByQueryRequest();
 
 		Query query = deleteByQueryDocumentRequest.getQuery();
 
 		QueryBuilder queryBuilder = new QueryStringQueryBuilder(
 			query.toString());
 
-		deleteByQueryRequestBuilder.filter(queryBuilder);
+		//no api yet. coming soon ~6.5.0
+//		deleteByQueryRequest.setQuery(queryBuilder); //was filter
 
-		deleteByQueryRequestBuilder.refresh(
+		deleteByQueryRequest.setRefresh(
 			deleteByQueryDocumentRequest.isRefresh());
-		deleteByQueryRequestBuilder.source(
-			deleteByQueryDocumentRequest.getIndexNames());
+		deleteByQueryRequest.indices(
+			deleteByQueryDocumentRequest.getIndexNames()); //was source
 
-		return deleteByQueryRequestBuilder;
+		return deleteByQueryRequest;
 	}
 
 	@Reference

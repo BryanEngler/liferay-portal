@@ -26,17 +26,19 @@ import com.liferay.portal.search.elasticsearch6.internal.util.LogUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.elasticsearch.action.search.ClearScrollRequestBuilder;
+import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.ClearScrollResponse;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchScrollRequestBuilder;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.action.search.SearchScrollRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.Scroll;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
@@ -46,11 +48,11 @@ import org.elasticsearch.search.sort.SortOrder;
 public class SearchResponseScroller {
 
 	public SearchResponseScroller(
-		Client client, SearchContext searchContext,
+		RestHighLevelClient restHighLevelClient, SearchContext searchContext,
 		IndexNameBuilder indexNameBuilder, QueryBuilder queryBuilder,
 		TimeValue scrollTimeValue, String... types) {
 
-		_client = client;
+		_restHighLevelClient = restHighLevelClient;
 		_searchContext = searchContext;
 		_indexNameBuilder = indexNameBuilder;
 		_queryBuilder = queryBuilder;
@@ -60,13 +62,13 @@ public class SearchResponseScroller {
 
 	public boolean close() {
 		try {
-			ClearScrollRequestBuilder clearScrollRequestBuilder =
-				_client.prepareClearScroll();
+			ClearScrollRequest request = new ClearScrollRequest();
 
-			clearScrollRequestBuilder.setScrollIds(_previousScrollIds);
+			request.setScrollIds(_previousScrollIds);
 
 			ClearScrollResponse clearScrollResponse =
-				clearScrollRequestBuilder.get();
+				_restHighLevelClient.clearScroll(
+					request, RequestOptions.DEFAULT);
 
 			LogUtil.logActionResponse(_log, clearScrollResponse);
 
@@ -82,22 +84,27 @@ public class SearchResponseScroller {
 	}
 
 	public void prepare() throws Exception {
-		SearchRequestBuilder searchRequestBuilder = _client.prepareSearch(
+		SearchRequest searchRequest = new SearchRequest(
 			_indexNameBuilder.getIndexName(_searchContext.getCompanyId()));
 
-		searchRequestBuilder.addSort(
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+
+		searchSourceBuilder.sort(
 			FieldSortBuilder.DOC_FIELD_NAME, SortOrder.ASC);
-		searchRequestBuilder.addStoredField(Field.UID);
-		searchRequestBuilder.setQuery(_queryBuilder);
-		searchRequestBuilder.setTypes(_types);
+		searchSourceBuilder.storedField(Field.UID);
+		searchSourceBuilder.query(_queryBuilder);
+
+		searchRequest.source(searchSourceBuilder);
+		searchRequest.types(_types);
 
 		Scroll scroll = new Scroll(_scrollTimeValue);
 
-		searchRequestBuilder.setScroll(scroll);
+		searchRequest.scroll(scroll);
 
-		SearchResponse searchResponse = searchRequestBuilder.get();
+		SearchResponse searchResponse = _restHighLevelClient.search(
+			searchRequest, RequestOptions.DEFAULT);
 
-		_scrollId = searchResponse.getScrollId();
+		_scrollId = searchResponse.getScrollId(); //process first set?
 
 		LogUtil.logActionResponse(_log, searchResponse);
 	}
@@ -105,18 +112,18 @@ public class SearchResponseScroller {
 	public boolean scroll(SearchHitsProcessor searchHitsProcessor)
 		throws Exception {
 
-		if (Validator.isNull(_scrollId)) {
+		if (Validator.isNull(_scrollId)) { //while loop?
 			return false;
 		}
 
-		SearchScrollRequestBuilder searchScrollRequestBuilder =
-			_client.prepareSearchScroll(_scrollId);
+		SearchScrollRequest scrollRequest = new SearchScrollRequest(_scrollId);
 
 		Scroll scroll = new Scroll(_scrollTimeValue);
 
-		searchScrollRequestBuilder.setScroll(scroll);
+		scrollRequest.scroll(scroll);
 
-		SearchResponse searchResponse = searchScrollRequestBuilder.get();
+		SearchResponse searchResponse = _restHighLevelClient.scroll(
+			scrollRequest, RequestOptions.DEFAULT);
 
 		LogUtil.logActionResponse(_log, searchResponse);
 
@@ -142,7 +149,7 @@ public class SearchResponseScroller {
 	private static final Log _log = LogFactoryUtil.getLog(
 		SearchResponseScroller.class);
 
-	private final Client _client;
+	private final RestHighLevelClient _restHighLevelClient;
 	private final IndexNameBuilder _indexNameBuilder;
 	private final List<String> _previousScrollIds = new ArrayList<>();
 	private final QueryBuilder _queryBuilder;

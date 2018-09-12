@@ -18,9 +18,10 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.search.elasticsearch6.internal.util.LogUtil;
 
-import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequestBuilder;
+import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsResponse;
-import org.elasticsearch.client.IndicesAdminClient;
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.settings.Settings;
 
 /**
@@ -28,26 +29,27 @@ import org.elasticsearch.common.settings.Settings;
  */
 public class ReplicasManagerImpl implements ReplicasManager {
 
-	public ReplicasManagerImpl(IndicesAdminClient indicesAdminClient) {
-		_indicesAdminClient = indicesAdminClient;
+	public ReplicasManagerImpl(IndicesClient indicesClient) {
+		_indicesClient = indicesClient;
 	}
 
 	@Override
 	public void updateNumberOfReplicas(
 		int numberOfReplicas, String... indices) {
 
-		UpdateSettingsRequestBuilder updateSettingsRequestBuilder =
-			_indicesAdminClient.prepareUpdateSettings(indices);
+		UpdateSettingsRequest updateSettingsRequest =
+			new UpdateSettingsRequest(indices);
 
 		Settings.Builder builder = Settings.builder();
 
 		builder.put("number_of_replicas", numberOfReplicas);
 
-		updateSettingsRequestBuilder.setSettings(builder);
+		updateSettingsRequest.settings(builder);
 
 		try {
 			UpdateSettingsResponse updateSettingsResponse =
-				updateSettingsRequestBuilder.get();
+				_indicesClient.putSettings(updateSettingsRequest,
+					RequestOptions.DEFAULT);
 
 			LogUtil.logActionResponse(_log, updateSettingsResponse);
 		}
@@ -61,6 +63,6 @@ public class ReplicasManagerImpl implements ReplicasManager {
 	private static final Log _log = LogFactoryUtil.getLog(
 		ReplicasManagerImpl.class);
 
-	private final IndicesAdminClient _indicesAdminClient;
+	private final IndicesClient _indicesClient;
 
 }

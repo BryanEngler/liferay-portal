@@ -80,12 +80,9 @@ public class DeleteByQueryDocumentRequestExecutorTest {
 					}
 				};
 
-		DeleteByQueryRequestBuilder deleteByQueryRequestBuilder =
-			deleteByQueryDocumentRequestExecutorImpl.
-				createDeleteByQueryRequestBuilder(deleteByQueryDocumentRequest);
-
 		DeleteByQueryRequest deleteByQueryRequest =
-			deleteByQueryRequestBuilder.request();
+			deleteByQueryDocumentRequestExecutorImpl.
+				createDeleteByQueryRequest(deleteByQueryDocumentRequest);
 
 		Assert.assertArrayEquals(
 			new String[] {_INDEX_NAME}, deleteByQueryRequest.indices());

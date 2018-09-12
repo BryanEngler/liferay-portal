@@ -65,7 +65,7 @@ public class DefaultElasticsearchDocumentFactory
 
 		xContentBuilder.endObject();
 
-		return xContentBuilder.string();
+		return xContentBuilder.toString();
 	}
 
 	protected void addDates(XContentBuilder xContentBuilder, Field field)

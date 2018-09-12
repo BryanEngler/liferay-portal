@@ -14,13 +14,16 @@
 
 package com.liferay.portal.search.elasticsearch6.internal.connection;
 
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequestBuilder;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.support.IndicesOptions;
-import org.elasticsearch.client.IndicesAdminClient;
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.settings.Settings;
 
 import org.mockito.Mockito;
+
+import java.io.IOException;
 
 /**
  * @author André de Oliveira
@@ -32,20 +35,25 @@ public class IndexCreator {
 	}
 
 	public Index createIndex(IndexName indexName) {
-		IndicesAdminClient indicesAdminClient = getIndicesAdminClient();
+		IndicesClient indicesClient = getIndicesClient();
 
 		String name = indexName.getName();
 
-		DeleteIndexRequestBuilder deleteIndexRequestBuilder =
-			indicesAdminClient.prepareDelete(name);
+		DeleteIndexRequest deleteIndexRequest =
+			new DeleteIndexRequest(name);
 
-		deleteIndexRequestBuilder.setIndicesOptions(
+		deleteIndexRequest.indicesOptions(
 			IndicesOptions.lenientExpandOpen());
 
-		deleteIndexRequestBuilder.get();
+		try {
+			indicesClient.delete(deleteIndexRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
 
-		CreateIndexRequestBuilder createIndexRequestBuilder =
-			indicesAdminClient.prepareCreate(name);
+		}
+
+		CreateIndexRequest createIndexRequest =
+			new CreateIndexRequest(name);
 
 		IndexCreationHelper indexCreationHelper = _indexCreationHelper;
 
@@ -53,7 +61,7 @@ public class IndexCreator {
 			indexCreationHelper = Mockito.mock(IndexCreationHelper.class);
 		}
 
-		indexCreationHelper.contribute(createIndexRequestBuilder);
+		indexCreationHelper.contribute(createIndexRequest);
 
 		Settings.Builder builder = Settings.builder();
 
@@ -62,9 +70,14 @@ public class IndexCreator {
 
 		indexCreationHelper.contributeIndexSettings(builder);
 
-		createIndexRequestBuilder.setSettings(builder);
+		createIndexRequest.settings(builder);
 
-		createIndexRequestBuilder.get();
+		try {
+			indicesClient.create(createIndexRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+
+		}
 
 		indexCreationHelper.whenIndexCreated(name);
 
@@ -77,8 +90,8 @@ public class IndexCreator {
 		_indexCreationHelper = indexCreationHelper;
 	}
 
-	protected final IndicesAdminClient getIndicesAdminClient() {
-		return _indicesAdminClientSupplier.getIndicesAdminClient();
+	protected final IndicesClient getIndicesClient() {
+		return _indicesAdminClientSupplier.getIndicesClient();
 	}
 
 	private IndexCreationHelper _indexCreationHelper;

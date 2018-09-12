@@ -20,7 +20,6 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.TestElastics
 import com.liferay.portal.search.engine.adapter.cluster.HealthClusterRequest;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequestBuilder;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -61,12 +60,9 @@ public class HealthClusterRequestExecutorTest {
 				}
 			};
 
-		ClusterHealthRequestBuilder clusterHealthRequestBuilder =
-			healthClusterRequestExecutorImpl.createClusterHealthRequestBuilder(
-				healthClusterRequest);
-
 		ClusterHealthRequest clusterHealthRequest =
-			clusterHealthRequestBuilder.request();
+			healthClusterRequestExecutorImpl.createClusterHealthRequest(
+				healthClusterRequest);
 
 		String[] indices = clusterHealthRequest.indices();
 

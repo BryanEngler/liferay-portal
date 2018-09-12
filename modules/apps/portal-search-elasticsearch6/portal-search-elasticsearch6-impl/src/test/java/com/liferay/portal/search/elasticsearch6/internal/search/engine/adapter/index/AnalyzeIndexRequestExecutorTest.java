@@ -20,7 +20,6 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.TestElastics
 import com.liferay.portal.search.engine.adapter.index.AnalyzeIndexRequest;
 
 import org.elasticsearch.action.admin.indices.analyze.AnalyzeRequest;
-import org.elasticsearch.action.admin.indices.analyze.AnalyzeRequestBuilder;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -62,11 +61,9 @@ public class AnalyzeIndexRequestExecutorTest {
 				}
 			};
 
-		AnalyzeRequestBuilder analyzeRequestBuilder =
-			analyzeIndexRequestExecutorImpl.createAnalyzeRequestBuilder(
+		AnalyzeRequest analyzeRequest =
+			analyzeIndexRequestExecutorImpl.createAnalyzeRequest(
 				analyzeIndexRequest);
-
-		AnalyzeRequest analyzeRequest = analyzeRequestBuilder.request();
 
 		Assert.assertEquals(_INDEX_NAME, analyzeRequest.index());
 	}

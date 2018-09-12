@@ -27,6 +27,7 @@ import com.liferay.portal.util.FileImpl;
 
 import java.io.File;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,16 +35,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 
-import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequestBuilder;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.action.admin.indices.get.GetIndexRequestBuilder;
+import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
 import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
-import org.elasticsearch.client.AdminClient;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.ClusterAdminClient;
-import org.elasticsearch.client.IndicesAdminClient;
+import org.elasticsearch.client.ClusterClient;
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
 
 import org.mockito.Mockito;
@@ -91,28 +90,18 @@ public class ElasticsearchFixture implements IndicesAdminClientSupplier {
 		deleteTmpDir();
 	}
 
-	public AdminClient getAdminClient() {
-		Client client = getClient();
-
-		return client.admin();
-	}
-
-	public Client getClient() {
-		return _embeddedElasticsearchConnection.getClient();
+	public RestHighLevelClient getRestHighLevelClient() {
+		return _embeddedElasticsearchConnection.getRestHighLevelClient();
 	}
 
 	public ClusterHealthResponse getClusterHealthResponse(
 		HealthExpectations healthExpectations) {
 
-		AdminClient adminClient = getAdminClient();
+		RestHighLevelClient restHighLevelClient = getRestHighLevelClient();
 
-		ClusterAdminClient clusterAdminClient = adminClient.cluster();
+		ClusterClient clusterClient = restHighLevelClient.cluster();
 
-		ClusterHealthRequestBuilder clusterHealthRequestBuilder =
-			clusterAdminClient.prepareHealth();
-
-		ClusterHealthRequest clusterHealthRequest =
-			clusterHealthRequestBuilder.request();
+		ClusterHealthRequest clusterHealthRequest = new ClusterHealthRequest();
 
 		clusterHealthRequest.timeout(new TimeValue(10, TimeUnit.MINUTES));
 		clusterHealthRequest.waitForActiveShards(
@@ -122,10 +111,13 @@ public class ElasticsearchFixture implements IndicesAdminClientSupplier {
 		clusterHealthRequest.waitForNoRelocatingShards(true);
 		clusterHealthRequest.waitForStatus(healthExpectations.status);
 
-		ActionFuture<ClusterHealthResponse> health = clusterAdminClient.health(
-			clusterHealthRequest);
-
-		return health.actionGet();
+		try {
+			return clusterClient.health(
+				clusterHealthRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			return null;
+		}
 	}
 
 	public Map<String, Object> getElasticsearchConfigurationProperties() {
@@ -139,21 +131,25 @@ public class ElasticsearchFixture implements IndicesAdminClientSupplier {
 	}
 
 	public GetIndexResponse getIndex(String... indices) {
-		IndicesAdminClient indicesAdminClient = getIndicesAdminClient();
+		IndicesClient indicesClient = getIndicesClient();
 
-		GetIndexRequestBuilder getIndexRequestBuilder =
-			indicesAdminClient.prepareGetIndex();
+		GetIndexRequest getIndexRequest = new GetIndexRequest();
 
-		getIndexRequestBuilder.addIndices(indices);
+		getIndexRequest.indices(indices);
 
-		return getIndexRequestBuilder.get();
+		try {
+			return indicesClient.get(getIndexRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			return null;
+		}
 	}
 
 	@Override
-	public IndicesAdminClient getIndicesAdminClient() {
-		AdminClient adminClient = getAdminClient();
+	public IndicesClient getIndicesClient() {
+		RestHighLevelClient restHighLevelClient = getRestHighLevelClient();
 
-		return adminClient.indices();
+		return restHighLevelClient.indices();
 	}
 
 	public void setClusterSettingsContext(

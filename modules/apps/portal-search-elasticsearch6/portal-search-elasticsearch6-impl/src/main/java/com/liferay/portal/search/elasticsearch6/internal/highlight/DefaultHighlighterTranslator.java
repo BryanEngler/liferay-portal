@@ -19,7 +19,7 @@ import com.liferay.portal.kernel.search.highlight.HighlightUtil;
 
 import java.util.Locale;
 
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 
 import org.osgi.service.component.annotations.Component;
@@ -32,7 +32,7 @@ public class DefaultHighlighterTranslator implements HighlighterTranslator {
 
 	@Override
 	public void translate(
-		SearchRequestBuilder searchRequestBuilder, Locale locale,
+		SearchSourceBuilder searchSourceBuilder, Locale locale,
 		String[] highlightFieldNames, boolean highlightRequireFieldMatch,
 		int highlightFragmentSize, int highlightSnippetSize,
 		boolean luceneSyntax) {
@@ -54,7 +54,7 @@ public class DefaultHighlighterTranslator implements HighlighterTranslator {
 
 		highlightBuilder.requireFieldMatch(highlightRequireFieldMatch);
 
-		searchRequestBuilder.highlighter(highlightBuilder);
+		searchSourceBuilder.highlighter(highlightBuilder);
 	}
 
 	protected void addHighlightedField(

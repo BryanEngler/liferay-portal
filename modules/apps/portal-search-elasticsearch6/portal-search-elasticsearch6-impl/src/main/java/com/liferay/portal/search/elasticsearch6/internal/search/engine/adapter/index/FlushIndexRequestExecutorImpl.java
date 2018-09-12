@@ -21,14 +21,16 @@ import com.liferay.portal.search.engine.adapter.index.FlushIndexResponse;
 import com.liferay.portal.search.engine.adapter.index.IndexRequestShardFailure;
 
 import org.elasticsearch.action.ShardOperationFailedException;
-import org.elasticsearch.action.admin.indices.flush.FlushAction;
-import org.elasticsearch.action.admin.indices.flush.FlushRequestBuilder;
+import org.elasticsearch.action.admin.indices.flush.FlushRequest;
 import org.elasticsearch.action.admin.indices.flush.FlushResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.rest.RestStatus;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import java.io.IOException;
 
 /**
  * @author Michael C. Han
@@ -39,55 +41,60 @@ public class FlushIndexRequestExecutorImpl
 
 	@Override
 	public FlushIndexResponse execute(FlushIndexRequest flushIndexRequest) {
-		FlushRequestBuilder flushRequestBuilder = createFlushRequestBuilder(
+		FlushRequest flushRequest = createFlushRequest(
 			flushIndexRequest);
 
-		FlushResponse flushResponse = flushRequestBuilder.get();
+		IndicesClient indicesClient =
+			elasticsearchConnectionManager.getIndicesClient();
 
-		FlushIndexResponse flushIndexResponse = new FlushIndexResponse();
+		try {
+			FlushResponse flushResponse = indicesClient.flush(
+				flushRequest, RequestOptions.DEFAULT);
 
-		flushIndexResponse.setFailedShards(flushResponse.getFailedShards());
-		flushIndexResponse.setSuccessfulShards(
-			flushResponse.getSuccessfulShards());
-		flushIndexResponse.setTotalShards(flushResponse.getTotalShards());
+			FlushIndexResponse flushIndexResponse = new FlushIndexResponse();
 
-		RestStatus restStatus = flushResponse.getStatus();
+			flushIndexResponse.setFailedShards(flushResponse.getFailedShards());
+			flushIndexResponse.setSuccessfulShards(
+				flushResponse.getSuccessfulShards());
+			flushIndexResponse.setTotalShards(flushResponse.getTotalShards());
 
-		flushIndexResponse.setRestStatus(restStatus.getStatus());
+			RestStatus restStatus = flushResponse.getStatus();
 
-		ShardOperationFailedException[] shardOperationFailedExceptions =
-			flushResponse.getShardFailures();
+			flushIndexResponse.setRestStatus(restStatus.getStatus());
 
-		if (ArrayUtil.isNotEmpty(shardOperationFailedExceptions)) {
-			for (ShardOperationFailedException shardOperationFailedException :
+			ShardOperationFailedException[] shardOperationFailedExceptions =
+				flushResponse.getShardFailures();
+
+			if (ArrayUtil.isNotEmpty(shardOperationFailedExceptions)) {
+				for (ShardOperationFailedException shardOperationFailedException :
 					shardOperationFailedExceptions) {
 
-				IndexRequestShardFailure indexRequestShardFailure =
-					indexRequestShardFailureTranslator.translate(
-						shardOperationFailedException);
+					IndexRequestShardFailure indexRequestShardFailure =
+						indexRequestShardFailureTranslator.translate(
+							shardOperationFailedException);
 
-				flushIndexResponse.addIndexRequestShardFailure(
-					indexRequestShardFailure);
+					flushIndexResponse.addIndexRequestShardFailure(
+						indexRequestShardFailure);
+				}
 			}
-		}
 
-		return flushIndexResponse;
+			return flushIndexResponse;
+		}
+		catch (IOException ioe) {
+			return null;
+		}
 	}
 
-	protected FlushRequestBuilder createFlushRequestBuilder(
+	protected FlushRequest createFlushRequest(
 		FlushIndexRequest flushIndexRequest) {
 
-		Client client = elasticsearchConnectionManager.getClient();
+		FlushRequest flushRequest = new FlushRequest(
+			flushIndexRequest.getIndexNames());
 
-		FlushRequestBuilder flushRequestBuilder =
-			FlushAction.INSTANCE.newRequestBuilder(client);
+		flushRequest.force(flushIndexRequest.isForce());
+		flushRequest.waitIfOngoing(flushIndexRequest.isWaitIfOngoing());
 
-		flushRequestBuilder.setIndices(flushIndexRequest.getIndexNames());
-		flushRequestBuilder.setForce(flushIndexRequest.isForce());
-		flushRequestBuilder.setWaitIfOngoing(
-			flushIndexRequest.isWaitIfOngoing());
-
-		return flushRequestBuilder;
+		return flushRequest;
 	}
 
 	@Reference

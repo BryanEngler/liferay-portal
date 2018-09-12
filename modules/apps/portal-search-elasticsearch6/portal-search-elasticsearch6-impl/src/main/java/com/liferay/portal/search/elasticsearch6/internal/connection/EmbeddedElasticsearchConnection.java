@@ -44,7 +44,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.logging.log4j.LogManager;
 
-import org.elasticsearch.client.Client;
+import org.apache.http.HttpHost;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.inject.Injector;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
@@ -268,7 +270,7 @@ public class EmbeddedElasticsearchConnection
 	}
 
 	@Override
-	protected Client createClient() {
+	protected RestHighLevelClient createRestHighLevelClient() {
 		StopWatch stopWatch = new StopWatch();
 
 		stopWatch.start();
@@ -305,7 +307,9 @@ public class EmbeddedElasticsearchConnection
 			throw new RuntimeException(nve);
 		}
 
-		Client client = _node.client();
+		RestHighLevelClient restHighLevelClient =
+			new RestHighLevelClient(
+				RestClient.builder(new HttpHost("localhost", 9200, "http")));
 
 		if (_log.isDebugEnabled()) {
 			stopWatch.stop();
@@ -316,7 +320,7 @@ public class EmbeddedElasticsearchConnection
 					" in ", stopWatch.getTime(), " ms"));
 		}
 
-		return client;
+		return restHighLevelClient;
 	}
 
 	protected EmbeddedElasticsearchPluginManager

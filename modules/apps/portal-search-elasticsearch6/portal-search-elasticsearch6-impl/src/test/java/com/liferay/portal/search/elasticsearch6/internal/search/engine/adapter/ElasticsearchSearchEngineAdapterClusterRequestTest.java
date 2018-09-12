@@ -32,15 +32,17 @@ import com.liferay.portal.search.engine.adapter.cluster.StateClusterResponse;
 import com.liferay.portal.search.engine.adapter.cluster.StatsClusterRequest;
 import com.liferay.portal.search.engine.adapter.cluster.StatsClusterResponse;
 
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequestBuilder;
-import org.elasticsearch.client.AdminClient;
-import org.elasticsearch.client.IndicesAdminClient;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
 
 /**
  * @author Dylan Rebelak
@@ -155,15 +157,18 @@ public class ElasticsearchSearchEngineAdapterClusterRequestTest {
 	}
 
 	protected void createIndex() {
-		AdminClient adminClient =
-			_elasticsearchConnectionManager.getAdminClient();
+		IndicesClient indicesClient =
+			_elasticsearchConnectionManager.getIndicesClient();
 
-		IndicesAdminClient indicesAdminClient = adminClient.indices();
+		CreateIndexRequest createIndexRequest =
+			new CreateIndexRequest(_INDEX_NAME);
 
-		CreateIndexRequestBuilder createIndexRequestBuilder =
-			indicesAdminClient.prepareCreate(_INDEX_NAME);
+		try {
+			indicesClient.create(createIndexRequest, RequestOptions.DEFAULT);
+		}
+		catch(IOException ioe) {
 
-		createIndexRequestBuilder.get();
+		}
 	}
 
 	protected SearchEngineAdapter createSearchEngineAdapter(
@@ -178,15 +183,18 @@ public class ElasticsearchSearchEngineAdapterClusterRequestTest {
 	}
 
 	protected void deleteIndex() {
-		AdminClient adminClient =
-			_elasticsearchConnectionManager.getAdminClient();
+		IndicesClient indicesClient =
+			_elasticsearchConnectionManager.getIndicesClient();
 
-		IndicesAdminClient indicesAdminClient = adminClient.indices();
+		DeleteIndexRequest deleteIndexRequest =
+			new DeleteIndexRequest(_INDEX_NAME);
 
-		DeleteIndexRequestBuilder deleteIndexRequestBuilder =
-			indicesAdminClient.prepareDelete(_INDEX_NAME);
+		try{
+			indicesClient.delete(deleteIndexRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
 
-		deleteIndexRequestBuilder.get();
+		}
 	}
 
 	private static final String _INDEX_NAME = "test_request_index";

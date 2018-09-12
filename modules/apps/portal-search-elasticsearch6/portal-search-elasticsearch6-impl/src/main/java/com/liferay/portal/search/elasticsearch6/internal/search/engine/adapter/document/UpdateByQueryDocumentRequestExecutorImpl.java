@@ -20,13 +20,13 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import com.liferay.portal.search.engine.adapter.document.UpdateByQueryDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.UpdateByQueryDocumentResponse;
 
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.index.reindex.BulkByScrollResponse;
-import org.elasticsearch.index.reindex.UpdateByQueryAction;
-import org.elasticsearch.index.reindex.UpdateByQueryRequestBuilder;
+import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 import org.elasticsearch.script.Script;
 
 import org.osgi.service.component.annotations.Component;
@@ -45,11 +45,17 @@ public class UpdateByQueryDocumentRequestExecutorImpl
 	public UpdateByQueryDocumentResponse execute(
 		UpdateByQueryDocumentRequest updateByQueryDocumentRequest) {
 
-		UpdateByQueryRequestBuilder updateByQueryRequestBuilder =
-			createUpdateByQueryRequestBuilder(updateByQueryDocumentRequest);
+		UpdateByQueryRequest updateByQueryRequest =
+			createUpdateByQueryRequest(updateByQueryDocumentRequest);
 
+		RestHighLevelClient restHighLevelClient =
+			elasticsearchConnectionManager.getRestHighLevelClient();
+
+		//no high level REST api yet. coming soon ~6.5.0
 		BulkByScrollResponse bulkByScrollResponse =
-			updateByQueryRequestBuilder.get();
+			//restHighLevelClient.updateByQuery(
+			//	updateByQueryRequest, RequestOptions.DEFAULT);
+			new BulkByScrollResponse();
 
 		TimeValue timeValue = bulkByScrollResponse.getTook();
 
@@ -60,22 +66,20 @@ public class UpdateByQueryDocumentRequestExecutorImpl
 		return updateByQueryDocumentResponse;
 	}
 
-	protected UpdateByQueryRequestBuilder createUpdateByQueryRequestBuilder(
+	protected UpdateByQueryRequest createUpdateByQueryRequest(
 		UpdateByQueryDocumentRequest updateByQueryDocumentRequest) {
 
-		Client client = elasticsearchConnectionManager.getClient();
-
-		UpdateByQueryRequestBuilder updateByQueryRequestBuilder =
-			UpdateByQueryAction.INSTANCE.newRequestBuilder(client);
+		UpdateByQueryRequest updateByQueryRequest = new UpdateByQueryRequest();
 
 		Query query = updateByQueryDocumentRequest.getQuery();
 
 		QueryBuilder queryBuilder = new QueryStringQueryBuilder(
 			query.toString());
 
-		updateByQueryRequestBuilder.filter(queryBuilder);
+		//no api yet. coming soon ~6.5.0
+//		updateByQueryRequest.setQuery(queryBuilder); //was filter
 
-		updateByQueryRequestBuilder.refresh(
+		updateByQueryRequest.setRefresh(
 			updateByQueryDocumentRequest.isRefresh());
 
 		JSONObject jsonObject =
@@ -84,13 +88,13 @@ public class UpdateByQueryDocumentRequestExecutorImpl
 		if (jsonObject != null) {
 			Script script = new Script(jsonObject.toString());
 
-			updateByQueryRequestBuilder.script(script);
+			updateByQueryRequest.setScript(script);
 		}
 
-		updateByQueryRequestBuilder.source(
-			updateByQueryDocumentRequest.getIndexNames());
+		updateByQueryRequest.indices(
+			updateByQueryDocumentRequest.getIndexNames()); //was source
 
-		return updateByQueryRequestBuilder;
+		return updateByQueryRequest;
 	}
 
 	@Reference

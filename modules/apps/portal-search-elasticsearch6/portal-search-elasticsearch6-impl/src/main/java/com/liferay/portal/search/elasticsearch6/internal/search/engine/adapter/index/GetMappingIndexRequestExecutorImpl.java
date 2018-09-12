@@ -18,13 +18,14 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import com.liferay.portal.search.engine.adapter.index.GetMappingIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.GetMappingIndexResponse;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequestBuilder;
+import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequest;
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse;
-import org.elasticsearch.client.AdminClient;
-import org.elasticsearch.client.IndicesAdminClient;
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.compress.CompressedXContent;
@@ -43,48 +44,52 @@ public class GetMappingIndexRequestExecutorImpl
 	public GetMappingIndexResponse execute(
 		GetMappingIndexRequest getMappingIndexRequest) {
 
-		GetMappingsRequestBuilder getMappingsRequestBuilder =
-			createGetMappingsRequestBuilder(getMappingIndexRequest);
+		GetMappingsRequest getMappingsRequest =
+			createGetMappingsRequest(getMappingIndexRequest);
 
-		GetMappingsResponse getMappingsResponse =
-			getMappingsRequestBuilder.get();
+		IndicesClient indicesClient =
+			elasticsearchConnectionManager.getIndicesClient();
 
-		ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>>
-			mappings = getMappingsResponse.mappings();
+		try {
+			GetMappingsResponse getMappingsResponse =
+				indicesClient.getMapping(
+					getMappingsRequest,
+					RequestOptions.DEFAULT);
 
-		Map<String, String> indexMappings = new HashMap<>();
+			ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>>
+				mappings = getMappingsResponse.mappings();
 
-		for (String indexName : getMappingIndexRequest.getIndexNames()) {
-			ImmutableOpenMap<String, MappingMetaData> indexMapping =
-				mappings.get(indexName);
+			Map<String, String> indexMappings = new HashMap<>();
 
-			MappingMetaData mappingMetaData = indexMapping.get(
-				getMappingIndexRequest.getMappingName());
+			for (String indexName : getMappingIndexRequest.getIndexNames()) {
+				ImmutableOpenMap<String, MappingMetaData> indexMapping =
+					mappings.get(indexName);
 
-			CompressedXContent mappingContent = mappingMetaData.source();
+				MappingMetaData mappingMetaData = indexMapping.get(
+					getMappingIndexRequest.getMappingName());
 
-			indexMappings.put(indexName, mappingContent.toString());
+				CompressedXContent mappingContent = mappingMetaData.source();
+
+				indexMappings.put(indexName, mappingContent.toString());
+			}
+
+			return new GetMappingIndexResponse(indexMappings);
 		}
-
-		return new GetMappingIndexResponse(indexMappings);
+		catch (IOException ioe) {
+			return null;
+		}
 	}
 
-	protected GetMappingsRequestBuilder createGetMappingsRequestBuilder(
+	protected GetMappingsRequest createGetMappingsRequest(
 		GetMappingIndexRequest getMappingIndexRequest) {
 
-		AdminClient adminClient =
-			elasticsearchConnectionManager.getAdminClient();
+		GetMappingsRequest getMappingsRequest = new GetMappingsRequest();
 
-		IndicesAdminClient indicesAdminClient = adminClient.indices();
+		getMappingsRequest.indices(getMappingIndexRequest.getIndexNames());
 
-		GetMappingsRequestBuilder getMappingsRequestBuilder =
-			indicesAdminClient.prepareGetMappings(
-				getMappingIndexRequest.getIndexNames());
+		getMappingsRequest.types(getMappingIndexRequest.getMappingName());
 
-		getMappingsRequestBuilder.setTypes(
-			getMappingIndexRequest.getMappingName());
-
-		return getMappingsRequestBuilder;
+		return getMappingsRequest;
 	}
 
 	@Reference

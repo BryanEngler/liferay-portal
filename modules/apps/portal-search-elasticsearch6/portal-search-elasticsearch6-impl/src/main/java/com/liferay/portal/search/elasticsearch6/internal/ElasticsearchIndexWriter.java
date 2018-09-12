@@ -33,16 +33,16 @@ import com.liferay.portal.search.elasticsearch6.internal.util.LogUtil;
 
 import java.util.Collection;
 
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequestBuilder;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.delete.DeleteRequestBuilder;
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.support.WriteRequest;
-import org.elasticsearch.client.AdminClient;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.IndicesAdminClient;
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -83,17 +83,14 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 	@Override
 	public void commit(SearchContext searchContext) throws SearchException {
 		try {
-			AdminClient adminClient =
-				elasticsearchConnectionManager.getAdminClient();
+			IndicesClient indicesClient =
+				elasticsearchConnectionManager.getIndicesClient();
 
-			IndicesAdminClient indicesAdminClient = adminClient.indices();
+			RefreshRequest refreshRequest = new RefreshRequest(
+				indexNameBuilder.getIndexName(searchContext.getCompanyId()));
 
-			RefreshRequestBuilder refreshRequestBuilder =
-				indicesAdminClient.prepareRefresh(
-					indexNameBuilder.getIndexName(
-						searchContext.getCompanyId()));
-
-			RefreshResponse refreshResponse = refreshRequestBuilder.get();
+			RefreshResponse refreshResponse =
+				indicesClient.refresh(refreshRequest, RequestOptions.DEFAULT);
 
 			LogUtil.logActionResponse(_log, refreshResponse);
 		}
@@ -110,19 +107,22 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 			searchContext.getCompanyId());
 
 		try {
-			Client client = elasticsearchConnectionManager.getClient();
+			RestHighLevelClient restHighLevelClient =
+				elasticsearchConnectionManager.getRestHighLevelClient();
 
-			DeleteRequestBuilder deleteRequestBuilder = client.prepareDelete(
-				indexName, DocumentTypes.LIFERAY, uid);
+			DeleteRequest deleteRequest =
+				new DeleteRequest(indexName, DocumentTypes.LIFERAY, uid);
 
 			if (PortalRunMode.isTestMode() ||
 				searchContext.isCommitImmediately()) {
 
-				deleteRequestBuilder.setRefreshPolicy(
+				deleteRequest.setRefreshPolicy(
 					WriteRequest.RefreshPolicy.IMMEDIATE);
 			}
 
-			DeleteResponse deleteResponse = deleteRequestBuilder.get();
+			DeleteResponse deleteResponse =
+				restHighLevelClient.delete(
+					deleteRequest, RequestOptions.DEFAULT);
 
 			LogUtil.logActionResponse(_log, deleteResponse);
 		}
@@ -144,29 +144,31 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 			SearchContext searchContext, Collection<String> uids)
 		throws SearchException {
 
-		try {
-			Client client = elasticsearchConnectionManager.getClient();
+		String indexName = indexNameBuilder.getIndexName(
+			searchContext.getCompanyId());
 
-			BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
+		try {
+			RestHighLevelClient restHighLevelClient =
+				elasticsearchConnectionManager.getRestHighLevelClient();
+
+			BulkRequest bulkRequest = new BulkRequest();
 
 			for (String uid : uids) {
-				DeleteRequestBuilder deleteRequestBuilder =
-					client.prepareDelete(
-						indexNameBuilder.getIndexName(
-							searchContext.getCompanyId()),
-						DocumentTypes.LIFERAY, uid);
+				DeleteRequest deleteRequest =
+					new DeleteRequest(indexName, DocumentTypes.LIFERAY, uid);
 
-				bulkRequestBuilder.add(deleteRequestBuilder);
+				bulkRequest.add(deleteRequest);
 			}
 
 			if (PortalRunMode.isTestMode() ||
 				searchContext.isCommitImmediately()) {
 
-				bulkRequestBuilder.setRefreshPolicy(
+				bulkRequest.setRefreshPolicy(
 					WriteRequest.RefreshPolicy.IMMEDIATE);
 			}
 
-			BulkResponse bulkResponse = bulkRequestBuilder.get();
+			BulkResponse bulkResponse = restHighLevelClient.bulk(
+				bulkRequest, RequestOptions.DEFAULT);
 
 			LogUtil.logActionResponse(_log, bulkResponse);
 		}
@@ -181,7 +183,8 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 		throws SearchException {
 
 		try {
-			Client client = elasticsearchConnectionManager.getClient();
+			RestHighLevelClient restHighLevelClient =
+				elasticsearchConnectionManager.getRestHighLevelClient();
 
 			MatchAllQueryBuilder matchAllQueryBuilder =
 				QueryBuilders.matchAllQuery();
@@ -196,8 +199,9 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 
 			SearchResponseScroller searchResponseScroller =
 				new SearchResponseScroller(
-					client, searchContext, indexNameBuilder, boolQueryBuilder,
-					TimeValue.timeValueSeconds(30), DocumentTypes.LIFERAY);
+					restHighLevelClient, searchContext, indexNameBuilder,
+					boolQueryBuilder, TimeValue.timeValueSeconds(30),
+					DocumentTypes.LIFERAY);
 
 			try {
 				searchResponseScroller.prepare();

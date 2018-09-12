@@ -15,16 +15,23 @@
 package com.liferay.portal.search.elasticsearch6.internal.search.engine.adapter.index;
 
 import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchConnectionManager;
+import com.liferay.portal.search.engine.adapter.index.GetIndexIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.IndicesExistsIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.IndicesExistsIndexResponse;
 
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsAction;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequestBuilder;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
+import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
 import org.elasticsearch.client.Client;
 
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import java.io.IOException;
 
 /**
  * @author Michael C. Han
@@ -37,30 +44,36 @@ public class IndicesExistsIndexRequestExecutorImpl
 	public IndicesExistsIndexResponse execute(
 		IndicesExistsIndexRequest indicesExistsIndexRequest) {
 
-		IndicesExistsRequestBuilder indicesExistsRequestBuilder =
-			createIndicesExistsRequestBuilder(indicesExistsIndexRequest);
+		GetIndexRequest getIndexRequest =
+			createGetIndexRequest(indicesExistsIndexRequest);
 
-		IndicesExistsResponse indicesExistsResponse =
-			indicesExistsRequestBuilder.get();
+		IndicesClient indicesClient =
+			elasticsearchConnectionManager.getIndicesClient();
+
+		boolean indicesExists = false;
+
+		try {
+			indicesExists = indicesClient.exists(
+				getIndexRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+
+		}
 
 		IndicesExistsIndexResponse indicesExistsIndexResponse =
-			new IndicesExistsIndexResponse(indicesExistsResponse.isExists());
+			new IndicesExistsIndexResponse(indicesExists);
 
 		return indicesExistsIndexResponse;
 	}
 
-	protected IndicesExistsRequestBuilder createIndicesExistsRequestBuilder(
+	protected GetIndexRequest createGetIndexRequest(
 		IndicesExistsIndexRequest indicesExistsIndexRequest) {
 
-		Client client = elasticsearchConnectionManager.getClient();
+		GetIndexRequest getIndexRequest = new GetIndexRequest();
 
-		IndicesExistsRequestBuilder indicesExistsRequestBuilder =
-			IndicesExistsAction.INSTANCE.newRequestBuilder(client);
+		getIndexRequest.indices(indicesExistsIndexRequest.getIndexNames());
 
-		indicesExistsRequestBuilder.setIndices(
-			indicesExistsIndexRequest.getIndexNames());
-
-		return indicesExistsRequestBuilder;
+		return getIndexRequest;
 	}
 
 	@Reference

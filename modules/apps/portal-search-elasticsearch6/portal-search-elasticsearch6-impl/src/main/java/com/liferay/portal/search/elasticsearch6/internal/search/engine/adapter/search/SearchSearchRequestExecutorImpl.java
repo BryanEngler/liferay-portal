@@ -18,13 +18,16 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
 
-import org.elasticsearch.action.search.SearchAction;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Client;
 
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import java.io.IOException;
 
 /**
  * @author Michael C. Han
@@ -37,25 +40,39 @@ public class SearchSearchRequestExecutorImpl
 	public SearchSearchResponse execute(
 		SearchSearchRequest searchSearchRequest) {
 
-		Client client = elasticsearchConnectionManager.getClient();
+		SearchRequest searchRequest = new SearchRequest(
+			searchSearchRequest.getIndexNames());
 
-		SearchRequestBuilder searchRequestBuilder =
-			SearchAction.INSTANCE.newRequestBuilder(client);
+		if (searchSearchRequest.isRequestCache()) {
+			searchRequest.requestCache(searchSearchRequest.isRequestCache());
+		}
+
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
 		searchSearchRequestAssembler.assemble(
-			searchRequestBuilder, searchSearchRequest);
+			searchSourceBuilder, searchSearchRequest, searchRequest);
 
-		SearchResponse searchResponse = searchRequestBuilder.get();
+		RestHighLevelClient restHighLevelClient =
+			elasticsearchConnectionManager.getRestHighLevelClient();
 
-		SearchSearchResponse searchSearchResponse = new SearchSearchResponse();
+		try {
+			SearchResponse searchResponse = restHighLevelClient.search(
+				searchRequest, RequestOptions.DEFAULT);
 
-		String searchRequestBuilderString = searchRequestBuilder.toString();
+			SearchSearchResponse searchSearchResponse =
+				new SearchSearchResponse();
 
-		searchSearchResponseAssembler.assemble(
-			searchResponse, searchSearchResponse, searchSearchRequest,
-			searchRequestBuilderString);
+			String searchSourceBuilderString = searchSourceBuilder.toString();
 
-		return searchSearchResponse;
+			searchSearchResponseAssembler.assemble(
+				searchResponse, searchSearchResponse, searchSearchRequest,
+				searchSourceBuilderString);
+
+			return searchSearchResponse;
+		}
+		catch (IOException ioe) {
+			return null;
+		}
 	}
 
 	@Reference

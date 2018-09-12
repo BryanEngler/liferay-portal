@@ -21,15 +21,15 @@ import com.liferay.portal.search.elasticsearch6.internal.util.ResourceUtil;
 import com.liferay.portal.search.elasticsearch6.settings.ClientSettingsHelper;
 import com.liferay.portal.search.elasticsearch6.settings.SettingsContributor;
 
+import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.Future;
 
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequestBuilder;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.client.AdminClient;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.ClusterAdminClient;
+import org.elasticsearch.client.ClusterClient;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
 
@@ -41,13 +41,18 @@ public abstract class BaseElasticsearchConnection
 
 	@Override
 	public void close() {
-		if (_client == null) {
+		if (_restHighLevelClient == null) {
 			return;
 		}
 
-		_client.close();
+		try {
+			_restHighLevelClient.close();
+		}
+		catch (IOException ioe){
 
-		_client = null;
+		}
+
+		_restHighLevelClient = null;
 	}
 
 	@Override
@@ -62,43 +67,42 @@ public abstract class BaseElasticsearchConnection
 
 		loadSettingsContributors();
 
-		_client = createClient();
+		_restHighLevelClient = createRestHighLevelClient();
 	}
 
 	@Override
-	public Client getClient() {
-		return _client;
+	public RestHighLevelClient getRestHighLevelClient() {
+		return _restHighLevelClient;
 	}
 
 	@Override
 	public ClusterHealthResponse getClusterHealthResponse(long timeout) {
-		Client client = getClient();
+		ClusterClient clusterClient = _restHighLevelClient.cluster();
 
-		AdminClient adminClient = client.admin();
+		ClusterHealthRequest clusterHealthRequest
+			= new ClusterHealthRequest();
 
-		ClusterAdminClient clusterAdminClient = adminClient.cluster();
-
-		ClusterHealthRequestBuilder clusterHealthRequestBuilder =
-			clusterAdminClient.prepareHealth();
-
-		clusterHealthRequestBuilder.setTimeout(
+		clusterHealthRequest.timeout(
 			TimeValue.timeValueMillis(timeout));
 
-		clusterHealthRequestBuilder.setWaitForYellowStatus();
+		clusterHealthRequest.waitForYellowStatus();
 
-		Future<ClusterHealthResponse> future =
-			clusterHealthRequestBuilder.execute();
+		ClusterHealthResponse clusterHealthResponse = null;
 
 		try {
-			return future.get();
+			clusterHealthResponse =
+				clusterClient.health(
+					clusterHealthRequest, RequestOptions.DEFAULT);
+
+			return clusterHealthResponse;
 		}
-		catch (Exception e) {
-			throw new IllegalStateException(e);
+		catch (IOException ioe){
+			return null;
 		}
 	}
 
 	public boolean isConnected() {
-		if (_client != null) {
+		if (_restHighLevelClient != null) {
 			return true;
 		}
 
@@ -115,7 +119,7 @@ public abstract class BaseElasticsearchConnection
 		_settingsContributors.add(settingsContributor);
 	}
 
-	protected abstract Client createClient();
+	protected abstract RestHighLevelClient createRestHighLevelClient();
 
 	protected IndexFactory getIndexFactory() {
 		return _indexFactory;
@@ -167,7 +171,7 @@ public abstract class BaseElasticsearchConnection
 	protected SettingsBuilder settingsBuilder = new SettingsBuilder(
 		Settings.builder());
 
-	private Client _client;
+	private RestHighLevelClient _restHighLevelClient;
 	private IndexFactory _indexFactory;
 	private final Set<SettingsContributor> _settingsContributors =
 		new ConcurrentSkipListSet<>();

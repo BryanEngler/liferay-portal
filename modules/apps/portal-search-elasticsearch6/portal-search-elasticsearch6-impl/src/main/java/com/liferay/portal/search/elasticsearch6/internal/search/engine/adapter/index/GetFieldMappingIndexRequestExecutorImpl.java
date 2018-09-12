@@ -18,14 +18,15 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import com.liferay.portal.search.engine.adapter.index.GetFieldMappingIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.GetFieldMappingIndexResponse;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsRequestBuilder;
+import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsRequest;
 import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
-import org.elasticsearch.client.AdminClient;
-import org.elasticsearch.client.IndicesAdminClient;
 
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -42,55 +43,62 @@ public class GetFieldMappingIndexRequestExecutorImpl
 	public GetFieldMappingIndexResponse execute(
 		GetFieldMappingIndexRequest getFieldMappingIndexRequest) {
 
-		GetFieldMappingsRequestBuilder getFieldMappingsRequestBuilder =
-			createGetFieldMappingsRequestBuilder(getFieldMappingIndexRequest);
+		GetFieldMappingsRequest getFieldMappingsRequest =
+			createGetFieldMappingsRequest(getFieldMappingIndexRequest);
 
-		GetFieldMappingsResponse getFieldMappingsResponse =
-			getFieldMappingsRequestBuilder.get();
+		IndicesClient indicesClient =
+			elasticsearchConnectionManager.getIndicesClient();
 
-		Map
-			<String,
-			 Map
-				<String,
-				 Map<String, GetFieldMappingsResponse.FieldMappingMetaData>>>
-					mappings = getFieldMappingsResponse.mappings();
+		try {
+			GetFieldMappingsResponse getFieldMappingsResponse =
+				indicesClient.getFieldMapping(
+					getFieldMappingsRequest, RequestOptions.DEFAULT);
 
-		Map<String, String> fieldMappings = new HashMap<>();
-
-		for (String indexName : getFieldMappingIndexRequest.getIndexNames()) {
 			Map
 				<String,
-				 Map<String, GetFieldMappingsResponse.FieldMappingMetaData>>
+					Map
+						<String,
+							Map<String, GetFieldMappingsResponse.FieldMappingMetaData>>>
+				mappings = getFieldMappingsResponse.mappings();
+
+			Map<String, String> fieldMappings = new HashMap<>();
+
+			for (String indexName : getFieldMappingIndexRequest.getIndexNames()) {
+				Map
+					<String,
+						Map<String, GetFieldMappingsResponse.FieldMappingMetaData>>
 					map1 = mappings.get(indexName);
 
-			Map<String, GetFieldMappingsResponse.FieldMappingMetaData> map2 =
-				map1.get(getFieldMappingIndexRequest.getMappingName());
+				Map<String, GetFieldMappingsResponse.FieldMappingMetaData>
+					map2 =
+					map1.get(getFieldMappingIndexRequest.getMappingName());
 
-			fieldMappings.put(indexName, map2.toString());
+				fieldMappings.put(indexName, map2.toString());
+			}
+
+			return new GetFieldMappingIndexResponse(fieldMappings);
 		}
-
-		return new GetFieldMappingIndexResponse(fieldMappings);
+		catch (IOException ioe) {
+			return null;
+		}
 	}
 
-	protected GetFieldMappingsRequestBuilder
-		createGetFieldMappingsRequestBuilder(
+	protected GetFieldMappingsRequest
+		createGetFieldMappingsRequest (
 			GetFieldMappingIndexRequest getFieldMappingIndexRequest) {
 
-		AdminClient adminClient =
-			elasticsearchConnectionManager.getAdminClient();
+		GetFieldMappingsRequest getFieldMappingsRequest =
+			new GetFieldMappingsRequest();
 
-		IndicesAdminClient indicesAdminClient = adminClient.indices();
+		getFieldMappingsRequest.indices(
+			getFieldMappingIndexRequest.getIndexNames());
 
-		GetFieldMappingsRequestBuilder getFieldMappingsRequestBuilder =
-			indicesAdminClient.prepareGetFieldMappings(
-				getFieldMappingIndexRequest.getIndexNames());
-
-		getFieldMappingsRequestBuilder.setFields(
+		getFieldMappingsRequest.fields(
 			getFieldMappingIndexRequest.getFields());
-		getFieldMappingsRequestBuilder.setTypes(
+		getFieldMappingsRequest.types(
 			getFieldMappingIndexRequest.getMappingName());
 
-		return getFieldMappingsRequestBuilder;
+		return getFieldMappingsRequest;
 	}
 
 	@Reference

@@ -84,7 +84,7 @@ public class CommonSearchResponseAssemblerImpl
 				}
 			});
 
-		return xContentBuilder.string();
+		return xContentBuilder.toString();
 	}
 
 	protected void setExecutionProfile(

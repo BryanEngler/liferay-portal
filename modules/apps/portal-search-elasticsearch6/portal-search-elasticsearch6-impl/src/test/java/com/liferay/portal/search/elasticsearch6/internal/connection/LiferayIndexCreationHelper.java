@@ -17,7 +17,7 @@ package com.liferay.portal.search.elasticsearch6.internal.connection;
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.search.elasticsearch6.internal.index.LiferayDocumentTypeFactory;
 
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.common.settings.Settings;
 
 /**
@@ -33,13 +33,13 @@ public class LiferayIndexCreationHelper implements IndexCreationHelper {
 
 	@Override
 	public void contribute(
-		CreateIndexRequestBuilder createIndexRequestBuilder) {
+		CreateIndexRequest createIndexRequest) {
 
 		LiferayDocumentTypeFactory liferayDocumentTypeFactory =
 			getLiferayDocumentTypeFactory();
 
 		liferayDocumentTypeFactory.createRequiredDefaultTypeMappings(
-			createIndexRequestBuilder);
+			createIndexRequest);
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class LiferayIndexCreationHelper implements IndexCreationHelper {
 
 	protected LiferayDocumentTypeFactory getLiferayDocumentTypeFactory() {
 		return new LiferayDocumentTypeFactory(
-			_indicesAdminClientSupplier.getIndicesAdminClient(),
+			_indicesAdminClientSupplier.getIndicesClient(),
 			new JSONFactoryImpl());
 	}
 

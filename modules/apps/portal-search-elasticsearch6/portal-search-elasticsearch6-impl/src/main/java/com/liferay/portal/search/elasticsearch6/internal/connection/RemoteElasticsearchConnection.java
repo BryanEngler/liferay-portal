@@ -34,11 +34,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.elasticsearch.client.Client;
+import org.apache.http.HttpHost;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
-import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -109,39 +109,12 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 			new TransportAddress(inetAddress, port));
 	}
 
-	@Override
-	protected Client createClient() {
-		if (_transportAddresses.isEmpty()) {
-			throw new IllegalStateException(
-				"There must be at least one transport address");
-		}
+	protected RestHighLevelClient createRestHighLevelClient() {
+		RestHighLevelClient restHighLevelClient =
+			new RestHighLevelClient(
+				RestClient.builder(new HttpHost("localhost", 9201, "http")));
 
-		TransportClient transportClient = createTransportClient();
-
-		for (String transportAddress : _transportAddresses) {
-			try {
-				addTransportAddress(transportClient, transportAddress);
-			}
-			catch (Exception e) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(
-						"Unable to add transport address " + transportAddress,
-						e);
-				}
-			}
-		}
-
-		return transportClient;
-	}
-
-	protected TransportClient createTransportClient() {
-		if ((xPackSecuritySettings != null) &&
-			xPackSecuritySettings.requiresXPackSecurity()) {
-
-			return new PreBuiltXPackTransportClient(settingsBuilder.build());
-		}
-
-		return new PreBuiltTransportClient(settingsBuilder.build());
+		return restHighLevelClient;
 	}
 
 	@Deactivate

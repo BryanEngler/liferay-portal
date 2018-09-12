@@ -36,21 +36,21 @@ import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequestBuilder;
+import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
-import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryRequestBuilder;
+import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryRequest;
 import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryResponse;
-import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequestBuilder;
+import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
-import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequestBuilder;
+import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotResponse;
-import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequestBuilder;
+import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
-import org.elasticsearch.action.admin.indices.close.CloseIndexRequestBuilder;
+import org.elasticsearch.action.admin.indices.close.CloseIndexRequest;
 import org.elasticsearch.action.admin.indices.close.CloseIndexResponse;
-import org.elasticsearch.client.AdminClient;
-import org.elasticsearch.client.ClusterAdminClient;
-import org.elasticsearch.client.IndicesAdminClient;
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.SnapshotClient;
 import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.cluster.metadata.RepositoryMetaData;
 import org.elasticsearch.common.Strings;
@@ -81,20 +81,20 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 
 		validateBackupName(backupName);
 
-		ClusterAdminClient clusterAdminClient =
-			elasticsearchConnectionManager.getClusterAdminClient();
+		SnapshotClient snapshotClient =
+			elasticsearchConnectionManager.getSnapshotClient();
 
-		CreateSnapshotRequestBuilder createSnapshotRequestBuilder =
-			clusterAdminClient.prepareCreateSnapshot(
-				_BACKUP_REPOSITORY_NAME, backupName);
+		CreateSnapshotRequest createSnapshotRequest =
+			new CreateSnapshotRequest(_BACKUP_REPOSITORY_NAME, backupName);
 
-		createSnapshotRequestBuilder.setWaitForCompletion(true);
+		createSnapshotRequest.waitForCompletion(true);
 
 		try {
-			createBackupRepository(clusterAdminClient);
+			createBackupRepository(snapshotClient);
 
 			CreateSnapshotResponse createSnapshotResponse =
-				createSnapshotRequestBuilder.get();
+				snapshotClient.create(
+					createSnapshotRequest, RequestOptions.DEFAULT);
 
 			LogUtil.logActionResponse(_log, createSnapshotResponse);
 
@@ -112,8 +112,10 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		waitForYellowStatus();
 
 		try {
-			indexFactory.createIndices(
-				elasticsearchConnectionManager.getAdminClient(), companyId);
+			IndicesClient indicesClient =
+				elasticsearchConnectionManager.getIndicesClient();
+
+			indexFactory.createIndices(indicesClient, companyId);
 
 			elasticsearchConnectionManager.registerCompanyId(companyId);
 		}
@@ -128,20 +130,20 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 	public synchronized void removeBackup(long companyId, String backupName)
 		throws SearchException {
 
-		ClusterAdminClient clusterAdminClient =
-			elasticsearchConnectionManager.getClusterAdminClient();
+		SnapshotClient snapshotClient =
+			elasticsearchConnectionManager.getSnapshotClient();
 
 		try {
-			if (!hasBackupRepository(clusterAdminClient)) {
+			if (!hasBackupRepository(snapshotClient)) {
 				return;
 			}
 
-			DeleteSnapshotRequestBuilder deleteSnapshotRequestBuilder =
-				clusterAdminClient.prepareDeleteSnapshot(
-					_BACKUP_REPOSITORY_NAME, backupName);
+			DeleteSnapshotRequest deleteSnapshotRequest =
+				new DeleteSnapshotRequest(_BACKUP_REPOSITORY_NAME, backupName);
 
 			DeleteSnapshotResponse deleteSnapshotResponse =
-				deleteSnapshotRequestBuilder.get();
+				snapshotClient.delete(
+					deleteSnapshotRequest, RequestOptions.DEFAULT);
 
 			LogUtil.logActionResponse(_log, deleteSnapshotResponse);
 		}
@@ -156,7 +158,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 
 		try {
 			indexFactory.deleteIndices(
-				elasticsearchConnectionManager.getAdminClient(), companyId);
+				elasticsearchConnectionManager.getIndicesClient(), companyId);
 
 			elasticsearchConnectionManager.unregisterCompanyId(companyId);
 		}
@@ -175,18 +177,15 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 
 		validateBackupName(backupName);
 
-		AdminClient adminClient =
-			elasticsearchConnectionManager.getAdminClient();
+		IndicesClient indicesClient =
+			elasticsearchConnectionManager.getIndicesClient();
 
-		IndicesAdminClient indicesAdminClient = adminClient.indices();
-
-		CloseIndexRequestBuilder closeIndexRequestBuilder =
-			indicesAdminClient.prepareClose(
-				indexNameBuilder.getIndexName(companyId));
+		CloseIndexRequest closeIndexRequest = new CloseIndexRequest(
+			indexNameBuilder.getIndexName(companyId));
 
 		try {
 			CloseIndexResponse closeIndexResponse =
-				closeIndexRequestBuilder.get();
+				indicesClient.close(closeIndexRequest, RequestOptions.DEFAULT);
 
 			LogUtil.logActionResponse(_log, closeIndexResponse);
 		}
@@ -194,20 +193,23 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 			throw new SearchException(e);
 		}
 
-		ClusterAdminClient clusterAdminClient =
-			elasticsearchConnectionManager.getClusterAdminClient();
+		SnapshotClient snapshotClient =
+			elasticsearchConnectionManager.getSnapshotClient();
 
-		RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder =
-			clusterAdminClient.prepareRestoreSnapshot(
-				_BACKUP_REPOSITORY_NAME, backupName);
+		RestoreSnapshotRequest restoreSnapshotRequest =
+			new RestoreSnapshotRequest(_BACKUP_REPOSITORY_NAME, backupName);
 
-		restoreSnapshotRequestBuilder.setIndices(
+		restoreSnapshotRequest.indices(
 			indexNameBuilder.getIndexName(companyId));
-		restoreSnapshotRequestBuilder.setWaitForCompletion(true);
+
+		restoreSnapshotRequest.waitForCompletion(true);
 
 		try {
+			//no high level REST api yet. coming soon ~6.5.0
 			RestoreSnapshotResponse restoreSnapshotResponse =
-				restoreSnapshotRequestBuilder.get();
+				//snapshotClient.restore(
+				//	restoreSnapshotRequest, RequestOptions.DEFAULT);
+				null;
 
 			LogUtil.logActionResponse(_log, restoreSnapshotResponse);
 		}
@@ -245,39 +247,41 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		setVendor(MapUtil.getString(properties, "search.engine.impl"));
 	}
 
-	protected void createBackupRepository(ClusterAdminClient clusterAdminClient)
+	protected void createBackupRepository(SnapshotClient snapshotClient)
 		throws Exception {
 
-		if (hasBackupRepository(clusterAdminClient)) {
+		if (hasBackupRepository(snapshotClient)) {
 			return;
 		}
 
-		PutRepositoryRequestBuilder putRepositoryRequestBuilder =
-			clusterAdminClient.preparePutRepository(_BACKUP_REPOSITORY_NAME);
+		PutRepositoryRequest putRepositoryRequest =
+			new PutRepositoryRequest(_BACKUP_REPOSITORY_NAME);
 
 		Settings.Builder builder = Settings.builder();
 
 		builder.put("location", "es_backup");
 
-		putRepositoryRequestBuilder.setSettings(builder);
+		putRepositoryRequest.settings(builder);
 
-		putRepositoryRequestBuilder.setType("fs");
+		putRepositoryRequest.type("fs");
 
 		PutRepositoryResponse putRepositoryResponse =
-			putRepositoryRequestBuilder.get();
+			snapshotClient.createRepository(
+				putRepositoryRequest, RequestOptions.DEFAULT);
 
 		LogUtil.logActionResponse(_log, putRepositoryResponse);
 	}
 
-	protected boolean hasBackupRepository(ClusterAdminClient clusterAdminClient)
+	protected boolean hasBackupRepository(SnapshotClient snapshotClient)
 		throws Exception {
 
-		GetRepositoriesRequestBuilder getRepositoriesRequestBuilder =
-			clusterAdminClient.prepareGetRepositories(_BACKUP_REPOSITORY_NAME);
+		GetRepositoriesRequest getRepositoriesRequest =
+			new GetRepositoriesRequest(new String[]{_BACKUP_REPOSITORY_NAME});
 
 		try {
 			GetRepositoriesResponse getRepositoriesResponse =
-				getRepositoriesRequestBuilder.get();
+				snapshotClient.getRepository(
+					getRepositoriesRequest, RequestOptions.DEFAULT);
 
 			List<RepositoryMetaData> repositoryMetaDatas =
 				getRepositoriesResponse.repositories();

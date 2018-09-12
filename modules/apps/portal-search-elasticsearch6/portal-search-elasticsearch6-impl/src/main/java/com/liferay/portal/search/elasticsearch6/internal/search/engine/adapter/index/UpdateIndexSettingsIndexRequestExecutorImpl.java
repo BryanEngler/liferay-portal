@@ -20,13 +20,18 @@ import com.liferay.portal.search.engine.adapter.index.UpdateIndexSettingsIndexRe
 import com.liferay.portal.search.engine.adapter.index.UpdateIndexSettingsIndexResponse;
 
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsAction;
+import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequestBuilder;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.xcontent.XContentType;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import java.io.IOException;
 
 /**
  * @author Michael C. Han
@@ -39,11 +44,22 @@ public class UpdateIndexSettingsIndexRequestExecutorImpl
 	public UpdateIndexSettingsIndexResponse execute(
 		UpdateIndexSettingsIndexRequest updateIndexSettingsIndexRequest) {
 
-		UpdateSettingsRequestBuilder updateSettingsRequestBuilder =
-			createUpdateSettingsRequestBuilder(updateIndexSettingsIndexRequest);
+		UpdateSettingsRequest updateSettingsRequest =
+			createUpdateSettingsRequest(updateIndexSettingsIndexRequest);
 
-		UpdateSettingsResponse updateSettingsResponse =
-			updateSettingsRequestBuilder.get();
+		IndicesClient indicesClient =
+			elasticsearchConnectionManager.getIndicesClient();
+
+		UpdateSettingsResponse updateSettingsResponse = null;
+
+		try {
+			updateSettingsResponse = indicesClient.putSettings(
+				updateSettingsRequest,
+				RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+
+		}
 
 		UpdateIndexSettingsIndexResponse updateIndexSettingsIndexResponse =
 			new UpdateIndexSettingsIndexResponse(
@@ -52,29 +68,25 @@ public class UpdateIndexSettingsIndexRequestExecutorImpl
 		return updateIndexSettingsIndexResponse;
 	}
 
-	protected UpdateSettingsRequestBuilder createUpdateSettingsRequestBuilder(
+	protected UpdateSettingsRequest createUpdateSettingsRequest(
 		UpdateIndexSettingsIndexRequest updateIndexSettingsIndexRequest) {
 
-		Client client = elasticsearchConnectionManager.getClient();
+		UpdateSettingsRequest updateSettingsRequest =
+			new UpdateSettingsRequest(
+				updateIndexSettingsIndexRequest.getIndexNames());
 
-		UpdateSettingsRequestBuilder updateSettingsRequestBuilder =
-			UpdateSettingsAction.INSTANCE.newRequestBuilder(client);
-
-		updateSettingsRequestBuilder.setIndices(
-			updateIndexSettingsIndexRequest.getIndexNames());
-
-		updateSettingsRequestBuilder.setSettings(
+		updateSettingsRequest.settings(
 			updateIndexSettingsIndexRequest.getSettings(), XContentType.JSON);
 
 		IndicesOptions indicesOptions =
 			updateIndexSettingsIndexRequest.getIndicesOptions();
 
 		if (indicesOptions != null) {
-			updateSettingsRequestBuilder.setIndicesOptions(
+			updateSettingsRequest.indicesOptions(
 				indicesOptionsTranslator.translate(indicesOptions));
 		}
 
-		return updateSettingsRequestBuilder;
+		return updateSettingsRequest;
 	}
 
 	@Reference

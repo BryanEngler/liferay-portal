@@ -38,6 +38,7 @@ import com.liferay.portal.kernel.search.query.QueryTranslator;
 import com.liferay.portal.kernel.search.suggest.QuerySuggester;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.Validator;
@@ -59,14 +60,15 @@ import java.util.Map;
 
 import org.apache.commons.lang.time.StopWatch;
 
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHits;
 
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -219,7 +221,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	}
 
 	protected void addGroupBy(
-		SearchRequestBuilder searchRequestBuilder, GroupBy groupBy,
+		SearchSourceBuilder searchSourceBuilder, GroupBy groupBy,
 		Sort[] sorts, String[] selectedFieldNames, String[] highlightFieldNames,
 		boolean highlightEnabled, boolean highlightRequireFieldMatch,
 		Locale locale, int highlightFragmentSize, int highlightSnippetSize,
@@ -230,13 +232,13 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		}
 
 		groupByTranslator.translate(
-			searchRequestBuilder, groupBy, sorts, locale, selectedFieldNames,
+			searchSourceBuilder, groupBy, sorts, locale, selectedFieldNames,
 			highlightFieldNames, highlightEnabled, highlightRequireFieldMatch,
 			highlightFragmentSize, highlightSnippetSize, start, end);
 	}
 
 	protected void addHighlights(
-		SearchRequestBuilder searchRequestBuilder, SearchContext searchContext,
+		SearchSourceBuilder searchSourceBuilder, SearchContext searchContext,
 		Locale locale, String[] highlightFieldNames,
 		boolean highlightRequireFieldMatch, int highlightFragmentSize,
 		int highlightSnippetSize) {
@@ -246,52 +248,51 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 				SearchContextAttributes.ATTRIBUTE_KEY_LUCENE_SYNTAX));
 
 		highlighterTranslator.translate(
-			searchRequestBuilder, locale, highlightFieldNames,
+			searchSourceBuilder, locale, highlightFieldNames,
 			highlightRequireFieldMatch, highlightFragmentSize,
 			highlightSnippetSize, luceneSyntax);
 	}
 
 	protected void addPagination(
-		SearchRequestBuilder searchRequestBuilder, int start, int end) {
+		SearchSourceBuilder searchSourceBuilder, int start, int end) {
 
-		searchRequestBuilder.setFrom(start);
-		searchRequestBuilder.setSize(end - start);
+		searchSourceBuilder.from(start);
+		searchSourceBuilder.size(end - start);
 	}
 
 	protected void addPreference(
-		SearchRequestBuilder searchRequestBuilder,
-		SearchContext searchContext) {
+		SearchRequest searchRequest, SearchContext searchContext) {
 
 		String preference = (String)searchContext.getAttribute(
 			ElasticsearchSearchContextAttributes.
 				ATTRIBUTE_KEY_SEARCH_REQUEST_PREFERENCE);
 
 		if (!Validator.isBlank(preference)) {
-			searchRequestBuilder.setPreference(preference);
+			searchRequest.preference(preference);
 		}
 	}
 
 	protected void addSelectedFields(
-		SearchRequestBuilder searchRequestBuilder, QueryConfig queryConfig) {
+		SearchSourceBuilder searchSourceBuilder, QueryConfig queryConfig) {
 
 		String[] selectedFieldNames = queryConfig.getSelectedFieldNames();
 
 		if (ArrayUtil.isEmpty(selectedFieldNames)) {
-			searchRequestBuilder.addStoredField(StringPool.STAR);
+			searchSourceBuilder.storedField(StringPool.STAR);
 		}
 		else {
-			searchRequestBuilder.storedFields(selectedFieldNames);
+			searchSourceBuilder.storedFields(ListUtil.fromArray(selectedFieldNames));
 		}
 	}
 
 	protected void addStats(
-		SearchRequestBuilder searchRequestBuilder,
+		SearchSourceBuilder searchSourceBuilder,
 		SearchContext searchContext) {
 
 		Map<String, Stats> statsMap = searchContext.getStats();
 
 		for (Stats stats : statsMap.values()) {
-			statsTranslator.translate(searchRequestBuilder, stats);
+			statsTranslator.translate(searchSourceBuilder, stats);
 		}
 	}
 
@@ -300,28 +301,33 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			boolean count)
 		throws Exception {
 
-		Client client = elasticsearchConnectionManager.getClient();
+		RestHighLevelClient restHighLevelClient =
+			elasticsearchConnectionManager.getRestHighLevelClient();
+
+		SearchRequest searchRequest = new SearchRequest();
 
 		QueryConfig queryConfig = searchContext.getQueryConfig();
 
-		SearchRequestBuilder searchRequestBuilder = client.prepareSearch(
-			getSelectedIndexNames(queryConfig, searchContext));
+		searchRequest.indices(getSelectedIndexNames(
+			queryConfig, searchContext));
 
-		searchRequestBuilder.setTypes(getSelectedTypes(queryConfig));
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
-		addStats(searchRequestBuilder, searchContext);
+		searchRequest.types(getSelectedTypes(queryConfig));
+
+		addStats(searchSourceBuilder, searchContext);
 
 		boolean basicFacetSelection = GetterUtil.getBoolean(
 			searchContext.getAttribute(
 				SearchContextAttributes.ATTRIBUTE_KEY_BASIC_FACET_SELECTION));
 
 		facetTranslator.translate(
-			searchRequestBuilder, query, searchContext.getFacets(),
+			searchSourceBuilder, query, searchContext.getFacets(),
 			basicFacetSelection);
 
 		if (!count) {
 			addGroupBy(
-				searchRequestBuilder, searchContext.getGroupBy(),
+				searchSourceBuilder, searchContext.getGroupBy(),
 				searchContext.getSorts(), queryConfig.getSelectedFieldNames(),
 				queryConfig.getHighlightFieldNames(),
 				queryConfig.isHighlightEnabled(),
@@ -331,7 +337,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 			if (queryConfig.isHighlightEnabled()) {
 				addHighlights(
-					searchRequestBuilder, searchContext,
+					searchSourceBuilder, searchContext,
 					queryConfig.getLocale(),
 					queryConfig.getHighlightFieldNames(),
 					queryConfig.isHighlightRequireFieldMatch(),
@@ -339,17 +345,17 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 					queryConfig.getHighlightSnippetSize());
 			}
 
-			addPagination(searchRequestBuilder, start, end);
-			addPreference(searchRequestBuilder, searchContext);
-			addSelectedFields(searchRequestBuilder, queryConfig);
+			addPagination(searchSourceBuilder, start, end);
+			addPreference(searchRequest, searchContext);
+			addSelectedFields(searchSourceBuilder, queryConfig);
 
 			sortTranslator.translate(
-				searchRequestBuilder, searchContext.getSorts());
+				searchSourceBuilder, searchContext.getSorts());
 
-			searchRequestBuilder.setTrackScores(queryConfig.isScoreEnabled());
+			searchSourceBuilder.trackScores(queryConfig.isScoreEnabled());
 		}
 		else {
-			searchRequestBuilder.setSize(0);
+			searchSourceBuilder.size(0);
 		}
 
 		QueryBuilder queryBuilder = queryTranslator.translate(
@@ -367,22 +373,25 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			queryBuilder = boolQueryBuilder;
 		}
 
-		searchRequestBuilder.setQuery(queryBuilder);
+		searchSourceBuilder.query(queryBuilder);
 
-		String searchRequestBuilderString = searchRequestBuilder.toString();
+		String searchSourceBuilderString = searchSourceBuilder.toString();
 
-		searchContext.setAttribute("queryString", searchRequestBuilderString);
+		searchContext.setAttribute("queryString", searchSourceBuilderString);
 
 		if (_log.isDebugEnabled()) {
-			_log.debug("Search query " + searchRequestBuilderString);
+			_log.debug("Search query " + searchSourceBuilderString);
 		}
 
-		SearchResponse searchResponse = searchRequestBuilder.get();
+		searchRequest.source(searchSourceBuilder);
+
+		SearchResponse searchResponse =
+			restHighLevelClient.search(searchRequest);
 
 		if (_log.isInfoEnabled()) {
 			_log.info(
 				StringBundler.concat(
-					"The search engine processed ", searchRequestBuilderString,
+					"The search engine processed ", searchSourceBuilderString,
 					" in ", searchResponse.getTook()));
 		}
 
