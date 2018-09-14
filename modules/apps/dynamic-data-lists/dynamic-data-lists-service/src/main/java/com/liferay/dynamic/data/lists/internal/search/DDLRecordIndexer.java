@@ -43,7 +43,6 @@ import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.IndexWriterHelper;
-import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchPermissionChecker;
 import com.liferay.portal.kernel.search.Summary;
@@ -63,13 +62,11 @@ import java.util.Set;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 /**
  * @author Marcellus Tavares
+ * @deprecated As of Judson (7.1.x), since 7.1.0
  */
-@Component(immediate = true, service = Indexer.class)
+@Deprecated
 public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 
 	public static final String CLASS_NAME = DDLRecord.class.getName();
@@ -388,28 +385,13 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 		indexableActionableDynamicQuery.performActions();
 	}
 
-	@Reference
 	protected ClassNameLocalService classNameLocalService;
-
-	@Reference
 	protected DDLRecordLocalService ddlRecordLocalService;
-
-	@Reference
 	protected DDLRecordSetLocalService ddlRecordSetLocalService;
-
-	@Reference
 	protected DDLRecordVersionLocalService ddlRecordVersionLocalService;
-
-	@Reference
 	protected DDMIndexer ddmIndexer;
-
-	@Reference
 	protected IndexWriterHelper indexWriterHelper;
-
-	@Reference
 	protected SearchPermissionChecker searchPermissionChecker;
-
-	@Reference
 	protected StorageEngine storageEngine;
 
 	private static final int[] _REINDEX_SCOPES = {
