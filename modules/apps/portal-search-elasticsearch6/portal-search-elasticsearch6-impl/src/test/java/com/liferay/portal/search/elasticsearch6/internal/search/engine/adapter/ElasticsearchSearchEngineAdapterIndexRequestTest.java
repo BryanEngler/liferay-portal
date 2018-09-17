@@ -105,7 +105,7 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 		CreateIndexRequest createIndexRequest = new CreateIndexRequest(
 			"test_index_2");
 
-		StringBundler sb = new StringBundler(12);
+		StringBundler sb = new StringBundler(14);
 
 		sb.append("{\n");
 		sb.append("    \"settings\": {\n");
