@@ -42,6 +42,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.time.StopWatch;
+import org.apache.logging.log4j.Level;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.inject.Injector;
@@ -272,6 +273,8 @@ public class EmbeddedElasticsearchConnection
 	}
 
 	protected void configurePlugins() {
+		System.setProperty("es.logger.level", Level.WARN.name());
+
 		Settings settings = settingsBuilder.build();
 
 		String[] plugins = {
