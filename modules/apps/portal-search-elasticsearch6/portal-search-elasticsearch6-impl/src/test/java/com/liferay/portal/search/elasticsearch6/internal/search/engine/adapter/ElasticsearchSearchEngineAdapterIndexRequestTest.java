@@ -108,13 +108,15 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 		StringBundler sb = new StringBundler(12);
 
 		sb.append("{\n");
-		sb.append("    \"settings\" : {\n");
-		sb.append("        \"number_of_shards\" : 1\n");
+		sb.append("    \"settings\": {\n");
+		sb.append("        \"number_of_shards\": 1\n");
 		sb.append("    },\n");
-		sb.append("    \"mappings\" : {\n");
-		sb.append("        \"type1\" : {\n");
-		sb.append("            \"properties\" : {\n");
-		sb.append("                \"field1\" : { \"type\" : \"text\" }\n");
+		sb.append("    \"mappings\": {\n");
+		sb.append("        \"type1\": {\n");
+		sb.append("            \"properties\": {\n");
+		sb.append("                \"field1\": {\n");
+		sb.append("                    \"type\": \"text\"\n");
+		sb.append("                }\n");
 		sb.append("            }\n");
 		sb.append("        }\n");
 		sb.append("    }\n");

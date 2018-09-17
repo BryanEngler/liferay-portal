@@ -56,11 +56,11 @@ public class CreateIndexRequestExecutorTest {
 		StringBundler sb = new StringBundler(10);
 
 		sb.append("{\n");
-		sb.append("    \"analysis\" : {\n");
-		sb.append("        \"analyzer\":{\n");
-		sb.append("            \"content\":{\n");
-		sb.append("                \"tokenizer\":\"whitespace\",\n");
-		sb.append("                \"type\":\"custom\"\n");
+		sb.append("    \"analysis\": {\n");
+		sb.append("        \"analyzer\": {\n");
+		sb.append("            \"content\": {\n");
+		sb.append("                \"tokenizer\": \"whitespace\",\n");
+		sb.append("                \"type\": \"custom\"\n");
 		sb.append("            }\n");
 		sb.append("        }\n");
 		sb.append("    }\n");
