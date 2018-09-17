@@ -56,7 +56,6 @@ public class CreateIndexRequestExecutorImpl
 			CreateIndexAction.INSTANCE.newRequestBuilder(client);
 
 		createIndexRequestBuilder.setIndex(createIndexRequest.getIndexName());
-
 		createIndexRequestBuilder.setSource(
 			createIndexRequest.getSource(), XContentType.JSON);
 
