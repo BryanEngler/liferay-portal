@@ -87,27 +87,53 @@ public class DefaultSearchResponseTranslator
 
 	protected void addSnippets(
 		Document document, Map<String, HighlightField> highlightFields,
-		String fieldName, Locale locale) {
+		String highlightFieldName, Locale locale) {
 
-		String snippetFieldName = Field.getLocalizedName(locale, fieldName);
+		if (highlightFieldName.endsWith(StringPool.STAR)) {
+			for (Map.Entry<String, HighlightField> entry : highlightFields.entrySet()) {
+				HighlightField highlightField = entry.getValue();
 
-		HighlightField highlightField = highlightFields.get(snippetFieldName);
+				String fieldName = highlightField.getName();
 
-		if (highlightField == null) {
-			highlightField = highlightFields.get(fieldName);
+				String highlightFieldNamePrefix = highlightFieldName.substring(
+					0, highlightFieldName.indexOf(StringPool.STAR));
 
-			snippetFieldName = fieldName;
+				if (!fieldName.startsWith(highlightFieldNamePrefix)) {
+					continue;
+				}
+
+				Object[] array = highlightField.fragments();
+
+				document.addText(
+					Field.SNIPPET.concat(StringPool.UNDERLINE).concat(
+						fieldName),
+					StringUtil.merge(array, StringPool.TRIPLE_PERIOD));
+			}
 		}
+		else {
+			String snippetFieldName =
+				Field.getLocalizedName(locale, highlightFieldName);
 
-		if (highlightField == null) {
-			return;
+			HighlightField highlightField =
+				highlightFields.get(snippetFieldName);
+
+			if (highlightField == null) {
+				highlightField = highlightFields.get(highlightFieldName);
+
+				snippetFieldName = highlightFieldName;
+			}
+
+			if (highlightField == null) {
+				return;
+			}
+
+			Object[] array = highlightField.fragments();
+
+			document.addText(
+				Field.SNIPPET.concat(StringPool.UNDERLINE).concat(
+					snippetFieldName),
+				StringUtil.merge(array, StringPool.TRIPLE_PERIOD));
 		}
-
-		Object[] array = highlightField.fragments();
-
-		document.addText(
-			Field.SNIPPET.concat(StringPool.UNDERLINE).concat(snippetFieldName),
-			StringUtil.merge(array, StringPool.TRIPLE_PERIOD));
 	}
 
 	protected void addSnippets(
