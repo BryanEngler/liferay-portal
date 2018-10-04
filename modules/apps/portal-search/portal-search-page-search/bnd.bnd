@@ -1,0 +1,6 @@
+Bundle-Name: Liferay Portal Search Page Search
+Bundle-SymbolicName: com.liferay.portal.search.page.search
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.liferay.portal.search.page.search
+Web-ContextPath: /portal-search-page-search
