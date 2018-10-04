@@ -27,14 +27,23 @@ public class SearchAdminDisplayContext {
 		return _missingSearchEngine;
 	}
 
+	public boolean isShowPageSearchCommands() {
+		return _showPageSearchCommands;
+	}
+
 	public void setMissingSearchEngine(boolean missingSearchEngine) {
 		_missingSearchEngine = missingSearchEngine;
+	}
+
+	public void setShowPageSearchCommands(boolean showPageSearchCommands) {
+		_showPageSearchCommands = showPageSearchCommands;
 	}
 
 	public void setStatusString(String statusString) {
 		_statusString = statusString;
 	}
 
+	private boolean _showPageSearchCommands;
 	private boolean _missingSearchEngine;
 	private String _statusString;
 

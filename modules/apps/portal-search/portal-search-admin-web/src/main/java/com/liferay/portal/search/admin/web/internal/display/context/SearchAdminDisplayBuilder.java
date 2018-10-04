@@ -33,6 +33,9 @@ public class SearchAdminDisplayBuilder {
 			searchAdminDisplayContext.setMissingSearchEngine(true);
 		}
 
+		searchAdminDisplayContext.setShowPageSearchCommands(
+			_showPageSearchCommands);
+
 		return searchAdminDisplayContext;
 	}
 
@@ -42,6 +45,13 @@ public class SearchAdminDisplayBuilder {
 		_searchEngineInformation = searchEngineInformation;
 	}
 
+	public void setShowPageSearchCommands(
+		boolean showPageSearchCommands) {
+
+		_showPageSearchCommands = showPageSearchCommands;
+	}
+
 	private SearchEngineInformation _searchEngineInformation;
+	private boolean _showPageSearchCommands;
 
 }

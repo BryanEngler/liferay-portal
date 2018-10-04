@@ -35,6 +35,7 @@ import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.uuid.PortalUUID;
 import com.liferay.portal.search.admin.web.internal.constants.SearchAdminPortletKeys;
+import com.liferay.portal.search.page.search.PageSearchCommands;
 
 import java.io.Serializable;
 
@@ -92,6 +93,12 @@ public class EditMVCActionCommand extends BaseMVCActionCommand {
 		}
 		else if (cmd.equals("reindexDictionaries")) {
 			reindexDictionaries(actionRequest);
+		}
+		else if (cmd.equals("crawl")) {
+			_pageSearchCommands.crawl();
+		}
+		else if (cmd.equals("ingest")) {
+			_pageSearchCommands.ingest();
 		}
 
 		sendRedirect(actionRequest, actionResponse, redirect);
@@ -185,6 +192,9 @@ public class EditMVCActionCommand extends BaseMVCActionCommand {
 			_indexWriterHelper.indexSpellCheckerDictionaries(companyId);
 		}
 	}
+
+	@Reference
+	private PageSearchCommands _pageSearchCommands;
 
 	@Reference
 	private BackgroundTaskManager _backgroundTaskManager;

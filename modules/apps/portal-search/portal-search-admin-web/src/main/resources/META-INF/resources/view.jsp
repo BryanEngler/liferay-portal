@@ -155,6 +155,31 @@ portletURL.setParameter("mvcRenderCommandName", "/search_admin/view");
 				</li>
 
 				<%
+				if (searchAdminDisplayContext.isShowPageSearchCommands()) {
+				%>
+					<li class="clearfix list-group-item">
+						<div class="pull-left">
+							<h5><liferay-ui:message key="Crawl" /></h5>
+						</div>
+
+						<div class="pull-right">
+							<aui:button cssClass="save-server-button" data-cmd="crawl" value="execute" />
+						</div>
+					</li>
+					<li class="clearfix list-group-item">
+						<div class="pull-left">
+							<h5><liferay-ui:message key="Ingest" /></h5>
+						</div>
+
+						<div class="pull-right">
+							<aui:button cssClass="save-server-button" data-cmd="ingest" value="execute" />
+						</div>
+					</li>
+				<%
+				}
+				%>
+
+				<%
 				List<Indexer<?>> indexers = new ArrayList<>(IndexerRegistryUtil.getIndexers());
 
 				Collections.sort(indexers, new IndexerClassNameComparator(true));

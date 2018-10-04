@@ -27,6 +27,7 @@ import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import com.liferay.portal.search.page.search.PageSearchCommands;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -73,11 +74,25 @@ public class SearchAdminPortlet extends MVCPortlet {
 		searchAdminDisplayBuilder.setSearchEngineInformation(
 			searchEngineInformation);
 
+		if (pageSearchCommands != null) {
+			searchAdminDisplayBuilder.setShowPageSearchCommands(true);
+		}
+		else {
+			searchAdminDisplayBuilder.setShowPageSearchCommands(false);
+		}
+
 		renderRequest.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT, searchAdminDisplayBuilder.build());
 
 		super.render(renderRequest, renderResponse);
 	}
+
+	@Reference(
+		cardinality = ReferenceCardinality.OPTIONAL,
+		policy = ReferencePolicy.DYNAMIC,
+		policyOption = ReferencePolicyOption.GREEDY
+	)
+	protected volatile PageSearchCommands pageSearchCommands;
 
 	@Reference(
 		cardinality = ReferenceCardinality.OPTIONAL,
