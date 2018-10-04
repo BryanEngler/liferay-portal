@@ -74,6 +74,7 @@ FederatedSearchResultsPortletPreferences
 			%>
 				<aui:option label="Video" selected="<%= displayStyle.equals("video") %>" value="video" />
 				<aui:option label="Standard" selected="<%= displayStyle.equals("standard") %>" value="standard" />
+				<aui:option label="Page" selected="<%= displayStyle.equals("page") %>" value="page" />
 			<%
 
 			%>

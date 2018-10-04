@@ -89,7 +89,7 @@ if (!Validator.isBlank(source)) {
 			</ul>
 		<%
 		}
-		else {
+		else if (displayStyle.equals("standard")) {
 			%>
 			<li>Source: <strong><%= source %></strong></li><br>
 			<%
@@ -100,6 +100,26 @@ if (!Validator.isBlank(source)) {
 					<aui:a target="_blank" href="<%= videoURL %>" ><strong><%= federatedSearchSummary.getTitle() %></strong></aui:a><br>
 					<div style="font-size: small" ><font color="green"><%= "https://www.youtube.com/watch?v=" + federatedSearchSummary.getURL() %></font></div>
 					<i><%= federatedSearchSummary.getContent() %></i>
+				</li><br>
+			<%
+			}
+		}
+		else {
+			%>
+			<style>
+				.highlight {
+					background-color: transparent;
+				}
+			</style>
+			<li>Source: <strong><%= source %></strong></li><br>
+			<%
+			for (FederatedSearchSummary federatedSearchSummary : federatedSearchResultSummaries) {
+				String url = federatedSearchSummary.getURL();
+			%>
+				<li style="list-style-type: none" />
+					<aui:a href="<%= url %>" ><strong><%= federatedSearchSummary.getTitle() %></strong></aui:a><br>
+					<div style="font-size: small" ><font color="green"><%= federatedSearchSummary.getURL() %></font></div>
+					<div style="font-size: small" ><font color="#6B6C7E"><%= federatedSearchSummary.getContent() %></font></div>
 				</li><br>
 			<%
 			}
