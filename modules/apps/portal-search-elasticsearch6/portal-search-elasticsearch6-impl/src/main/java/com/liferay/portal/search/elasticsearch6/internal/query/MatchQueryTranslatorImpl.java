@@ -40,7 +40,6 @@ public class MatchQueryTranslatorImpl
 	@Override
 	public QueryBuilder translate(MatchQuery matchQuery) {
 		String field = matchQuery.getField();
-
 		MatchQuery.Type type = matchQuery.getType();
 		String value = matchQuery.getValue();
 
