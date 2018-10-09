@@ -121,6 +121,7 @@ public class MatchQueryTranslatorImpl
 
 	protected MatchQueryBuilder translateMatchQuery(MatchQuery matchQuery) {
 		String field = matchQuery.getField();
+
 		MatchQuery.Type matchQueryType = matchQuery.getType();
 		String value = matchQuery.getValue();
 
