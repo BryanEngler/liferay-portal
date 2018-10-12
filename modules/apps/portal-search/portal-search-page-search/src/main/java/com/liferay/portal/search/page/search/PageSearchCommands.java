@@ -14,20 +14,28 @@
 
 package com.liferay.portal.search.page.search;
 
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.generic.MatchAllQuery;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.document.DocumentRequestExecutor;
 import com.liferay.portal.search.engine.adapter.document.IndexDocumentRequest;
+import com.liferay.portal.search.engine.adapter.index.CreateIndexRequest;
+import com.liferay.portal.search.engine.adapter.index.DeleteIndexRequest;
 import com.liferay.portal.search.engine.adapter.search.SearchRequestExecutor;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,10 +52,60 @@ import org.osgi.service.component.annotations.Reference;
 @Component(service = PageSearchCommands.class)
 public class PageSearchCommands {
 
-	public void crawl()
-		throws Exception {
+	public void writeConfig(String username, String password) throws Exception {
+		String data =
+		"<?xml version=\"1.0\"?> " +
+		"<?xml-stylesheet type=\"text/xsl\" href=\"configuration.xsl\"?>\n" +
+		"<configuration>\n" +
+			"<property>\n"+
+				"<name>http.basic.auth.username</name>\n"+
+				"<value>" + username + "</value>\n"+
+				"<description>basic auth un\n"+
+				"</description>\n"+
+			"</property>\n"+
 
-		System.out.println("START CRAWLING");
+			"<property>\n"+
+				"<name>http.basic.auth.password</name>\n"+
+				"<value>" + password + "</value>\n"+
+				"<description>basic auth pw\n"+
+				"</description>\n"+
+			"</property>\n"+
+		"</configuration>";
+
+		try {
+            Files.write(
+				Paths.get("apache-nutch-1.15/conf/nutch-site.xml"),
+				data.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+		Thread.sleep(2000);
+	}
+
+	public void crawl() throws Exception {
+		User user;
+		String password;
+
+		user = UserLocalServiceUtil.fetchUserByScreenName(20099, "t");
+		password = "t";
+		doCrawl(user, password);
+		ingest(user);
+
+		user = UserLocalServiceUtil.fetchUserByScreenName(20099, "y");
+		password = "y";
+		doCrawl(user, password);
+		ingest(user);
+	}
+
+	public void doCrawl(User user, String password) throws Exception {
+		System.out.println("START CRAWLING with " + user.getScreenName());
+
+		deleteNutchIndex();
+
+		createNutchIndex();
+
+		writeConfig(user.getScreenName(), password);
 
 		Runtime rt = Runtime.getRuntime();
 
@@ -146,11 +204,11 @@ public class PageSearchCommands {
 		pr.waitFor();
 
 		System.out.println("DONE CRAWLING");
+
+		Thread.sleep(2000);
 	}
 
-	public void ingest()
-		throws Exception {
-
+	public void ingest(User user) throws Exception {
 		System.out.println("START INGESTING");
 
 		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
@@ -171,7 +229,9 @@ public class PageSearchCommands {
 		for (Document document : hits.getDocs()) {
 			Document liferayDoc = new DocumentImpl();
 
-			liferayDoc.addText(Field.UID, document.get("url"));
+			liferayDoc.addNumber("roleIds", user.getRoleIds());
+			liferayDoc.addText("user", user.getScreenName());
+			liferayDoc.addText(Field.UID, document.get("url") + "_" + user.getScreenName());
 			liferayDoc.addText(Field.TYPE, "doc");
 			liferayDoc.addText("page_title", document.get("title"));
 			liferayDoc.addText("url", document.get("url"));
@@ -278,6 +338,8 @@ public class PageSearchCommands {
 		}
 
 		System.out.println("DONE INGESTING");
+
+		Thread.sleep(2000);
 	}
 
 
@@ -400,6 +462,48 @@ public class PageSearchCommands {
 
 		documentRequestExecutor.executeDocumentRequest(indexDocumentRequest);
 	}
+
+	protected void createNutchIndex() throws Exception {
+		CreateIndexRequest createIndexRequest = new CreateIndexRequest(
+			"nutch");
+
+		StringBundler sb = new StringBundler(14);
+
+		sb.append("{\n");
+		sb.append("    \"mappings\": {\n");
+		sb.append("        \"doc\": {\n");
+		sb.append("            \"date_detection\": false,\n");
+		sb.append("            \"dynamic_templates\": [{\n");
+		sb.append("                \"template_all_text\": {\n");
+		sb.append("                  \"mapping\": {\n");
+		sb.append("                    \"store\": true,\n");
+		sb.append("                    \"type\": \"text\"\n");
+		sb.append("                },\n");
+		sb.append("                \"match\": \"*\"");
+		sb.append("                }\n");
+		sb.append("            }]\n");
+		sb.append("        }\n");
+		sb.append("    }\n");
+		sb.append("}");
+
+		createIndexRequest.setSource(sb.toString());
+
+		searchEngineAdapter.execute(createIndexRequest);
+
+		Thread.sleep(2000);
+	}
+
+	protected void deleteNutchIndex() throws Exception {
+		DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest(
+			"nutch");
+
+		searchEngineAdapter.execute(deleteIndexRequest);
+
+		Thread.sleep(2000);
+	}
+
+	@Reference
+	protected SearchEngineAdapter searchEngineAdapter;
 
 	@Reference
 	protected DocumentRequestExecutor documentRequestExecutor;
