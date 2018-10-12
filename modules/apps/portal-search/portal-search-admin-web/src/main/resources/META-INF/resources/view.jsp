@@ -166,15 +166,6 @@ portletURL.setParameter("mvcRenderCommandName", "/search_admin/view");
 							<aui:button cssClass="save-server-button" data-cmd="crawl" value="execute" />
 						</div>
 					</li>
-					<li class="clearfix list-group-item">
-						<div class="pull-left">
-							<h5><liferay-ui:message key="Ingest" /></h5>
-						</div>
-
-						<div class="pull-right">
-							<aui:button cssClass="save-server-button" data-cmd="ingest" value="execute" />
-						</div>
-					</li>
 				<%
 				}
 				%>

@@ -97,9 +97,6 @@ public class EditMVCActionCommand extends BaseMVCActionCommand {
 		else if (cmd.equals("crawl")) {
 			_pageSearchCommands.crawl();
 		}
-		else if (cmd.equals("ingest")) {
-			_pageSearchCommands.ingest();
-		}
 
 		sendRedirect(actionRequest, actionResponse, redirect);
 	}
