@@ -101,7 +101,11 @@ public class PageSearchCommands {
 	public void doCrawl(User user, String password) throws Exception {
 		System.out.println("START CRAWLING with " + user.getScreenName());
 
-		deleteNutchIndex();
+		try {
+			deleteNutchIndex();
+		}
+		catch (Exception e) {
+		}
 
 		createNutchIndex();
 
