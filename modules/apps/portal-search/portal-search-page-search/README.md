@@ -113,6 +113,4 @@ PUT liferay_page_index
 
 21. Go to Control Panel > Configuration > Search. Click on the `Crawl` button. It will take about 30 seconds to crawl the site. The tomcat logs will let you know when crawling is complete.
 
-22. Once crawling is complete, click the `Ingest` button. Ingestion should complete almost instantly.
-
-23. Go back to the home page and use the Search Bar portlet to search for any of the words entered in the page's SEO section and/or words contained in the web content article/blog
+22. Go back to the home page and use the Search Bar portlet to search for any of the words entered in the page's SEO section and/or words contained in the web content article/blog
