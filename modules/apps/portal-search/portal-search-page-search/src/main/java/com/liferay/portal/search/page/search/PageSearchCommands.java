@@ -96,6 +96,8 @@ public class PageSearchCommands {
 		password = "y";
 		doCrawl(user, password);
 		ingest(user);
+
+		System.out.println("DONE CRAWLING");
 	}
 
 	public void doCrawl(User user, String password) throws Exception {
@@ -207,13 +209,11 @@ public class PageSearchCommands {
 
 		pr.waitFor();
 
-		System.out.println("DONE CRAWLING");
-
 		Thread.sleep(2000);
 	}
 
 	public void ingest(User user) throws Exception {
-		System.out.println("START INGESTING");
+		System.out.println("INGESTING");
 
 		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
 
@@ -340,8 +340,6 @@ public class PageSearchCommands {
 
 			index(liferayDoc);
 		}
-
-		System.out.println("DONE INGESTING");
 
 		Thread.sleep(2000);
 	}
