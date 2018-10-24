@@ -181,7 +181,6 @@ public class ElasticsearchIndexingFixture implements IndexingFixture {
 
 		return new ElasticsearchIndexSearcher() {
 			{
-
 				indexNameBuilder = indexNameBuilder1;
 				props = createProps();
 				searchEngineAdapter = searchEngineAdapter1;
