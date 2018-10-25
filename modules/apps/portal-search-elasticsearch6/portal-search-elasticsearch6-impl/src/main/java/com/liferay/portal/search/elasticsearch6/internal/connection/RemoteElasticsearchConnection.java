@@ -116,22 +116,36 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 				"There must be at least one transport address");
 		}
 
-		TransportClient transportClient = createTransportClient();
+		Thread thread = Thread.currentThread();
 
-		for (String transportAddress : _transportAddresses) {
-			try {
-				addTransportAddress(transportClient, transportAddress);
-			}
-			catch (Exception e) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(
-						"Unable to add transport address " + transportAddress,
-						e);
+		ClassLoader contextClassLoader = thread.getContextClassLoader();
+
+		Class<?> clazz = getClass();
+
+		thread.setContextClassLoader(clazz.getClassLoader());
+
+		try {
+			TransportClient transportClient = createTransportClient();
+
+			for (String transportAddress : _transportAddresses) {
+				try {
+					addTransportAddress(transportClient, transportAddress);
+				}
+				catch (Exception e) {
+					if (_log.isWarnEnabled()) {
+						_log.warn(
+							"Unable to add transport address " +
+								transportAddress,
+							e);
+					}
 				}
 			}
-		}
 
-		return transportClient;
+			return transportClient;
+		}
+		finally {
+			thread.setContextClassLoader(contextClassLoader);
+		}
 	}
 
 	protected TransportClient createTransportClient() {
