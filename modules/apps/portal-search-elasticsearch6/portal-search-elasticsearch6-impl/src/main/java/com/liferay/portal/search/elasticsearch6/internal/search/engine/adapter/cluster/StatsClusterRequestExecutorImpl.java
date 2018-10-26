@@ -25,9 +25,9 @@ import org.elasticsearch.action.admin.cluster.stats.ClusterStatsRequestBuilder;
 import org.elasticsearch.action.admin.cluster.stats.ClusterStatsResponse;
 import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.cluster.health.ClusterHealthStatus;
+import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.xpack.watcher.watch.Payload;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -55,7 +55,7 @@ public class StatsClusterRequestExecutorImpl
 			xContentBuilder.startObject();
 
 			xContentBuilder = clusterStatsResponse.toXContent(
-				xContentBuilder, Payload.XContent.EMPTY_PARAMS);
+				xContentBuilder, ToXContent.EMPTY_PARAMS);
 
 			xContentBuilder.endObject();
 
@@ -66,7 +66,7 @@ public class StatsClusterRequestExecutorImpl
 				new StatsClusterResponse(
 					clusterHealthStatusTranslator.translate(
 						clusterHealthStatus),
-					xContentBuilder.string());
+					xContentBuilder.toString());
 
 			return statsClusterResponse;
 		}

@@ -38,7 +38,6 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
-import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -149,12 +148,6 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 	}
 
 	protected TransportClient createTransportClient() {
-		if ((xPackSecuritySettings != null) &&
-			xPackSecuritySettings.requiresXPackSecurity()) {
-
-			return new PreBuiltXPackTransportClient(settingsBuilder.build());
-		}
-
 		return new PreBuiltTransportClient(settingsBuilder.build());
 	}
 
