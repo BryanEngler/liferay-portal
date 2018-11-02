@@ -19,7 +19,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.search.elasticsearch6.internal.util.LogUtil;
 
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequestBuilder;
-import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.IndicesAdminClient;
 import org.elasticsearch.common.settings.Settings;
 
@@ -46,7 +46,7 @@ public class ReplicasManagerImpl implements ReplicasManager {
 		updateSettingsRequestBuilder.setSettings(builder);
 
 		try {
-			UpdateSettingsResponse updateSettingsResponse =
+			AcknowledgedResponse updateSettingsResponse =
 				updateSettingsRequestBuilder.get();
 
 			LogUtil.logActionResponse(_log, updateSettingsResponse);

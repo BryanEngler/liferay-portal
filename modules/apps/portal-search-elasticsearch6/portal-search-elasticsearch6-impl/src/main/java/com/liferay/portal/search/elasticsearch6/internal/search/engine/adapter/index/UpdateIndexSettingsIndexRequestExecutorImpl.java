@@ -21,7 +21,7 @@ import com.liferay.portal.search.engine.adapter.index.UpdateIndexSettingsIndexRe
 
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsAction;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequestBuilder;
-import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentType;
 
@@ -42,7 +42,7 @@ public class UpdateIndexSettingsIndexRequestExecutorImpl
 		UpdateSettingsRequestBuilder updateSettingsRequestBuilder =
 			createUpdateSettingsRequestBuilder(updateIndexSettingsIndexRequest);
 
-		UpdateSettingsResponse updateSettingsResponse =
+		AcknowledgedResponse updateSettingsResponse =
 			updateSettingsRequestBuilder.get();
 
 		UpdateIndexSettingsIndexResponse updateIndexSettingsIndexResponse =

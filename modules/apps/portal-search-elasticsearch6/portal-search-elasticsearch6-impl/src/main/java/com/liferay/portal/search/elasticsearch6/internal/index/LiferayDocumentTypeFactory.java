@@ -35,7 +35,7 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequestBuilder;
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequestBuilder;
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.IndicesAdminClient;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
@@ -68,7 +68,8 @@ public class LiferayDocumentTypeFactory implements TypeMappingsHelper {
 		putMappingRequestBuilder.setType(
 			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE);
 
-		PutMappingResponse putMappingResponse = putMappingRequestBuilder.get();
+		AcknowledgedResponse putMappingResponse =
+			putMappingRequestBuilder.get();
 
 		try {
 			LogUtil.logActionResponse(_log, putMappingResponse);

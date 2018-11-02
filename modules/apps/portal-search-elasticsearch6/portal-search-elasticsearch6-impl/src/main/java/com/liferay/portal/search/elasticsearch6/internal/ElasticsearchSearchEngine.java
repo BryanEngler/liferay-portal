@@ -39,15 +39,13 @@ import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequestBuilder;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
 import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryRequestBuilder;
-import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryResponse;
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
 import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequestBuilder;
-import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotResponse;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
 import org.elasticsearch.action.admin.indices.close.CloseIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.close.CloseIndexResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.client.IndicesAdminClient;
@@ -140,7 +138,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 				clusterAdminClient.prepareDeleteSnapshot(
 					_BACKUP_REPOSITORY_NAME, backupName);
 
-			DeleteSnapshotResponse deleteSnapshotResponse =
+			AcknowledgedResponse deleteSnapshotResponse =
 				deleteSnapshotRequestBuilder.get();
 
 			LogUtil.logActionResponse(_log, deleteSnapshotResponse);
@@ -185,7 +183,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 				indexNameBuilder.getIndexName(companyId));
 
 		try {
-			CloseIndexResponse closeIndexResponse =
+			AcknowledgedResponse closeIndexResponse =
 				closeIndexRequestBuilder.get();
 
 			LogUtil.logActionResponse(_log, closeIndexResponse);
@@ -263,7 +261,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 
 		putRepositoryRequestBuilder.setType("fs");
 
-		PutRepositoryResponse putRepositoryResponse =
+		AcknowledgedResponse putRepositoryResponse =
 			putRepositoryRequestBuilder.get();
 
 		LogUtil.logActionResponse(_log, putRepositoryResponse);
