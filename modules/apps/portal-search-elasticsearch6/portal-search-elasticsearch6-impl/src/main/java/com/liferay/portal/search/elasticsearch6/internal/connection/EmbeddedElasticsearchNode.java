@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.elasticsearch.analysis.common.CommonAnalysisPlugin;
 import org.elasticsearch.common.logging.LogConfigurator;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
@@ -39,7 +40,7 @@ public class EmbeddedElasticsearchNode extends Node {
 			settings, null);
 
 		List<Class<? extends Plugin>> classpathPlugins = Arrays.asList(
-			Netty4Plugin.class);
+			CommonAnalysisPlugin.class, Netty4Plugin.class);
 
 		try {
 			LogConfigurator.configure(environment);
