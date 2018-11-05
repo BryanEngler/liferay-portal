@@ -160,6 +160,10 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 				SearchSearchResponse searchSearchResponse =
 					searchEngineAdapter.execute(searchSearchRequest);
 
+				searchContext.setAttribute(
+					"queryString",
+					searchSearchResponse.getSearchRequestString());
+
 				hits = searchSearchResponse.getHits();
 
 				Document[] documents = hits.getDocs();
@@ -228,6 +232,9 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 			CountSearchResponse countSearchResponse =
 				searchEngineAdapter.execute(countSearchRequest);
+
+			searchContext.setAttribute(
+				"queryString", countSearchResponse.getSearchRequestString());
 
 			return countSearchResponse.getCount();
 		}
