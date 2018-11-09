@@ -24,7 +24,6 @@ import com.liferay.portal.kernel.search.IndexWriter;
 import com.liferay.portal.kernel.search.ParseException;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
-import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.TermFilter;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.search.generic.MatchAllQuery;
@@ -105,8 +104,8 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 		String indexName = indexNameBuilder.getIndexName(
 			searchContext.getCompanyId());
 
-		RefreshIndexRequest refreshIndexRequest =
-			new RefreshIndexRequest(indexName);
+		RefreshIndexRequest refreshIndexRequest = new RefreshIndexRequest(
+			indexName);
 
 		searchEngineAdapter.execute(refreshIndexRequest);
 	}
@@ -164,20 +163,17 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 			searchContext.getCompanyId());
 
 		try {
-			Filter termFilter = new TermFilter(
-				Field.ENTRY_CLASS_NAME, className);
+			BooleanQuery booleanQuery = new BooleanQueryImpl();
+
+			booleanQuery.add(new MatchAllQuery(), BooleanClauseOccur.MUST);
 
 			BooleanFilter booleanFilter = new BooleanFilter();
 
-			booleanFilter.add(termFilter, BooleanClauseOccur.MUST);
-
-			MatchAllQuery matchAllQuery = new MatchAllQuery();
-
-			BooleanQuery booleanQuery = new BooleanQueryImpl();
+			booleanFilter.add(
+				new TermFilter(Field.ENTRY_CLASS_NAME, className),
+				BooleanClauseOccur.MUST);
 
 			booleanQuery.setPreBooleanFilter(booleanFilter);
-
-			booleanQuery.add(matchAllQuery, BooleanClauseOccur.MUST);
 
 			DeleteByQueryDocumentRequest deleteByQueryDocumentRequest =
 				new DeleteByQueryDocumentRequest(booleanQuery, indexName);
