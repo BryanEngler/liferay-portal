@@ -119,11 +119,11 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest(
 			indexName, uid);
 
-		deleteDocumentRequest.setType(DocumentTypes.LIFERAY);
-
 		if (PortalRunMode.isTestMode() || searchContext.isCommitImmediately()) {
 			deleteDocumentRequest.setRefresh(true);
 		}
+
+		deleteDocumentRequest.setType(DocumentTypes.LIFERAY);
 
 		searchEngineAdapter.execute(deleteDocumentRequest);
 	}
