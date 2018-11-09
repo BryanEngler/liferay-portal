@@ -105,9 +105,10 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 		String indexName = indexNameBuilder.getIndexName(
 			searchContext.getCompanyId());
 
-		RefreshIndexRequest refreshRequest = new RefreshIndexRequest(indexName);
+		RefreshIndexRequest refreshIndexRequest =
+			new RefreshIndexRequest(indexName);
 
-		searchEngineAdapter.execute(refreshRequest);
+		searchEngineAdapter.execute(refreshIndexRequest);
 	}
 
 	@Override
