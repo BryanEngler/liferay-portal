@@ -5,7 +5,8 @@
 
 	<macrodef name="configure-elasticsearch-properties">
 		<sequential>
-			<echo append="true" file="${elasticsearch.dir}/config/elasticsearch.yml">${line.separator}cluster.name: LiferayElasticsearchCluster</echo>
+			<echo append="true" file="${elasticsearch.dir}/config/elasticsearch.yml">${line.separator}cluster.name: LiferayElasticsearchCluster
+xpack.security.enabled: true</echo>
 		</sequential>
 	</macrodef>
 
@@ -98,12 +99,12 @@ transportSSLEnabled="true"</echo>
 			<if>
 				<os family="unix" />
 				<then>
-					<exec dir="${elasticsearch.dir}-1/bin/x-pack" executable="/bin/bash">
+					<exec dir="${elasticsearch.dir}-1/bin" executable="/bin/bash">
 						<arg value="-c" />
-						<arg value="./certutil cert --ca-cert ${elasticsearch.dir}-1/config/certs/ca/ca.crt --ca-key ${elasticsearch.dir}-1/config/certs/ca/ca.key --pass liferay --ip 127.0.0.1 --dns localhost --name localhost --out ${elasticsearch.dir}-1/config/certs/localhost.p12" />
+						<arg value="./elasticsearch-certutil cert --ca-cert ${elasticsearch.dir}-1/config/certs/ca/ca.crt --ca-key ${elasticsearch.dir}-1/config/certs/ca/ca.key --pass liferay --ip 127.0.0.1 --dns localhost --name localhost --out ${elasticsearch.dir}-1/config/certs/localhost.p12" />
 					</exec>
 
-					<exec dir="${elasticsearch.dir}-1/bin/x-pack" executable="/bin/bash">
+					<exec dir="${elasticsearch.dir}-1/bin" executable="/bin/bash">
 						<arg value="-c" />
 						<arg value="keytool -importkeystore -deststorepass liferay -destkeystore ${elasticsearch.dir}-1/config/certs/localhost.jks -srckeystore ${elasticsearch.dir}-1/config/certs/localhost.p12 -srcstoretype PKCS12 -srcstorepass liferay" />
 					</exec>
@@ -111,12 +112,12 @@ transportSSLEnabled="true"</echo>
 				<elseif>
 					<os family="windows" />
 					<then>
-						<exec dir="${elasticsearch.dir}-1/bin/x-pack" executable="cmd">
+						<exec dir="${elasticsearch.dir}-1/bin" executable="cmd">
 							<arg value="/c" />
-							<arg value="certutil cert --ca-cert ${elasticsearch.dir}-1/config/certs/ca/ca.crt --ca-key ${elasticsearch.dir}-1/config/certs/ca/ca.key --pass liferay --ip 127.0.0.1 --dns localhost --name localhost --out ${elasticsearch.dir}-1/config/certs/localhost.p12" />
+							<arg value="elasticsearch-certutil cert --ca-cert ${elasticsearch.dir}-1/config/certs/ca/ca.crt --ca-key ${elasticsearch.dir}-1/config/certs/ca/ca.key --pass liferay --ip 127.0.0.1 --dns localhost --name localhost --out ${elasticsearch.dir}-1/config/certs/localhost.p12" />
 						</exec>
 
-						<exec dir="${elasticsearch.dir}-1/bin/x-pack" executable="cmd">
+						<exec dir="${elasticsearch.dir}-1/bin" executable="cmd">
 							<arg value="/c" />
 							<arg value="keytool -importkeystore -deststorepass liferay -destkeystore ${elasticsearch.dir}-1/config/certs/localhost.jks -srckeystore ${elasticsearch.dir}-1/config/certs/localhost.p12 -srcstoretype PKCS12 -srcstorepass liferay" />
 						</exec>
@@ -147,63 +148,63 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 			<if>
 				<os family="unix" />
 				<then>
-					<exec dir="${elasticsearch.dir}/bin/x-pack" executable="/bin/bash">
+					<exec dir="${elasticsearch.dir}/bin" executable="/bin/bash">
 						<arg value="-c" />
-						<arg value="./certutil ca --pem --ca-dn CN=localhost --out elastic-stack-ca.zip" />
+						<arg value="./elasticsearch-certutil ca --pem --ca-dn CN=localhost --out elastic-stack-ca.zip" />
 					</exec>
 				</then>
 				<elseif>
 					<os family="windows" />
 					<then>
-						<exec dir="${elasticsearch.dir}/bin/x-pack" executable="cmd">
+						<exec dir="${elasticsearch.dir}/bin" executable="cmd">
 							<arg value="/c" />
-							<arg value="certutil ca --pem --ca-dn CN=localhost --out elastic-stack-ca.zip" />
+							<arg value="elasticsearch-certutil ca --pem --ca-dn CN=localhost --out elastic-stack-ca.zip" />
 						</exec>
 					</then>
 				</elseif>
 			</if>
 
 			<unzip
-				dest="${elasticsearch.dir}/bin/x-pack"
-				src="${elasticsearch.dir}/bin/x-pack/elastic-stack-ca.zip"
+				dest="${elasticsearch.dir}/bin"
+				src="${elasticsearch.dir}/bin/elastic-stack-ca.zip"
 			/>
 
 			<if>
 				<os family="unix" />
 				<then>
-					<exec dir="${elasticsearch.dir}/bin/x-pack" executable="/bin/bash">
+					<exec dir="${elasticsearch.dir}/bin" executable="/bin/bash">
 						<arg value="-c" />
-						<arg value="./certutil cert --ca-cert ca/ca.crt --ca-key ca/ca.key --pem --ip 127.0.0.1 --dns localhost --name localhost --out certificate-bundle.zip" />
+						<arg value="./elasticsearch-certutil cert --ca-cert ca/ca.crt --ca-key ca/ca.key --pem --ip 127.0.0.1 --dns localhost --name localhost --out certificate-bundle.zip" />
 					</exec>
 				</then>
 				<elseif>
 					<os family="windows" />
 					<then>
-						<exec dir="${elasticsearch.dir}/bin/x-pack" executable="cmd">
+						<exec dir="${elasticsearch.dir}/bin" executable="cmd">
 							<arg value="/c" />
-							<arg value="certutil cert --ca-cert ca/ca.crt --ca-key ca/ca.key --pem --ip 127.0.0.1 --dns localhost --name localhost --out certificate-bundle.zip" />
+							<arg value="elasticsearch-certutil cert --ca-cert ca/ca.crt --ca-key ca/ca.key --pem --ip 127.0.0.1 --dns localhost --name localhost --out certificate-bundle.zip" />
 						</exec>
 					</then>
 				</elseif>
 			</if>
 
 			<unzip
-				dest="${elasticsearch.dir}/bin/x-pack"
-				src="${elasticsearch.dir}/bin/x-pack/certificate-bundle.zip"
+				dest="${elasticsearch.dir}/bin"
+				src="${elasticsearch.dir}/bin/certificate-bundle.zip"
 			/>
 
 			<move
-				file="${elasticsearch.dir}/bin/x-pack/ca"
+				file="${elasticsearch.dir}/bin/ca"
 				todir="${elasticsearch.dir}/config/certs"
 			/>
 
 			<move
-				file="${elasticsearch.dir}/bin/x-pack/localhost"
+				file="${elasticsearch.dir}/bin/localhost"
 				todir="${elasticsearch.dir}/config/certs"
 			/>
 
-			<delete file="${elasticsearch.dir}/bin/x-pack/elastic-stack-ca.zip" />
-			<delete file="${elasticsearch.dir}/bin/x-pack/certificate-bundle.zip" />
+			<delete file="${elasticsearch.dir}/bin/elastic-stack-ca.zip" />
+			<delete file="${elasticsearch.dir}/bin/certificate-bundle.zip" />
 		</sequential>
 	</macrodef>
 
@@ -295,94 +296,30 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 		</sequential>
 	</macrodef>
 
-	<macrodef name="prepare-elasticsearch-x-pack">
-		<sequential>
-			<if>
-				<not>
-					<available file="${elasticsearch.dir}/${elastic.x-pack.zip.name}" />
-				</not>
-				<then>
-					<mirrors-get
-						dest="${elasticsearch.dir}/${elastic.x-pack.zip.name}"
-						skipChecksum="true"
-						src="${elastic.x-pack.zip.url}"
-					/>
-				</then>
-			</if>
-
-			<if>
-				<os family="unix" />
-				<then>
-					<exec dir="${elasticsearch.dir}/bin" executable="/bin/bash">
-						<arg value="-c" />
-						<arg value="./elasticsearch-plugin install file:///${elasticsearch.dir}/${elastic.x-pack.zip.name}" />
-					</exec>
-				</then>
-				<elseif>
-					<os family="windows" />
-					<then>
-						<exec dir="${elasticsearch.dir}/bin" executable="cmd">
-							<arg value="/c" />
-							<arg value="elasticsearch-plugin install file:///${elasticsearch.dir}/${elastic.x-pack.zip.name}" />
-						</exec>
-					</then>
-				</elseif>
-			</if>
-		</sequential>
-	</macrodef>
-
-	<macrodef name="prepare-kibana-x-pack">
-		<sequential>
-			<if>
-				<not>
-					<available file="${elastic.kibana.dir}/${elastic.x-pack.zip.name}" />
-				</not>
-				<then>
-					<mirrors-get
-						dest="${elastic.kibana.dir}/${elastic.x-pack.zip.name}"
-						skipChecksum="true"
-						src="${elastic.x-pack.zip.url}"
-					/>
-				</then>
-			</if>
-
-			<if>
-				<os family="unix" />
-				<then>
-					<exec dir="${elastic.kibana.dir}/bin" executable="/bin/bash">
-						<arg value="-c" />
-						<arg value="./kibana-plugin install file:///${elastic.kibana.dir}/${elastic.x-pack.zip.name}" />
-					</exec>
-				</then>
-				<elseif>
-					<os family="windows" />
-					<then>
-						<exec dir="${elastic.kibana.dir}/bin" executable="cmd" spawn="true">
-							<arg value="/c" />
-							<arg value="kibana-plugin install file:///${elastic.kibana.dir}/${elastic.x-pack.zip.name}" />
-						</exec>
-					</then>
-				</elseif>
-			</if>
-		</sequential>
-	</macrodef>
-
 	<macrodef name="set-x-pack-user-passwords">
 		<sequential>
+			<exec executable="curl" outputproperty="curl.output.trial">
+				<arg value="-k" />
+				<arg value="-X POST" />
+				<arg value="https://localhost:9200/_xpack/license/start_trial?acknowledge=true" />
+			</exec>
+
+			<echo>${curl.output.trial}</echo>
+
 			<if>
 				<os family="unix" />
 				<then>
-					<exec dir="${elasticsearch.dir}-1/bin/x-pack" executable="/bin/bash" outputproperty="elastic.xpack.user.passwords">
+					<exec dir="${elasticsearch.dir}-1/bin" executable="/bin/bash" outputproperty="elastic.xpack.user.passwords">
 						<arg value="-c" />
-						<arg value="./setup-passwords auto --batch" />
+						<arg value="./elasticsearch-setup-passwords auto --batch" />
 					</exec>
 				</then>
 				<elseif>
 					<os family="windows" />
 					<then>
-						<exec dir="${elasticsearch.dir}-1/bin/x-pack" executable="cmd" outputproperty="elastic.xpack.user.passwords">
+						<exec dir="${elasticsearch.dir}-1/bin" executable="cmd" outputproperty="elastic.xpack.user.passwords">
 							<arg value="/c" />
-							<arg value="setup-passwords auto --batch" />
+							<arg value="elasticsearch-setup-passwords auto --batch" />
 						</exec>
 					</then>
 				</elseif>
@@ -567,7 +504,8 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 			result="elasticsearch.master-eligible.nodes.quorum"
 		/>
 
-		<echo append="true" file="${elasticsearch.dir}/config/elasticsearch.yml">${line.separator}discovery.zen.minimum_master_nodes: ${elasticsearch.master-eligible.nodes.quorum}</echo>
+		<echo append="true" file="${elasticsearch.dir}/config/elasticsearch.yml">${line.separator}discovery.zen.minimum_master_nodes: ${elasticsearch.master-eligible.nodes.quorum}
+xpack.monitoring.collection.enabled: true</echo>
 	</target>
 
 	<target name="deploy-elasticsearch6">
@@ -616,8 +554,6 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 		<if>
 			<equals arg1="true" arg2="true" />
 			<then>
-				<prepare-elasticsearch-x-pack />
-
 				<property name="xpack.certificate.password" value="liferay" />
 
 				<generate-x-pack-security-certificates certificate.password="${xpack.certificate.password}" />
@@ -753,8 +689,6 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 		<if>
 			<equals arg1="true" arg2="true" />
 			<then>
-				<prepare-kibana-x-pack />
-
 				<configure-kibana-x-pack-security-properties />
 			</then>
 		</if>
@@ -807,7 +741,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 				<then>
 					<loadfile
 						property="pid-elasticsearch"
-						srcFile="${elasticsearch.dir}-${elasticsearch.node.number}/bin/pid-elasticsearch"
+						srcFile="${elasticsearch.dir}-${elasticsearch.node.number}/pid-elasticsearch"
 					>
 						<filterchain>
 							<linecontainsregexp>
