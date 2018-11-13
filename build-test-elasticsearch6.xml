@@ -614,7 +614,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 		<get-testcase-property property.name="elastic.xpack.enabled" />
 
 		<if>
-			<equals arg1="${elastic.xpack.enabled}" arg2="true" />
+			<equals arg1="true" arg2="true" />
 			<then>
 				<prepare-elasticsearch-x-pack />
 
@@ -646,7 +646,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 		<antcall target="start-elasticsearch-node" />
 
 		<if>
-			<equals arg1="${elastic.xpack.enabled}" arg2="true" />
+			<equals arg1="true" arg2="true" />
 			<then>
 				<sleep seconds="30" />
 
@@ -686,6 +686,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 				/>
 
 				<chmod
+					maxparallel="10"
 					perm="a+rwx"
 					type="both"
 				>
@@ -729,6 +730,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 		<unzip-kibana />
 
 		<chmod
+			maxparallel="10"
 			perm="a+x"
 			type="both"
 		>
@@ -749,7 +751,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 		<get-testcase-property property.name="elastic.xpack.enabled" />
 
 		<if>
-			<equals arg1="${elastic.xpack.enabled}" arg2="true" />
+			<equals arg1="true" arg2="true" />
 			<then>
 				<prepare-kibana-x-pack />
 
@@ -836,7 +838,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 		</antelope:repeat>
 
 		<if>
-			<equals arg1="${elastic.xpack.enabled}" arg2="true" />
+			<equals arg1="true" arg2="true" />
 			<then>
 				<print-file file.name="${elastic.kibana.dir}/bin/kibana.log" />
 
