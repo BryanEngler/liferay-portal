@@ -103,6 +103,8 @@ public class ExpandoColumnConstants {
 
 	public static final String NUMBER_LABEL = "custom.field.number";
 
+	public static final String PROPERTY_BOOST = "boost";
+
 	public static final String PROPERTY_DISPLAY_TYPE = "display-type";
 
 	public static final String PROPERTY_DISPLAY_TYPE_CHECKBOX = "checkbox";

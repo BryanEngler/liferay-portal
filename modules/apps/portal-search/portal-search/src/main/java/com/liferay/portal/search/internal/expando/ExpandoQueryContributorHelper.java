@@ -20,9 +20,11 @@ import com.liferay.expando.kernel.model.ExpandoColumnConstants;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactory;
 import com.liferay.expando.kernel.util.ExpandoBridgeIndexer;
+import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.ParseException;
 import com.liferay.portal.kernel.search.Query;
+import com.liferay.portal.kernel.search.generic.MatchQuery;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Localization;
@@ -110,6 +112,12 @@ public class ExpandoQueryContributorHelper {
 
 		String fieldName = getExpandoFieldName(attributeName, expandoBridge);
 
+		float boost = GetterUtil.getFloat(properties.getProperty("boost"));
+
+		if (boost > 0) {
+			addBoostQuery(fieldName, boost);
+		}
+
 		boolean like = false;
 
 		if (indexType == ExpandoColumnConstants.INDEX_TYPE_TEXT) {
@@ -121,6 +129,19 @@ public class ExpandoQueryContributorHelper {
 		}
 		else {
 			_addTerm(_booleanQuery, fieldName, _keywords, like);
+		}
+	}
+
+	protected void addBoostQuery(String fieldName, float boost) {
+		MatchQuery matchQuery = new MatchQuery(fieldName, _keywords);
+
+		matchQuery.setBoost(boost);
+
+		try {
+			_booleanQuery.add(matchQuery, BooleanClauseOccur.SHOULD);
+		}
+		catch (ParseException pe) {
+			throw new RuntimeException(pe);
 		}
 	}
 

@@ -46,6 +46,7 @@ if (column != null) {
 	defaultValue = expandoBridge.getAttributeDefault(column.getName());
 }
 
+float boost = GetterUtil.getFloat(properties.get(ExpandoColumnConstants.PROPERTY_BOOST));
 boolean propertyHidden = GetterUtil.getBoolean(properties.get(ExpandoColumnConstants.PROPERTY_HIDDEN));
 boolean propertyVisibleWithUpdatePermission = GetterUtil.getBoolean(properties.get(ExpandoColumnConstants.PROPERTY_VISIBLE_WITH_UPDATE_PERMISSION));
 int propertyIndexType = GetterUtil.getInteger(properties.get(ExpandoColumnConstants.INDEX_TYPE));
@@ -254,6 +255,10 @@ renderResponse.setTitle(modelResourceName + ": " + ((column == null) ? LanguageU
 
 					<aui:option label="as-keyword" selected="<%= propertyIndexType == ExpandoColumnConstants.INDEX_TYPE_KEYWORD %>" value="<%= ExpandoColumnConstants.INDEX_TYPE_KEYWORD %>" />
 				</aui:select>
+
+				<aui:input name="PropertyName--boost--" type="hidden" value="boost" />
+
+				<aui:input cssClass="lfr-input-text short-input-text" helpMessage="boost-help" label="boost" name="Property--boost--" type="text" value="<%= boost %>" />
 
 				<c:if test="<%= (type == ExpandoColumnConstants.DOUBLE_ARRAY) || (type == ExpandoColumnConstants.FLOAT_ARRAY) || (type == ExpandoColumnConstants.INTEGER_ARRAY) || (type == ExpandoColumnConstants.LONG_ARRAY) || (type == ExpandoColumnConstants.NUMBER_ARRAY) || (type == ExpandoColumnConstants.SHORT_ARRAY) || (type == ExpandoColumnConstants.STRING_ARRAY) %>">
 					<aui:input name="PropertyName--display-type--" type="hidden" value="display-type" />
