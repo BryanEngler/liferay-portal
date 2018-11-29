@@ -96,26 +96,35 @@ public class ExpandoPortlet extends MVCPortlet {
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		String modelResource = ParamUtil.getString(
-			actionRequest, "modelResource");
+//		String modelResource = ParamUtil.getString(
+//			actionRequest, "modelResource");
 		long resourcePrimKey = ParamUtil.getLong(
 			actionRequest, "resourcePrimKey");
 
 		String name = ParamUtil.getString(actionRequest, "name");
 		String preset = ParamUtil.getString(actionRequest, "type");
 
-		ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(
-			themeDisplay.getCompanyId(), modelResource, resourcePrimKey);
+		List<String> modelResources = new ArrayList<>();
 
-		if (preset.startsWith("Preset")) {
-			ExpandoPresetUtil.addPresetExpando(expandoBridge, preset, name);
-		}
-		else {
-			int type = ParamUtil.getInteger(actionRequest, "type");
+		modelResources.add("com.liferay.bookmarks.model.BookmarksEntry");
+		modelResources.add("com.liferay.calendar.model.CalendarBooking");
 
-			expandoBridge.addAttribute(name, type);
+		for (String modelResource : modelResources) {
+			ExpandoBridge expandoBridge =
+				ExpandoBridgeFactoryUtil.getExpandoBridge(
+					themeDisplay.getCompanyId(), modelResource,
+					resourcePrimKey);
 
-			updateProperties(actionRequest, expandoBridge, name);
+			if (preset.startsWith("Preset")) {
+				ExpandoPresetUtil.addPresetExpando(expandoBridge, preset, name);
+			}
+			else {
+				int type = ParamUtil.getInteger(actionRequest, "type");
+
+				expandoBridge.addAttribute(name, type);
+
+				updateProperties(actionRequest, expandoBridge, name);
+			}
 		}
 	}
 
