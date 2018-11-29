@@ -14,6 +14,20 @@
 
 package com.liferay.portal.search.admin.web.internal.portlet.action;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.list.model.AssetListEntry;
+import com.liferay.asset.list.service.AssetListEntryLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.storage.Fields;
+import com.liferay.dynamic.data.mapping.util.DDMIndexer;
+import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverter;
+import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.service.JournalArticleLocalServiceUtil;
+import com.liferay.journal.util.JournalConverter;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.instances.service.PortalInstancesLocalService;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskConstants;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManager;
@@ -24,21 +38,30 @@ import com.liferay.portal.kernel.messaging.MessageListener;
 import com.liferay.portal.kernel.messaging.MessageListenerException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.search.Document;
+import com.liferay.portal.kernel.search.DocumentImpl;
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.IndexWriterHelper;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.uuid.PortalUUID;
 import com.liferay.portal.search.admin.web.internal.constants.SearchAdminPortletKeys;
+import com.liferay.portal.search.configuration.CustomRelevanceConfiguration;
+import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
+import com.liferay.portal.search.engine.adapter.document.UpdateDocumentRequest;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -47,13 +70,16 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletSession;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Wade Cao
  */
 @Component(
+	configurationPid = "com.liferay.portal.search.configuration.CustomRelevanceConfiguration",
 	property = {
 		"javax.portlet.name=" + SearchAdminPortletKeys.SEARCH_ADMIN,
 		"mvc.command.name=/search_admin/edit"
@@ -93,8 +119,150 @@ public class EditMVCActionCommand extends BaseMVCActionCommand {
 		else if (cmd.equals("reindexDictionaries")) {
 			reindexDictionaries(actionRequest);
 		}
+		else if (cmd.equals("applyCustomRelevance")) {
+			applyCustomRelevance(actionRequest, themeDisplay);
+		}
 
 		sendRedirect(actionRequest, actionResponse, redirect);
+	}
+
+	protected void applyCustomRelevance(
+		ActionRequest actionRequest, ThemeDisplay themeDisplay) throws Exception {
+
+		//get the field name from the config
+		String boostFieldName = customRelevanceConfiguration.boostFieldName();
+
+		//get the journalaritcle Id from the config
+		long templateJournalArticleId = customRelevanceConfiguration.templateAssetId();
+
+		//get the journalaritcle from the Id
+
+		//journal-api
+		JournalArticle journalArticle =
+			JournalArticleLocalServiceUtil.fetchJournalArticle(
+				templateJournalArticleId);
+
+		//get the content/boostwords from the template journalarticle
+		String content = extractDDMContent(journalArticle, "en_US");
+
+		//get the assetlistId from the config
+		long assetListEntryId = customRelevanceConfiguration.assetListId();
+
+		//get the asset list from the assetlistId
+		//asset-list-api
+		AssetListEntry assetListEntry =
+			AssetListEntryLocalServiceUtil.fetchAssetListEntry(
+				assetListEntryId);
+
+		//quick way to test boosting without having to create journal article/structure/template
+		boolean useAssetListTitleAsBoostWords = false;
+
+		if (useAssetListTitleAsBoostWords) {
+			content = assetListEntry.getTitle();
+		}
+
+		//get the assets in the list
+		List<AssetEntry> assetEntries = assetListEntry.getAssetEntries();
+
+		//for each asset, add the field and content to the document and index it
+		for (AssetEntry assetEntry : assetEntries) {
+			String uid = Field.getUID(
+				assetEntry.getClassName(),
+				String.valueOf(assetEntry.getClassPK())); //WARNING, may not work for JournalArticle
+			//see JournalArticleIndexer.doGetDocument() for document.addUID with ClassPK
+
+			Document document = new DocumentImpl();
+
+			document.addKeyword(Field.UID, uid);
+			document.addText(boostFieldName, content);
+
+			//_indexWriterHelper.partiallyUpdateDocument(
+			//	null, themeDisplay.getCompanyId(), document, true);
+
+
+			//use low level api
+
+			String indexName = "liferay-" + themeDisplay.getCompanyId();
+
+			UpdateDocumentRequest updateDocumentRequest =
+				new UpdateDocumentRequest(indexName, uid, document);
+
+			updateDocumentRequest.setType("LiferayDocumentType");
+
+			searchEngineAdapter.execute(updateDocumentRequest);
+		}
+	}
+
+	protected String extractDDMContent(
+			JournalArticle article, String languageId)
+		throws Exception {
+
+		DDMStructure ddmStructure = _ddmStructureLocalService.fetchStructure(
+			_portal.getSiteGroupId(article.getGroupId()),
+			_portal.getClassNameId(JournalArticle.class),
+			article.getDDMStructureKey(), true);
+
+		if (ddmStructure == null) {
+			return StringPool.BLANK;
+		}
+
+		DDMFormValues ddmFormValues = null;
+
+		try {
+			Fields fields = _journalConverter.getDDMFields(
+				ddmStructure, article.getDocument());
+
+			ddmFormValues = _fieldsToDDMFormValuesConverter.convert(
+				ddmStructure, fields);
+		}
+		catch (Exception e) {
+			return StringPool.BLANK;
+		}
+
+		if (ddmFormValues == null) {
+			return StringPool.BLANK;
+		}
+
+		return _ddmIndexer.extractIndexableAttributes(
+			ddmStructure, ddmFormValues, LocaleUtil.fromLanguageId(languageId));
+	}
+
+
+	@Reference(unbind = "-")
+	protected void setJournalConverter(JournalConverter journalConverter) {
+		_journalConverter = journalConverter;
+	}
+
+	private JournalConverter _journalConverter;
+
+	@Reference(unbind = "-")
+	protected void setDDMStructureLocalService(
+		DDMStructureLocalService ddmStructureLocalService) {
+
+		_ddmStructureLocalService = ddmStructureLocalService;
+	}
+
+	private DDMStructureLocalService _ddmStructureLocalService;
+
+	@Reference
+	private Portal _portal;
+
+	private DDMIndexer _ddmIndexer;
+
+
+	@Reference(unbind = "-")
+	protected void setDDMIndexer(DDMIndexer ddmIndexer) {
+		_ddmIndexer = ddmIndexer;
+	}
+
+	private FieldsToDDMFormValuesConverter _fieldsToDDMFormValuesConverter;
+
+
+	@Reference(unbind = "-")
+	protected void setFieldsToDDMFormValuesConverter(
+		FieldsToDDMFormValuesConverter fieldsToDDMFormValuesConverter) {
+
+		_fieldsToDDMFormValuesConverter = fieldsToDDMFormValuesConverter;
 	}
 
 	protected void reindex(final ActionRequest actionRequest) throws Exception {
@@ -102,7 +270,6 @@ public class EditMVCActionCommand extends BaseMVCActionCommand {
 			WebKeys.THEME_DISPLAY);
 
 		Map<String, Serializable> taskContextMap = new HashMap<>();
-
 		String className = ParamUtil.getString(actionRequest, "className");
 
 		if (!ParamUtil.getBoolean(actionRequest, "blocking")) {
@@ -200,5 +367,18 @@ public class EditMVCActionCommand extends BaseMVCActionCommand {
 
 	@Reference
 	private PortalUUID _portalUUID;
+
+	@Reference
+	protected SearchEngineAdapter searchEngineAdapter;
+
+	@Activate
+	@Modified
+	protected void activate(Map<String, Object> properties) {
+		customRelevanceConfiguration =
+			ConfigurableUtil.createConfigurable(
+				CustomRelevanceConfiguration.class, properties);
+	}
+
+	protected CustomRelevanceConfiguration customRelevanceConfiguration;
 
 }

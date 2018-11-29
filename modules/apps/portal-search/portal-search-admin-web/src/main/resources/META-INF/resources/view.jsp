@@ -153,6 +153,15 @@ portletURL.setParameter("mvcRenderCommandName", "/search_admin/view");
 						<aui:button cssClass="save-server-button" data-cmd="reindexDictionaries" value="execute" />
 					</div>
 				</li>
+				<li class="clearfix list-group-item">
+					<div class="pull-left">
+						<h5><liferay-ui:message key="apply-custom-relevance" /></h5>
+					</div>
+
+					<div class="pull-right">
+						<aui:button cssClass="save-server-button" data-cmd="applyCustomRelevance" value="execute" />
+					</div>
+				</li>
 
 				<%
 				List<Indexer<?>> indexers = new ArrayList<>(IndexerRegistryUtil.getIndexers());

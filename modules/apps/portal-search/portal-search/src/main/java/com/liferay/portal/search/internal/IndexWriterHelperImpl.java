@@ -426,6 +426,10 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 			_log.debug("Document " + document.toString());
 		}
 
+		if (searchEngineId == null) {
+			searchEngineId = _searchEngineHelper.getDefaultSearchEngineId();
+		}
+
 		SearchEngine searchEngine = _searchEngineHelper.getSearchEngine(
 			searchEngineId);
 
