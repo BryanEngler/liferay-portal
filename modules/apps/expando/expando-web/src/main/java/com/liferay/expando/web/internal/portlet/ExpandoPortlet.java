@@ -96,8 +96,8 @@ public class ExpandoPortlet extends MVCPortlet {
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-//		String modelResource = ParamUtil.getString(
-//			actionRequest, "modelResource");
+		String modelResource = ParamUtil.getString(
+			actionRequest, "modelResource");
 		long resourcePrimKey = ParamUtil.getLong(
 			actionRequest, "resourcePrimKey");
 
@@ -109,7 +109,7 @@ public class ExpandoPortlet extends MVCPortlet {
 		modelResources.add("com.liferay.bookmarks.model.BookmarksEntry");
 		modelResources.add("com.liferay.calendar.model.CalendarBooking");
 
-		for (String modelResource : modelResources) {
+		//for (String modelResource : modelResources) {
 			ExpandoBridge expandoBridge =
 				ExpandoBridgeFactoryUtil.getExpandoBridge(
 					themeDisplay.getCompanyId(), modelResource,
@@ -125,7 +125,7 @@ public class ExpandoPortlet extends MVCPortlet {
 
 				updateProperties(actionRequest, expandoBridge, name);
 			}
-		}
+		//}
 	}
 
 	public void deleteExpando(
