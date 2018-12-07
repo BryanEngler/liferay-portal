@@ -280,7 +280,7 @@ public class EmbeddedElasticsearchConnection
 			sb.append("as its search engine. Do NOT use embedded ");
 			sb.append("Elasticsearch in production. Embedded Elasticsearch ");
 			sb.append("is useful for development and demonstration purposes. ");
-			sb.append("For details on the limitations of Embedded ");
+			sb.append("For details on the limitations of embedded ");
 			sb.append("Elasticsearch in Liferay, refer to the documentation. ");
 			sb.append("Remote Elasticsearch connections can be configured in ");
 			sb.append("the Control Panel.");
