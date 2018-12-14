@@ -62,7 +62,7 @@ public class SearchRequestExecutorFixture {
 	protected CommonSearchSourceBuilderAssembler
 		createCommonSearchRequestBuilderAssembler() {
 
-		return new CommonSearchRequestBuilderAssemblerImpl() {
+		return new CommonSearchSourceBuilderAssemblerImpl() {
 			{
 				facetTranslator = createDefaultFacetTranslator();
 
