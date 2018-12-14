@@ -163,7 +163,7 @@ public class InstantIndexesTest {
 
 		return new IndexSynchronizerImpl() {
 			{
-				setElasticsearchClientResolver(elasticsearchFixture);
+				//setCreateIndexRequestExecutor();
 				setIndexDefinitionsHolder(indexDefinitionsHolderImpl);
 			}
 		};

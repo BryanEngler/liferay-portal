@@ -30,9 +30,9 @@ import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 
 import java.util.Arrays;
 
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingAction;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequestBuilder;
+import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentType;
 
@@ -116,8 +116,7 @@ public class GeoLocationPointFieldTest extends BaseIndexingTestCase {
 		}
 
 		@Override
-		public void contribute(
-			CreateIndexRequestBuilder createIndexRequestBuilder) {
+		public void contribute(CreateIndexRequest createIndexRequest) {
 		}
 
 		@Override

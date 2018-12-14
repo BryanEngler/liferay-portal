@@ -96,6 +96,36 @@ public class ElasticsearchConnectionManagerTest {
 	}
 
 	@Test
+	public void testGetRestHighLevelClient() {
+		modify(OperationMode.EMBEDDED);
+
+		_elasticsearchConnectionManager.getRestHighLevelClient();
+
+		Mockito.verify(
+			_embeddedElasticsearchConnection
+		).getRestHighLevelClient();
+
+		modify(OperationMode.REMOTE);
+
+		_elasticsearchConnectionManager.getRestHighLevelClient();
+
+		Mockito.verify(
+			_remoteElasticsearchConnection
+		).getRestHighLevelClient();
+	}
+
+	@Test
+	public void testGetRestHighLevelClientWhenOperationModeNotSet() {
+		try {
+			_elasticsearchConnectionManager.getRestHighLevelClient();
+
+			Assert.fail();
+		}
+		catch (ElasticsearchConnectionNotInitializedException ecnie) {
+		}
+	}
+
+	@Test
 	public void testSetModifiedOperationModeResetsConnection() {
 		HashMap<String, Object> properties = new HashMap<>();
 
