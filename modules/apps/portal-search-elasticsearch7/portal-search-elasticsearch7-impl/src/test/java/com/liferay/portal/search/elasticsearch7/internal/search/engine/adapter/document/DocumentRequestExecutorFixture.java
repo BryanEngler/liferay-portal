@@ -41,7 +41,6 @@ public class DocumentRequestExecutorFixture {
 
 		return new ElasticsearchBulkableDocumentRequestTranslator() {
 			{
-				setElasticsearchClientResolver(elasticsearchClientResolver);
 				setElasticsearchDocumentFactory(elasticsearchDocumentFactory);
 			}
 		};

@@ -31,11 +31,13 @@ import com.liferay.portal.search.engine.adapter.cluster.StateClusterResponse;
 import com.liferay.portal.search.engine.adapter.cluster.StatsClusterRequest;
 import com.liferay.portal.search.engine.adapter.cluster.StatsClusterResponse;
 
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequestBuilder;
-import org.elasticsearch.client.AdminClient;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.IndicesAdminClient;
+import java.io.IOException;
+
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.CreateIndexRequest;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -168,29 +170,37 @@ public class ElasticsearchSearchEngineAdapterClusterRequestTest {
 	}
 
 	protected void createIndex() {
-		Client client = _elasticsearchFixture.getClient();
+		RestHighLevelClient restHighLevelClient =
+			_elasticsearchFixture.getRestHighLevelClient();
 
-		AdminClient adminClient = client.admin();
+		IndicesClient indicesClient = restHighLevelClient.indices();
 
-		IndicesAdminClient indicesAdminClient = adminClient.indices();
+		CreateIndexRequest createIndexRequest = new CreateIndexRequest(
+			_INDEX_NAME);
 
-		CreateIndexRequestBuilder createIndexRequestBuilder =
-			indicesAdminClient.prepareCreate(_INDEX_NAME);
-
-		createIndexRequestBuilder.get();
+		try {
+			indicesClient.create(createIndexRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 	}
 
 	protected void deleteIndex() {
-		Client client = _elasticsearchFixture.getClient();
+		RestHighLevelClient restHighLevelClient =
+			_elasticsearchFixture.getRestHighLevelClient();
 
-		AdminClient adminClient = client.admin();
+		IndicesClient indicesClient = restHighLevelClient.indices();
 
-		IndicesAdminClient indicesAdminClient = adminClient.indices();
+		DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest(
+			_INDEX_NAME);
 
-		DeleteIndexRequestBuilder deleteIndexRequestBuilder =
-			indicesAdminClient.prepareDelete(_INDEX_NAME);
-
-		deleteIndexRequestBuilder.get();
+		try {
+			indicesClient.delete(deleteIndexRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 	}
 
 	private static final String _ELASTICSEARCH_DEFAULT_NUMBER_OF_SHARDS = "1";
