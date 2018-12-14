@@ -92,12 +92,7 @@ public class DocumentRequestExecutorFixture {
 	protected ElasticsearchBulkableDocumentRequestTranslator
 		createElasticsearchBulkableDocumentRequestTranslator() {
 
-		return new ElasticsearchBulkableDocumentRequestTranslator() {
-			{
-				elasticsearchConnectionManager =
-					_elasticsearchConnectionManager;
-			}
-		};
+		return new ElasticsearchBulkableDocumentRequestTranslator();
 	}
 
 	protected IndexDocumentRequestExecutor

@@ -21,7 +21,6 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.TestElastics
 import com.liferay.portal.search.engine.adapter.index.UpdateIndexSettingsIndexRequest;
 
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
-import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequestBuilder;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -81,13 +80,9 @@ public class UpdateIndexSettingsIndexRequestExecutorTest {
 					}
 				};
 
-		UpdateSettingsRequestBuilder updateSettingsRequestBuilder =
-			updateIndexSettingsIndexRequestExecutorImpl.
-				createUpdateSettingsRequestBuilder(
-					updateIndexSettingsIndexRequest);
-
 		UpdateSettingsRequest updateSettingsRequest =
-			updateSettingsRequestBuilder.request();
+			updateIndexSettingsIndexRequestExecutorImpl.
+				createUpdateSettingsRequest(updateIndexSettingsIndexRequest);
 
 		Assert.assertEquals(1, updateSettingsRequest.indices().length);
 		Assert.assertEquals(_INDEX_NAME, updateSettingsRequest.indices()[0]);

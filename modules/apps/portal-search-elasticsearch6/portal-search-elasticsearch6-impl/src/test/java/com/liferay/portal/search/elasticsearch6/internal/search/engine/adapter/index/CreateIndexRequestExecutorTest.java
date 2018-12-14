@@ -20,8 +20,6 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import com.liferay.portal.search.elasticsearch6.internal.connection.TestElasticsearchConnectionManager;
 import com.liferay.portal.search.engine.adapter.index.CreateIndexRequest;
 
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -76,13 +74,10 @@ public class CreateIndexRequestExecutorTest {
 				}
 			};
 
-		CreateIndexRequestBuilder createIndexRequestBuilder =
-			createIndexRequestExecutorImpl.createCreateIndexRequestBuilder(
-				createIndexRequest);
-
 		org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 			elasticsearchCreateIndexRequest =
-				createIndexRequestBuilder.request();
+				createIndexRequestExecutorImpl.createCreateIndexRequest(
+					createIndexRequest);
 
 		Assert.assertEquals(
 			_INDEX_NAME, elasticsearchCreateIndexRequest.index());

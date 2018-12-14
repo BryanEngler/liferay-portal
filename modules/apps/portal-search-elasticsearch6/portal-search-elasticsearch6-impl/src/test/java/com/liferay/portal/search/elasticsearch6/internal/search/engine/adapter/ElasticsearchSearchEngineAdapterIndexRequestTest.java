@@ -15,7 +15,12 @@
 package com.liferay.portal.search.elasticsearch6.internal.search.engine.adapter;
 
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.json.JSONFactoryImpl;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchFixture;
 import com.liferay.portal.search.elasticsearch6.internal.connection.TestElasticsearchConnectionManager;
@@ -48,28 +53,27 @@ import com.liferay.portal.search.engine.adapter.index.RefreshIndexResponse;
 import com.liferay.portal.search.engine.adapter.index.UpdateIndexSettingsIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.UpdateIndexSettingsIndexResponse;
 
+import java.io.IOException;
+
 import java.util.Map;
 
-import org.elasticsearch.action.admin.cluster.state.ClusterStateAction;
-import org.elasticsearch.action.admin.cluster.state.ClusterStateRequestBuilder;
-import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
-import org.elasticsearch.action.admin.indices.close.CloseIndexAction;
-import org.elasticsearch.action.admin.indices.close.CloseIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequestBuilder;
-import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
-import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequestBuilder;
+import org.apache.http.util.EntityUtils;
+
+import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
+import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequest;
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse;
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequestBuilder;
-import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequestBuilder;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
-import org.elasticsearch.client.AdminClient;
-import org.elasticsearch.client.IndicesAdminClient;
-import org.elasticsearch.cluster.ClusterState;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.Response;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.cluster.metadata.IndexMetaData;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
-import org.elasticsearch.cluster.metadata.MetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.xcontent.XContentType;
 
@@ -86,6 +90,8 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 
 	@Before
 	public void setUp() throws Exception {
+		setUpJSONFactoryUtil();
+
 		_elasticsearchFixture = new ElasticsearchFixture(
 			ElasticsearchSearchEngineAdapterIndexRequestTest.class.
 				getSimpleName());
@@ -95,20 +101,17 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 		ElasticsearchConnectionManager elasticsearchConnectionManager =
 			new TestElasticsearchConnectionManager(_elasticsearchFixture);
 
-		AdminClient adminClient =
-			elasticsearchConnectionManager.getAdminClient();
-
-		_indicesAdminClient = adminClient.indices();
+		_indicesClient = elasticsearchConnectionManager.getIndicesClient();
 
 		_searchEngineAdapter = createSearchEngineAdapter(
 			elasticsearchConnectionManager);
 
-		createIndex();
+		createIndex(_INDEX_NAME);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		deleteIndex();
+		deleteIndex(_INDEX_NAME);
 
 		_elasticsearchFixture.tearDown();
 	}
@@ -163,26 +166,14 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 
 		Assert.assertTrue(createIndexResponse.isAcknowledged());
 
-		IndicesExistsRequestBuilder indicesExistsRequestBuilder =
-			_indicesAdminClient.prepareExists("test_index_2");
+		Assert.assertTrue(indiciesExists("test_index_2"));
 
-		IndicesExistsResponse indicesExistsResponse =
-			indicesExistsRequestBuilder.get();
-
-		Assert.assertTrue(indicesExistsResponse.isExists());
-
-		DeleteIndexRequestBuilder deleteIndexRequestBuilder =
-			_indicesAdminClient.prepareDelete("test_index_2");
-
-		deleteIndexRequestBuilder.get();
+		deleteIndex("test_index_2");
 	}
 
 	@Test
 	public void testExecuteDeleteIndexRequest() {
-		CreateIndexRequestBuilder createIndexRequestBuilder =
-			_indicesAdminClient.prepareCreate("test_index_2");
-
-		createIndexRequestBuilder.get();
+		createIndex("test_index_2");
 
 		DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest(
 			"test_index_2");
@@ -192,13 +183,7 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 
 		Assert.assertTrue(deleteIndexResponse.isAcknowledged());
 
-		IndicesExistsRequestBuilder indicesExistsRequestBuilder =
-			_indicesAdminClient.prepareExists("test_index_2");
-
-		IndicesExistsResponse indicesExistsResponse =
-			indicesExistsRequestBuilder.get();
-
-		Assert.assertFalse(indicesExistsResponse.isExists());
+		Assert.assertFalse(indiciesExists("test_index_2"));
 	}
 
 	@Test
@@ -306,13 +291,20 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 
 		Assert.assertTrue(putMappingIndexResponse.isAcknowledged());
 
-		GetMappingsRequestBuilder getMappingsRequestBuilder =
-			_indicesAdminClient.prepareGetMappings(_INDEX_NAME);
+		GetMappingsRequest getMappingsRequest = new GetMappingsRequest();
 
-		getMappingsRequestBuilder.setTypes(mappingName);
+		getMappingsRequest.indices(_INDEX_NAME);
+		getMappingsRequest.types(mappingName);
 
-		GetMappingsResponse getMappingsResponse =
-			getMappingsRequestBuilder.get();
+		GetMappingsResponse getMappingsResponse = null;
+
+		try {
+			getMappingsResponse = _indicesClient.getMapping(
+				getMappingsRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 
 		ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>>
 			immutableOpenMap1 = getMappingsResponse.getMappings();
@@ -341,10 +333,7 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 	@Ignore
 	@Test
 	public void testExecuteUpdateIndexSettingsIndexRequest() {
-		CreateIndexRequestBuilder createIndexRequestBuilder =
-			_indicesAdminClient.prepareCreate("test_index_2");
-
-		createIndexRequestBuilder.get();
+		createIndex("test_index_2");
 
 		UpdateIndexSettingsIndexRequest updateIndexSettingsIndexRequest =
 			new UpdateIndexSettingsIndexRequest("test_index_2");
@@ -364,32 +353,41 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 
 		Assert.assertTrue(indexSettingsIndexResponse.isAcknowledged());
 
-		GetSettingsRequestBuilder getSettingsRequestBuilder =
-			_indicesAdminClient.prepareGetSettings("test_index_2");
+		GetSettingsRequest getSettingsRequest = new GetSettingsRequest();
 
-		GetSettingsResponse getSettingsResponse =
-			getSettingsRequestBuilder.get();
+		getSettingsRequest.indices("test_index_2");
 
-		String refreshInterval = getSettingsResponse.getSetting(
-			"test_index_2", "refresh_interval");
+		try {
+			GetSettingsResponse getSettingsResponse =
+				_indicesClient.getSettings(
+					getSettingsRequest, RequestOptions.DEFAULT);
 
-		Assert.assertEquals("2s", refreshInterval);
+			String refreshInterval = getSettingsResponse.getSetting(
+				"test_index_2", "refresh_interval");
 
-		DeleteIndexRequestBuilder deleteIndexRequestBuilder =
-			_indicesAdminClient.prepareDelete("test_index_2");
+			Assert.assertEquals("2s", refreshInterval);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 
-		deleteIndexRequestBuilder.get();
+		deleteIndex("test_index_2");
 	}
 
 	@Test
-	public void testOpenIndexRequest() {
-		CloseIndexRequestBuilder closeIndexRequestBuilder =
-			CloseIndexAction.INSTANCE.newRequestBuilder(
-				_elasticsearchFixture.getClient());
+	public void testExecuteOpenIndexRequest() {
+		org.elasticsearch.action.admin.indices.close.CloseIndexRequest
+			elasticsearchCloseIndexRequest = new
+				org.elasticsearch.action.admin.indices.close.CloseIndexRequest(
+					_INDEX_NAME);
 
-		closeIndexRequestBuilder.setIndices(_INDEX_NAME);
-
-		closeIndexRequestBuilder.get();
+		try {
+			_indicesClient.close(
+				elasticsearchCloseIndexRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 
 		assertIndexMetaDataState(_INDEX_NAME, IndexMetaData.State.CLOSE);
 
@@ -414,32 +412,53 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 	protected void assertIndexMetaDataState(
 		String indexName, IndexMetaData.State indexMetaDataState) {
 
-		ClusterStateRequestBuilder clusterStateRequestBuilder =
-			ClusterStateAction.INSTANCE.newRequestBuilder(
-				_elasticsearchFixture.getClient());
+		RestHighLevelClient restHighLevelClient =
+			_elasticsearchFixture.getRestHighLevelClient();
 
-		clusterStateRequestBuilder.setIndices(indexName);
+		RestClient restLowLevelClient = restHighLevelClient.getLowLevelClient();
 
-		ClusterStateResponse clusterStateResponse =
-			clusterStateRequestBuilder.get();
+		Request request = new Request(
+			"GET", "/_cluster/state/metadata/" + indexName);
 
-		ClusterState clusterState = clusterStateResponse.getState();
+		try {
+			Response response = restLowLevelClient.performRequest(request);
 
-		MetaData metaData = clusterState.getMetaData();
+			String responseBody = EntityUtils.toString(response.getEntity());
 
-		ImmutableOpenMap<String, IndexMetaData> indexMetaDataMap =
-			metaData.getIndices();
+			JSONObject responseJSONObject = JSONFactoryUtil.createJSONObject(
+				responseBody);
 
-		IndexMetaData indexMetaData = indexMetaDataMap.get(_INDEX_NAME);
+			JSONObject metadataJSONObject = responseJSONObject.getJSONObject(
+				"metadata");
 
-		Assert.assertEquals(indexMetaDataState, indexMetaData.getState());
+			JSONObject indicesJSONObject = metadataJSONObject.getJSONObject(
+				"indices");
+
+			JSONObject indexJSONObject = indicesJSONObject.getJSONObject(
+				indexName);
+
+			String state = GetterUtil.getString(indexJSONObject.get("state"));
+
+			Assert.assertEquals(translateState(indexMetaDataState), state);
+		}
+		catch (Exception e) {
+			throw new SystemException(e);
+		}
 	}
 
-	protected void createIndex() {
-		CreateIndexRequestBuilder createIndexRequestBuilder =
-			_indicesAdminClient.prepareCreate(_INDEX_NAME);
+	protected void createIndex(String indexName) {
+		org.elasticsearch.action.admin.indices.create.CreateIndexRequest
+			elasticsearchCreateIndexRequest = new
+				org.elasticsearch.action.admin.indices.create.
+					CreateIndexRequest(indexName);
 
-		createIndexRequestBuilder.get();
+		try {
+			_indicesClient.create(
+				elasticsearchCreateIndexRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 	}
 
 	protected IndexRequestExecutor createIndexRequestExecutor(
@@ -462,27 +481,73 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 		};
 	}
 
-	protected void deleteIndex() {
-		DeleteIndexRequestBuilder deleteIndexRequestBuilder =
-			_indicesAdminClient.prepareDelete(_INDEX_NAME);
+	protected AcknowledgedResponse deleteIndex(String indexName) {
+		org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
+			elasticsearchDeleteIndexRequest = new
+				org.elasticsearch.action.admin.indices.delete.
+					DeleteIndexRequest(indexName);
 
-		deleteIndexRequestBuilder.get();
+		try {
+			return _indicesClient.delete(
+				elasticsearchDeleteIndexRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
+	}
+
+	protected boolean indiciesExists(String indexName) {
+		GetIndexRequest getIndexRequest = new GetIndexRequest();
+
+		getIndexRequest.indices(indexName);
+
+		try {
+			return _indicesClient.exists(
+				getIndexRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
+	}
+
+	protected void setUpJSONFactoryUtil() {
+		JSONFactoryUtil jsonFactoryUtil = new JSONFactoryUtil();
+
+		jsonFactoryUtil.setJSONFactory(new JSONFactoryImpl());
+	}
+
+	protected String translateState(IndexMetaData.State state) {
+		if (state == IndexMetaData.State.OPEN) {
+			return "open";
+		}
+
+		if (state == IndexMetaData.State.CLOSE) {
+			return "close";
+		}
+
+		throw new IllegalArgumentException("Unknown state: " + state);
 	}
 
 	private void _putMapping(String mappingName, String mappingSource) {
-		PutMappingRequestBuilder putMappingRequestBuilder =
-			_indicesAdminClient.preparePutMapping(_INDEX_NAME);
+		PutMappingRequest putMappingRequest = new PutMappingRequest(
+			_INDEX_NAME);
 
-		putMappingRequestBuilder.setSource(mappingSource, XContentType.JSON);
-		putMappingRequestBuilder.setType(mappingName);
+		putMappingRequest.source(mappingSource, XContentType.JSON);
+		putMappingRequest.type(mappingName);
 
-		putMappingRequestBuilder.get();
+		try {
+			_indicesClient.putMapping(
+				putMappingRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 	}
 
 	private static final String _INDEX_NAME = "test_request_index";
 
 	private ElasticsearchFixture _elasticsearchFixture;
-	private IndicesAdminClient _indicesAdminClient;
+	private IndicesClient _indicesClient;
 	private SearchEngineAdapter _searchEngineAdapter;
 
 }

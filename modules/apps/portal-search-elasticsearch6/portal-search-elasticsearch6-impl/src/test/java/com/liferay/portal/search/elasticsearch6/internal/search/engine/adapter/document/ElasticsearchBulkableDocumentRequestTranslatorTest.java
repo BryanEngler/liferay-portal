@@ -17,9 +17,7 @@ package com.liferay.portal.search.elasticsearch6.internal.search.engine.adapter.
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchFixture;
-import com.liferay.portal.search.elasticsearch6.internal.connection.TestElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch6.internal.document.DefaultElasticsearchDocumentFactory;
 import com.liferay.portal.search.elasticsearch6.internal.document.ElasticsearchDocumentFactory;
 import com.liferay.portal.search.engine.adapter.document.DeleteDocumentRequest;
@@ -29,16 +27,11 @@ import com.liferay.portal.search.test.util.indexing.DocumentFixture;
 
 import java.io.IOException;
 
-import org.elasticsearch.action.bulk.BulkAction;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateRequestBuilder;
-import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentHelper;
 import org.elasticsearch.common.xcontent.XContentType;
 
@@ -60,18 +53,10 @@ public class ElasticsearchBulkableDocumentRequestTranslatorTest {
 
 		_elasticsearchFixture.setUp();
 
-		_elasticsearchConnectionManager =
-			new TestElasticsearchConnectionManager(_elasticsearchFixture);
-
 		_documentFixture.setUp();
 
 		_elasticsearchBulkableDocumentRequestTranslator =
-			new ElasticsearchBulkableDocumentRequestTranslator() {
-				{
-					elasticsearchConnectionManager =
-						_elasticsearchConnectionManager;
-				}
-			};
+			new ElasticsearchBulkableDocumentRequestTranslator();
 	}
 
 	@After
@@ -137,11 +122,9 @@ public class ElasticsearchBulkableDocumentRequestTranslatorTest {
 		deleteDocumentRequest.setRefresh(refreshPolicy);
 		deleteDocumentRequest.setType(_MAPPING_NAME);
 
-		DeleteRequestBuilder deleteRequestBuilder =
+		DeleteRequest deleteRequest =
 			_elasticsearchBulkableDocumentRequestTranslator.translate(
 				deleteDocumentRequest, null);
-
-		DeleteRequest deleteRequest = deleteRequestBuilder.request();
 
 		Assert.assertEquals(
 			expectedRefreshPolicy, deleteRequest.getRefreshPolicy());
@@ -149,15 +132,12 @@ public class ElasticsearchBulkableDocumentRequestTranslatorTest {
 		Assert.assertEquals(_MAPPING_NAME, deleteRequest.type());
 		Assert.assertEquals(id, deleteRequest.id());
 
-		Client client = _elasticsearchConnectionManager.getClient();
-
-		BulkRequestBuilder bulkRequestBuilder =
-			BulkAction.INSTANCE.newRequestBuilder(client);
+		BulkRequest bulkRequest = new BulkRequest();
 
 		_elasticsearchBulkableDocumentRequestTranslator.translate(
-			deleteDocumentRequest, bulkRequestBuilder);
+			deleteDocumentRequest, bulkRequest);
 
-		Assert.assertEquals(1, bulkRequestBuilder.numberOfActions());
+		Assert.assertEquals(1, bulkRequest.numberOfActions());
 	}
 
 	protected void doTestIndexDocumentRequestTranslation(
@@ -177,11 +157,9 @@ public class ElasticsearchBulkableDocumentRequestTranslatorTest {
 		indexDocumentRequest.setRefresh(refreshPolicy);
 		indexDocumentRequest.setType(_MAPPING_NAME);
 
-		IndexRequestBuilder indexRequestBuilder =
+		IndexRequest indexRequest =
 			_elasticsearchBulkableDocumentRequestTranslator.translate(
 				indexDocumentRequest, null);
-
-		IndexRequest indexRequest = indexRequestBuilder.request();
 
 		Assert.assertEquals(
 			expectedRefreshPolicy, indexRequest.getRefreshPolicy());
@@ -199,15 +177,12 @@ public class ElasticsearchBulkableDocumentRequestTranslatorTest {
 			elasticsearchDocumentFactory.getElasticsearchDocument(document),
 			source);
 
-		Client client = _elasticsearchConnectionManager.getClient();
-
-		BulkRequestBuilder bulkRequestBuilder =
-			BulkAction.INSTANCE.newRequestBuilder(client);
+		BulkRequest bulkRequest = new BulkRequest();
 
 		_elasticsearchBulkableDocumentRequestTranslator.translate(
-			indexDocumentRequest, bulkRequestBuilder);
+			indexDocumentRequest, bulkRequest);
 
-		Assert.assertEquals(1, bulkRequestBuilder.numberOfActions());
+		Assert.assertEquals(1, bulkRequest.numberOfActions());
 	}
 
 	protected void doTestUpdateDocumentRequestTranslation(
@@ -227,11 +202,9 @@ public class ElasticsearchBulkableDocumentRequestTranslatorTest {
 		updateDocumentRequest.setRefresh(refreshPolicy);
 		updateDocumentRequest.setType(_MAPPING_NAME);
 
-		UpdateRequestBuilder updateRequestBuilder =
+		UpdateRequest updateRequest =
 			_elasticsearchBulkableDocumentRequestTranslator.translate(
 				updateDocumentRequest, null);
-
-		UpdateRequest updateRequest = updateRequestBuilder.request();
 
 		Assert.assertEquals(
 			expectedRefreshPolicy, updateRequest.getRefreshPolicy());
@@ -250,15 +223,12 @@ public class ElasticsearchBulkableDocumentRequestTranslatorTest {
 			elasticsearchDocumentFactory.getElasticsearchDocument(document),
 			source);
 
-		Client client = _elasticsearchConnectionManager.getClient();
-
-		BulkRequestBuilder bulkRequestBuilder =
-			BulkAction.INSTANCE.newRequestBuilder(client);
+		BulkRequest bulkRequest = new BulkRequest();
 
 		_elasticsearchBulkableDocumentRequestTranslator.translate(
-			updateDocumentRequest, bulkRequestBuilder);
+			updateDocumentRequest, bulkRequest);
 
-		Assert.assertEquals(1, bulkRequestBuilder.numberOfActions());
+		Assert.assertEquals(1, bulkRequest.numberOfActions());
 	}
 
 	private static final String _INDEX_NAME = "test_request_index";
@@ -268,7 +238,6 @@ public class ElasticsearchBulkableDocumentRequestTranslatorTest {
 	private final DocumentFixture _documentFixture = new DocumentFixture();
 	private ElasticsearchBulkableDocumentRequestTranslator
 		_elasticsearchBulkableDocumentRequestTranslator;
-	private ElasticsearchConnectionManager _elasticsearchConnectionManager;
 	private ElasticsearchFixture _elasticsearchFixture;
 
 }

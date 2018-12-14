@@ -20,8 +20,6 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.TestElastics
 import com.liferay.portal.search.engine.adapter.index.DeleteIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.IndicesOptions;
 
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequestBuilder;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -73,13 +71,10 @@ public class DeleteIndexRequestExecutorTest {
 				}
 			};
 
-		DeleteIndexRequestBuilder deleteIndexRequestBuilder =
-			deleteIndexRequestExecutorImpl.createDeleteIndexRequestBuilder(
-				deleteIndexRequest);
-
 		org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 			elasticsearchDeleteIndexRequest =
-				deleteIndexRequestBuilder.request();
+				deleteIndexRequestExecutorImpl.createDeleteIndexRequest(
+					deleteIndexRequest);
 
 		Assert.assertEquals(
 			2, elasticsearchDeleteIndexRequest.indices().length);

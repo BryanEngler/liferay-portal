@@ -19,8 +19,7 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import com.liferay.portal.search.elasticsearch6.internal.connection.TestElasticsearchConnectionManager;
 import com.liferay.portal.search.engine.adapter.index.IndicesExistsIndexRequest;
 
-import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
-import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequestBuilder;
+import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -62,16 +61,13 @@ public class IndicesExistsIndexRequestExecutorTest {
 					}
 				};
 
-		IndicesExistsRequestBuilder indicesExistsRequestBuilder =
-			indicesExistsIndexRequestExecutorImpl.
-				createIndicesExistsRequestBuilder(indicesExistsIndexRequest);
+		GetIndexRequest getIndexRequest =
+			indicesExistsIndexRequestExecutorImpl.createGetIndexRequest(
+				indicesExistsIndexRequest);
 
-		IndicesExistsRequest indicesExistsRequest =
-			indicesExistsRequestBuilder.request();
-
-		Assert.assertEquals(2, indicesExistsRequest.indices().length);
-		Assert.assertEquals(_INDEX_NAME_1, indicesExistsRequest.indices()[0]);
-		Assert.assertEquals(_INDEX_NAME_2, indicesExistsRequest.indices()[1]);
+		Assert.assertEquals(2, getIndexRequest.indices().length);
+		Assert.assertEquals(_INDEX_NAME_1, getIndexRequest.indices()[0]);
+		Assert.assertEquals(_INDEX_NAME_2, getIndexRequest.indices()[1]);
 	}
 
 	private static final String _INDEX_NAME_1 = "test_request_index1";

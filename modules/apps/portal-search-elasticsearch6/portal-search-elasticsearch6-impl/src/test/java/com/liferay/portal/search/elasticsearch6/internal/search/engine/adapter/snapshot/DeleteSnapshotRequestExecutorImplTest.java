@@ -20,8 +20,6 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.TestElastics
 import com.liferay.portal.search.elasticsearch6.internal.search.engine.adapter.index.AnalyzeIndexRequestExecutorTest;
 import com.liferay.portal.search.engine.adapter.snapshot.DeleteSnapshotRequest;
 
-import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequestBuilder;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -49,7 +47,7 @@ public class DeleteSnapshotRequestExecutorImplTest {
 	}
 
 	@Test
-	public void testCreateDeleteSnapshotRequestBuilder() {
+	public void testCreateDeleteSnapshotRequest() {
 		DeleteSnapshotRequest deleteSnapshotRequest = new DeleteSnapshotRequest(
 			"repository", "snapshot");
 
@@ -61,13 +59,10 @@ public class DeleteSnapshotRequestExecutorImplTest {
 				}
 			};
 
-		DeleteSnapshotRequestBuilder deleteSnapshotRequestBuilder =
-			deleteSnapshotRequestExecutorImpl.
-				createDeleteSnapshotRequestBuilder(deleteSnapshotRequest);
-
 		org.elasticsearch.action.admin.cluster.snapshots.delete.
 			DeleteSnapshotRequest elasticDeleteSnapshotRequest =
-				deleteSnapshotRequestBuilder.request();
+				deleteSnapshotRequestExecutorImpl.createDeleteSnapshotRequest(
+					deleteSnapshotRequest);
 
 		Assert.assertEquals(
 			deleteSnapshotRequest.getRepositoryName(),

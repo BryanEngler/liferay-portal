@@ -20,7 +20,6 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.TestElastics
 import com.liferay.portal.search.engine.adapter.index.GetIndexIndexRequest;
 
 import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
-import org.elasticsearch.action.admin.indices.get.GetIndexRequestBuilder;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -61,11 +60,9 @@ public class GetIndexIndexRequestExecutorTest {
 				}
 			};
 
-		GetIndexRequestBuilder getIndexRequestBuilder =
-			getIndexIndexRequestExecutorImpl.createGetIndexRequestBuilder(
+		GetIndexRequest getIndexRequest =
+			getIndexIndexRequestExecutorImpl.createGetIndexRequest(
 				getIndexIndexRequest);
-
-		GetIndexRequest getIndexRequest = getIndexRequestBuilder.request();
 
 		Assert.assertEquals(1, getIndexRequest.indices().length);
 		Assert.assertEquals(_INDEX_NAME, getIndexRequest.indices()[0]);

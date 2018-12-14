@@ -20,8 +20,6 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.TestElastics
 import com.liferay.portal.search.elasticsearch6.internal.search.engine.adapter.index.AnalyzeIndexRequestExecutorTest;
 import com.liferay.portal.search.engine.adapter.snapshot.CreateSnapshotRequest;
 
-import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequestBuilder;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -49,7 +47,7 @@ public class CreateSnapshotRequestExecutorImplTest {
 	}
 
 	@Test
-	public void testCreatePutRepositoryRequestBuilder() {
+	public void testCreatePutRepositoryRequest() {
 		CreateSnapshotRequest createSnapshotRequest = new CreateSnapshotRequest(
 			"name", "location");
 
@@ -64,13 +62,10 @@ public class CreateSnapshotRequestExecutorImplTest {
 				}
 			};
 
-		CreateSnapshotRequestBuilder createSnapshotRequestBuilder =
-			createSnapshotRequestExecutorImpl.
-				createCreateSnapshotRequestBuilder(createSnapshotRequest);
-
 		org.elasticsearch.action.admin.cluster.snapshots.create.
 			CreateSnapshotRequest elasticsearchCreateSnapshotRequest =
-				createSnapshotRequestBuilder.request();
+				createSnapshotRequestExecutorImpl.createCreateSnapshotRequest(
+					createSnapshotRequest);
 
 		Assert.assertArrayEquals(
 			createSnapshotRequest.getIndexNames(),

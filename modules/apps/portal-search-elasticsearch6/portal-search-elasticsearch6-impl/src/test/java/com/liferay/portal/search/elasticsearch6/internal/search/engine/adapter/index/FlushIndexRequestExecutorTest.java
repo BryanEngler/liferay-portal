@@ -20,7 +20,6 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.TestElastics
 import com.liferay.portal.search.engine.adapter.index.FlushIndexRequest;
 
 import org.elasticsearch.action.admin.indices.flush.FlushRequest;
-import org.elasticsearch.action.admin.indices.flush.FlushRequestBuilder;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -67,11 +66,8 @@ public class FlushIndexRequestExecutorTest {
 				}
 			};
 
-		FlushRequestBuilder flushRequestBuilder =
-			flushIndexRequestExecutorImpl.createFlushRequestBuilder(
-				flushIndexRequest);
-
-		FlushRequest flushRequest = flushRequestBuilder.request();
+		FlushRequest flushRequest =
+			flushIndexRequestExecutorImpl.createFlushRequest(flushIndexRequest);
 
 		Assert.assertArrayEquals(
 			new String[] {_INDEX_NAME}, flushRequest.indices());
