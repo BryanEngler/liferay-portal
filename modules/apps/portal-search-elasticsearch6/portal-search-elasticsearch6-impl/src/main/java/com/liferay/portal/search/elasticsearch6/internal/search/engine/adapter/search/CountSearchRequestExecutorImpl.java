@@ -48,7 +48,7 @@ public class CountSearchRequestExecutorImpl
 
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
-		commonSearchRequestBuilderAssembler.assemble(
+		commonSearchSourceBuilderAssembler.assemble(
 			searchSourceBuilder, countSearchRequest, searchRequest);
 
 		searchSourceBuilder.size(0);
@@ -84,11 +84,11 @@ public class CountSearchRequestExecutorImpl
 	}
 
 	@Reference
-	protected CommonSearchRequestBuilderAssembler
-		commonSearchRequestBuilderAssembler;
+	protected CommonSearchResponseAssembler commonSearchResponseAssembler;
 
 	@Reference
-	protected CommonSearchResponseAssembler commonSearchResponseAssembler;
+	protected CommonSearchSourceBuilderAssembler
+		commonSearchSourceBuilderAssembler;
 
 	@Reference
 	protected ElasticsearchConnectionManager elasticsearchConnectionManager;

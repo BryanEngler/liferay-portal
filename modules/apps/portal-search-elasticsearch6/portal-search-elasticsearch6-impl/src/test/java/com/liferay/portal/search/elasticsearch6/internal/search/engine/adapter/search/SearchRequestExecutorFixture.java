@@ -59,7 +59,7 @@ public class SearchRequestExecutorFixture {
 		_facetProcessor = facetProcessor;
 	}
 
-	protected CommonSearchRequestBuilderAssembler
+	protected CommonSearchSourceBuilderAssembler
 		createCommonSearchRequestBuilderAssembler() {
 
 		return new CommonSearchRequestBuilderAssemblerImpl() {
@@ -88,7 +88,7 @@ public class SearchRequestExecutorFixture {
 	protected CountSearchRequestExecutor createCountSearchRequestExecutor() {
 		return new CountSearchRequestExecutorImpl() {
 			{
-				commonSearchRequestBuilderAssembler =
+				commonSearchSourceBuilderAssembler =
 					createCommonSearchRequestBuilderAssembler();
 				commonSearchResponseAssembler =
 					new CommonSearchResponseAssemblerImpl();
@@ -134,7 +134,7 @@ public class SearchRequestExecutorFixture {
 
 		return new SearchSearchRequestAssemblerImpl() {
 			{
-				commonSearchRequestBuilderAssembler =
+				commonSearchSourceBuilderAssembler =
 					createCommonSearchRequestBuilderAssembler();
 				groupByTranslator = new DefaultGroupByTranslator();
 				highlighterTranslator = new DefaultHighlighterTranslator();

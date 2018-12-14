@@ -35,10 +35,10 @@ import org.osgi.service.component.annotations.Reference;
  * @author Michael C. Han
  */
 @Component(
-	immediate = true, service = CommonSearchRequestBuilderAssembler.class
+	immediate = true, service = CommonSearchSourceBuilderAssembler.class
 )
 public class CommonSearchRequestBuilderAssemblerImpl
-	implements CommonSearchRequestBuilderAssembler {
+	implements CommonSearchSourceBuilderAssembler {
 
 	@Override
 	public void assemble(

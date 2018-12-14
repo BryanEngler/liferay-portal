@@ -47,7 +47,7 @@ public class SearchSearchRequestAssemblerImpl
 		SearchSourceBuilder searchSourceBuilder,
 		SearchSearchRequest searchSearchRequest, SearchRequest searchRequest) {
 
-		commonSearchRequestBuilderAssembler.assemble(
+		commonSearchSourceBuilderAssembler.assemble(
 			searchSourceBuilder, searchSearchRequest, searchRequest);
 
 		Map<String, Stats> stats = searchSearchRequest.getStats();
@@ -135,8 +135,8 @@ public class SearchSearchRequestAssemblerImpl
 	}
 
 	@Reference
-	protected CommonSearchRequestBuilderAssembler
-		commonSearchRequestBuilderAssembler;
+	protected CommonSearchSourceBuilderAssembler
+		commonSearchSourceBuilderAssembler;
 
 	@Reference
 	protected GroupByTranslator groupByTranslator;
