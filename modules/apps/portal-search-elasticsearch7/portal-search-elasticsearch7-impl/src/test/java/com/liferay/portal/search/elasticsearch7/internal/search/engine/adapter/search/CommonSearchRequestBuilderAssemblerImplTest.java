@@ -60,8 +60,8 @@ public class CommonSearchRequestBuilderAssemblerImplTest {
 
 		_liferayIndexFixture.setUp();
 
-		_commonSearchRequestBuilderAssembler =
-			createCommonSearchRequestBuilderAssembler();
+		_commonSearchSourceBuilderAssembler =
+			createCommonSearchSourceBuilderAssembler();
 	}
 
 	@After
@@ -149,7 +149,7 @@ public class CommonSearchRequestBuilderAssemblerImplTest {
 
 		SearchRequest searchRequest = new SearchRequest();
 
-		_commonSearchRequestBuilderAssembler.assemble(
+		_commonSearchSourceBuilderAssembler.assemble(
 			searchSourceBuilder, searchSearchRequest, searchRequest);
 
 		SearchAssert.assertSearch(
@@ -157,8 +157,8 @@ public class CommonSearchRequestBuilderAssemblerImplTest {
 			searchRequest, field, expected);
 	}
 
-	protected CommonSearchRequestBuilderAssembler
-		createCommonSearchRequestBuilderAssembler() {
+	protected CommonSearchSourceBuilderAssembler
+		createCommonSearchSourceBuilderAssembler() {
 
 		ElasticsearchQueryTranslatorFixture
 			elasticsearchQueryTranslatorFixture =
@@ -183,7 +183,7 @@ public class CommonSearchRequestBuilderAssemblerImplTest {
 				legacyElasticsearchQueryTranslatorFixture.
 					getElasticsearchQueryTranslator();
 
-		return new CommonSearchRequestBuilderAssemblerImpl() {
+		return new CommonSearchSourceBuilderAssemblerImpl() {
 			{
 				setComplexQueryBuilderFactory(
 					new TestComplexQueryBuilderFactory());
@@ -212,8 +212,8 @@ public class CommonSearchRequestBuilderAssemblerImplTest {
 
 	}
 
-	private CommonSearchRequestBuilderAssembler
-		_commonSearchRequestBuilderAssembler;
+	private CommonSearchSourceBuilderAssembler
+		_commonSearchSourceBuilderAssembler;
 	private IndexName _indexName;
 	private LiferayIndexFixture _liferayIndexFixture;
 
