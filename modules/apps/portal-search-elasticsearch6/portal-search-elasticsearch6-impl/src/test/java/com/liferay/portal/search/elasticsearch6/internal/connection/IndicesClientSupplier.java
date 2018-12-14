@@ -19,7 +19,7 @@ import org.elasticsearch.client.IndicesClient;
 /**
  * @author André de Oliveira
  */
-public interface IndicesAdminClientSupplier {
+public interface IndicesClientSupplier {
 
 	public IndicesClient getIndicesClient();
 

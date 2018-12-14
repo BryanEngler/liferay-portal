@@ -30,8 +30,8 @@ import org.mockito.Mockito;
  */
 public class IndexCreator {
 
-	public IndexCreator(IndicesAdminClientSupplier indicesAdminClientSupplier) {
-		_indicesAdminClientSupplier = indicesAdminClientSupplier;
+	public IndexCreator(IndicesClientSupplier indicesClientSupplier) {
+		_indicesClientSupplier = indicesClientSupplier;
 	}
 
 	public Index createIndex(IndexName indexName) {
@@ -88,10 +88,10 @@ public class IndexCreator {
 	}
 
 	protected final IndicesClient getIndicesClient() {
-		return _indicesAdminClientSupplier.getIndicesClient();
+		return _indicesClientSupplier.getIndicesClient();
 	}
 
 	private IndexCreationHelper _indexCreationHelper;
-	private final IndicesAdminClientSupplier _indicesAdminClientSupplier;
+	private final IndicesClientSupplier _indicesClientSupplier;
 
 }

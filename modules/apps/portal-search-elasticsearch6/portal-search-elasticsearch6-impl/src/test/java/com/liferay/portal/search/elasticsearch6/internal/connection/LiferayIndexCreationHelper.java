@@ -26,9 +26,9 @@ import org.elasticsearch.common.settings.Settings;
 public class LiferayIndexCreationHelper implements IndexCreationHelper {
 
 	public LiferayIndexCreationHelper(
-		IndicesAdminClientSupplier indicesAdminClientSupplier) {
+		IndicesClientSupplier indicesClientSupplier) {
 
-		_indicesAdminClientSupplier = indicesAdminClientSupplier;
+		_indicesClientSupplier = indicesClientSupplier;
 	}
 
 	@Override
@@ -58,10 +58,9 @@ public class LiferayIndexCreationHelper implements IndexCreationHelper {
 
 	protected LiferayDocumentTypeFactory getLiferayDocumentTypeFactory() {
 		return new LiferayDocumentTypeFactory(
-			_indicesAdminClientSupplier.getIndicesClient(),
-			new JSONFactoryImpl());
+			_indicesClientSupplier.getIndicesClient(), new JSONFactoryImpl());
 	}
 
-	private final IndicesAdminClientSupplier _indicesAdminClientSupplier;
+	private final IndicesClientSupplier _indicesClientSupplier;
 
 }
