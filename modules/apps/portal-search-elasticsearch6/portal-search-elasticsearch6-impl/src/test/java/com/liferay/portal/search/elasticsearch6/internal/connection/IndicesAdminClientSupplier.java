@@ -14,13 +14,13 @@
 
 package com.liferay.portal.search.elasticsearch6.internal.connection;
 
-import org.elasticsearch.client.IndicesAdminClient;
+import org.elasticsearch.client.IndicesClient;
 
 /**
  * @author André de Oliveira
  */
 public interface IndicesAdminClientSupplier {
 
-	public IndicesAdminClient getIndicesAdminClient();
+	public IndicesClient getIndicesClient();
 
 }

@@ -22,17 +22,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import org.elasticsearch.action.admin.cluster.node.info.NodeInfo;
-import org.elasticsearch.action.admin.cluster.node.info.NodesInfoRequestBuilder;
-import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
-import org.elasticsearch.client.AdminClient;
-import org.elasticsearch.client.ClusterAdminClient;
-import org.elasticsearch.common.transport.BoundTransportAddress;
-import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.http.HttpInfo;
 
 import org.hamcrest.CoreMatchers;
 
@@ -77,38 +67,12 @@ public class EmbeddedElasticsearchConnectionHttpTest {
 	public void testHttpLocallyAvailableRegardlessOfNetworkHost()
 		throws Exception {
 
-		String status = toString(new URL("http://localhost:" + getHttpPort()));
+		String status = toString(new URL("http://localhost:9200"));
 
 		Assert.assertThat(
 			status,
 			CoreMatchers.containsString(
 				"\"cluster_name\" : \"" + _clusterName));
-	}
-
-	protected int getHttpPort() {
-		AdminClient adminClient = _elasticsearchFixture.getAdminClient();
-
-		ClusterAdminClient clusterAdminClient = adminClient.cluster();
-
-		NodesInfoRequestBuilder nodesInfoRequestBuilder =
-			clusterAdminClient.prepareNodesInfo();
-
-		NodesInfoResponse nodesInfoResponse = nodesInfoRequestBuilder.get();
-
-		List<NodeInfo> nodeInfos = nodesInfoResponse.getNodes();
-
-		NodeInfo nodeInfo = nodeInfos.get(0);
-
-		HttpInfo httpInfo = nodeInfo.getHttp();
-
-		BoundTransportAddress boundTransportAddress = httpInfo.address();
-
-		TransportAddress transportAddress =
-			boundTransportAddress.publishAddress();
-
-		int port = transportAddress.getPort();
-
-		return port;
 	}
 
 	protected String toString(URL url) throws Exception {

@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch6.internal.index;
 
+import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchFixture;
 import com.liferay.portal.search.elasticsearch6.internal.connection.IndexName;
 import com.liferay.portal.search.elasticsearch6.internal.document.SingleFieldFixture;
 import com.liferay.portal.search.elasticsearch6.internal.query.QueryBuilderFactories;
@@ -37,8 +38,11 @@ public class LiferayTypeMappingsJapaneseTest {
 
 		_liferayIndexFixture.setUp();
 
+		ElasticsearchFixture elasticsearchFixture =
+			_liferayIndexFixture.getElasticsearchFixture();
+
 		_singleFieldFixture = new SingleFieldFixture(
-			_liferayIndexFixture.getClient(), indexName,
+			elasticsearchFixture.getRestHighLevelClient(), indexName,
 			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE);
 
 		_singleFieldFixture.setField(_PREFIX + "_ja");

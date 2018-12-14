@@ -29,16 +29,17 @@ import com.liferay.portal.search.elasticsearch6.internal.index.IndexNameBuilder;
 import com.liferay.portal.search.elasticsearch6.internal.search.engine.adapter.ElasticsearchEngineAdapterFixture;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 
+import java.io.IOException;
+
 import java.util.List;
 
-import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotAction;
-import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequestBuilder;
-import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotAction;
-import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequestBuilder;
-import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsAction;
-import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequestBuilder;
+import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequest;
+import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequest;
+import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.SnapshotClient;
 import org.elasticsearch.snapshots.SnapshotInfo;
 
 import org.junit.After;
@@ -59,7 +60,7 @@ public class ElasticsearchSearchEngineTest {
 		_elasticsearchFixture.setUp();
 
 		_elasticsearchConnectionManager =
-			new TestElasticsearchConnectionManager(_elasticsearchFixture);
+			createElasticsearchConnectionManager();
 
 		ElasticsearchEngineAdapterFixture elasticsearchEngineAdapterFixture =
 			new ElasticsearchEngineAdapterFixture(
@@ -86,29 +87,14 @@ public class ElasticsearchSearchEngineTest {
 
 		elasticsearchSearchEngine.backup(companyId, "backup_test");
 
-		GetSnapshotsRequestBuilder getSnapshotsRequestBuilder =
-			GetSnapshotsAction.INSTANCE.newRequestBuilder(
-				_elasticsearchFixture.getClient());
-
-		getSnapshotsRequestBuilder.setIgnoreUnavailable(true);
-		getSnapshotsRequestBuilder.setRepository("liferay_backup");
-		getSnapshotsRequestBuilder.setSnapshots("backup_test");
-
-		GetSnapshotsResponse getSnapshotsResponse =
-			getSnapshotsRequestBuilder.get();
+		GetSnapshotsResponse getSnapshotsResponse = getGetSnapshotsResponse(
+			"liferay_backup", new String[] {"backup_test"}, true);
 
 		List<SnapshotInfo> snapshotInfos = getSnapshotsResponse.getSnapshots();
 
 		Assert.assertTrue(snapshotInfos.size() == 1);
 
-		DeleteSnapshotRequestBuilder deleteSnapshotRequestBuilder =
-			DeleteSnapshotAction.INSTANCE.newRequestBuilder(
-				_elasticsearchFixture.getClient());
-
-		deleteSnapshotRequestBuilder.setRepository("liferay_backup");
-		deleteSnapshotRequestBuilder.setSnapshot("backup_test");
-
-		deleteSnapshotRequestBuilder.get();
+		deleteSnapshot("liferay_backup", "backup_test");
 	}
 
 	@Test
@@ -138,27 +124,12 @@ public class ElasticsearchSearchEngineTest {
 
 		elasticsearchSearchEngine.createBackupRepository();
 
-		CreateSnapshotRequestBuilder createSnapshotRequestBuilder =
-			CreateSnapshotAction.INSTANCE.newRequestBuilder(
-				_elasticsearchFixture.getClient());
-
-		createSnapshotRequestBuilder.setIndices(String.valueOf(companyId));
-		createSnapshotRequestBuilder.setRepository("liferay_backup");
-		createSnapshotRequestBuilder.setSnapshot("restore_test");
-		createSnapshotRequestBuilder.setWaitForCompletion(true);
-
-		createSnapshotRequestBuilder.get();
+		createSnapshot(
+			"liferay_backup", "restore_test", true, String.valueOf(companyId));
 
 		elasticsearchSearchEngine.restore(companyId, "restore_test");
 
-		DeleteSnapshotRequestBuilder deleteSnapshotRequestBuilder =
-			DeleteSnapshotAction.INSTANCE.newRequestBuilder(
-				_elasticsearchFixture.getClient());
-
-		deleteSnapshotRequestBuilder.setRepository("liferay_backup");
-		deleteSnapshotRequestBuilder.setSnapshot("restore_test");
-
-		deleteSnapshotRequestBuilder.get();
+		deleteSnapshot("liferay_backup", "restore_test");
 	}
 
 	protected CompanyIndexFactory createCompanyIndexFactory() {
@@ -197,6 +168,65 @@ public class ElasticsearchSearchEngineTest {
 				setIndexNamePrefix(null);
 			}
 		};
+	}
+
+	protected void createSnapshot(
+		String repositoryName, String snapshotName, boolean waitForCompletion,
+		String... indexNames) {
+
+		CreateSnapshotRequest createSnapshotRequest = new CreateSnapshotRequest(
+			repositoryName, snapshotName);
+
+		createSnapshotRequest.indices(indexNames);
+		createSnapshotRequest.waitForCompletion(waitForCompletion);
+
+		SnapshotClient snapshotClient =
+			_elasticsearchConnectionManager.getSnapshotClient();
+
+		try {
+			snapshotClient.create(
+				createSnapshotRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
+	}
+
+	protected void deleteSnapshot(String repository, String snapshot) {
+		DeleteSnapshotRequest deleteSnapshotRequest = new DeleteSnapshotRequest(
+			repository, snapshot);
+
+		SnapshotClient snapshotClient =
+			_elasticsearchConnectionManager.getSnapshotClient();
+
+		try {
+			snapshotClient.delete(
+				deleteSnapshotRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
+	}
+
+	protected GetSnapshotsResponse getGetSnapshotsResponse(
+		String repository, String[] snapshots, boolean ignoreUnavailable) {
+
+		GetSnapshotsRequest getSnapshotsRequest = new GetSnapshotsRequest();
+
+		getSnapshotsRequest.ignoreUnavailable(ignoreUnavailable);
+		getSnapshotsRequest.repository(repository);
+		getSnapshotsRequest.snapshots(snapshots);
+
+		SnapshotClient snapshotClient =
+			_elasticsearchConnectionManager.getSnapshotClient();
+
+		try {
+			return snapshotClient.get(
+				getSnapshotsRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 	}
 
 	protected void reconnect(
