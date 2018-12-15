@@ -42,7 +42,7 @@ public class EmbeddedElasticsearchNode extends Node {
 
 	public static Node newInstance(Settings settings) {
 		Environment environment = InternalSettingsPreparer.prepareEnvironment(
-			settings, Collections.emptyMap(), null, () -> "liferay");
+			settings, Collections.emptyMap(), null, null);
 
 		List<Class<? extends Plugin>> classpathPlugins = Arrays.asList(
 			CommonAnalysisPlugin.class, Netty4Plugin.class,
