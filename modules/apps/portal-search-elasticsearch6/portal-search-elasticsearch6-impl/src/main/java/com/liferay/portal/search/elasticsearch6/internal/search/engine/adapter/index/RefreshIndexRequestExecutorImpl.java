@@ -20,11 +20,13 @@ import com.liferay.portal.search.engine.adapter.index.IndexRequestShardFailure;
 import com.liferay.portal.search.engine.adapter.index.RefreshIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.RefreshIndexResponse;
 
+import java.io.IOException;
+
 import org.elasticsearch.action.ShardOperationFailedException;
-import org.elasticsearch.action.admin.indices.refresh.RefreshAction;
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequestBuilder;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -40,10 +42,10 @@ public class RefreshIndexRequestExecutorImpl
 	public RefreshIndexResponse execute(
 		RefreshIndexRequest refreshIndexRequest) {
 
-		RefreshRequestBuilder refreshRequestBuilder =
-			createRefreshRequestBuilder(refreshIndexRequest);
+		RefreshRequest refreshRequest = createRefreshRequest(
+			refreshIndexRequest);
 
-		RefreshResponse refreshResponse = refreshRequestBuilder.get();
+		RefreshResponse refreshResponse = getRefreshResponse(refreshRequest);
 
 		RefreshIndexResponse refreshIndexResponse = new RefreshIndexResponse();
 
@@ -71,17 +73,28 @@ public class RefreshIndexRequestExecutorImpl
 		return refreshIndexResponse;
 	}
 
-	protected RefreshRequestBuilder createRefreshRequestBuilder(
+	protected RefreshRequest createRefreshRequest(
 		RefreshIndexRequest refreshIndexRequest) {
 
-		Client client = elasticsearchConnectionManager.getClient();
+		RefreshRequest refreshRequest = new RefreshRequest(
+			refreshIndexRequest.getIndexNames());
 
-		RefreshRequestBuilder refreshRequestBuilder =
-			RefreshAction.INSTANCE.newRequestBuilder(client);
+		return refreshRequest;
+	}
 
-		refreshRequestBuilder.setIndices(refreshIndexRequest.getIndexNames());
+	protected RefreshResponse getRefreshResponse(
+		RefreshRequest refreshRequest) {
 
-		return refreshRequestBuilder;
+		IndicesClient indicesClient =
+			elasticsearchConnectionManager.getIndicesClient();
+
+		try {
+			return indicesClient.refresh(
+				refreshRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 	}
 
 	@Reference

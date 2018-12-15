@@ -20,10 +20,13 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
 
-import org.elasticsearch.action.search.SearchAction;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import java.io.IOException;
+
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -39,29 +42,46 @@ public class SearchSearchRequestExecutorImpl
 	public SearchSearchResponse execute(
 		SearchSearchRequest searchSearchRequest) {
 
-		Client client = elasticsearchConnectionManager.getClient();
+		SearchRequest searchRequest = new SearchRequest(
+			searchSearchRequest.getIndexNames());
 
-		SearchRequestBuilder searchRequestBuilder =
-			SearchAction.INSTANCE.newRequestBuilder(client);
+		if (searchSearchRequest.isRequestCache()) {
+			searchRequest.requestCache(searchSearchRequest.isRequestCache());
+		}
+
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
 		searchSearchRequestAssembler.assemble(
-			searchRequestBuilder, searchSearchRequest);
+			searchSourceBuilder, searchSearchRequest, searchRequest);
 
-		SearchResponse searchResponse = searchRequestBuilder.get();
+		SearchResponse searchResponse = getSearchResponse(searchRequest);
 
 		SearchSearchResponse searchSearchResponse = new SearchSearchResponse();
 
-		String searchRequestBuilderString = searchRequestBuilder.toString();
+		String searchSourceBuilderString = searchSourceBuilder.toString();
 
-		searchRequestBuilderString = StringUtil.replace(
-			searchRequestBuilderString, ZERO_TERMS_QUERY_STRING,
+		searchSourceBuilderString = StringUtil.replace(
+			searchSourceBuilderString, ZERO_TERMS_QUERY_STRING,
 			StringPool.BLANK);
 
 		searchSearchResponseAssembler.assemble(
 			searchResponse, searchSearchResponse, searchSearchRequest,
-			searchRequestBuilderString);
+			searchSourceBuilderString);
 
 		return searchSearchResponse;
+	}
+
+	protected SearchResponse getSearchResponse(SearchRequest searchRequest) {
+		RestHighLevelClient restHighLevelClient =
+			elasticsearchConnectionManager.getRestHighLevelClient();
+
+		try {
+			return restHighLevelClient.search(
+				searchRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 	}
 
 	protected static final String ZERO_TERMS_QUERY_STRING =

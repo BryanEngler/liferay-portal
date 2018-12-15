@@ -18,10 +18,11 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import com.liferay.portal.search.engine.adapter.index.IndicesExistsIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.IndicesExistsIndexResponse;
 
-import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsAction;
-import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequestBuilder;
-import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
-import org.elasticsearch.client.Client;
+import java.io.IOException;
+
+import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -37,30 +38,38 @@ public class IndicesExistsIndexRequestExecutorImpl
 	public IndicesExistsIndexResponse execute(
 		IndicesExistsIndexRequest indicesExistsIndexRequest) {
 
-		IndicesExistsRequestBuilder indicesExistsRequestBuilder =
-			createIndicesExistsRequestBuilder(indicesExistsIndexRequest);
+		GetIndexRequest getIndexRequest = createGetIndexRequest(
+			indicesExistsIndexRequest);
 
-		IndicesExistsResponse indicesExistsResponse =
-			indicesExistsRequestBuilder.get();
+		boolean exists = indicesExists(getIndexRequest);
 
 		IndicesExistsIndexResponse indicesExistsIndexResponse =
-			new IndicesExistsIndexResponse(indicesExistsResponse.isExists());
+			new IndicesExistsIndexResponse(exists);
 
 		return indicesExistsIndexResponse;
 	}
 
-	protected IndicesExistsRequestBuilder createIndicesExistsRequestBuilder(
+	protected GetIndexRequest createGetIndexRequest(
 		IndicesExistsIndexRequest indicesExistsIndexRequest) {
 
-		Client client = elasticsearchConnectionManager.getClient();
+		GetIndexRequest getIndexRequest = new GetIndexRequest();
 
-		IndicesExistsRequestBuilder indicesExistsRequestBuilder =
-			IndicesExistsAction.INSTANCE.newRequestBuilder(client);
+		getIndexRequest.indices(indicesExistsIndexRequest.getIndexNames());
 
-		indicesExistsRequestBuilder.setIndices(
-			indicesExistsIndexRequest.getIndexNames());
+		return getIndexRequest;
+	}
 
-		return indicesExistsRequestBuilder;
+	protected boolean indicesExists(GetIndexRequest getIndexRequest) {
+		IndicesClient indicesClient =
+			elasticsearchConnectionManager.getIndicesClient();
+
+		try {
+			return indicesClient.exists(
+				getIndexRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 	}
 
 	@Reference

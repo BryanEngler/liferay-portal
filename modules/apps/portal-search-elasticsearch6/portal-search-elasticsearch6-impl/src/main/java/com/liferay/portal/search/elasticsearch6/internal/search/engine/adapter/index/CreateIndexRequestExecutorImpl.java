@@ -18,9 +18,10 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import com.liferay.portal.search.engine.adapter.index.CreateIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.CreateIndexResponse;
 
-import org.elasticsearch.action.admin.indices.create.CreateIndexAction;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.elasticsearch.client.Client;
+import java.io.IOException;
+
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.xcontent.XContentType;
 
 import org.osgi.service.component.annotations.Component;
@@ -35,11 +36,13 @@ public class CreateIndexRequestExecutorImpl
 
 	@Override
 	public CreateIndexResponse execute(CreateIndexRequest createIndexRequest) {
-		CreateIndexRequestBuilder createIndexRequestBuilder =
-			createCreateIndexRequestBuilder(createIndexRequest);
+		org.elasticsearch.action.admin.indices.create.CreateIndexRequest
+			elasticsearchCreateIndexRequest = createCreateIndexRequest(
+				createIndexRequest);
 
 		org.elasticsearch.action.admin.indices.create.CreateIndexResponse
-			elasticsearchCreateIndexResponse = createIndexRequestBuilder.get();
+			elasticsearchCreateIndexResponse = getCreateIndexResponse(
+				elasticsearchCreateIndexRequest);
 
 		CreateIndexResponse createIndexResponse = new CreateIndexResponse(
 			elasticsearchCreateIndexResponse.isAcknowledged());
@@ -47,19 +50,35 @@ public class CreateIndexRequestExecutorImpl
 		return createIndexResponse;
 	}
 
-	protected CreateIndexRequestBuilder createCreateIndexRequestBuilder(
-		CreateIndexRequest createIndexRequest) {
+	protected org.elasticsearch.action.admin.indices.create.CreateIndexRequest
+		createCreateIndexRequest(CreateIndexRequest createIndexRequest) {
 
-		Client client = elasticsearchConnectionManager.getClient();
+		org.elasticsearch.action.admin.indices.create.CreateIndexRequest
+			elasticsearchCreateIndexRequest =
+				new org.elasticsearch.action.admin.indices.create.
+					CreateIndexRequest(createIndexRequest.getIndexName());
 
-		CreateIndexRequestBuilder createIndexRequestBuilder =
-			CreateIndexAction.INSTANCE.newRequestBuilder(client);
-
-		createIndexRequestBuilder.setIndex(createIndexRequest.getIndexName());
-		createIndexRequestBuilder.setSource(
+		elasticsearchCreateIndexRequest.source(
 			createIndexRequest.getSource(), XContentType.JSON);
 
-		return createIndexRequestBuilder;
+		return elasticsearchCreateIndexRequest;
+	}
+
+	protected org.elasticsearch.action.admin.indices.create.CreateIndexResponse
+		getCreateIndexResponse(
+			org.elasticsearch.action.admin.indices.create.CreateIndexRequest
+				elasticsearchCreateIndexRequest) {
+
+		IndicesClient indicesClient =
+			elasticsearchConnectionManager.getIndicesClient();
+
+		try {
+			return indicesClient.create(
+				elasticsearchCreateIndexRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 	}
 
 	@Reference

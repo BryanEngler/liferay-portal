@@ -15,12 +15,14 @@
 package com.liferay.portal.search.elasticsearch6.internal.search.engine.adapter.snapshot;
 
 import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchConnectionManager;
-import com.liferay.portal.search.engine.adapter.snapshot.DeleteSnapshotRequest;
 import com.liferay.portal.search.engine.adapter.snapshot.DeleteSnapshotResponse;
 
-import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotAction;
-import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequestBuilder;
+import java.io.IOException;
+
+import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequest;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.SnapshotClient;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -34,13 +36,14 @@ public class DeleteSnapshotRequestExecutorImpl
 
 	@Override
 	public DeleteSnapshotResponse execute(
-		DeleteSnapshotRequest deleteSnapshotRequest) {
+		com.liferay.portal.search.engine.adapter.snapshot.DeleteSnapshotRequest
+			deleteSnapshotRequest) {
 
-		DeleteSnapshotRequestBuilder deleteSnapshotRequestBuilder =
-			createDeleteSnapshotRequestBuilder(deleteSnapshotRequest);
+		DeleteSnapshotRequest elasticsearchDeleteSnapshotRequest =
+			createDeleteSnapshotRequest(deleteSnapshotRequest);
 
-		AcknowledgedResponse acknowledgedResponse =
-			deleteSnapshotRequestBuilder.get();
+		AcknowledgedResponse acknowledgedResponse = getAcknowledgedResponse(
+			elasticsearchDeleteSnapshotRequest);
 
 		DeleteSnapshotResponse deleteSnapshotResponse =
 			new DeleteSnapshotResponse(acknowledgedResponse.isAcknowledged());
@@ -48,19 +51,34 @@ public class DeleteSnapshotRequestExecutorImpl
 		return deleteSnapshotResponse;
 	}
 
-	protected DeleteSnapshotRequestBuilder createDeleteSnapshotRequestBuilder(
-		DeleteSnapshotRequest deleteSnapshotRequest) {
+	protected DeleteSnapshotRequest createDeleteSnapshotRequest(
+		com.liferay.portal.search.engine.adapter.snapshot.DeleteSnapshotRequest
+			deleteSnapshotRequest) {
 
-		DeleteSnapshotRequestBuilder deleteSnapshotRequestBuilder =
-			DeleteSnapshotAction.INSTANCE.newRequestBuilder(
-				elasticsearchConnectionManager.getClient());
+		DeleteSnapshotRequest elasticsearchDeleteSnapshotRequest =
+			new DeleteSnapshotRequest();
 
-		deleteSnapshotRequestBuilder.setRepository(
+		elasticsearchDeleteSnapshotRequest.repository(
 			deleteSnapshotRequest.getRepositoryName());
-		deleteSnapshotRequestBuilder.setSnapshot(
+		elasticsearchDeleteSnapshotRequest.snapshot(
 			deleteSnapshotRequest.getSnapshotName());
 
-		return deleteSnapshotRequestBuilder;
+		return elasticsearchDeleteSnapshotRequest;
+	}
+
+	protected AcknowledgedResponse getAcknowledgedResponse(
+		DeleteSnapshotRequest deleteSnapshotRequest) {
+
+		SnapshotClient snapshotClient =
+			elasticsearchConnectionManager.getSnapshotClient();
+
+		try {
+			return snapshotClient.delete(
+				deleteSnapshotRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 	}
 
 	@Reference

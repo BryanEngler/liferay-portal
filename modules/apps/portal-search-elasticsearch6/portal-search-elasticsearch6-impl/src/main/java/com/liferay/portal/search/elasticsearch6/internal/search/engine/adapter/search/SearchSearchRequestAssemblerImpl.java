@@ -18,6 +18,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.GroupBy;
 import com.liferay.portal.kernel.search.Stats;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch6.internal.groupby.GroupByTranslator;
@@ -28,7 +29,8 @@ import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 
 import java.util.Map;
 
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -42,25 +44,25 @@ public class SearchSearchRequestAssemblerImpl
 
 	@Override
 	public void assemble(
-		SearchRequestBuilder searchRequestBuilder,
-		SearchSearchRequest searchSearchRequest) {
+		SearchSourceBuilder searchSourceBuilder,
+		SearchSearchRequest searchSearchRequest, SearchRequest searchRequest) {
 
 		commonSearchRequestBuilderAssembler.assemble(
-			searchRequestBuilder, searchSearchRequest);
+			searchSourceBuilder, searchSearchRequest, searchRequest);
 
 		Map<String, Stats> stats = searchSearchRequest.getStats();
 
 		if (!MapUtil.isEmpty(stats)) {
 			stats.forEach(
 				(statsKey, stat) -> statsTranslator.translate(
-					searchRequestBuilder, stat));
+					searchSourceBuilder, stat));
 		}
 
-		addGroupBy(searchRequestBuilder, searchSearchRequest);
+		addGroupBy(searchSourceBuilder, searchSearchRequest);
 
 		if (searchSearchRequest.isHighlightEnabled()) {
 			highlighterTranslator.translate(
-				searchRequestBuilder, searchSearchRequest.getLocale(),
+				searchSourceBuilder, searchSearchRequest.getLocale(),
 				searchSearchRequest.getHighlightFieldNames(),
 				searchSearchRequest.isHighlightRequireFieldMatch(),
 				searchSearchRequest.getHighlightFragmentSize(),
@@ -69,21 +71,20 @@ public class SearchSearchRequestAssemblerImpl
 		}
 
 		addPagination(
-			searchRequestBuilder, searchSearchRequest.getStart(),
+			searchSourceBuilder, searchSearchRequest.getStart(),
 			searchSearchRequest.getSize());
-		addPreference(searchRequestBuilder, searchSearchRequest);
+		addPreference(searchRequest, searchSearchRequest);
 		addSelectedFields(
-			searchRequestBuilder, searchSearchRequest.getSelectedFieldNames());
+			searchSourceBuilder, searchSearchRequest.getSelectedFieldNames());
 
 		sortTranslator.translate(
-			searchRequestBuilder, searchSearchRequest.getSorts());
+			searchSourceBuilder, searchSearchRequest.getSorts());
 
-		searchRequestBuilder.setTrackScores(
-			searchSearchRequest.isScoreEnabled());
+		searchSourceBuilder.trackScores(searchSearchRequest.isScoreEnabled());
 	}
 
 	protected void addGroupBy(
-		SearchRequestBuilder searchRequestBuilder,
+		SearchSourceBuilder searchSourceBuilder,
 		SearchSearchRequest searchSearchRequest) {
 
 		GroupBy groupBy = searchSearchRequest.getGroupBy();
@@ -93,7 +94,7 @@ public class SearchSearchRequestAssemblerImpl
 		}
 
 		groupByTranslator.translate(
-			searchRequestBuilder, groupBy, searchSearchRequest.getSorts(),
+			searchSourceBuilder, groupBy, searchSearchRequest.getSorts(),
 			searchSearchRequest.getLocale(),
 			searchSearchRequest.getSelectedFieldNames(),
 			searchSearchRequest.getHighlightFieldNames(),
@@ -105,32 +106,31 @@ public class SearchSearchRequestAssemblerImpl
 	}
 
 	protected void addPagination(
-		SearchRequestBuilder searchRequestBuilder, int start, int size) {
+		SearchSourceBuilder searchSourceBuilder, int start, int size) {
 
-		searchRequestBuilder.setFrom(start);
-		searchRequestBuilder.setSize(size);
+		searchSourceBuilder.from(start);
+		searchSourceBuilder.size(size);
 	}
 
 	protected void addPreference(
-		SearchRequestBuilder searchRequestBuilder,
-		SearchSearchRequest searchSearchRequest) {
+		SearchRequest searchRequest, SearchSearchRequest searchSearchRequest) {
 
 		String preference = searchSearchRequest.getPreference();
 
 		if (!Validator.isBlank(preference)) {
-			searchRequestBuilder.setPreference(preference);
+			searchRequest.preference(preference);
 		}
 	}
 
 	protected void addSelectedFields(
-		SearchRequestBuilder searchRequestBuilder,
-		String[] selectedFieldNames) {
+		SearchSourceBuilder searchSourceBuilder, String[] selectedFieldNames) {
 
 		if (ArrayUtil.isEmpty(selectedFieldNames)) {
-			searchRequestBuilder.addStoredField(StringPool.STAR);
+			searchSourceBuilder.storedField(StringPool.STAR);
 		}
 		else {
-			searchRequestBuilder.storedFields(selectedFieldNames);
+			searchSourceBuilder.storedFields(
+				ListUtil.fromArray(selectedFieldNames));
 		}
 	}
 

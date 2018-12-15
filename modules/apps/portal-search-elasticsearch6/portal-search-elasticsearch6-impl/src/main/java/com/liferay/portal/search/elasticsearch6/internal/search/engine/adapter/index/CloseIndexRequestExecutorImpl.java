@@ -19,9 +19,11 @@ import com.liferay.portal.search.engine.adapter.index.CloseIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.CloseIndexResponse;
 import com.liferay.portal.search.engine.adapter.index.IndicesOptions;
 
-import org.elasticsearch.action.admin.indices.close.CloseIndexAction;
-import org.elasticsearch.action.admin.indices.close.CloseIndexRequestBuilder;
+import java.io.IOException;
+
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.unit.TimeValue;
 
 import org.osgi.service.component.annotations.Component;
@@ -36,11 +38,12 @@ public class CloseIndexRequestExecutorImpl
 
 	@Override
 	public CloseIndexResponse execute(CloseIndexRequest closeIndexRequest) {
-		CloseIndexRequestBuilder closeIndexRequestBuilder =
-			createCloseIndexRequestBuilder(closeIndexRequest);
+		org.elasticsearch.action.admin.indices.close.CloseIndexRequest
+			elasticsearchCloseIndexRequest = createCloseIndexRequest(
+				closeIndexRequest);
 
-		AcknowledgedResponse acknowledgedResponse =
-			closeIndexRequestBuilder.get();
+		AcknowledgedResponse acknowledgedResponse = getAcknowledgedResponse(
+			elasticsearchCloseIndexRequest);
 
 		CloseIndexResponse closeIndexResponse = new CloseIndexResponse(
 			acknowledgedResponse.isAcknowledged());
@@ -48,19 +51,18 @@ public class CloseIndexRequestExecutorImpl
 		return closeIndexResponse;
 	}
 
-	protected CloseIndexRequestBuilder createCloseIndexRequestBuilder(
-		CloseIndexRequest closeIndexRequest) {
+	protected org.elasticsearch.action.admin.indices.close.CloseIndexRequest
+		createCloseIndexRequest(CloseIndexRequest closeIndexRequest) {
 
-		CloseIndexRequestBuilder closeIndexRequestBuilder =
-			CloseIndexAction.INSTANCE.newRequestBuilder(
-				elasticsearchConnectionManager.getClient());
-
-		closeIndexRequestBuilder.setIndices(closeIndexRequest.getIndexNames());
+		org.elasticsearch.action.admin.indices.close.CloseIndexRequest
+			elasticsearchCloseIndexRequest = new
+				org.elasticsearch.action.admin.indices.close.CloseIndexRequest(
+					closeIndexRequest.getIndexNames());
 
 		IndicesOptions indicesOptions = closeIndexRequest.getIndicesOptions();
 
 		if (indicesOptions != null) {
-			closeIndexRequestBuilder.setIndicesOptions(
+			elasticsearchCloseIndexRequest.indicesOptions(
 				indicesOptionsTranslator.translate(indicesOptions));
 		}
 
@@ -68,11 +70,27 @@ public class CloseIndexRequestExecutorImpl
 			TimeValue timeValue = TimeValue.timeValueMillis(
 				closeIndexRequest.getTimeout());
 
-			closeIndexRequestBuilder.setMasterNodeTimeout(timeValue);
-			closeIndexRequestBuilder.setTimeout(timeValue);
+			elasticsearchCloseIndexRequest.masterNodeTimeout(timeValue);
+			elasticsearchCloseIndexRequest.timeout(timeValue);
 		}
 
-		return closeIndexRequestBuilder;
+		return elasticsearchCloseIndexRequest;
+	}
+
+	protected AcknowledgedResponse getAcknowledgedResponse(
+		org.elasticsearch.action.admin.indices.close.CloseIndexRequest
+			elasticsearchCloseIndexRequest) {
+
+		IndicesClient indicesClient =
+			elasticsearchConnectionManager.getIndicesClient();
+
+		try {
+			return indicesClient.close(
+				elasticsearchCloseIndexRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 	}
 
 	@Reference

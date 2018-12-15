@@ -14,15 +14,20 @@
 
 package com.liferay.portal.search.elasticsearch6.internal.search.engine.adapter.document;
 
+import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.engine.adapter.document.BulkableDocumentRequestTranslator;
 import com.liferay.portal.search.engine.adapter.document.DeleteDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.DeleteDocumentResponse;
 
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.delete.DeleteRequestBuilder;
+import java.io.IOException;
+
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.index.IndexRequestBuilder;
-import org.elasticsearch.action.update.UpdateRequestBuilder;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.rest.RestStatus;
 
 import org.osgi.service.component.annotations.Component;
@@ -39,11 +44,11 @@ public class DeleteDocumentRequestExecutorImpl
 	public DeleteDocumentResponse execute(
 		DeleteDocumentRequest deleteDocumentRequest) {
 
-		DeleteRequestBuilder deleteRequestBuilder =
+		DeleteRequest deleteRequest =
 			bulkableDocumentRequestTranslator.translate(
 				deleteDocumentRequest, null);
 
-		DeleteResponse deleteResponse = deleteRequestBuilder.get();
+		DeleteResponse deleteResponse = getDeleteResponse(deleteRequest);
 
 		RestStatus restStatus = deleteResponse.status();
 
@@ -53,9 +58,25 @@ public class DeleteDocumentRequestExecutorImpl
 		return deleteDocumentResponse;
 	}
 
+	protected DeleteResponse getDeleteResponse(DeleteRequest deleteRequest) {
+		RestHighLevelClient restHighLevelClient =
+			elasticsearchConnectionManager.getRestHighLevelClient();
+
+		try {
+			return restHighLevelClient.delete(
+				deleteRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
+	}
+
 	@Reference(target = "(search.engine.impl=Elasticsearch)")
 	protected BulkableDocumentRequestTranslator
-		<DeleteRequestBuilder, IndexRequestBuilder, UpdateRequestBuilder,
-		 BulkRequestBuilder> bulkableDocumentRequestTranslator;
+		<DeleteRequest, IndexRequest, UpdateRequest, BulkRequest>
+			bulkableDocumentRequestTranslator;
+
+	@Reference
+	protected ElasticsearchConnectionManager elasticsearchConnectionManager;
 
 }

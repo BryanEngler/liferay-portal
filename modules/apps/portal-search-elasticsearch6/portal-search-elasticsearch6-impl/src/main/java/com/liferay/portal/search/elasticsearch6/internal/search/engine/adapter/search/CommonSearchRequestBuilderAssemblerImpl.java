@@ -21,11 +21,12 @@ import com.liferay.portal.kernel.search.query.QueryTranslator;
 import com.liferay.portal.search.elasticsearch6.internal.facet.FacetTranslator;
 import com.liferay.portal.search.engine.adapter.search.BaseSearchRequest;
 
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -41,41 +42,37 @@ public class CommonSearchRequestBuilderAssemblerImpl
 
 	@Override
 	public void assemble(
-		SearchRequestBuilder searchRequestBuilder,
-		BaseSearchRequest baseSearchRequest) {
-
-		searchRequestBuilder.setIndices(baseSearchRequest.getIndexNames());
+		SearchSourceBuilder searchSourceBuilder,
+		BaseSearchRequest baseSearchRequest, SearchRequest searchRequest) {
 
 		if (baseSearchRequest.getMinimumScore() > 0) {
-			searchRequestBuilder.setMinScore(
-				baseSearchRequest.getMinimumScore());
+			searchSourceBuilder.minScore(baseSearchRequest.getMinimumScore());
 		}
 
 		if (baseSearchRequest.getPostFilter() != null) {
 			QueryBuilder postFilterQueryBuilder = filterTranslator.translate(
 				baseSearchRequest.getPostFilter(), null);
 
-			searchRequestBuilder.setPostFilter(postFilterQueryBuilder);
+			searchSourceBuilder.postFilter(postFilterQueryBuilder);
 		}
 
-		searchRequestBuilder.setQuery(getQueryBuilder(baseSearchRequest));
+		searchSourceBuilder.query(getQueryBuilder(baseSearchRequest));
 
 		if (baseSearchRequest.isRequestCache()) {
-			searchRequestBuilder.setRequestCache(
-				baseSearchRequest.isRequestCache());
+			searchRequest.requestCache(baseSearchRequest.isRequestCache());
 		}
 
 		if (baseSearchRequest.getTimeoutInMilliseconds() > 0) {
-			searchRequestBuilder.setTimeout(
+			searchSourceBuilder.timeout(
 				TimeValue.timeValueMillis(
 					baseSearchRequest.getTimeoutInMilliseconds()));
 		}
 
-		searchRequestBuilder.setTrackTotalHits(
+		searchSourceBuilder.trackTotalHits(
 			baseSearchRequest.isTrackTotalHits());
 
 		facetTranslator.translate(
-			searchRequestBuilder, baseSearchRequest.getQuery(),
+			searchSourceBuilder, baseSearchRequest.getQuery(),
 			baseSearchRequest.getFacets(),
 			baseSearchRequest.isBasicFacetSelection());
 	}

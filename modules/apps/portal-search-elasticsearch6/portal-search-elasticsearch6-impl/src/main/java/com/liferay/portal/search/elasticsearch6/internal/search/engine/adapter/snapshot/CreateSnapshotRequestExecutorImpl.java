@@ -16,12 +16,14 @@ package com.liferay.portal.search.elasticsearch6.internal.search.engine.adapter.
 
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchConnectionManager;
-import com.liferay.portal.search.engine.adapter.snapshot.CreateSnapshotRequest;
-import com.liferay.portal.search.engine.adapter.snapshot.CreateSnapshotResponse;
 import com.liferay.portal.search.engine.adapter.snapshot.SnapshotDetails;
 
-import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotAction;
-import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequestBuilder;
+import java.io.IOException;
+
+import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequest;
+import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.SnapshotClient;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -34,45 +36,63 @@ public class CreateSnapshotRequestExecutorImpl
 	implements CreateSnapshotRequestExecutor {
 
 	@Override
-	public CreateSnapshotResponse execute(
-		CreateSnapshotRequest createSnapshotRequest) {
+	public com.liferay.portal.search.engine.adapter.snapshot.
+		CreateSnapshotResponse execute(
+			com.liferay.portal.search.engine.adapter.snapshot.
+				CreateSnapshotRequest createSnapshotRequest) {
 
-		CreateSnapshotRequestBuilder createSnapshotRequestBuilder =
-			createCreateSnapshotRequestBuilder(createSnapshotRequest);
+		CreateSnapshotRequest elasticsearchCreateSnapshotRequest =
+			createCreateSnapshotRequest(createSnapshotRequest);
 
-		org.elasticsearch.action.admin.cluster.snapshots.create.
-			CreateSnapshotResponse elasticsearchCreateSnapshotResponse =
-				createSnapshotRequestBuilder.get();
+		CreateSnapshotResponse elasticsearchCreateSnapshotResponse =
+			getCreateSnapshotResponse(elasticsearchCreateSnapshotRequest);
 
 		SnapshotDetails snapshotDetails = SnapshotInfoConverter.convert(
 			elasticsearchCreateSnapshotResponse.getSnapshotInfo());
 
-		CreateSnapshotResponse createSnapshotResponse =
-			new CreateSnapshotResponse(snapshotDetails);
+		com.liferay.portal.search.engine.adapter.snapshot.CreateSnapshotResponse
+			createSnapshotResponse =
+				new com.liferay.portal.search.engine.adapter.snapshot.
+					CreateSnapshotResponse(snapshotDetails);
 
 		return createSnapshotResponse;
 	}
 
-	protected CreateSnapshotRequestBuilder createCreateSnapshotRequestBuilder(
-		CreateSnapshotRequest createSnapshotRequest) {
+	protected CreateSnapshotRequest createCreateSnapshotRequest(
+		com.liferay.portal.search.engine.adapter.snapshot.CreateSnapshotRequest
+			createSnapshotRequest) {
 
-		CreateSnapshotRequestBuilder createSnapshotRequestBuilder =
-			CreateSnapshotAction.INSTANCE.newRequestBuilder(
-				elasticsearchConnectionManager.getClient());
+		CreateSnapshotRequest elasticsearchCreateSnapshotRequest =
+			new CreateSnapshotRequest();
 
 		if (ArrayUtil.isNotEmpty(createSnapshotRequest.getIndexNames())) {
-			createSnapshotRequestBuilder.setIndices(
+			elasticsearchCreateSnapshotRequest.indices(
 				createSnapshotRequest.getIndexNames());
 		}
 
-		createSnapshotRequestBuilder.setRepository(
+		elasticsearchCreateSnapshotRequest.repository(
 			createSnapshotRequest.getRepositoryName());
-		createSnapshotRequestBuilder.setSnapshot(
+		elasticsearchCreateSnapshotRequest.snapshot(
 			createSnapshotRequest.getSnapshotName());
-		createSnapshotRequestBuilder.setWaitForCompletion(
+		elasticsearchCreateSnapshotRequest.waitForCompletion(
 			createSnapshotRequest.isWaitForCompletion());
 
-		return createSnapshotRequestBuilder;
+		return elasticsearchCreateSnapshotRequest;
+	}
+
+	protected CreateSnapshotResponse getCreateSnapshotResponse(
+		CreateSnapshotRequest createSnapshotRequest) {
+
+		SnapshotClient snapshotClient =
+			elasticsearchConnectionManager.getSnapshotClient();
+
+		try {
+			return snapshotClient.create(
+				createSnapshotRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 	}
 
 	@Reference

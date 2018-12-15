@@ -18,11 +18,14 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import com.liferay.portal.search.engine.adapter.search.CountSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.CountSearchResponse;
 
-import org.elasticsearch.action.search.SearchAction;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import java.io.IOException;
+
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -36,18 +39,22 @@ public class CountSearchRequestExecutorImpl
 
 	@Override
 	public CountSearchResponse execute(CountSearchRequest countSearchRequest) {
-		Client client = elasticsearchConnectionManager.getClient();
+		SearchRequest searchRequest = new SearchRequest(
+			countSearchRequest.getIndexNames());
 
-		SearchRequestBuilder searchRequestBuilder =
-			SearchAction.INSTANCE.newRequestBuilder(client);
+		if (countSearchRequest.isRequestCache()) {
+			searchRequest.requestCache(countSearchRequest.isRequestCache());
+		}
+
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
 		commonSearchRequestBuilderAssembler.assemble(
-			searchRequestBuilder, countSearchRequest);
+			searchSourceBuilder, countSearchRequest, searchRequest);
 
-		searchRequestBuilder.setSize(0);
-		searchRequestBuilder.setTrackScores(false);
+		searchSourceBuilder.size(0);
+		searchSourceBuilder.trackScores(false);
 
-		SearchResponse searchResponse = searchRequestBuilder.get();
+		SearchResponse searchResponse = getSearchResponse(searchRequest);
 
 		SearchHits searchHits = searchResponse.getHits();
 
@@ -55,12 +62,25 @@ public class CountSearchRequestExecutorImpl
 
 		countSearchResponse.setCount(searchHits.totalHits);
 
-		String searchRequestBuilderString = searchRequestBuilder.toString();
+		String searchSourceBuilderString = searchSourceBuilder.toString();
 
 		commonSearchResponseAssembler.assemble(
-			searchResponse, countSearchResponse, searchRequestBuilderString);
+			searchResponse, countSearchResponse, searchSourceBuilderString);
 
 		return countSearchResponse;
+	}
+
+	protected SearchResponse getSearchResponse(SearchRequest searchRequest) {
+		RestHighLevelClient restHighLevelClient =
+			elasticsearchConnectionManager.getRestHighLevelClient();
+
+		try {
+			return restHighLevelClient.search(
+				searchRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 	}
 
 	@Reference

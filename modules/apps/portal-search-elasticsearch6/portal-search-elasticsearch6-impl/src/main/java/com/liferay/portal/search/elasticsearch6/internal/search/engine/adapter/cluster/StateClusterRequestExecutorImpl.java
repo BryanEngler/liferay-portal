@@ -21,14 +21,11 @@ import com.liferay.portal.search.engine.adapter.cluster.StateClusterResponse;
 
 import java.io.IOException;
 
-import org.elasticsearch.action.admin.cluster.state.ClusterStateAction;
-import org.elasticsearch.action.admin.cluster.state.ClusterStateRequestBuilder;
-import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
-import org.elasticsearch.cluster.ClusterState;
-import org.elasticsearch.common.Strings;
-import org.elasticsearch.common.xcontent.ToXContent;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
+import org.apache.http.util.EntityUtils;
+
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.Response;
+import org.elasticsearch.client.RestClient;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -44,42 +41,21 @@ public class StateClusterRequestExecutorImpl
 	public StateClusterResponse execute(
 		StateClusterRequest stateClusterRequest) {
 
-		ClusterStateRequestBuilder clusterStateRequestBuilder =
-			createClusterStateRequestBuilder(stateClusterRequest);
+		RestClient restLowLevelClient =
+			elasticsearchConnectionManager.getRestLowLevelClient();
 
-		ClusterStateResponse clusterStateResponse =
-			clusterStateRequestBuilder.get();
+		Request request = new Request("GET", "/_cluster/state");
 
 		try {
-			ClusterState clusterState = clusterStateResponse.getState();
+			Response response = restLowLevelClient.performRequest(request);
 
-			XContentBuilder xContentBuilder = XContentFactory.jsonBuilder();
+			String responseBody = EntityUtils.toString(response.getEntity());
 
-			xContentBuilder.startObject();
-
-			xContentBuilder = clusterState.toXContent(
-				xContentBuilder, ToXContent.EMPTY_PARAMS);
-
-			xContentBuilder.endObject();
-
-			return new StateClusterResponse(Strings.toString(xContentBuilder));
+			return new StateClusterResponse(responseBody);
 		}
 		catch (IOException ioe) {
 			throw new SystemException(ioe);
 		}
-	}
-
-	protected ClusterStateRequestBuilder createClusterStateRequestBuilder(
-		StateClusterRequest stateClusterRequest) {
-
-		ClusterStateRequestBuilder clusterStateRequestBuilder =
-			ClusterStateAction.INSTANCE.newRequestBuilder(
-				elasticsearchConnectionManager.getClient());
-
-		clusterStateRequestBuilder.setIndices(
-			stateClusterRequest.getIndexNames());
-
-		return clusterStateRequestBuilder;
 	}
 
 	@Reference

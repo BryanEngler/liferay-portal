@@ -20,17 +20,19 @@ import com.liferay.portal.search.engine.adapter.search.MultisearchSearchResponse
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
 
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.elasticsearch.action.search.MultiSearchAction;
-import org.elasticsearch.action.search.MultiSearchRequestBuilder;
+import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.MultiSearchResponse;
-import org.elasticsearch.action.search.SearchAction;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -46,10 +48,7 @@ public class MultisearchSearchRequestExecutorImpl
 	public MultisearchSearchResponse execute(
 		MultisearchSearchRequest multisearchSearchRequest) {
 
-		Client client = elasticsearchConnectionManager.getClient();
-
-		MultiSearchRequestBuilder multiSearchRequestBuilder =
-			MultiSearchAction.INSTANCE.newRequestBuilder(client);
+		MultiSearchRequest multiSearchRequest = new MultiSearchRequest();
 
 		List<SearchSearchRequest> searchSearchRequests =
 			multisearchSearchRequest.getSearchSearchRequests();
@@ -59,23 +58,26 @@ public class MultisearchSearchRequestExecutorImpl
 
 		searchSearchRequests.forEach(
 			searchSearchRequest -> {
-				SearchRequestBuilder searchRequestBuilder =
-					SearchAction.INSTANCE.newRequestBuilder(client);
+				SearchRequest searchRequest = new SearchRequest(
+					searchSearchRequest.getIndexNames());
+
+				SearchSourceBuilder searchSourceBuilder =
+					new SearchSourceBuilder();
 
 				searchSearchRequestAssembler.assemble(
-					searchRequestBuilder, searchSearchRequest);
+					searchSourceBuilder, searchSearchRequest, searchRequest);
 
 				SearchRequestHolder searchRequestHolder =
 					new SearchRequestHolder(
-						searchSearchRequest, searchRequestBuilder.toString());
+						searchSearchRequest, searchSourceBuilder.toString());
 
 				searchRequestHolders.add(searchRequestHolder);
 
-				multiSearchRequestBuilder.add(searchRequestBuilder);
+				multiSearchRequest.add(searchRequest);
 			});
 
-		MultiSearchResponse multiSearchResponse =
-			multiSearchRequestBuilder.get();
+		MultiSearchResponse multiSearchResponse = getMultiSearchResponse(
+			multiSearchRequest);
 
 		Iterator<MultiSearchResponse.Item> multiSearchResponseItems =
 			multiSearchResponse.iterator();
@@ -107,6 +109,21 @@ public class MultisearchSearchRequestExecutorImpl
 		}
 
 		return multisearchSearchResponse;
+	}
+
+	protected MultiSearchResponse getMultiSearchResponse(
+		MultiSearchRequest multiSearchRequest) {
+
+		RestHighLevelClient restHighLevelClient =
+			elasticsearchConnectionManager.getRestHighLevelClient();
+
+		try {
+			return restHighLevelClient.msearch(
+				multiSearchRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 	}
 
 	@Reference
