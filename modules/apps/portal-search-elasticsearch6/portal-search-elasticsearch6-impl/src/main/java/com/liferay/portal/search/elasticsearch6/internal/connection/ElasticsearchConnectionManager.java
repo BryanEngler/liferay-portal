@@ -24,8 +24,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.elasticsearch.client.AdminClient;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.ClusterClient;
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.SnapshotClient;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -49,13 +52,23 @@ public class ElasticsearchConnectionManager {
 		elasticsearchConnection.connect();
 	}
 
-	public AdminClient getAdminClient() {
-		Client client = getClient();
+	public ClusterClient getClusterClient() {
+		RestHighLevelClient restHighLevelClient = getRestHighLevelClient();
 
-		return client.admin();
+		return restHighLevelClient.cluster();
 	}
 
-	public Client getClient() {
+	public ElasticsearchConnection getElasticsearchConnection() {
+		return _elasticsearchConnections.get(_operationMode);
+	}
+
+	public IndicesClient getIndicesClient() {
+		RestHighLevelClient restHighLevelClient = getRestHighLevelClient();
+
+		return restHighLevelClient.indices();
+	}
+
+	public RestHighLevelClient getRestHighLevelClient() {
 		ElasticsearchConnection elasticsearchConnection =
 			getElasticsearchConnection();
 
@@ -63,11 +76,19 @@ public class ElasticsearchConnectionManager {
 			throw new ElasticsearchConnectionNotInitializedException();
 		}
 
-		return elasticsearchConnection.getClient();
+		return elasticsearchConnection.getRestHighLevelClient();
 	}
 
-	public ElasticsearchConnection getElasticsearchConnection() {
-		return _elasticsearchConnections.get(_operationMode);
+	public RestClient getRestLowLevelClient() {
+		RestHighLevelClient restHighLevelClient = getRestHighLevelClient();
+
+		return restHighLevelClient.getLowLevelClient();
+	}
+
+	public SnapshotClient getSnapshotClient() {
+		RestHighLevelClient restHighLevelClient = getRestHighLevelClient();
+
+		return restHighLevelClient.snapshot();
 	}
 
 	public synchronized void registerCompanyId(long companyId) {
@@ -163,7 +184,7 @@ public class ElasticsearchConnectionManager {
 
 		for (Long companyId : _companyIds.values()) {
 			try {
-				indexFactory.createIndices(getAdminClient(), companyId);
+				indexFactory.createIndices(getIndicesClient(), companyId);
 			}
 			catch (Exception e) {
 				if (_log.isWarnEnabled()) {
