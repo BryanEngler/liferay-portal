@@ -19,8 +19,8 @@ import com.liferay.portal.kernel.search.StatsResults;
 
 import java.util.Map;
 
-import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 /**
  * @author Michael C. Han
@@ -30,7 +30,6 @@ public interface StatsTranslator {
 	public StatsResults translate(
 		Map<String, Aggregation> aggregationMap, Stats stats);
 
-	public void translate(
-		SearchRequestBuilder searchRequestBuilder, Stats stats);
+	public void translate(SearchSourceBuilder searchSourceBuilder, Stats stats);
 
 }

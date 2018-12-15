@@ -34,6 +34,8 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch6.internal.index.IndexNameBuilder;
 
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,10 +45,12 @@ import org.apache.commons.lang.time.StopWatch;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.search.SearchPhaseExecutionException;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.text.Text;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.suggest.Suggest;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.search.suggest.SuggestionBuilder;
@@ -238,8 +242,6 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 
 		stopWatch.start();
 
-		Client client = elasticsearchConnectionManager.getClient();
-
 		SuggestBuilder suggestBuilder = suggesterTranslator.translate(
 			suggester, searchContext);
 
@@ -250,8 +252,10 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 			suggestBuilder.setGlobalText(aggregateSuggester.getValue());
 		}
 
-		SearchRequestBuilder searchRequestBuilder = client.prepareSearch(
+		SearchRequest searchRequest = new SearchRequest(
 			indexNameBuilder.getIndexName(searchContext.getCompanyId()));
+
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
 		Map<String, SuggestionBuilder<?>> suggestionBuilders =
 			suggestBuilder.getSuggestions();
@@ -261,13 +265,14 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 
 			SuggestBuilder suggestBuilder2 = new SuggestBuilder();
 
-			searchRequestBuilder.suggest(
+			searchSourceBuilder.suggest(
 				suggestBuilder2.addSuggestion(
 					entry.getKey(), entry.getValue()));
 		}
 
-		SearchResponse suggestResponse = getSuggestResponse(
-			searchRequestBuilder);
+		searchRequest.source(searchSourceBuilder);
+
+		SearchResponse suggestResponse = getSuggestResponse(searchRequest);
 
 		if (suggestResponse == null) {
 			return null;
@@ -296,11 +301,13 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 		return LocalizationUtil.getLocalization();
 	}
 
-	protected SearchResponse getSuggestResponse(
-		SearchRequestBuilder searchRequestBuilder) {
+	protected SearchResponse getSuggestResponse(SearchRequest searchRequest) {
+		RestHighLevelClient restHighLevelClient =
+			elasticsearchConnectionManager.getRestHighLevelClient();
 
 		try {
-			return searchRequestBuilder.get();
+			return restHighLevelClient.search(
+				searchRequest, RequestOptions.DEFAULT);
 		}
 		catch (SearchPhaseExecutionException spee) {
 			ElasticsearchException ee = spee.guessRootCauses()[0];
@@ -316,6 +323,9 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 			}
 
 			throw spee;
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
 		}
 	}
 

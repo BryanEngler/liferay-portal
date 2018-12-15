@@ -108,7 +108,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 
 		try {
 			indexFactory.createIndices(
-				elasticsearchConnectionManager.getAdminClient(), companyId);
+				elasticsearchConnectionManager.getIndicesClient(), companyId);
 
 			elasticsearchConnectionManager.registerCompanyId(companyId);
 		}
@@ -137,7 +137,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 
 		try {
 			indexFactory.deleteIndices(
-				elasticsearchConnectionManager.getAdminClient(), companyId);
+				elasticsearchConnectionManager.getIndicesClient(), companyId);
 
 			elasticsearchConnectionManager.unregisterCompanyId(companyId);
 		}

@@ -14,17 +14,17 @@
 
 package com.liferay.portal.search.elasticsearch6.internal.index;
 
-import org.elasticsearch.client.AdminClient;
+import org.elasticsearch.client.IndicesClient;
 
 /**
  * @author Michael C. Han
  */
 public interface IndexFactory {
 
-	public void createIndices(AdminClient adminClient, long companyId)
+	public void createIndices(IndicesClient indicesClient, long companyId)
 		throws Exception;
 
-	public void deleteIndices(AdminClient adminClient, long companyId)
+	public void deleteIndices(IndicesClient indicesClient, long companyId)
 		throws Exception;
 
 }

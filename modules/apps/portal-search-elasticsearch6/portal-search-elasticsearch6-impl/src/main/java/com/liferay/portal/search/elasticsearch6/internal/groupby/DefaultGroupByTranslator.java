@@ -31,12 +31,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.common.geo.GeoDistance;
 import org.elasticsearch.common.geo.GeoPoint;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.tophits.TopHitsAggregationBuilder;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.GeoDistanceSortBuilder;
@@ -55,8 +55,8 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 
 	@Override
 	public void translate(
-		SearchRequestBuilder searchRequestBuilder, GroupBy groupBy,
-		Sort[] sorts, Locale locale, String[] selectedFieldNames,
+		SearchSourceBuilder searchSourceBuilder, GroupBy groupBy, Sort[] sorts,
+		Locale locale, String[] selectedFieldNames,
 		String[] highlightFieldNames, boolean highlightEnabled,
 		boolean highlightRequireFieldMatch, int highlightFragmentSize,
 		int highlightSnippetSize, int start, int size) {
@@ -75,7 +75,7 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 
 		termsAggregationBuilder.subAggregation(topHitsAggregationBuilder);
 
-		searchRequestBuilder.addAggregation(termsAggregationBuilder);
+		searchSourceBuilder.aggregation(termsAggregationBuilder);
 	}
 
 	protected void addHighlightedField(
