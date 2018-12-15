@@ -26,6 +26,7 @@ import java.util.Objects;
 
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RestHighLevelClient;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -79,6 +80,17 @@ public class ElasticsearchConnectionManager
 
 	public ElasticsearchConnection getElasticsearchConnection() {
 		return _elasticsearchConnections.get(_operationMode);
+	}
+
+	public RestHighLevelClient getRestHighLevelClient() {
+		ElasticsearchConnection elasticsearchConnection =
+			getElasticsearchConnection();
+
+		if (elasticsearchConnection == null) {
+			throw new ElasticsearchConnectionNotInitializedException();
+		}
+
+		return elasticsearchConnection.getRestHighLevelClient();
 	}
 
 	public synchronized void registerCompanyId(long companyId) {
@@ -166,9 +178,12 @@ public class ElasticsearchConnectionManager
 
 		_operationMode = operationMode;
 
+		RestHighLevelClient restHighLevelClient = getRestHighLevelClient();
+
 		for (Long companyId : _companyIds.values()) {
 			try {
-				indexFactory.createIndices(getAdminClient(), companyId);
+				indexFactory.createIndices(
+					restHighLevelClient.indices(), companyId);
 			}
 			catch (Exception e) {
 				if (_log.isWarnEnabled()) {

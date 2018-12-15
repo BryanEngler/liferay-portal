@@ -28,14 +28,36 @@ import com.liferay.portal.search.elasticsearch7.internal.index.IndexFactory;
 import com.liferay.portal.search.elasticsearch7.settings.SettingsContributor;
 import com.liferay.portal.search.elasticsearch7.settings.XPackSecuritySettings;
 
+import java.io.InputStream;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import java.security.KeyStore;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.net.ssl.SSLContext;
+
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.SSLContexts;
+
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestClientBuilder;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
@@ -150,6 +172,75 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 		}
 	}
 
+	protected RestHighLevelClient createRestHighLevelClient() {
+		String[] networkHostAddresses =
+			elasticsearchConfiguration.networkHostAddresses();
+
+		HttpHost[] httpHosts = new HttpHost[networkHostAddresses.length];
+
+		for (int i = 0; i < networkHostAddresses.length; i++) {
+			httpHosts[i] = HttpHost.create(networkHostAddresses[i]);
+		}
+
+		RestClientBuilder restClientBuilder = RestClient.builder(httpHosts);
+
+		if ((xPackSecuritySettings != null) &&
+			xPackSecuritySettings.requiresXPackSecurity()) {
+
+			Settings.Builder builder = settingsBuilder.getBuilder();
+
+			String usernamePassword = builder.get("xpack.security.user");
+
+			CredentialsProvider credentialsProvider =
+				new BasicCredentialsProvider();
+
+			credentialsProvider.setCredentials(
+				AuthScope.ANY,
+				new UsernamePasswordCredentials(usernamePassword));
+
+			String keyStoreFilePath = builder.get("xpack.ssl.keystore.path");
+
+			Path keyStorePath = Paths.get(keyStoreFilePath);
+
+			SSLContext sslContext;
+
+			try (InputStream is = Files.newInputStream(keyStorePath)) {
+				KeyStore truststore = KeyStore.getInstance("jks");
+
+				String keyStorePass = builder.get(
+					"xpack.ssl.keystore.password");
+
+				truststore.load(is, keyStorePass.toCharArray());
+
+				SSLContextBuilder sslBuilder = SSLContexts.custom();
+
+				sslBuilder.loadTrustMaterial(truststore, null);
+
+				sslContext = sslBuilder.build();
+			}
+			catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+
+			restClientBuilder.setHttpClientConfigCallback(
+				new RestClientBuilder.HttpClientConfigCallback() {
+
+					@Override
+					public HttpAsyncClientBuilder customizeHttpClient(
+						HttpAsyncClientBuilder httpClientBuilder) {
+
+						httpClientBuilder.setSSLContext(sslContext);
+
+						return httpClientBuilder.setDefaultCredentialsProvider(
+							credentialsProvider);
+					}
+
+				});
+		}
+
+		return new RestHighLevelClient(restClientBuilder);
+	}
+
 	protected TransportClient createTransportClient() {
 		Settings settings = settingsBuilder.build();
 
@@ -172,7 +263,7 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 	}
 
 	@Override
-	protected void loadRequiredDefaultConfigurations() {
+	protected void loadConfigurations() {
 		settingsBuilder.put(
 			"client.transport.ignore_cluster_name",
 			elasticsearchConfiguration.clientTransportIgnoreClusterName());
