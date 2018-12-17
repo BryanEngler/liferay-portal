@@ -277,6 +277,41 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 	}
 
 	@Test
+	public void testExecuteOpenIndexRequest() {
+		org.elasticsearch.action.admin.indices.close.CloseIndexRequest
+			elasticsearchCloseIndexRequest = new
+				org.elasticsearch.action.admin.indices.close.CloseIndexRequest(
+					_INDEX_NAME);
+
+		try {
+			_indicesClient.close(
+				elasticsearchCloseIndexRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
+
+		assertIndexMetaDataState(_INDEX_NAME, IndexMetaData.State.CLOSE);
+
+		OpenIndexRequest openIndexRequest = new OpenIndexRequest(_INDEX_NAME);
+
+		IndicesOptions indicesOptions = new IndicesOptions();
+
+		indicesOptions.setIgnoreUnavailable(true);
+
+		openIndexRequest.setIndicesOptions(indicesOptions);
+
+		OpenIndexResponse openIndexResponse = _searchEngineAdapter.execute(
+			openIndexRequest);
+
+		Assert.assertTrue(
+			"Open request not acknowledged",
+			openIndexResponse.isAcknowledged());
+
+		assertIndexMetaDataState(_INDEX_NAME, IndexMetaData.State.OPEN);
+	}
+
+	@Test
 	public void testExecutePutMappingIndexRequest() {
 		String mappingName = "testPutMapping";
 		String mappingSource =
@@ -372,41 +407,6 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 		}
 
 		deleteIndex("test_index_2");
-	}
-
-	@Test
-	public void testExecuteOpenIndexRequest() {
-		org.elasticsearch.action.admin.indices.close.CloseIndexRequest
-			elasticsearchCloseIndexRequest = new
-				org.elasticsearch.action.admin.indices.close.CloseIndexRequest(
-					_INDEX_NAME);
-
-		try {
-			_indicesClient.close(
-				elasticsearchCloseIndexRequest, RequestOptions.DEFAULT);
-		}
-		catch (IOException ioe) {
-			throw new RuntimeException(ioe);
-		}
-
-		assertIndexMetaDataState(_INDEX_NAME, IndexMetaData.State.CLOSE);
-
-		OpenIndexRequest openIndexRequest = new OpenIndexRequest(_INDEX_NAME);
-
-		IndicesOptions indicesOptions = new IndicesOptions();
-
-		indicesOptions.setIgnoreUnavailable(true);
-
-		openIndexRequest.setIndicesOptions(indicesOptions);
-
-		OpenIndexResponse openIndexResponse = _searchEngineAdapter.execute(
-			openIndexRequest);
-
-		Assert.assertTrue(
-			"Open request not acknowledged",
-			openIndexResponse.isAcknowledged());
-
-		assertIndexMetaDataState(_INDEX_NAME, IndexMetaData.State.OPEN);
 	}
 
 	protected void assertIndexMetaDataState(
