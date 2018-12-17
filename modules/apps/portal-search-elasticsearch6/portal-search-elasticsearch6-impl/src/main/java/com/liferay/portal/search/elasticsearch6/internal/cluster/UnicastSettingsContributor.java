@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	configurationPid = "com.liferay.portal.search.elasticsearch6.configuration.ElasticsearchConfiguration",
+	//support multiple nodes with emdedded?
 	immediate = true, property = "operation.mode=EMBEDDED",
 	service = SettingsContributor.class
 )
