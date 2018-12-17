@@ -277,68 +277,6 @@ public class EmbeddedElasticsearchConnection
 		settingsBuilder.put("monitor.jvm.gc.enabled", StringPool.FALSE);
 	}
 
-	@Override
-	protected RestHighLevelClient createRestHighLevelClient() {
-		startNode();
-
-		RestHighLevelClient restHighLevelClient = new RestHighLevelClient(
-			RestClient.builder(
-				new HttpHost(
-					"localhost", elasticsearchConfiguration.embeddedHttpPort(),
-					"http")));
-
-		return restHighLevelClient;
-	}
-
-	protected void startNode() {
-		StopWatch stopWatch = new StopWatch();
-
-		stopWatch.start();
-
-		if (_log.isWarnEnabled()) {
-			StringBundler sb = new StringBundler(8);
-
-			sb.append("Liferay is configured to use embedded Elasticsearch ");
-			sb.append("as its search engine. Do NOT use embedded ");
-			sb.append("Elasticsearch in production. Embedded Elasticsearch ");
-			sb.append("is useful for development and demonstration purposes. ");
-			sb.append("Refer to the documentation for details on the ");
-			sb.append("limitations of embedded Elasticsearch. Remote ");
-			sb.append("Elasticsearch connections can be configured in the ");
-			sb.append("Control Panel.");
-
-			_log.warn(sb.toString());
-		}
-
-		Settings settings = settingsBuilder.build();
-
-		installPlugins(settings);
-
-		if (_log.isDebugEnabled()) {
-			_log.debug(
-				"Starting embedded Elasticsearch cluster " +
-					elasticsearchConfiguration.clusterName());
-		}
-
-		_node = createNode(settings);
-
-		try {
-			_node.start();
-		}
-		catch (NodeValidationException nve) {
-			throw new RuntimeException(nve);
-		}
-
-		if (_log.isDebugEnabled()) {
-			stopWatch.stop();
-
-			_log.debug(
-				StringBundler.concat(
-					"Started ", elasticsearchConfiguration.clusterName(),
-					" in ", stopWatch.getTime(), " ms"));
-		}
-	}
-
 	protected EmbeddedElasticsearchPluginManager
 		createEmbeddedElasticsearchPluginManager(
 			String name, Settings settings) {
@@ -375,6 +313,19 @@ public class EmbeddedElasticsearchConnection
 				System.setProperty("jna.tmpdir", jnaTmpDir);
 			}
 		}
+	}
+
+	@Override
+	protected RestHighLevelClient createRestHighLevelClient() {
+		startNode();
+
+		RestHighLevelClient restHighLevelClient = new RestHighLevelClient(
+			RestClient.builder(
+				new HttpHost(
+					"localhost", elasticsearchConfiguration.embeddedHttpPort(),
+					"http")));
+
+		return restHighLevelClient;
 	}
 
 	@Deactivate
@@ -472,6 +423,55 @@ public class EmbeddedElasticsearchConnection
 		SettingsContributor settingsContributor) {
 
 		super.removeSettingsContributor(settingsContributor);
+	}
+
+	protected void startNode() {
+		StopWatch stopWatch = new StopWatch();
+
+		stopWatch.start();
+
+		if (_log.isWarnEnabled()) {
+			StringBundler sb = new StringBundler(8);
+
+			sb.append("Liferay is configured to use embedded Elasticsearch ");
+			sb.append("as its search engine. Do NOT use embedded ");
+			sb.append("Elasticsearch in production. Embedded Elasticsearch ");
+			sb.append("is useful for development and demonstration purposes. ");
+			sb.append("Refer to the documentation for details on the ");
+			sb.append("limitations of embedded Elasticsearch. Remote ");
+			sb.append("Elasticsearch connections can be configured in the ");
+			sb.append("Control Panel.");
+
+			_log.warn(sb.toString());
+		}
+
+		Settings settings = settingsBuilder.build();
+
+		installPlugins(settings);
+
+		if (_log.isDebugEnabled()) {
+			_log.debug(
+				"Starting embedded Elasticsearch cluster " +
+					elasticsearchConfiguration.clusterName());
+		}
+
+		_node = createNode(settings);
+
+		try {
+			_node.start();
+		}
+		catch (NodeValidationException nve) {
+			throw new RuntimeException(nve);
+		}
+
+		if (_log.isDebugEnabled()) {
+			stopWatch.stop();
+
+			_log.debug(
+				StringBundler.concat(
+					"Started ", elasticsearchConfiguration.clusterName(),
+					" in ", stopWatch.getTime(), " ms"));
+		}
 	}
 
 	protected static final String JNA_TMP_DIR = "elasticSearch-tmpDir";
