@@ -34,7 +34,7 @@ public interface ElasticsearchConfiguration {
 		description = "cluster-name-help", name = "cluster-name",
 		required = false
 	)
-	public String clusterName();
+	public String clusterName(); //embedded only
 
 	@Meta.AD(
 		deflt = "EMBEDDED", description = "operation-mode-help",
@@ -64,7 +64,7 @@ public interface ElasticsearchConfiguration {
 		deflt = "false", description = "bootstrap-mlockall-help",
 		name = "bootstrap-mlockall", required = false
 	)
-	public boolean bootstrapMlockAll();
+	public boolean bootstrapMlockAll(); //embedded only
 
 	@Meta.AD(
 		deflt = "true", description = "log-exceptions-only-help",
@@ -89,38 +89,56 @@ public interface ElasticsearchConfiguration {
 		deflt = "", description = "network-host-help", name = "network-host",
 		required = false
 	)
-	public String networkHost();
+	public String networkHost(); //embedded only
+
+	@Meta.AD(
+		deflt = "9200", description = "embedded-http-port-help",
+		name = "embedded-http-port-host", required = false
+	)
+	public int embeddedHttpPort(); //embedded only
 
 	@Meta.AD(
 		deflt = "", description = "network-bind-host-help",
 		name = "network-bind-host", required = false
 	)
-	public String networkBindHost();
+	public String networkBindHost(); //embedded only
 
 	@Meta.AD(
 		deflt = "", description = "network-publish-host-help",
 		name = "network-publish-host", required = false
 	)
-	public String networkPublishHost();
+	public String networkPublishHost(); //embedded only
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	@Meta.AD(
 		deflt = "", description = "transport-tcp-port-help",
 		name = "transport-tcp-port", required = false
 	)
-	public String transportTcpPort();
+	public String transportTcpPort(); //embedded only
 
 	@Meta.AD(
-		deflt = "localhost:9300", description = "transport-addresses-help",
+		deflt = "http://localhost:9201", description = "transport-addresses-help",
 		name = "transport-addresses", required = false
 	)
-	public String[] transportAddresses();
+	public String[] networkHostAddresses();
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	@Meta.AD(
 		deflt = "true", description = "client-transport-sniff-help",
 		name = "client-transport-sniff", required = false
 	)
 	public boolean clientTransportSniff();
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	@Meta.AD(
 		deflt = "false",
 		description = "client-transport-ignore-cluster-name-help",
@@ -128,12 +146,20 @@ public interface ElasticsearchConfiguration {
 	)
 	public boolean clientTransportIgnoreClusterName();
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	@Meta.AD(
 		deflt = "", description = "client-transport-ping-timeout-help",
 		name = "client-transport-ping-timeout", required = false
 	)
 	public String clientTransportPingTimeout();
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	@Meta.AD(
 		deflt = "",
 		description = "client-transport-nodes-sampler-interval-help",
@@ -149,32 +175,32 @@ public interface ElasticsearchConfiguration {
 		deflt = "true", description = "http-enabled-help",
 		name = "http-enabled", required = false
 	)
-	public boolean httpEnabled();
+	public boolean httpEnabled(); //embedded only
 
 	@Meta.AD(
 		deflt = "true", description = "http-cors-enabled-help",
 		name = "http-cors-enabled", required = false
 	)
-	public boolean httpCORSEnabled();
+	public boolean httpCORSEnabled(); //embedded only
 
 	@Meta.AD(
 		deflt = "/https?:\\/\\/localhost(:[0-9]+)?/",
 		description = "http-cors-allow-origin-help",
 		name = "http-cors-allow-origin", required = false
 	)
-	public String httpCORSAllowOrigin();
+	public String httpCORSAllowOrigin(); //embedded only
 
 	@Meta.AD(
 		description = "http-cors-configurations-help",
 		name = "http-cors-configurations", required = false
 	)
-	public String httpCORSConfigurations();
+	public String httpCORSConfigurations(); //embedded only
 
 	@Meta.AD(
 		description = "additional-configurations-help",
 		name = "additional-configurations", required = false
 	)
-	public String additionalConfigurations();
+	public String additionalConfigurations(); //embedded only
 
 	@Meta.AD(
 		description = "additional-index-configurations-help",
