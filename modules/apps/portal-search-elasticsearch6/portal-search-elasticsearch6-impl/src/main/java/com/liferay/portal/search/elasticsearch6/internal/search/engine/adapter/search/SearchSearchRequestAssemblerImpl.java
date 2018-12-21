@@ -60,7 +60,7 @@ public class SearchSearchRequestAssemblerImpl
 
 		if (searchSearchRequest.isHighlightEnabled()) {
 			highlighterTranslator.translate(
-				searchRequestBuilder, searchSearchRequest.getLocale(),
+				searchRequestBuilder,
 				searchSearchRequest.getHighlightFieldNames(),
 				searchSearchRequest.isHighlightRequireFieldMatch(),
 				searchSearchRequest.getHighlightFragmentSize(),

@@ -14,10 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch6.internal.highlight;
 
-import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.highlight.HighlightUtil;
-
-import java.util.Locale;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -32,17 +29,16 @@ public class DefaultHighlighterTranslator implements HighlighterTranslator {
 
 	@Override
 	public void translate(
-		SearchRequestBuilder searchRequestBuilder, Locale locale,
-		String[] highlightFieldNames, boolean highlightRequireFieldMatch,
-		int highlightFragmentSize, int highlightSnippetSize,
-		boolean luceneSyntax) {
+		SearchRequestBuilder searchRequestBuilder, String[] highlightFieldNames,
+		boolean highlightRequireFieldMatch, int highlightFragmentSize,
+		int highlightSnippetSize, boolean luceneSyntax) {
 
 		HighlightBuilder highlightBuilder = new HighlightBuilder();
 
 		for (String highlightFieldName : highlightFieldNames) {
-			addHighlightedField(
-				highlightBuilder, highlightFieldName, locale,
-				highlightFragmentSize, highlightSnippetSize);
+			highlightBuilder.field(
+				highlightFieldName, highlightFragmentSize,
+				highlightSnippetSize);
 		}
 
 		highlightBuilder.postTags(HighlightUtil.HIGHLIGHT_TAG_CLOSE);
@@ -55,19 +51,6 @@ public class DefaultHighlighterTranslator implements HighlighterTranslator {
 		highlightBuilder.requireFieldMatch(highlightRequireFieldMatch);
 
 		searchRequestBuilder.highlighter(highlightBuilder);
-	}
-
-	protected void addHighlightedField(
-		HighlightBuilder highlightBuilder, String fieldName, Locale locale,
-		int highlightFragmentSize, int highlightSnippetSize) {
-
-		highlightBuilder.field(
-			fieldName, highlightFragmentSize, highlightSnippetSize);
-
-		String localizedFieldName = Field.getLocalizedName(locale, fieldName);
-
-		highlightBuilder.field(
-			localizedFieldName, highlightFragmentSize, highlightSnippetSize);
 	}
 
 }
