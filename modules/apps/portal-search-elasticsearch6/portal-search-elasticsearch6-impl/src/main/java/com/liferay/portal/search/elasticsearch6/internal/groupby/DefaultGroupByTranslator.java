@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -37,6 +38,7 @@ import org.elasticsearch.common.geo.GeoPoint;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.tophits.TopHitsAggregationBuilder;
+import org.elasticsearch.search.aggregations.pipeline.bucketsort.BucketSortPipelineAggregationBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.GeoDistanceSortBuilder;
@@ -70,6 +72,9 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 		).size(
 			start + size
 		);
+
+		termsAggregationBuilder.subAggregation(
+			getBucketSortPipelineBuilder(start, size));
 
 		TopHitsAggregationBuilder topHitsAggregationBuilder = getTopHitsBuilder(
 			groupBy, selectedFieldNames, locale, highlightFieldNames,
@@ -207,6 +212,20 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 
 			topHitsAggregationBuilder.sort(sortBuilder);
 		}
+	}
+
+	protected BucketSortPipelineAggregationBuilder getBucketSortPipelineBuilder(
+		int start, int size) {
+
+		BucketSortPipelineAggregationBuilder
+			bucketSortPipelineAggregationBuilder =
+				new BucketSortPipelineAggregationBuilder(
+					SORT_AGGREGATION_NAME, Collections.emptyList());
+
+		bucketSortPipelineAggregationBuilder.from(start);
+		bucketSortPipelineAggregationBuilder.size(size);
+
+		return bucketSortPipelineAggregationBuilder;
 	}
 
 	protected TopHitsAggregationBuilder getTopHitsBuilder(
