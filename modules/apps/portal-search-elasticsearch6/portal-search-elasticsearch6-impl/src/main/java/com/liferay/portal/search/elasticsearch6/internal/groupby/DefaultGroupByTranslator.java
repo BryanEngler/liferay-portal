@@ -66,7 +66,10 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 				GROUP_BY_AGGREGATION_PREFIX + groupBy.getField());
 
 		termsAggregationBuilder = termsAggregationBuilder.field(
-			groupBy.getField());
+			groupBy.getField()
+		).size(
+			start + size
+		);
 
 		TopHitsAggregationBuilder topHitsAggregationBuilder = getTopHitsBuilder(
 			groupBy, sorts, selectedFieldNames, locale, highlightFieldNames,
