@@ -198,6 +198,111 @@ public abstract class BaseGroupByTestCase extends BaseIndexingTestCase {
 	}
 
 	@Test
+	public void testGroupByStartAndSizeAndStartAndEnd1() throws Exception {
+		Map<String, Integer> map1 = new HashMap<String, Integer>() {
+			{
+				put("sixteen", 16);
+				put("three", 3);
+				put("two", 2);
+			}
+		};
+
+		map1.forEach((key, value) -> indexDuplicates(key, value));
+
+		assertSearch(
+			indexingTestHelper -> {
+				indexingTestHelper.define(
+					searchContext -> {
+						GroupBy groupBy = new GroupBy(GROUP_FIELD);
+
+						groupBy.setSize(1);
+						groupBy.setStart(0);
+
+						searchContext.setGroupBy(groupBy);
+
+						searchContext.setEnd(1);
+						searchContext.setStart(0);
+					});
+
+				indexingTestHelper.search();
+
+				indexingTestHelper.verify(
+					hits -> assertGroups(
+						toMap("sixteen", "16|1"), hits, indexingTestHelper));
+			});
+	}
+
+	@Test
+	public void testGroupByStartAndSizeAndStartAndEnd2() throws Exception {
+		Map<String, Integer> map1 = new HashMap<String, Integer>() {
+			{
+				put("sixteen", 16);
+				put("three", 3);
+				put("two", 2);
+			}
+		};
+
+		map1.forEach((key, value) -> indexDuplicates(key, value));
+
+		assertSearch(
+			indexingTestHelper -> {
+				indexingTestHelper.define(
+					searchContext -> {
+						GroupBy groupBy = new GroupBy(GROUP_FIELD);
+
+						groupBy.setSize(1);
+						groupBy.setStart(0);
+
+						searchContext.setGroupBy(groupBy);
+
+						searchContext.setEnd(3);
+						searchContext.setStart(2);
+					});
+
+				indexingTestHelper.search();
+
+				indexingTestHelper.verify(
+					hits -> assertGroups(
+						toMap("two", "2|1"), hits, indexingTestHelper));
+			});
+	}
+
+	@Test
+	public void testGroupByStartAndSizeAndStartAndEnd3() throws Exception {
+		Map<String, Integer> map1 = new HashMap<String, Integer>() {
+			{
+				put("sixteen", 16);
+				put("three", 3);
+				put("two", 2);
+			}
+		};
+
+		map1.forEach((key, value) -> indexDuplicates(key, value));
+
+		assertSearch(
+			indexingTestHelper -> {
+				indexingTestHelper.define(
+					searchContext -> {
+						GroupBy groupBy = new GroupBy(GROUP_FIELD);
+
+						groupBy.setSize(1);
+						groupBy.setStart(15);
+
+						searchContext.setGroupBy(groupBy);
+
+						searchContext.setEnd(1);
+						searchContext.setStart(0);
+					});
+
+				indexingTestHelper.search();
+
+				indexingTestHelper.verify(
+					hits -> assertGroups(
+						toMap("sixteen", "16|1"), hits, indexingTestHelper));
+			});
+	}
+
+	@Test
 	public void testStartAndEnd() throws Exception {
 		indexDuplicates("sixteen", 16);
 
