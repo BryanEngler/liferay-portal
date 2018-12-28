@@ -24,6 +24,8 @@ import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.missing.Missing;
 import org.elasticsearch.search.aggregations.bucket.missing.MissingAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.cardinality.Cardinality;
+import org.elasticsearch.search.aggregations.metrics.cardinality.CardinalityAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.max.Max;
 import org.elasticsearch.search.aggregations.metrics.max.MaxAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.min.Min;
@@ -51,6 +53,13 @@ public class DefaultStatsTranslator implements StatsTranslator {
 		String field = stats.getField();
 
 		StatsResults statsResults = new StatsResults(field);
+
+		if (stats.isCardinality()) {
+			Cardinality cardinality = (Cardinality)aggregationMap.get(
+				field + "_cardinality");
+
+			statsResults.setCardinality(cardinality.getValue());
+		}
 
 		if (stats.isCount()) {
 			ValueCount valueCount = (ValueCount)aggregationMap.get(
@@ -118,6 +127,15 @@ public class DefaultStatsTranslator implements StatsTranslator {
 		}
 
 		String field = stats.getField();
+
+		if (stats.isCardinality()) {
+			CardinalityAggregationBuilder cardinalityAggregationBuilder =
+				AggregationBuilders.cardinality(field + "_cardinality");
+
+			cardinalityAggregationBuilder.field(field);
+
+			searchRequestBuilder.addAggregation(cardinalityAggregationBuilder);
+		}
 
 		if (stats.isCount()) {
 			ValueCountAggregationBuilder valueCountAggregationBuilder =
