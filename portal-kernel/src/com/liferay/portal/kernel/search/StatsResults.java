@@ -25,6 +25,10 @@ public class StatsResults implements Serializable {
 		_field = field;
 	}
 
+	public long getCardinality() {
+		return _cardinality;
+	}
+
 	public long getCount() {
 		return _count;
 	}
@@ -61,6 +65,10 @@ public class StatsResults implements Serializable {
 		return _sumOfSquares;
 	}
 
+	public void setCardinality(long cardinality) {
+		_cardinality = cardinality;
+	}
+
 	public void setCount(long count) {
 		_count = count;
 	}
@@ -93,6 +101,7 @@ public class StatsResults implements Serializable {
 		_sumOfSquares = sumOfSquares;
 	}
 
+	private long _cardinality;
 	private long _count;
 	private final String _field;
 	private double _max;
