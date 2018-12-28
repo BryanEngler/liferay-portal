@@ -72,9 +72,9 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 		);
 
 		TopHitsAggregationBuilder topHitsAggregationBuilder = getTopHitsBuilder(
-			groupBy, sorts, selectedFieldNames, locale, highlightFieldNames,
+			groupBy, selectedFieldNames, locale, highlightFieldNames,
 			highlightEnabled, highlightRequireFieldMatch, highlightFragmentSize,
-			highlightSnippetSize, start, size);
+			highlightSnippetSize);
 
 		termsAggregationBuilder.subAggregation(topHitsAggregationBuilder);
 
@@ -210,29 +210,17 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 	}
 
 	protected TopHitsAggregationBuilder getTopHitsBuilder(
-		GroupBy groupBy, Sort[] sorts, String[] selectedFieldNames,
-		Locale locale, String[] highlightFieldNames, boolean highlightEnabled,
+		GroupBy groupBy, String[] selectedFieldNames, Locale locale,
+		String[] highlightFieldNames, boolean highlightEnabled,
 		boolean highlightRequireFieldMatch, int highlightFragmentSize,
-		int highlightSnippetSize, int start, int size) {
+		int highlightSnippetSize) {
 
 		TopHitsAggregationBuilder topHitsAggregationBuilder =
 			AggregationBuilders.topHits(TOP_HITS_AGGREGATION_NAME);
 
-		int groupyByStart = groupBy.getStart();
+		topHitsAggregationBuilder.from(groupBy.getStart());
 
-		if (groupyByStart == 0) {
-			groupyByStart = start;
-		}
-
-		topHitsAggregationBuilder.from(groupyByStart);
-
-		int groupBySize = groupBy.getSize();
-
-		if (groupBySize == 0) {
-			groupBySize = size;
-		}
-
-		topHitsAggregationBuilder.size(groupBySize);
+		topHitsAggregationBuilder.size(groupBy.getSize());
 
 		if (highlightEnabled) {
 			addHighlights(
@@ -242,7 +230,8 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 		}
 
 		addSelectedFields(topHitsAggregationBuilder, selectedFieldNames);
-		addSorts(topHitsAggregationBuilder, sorts);
+
+		addSorts(topHitsAggregationBuilder, groupBy.getSorts());
 
 		return topHitsAggregationBuilder;
 	}
