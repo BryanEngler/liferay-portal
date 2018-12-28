@@ -51,8 +51,14 @@ public abstract class BaseGroupByTestCase extends BaseIndexingTestCase {
 		assertSearch(
 			indexingTestHelper -> {
 				indexingTestHelper.define(
-					searchContext -> searchContext.setGroupBy(
-						new GroupBy(GROUP_FIELD)));
+					searchContext -> {
+						GroupBy groupBy = new GroupBy(GROUP_FIELD);
+
+						groupBy.setSize(10);
+						groupBy.setStart(0);
+
+						searchContext.setGroupBy(groupBy);
+					});
 
 				indexingTestHelper.search();
 
@@ -73,8 +79,14 @@ public abstract class BaseGroupByTestCase extends BaseIndexingTestCase {
 		assertSearch(
 			indexingTestHelper -> {
 				indexingTestHelper.define(
-					searchContext -> searchContext.setGroupBy(
-						new GroupBy(GROUP_FIELD)));
+					searchContext -> {
+						GroupBy groupBy = new GroupBy(GROUP_FIELD);
+
+						groupBy.setSize(10);
+						groupBy.setStart(0);
+
+						searchContext.setGroupBy(groupBy);
+					});
 
 				indexingTestHelper.search();
 
@@ -92,7 +104,12 @@ public abstract class BaseGroupByTestCase extends BaseIndexingTestCase {
 			indexingTestHelper -> {
 				indexingTestHelper.define(
 					searchContext -> {
-						searchContext.setGroupBy(new GroupBy(GROUP_FIELD));
+						GroupBy groupBy = new GroupBy(GROUP_FIELD);
+
+						groupBy.setSize(10);
+						groupBy.setStart(0);
+
+						searchContext.setGroupBy(groupBy);
 
 						QueryConfig queryConfig =
 							searchContext.getQueryConfig();
@@ -119,7 +136,12 @@ public abstract class BaseGroupByTestCase extends BaseIndexingTestCase {
 
 				indexingTestHelper.define(
 					searchContext -> {
-						searchContext.setGroupBy(new GroupBy(GROUP_FIELD));
+						GroupBy groupBy = new GroupBy(GROUP_FIELD);
+
+						groupBy.setSize(10);
+						groupBy.setStart(0);
+
+						searchContext.setGroupBy(groupBy);
 
 						QueryConfig queryConfig =
 							searchContext.getQueryConfig();
@@ -159,8 +181,14 @@ public abstract class BaseGroupByTestCase extends BaseIndexingTestCase {
 		assertSearch(
 			indexingTestHelper -> {
 				indexingTestHelper.define(
-					searchContext -> searchContext.setGroupBy(
-						new GroupBy(GROUP_FIELD)));
+					searchContext -> {
+						GroupBy groupBy = new GroupBy(GROUP_FIELD);
+
+						groupBy.setSize(16);
+						groupBy.setStart(0);
+
+						searchContext.setGroupBy(groupBy);
+					});
 
 				indexingTestHelper.search();
 
@@ -177,9 +205,12 @@ public abstract class BaseGroupByTestCase extends BaseIndexingTestCase {
 			indexingTestHelper -> {
 				indexingTestHelper.define(
 					searchContext -> {
-						searchContext.setEnd(9);
-						searchContext.setGroupBy(new GroupBy(GROUP_FIELD));
-						searchContext.setStart(4);
+						GroupBy groupBy = new GroupBy(GROUP_FIELD);
+
+						groupBy.setSize(5);
+						groupBy.setStart(4);
+
+						searchContext.setGroupBy(groupBy);
 					});
 
 				indexingTestHelper.search();
