@@ -261,7 +261,7 @@ public class DefaultSearchResponseTranslator
 	protected void updateStatsResults(
 		SearchResponse searchResponse, Hits hits, Map<String, Stats> statsMap) {
 
-		if (statsMap.isEmpty()) {
+		if ((statsMap == null) || statsMap.isEmpty()) {
 			return;
 		}
 
