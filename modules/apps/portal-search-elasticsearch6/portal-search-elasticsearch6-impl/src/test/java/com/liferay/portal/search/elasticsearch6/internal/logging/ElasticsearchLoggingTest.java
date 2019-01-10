@@ -19,8 +19,10 @@ import com.liferay.portal.kernel.search.generic.MatchAllQuery;
 import com.liferay.portal.kernel.test.CaptureHandler;
 import com.liferay.portal.kernel.test.JDKLoggerTestUtil;
 import com.liferay.portal.search.elasticsearch6.internal.ElasticsearchIndexingFixture;
+import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchFixture;
 import com.liferay.portal.search.elasticsearch6.internal.connection.LiferayIndexCreator;
+import com.liferay.portal.search.elasticsearch6.internal.connection.TestElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch6.internal.facet.DefaultFacetProcessor;
 import com.liferay.portal.search.elasticsearch6.internal.search.engine.adapter.ElasticsearchEngineAdapterFixture;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
@@ -35,12 +37,30 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  * @author Bryan Engler
  */
 public class ElasticsearchLoggingTest extends BaseIndexingTestCase {
+
+	@Before
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+
+		ElasticsearchConnectionManager elasticsearchConnectionManager =
+			new TestElasticsearchConnectionManager(
+				_elasticsearchIndexingFixture.getElasticsearchFixture());
+
+		ElasticsearchEngineAdapterFixture elasticsearchEngineAdapterFixture =
+			new ElasticsearchEngineAdapterFixture(
+				elasticsearchConnectionManager, new DefaultFacetProcessor());
+
+		_searchEngineAdapter =
+			elasticsearchEngineAdapterFixture.getSearchEngineAdapter();
+	}
 
 	@Test
 	public void testCountSearchRequestExecutorLogs() throws Exception {
@@ -117,16 +137,11 @@ public class ElasticsearchLoggingTest extends BaseIndexingTestCase {
 		ElasticsearchFixture elasticsearchFixture = new ElasticsearchFixture(
 			getClass());
 
-		ElasticsearchEngineAdapterFixture elasticsearchEngineAdapterFixture =
-			new ElasticsearchEngineAdapterFixture(
-				elasticsearchFixture, new DefaultFacetProcessor());
-
-		_searchEngineAdapter =
-			elasticsearchEngineAdapterFixture.getSearchEngineAdapter();
-
-		return new ElasticsearchIndexingFixture(
+		_elasticsearchIndexingFixture = new ElasticsearchIndexingFixture(
 			elasticsearchFixture, BaseIndexingTestCase.COMPANY_ID,
 			new LiferayIndexCreator(elasticsearchFixture));
+
+		return _elasticsearchIndexingFixture;
 	}
 
 	protected SearchSearchRequest createSearchSearchRequest() throws Exception {
@@ -192,6 +207,7 @@ public class ElasticsearchLoggingTest extends BaseIndexingTestCase {
 			"com.liferay.portal.search.elasticsearch6.internal.search.engine." +
 				"adapter.search.SearchSearchRequestExecutorImpl";
 
+	private ElasticsearchIndexingFixture _elasticsearchIndexingFixture;
 	private SearchEngineAdapter _searchEngineAdapter;
 
 	private interface SearchFunction {
