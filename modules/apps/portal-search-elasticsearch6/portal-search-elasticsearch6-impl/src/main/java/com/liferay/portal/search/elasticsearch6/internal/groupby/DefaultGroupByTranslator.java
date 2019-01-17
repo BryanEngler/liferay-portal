@@ -220,7 +220,7 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 		BucketSortPipelineAggregationBuilder
 			bucketSortPipelineAggregationBuilder =
 				new BucketSortPipelineAggregationBuilder(
-					SORT_AGGREGATION_NAME, Collections.emptyList());
+					BUCKET_SORT_AGGREGATION_NAME, Collections.emptyList());
 
 		bucketSortPipelineAggregationBuilder.from(start);
 		bucketSortPipelineAggregationBuilder.size(size);

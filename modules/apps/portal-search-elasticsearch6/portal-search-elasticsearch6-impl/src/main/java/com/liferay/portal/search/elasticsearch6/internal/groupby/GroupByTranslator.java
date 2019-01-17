@@ -26,9 +26,9 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
  */
 public interface GroupByTranslator {
 
-	public static final String GROUP_BY_AGGREGATION_PREFIX = "GroupBy_";
+	public static final String BUCKET_SORT_AGGREGATION_NAME = "_bucketSort";
 
-	public static final String SORT_AGGREGATION_NAME = "_Sort";
+	public static final String GROUP_BY_AGGREGATION_PREFIX = "GroupBy_";
 
 	public static final String TOP_HITS_AGGREGATION_NAME = "_topHits";
 
