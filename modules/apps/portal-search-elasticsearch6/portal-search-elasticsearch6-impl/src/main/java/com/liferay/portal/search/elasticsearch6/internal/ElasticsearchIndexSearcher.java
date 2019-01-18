@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
+import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.suggest.QuerySuggester;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -46,6 +47,8 @@ import com.liferay.portal.search.engine.adapter.search.CountSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.CountSearchResponse;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
+import com.liferay.portal.search.groupby.GroupBy;
+import com.liferay.portal.search.legacy.groupby.GroupByFactory;
 import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.legacy.searcher.SearchResponseBuilderFactory;
 import com.liferay.portal.search.searcher.SearchRequest;
@@ -271,7 +274,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		searchSearchRequest.putAllFacets(searchContext.getFacets());
 
-		searchSearchRequest.setGroupBy(searchContext.getGroupBy());
+		searchSearchRequest.setGroupBy(_getGroupBy(searchContext));
 
 		searchSearchRequest.setHighlightEnabled(
 			queryConfig.isHighlightEnabled());
@@ -390,6 +393,9 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	}
 
 	@Reference
+	protected GroupByFactory groupByFactory;
+
+	@Reference
 	protected IndexNameBuilder indexNameBuilder;
 
 	@Reference
@@ -403,6 +409,27 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 	@Reference
 	protected SearchResponseBuilderFactory searchResponseBuilderFactory;
+
+	private GroupBy _getGroupBy(SearchContext searchContext) {
+		if (searchContext.getGroupBy() == null) {
+			return null;
+		}
+
+		GroupBy groupBy = groupByFactory.getGroupBy(searchContext.getGroupBy());
+
+		groupBy.setTermsSize(
+			GetterUtil.getInteger(
+				searchContext.getAttribute("groupByTermsSize")));
+
+		groupBy.setTermsSorts(
+			(Sort[])searchContext.getAttribute("groupByTermsSorts"));
+
+		groupBy.setTermsStart(
+			GetterUtil.getInteger(
+				searchContext.getAttribute("groupByTermsStart")));
+
+		return groupBy;
+	}
 
 	private SearchRequestBuilder _getSearchRequestBuilder(
 		SearchContext searchContext) {
