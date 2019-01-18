@@ -14,10 +14,10 @@
 
 package com.liferay.portal.search.elasticsearch6.internal.search.response;
 
-import com.liferay.portal.kernel.search.GroupBy;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Stats;
 import com.liferay.portal.kernel.search.facet.Facet;
+import com.liferay.portal.search.groupby.GroupBy;
 
 import java.util.Locale;
 import java.util.Map;

@@ -15,7 +15,6 @@
 package com.liferay.portal.search.elasticsearch6.internal.search.engine.adapter.search;
 
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.search.GroupBy;
 import com.liferay.portal.kernel.search.Stats;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -25,6 +24,7 @@ import com.liferay.portal.search.elasticsearch6.internal.highlight.HighlighterTr
 import com.liferay.portal.search.elasticsearch6.internal.sort.SortTranslator;
 import com.liferay.portal.search.elasticsearch6.internal.stats.StatsTranslator;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
+import com.liferay.portal.search.groupby.GroupBy;
 
 import java.util.Map;
 
@@ -93,15 +93,13 @@ public class SearchSearchRequestAssemblerImpl
 		}
 
 		_groupByTranslator.translate(
-			searchRequestBuilder, groupBy, searchSearchRequest.getSorts(),
-			searchSearchRequest.getLocale(),
+			searchRequestBuilder, groupBy, searchSearchRequest.getLocale(),
 			searchSearchRequest.getSelectedFieldNames(),
 			searchSearchRequest.getHighlightFieldNames(),
 			searchSearchRequest.isHighlightEnabled(),
 			searchSearchRequest.isHighlightRequireFieldMatch(),
 			searchSearchRequest.getHighlightFragmentSize(),
-			searchSearchRequest.getHighlightSnippetSize(),
-			searchSearchRequest.getStart(), searchSearchRequest.getSize());
+			searchSearchRequest.getHighlightSnippetSize());
 	}
 
 	protected void addPagination(

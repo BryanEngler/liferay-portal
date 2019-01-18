@@ -17,7 +17,6 @@ package com.liferay.portal.search.elasticsearch6.internal.search.response;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.GroupBy;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.HitsImpl;
 import com.liferay.portal.kernel.search.Stats;
@@ -33,6 +32,7 @@ import com.liferay.portal.search.elasticsearch6.internal.facet.FacetCollectorFac
 import com.liferay.portal.search.elasticsearch6.internal.facet.FacetUtil;
 import com.liferay.portal.search.elasticsearch6.internal.groupby.GroupByTranslator;
 import com.liferay.portal.search.elasticsearch6.internal.stats.StatsTranslator;
+import com.liferay.portal.search.groupby.GroupBy;
 
 import java.util.ArrayList;
 import java.util.List;
