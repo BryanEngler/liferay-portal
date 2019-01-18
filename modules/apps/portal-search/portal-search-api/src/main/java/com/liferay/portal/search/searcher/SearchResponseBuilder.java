@@ -18,9 +18,11 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.search.aggregation.AggregationResult;
+import com.liferay.portal.search.groupby.GroupByResponse;
 import com.liferay.portal.search.hits.SearchHits;
 import com.liferay.portal.search.stats.StatsResponse;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,6 +50,18 @@ public interface SearchResponseBuilder {
 	 * @review
 	 */
 	public SearchResponse build();
+
+	/**
+	 * Sets the map containing the top hits aggregations for each field.
+	 *
+	 * @param groupByResponseMap the map containing the top hits aggregations
+	 *        per field.
+	 * @return the same builder
+	 *
+	 * @review
+	 */
+	public SearchResponseBuilder groupByResponses(
+		List<GroupByResponse> groupByResponseMap);
 
 	public SearchResponseBuilder hits(Hits hits);
 

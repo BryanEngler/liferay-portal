@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.search.aggregation.Aggregation;
 import com.liferay.portal.search.aggregation.pipeline.PipelineAggregation;
+import com.liferay.portal.search.groupby.GroupByRequest;
 import com.liferay.portal.search.query.Query;
 import com.liferay.portal.search.sort.Sort;
 import com.liferay.portal.search.stats.StatsRequest;
@@ -38,6 +39,16 @@ public interface SearchRequest {
 	public Map<String, Aggregation> getAggregationsMap();
 
 	public List<String> getEntryClassNames();
+
+	/**
+	 * Provides the top hits aggregations used for grouping results by the
+	 * specified fields.
+	 *
+	 * @return the GroupByRequests that are enabled for the search.
+	 *
+	 * @review
+	 */
+	public List<GroupByRequest> getGroupByRequests();
 
 	public List<Class<?>> getModelIndexerClasses();
 
