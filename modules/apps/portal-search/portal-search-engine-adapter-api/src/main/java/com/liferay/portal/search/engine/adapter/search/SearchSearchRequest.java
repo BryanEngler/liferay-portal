@@ -16,10 +16,10 @@ package com.liferay.portal.search.engine.adapter.search;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.kernel.search.GroupBy;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.Stats;
+import com.liferay.portal.search.groupby.GroupBy;
 
 import java.util.HashMap;
 import java.util.Locale;
