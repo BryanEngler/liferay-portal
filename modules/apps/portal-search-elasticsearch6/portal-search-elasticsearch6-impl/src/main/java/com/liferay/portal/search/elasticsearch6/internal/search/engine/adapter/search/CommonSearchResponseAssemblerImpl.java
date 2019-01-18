@@ -63,7 +63,8 @@ public class CommonSearchResponseAssemblerImpl
 		baseSearchResponse.setSearchRequestString(
 			StringUtil.removeSubstrings(
 				searchRequestBuilder.toString(), ADJUST_PURE_NEGATIVE_STRING,
-				FUZZY_TRANSPOSITIONS_STRING, ZERO_TERMS_QUERY_STRING));
+				BOOST_STRING, FUZZY_TRANSPOSITIONS_STRING,
+				ZERO_TERMS_QUERY_STRING));
 
 		if (baseSearchRequest.isIncludeResponseString()) {
 			baseSearchResponse.setSearchResponseString(
@@ -144,6 +145,8 @@ public class CommonSearchResponseAssemblerImpl
 
 	protected static final String ADJUST_PURE_NEGATIVE_STRING =
 		",\"adjust_pure_negative\":true";
+
+	protected static final String BOOST_STRING = ",\"boost\":1.0";
 
 	protected static final String FUZZY_TRANSPOSITIONS_STRING =
 		",\"fuzzy_transpositions\":" + FuzzyQuery.defaultTranspositions;
