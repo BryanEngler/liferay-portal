@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.search.aggregation.AggregationResult;
 import com.liferay.portal.search.document.Document;
+import com.liferay.portal.search.groupby.GroupByResponse;
 import com.liferay.portal.search.hits.SearchHit;
 import com.liferay.portal.search.hits.SearchHits;
 import com.liferay.portal.search.internal.hits.SearchHitsImpl;
@@ -30,6 +31,7 @@ import com.liferay.portal.search.stats.StatsResponse;
 
 import java.io.Serializable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -63,6 +65,17 @@ public class SearchResponseBuilderImpl implements SearchResponseBuilder {
 	@Override
 	public SearchResponse build() {
 		return new SearchResponseImpl();
+	}
+
+	@Override
+	public SearchResponseBuilder groupByResponses(
+		List<GroupByResponse> groupByResponses) {
+
+		_searchContext.setAttribute(
+			_SEARCH_CONTEXT_KEY_GROUPBY_RESPONSES,
+			new ArrayList<>(groupByResponses));
+
+		return this;
 	}
 
 	@Override
@@ -161,6 +174,18 @@ public class SearchResponseBuilderImpl implements SearchResponseBuilder {
 		}
 
 		@Override
+		public List<GroupByResponse> getGroupByResponses() {
+			Serializable serializable = _searchContext.getAttribute(
+				_SEARCH_CONTEXT_KEY_GROUPBY_RESPONSES);
+
+			if (serializable != null) {
+				return (ArrayList<GroupByResponse>)serializable;
+			}
+
+			return Collections.emptyList();
+		}
+
+		@Override
 		public SearchRequest getRequest() {
 			return _searchRequest;
 		}
@@ -244,6 +269,9 @@ public class SearchResponseBuilderImpl implements SearchResponseBuilder {
 
 	private static final String _SEARCH_CONTEXT_KEY_AGGREGATION_RESULTS_MAP =
 		"search.response.aggregation.results.map";
+
+	private static final String _SEARCH_CONTEXT_KEY_GROUPBY_RESPONSES =
+		"search.response.groupby.responses";
 
 	private static final String _SEARCH_CONTEXT_KEY_REQUEST_STRING =
 		"search.response.request.string";

@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.search.aggregation.Aggregation;
 import com.liferay.portal.search.aggregation.pipeline.PipelineAggregation;
+import com.liferay.portal.search.groupby.GroupByRequest;
 import com.liferay.portal.search.query.Query;
 import com.liferay.portal.search.searcher.FacetContext;
 import com.liferay.portal.search.searcher.SearchRequest;
@@ -91,6 +92,17 @@ public class SearchRequestBuilderImpl implements SearchRequestBuilder {
 	public SearchRequestBuilder explain(boolean explain) {
 		_searchContext.setAttribute(
 			_SEARCH_CONTEXT_KEY_EXPLAIN, Boolean.valueOf(explain));
+
+		return this;
+	}
+
+	@Override
+	public SearchRequestBuilder groupByRequests(
+		GroupByRequest... groupByRequests) {
+
+		_searchContext.setAttribute(
+			_SEARCH_CONTEXT_KEY_GROUPBY_REQUESTS,
+			new ArrayList<>(Arrays.asList(groupByRequests)));
 
 		return this;
 	}
@@ -200,6 +212,18 @@ public class SearchRequestBuilderImpl implements SearchRequestBuilder {
 		@Override
 		public List<String> getEntryClassNames() {
 			return Arrays.asList(_searchContext.getEntryClassNames());
+		}
+
+		@Override
+		public List<GroupByRequest> getGroupByRequests() {
+			Serializable serializable = _searchContext.getAttribute(
+				_SEARCH_CONTEXT_KEY_GROUPBY_REQUESTS);
+
+			if (serializable != null) {
+				return (List<GroupByRequest>)serializable;
+			}
+
+			return Collections.emptyList();
 		}
 
 		@Override
@@ -321,6 +345,9 @@ public class SearchRequestBuilderImpl implements SearchRequestBuilder {
 
 	private static final String _SEARCH_CONTEXT_KEY_EXPLAIN =
 		"search.request.explain";
+
+	private static final String _SEARCH_CONTEXT_KEY_GROUPBY_REQUESTS =
+		"search.request.groupby.requests";
 
 	private static final String _SEARCH_CONTEXT_KEY_INCLUDE_RESPONSE_STRING =
 		"search.request.include.response.string";
