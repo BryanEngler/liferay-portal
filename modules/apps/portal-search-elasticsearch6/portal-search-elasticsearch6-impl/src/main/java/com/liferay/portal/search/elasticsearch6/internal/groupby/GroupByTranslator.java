@@ -14,8 +14,8 @@
 
 package com.liferay.portal.search.elasticsearch6.internal.groupby;
 
-import com.liferay.portal.kernel.search.GroupBy;
 import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.search.groupby.GroupBy;
 
 import java.util.Locale;
 
