@@ -57,7 +57,7 @@ public class RestoreSnapshotRequestExecutorImplTest {
 		RestoreSnapshotRequestExecutorImpl restoreSnapshotRequestExecutorImpl =
 			new RestoreSnapshotRequestExecutorImpl() {
 				{
-					elasticsearchClientResolver = _elasticsearchFixture;
+					setElasticsearchClientResolver(_elasticsearchFixture);
 				}
 			};
 

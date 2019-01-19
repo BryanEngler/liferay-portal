@@ -534,15 +534,15 @@ public class ElasticsearchSearchEngineAdapterDocumentRequestTest {
 	}
 
 	protected static DocumentRequestExecutor createDocumentRequestExecutor(
-		ElasticsearchClientResolver elasticsearchClientResolver1,
-		ElasticsearchDocumentFactory elasticsearchDocumentFactory1) {
+		ElasticsearchClientResolver elasticsearchClientResolver,
+		ElasticsearchDocumentFactory elasticsearchDocumentFactory) {
 
 		DocumentRequestExecutorFixture documentRequestExecutorFixture =
 			new DocumentRequestExecutorFixture() {
 				{
-					elasticsearchClientResolver = elasticsearchClientResolver1;
-					elasticsearchDocumentFactory =
-						elasticsearchDocumentFactory1;
+					setElasticsearchClientResolver(elasticsearchClientResolver);
+					setElasticsearchDocumentFactory(
+						elasticsearchDocumentFactory);
 				}
 			};
 
@@ -554,13 +554,15 @@ public class ElasticsearchSearchEngineAdapterDocumentRequestTest {
 	protected static SearchEngineAdapter createSearchEngineAdapter(
 		ElasticsearchClientResolver elasticsearchClientResolver) {
 
-		ElasticsearchDocumentFactory elasticsearchDocumentFactory1 =
+		ElasticsearchDocumentFactory elasticsearchDocumentFactory =
 			new DefaultElasticsearchDocumentFactory();
 
 		return new ElasticsearchSearchEngineAdapterImpl() {
 			{
-				documentRequestExecutor = createDocumentRequestExecutor(
-					elasticsearchClientResolver, elasticsearchDocumentFactory1);
+				setDocumentRequestExecutor(
+					createDocumentRequestExecutor(
+						elasticsearchClientResolver,
+						elasticsearchDocumentFactory));
 			}
 		};
 	}

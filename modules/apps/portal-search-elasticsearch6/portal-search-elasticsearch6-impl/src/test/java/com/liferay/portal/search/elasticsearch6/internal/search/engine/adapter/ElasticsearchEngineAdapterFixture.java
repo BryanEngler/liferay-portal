@@ -38,50 +38,50 @@ public class ElasticsearchEngineAdapterFixture {
 
 	public void setUp() {
 		_searchEngineAdapter = createSearchEngineAdapter(
-			elasticsearchClientResolver, getElasticsearchDocumentFactory(),
-			facetProcessor);
+			_elasticsearchClientResolver, getElasticsearchDocumentFactory(),
+			_facetProcessor);
 	}
 
 	protected static SearchEngineAdapter createSearchEngineAdapter(
-		ElasticsearchClientResolver elasticsearchClientResolver1,
-		ElasticsearchDocumentFactory elasticsearchDocumentFactory1,
-		FacetProcessor facetProcessor1) {
+		ElasticsearchClientResolver elasticsearchClientResolver,
+		ElasticsearchDocumentFactory elasticsearchDocumentFactory,
+		FacetProcessor<?> facetProcessor) {
 
 		ClusterRequestExecutorFixture clusterRequestExecutorFixture =
 			new ClusterRequestExecutorFixture() {
 				{
-					elasticsearchClientResolver = elasticsearchClientResolver1;
+					setElasticsearchClientResolver(elasticsearchClientResolver);
 				}
 			};
 
 		DocumentRequestExecutorFixture documentRequestExecutorFixture =
 			new DocumentRequestExecutorFixture() {
 				{
-					elasticsearchClientResolver = elasticsearchClientResolver1;
-					elasticsearchDocumentFactory =
-						elasticsearchDocumentFactory1;
+					setElasticsearchClientResolver(elasticsearchClientResolver);
+					setElasticsearchDocumentFactory(
+						elasticsearchDocumentFactory);
 				}
 			};
 
 		IndexRequestExecutorFixture indexRequestExecutorFixture =
 			new IndexRequestExecutorFixture() {
 				{
-					elasticsearchClientResolver = elasticsearchClientResolver1;
+					setElasticsearchClientResolver(elasticsearchClientResolver);
 				}
 			};
 
 		SearchRequestExecutorFixture searchRequestExecutorFixture =
 			new SearchRequestExecutorFixture() {
 				{
-					elasticsearchClientResolver = elasticsearchClientResolver1;
-					facetProcessor = facetProcessor1;
+					setElasticsearchClientResolver(elasticsearchClientResolver);
+					setFacetProcessor(facetProcessor);
 				}
 			};
 
 		SnapshotRequestExecutorFixture snapshotRequestExecutorFixture =
 			new SnapshotRequestExecutorFixture() {
 				{
-					elasticsearchClientResolver = elasticsearchClientResolver1;
+					setElasticsearchClientResolver(elasticsearchClientResolver);
 				}
 			};
 
@@ -93,36 +93,55 @@ public class ElasticsearchEngineAdapterFixture {
 
 		return new ElasticsearchSearchEngineAdapterImpl() {
 			{
-				clusterRequestExecutor =
-					clusterRequestExecutorFixture.getClusterRequestExecutor();
+				setClusterRequestExecutor(
+					clusterRequestExecutorFixture.getClusterRequestExecutor());
 
-				documentRequestExecutor =
-					documentRequestExecutorFixture.getDocumentRequestExecutor();
+				setDocumentRequestExecutor(
+					documentRequestExecutorFixture.
+						getDocumentRequestExecutor());
 
-				indexRequestExecutor =
-					indexRequestExecutorFixture.getIndexRequestExecutor();
+				setIndexRequestExecutor(
+					indexRequestExecutorFixture.getIndexRequestExecutor());
 
-				searchRequestExecutor =
-					searchRequestExecutorFixture.getSearchRequestExecutor();
+				setSearchRequestExecutor(
+					searchRequestExecutorFixture.getSearchRequestExecutor());
 
-				snapshotRequestExecutor =
-					snapshotRequestExecutorFixture.getSnapshotRequestExecutor();
+				setSnapshotRequestExecutor(
+					snapshotRequestExecutorFixture.
+						getSnapshotRequestExecutor());
 			}
 		};
 	}
 
 	protected ElasticsearchDocumentFactory getElasticsearchDocumentFactory() {
-		if (elasticsearchDocumentFactory != null) {
-			return elasticsearchDocumentFactory;
+		if (_elasticsearchDocumentFactory != null) {
+			return _elasticsearchDocumentFactory;
 		}
 
 		return new DefaultElasticsearchDocumentFactory();
 	}
 
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
-	protected ElasticsearchDocumentFactory elasticsearchDocumentFactory;
-	protected FacetProcessor<SearchRequestBuilder> facetProcessor;
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
 
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	protected void setElasticsearchDocumentFactory(
+		ElasticsearchDocumentFactory elasticsearchDocumentFactory) {
+
+		_elasticsearchDocumentFactory = elasticsearchDocumentFactory;
+	}
+
+	protected void setFacetProcessor(
+		FacetProcessor<SearchRequestBuilder> facetProcessor) {
+
+		_facetProcessor = facetProcessor;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
+	private ElasticsearchDocumentFactory _elasticsearchDocumentFactory;
+	private FacetProcessor<SearchRequestBuilder> _facetProcessor;
 	private SearchEngineAdapter _searchEngineAdapter;
 
 }

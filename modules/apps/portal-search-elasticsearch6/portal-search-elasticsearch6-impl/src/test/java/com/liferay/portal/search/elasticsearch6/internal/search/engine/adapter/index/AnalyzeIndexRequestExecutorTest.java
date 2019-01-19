@@ -52,7 +52,7 @@ public class AnalyzeIndexRequestExecutorTest {
 		AnalyzeIndexRequestExecutorImpl analyzeIndexRequestExecutorImpl =
 			new AnalyzeIndexRequestExecutorImpl() {
 				{
-					elasticsearchClientResolver = _elasticsearchFixture;
+					setElasticsearchClientResolver(_elasticsearchFixture);
 				}
 			};
 

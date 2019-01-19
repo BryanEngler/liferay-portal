@@ -54,10 +54,10 @@ public class FlushIndexRequestExecutorTest {
 		FlushIndexRequestExecutorImpl flushIndexRequestExecutorImpl =
 			new FlushIndexRequestExecutorImpl() {
 				{
-					elasticsearchClientResolver = _elasticsearchFixture;
+					setElasticsearchClientResolver(_elasticsearchFixture);
 
-					indexRequestShardFailureTranslator =
-						new IndexRequestShardFailureTranslatorImpl();
+					setIndexRequestShardFailureTranslator(
+						new IndexRequestShardFailureTranslatorImpl());
 				}
 			};
 

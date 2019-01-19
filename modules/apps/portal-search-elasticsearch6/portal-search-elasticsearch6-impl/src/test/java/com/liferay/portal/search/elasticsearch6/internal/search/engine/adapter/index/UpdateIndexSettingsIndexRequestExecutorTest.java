@@ -70,8 +70,8 @@ public class UpdateIndexSettingsIndexRequestExecutorTest {
 			updateIndexSettingsIndexRequestExecutorImpl =
 				new UpdateIndexSettingsIndexRequestExecutorImpl() {
 					{
-						elasticsearchClientResolver = _elasticsearchFixture;
-						indicesOptionsTranslator = _indicesOptionsTranslator;
+						setElasticsearchClientResolver(_elasticsearchFixture);
+						setIndicesOptionsTranslator(_indicesOptionsTranslator);
 					}
 				};
 

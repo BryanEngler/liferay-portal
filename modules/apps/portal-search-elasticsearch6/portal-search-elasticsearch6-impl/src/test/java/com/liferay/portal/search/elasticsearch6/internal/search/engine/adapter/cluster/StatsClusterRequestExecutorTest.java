@@ -51,7 +51,7 @@ public class StatsClusterRequestExecutorTest {
 		StatsClusterRequestExecutorImpl statsClusterRequestExecutorImpl =
 			new StatsClusterRequestExecutorImpl() {
 				{
-					elasticsearchClientResolver = _elasticsearchFixture;
+					setElasticsearchClientResolver(_elasticsearchFixture);
 				}
 			};
 

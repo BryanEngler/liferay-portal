@@ -64,7 +64,11 @@ public class ReplicasManagerImplTest {
 
 		ElasticsearchFixture elasticsearchFixture0 = createNode(0);
 
-		IndexCreator indexCreator0 = new IndexCreator(elasticsearchFixture0);
+		IndexCreator indexCreator0 = new IndexCreator() {
+			{
+				setElasticsearchClientResolver(elasticsearchFixture0);
+			}
+		};
 
 		indexCreator0.createIndex(getTestIndexName(CompanyConstants.SYSTEM));
 
@@ -72,7 +76,11 @@ public class ReplicasManagerImplTest {
 
 		ClusterAssert.assert1PrimaryShardAnd2Nodes(elasticsearchFixture0);
 
-		IndexCreator indexCreator1 = new IndexCreator(elasticsearchFixture1);
+		IndexCreator indexCreator1 = new IndexCreator() {
+			{
+				setElasticsearchClientResolver(elasticsearchFixture1);
+			}
+		};
 
 		indexCreator1.createIndex(getTestIndexName(companyId));
 

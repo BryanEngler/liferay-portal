@@ -23,9 +23,8 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.search.elasticsearch6.internal.ElasticsearchIndexingFixture;
 import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchFixture;
-import com.liferay.portal.search.elasticsearch6.internal.connection.IndexCreator;
-import com.liferay.portal.search.elasticsearch6.internal.connection.LiferayIndexCreationHelper;
-import com.liferay.portal.search.elasticsearch6.internal.index.LiferayDocumentTypeFactory;
+import com.liferay.portal.search.elasticsearch6.internal.connection.IndexCreationHelper;
+import com.liferay.portal.search.elasticsearch6.internal.index.LiferayTypeMappingsConstants;
 import com.liferay.portal.search.test.util.IdempotentRetryAssert;
 import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
 import com.liferay.portal.search.test.util.indexing.DocumentCreationHelpers;
@@ -34,6 +33,12 @@ import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingAction;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequestBuilder;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.xcontent.XContentType;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -89,20 +94,17 @@ public class GeoLocationPointFieldTest extends BaseIndexingTestCase {
 
 	@Override
 	protected IndexingFixture createIndexingFixture() throws Exception {
-		ElasticsearchFixture elasticsearchFixture1 = new ElasticsearchFixture(
-			getClass());
-
 		return new ElasticsearchIndexingFixture() {
 			{
-				companyId = BaseIndexingTestCase.COMPANY_ID;
-				elasticsearchFixture = elasticsearchFixture1;
-				indexCreator = new IndexCreator(elasticsearchFixture1) {
-					{
-						setIndexCreationHelper(
-							new CustomFieldLiferayIndexCreationHelper(
-								elasticsearchFixture1));
-					}
-				};
+				ElasticsearchFixture elasticsearchFixture =
+					new ElasticsearchFixture(getClass());
+
+				setCompanyId(BaseIndexingTestCase.COMPANY_ID);
+				setElasticsearchFixture(elasticsearchFixture);
+				setIndexCreationHelper(
+					new CustomFieldLiferayIndexCreationHelper(
+						elasticsearchFixture));
+				setLiferayMappingsAddedToIndex(true);
 			}
 		};
 	}
@@ -128,28 +130,46 @@ public class GeoLocationPointFieldTest extends BaseIndexingTestCase {
 	private static final String _CUSTOM_FIELD = "customField";
 
 	private static class CustomFieldLiferayIndexCreationHelper
-		extends LiferayIndexCreationHelper {
+		implements IndexCreationHelper {
 
 		public CustomFieldLiferayIndexCreationHelper(
 			ElasticsearchClientResolver elasticsearchClientResolver) {
 
-			super(elasticsearchClientResolver);
+			_elasticsearchClientResolver = elasticsearchClientResolver;
+		}
+
+		@Override
+		public void contribute(
+			CreateIndexRequestBuilder createIndexRequestBuilder) {
+		}
+
+		@Override
+		public void contributeIndexSettings(Settings.Builder builder) {
 		}
 
 		@Override
 		public void whenIndexCreated(String indexName) {
-			super.whenIndexCreated(indexName);
-
-			LiferayDocumentTypeFactory liferayDocumentTypeFactory =
-				getLiferayDocumentTypeFactory();
+			PutMappingRequestBuilder putMappingRequestBuilder =
+				PutMappingAction.INSTANCE.newRequestBuilder(
+					_elasticsearchClientResolver.getClient());
 
 			String source = StringBundler.concat(
 				"{ \"properties\": { \"", _CUSTOM_FIELD, "\" : { \"fields\": ",
 				"{ \"geopoint\" : { \"store\": true, \"type\": \"keyword\" } ",
 				"}, \"store\": true, \"type\": \"geo_point\" } } }");
 
-			liferayDocumentTypeFactory.addTypeMappings(indexName, source);
+			putMappingRequestBuilder.setIndices(
+				indexName
+			).setSource(
+				source, XContentType.JSON
+			).setType(
+				LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE
+			);
+
+			putMappingRequestBuilder.get();
 		}
+
+		private final ElasticsearchClientResolver _elasticsearchClientResolver;
 
 	}
 

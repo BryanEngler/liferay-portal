@@ -39,12 +39,12 @@ public class ClusterAssert {
 			elasticsearchFixture,
 			new HealthExpectations() {
 				{
-					activePrimaryShards = 1;
-					activeShards = 1;
-					numberOfDataNodes = 1;
-					numberOfNodes = 1;
-					status = ClusterHealthStatus.YELLOW;
-					unassignedShards = 1;
+					setActivePrimaryShards(1);
+					setActiveShards(1);
+					setNumberOfDataNodes(1);
+					setNumberOfNodes(1);
+					setStatus(ClusterHealthStatus.YELLOW);
+					setUnassignedShards(1);
 				}
 			});
 	}
@@ -57,12 +57,12 @@ public class ClusterAssert {
 			elasticsearchFixture,
 			new HealthExpectations() {
 				{
-					activePrimaryShards = 1;
-					activeShards = 1;
-					numberOfDataNodes = 2;
-					numberOfNodes = 2;
-					status = ClusterHealthStatus.GREEN;
-					unassignedShards = 0;
+					setActivePrimaryShards(1);
+					setActiveShards(1);
+					setNumberOfDataNodes(2);
+					setNumberOfNodes(2);
+					setStatus(ClusterHealthStatus.GREEN);
+					setUnassignedShards(0);
 				}
 			});
 	}
@@ -75,12 +75,12 @@ public class ClusterAssert {
 			elasticsearchFixture,
 			new HealthExpectations() {
 				{
-					activePrimaryShards = 1;
-					activeShards = 1;
-					numberOfDataNodes = 1;
-					numberOfNodes = 1;
-					status = ClusterHealthStatus.GREEN;
-					unassignedShards = 0;
+					setActivePrimaryShards(1);
+					setActiveShards(1);
+					setNumberOfDataNodes(1);
+					setNumberOfNodes(1);
+					setStatus(ClusterHealthStatus.GREEN);
+					setUnassignedShards(0);
 				}
 			});
 	}
@@ -93,12 +93,12 @@ public class ClusterAssert {
 			elasticsearchFixture,
 			new HealthExpectations() {
 				{
-					activePrimaryShards = 1;
-					activeShards = 2;
-					numberOfDataNodes = 2;
-					numberOfNodes = 2;
-					status = ClusterHealthStatus.YELLOW;
-					unassignedShards = 1;
+					setActivePrimaryShards(1);
+					setActiveShards(2);
+					setNumberOfDataNodes(2);
+					setNumberOfNodes(2);
+					setStatus(ClusterHealthStatus.YELLOW);
+					setUnassignedShards(1);
 				}
 			});
 	}
@@ -111,12 +111,12 @@ public class ClusterAssert {
 			elasticsearchFixture,
 			new HealthExpectations() {
 				{
-					activePrimaryShards = 1;
-					activeShards = 2;
-					numberOfDataNodes = 2;
-					numberOfNodes = 2;
-					status = ClusterHealthStatus.GREEN;
-					unassignedShards = 0;
+					setActivePrimaryShards(1);
+					setActiveShards(2);
+					setNumberOfDataNodes(2);
+					setNumberOfNodes(2);
+					setStatus(ClusterHealthStatus.GREEN);
+					setUnassignedShards(0);
 				}
 			});
 	}
@@ -129,12 +129,12 @@ public class ClusterAssert {
 			elasticsearchFixture,
 			new HealthExpectations() {
 				{
-					activePrimaryShards = 2;
-					activeShards = 2;
-					numberOfDataNodes = 1;
-					numberOfNodes = 1;
-					status = ClusterHealthStatus.YELLOW;
-					unassignedShards = 2;
+					setActivePrimaryShards(2);
+					setActiveShards(2);
+					setNumberOfDataNodes(1);
+					setNumberOfNodes(1);
+					setStatus(ClusterHealthStatus.YELLOW);
+					setUnassignedShards(2);
 				}
 			});
 	}
@@ -147,12 +147,12 @@ public class ClusterAssert {
 			elasticsearchFixture,
 			new HealthExpectations() {
 				{
-					activePrimaryShards = 2;
-					activeShards = 4;
-					numberOfDataNodes = 2;
-					numberOfNodes = 2;
-					status = ClusterHealthStatus.GREEN;
-					unassignedShards = 0;
+					setActivePrimaryShards(2);
+					setActiveShards(4);
+					setNumberOfDataNodes(2);
+					setNumberOfNodes(2);
+					setStatus(ClusterHealthStatus.GREEN);
+					setUnassignedShards(0);
 				}
 			});
 	}
@@ -165,12 +165,12 @@ public class ClusterAssert {
 			elasticsearchFixture,
 			new HealthExpectations() {
 				{
-					activePrimaryShards = 2;
-					activeShards = 2;
-					numberOfDataNodes = 2;
-					numberOfNodes = 2;
-					status = ClusterHealthStatus.GREEN;
-					unassignedShards = 0;
+					setActivePrimaryShards(2);
+					setActiveShards(2);
+					setNumberOfDataNodes(2);
+					setNumberOfNodes(2);
+					setStatus(ClusterHealthStatus.GREEN);
+					setUnassignedShards(0);
 				}
 			});
 	}
@@ -183,12 +183,12 @@ public class ClusterAssert {
 			elasticsearchFixture,
 			new HealthExpectations() {
 				{
-					activePrimaryShards = 1;
-					activeShards = 3;
-					numberOfDataNodes = 3;
-					numberOfNodes = 3;
-					status = ClusterHealthStatus.GREEN;
-					unassignedShards = 0;
+					setActivePrimaryShards(1);
+					setActiveShards(3);
+					setNumberOfDataNodes(3);
+					setNumberOfNodes(3);
+					setStatus(ClusterHealthStatus.GREEN);
+					setUnassignedShards(0);
 				}
 			});
 	}

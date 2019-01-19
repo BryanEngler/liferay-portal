@@ -409,12 +409,12 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 	}
 
 	protected static IndexRequestExecutor createIndexRequestExecutor(
-		ElasticsearchClientResolver elasticsearchClientResolver1) {
+		ElasticsearchClientResolver elasticsearchClientResolver) {
 
 		IndexRequestExecutorFixture indexRequestExecutorFixture =
 			new IndexRequestExecutorFixture() {
 				{
-					elasticsearchClientResolver = elasticsearchClientResolver1;
+					setElasticsearchClientResolver(elasticsearchClientResolver);
 				}
 			};
 
@@ -428,8 +428,8 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 
 		return new ElasticsearchSearchEngineAdapterImpl() {
 			{
-				indexRequestExecutor = createIndexRequestExecutor(
-					elasticsearchClientResolver);
+				setIndexRequestExecutor(
+					createIndexRequestExecutor(elasticsearchClientResolver));
 			}
 		};
 	}

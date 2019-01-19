@@ -17,7 +17,6 @@ package com.liferay.portal.search.elasticsearch6.internal.filter;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.search.elasticsearch6.internal.ElasticsearchIndexingFixture;
 import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchFixture;
-import com.liferay.portal.search.elasticsearch6.internal.connection.LiferayIndexCreator;
 import com.liferay.portal.search.filter.FilterBuilders;
 import com.liferay.portal.search.filter.TermsSetFilter;
 import com.liferay.portal.search.filter.TermsSetFilterBuilder;
@@ -78,14 +77,11 @@ public class TermsSetFilterTest extends BaseIndexingTestCase {
 
 	@Override
 	protected IndexingFixture createIndexingFixture() throws Exception {
-		ElasticsearchFixture elasticsearchFixture1 = new ElasticsearchFixture(
-			getClass());
-
 		return new ElasticsearchIndexingFixture() {
 			{
-				companyId = BaseIndexingTestCase.COMPANY_ID;
-				elasticsearchFixture = elasticsearchFixture1;
-				indexCreator = new LiferayIndexCreator(elasticsearchFixture1);
+				setCompanyId(BaseIndexingTestCase.COMPANY_ID);
+				setElasticsearchFixture(new ElasticsearchFixture(getClass()));
+				setLiferayMappingsAddedToIndex(true);
 			}
 		};
 	}

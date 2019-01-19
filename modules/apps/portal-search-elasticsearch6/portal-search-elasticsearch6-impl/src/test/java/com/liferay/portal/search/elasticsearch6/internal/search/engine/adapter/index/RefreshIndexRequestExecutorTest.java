@@ -51,10 +51,10 @@ public class RefreshIndexRequestExecutorTest {
 		RefreshIndexRequestExecutorImpl refreshIndexRequestExecutorImpl =
 			new RefreshIndexRequestExecutorImpl() {
 				{
-					elasticsearchClientResolver = _elasticsearchFixture;
+					setElasticsearchClientResolver(_elasticsearchFixture);
 
-					indexRequestShardFailureTranslator =
-						new IndexRequestShardFailureTranslatorImpl();
+					setIndexRequestShardFailureTranslator(
+						new IndexRequestShardFailureTranslatorImpl());
 				}
 			};
 

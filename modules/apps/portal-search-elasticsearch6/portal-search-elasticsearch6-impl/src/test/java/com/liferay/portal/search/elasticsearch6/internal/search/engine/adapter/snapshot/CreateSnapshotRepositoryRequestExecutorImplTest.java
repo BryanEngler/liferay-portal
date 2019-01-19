@@ -59,7 +59,7 @@ public class CreateSnapshotRepositoryRequestExecutorImplTest {
 			createSnapshotRepositoryRequestExecutorImpl =
 				new CreateSnapshotRepositoryRequestExecutorImpl() {
 					{
-						elasticsearchClientResolver = _elasticsearchFixture;
+						setElasticsearchClientResolver(_elasticsearchFixture);
 					}
 				};
 

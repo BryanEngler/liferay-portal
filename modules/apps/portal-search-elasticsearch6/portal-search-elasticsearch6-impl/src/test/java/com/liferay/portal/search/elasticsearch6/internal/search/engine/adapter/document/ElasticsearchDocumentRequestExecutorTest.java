@@ -39,16 +39,16 @@ public class ElasticsearchDocumentRequestExecutorTest {
 		_elasticsearchDocumentRequestExecutor =
 			new ElasticsearchDocumentRequestExecutor() {
 				{
-					deleteByQueryDocumentRequestExecutor =
-						_deleteByQueryDocumentRequestExecutor;
-					deleteDocumentRequestExecutor =
-						_deleteDocumentRequestExecutor;
-					indexDocumentRequestExecutor =
-						_indexDocumentRequestExecutor;
-					updateByQueryDocumentRequestExecutor =
-						_updateByQueryDocumentRequestExecutor;
-					updateDocumentRequestExecutor =
-						_updateDocumentRequestExecutor;
+					setDeleteByQueryDocumentRequestExecutor(
+						_deleteByQueryDocumentRequestExecutor);
+					setDeleteDocumentRequestExecutor(
+						_deleteDocumentRequestExecutor);
+					setIndexDocumentRequestExecutor(
+						_indexDocumentRequestExecutor);
+					setUpdateByQueryDocumentRequestExecutor(
+						_updateByQueryDocumentRequestExecutor);
+					setUpdateDocumentRequestExecutor(
+						_updateDocumentRequestExecutor);
 				}
 			};
 	}

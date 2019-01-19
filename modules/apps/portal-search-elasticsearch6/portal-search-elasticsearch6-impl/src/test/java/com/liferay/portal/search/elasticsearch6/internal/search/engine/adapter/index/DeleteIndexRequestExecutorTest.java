@@ -62,8 +62,8 @@ public class DeleteIndexRequestExecutorTest {
 		DeleteIndexRequestExecutorImpl deleteIndexRequestExecutorImpl =
 			new DeleteIndexRequestExecutorImpl() {
 				{
-					elasticsearchClientResolver = _elasticsearchFixture;
-					indicesOptionsTranslator = _indicesOptionsTranslator;
+					setElasticsearchClientResolver(_elasticsearchFixture);
+					setIndicesOptionsTranslator(_indicesOptionsTranslator);
 				}
 			};
 

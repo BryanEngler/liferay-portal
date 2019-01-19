@@ -76,9 +76,9 @@ public class ElasticsearchIndexSearcherTest {
 
 		return new ElasticsearchIndexSearcher() {
 			{
-				indexNameBuilder = String::valueOf;
-				searchRequestBuilderFactory =
-					new SearchRequestBuilderFactoryImpl();
+				setIndexNameBuilder(String::valueOf);
+				setSearchRequestBuilderFactory(
+					new SearchRequestBuilderFactoryImpl());
 			}
 		};
 	}

@@ -44,23 +44,23 @@ public class ElasticsearchSearchEngineAdapterLoggingTest {
 
 	@Before
 	public void setUp() throws Exception {
-		ElasticsearchFixture elasticsearchFixture1 = new ElasticsearchFixture(
+		ElasticsearchFixture elasticsearchFixture = new ElasticsearchFixture(
 			getClass());
 
 		ElasticsearchEngineAdapterFixture elasticsearchEngineAdapterFixture =
 			new ElasticsearchEngineAdapterFixture() {
 				{
-					elasticsearchClientResolver = elasticsearchFixture1;
+					setElasticsearchClientResolver(elasticsearchFixture);
 				}
 			};
 
 		elasticsearchEngineAdapterFixture.setUp();
 
-		elasticsearchFixture1.setUp();
+		elasticsearchFixture.setUp();
 
-		waitForElasticsearchToStart(elasticsearchFixture1);
+		waitForElasticsearchToStart(elasticsearchFixture);
 
-		_elasticsearchFixture = elasticsearchFixture1;
+		_elasticsearchFixture = elasticsearchFixture;
 
 		_searchEngineAdapter =
 			elasticsearchEngineAdapterFixture.getSearchEngineAdapter();
@@ -133,12 +133,12 @@ public class ElasticsearchSearchEngineAdapterLoggingTest {
 		elasticsearchFixture.getClusterHealthResponse(
 			new HealthExpectations() {
 				{
-					activePrimaryShards = 0;
-					activeShards = 0;
-					numberOfDataNodes = 1;
-					numberOfNodes = 1;
-					status = ClusterHealthStatus.GREEN;
-					unassignedShards = 0;
+					setActivePrimaryShards(0);
+					setActiveShards(0);
+					setNumberOfDataNodes(1);
+					setNumberOfNodes(1);
+					setStatus(ClusterHealthStatus.GREEN);
+					setUnassignedShards(0);
 				}
 			});
 	}

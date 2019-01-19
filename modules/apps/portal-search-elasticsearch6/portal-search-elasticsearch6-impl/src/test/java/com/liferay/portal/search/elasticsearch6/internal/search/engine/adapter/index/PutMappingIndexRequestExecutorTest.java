@@ -52,7 +52,7 @@ public class PutMappingIndexRequestExecutorTest {
 		PutMappingIndexRequestExecutorImpl putMappingIndexRequestExecutorImpl =
 			new PutMappingIndexRequestExecutorImpl() {
 				{
-					elasticsearchClientResolver = _elasticsearchFixture;
+					setElasticsearchClientResolver(_elasticsearchFixture);
 				}
 			};
 

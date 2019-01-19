@@ -51,7 +51,7 @@ public class DeleteSnapshotRequestExecutorImplTest {
 		DeleteSnapshotRequestExecutorImpl deleteSnapshotRequestExecutorImpl =
 			new DeleteSnapshotRequestExecutorImpl() {
 				{
-					elasticsearchClientResolver = _elasticsearchFixture;
+					setElasticsearchClientResolver(_elasticsearchFixture);
 				}
 			};
 

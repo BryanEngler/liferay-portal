@@ -37,12 +37,12 @@ public class ElasticsearchIndexRequestExecutorTest {
 		_elasticsearchIndexRequestExecutor =
 			new ElasticsearchIndexRequestExecutor() {
 				{
-					getFieldMappingIndexRequestExecutor =
-						_getFieldMappingIndexRequestExecutor;
-					getMappingIndexRequestExecutor =
-						_getMappingIndexRequestExecutor;
-					putMappingIndexRequestExecutor =
-						_putMappingIndexRequestExecutor;
+					setGetFieldMappingIndexRequestExecutor(
+						_getFieldMappingIndexRequestExecutor);
+					setGetMappingIndexRequestExecutor(
+						_getMappingIndexRequestExecutor);
+					setPutMappingIndexRequestExecutor(
+						_putMappingIndexRequestExecutor);
 				}
 			};
 	}

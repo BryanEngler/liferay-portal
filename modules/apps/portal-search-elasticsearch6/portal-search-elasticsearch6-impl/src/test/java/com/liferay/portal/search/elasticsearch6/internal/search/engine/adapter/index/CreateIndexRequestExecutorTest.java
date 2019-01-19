@@ -66,7 +66,7 @@ public class CreateIndexRequestExecutorTest {
 		CreateIndexRequestExecutorImpl createIndexRequestExecutorImpl =
 			new CreateIndexRequestExecutorImpl() {
 				{
-					elasticsearchClientResolver = _elasticsearchFixture;
+					setElasticsearchClientResolver(_elasticsearchFixture);
 				}
 			};
 

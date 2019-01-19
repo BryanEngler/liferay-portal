@@ -159,13 +159,13 @@ public class ElasticsearchBulkableDocumentRequestTranslatorTest {
 
 	protected static ElasticsearchBulkableDocumentRequestTranslator
 		createElasticsearchBulkableDocumentRequestTranslator(
-			ElasticsearchClientResolver elasticsearchClientResolver1,
-			ElasticsearchDocumentFactory elasticsearchDocumentFactory1) {
+			ElasticsearchClientResolver elasticsearchClientResolver,
+			ElasticsearchDocumentFactory elasticsearchDocumentFactory) {
 
 		return new ElasticsearchBulkableDocumentRequestTranslator() {
 			{
-				elasticsearchClientResolver = elasticsearchClientResolver1;
-				elasticsearchDocumentFactory = elasticsearchDocumentFactory1;
+				setElasticsearchClientResolver(elasticsearchClientResolver);
+				setElasticsearchDocumentFactory(elasticsearchDocumentFactory);
 			}
 		};
 	}

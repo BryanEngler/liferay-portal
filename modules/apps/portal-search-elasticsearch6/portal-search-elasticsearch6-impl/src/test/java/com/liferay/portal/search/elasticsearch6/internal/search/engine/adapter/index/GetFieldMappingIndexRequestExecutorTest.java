@@ -54,7 +54,7 @@ public class GetFieldMappingIndexRequestExecutorTest {
 			getFieldMappingIndexRequestExecutorImpl =
 				new GetFieldMappingIndexRequestExecutorImpl() {
 					{
-						elasticsearchClientResolver = _elasticsearchFixture;
+						setElasticsearchClientResolver(_elasticsearchFixture);
 					}
 				};
 

@@ -38,9 +38,9 @@ public class ElasticsearchClusterRequestExecutorTest {
 
 		_clusterRequestExecutor = new ElasticsearchClusterRequestExecutor() {
 			{
-				healthClusterRequestExecutor = _healthClusterRequestExecutor;
-				stateClusterRequestExecutor = _stateClusterRequestExecutor;
-				statsClusterRequestExecutor = _statsClusterRequestExecutor;
+				setHealthClusterRequestExecutor(_healthClusterRequestExecutor);
+				setStateClusterRequestExecutor(_stateClusterRequestExecutor);
+				setStatsClusterRequestExecutor(_statsClusterRequestExecutor);
 			}
 		};
 	}

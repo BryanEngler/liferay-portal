@@ -57,9 +57,9 @@ public class HealthClusterRequestExecutorTest {
 		HealthClusterRequestExecutorImpl healthClusterRequestExecutorImpl =
 			new HealthClusterRequestExecutorImpl() {
 				{
-					clusterHealthStatusTranslator =
-						new ClusterHealthStatusTranslatorImpl();
-					elasticsearchClientResolver = _elasticsearchFixture;
+					setClusterHealthStatusTranslator(
+						new ClusterHealthStatusTranslatorImpl());
+					setElasticsearchClientResolver(_elasticsearchFixture);
 				}
 			};
 

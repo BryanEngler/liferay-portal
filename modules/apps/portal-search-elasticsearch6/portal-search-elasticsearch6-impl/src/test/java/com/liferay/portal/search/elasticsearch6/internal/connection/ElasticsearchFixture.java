@@ -117,11 +117,11 @@ public class ElasticsearchFixture implements ElasticsearchClientResolver {
 
 		clusterHealthRequest.timeout(new TimeValue(10, TimeUnit.MINUTES));
 		clusterHealthRequest.waitForActiveShards(
-			healthExpectations.activeShards);
+			healthExpectations.getActiveShards());
 		clusterHealthRequest.waitForNodes(
-			String.valueOf(healthExpectations.numberOfNodes));
+			String.valueOf(healthExpectations.getNumberOfNodes()));
 		clusterHealthRequest.waitForNoRelocatingShards(true);
-		clusterHealthRequest.waitForStatus(healthExpectations.status);
+		clusterHealthRequest.waitForStatus(healthExpectations.getStatus());
 
 		ActionFuture<ClusterHealthResponse> health = clusterAdminClient.health(
 			clusterHealthRequest);

@@ -27,100 +27,102 @@ public class SnapshotRequestExecutorFixture {
 	}
 
 	public void setUp() {
-		ElasticsearchClientResolver elasticsearchClientResolver1 =
-			elasticsearchClientResolver;
-
 		_snapshotRequestExecutor = new ElasticsearchSnapshotRequestExecutor() {
 			{
 				createSnapshotRepositoryRequestExecutor =
 					createCreateSnapshotRepositoryRequestExecutor(
-						elasticsearchClientResolver1);
+						_elasticsearchClientResolver);
 				createSnapshotRequestExecutor =
 					createCreateSnapshotRequestExecutor(
-						elasticsearchClientResolver1);
+						_elasticsearchClientResolver);
 				deleteSnapshotRequestExecutor =
 					createDeleteSnapshotRequestExecutor(
-						elasticsearchClientResolver1);
+						_elasticsearchClientResolver);
 				getSnapshotRepositoriesRequestExecutor =
 					createGetSnapshotRepositoriesRequestExecutor(
-						elasticsearchClientResolver1);
+						_elasticsearchClientResolver);
 				getSnapshotsRequestExecutor = createGetSnapshotsRequestExecutor(
-					elasticsearchClientResolver1);
+					_elasticsearchClientResolver);
 				restoreSnapshotRequestExecutor =
 					createRestoreSnapshotRequestExecutor(
-						elasticsearchClientResolver1);
+						_elasticsearchClientResolver);
 			}
 		};
 	}
 
 	protected static CreateSnapshotRepositoryRequestExecutor
 		createCreateSnapshotRepositoryRequestExecutor(
-			ElasticsearchClientResolver elasticsearchClientResolver1) {
+			ElasticsearchClientResolver elasticsearchClientResolver) {
 
 		return new CreateSnapshotRepositoryRequestExecutorImpl() {
 			{
-				elasticsearchClientResolver = elasticsearchClientResolver1;
+				setElasticsearchClientResolver(elasticsearchClientResolver);
 			}
 		};
 	}
 
 	protected static CreateSnapshotRequestExecutor
 		createCreateSnapshotRequestExecutor(
-			ElasticsearchClientResolver elasticsearchClientResolver1) {
+			ElasticsearchClientResolver elasticsearchClientResolver) {
 
 		return new CreateSnapshotRequestExecutorImpl() {
 			{
-				elasticsearchClientResolver = elasticsearchClientResolver1;
+				setElasticsearchClientResolver(elasticsearchClientResolver);
 			}
 		};
 	}
 
 	protected static DeleteSnapshotRequestExecutor
 		createDeleteSnapshotRequestExecutor(
-			ElasticsearchClientResolver elasticsearchClientResolver1) {
+			ElasticsearchClientResolver elasticsearchClientResolver) {
 
 		return new DeleteSnapshotRequestExecutorImpl() {
 			{
-				elasticsearchClientResolver = elasticsearchClientResolver1;
+				setElasticsearchClientResolver(elasticsearchClientResolver);
 			}
 		};
 	}
 
 	protected static GetSnapshotRepositoriesRequestExecutor
 		createGetSnapshotRepositoriesRequestExecutor(
-			ElasticsearchClientResolver elasticsearchClientResolver1) {
+			ElasticsearchClientResolver elasticsearchClientResolver) {
 
 		return new GetSnapshotRepositoriesRequestExecutorImpl() {
 			{
-				elasticsearchClientResolver = elasticsearchClientResolver1;
+				setElasticsearchClientResolver(elasticsearchClientResolver);
 			}
 		};
 	}
 
 	protected static GetSnapshotsRequestExecutor
 		createGetSnapshotsRequestExecutor(
-			ElasticsearchClientResolver elasticsearchClientResolver1) {
+			ElasticsearchClientResolver elasticsearchClientResolver) {
 
 		return new GetSnapshotsRequestExecutorImpl() {
 			{
-				elasticsearchClientResolver = elasticsearchClientResolver1;
+				setElasticsearchClientResolver(elasticsearchClientResolver);
 			}
 		};
 	}
 
 	protected static RestoreSnapshotRequestExecutor
 		createRestoreSnapshotRequestExecutor(
-			ElasticsearchClientResolver elasticsearchClientResolver1) {
+			ElasticsearchClientResolver elasticsearchClientResolver) {
 
 		return new RestoreSnapshotRequestExecutorImpl() {
 			{
-				elasticsearchClientResolver = elasticsearchClientResolver1;
+				setElasticsearchClientResolver(elasticsearchClientResolver);
 			}
 		};
 	}
 
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
 
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
 	private SnapshotRequestExecutor _snapshotRequestExecutor;
 
 }

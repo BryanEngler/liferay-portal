@@ -28,13 +28,69 @@ public class HealthExpectations {
 	}
 
 	public HealthExpectations(ClusterHealthResponse clusterHealthResponse) {
-		activePrimaryShards = clusterHealthResponse.getActivePrimaryShards();
-		activeShards = clusterHealthResponse.getActiveShards();
-		numberOfDataNodes = clusterHealthResponse.getNumberOfDataNodes();
-		numberOfNodes = clusterHealthResponse.getNumberOfNodes();
-		status = clusterHealthResponse.getStatus();
-		timedOut = clusterHealthResponse.isTimedOut();
-		unassignedShards = clusterHealthResponse.getUnassignedShards();
+		_activePrimaryShards = clusterHealthResponse.getActivePrimaryShards();
+		_activeShards = clusterHealthResponse.getActiveShards();
+		_numberOfDataNodes = clusterHealthResponse.getNumberOfDataNodes();
+		_numberOfNodes = clusterHealthResponse.getNumberOfNodes();
+		_status = clusterHealthResponse.getStatus();
+		_timedOut = clusterHealthResponse.isTimedOut();
+		_unassignedShards = clusterHealthResponse.getUnassignedShards();
+	}
+
+	public int getActivePrimaryShards() {
+		return _activePrimaryShards;
+	}
+
+	public int getActiveShards() {
+		return _activeShards;
+	}
+
+	public int getNumberOfDataNodes() {
+		return _numberOfDataNodes;
+	}
+
+	public int getNumberOfNodes() {
+		return _numberOfNodes;
+	}
+
+	public ClusterHealthStatus getStatus() {
+		return _status;
+	}
+
+	public int getUnassignedShards() {
+		return _unassignedShards;
+	}
+
+	public boolean isTimedOut() {
+		return _timedOut;
+	}
+
+	public void setActivePrimaryShards(int activePrimaryShards) {
+		_activePrimaryShards = activePrimaryShards;
+	}
+
+	public void setActiveShards(int activeShards) {
+		_activeShards = activeShards;
+	}
+
+	public void setNumberOfDataNodes(int numberOfDataNodes) {
+		_numberOfDataNodes = numberOfDataNodes;
+	}
+
+	public void setNumberOfNodes(int numberOfNodes) {
+		_numberOfNodes = numberOfNodes;
+	}
+
+	public void setStatus(ClusterHealthStatus status) {
+		_status = status;
+	}
+
+	public void setTimedOut(boolean timedOut) {
+		_timedOut = timedOut;
+	}
+
+	public void setUnassignedShards(int unassignedShards) {
+		_unassignedShards = unassignedShards;
 	}
 
 	@Override
@@ -42,30 +98,30 @@ public class HealthExpectations {
 		StringBundler sb = new StringBundler(15);
 
 		sb.append("{activePrimaryShards=");
-		sb.append(activePrimaryShards);
+		sb.append(_activePrimaryShards);
 		sb.append(", activeShards=");
-		sb.append(activeShards);
+		sb.append(_activeShards);
 		sb.append(", numberOfDataNodes=");
-		sb.append(numberOfDataNodes);
+		sb.append(_numberOfDataNodes);
 		sb.append(", numberOfNodes=");
-		sb.append(numberOfNodes);
+		sb.append(_numberOfNodes);
 		sb.append(", status=");
-		sb.append(status);
+		sb.append(_status);
 		sb.append(", timedOut=");
-		sb.append(timedOut);
+		sb.append(_timedOut);
 		sb.append(", unassignedShards=");
-		sb.append(unassignedShards);
+		sb.append(_unassignedShards);
 		sb.append("}");
 
 		return sb.toString();
 	}
 
-	public int activePrimaryShards;
-	public int activeShards;
-	public int numberOfDataNodes;
-	public int numberOfNodes;
-	public ClusterHealthStatus status;
-	public boolean timedOut;
-	public int unassignedShards;
+	private int _activePrimaryShards;
+	private int _activeShards;
+	private int _numberOfDataNodes;
+	private int _numberOfNodes;
+	private ClusterHealthStatus _status;
+	private boolean _timedOut;
+	private int _unassignedShards;
 
 }

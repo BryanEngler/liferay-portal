@@ -82,7 +82,11 @@ public class Cluster2InstancesTest {
 	public TestName testName = new TestName();
 
 	protected Index createIndex(ElasticsearchFixture elasticsearchFixture) {
-		IndexCreator indexCreator = new IndexCreator(elasticsearchFixture);
+		IndexCreator indexCreator = new IndexCreator() {
+			{
+				setElasticsearchClientResolver(elasticsearchFixture);
+			}
+		};
 
 		return indexCreator.createIndex(
 			new IndexName(testName.getMethodName()));

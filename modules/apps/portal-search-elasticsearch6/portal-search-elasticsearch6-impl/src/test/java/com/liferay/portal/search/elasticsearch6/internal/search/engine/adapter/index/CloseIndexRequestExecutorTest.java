@@ -60,9 +60,9 @@ public class CloseIndexRequestExecutorTest {
 		CloseIndexRequestExecutorImpl closeIndexRequestExecutorImpl =
 			new CloseIndexRequestExecutorImpl() {
 				{
-					elasticsearchClientResolver = _elasticsearchFixture;
-					indicesOptionsTranslator =
-						new IndicesOptionsTranslatorImpl();
+					setElasticsearchClientResolver(_elasticsearchFixture);
+					setIndicesOptionsTranslator(
+						new IndicesOptionsTranslatorImpl());
 				}
 			};
 

@@ -52,7 +52,7 @@ public class IndicesExistsIndexRequestExecutorTest {
 			indicesExistsIndexRequestExecutorImpl =
 				new IndicesExistsIndexRequestExecutorImpl() {
 					{
-						elasticsearchClientResolver = _elasticsearchFixture;
+						setElasticsearchClientResolver(_elasticsearchFixture);
 					}
 				};
 

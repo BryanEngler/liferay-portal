@@ -18,7 +18,6 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import com.liferay.portal.search.elasticsearch6.internal.connection.Index;
 import com.liferay.portal.search.elasticsearch6.internal.connection.IndexCreator;
 import com.liferay.portal.search.elasticsearch6.internal.connection.IndexName;
-import com.liferay.portal.search.elasticsearch6.internal.connection.LiferayIndexCreator;
 
 import java.util.Map;
 
@@ -70,8 +69,12 @@ public class LiferayIndexFixture {
 	}
 
 	protected Index createIndex() {
-		IndexCreator indexCreator = new LiferayIndexCreator(
-			_elasticsearchFixture);
+		IndexCreator indexCreator = new IndexCreator() {
+			{
+				setElasticsearchClientResolver(_elasticsearchFixture);
+				setLiferayMappingsAddedToIndex(true);
+			}
+		};
 
 		return indexCreator.createIndex(_indexName);
 	}

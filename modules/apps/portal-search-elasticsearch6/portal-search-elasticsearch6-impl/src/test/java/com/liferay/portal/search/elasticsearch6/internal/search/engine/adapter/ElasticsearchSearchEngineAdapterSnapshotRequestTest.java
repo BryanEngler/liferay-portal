@@ -342,19 +342,19 @@ public class ElasticsearchSearchEngineAdapterSnapshotRequestTest {
 
 		return new ElasticsearchSearchEngineAdapterImpl() {
 			{
-				snapshotRequestExecutor = createSnapshotRequestExecutor(
-					elasticsearchClientResolver);
+				setSnapshotRequestExecutor(
+					createSnapshotRequestExecutor(elasticsearchClientResolver));
 			}
 		};
 	}
 
 	protected static SnapshotRequestExecutor createSnapshotRequestExecutor(
-		ElasticsearchClientResolver elasticsearchClientResolver1) {
+		ElasticsearchClientResolver elasticsearchClientResolver) {
 
 		SnapshotRequestExecutorFixture snapshotRequestExecutorFixture =
 			new SnapshotRequestExecutorFixture() {
 				{
-					elasticsearchClientResolver = elasticsearchClientResolver1;
+					setElasticsearchClientResolver(elasticsearchClientResolver);
 				}
 			};
 

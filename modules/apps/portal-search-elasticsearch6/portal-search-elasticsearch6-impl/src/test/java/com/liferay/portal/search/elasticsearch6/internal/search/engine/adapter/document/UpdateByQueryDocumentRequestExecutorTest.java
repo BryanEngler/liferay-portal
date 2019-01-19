@@ -75,15 +75,15 @@ public class UpdateByQueryDocumentRequestExecutorTest {
 			updateByQueryDocumentRequestExecutorImpl =
 				new UpdateByQueryDocumentRequestExecutorImpl() {
 					{
-						elasticsearchClientResolver = _elasticsearchFixture;
+						setElasticsearchClientResolver(_elasticsearchFixture);
 
 						ElasticsearchQueryTranslatorFixture
 							elasticsearchQueryTranslatorFixture =
 								new ElasticsearchQueryTranslatorFixture();
 
-						queryTranslator =
+						setQueryTranslator(
 							elasticsearchQueryTranslatorFixture.
-								getElasticsearchQueryTranslator();
+								getElasticsearchQueryTranslator());
 					}
 				};
 

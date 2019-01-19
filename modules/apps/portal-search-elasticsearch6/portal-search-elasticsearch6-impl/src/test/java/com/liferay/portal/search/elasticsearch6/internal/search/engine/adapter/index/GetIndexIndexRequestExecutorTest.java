@@ -51,7 +51,7 @@ public class GetIndexIndexRequestExecutorTest {
 		GetIndexIndexRequestExecutorImpl getIndexIndexRequestExecutorImpl =
 			new GetIndexIndexRequestExecutorImpl() {
 				{
-					elasticsearchClientResolver = _elasticsearchFixture;
+					setElasticsearchClientResolver(_elasticsearchFixture);
 				}
 			};
 

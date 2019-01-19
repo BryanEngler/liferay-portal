@@ -55,7 +55,7 @@ public class GetSnapshotsRequestExecutorImplTest {
 		GetSnapshotsRequestExecutorImpl getSnapshotRepositoriesRequestImpl =
 			new GetSnapshotsRequestExecutorImpl() {
 				{
-					elasticsearchClientResolver = _elasticsearchFixture;
+					setElasticsearchClientResolver(_elasticsearchFixture);
 				}
 			};
 

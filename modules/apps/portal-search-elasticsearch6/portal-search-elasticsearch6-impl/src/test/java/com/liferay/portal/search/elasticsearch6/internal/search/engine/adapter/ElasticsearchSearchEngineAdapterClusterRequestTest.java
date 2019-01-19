@@ -140,12 +140,12 @@ public class ElasticsearchSearchEngineAdapterClusterRequestTest {
 	}
 
 	protected static ClusterRequestExecutor createClusterRequestExecutor(
-		ElasticsearchClientResolver elasticsearchClientResolver1) {
+		ElasticsearchClientResolver elasticsearchClientResolver) {
 
 		ClusterRequestExecutorFixture clusterRequestExecutorFixture =
 			new ClusterRequestExecutorFixture() {
 				{
-					elasticsearchClientResolver = elasticsearchClientResolver1;
+					setElasticsearchClientResolver(elasticsearchClientResolver);
 				}
 			};
 
@@ -159,8 +159,8 @@ public class ElasticsearchSearchEngineAdapterClusterRequestTest {
 
 		return new ElasticsearchSearchEngineAdapterImpl() {
 			{
-				clusterRequestExecutor = createClusterRequestExecutor(
-					elasticsearchClientResolver);
+				setClusterRequestExecutor(
+					createClusterRequestExecutor(elasticsearchClientResolver));
 			}
 		};
 	}

@@ -61,9 +61,9 @@ public class OpenIndexRequestExecutorTest {
 		OpenIndexRequestExecutorImpl openIndexRequestExecutorImpl =
 			new OpenIndexRequestExecutorImpl() {
 				{
-					elasticsearchClientResolver = _elasticsearchFixture;
-					indicesOptionsTranslator =
-						new IndicesOptionsTranslatorImpl();
+					setElasticsearchClientResolver(_elasticsearchFixture);
+					setIndicesOptionsTranslator(
+						new IndicesOptionsTranslatorImpl());
 				}
 			};
 

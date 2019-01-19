@@ -64,7 +64,7 @@ public class ElasticsearchSearchEngineTest {
 		ElasticsearchEngineAdapterFixture elasticsearchEngineAdapterFixture =
 			new ElasticsearchEngineAdapterFixture() {
 				{
-					elasticsearchClientResolver = _elasticsearchFixture;
+					setElasticsearchClientResolver(_elasticsearchFixture);
 				}
 			};
 
@@ -197,16 +197,16 @@ public class ElasticsearchSearchEngineTest {
 	}
 
 	protected ElasticsearchSearchEngine createElasticsearchSearchEngine(
-		final ElasticsearchConnectionManager elasticsearchConnectionManager2,
-		final SearchEngineAdapter searchEngineAdapter1) {
+		final ElasticsearchConnectionManager elasticsearchConnectionManager,
+		final SearchEngineAdapter searchEngineAdapter) {
 
 		return new ElasticsearchSearchEngine() {
 			{
-				indexFactory = createCompanyIndexFactory();
-				indexNameBuilder = String::valueOf;
-				elasticsearchConnectionManager =
-					elasticsearchConnectionManager2;
-				searchEngineAdapter = searchEngineAdapter1;
+				setIndexFactory(createCompanyIndexFactory());
+				setIndexNameBuilder(String::valueOf);
+				setElasticsearchConnectionManager(
+					elasticsearchConnectionManager);
+				setSearchEngineAdapter(searchEngineAdapter);
 			}
 		};
 	}

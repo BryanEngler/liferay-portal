@@ -44,23 +44,23 @@ public class BulkDocumentRequestExecutorTest {
 		ElasticsearchFixture elasticsearchFixture = new ElasticsearchFixture(
 			getClass());
 
-		ElasticsearchDocumentFactory elasticsearchDocumentFactory1 =
+		ElasticsearchDocumentFactory elasticsearchDocumentFactory =
 			new DefaultElasticsearchDocumentFactory();
 
-		BulkableDocumentRequestTranslator bulkableDocumentRequestTranslator1 =
+		BulkableDocumentRequestTranslator bulkableDocumentRequestTranslator =
 			new ElasticsearchBulkableDocumentRequestTranslator() {
 				{
-					elasticsearchClientResolver = elasticsearchFixture;
-					elasticsearchDocumentFactory =
-						elasticsearchDocumentFactory1;
+					setElasticsearchClientResolver(elasticsearchFixture);
+					setElasticsearchDocumentFactory(
+						elasticsearchDocumentFactory);
 				}
 			};
 
 		_bulkDocumentRequestExecutor = new BulkDocumentRequestExecutorImpl() {
 			{
-				bulkableDocumentRequestTranslator =
-					bulkableDocumentRequestTranslator1;
-				elasticsearchClientResolver = elasticsearchFixture;
+				setBulkableDocumentRequestTranslator(
+					bulkableDocumentRequestTranslator);
+				setElasticsearchClientResolver(elasticsearchFixture);
 			}
 		};
 
