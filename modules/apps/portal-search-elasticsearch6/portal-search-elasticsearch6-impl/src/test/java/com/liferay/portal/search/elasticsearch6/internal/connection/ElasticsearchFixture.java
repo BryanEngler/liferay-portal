@@ -56,7 +56,7 @@ import org.osgi.framework.BundleContext;
 public class ElasticsearchFixture implements ElasticsearchClientResolver {
 
 	public ElasticsearchFixture(Class clazz) {
-		this(clazz.getSimpleName());
+		this(getSimpleName(clazz));
 	}
 
 	public ElasticsearchFixture(String subdirName) {
@@ -168,6 +168,14 @@ public class ElasticsearchFixture implements ElasticsearchClientResolver {
 
 	public void tearDown() throws Exception {
 		destroyNode();
+	}
+
+	protected static String getSimpleName(Class clazz) {
+		while (clazz.isAnonymousClass()) {
+			clazz = clazz.getEnclosingClass();
+		}
+
+		return clazz.getSimpleName();
 	}
 
 	protected void addClusterLoggingThresholdContributor(
