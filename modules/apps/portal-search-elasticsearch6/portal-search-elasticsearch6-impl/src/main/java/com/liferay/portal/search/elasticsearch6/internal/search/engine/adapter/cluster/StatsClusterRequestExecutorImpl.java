@@ -65,7 +65,7 @@ public class StatsClusterRequestExecutorImpl
 
 			StatsClusterResponse statsClusterResponse =
 				new StatsClusterResponse(
-					clusterHealthStatusTranslator.translate(
+					_clusterHealthStatusTranslator.translate(
 						clusterHealthStatus),
 					Strings.toString(xContentBuilder));
 
@@ -81,15 +81,26 @@ public class StatsClusterRequestExecutorImpl
 
 		ClusterStatsRequestBuilder clusterStatsRequestBuilder =
 			ClusterStatsAction.INSTANCE.newRequestBuilder(
-				elasticsearchClientResolver.getClient());
+				_elasticsearchClientResolver.getClient());
 
 		return clusterStatsRequestBuilder;
 	}
 
-	@Reference
-	protected ClusterHealthStatusTranslator clusterHealthStatusTranslator;
+	@Reference(unbind = "-")
+	protected void setClusterHealthStatusTranslator(
+		ClusterHealthStatusTranslator clusterHealthStatusTranslator) {
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+		_clusterHealthStatusTranslator = clusterHealthStatusTranslator;
+	}
+
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	private ClusterHealthStatusTranslator _clusterHealthStatusTranslator;
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
 
 }

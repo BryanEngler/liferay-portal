@@ -61,14 +61,14 @@ public class DeleteByQueryDocumentRequestExecutorImpl
 	protected DeleteByQueryRequestBuilder createDeleteByQueryRequestBuilder(
 		DeleteByQueryDocumentRequest deleteByQueryDocumentRequest) {
 
-		Client client = elasticsearchClientResolver.getClient();
+		Client client = _elasticsearchClientResolver.getClient();
 
 		DeleteByQueryRequestBuilder deleteByQueryRequestBuilder =
 			DeleteByQueryAction.INSTANCE.newRequestBuilder(client);
 
 		Query query = deleteByQueryDocumentRequest.getQuery();
 
-		QueryBuilder queryBuilder = queryTranslator.translate(query, null);
+		QueryBuilder queryBuilder = _queryTranslator.translate(query, null);
 
 		deleteByQueryRequestBuilder.filter(queryBuilder);
 
@@ -80,10 +80,21 @@ public class DeleteByQueryDocumentRequestExecutorImpl
 		return deleteByQueryRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
 
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected QueryTranslator<QueryBuilder> queryTranslator;
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setQueryTranslator(
+		QueryTranslator<QueryBuilder> queryTranslator) {
+
+		_queryTranslator = queryTranslator;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
+	private QueryTranslator<QueryBuilder> _queryTranslator;
 
 }

@@ -40,7 +40,7 @@ public class DeleteDocumentRequestExecutorImpl
 		DeleteDocumentRequest deleteDocumentRequest) {
 
 		DeleteRequestBuilder deleteRequestBuilder =
-			bulkableDocumentRequestTranslator.translate(
+			_bulkableDocumentRequestTranslator.translate(
 				deleteDocumentRequest, null);
 
 		DeleteResponse deleteResponse = deleteRequestBuilder.get();
@@ -53,9 +53,18 @@ public class DeleteDocumentRequestExecutorImpl
 		return deleteDocumentResponse;
 	}
 
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected BulkableDocumentRequestTranslator
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setBulkableDocumentRequestTranslator(
+		BulkableDocumentRequestTranslator
+			<DeleteRequestBuilder, IndexRequestBuilder,
+			 UpdateRequestBuilder, BulkRequestBuilder>
+				bulkableDocumentRequestTranslator) {
+
+		_bulkableDocumentRequestTranslator = bulkableDocumentRequestTranslator;
+	}
+
+	private BulkableDocumentRequestTranslator
 		<DeleteRequestBuilder, IndexRequestBuilder, UpdateRequestBuilder,
-		 BulkRequestBuilder> bulkableDocumentRequestTranslator;
+		 BulkRequestBuilder> _bulkableDocumentRequestTranslator;
 
 }

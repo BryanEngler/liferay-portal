@@ -86,7 +86,7 @@ public class ElasticsearchSpellCheckIndexWriter
 	protected void addDocument(
 		String documentType, SearchContext searchContext, Document document) {
 
-		String indexName = indexNameBuilder.getIndexName(
+		String indexName = _indexNameBuilder.getIndexName(
 			searchContext.getCompanyId());
 
 		IndexDocumentRequest indexDocumentRequest = new IndexDocumentRequest(
@@ -94,7 +94,7 @@ public class ElasticsearchSpellCheckIndexWriter
 
 		indexDocumentRequest.setType(DocumentTypes.LIFERAY);
 
-		searchEngineAdapter.execute(indexDocumentRequest);
+		_searchEngineAdapter.execute(indexDocumentRequest);
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public class ElasticsearchSpellCheckIndexWriter
 		String documentType, SearchContext searchContext,
 		Collection<Document> documents) {
 
-		String indexName = indexNameBuilder.getIndexName(
+		String indexName = _indexNameBuilder.getIndexName(
 			searchContext.getCompanyId());
 
 		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
@@ -119,7 +119,7 @@ public class ElasticsearchSpellCheckIndexWriter
 
 			});
 
-		searchEngineAdapter.execute(bulkDocumentRequest);
+		_searchEngineAdapter.execute(bulkDocumentRequest);
 	}
 
 	@Override
@@ -153,7 +153,7 @@ public class ElasticsearchSpellCheckIndexWriter
 		SearchContext searchContext, String typeFieldValue) {
 
 		try {
-			String indexName = indexNameBuilder.getIndexName(
+			String indexName = _indexNameBuilder.getIndexName(
 				searchContext.getCompanyId());
 
 			Filter termFilter = new TermFilter(Field.TYPE, typeFieldValue);
@@ -179,7 +179,7 @@ public class ElasticsearchSpellCheckIndexWriter
 				deleteByQueryDocumentRequest.setRefresh(true);
 			}
 
-			searchEngineAdapter.execute(deleteByQueryDocumentRequest);
+			_searchEngineAdapter.execute(deleteByQueryDocumentRequest);
 		}
 		catch (ParseException pe) {
 			throw new SystemException(pe);
@@ -190,19 +190,31 @@ public class ElasticsearchSpellCheckIndexWriter
 
 		// See LPS-72507 and LPS-76500
 
-		if (localization != null) {
-			return localization;
+		if (_localization != null) {
+			return _localization;
 		}
 
 		return LocalizationUtil.getLocalization();
 	}
 
 	@Reference(unbind = "-")
-	protected IndexNameBuilder indexNameBuilder;
+	protected void setIndexNameBuilder(IndexNameBuilder indexNameBuilder) {
+		_indexNameBuilder = indexNameBuilder;
+	}
 
-	protected Localization localization;
+	protected void setLocalization(Localization localization) {
+		_localization = localization;
+	}
 
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected SearchEngineAdapter searchEngineAdapter;
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setSearchEngineAdapter(
+		SearchEngineAdapter searchEngineAdapter) {
+
+		_searchEngineAdapter = searchEngineAdapter;
+	}
+
+	private IndexNameBuilder _indexNameBuilder;
+	private Localization _localization;
+	private SearchEngineAdapter _searchEngineAdapter;
 
 }

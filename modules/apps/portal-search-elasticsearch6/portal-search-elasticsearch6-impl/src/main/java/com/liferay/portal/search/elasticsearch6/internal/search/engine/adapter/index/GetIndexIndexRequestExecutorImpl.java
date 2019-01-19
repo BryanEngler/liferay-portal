@@ -138,7 +138,7 @@ public class GetIndexIndexRequestExecutorImpl
 	protected GetIndexRequestBuilder createGetIndexRequestBuilder(
 		GetIndexIndexRequest getIndexIndexRequest) {
 
-		Client client = elasticsearchClientResolver.getClient();
+		Client client = _elasticsearchClientResolver.getClient();
 
 		GetIndexRequestBuilder getIndexRequestBuilder =
 			GetIndexAction.INSTANCE.newRequestBuilder(client);
@@ -148,7 +148,13 @@ public class GetIndexIndexRequestExecutorImpl
 		return getIndexRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
 
 }

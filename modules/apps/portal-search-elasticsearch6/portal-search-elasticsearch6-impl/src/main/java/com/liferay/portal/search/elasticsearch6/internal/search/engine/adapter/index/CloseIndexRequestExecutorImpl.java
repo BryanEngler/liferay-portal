@@ -53,7 +53,7 @@ public class CloseIndexRequestExecutorImpl
 
 		CloseIndexRequestBuilder closeIndexRequestBuilder =
 			CloseIndexAction.INSTANCE.newRequestBuilder(
-				elasticsearchClientResolver.getClient());
+				_elasticsearchClientResolver.getClient());
 
 		closeIndexRequestBuilder.setIndices(closeIndexRequest.getIndexNames());
 
@@ -61,7 +61,7 @@ public class CloseIndexRequestExecutorImpl
 
 		if (indicesOptions != null) {
 			closeIndexRequestBuilder.setIndicesOptions(
-				indicesOptionsTranslator.translate(indicesOptions));
+				_indicesOptionsTranslator.translate(indicesOptions));
 		}
 
 		if (closeIndexRequest.getTimeout() > 0) {
@@ -75,10 +75,21 @@ public class CloseIndexRequestExecutorImpl
 		return closeIndexRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
 
-	@Reference
-	protected IndicesOptionsTranslator indicesOptionsTranslator;
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	@Reference(unbind = "-")
+	protected void setIndicesOptionsTranslator(
+		IndicesOptionsTranslator indicesOptionsTranslator) {
+
+		_indicesOptionsTranslator = indicesOptionsTranslator;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
+	private IndicesOptionsTranslator _indicesOptionsTranslator;
 
 }

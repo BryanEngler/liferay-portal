@@ -54,7 +54,7 @@ public class CommonSearchRequestBuilderAssemblerImpl
 		}
 
 		if (baseSearchRequest.getPostFilter() != null) {
-			QueryBuilder postFilterQueryBuilder = filterTranslator.translate(
+			QueryBuilder postFilterQueryBuilder = _filterTranslator.translate(
 				baseSearchRequest.getPostFilter(), null);
 
 			searchRequestBuilder.setPostFilter(postFilterQueryBuilder);
@@ -78,7 +78,7 @@ public class CommonSearchRequestBuilderAssemblerImpl
 
 		setRescorer(searchRequestBuilder, baseSearchRequest);
 
-		facetTranslator.translate(
+		_facetTranslator.translate(
 			searchRequestBuilder, baseSearchRequest.getQuery(),
 			baseSearchRequest.getFacets(),
 			baseSearchRequest.isBasicFacetSelection());
@@ -89,7 +89,7 @@ public class CommonSearchRequestBuilderAssemblerImpl
 
 		Query query = searchSearchRequest.getQuery();
 
-		QueryBuilder queryBuilder = queryTranslator.translate(query, null);
+		QueryBuilder queryBuilder = _queryTranslator.translate(query, null);
 
 		if ((query.getPreBooleanFilter() == null) ||
 			(query instanceof BooleanQuery)) {
@@ -106,10 +106,29 @@ public class CommonSearchRequestBuilderAssemblerImpl
 		BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 
 		boolQueryBuilder.filter(
-			filterTranslator.translate(query.getPreBooleanFilter(), null));
+			_filterTranslator.translate(query.getPreBooleanFilter(), null));
 		boolQueryBuilder.must(queryBuilder);
 
 		return boolQueryBuilder;
+	}
+
+	@Reference(unbind = "-")
+	protected void setFacetTranslator(FacetTranslator facetTranslator) {
+		_facetTranslator = facetTranslator;
+	}
+
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setFilterTranslator(
+		FilterTranslator<QueryBuilder> filterTranslator) {
+
+		_filterTranslator = filterTranslator;
+	}
+
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setQueryTranslator(
+		QueryTranslator<QueryBuilder> queryTranslator) {
+
+		_queryTranslator = queryTranslator;
 	}
 
 	protected void setRescorer(
@@ -123,16 +142,11 @@ public class CommonSearchRequestBuilderAssemblerImpl
 		}
 
 		searchRequestBuilder.setRescorer(
-			new QueryRescorerBuilder(queryTranslator.translate(query, null)));
+			new QueryRescorerBuilder(_queryTranslator.translate(query, null)));
 	}
 
-	@Reference
-	protected FacetTranslator facetTranslator;
-
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected FilterTranslator<QueryBuilder> filterTranslator;
-
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected QueryTranslator<QueryBuilder> queryTranslator;
+	private FacetTranslator _facetTranslator;
+	private FilterTranslator<QueryBuilder> _filterTranslator;
+	private QueryTranslator<QueryBuilder> _queryTranslator;
 
 }

@@ -164,7 +164,7 @@ public class DefaultSearchResponseTranslator
 	protected Document processSearchHit(
 		SearchHit searchHit, String alternateUidFieldName) {
 
-		Document document = searchHitDocumentTranslator.translate(searchHit);
+		Document document = _searchHitDocumentTranslator.translate(searchHit);
 
 		populateUID(document, alternateUidFieldName);
 
@@ -199,6 +199,18 @@ public class DefaultSearchResponseTranslator
 		hits.setScores(ArrayUtil.toFloatArray(scores));
 
 		return hits;
+	}
+
+	@Reference(unbind = "-")
+	protected void setSearchHitDocumentTranslator(
+		SearchHitDocumentTranslator searchHitDocumentTranslator) {
+
+		_searchHitDocumentTranslator = searchHitDocumentTranslator;
+	}
+
+	@Reference(unbind = "-")
+	protected void setStatsTranslator(StatsTranslator statsTranslator) {
+		_statsTranslator = statsTranslator;
 	}
 
 	protected void updateFacetCollectors(
@@ -278,17 +290,14 @@ public class DefaultSearchResponseTranslator
 				continue;
 			}
 
-			StatsResults statsResults = statsTranslator.translate(
+			StatsResults statsResults = _statsTranslator.translate(
 				aggregationsMap, stats);
 
 			hits.addStatsResults(statsResults);
 		}
 	}
 
-	@Reference
-	protected SearchHitDocumentTranslator searchHitDocumentTranslator;
-
-	@Reference
-	protected StatsTranslator statsTranslator;
+	private SearchHitDocumentTranslator _searchHitDocumentTranslator;
+	private StatsTranslator _statsTranslator;
 
 }

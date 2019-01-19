@@ -40,7 +40,7 @@ public class UpdateDocumentRequestExecutorImpl
 		UpdateDocumentRequest updateDocumentRequest) {
 
 		UpdateRequestBuilder updateRequestBuilder =
-			bulkableDocumentRequestTranslator.translate(
+			_bulkableDocumentRequestTranslator.translate(
 				updateDocumentRequest, null);
 
 		UpdateResponse updateResponse = updateRequestBuilder.get();
@@ -53,9 +53,17 @@ public class UpdateDocumentRequestExecutorImpl
 		return updateDocumentResponse;
 	}
 
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected BulkableDocumentRequestTranslator
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setBulkableDocumentRequestTranslator(
+		BulkableDocumentRequestTranslator
+			<DeleteRequestBuilder, IndexRequestBuilder, UpdateRequestBuilder,
+			 BulkRequestBuilder> bulkableDocumentRequestTranslator) {
+
+		_bulkableDocumentRequestTranslator = bulkableDocumentRequestTranslator;
+	}
+
+	private BulkableDocumentRequestTranslator
 		<DeleteRequestBuilder, IndexRequestBuilder, UpdateRequestBuilder,
-		 BulkRequestBuilder> bulkableDocumentRequestTranslator;
+		 BulkRequestBuilder> _bulkableDocumentRequestTranslator;
 
 }

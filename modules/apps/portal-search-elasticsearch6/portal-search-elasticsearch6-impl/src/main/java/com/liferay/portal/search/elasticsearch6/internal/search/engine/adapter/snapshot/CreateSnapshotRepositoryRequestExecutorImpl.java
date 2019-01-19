@@ -53,7 +53,7 @@ public class CreateSnapshotRepositoryRequestExecutorImpl
 
 		PutRepositoryRequestBuilder putRepositoryRequestBuilder =
 			PutRepositoryAction.INSTANCE.newRequestBuilder(
-				elasticsearchClientResolver.getClient());
+				_elasticsearchClientResolver.getClient());
 
 		putRepositoryRequestBuilder.setName(
 			createSnapshotRepositoryRequest.getName());
@@ -78,7 +78,13 @@ public class CreateSnapshotRepositoryRequestExecutorImpl
 		return putRepositoryRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
 
 }

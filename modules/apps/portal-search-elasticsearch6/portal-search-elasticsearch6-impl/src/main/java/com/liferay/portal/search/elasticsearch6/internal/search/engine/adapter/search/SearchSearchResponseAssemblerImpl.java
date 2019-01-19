@@ -39,7 +39,7 @@ public class SearchSearchResponseAssemblerImpl
 		SearchResponse searchResponse, SearchSearchRequest searchSearchRequest,
 		SearchSearchResponse searchSearchResponse) {
 
-		commonSearchResponseAssembler.assemble(
+		_commonSearchResponseAssembler.assemble(
 			searchRequestBuilder, searchResponse, searchSearchRequest,
 			searchSearchResponse);
 
@@ -47,7 +47,7 @@ public class SearchSearchResponseAssemblerImpl
 
 		searchSearchResponse.setCount(searchHits.totalHits);
 
-		Hits hits = searchResponseTranslator.translate(
+		Hits hits = _searchResponseTranslator.translate(
 			searchResponse, searchSearchRequest.getFacets(),
 			searchSearchRequest.getGroupBy(), searchSearchRequest.getStats(),
 			searchSearchRequest.getAlternateUidFieldName(),
@@ -57,10 +57,21 @@ public class SearchSearchResponseAssemblerImpl
 		searchSearchResponse.setHits(hits);
 	}
 
-	@Reference
-	protected CommonSearchResponseAssembler commonSearchResponseAssembler;
+	@Reference(unbind = "-")
+	protected void setCommonSearchResponseAssembler(
+		CommonSearchResponseAssembler commonSearchResponseAssembler) {
 
-	@Reference
-	protected SearchResponseTranslator searchResponseTranslator;
+		_commonSearchResponseAssembler = commonSearchResponseAssembler;
+	}
+
+	@Reference(unbind = "-")
+	protected void setSearchResponseTranslator(
+		SearchResponseTranslator searchResponseTranslator) {
+
+		_searchResponseTranslator = searchResponseTranslator;
+	}
+
+	private CommonSearchResponseAssembler _commonSearchResponseAssembler;
+	private SearchResponseTranslator _searchResponseTranslator;
 
 }

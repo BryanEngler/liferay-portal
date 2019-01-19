@@ -50,7 +50,7 @@ public class CreateIndexRequestExecutorImpl
 	protected CreateIndexRequestBuilder createCreateIndexRequestBuilder(
 		CreateIndexRequest createIndexRequest) {
 
-		Client client = elasticsearchClientResolver.getClient();
+		Client client = _elasticsearchClientResolver.getClient();
 
 		CreateIndexRequestBuilder createIndexRequestBuilder =
 			CreateIndexAction.INSTANCE.newRequestBuilder(client);
@@ -62,7 +62,13 @@ public class CreateIndexRequestExecutorImpl
 		return createIndexRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
 
 }

@@ -62,7 +62,7 @@ public class DefaultFacetTranslator implements FacetTranslator {
 
 		if (query.getPostFilter() != null) {
 			postFilterQueryBuilders.add(
-				filterTranslator.translate(query.getPostFilter(), null));
+				_filterTranslator.translate(query.getPostFilter(), null));
 		}
 
 		for (Facet facet : facets) {
@@ -76,8 +76,8 @@ public class DefaultFacetTranslator implements FacetTranslator {
 			postFilterQueryBuilderOptional.ifPresent(
 				postFilterQueryBuilders::add);
 
-			Optional<AggregationBuilder> optional = facetProcessor.processFacet(
-				facet);
+			Optional<AggregationBuilder> optional =
+				_facetProcessor.processFacet(facet);
 
 			optional.map(
 				aggregationBuilder -> postProcessAggregationBuilder(
@@ -129,6 +129,20 @@ public class DefaultFacetTranslator implements FacetTranslator {
 		return aggregationBuilder;
 	}
 
+	@Reference(service = CompositeFacetProcessor.class, unbind = "-")
+	protected void setFacetProcessor(
+		FacetProcessor<SearchRequestBuilder> facetProcessor) {
+
+		_facetProcessor = facetProcessor;
+	}
+
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setFilterTranslator(
+		FilterTranslator<QueryBuilder> filterTranslator) {
+
+		_filterTranslator = filterTranslator;
+	}
+
 	protected QueryBuilder translateBooleanClause(
 		BooleanClause<Filter> booleanClause) {
 
@@ -137,7 +151,7 @@ public class DefaultFacetTranslator implements FacetTranslator {
 		booleanFilter.add(
 			booleanClause.getClause(), booleanClause.getBooleanClauseOccur());
 
-		return filterTranslator.translate(booleanFilter, null);
+		return _filterTranslator.translate(booleanFilter, null);
 	}
 
 	protected Optional<QueryBuilder> translateFacetQuery(Facet facet) {
@@ -153,10 +167,7 @@ public class DefaultFacetTranslator implements FacetTranslator {
 		return Optional.of(queryBuilder);
 	}
 
-	@Reference(service = CompositeFacetProcessor.class)
-	protected FacetProcessor<SearchRequestBuilder> facetProcessor;
-
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected FilterTranslator<QueryBuilder> filterTranslator;
+	private FacetProcessor<SearchRequestBuilder> _facetProcessor;
+	private FilterTranslator<QueryBuilder> _filterTranslator;
 
 }

@@ -52,7 +52,7 @@ public class UpdateIndexSettingsIndexRequestExecutorImpl
 	protected UpdateSettingsRequestBuilder createUpdateSettingsRequestBuilder(
 		UpdateIndexSettingsIndexRequest updateIndexSettingsIndexRequest) {
 
-		Client client = elasticsearchClientResolver.getClient();
+		Client client = _elasticsearchClientResolver.getClient();
 
 		UpdateSettingsRequestBuilder updateSettingsRequestBuilder =
 			UpdateSettingsAction.INSTANCE.newRequestBuilder(client);
@@ -68,16 +68,27 @@ public class UpdateIndexSettingsIndexRequestExecutorImpl
 
 		if (indicesOptions != null) {
 			updateSettingsRequestBuilder.setIndicesOptions(
-				indicesOptionsTranslator.translate(indicesOptions));
+				_indicesOptionsTranslator.translate(indicesOptions));
 		}
 
 		return updateSettingsRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
 
-	@Reference
-	protected IndicesOptionsTranslator indicesOptionsTranslator;
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	@Reference(unbind = "-")
+	protected void setIndicesOptionsTranslator(
+		IndicesOptionsTranslator indicesOptionsTranslator) {
+
+		_indicesOptionsTranslator = indicesOptionsTranslator;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
+	private IndicesOptionsTranslator _indicesOptionsTranslator;
 
 }

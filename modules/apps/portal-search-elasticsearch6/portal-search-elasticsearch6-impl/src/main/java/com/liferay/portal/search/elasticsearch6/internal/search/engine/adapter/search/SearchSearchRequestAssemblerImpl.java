@@ -45,21 +45,21 @@ public class SearchSearchRequestAssemblerImpl
 		SearchRequestBuilder searchRequestBuilder,
 		SearchSearchRequest searchSearchRequest) {
 
-		commonSearchRequestBuilderAssembler.assemble(
+		_commonSearchRequestBuilderAssembler.assemble(
 			searchRequestBuilder, searchSearchRequest);
 
 		Map<String, Stats> stats = searchSearchRequest.getStats();
 
 		if (!MapUtil.isEmpty(stats)) {
 			stats.forEach(
-				(statsKey, stat) -> statsTranslator.translate(
+				(statsKey, stat) -> _statsTranslator.translate(
 					searchRequestBuilder, stat));
 		}
 
 		addGroupBy(searchRequestBuilder, searchSearchRequest);
 
 		if (searchSearchRequest.isHighlightEnabled()) {
-			highlighterTranslator.translate(
+			_highlighterTranslator.translate(
 				searchRequestBuilder,
 				searchSearchRequest.getHighlightFieldNames(),
 				searchSearchRequest.isHighlightRequireFieldMatch(),
@@ -75,7 +75,7 @@ public class SearchSearchRequestAssemblerImpl
 		addSelectedFields(
 			searchRequestBuilder, searchSearchRequest.getSelectedFieldNames());
 
-		sortTranslator.translate(
+		_sortTranslator.translate(
 			searchRequestBuilder, searchSearchRequest.getSorts());
 
 		searchRequestBuilder.setTrackScores(
@@ -92,7 +92,7 @@ public class SearchSearchRequestAssemblerImpl
 			return;
 		}
 
-		groupByTranslator.translate(
+		_groupByTranslator.translate(
 			searchRequestBuilder, groupBy, searchSearchRequest.getSorts(),
 			searchSearchRequest.getLocale(),
 			searchSearchRequest.getSelectedFieldNames(),
@@ -134,20 +134,42 @@ public class SearchSearchRequestAssemblerImpl
 		}
 	}
 
-	@Reference
-	protected CommonSearchRequestBuilderAssembler
-		commonSearchRequestBuilderAssembler;
+	@Reference(unbind = "-")
+	protected void setCommonSearchRequestBuilderAssembler(
+		CommonSearchRequestBuilderAssembler
+			commonSearchRequestBuilderAssembler) {
 
-	@Reference
-	protected GroupByTranslator groupByTranslator;
+		_commonSearchRequestBuilderAssembler =
+			commonSearchRequestBuilderAssembler;
+	}
 
-	@Reference
-	protected HighlighterTranslator highlighterTranslator;
+	@Reference(unbind = "-")
+	protected void setGroupByTranslator(GroupByTranslator groupByTranslator) {
+		_groupByTranslator = groupByTranslator;
+	}
 
-	@Reference
-	protected SortTranslator sortTranslator;
+	@Reference(unbind = "-")
+	protected void setHighlighterTranslator(
+		HighlighterTranslator highlighterTranslator) {
 
-	@Reference
-	protected StatsTranslator statsTranslator;
+		_highlighterTranslator = highlighterTranslator;
+	}
+
+	@Reference(unbind = "-")
+	protected void setSortTranslator(SortTranslator sortTranslator) {
+		_sortTranslator = sortTranslator;
+	}
+
+	@Reference(unbind = "-")
+	protected void setStatsTranslator(StatsTranslator statsTranslator) {
+		_statsTranslator = statsTranslator;
+	}
+
+	private CommonSearchRequestBuilderAssembler
+		_commonSearchRequestBuilderAssembler;
+	private GroupByTranslator _groupByTranslator;
+	private HighlighterTranslator _highlighterTranslator;
+	private SortTranslator _sortTranslator;
+	private StatsTranslator _statsTranslator;
 
 }

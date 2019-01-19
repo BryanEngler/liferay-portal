@@ -88,7 +88,7 @@ public class GetSnapshotRepositoriesRequestExecutorImpl
 
 		GetRepositoriesRequestBuilder getRepositoriesRequestBuilder =
 			GetRepositoriesAction.INSTANCE.newRequestBuilder(
-				elasticsearchClientResolver.getClient());
+				_elasticsearchClientResolver.getClient());
 
 		getRepositoriesRequestBuilder.addRepositories(
 			getSnapshotRepositoriesRequest.getRepositoryNames());
@@ -96,10 +96,16 @@ public class GetSnapshotRepositoriesRequestExecutorImpl
 		return getRepositoriesRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		GetSnapshotRepositoriesRequestExecutorImpl.class);
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
 
 }

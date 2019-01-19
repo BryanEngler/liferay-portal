@@ -48,34 +48,56 @@ public class ElasticsearchSuggesterTranslator
 
 	@Override
 	public SuggestBuilder visit(AggregateSuggester aggregateSuggester) {
-		return aggregateSuggesteTranslator.translate(aggregateSuggester, this);
+		return _aggregateSuggesterTranslator.translate(
+			aggregateSuggester, this);
 	}
 
 	@Override
 	public SuggestBuilder visit(CompletionSuggester completionSuggester) {
-		return completionSuggesterTranslator.translate(completionSuggester);
+		return _completionSuggesterTranslator.translate(completionSuggester);
 	}
 
 	@Override
 	public SuggestBuilder visit(PhraseSuggester phraseSuggester) {
-		return phraseSuggesterTranslator.translate(phraseSuggester);
+		return _phraseSuggesterTranslator.translate(phraseSuggester);
 	}
 
 	@Override
 	public SuggestBuilder visit(TermSuggester termSuggester) {
-		return termSuggesterTranslator.translate(termSuggester);
+		return _termSuggesterTranslator.translate(termSuggester);
 	}
 
-	@Reference
-	protected AggregateSuggesterTranslator aggregateSuggesteTranslator;
+	@Reference(unbind = "-")
+	protected void setAggregateSuggesterTranslator(
+		AggregateSuggesterTranslator aggregateSuggesterTranslator) {
 
-	@Reference
-	protected CompletionSuggesterTranslator completionSuggesterTranslator;
+		_aggregateSuggesterTranslator = aggregateSuggesterTranslator;
+	}
 
-	@Reference
-	protected PhraseSuggesterTranslator phraseSuggesterTranslator;
+	@Reference(unbind = "-")
+	protected void setCompletionSuggesterTranslator(
+		CompletionSuggesterTranslator completionSuggesterTranslator) {
 
-	@Reference
-	protected TermSuggesterTranslator termSuggesterTranslator;
+		_completionSuggesterTranslator = completionSuggesterTranslator;
+	}
+
+	@Reference(unbind = "-")
+	protected void setPhraseSuggesterTranslator(
+		PhraseSuggesterTranslator phraseSuggesterTranslator) {
+
+		_phraseSuggesterTranslator = phraseSuggesterTranslator;
+	}
+
+	@Reference(unbind = "-")
+	protected void setTermSuggesterTranslator(
+		TermSuggesterTranslator termSuggesterTranslator) {
+
+		_termSuggesterTranslator = termSuggesterTranslator;
+	}
+
+	private AggregateSuggesterTranslator _aggregateSuggesterTranslator;
+	private CompletionSuggesterTranslator _completionSuggesterTranslator;
+	private PhraseSuggesterTranslator _phraseSuggesterTranslator;
+	private TermSuggesterTranslator _termSuggesterTranslator;
 
 }

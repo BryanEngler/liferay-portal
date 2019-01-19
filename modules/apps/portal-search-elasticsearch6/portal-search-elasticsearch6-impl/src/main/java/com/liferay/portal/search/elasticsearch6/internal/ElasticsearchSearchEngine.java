@@ -84,10 +84,10 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 			_BACKUP_REPOSITORY_NAME, backupName);
 
 		createSnapshotRequest.setIndexNames(
-			indexNameBuilder.getIndexName(companyId));
+			_indexNameBuilder.getIndexName(companyId));
 
 		CreateSnapshotResponse createSnapshotResponse =
-			searchEngineAdapter.execute(createSnapshotRequest);
+			_searchEngineAdapter.execute(createSnapshotRequest);
 
 		SnapshotDetails snapshotDetails =
 			createSnapshotResponse.getSnapshotDetails();
@@ -107,11 +107,11 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 
 		waitForYellowStatus();
 
-		Client client = elasticsearchConnectionManager.getClient();
+		Client client = _elasticsearchConnectionManager.getClient();
 
-		indexFactory.createIndices(client.admin(), companyId);
+		_indexFactory.createIndices(client.admin(), companyId);
 
-		elasticsearchConnectionManager.registerCompanyId(companyId);
+		_elasticsearchConnectionManager.registerCompanyId(companyId);
 
 		waitForYellowStatus();
 	}
@@ -125,7 +125,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		DeleteSnapshotRequest deleteSnapshotRequest = new DeleteSnapshotRequest(
 			_BACKUP_REPOSITORY_NAME, backupName);
 
-		searchEngineAdapter.execute(deleteSnapshotRequest);
+		_searchEngineAdapter.execute(deleteSnapshotRequest);
 	}
 
 	@Override
@@ -133,10 +133,10 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		super.removeCompany(companyId);
 
 		try {
-			indexFactory.deleteIndices(
-				elasticsearchConnectionManager.getAdminClient(), companyId);
+			_indexFactory.deleteIndices(
+				_elasticsearchConnectionManager.getAdminClient(), companyId);
 
-			elasticsearchConnectionManager.unregisterCompanyId(companyId);
+			_elasticsearchConnectionManager.unregisterCompanyId(companyId);
 		}
 		catch (Exception e) {
 			if (_log.isWarnEnabled()) {
@@ -154,24 +154,24 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		validateBackupName(backupName);
 
 		CloseIndexRequest closeIndexRequest = new CloseIndexRequest(
-			indexNameBuilder.getIndexName(companyId));
+			_indexNameBuilder.getIndexName(companyId));
 
-		CloseIndexResponse closeIndexResponse = searchEngineAdapter.execute(
+		CloseIndexResponse closeIndexResponse = _searchEngineAdapter.execute(
 			closeIndexRequest);
 
 		if (!closeIndexResponse.isAcknowledged()) {
 			throw new SystemException(
 				"Error closing index: " +
-					indexNameBuilder.getIndexName(companyId));
+					_indexNameBuilder.getIndexName(companyId));
 		}
 
 		RestoreSnapshotRequest restoreSnapshotRequest =
 			new RestoreSnapshotRequest(_BACKUP_REPOSITORY_NAME, backupName);
 
 		restoreSnapshotRequest.setIndexNames(
-			indexNameBuilder.getIndexName(companyId));
+			_indexNameBuilder.getIndexName(companyId));
 
-		searchEngineAdapter.execute(restoreSnapshotRequest);
+		_searchEngineAdapter.execute(restoreSnapshotRequest);
 
 		waitForYellowStatus();
 	}
@@ -191,11 +191,11 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 	public void unsetElasticsearchConnectionManager(
 		ElasticsearchConnectionManager elasticsearchConnectionManager) {
 
-		this.elasticsearchConnectionManager = null;
+		_elasticsearchConnectionManager = null;
 	}
 
 	public void unsetIndexFactory(IndexFactory indexFactory) {
-		this.indexFactory = null;
+		_indexFactory = null;
 	}
 
 	@Activate
@@ -212,7 +212,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 			new CreateSnapshotRepositoryRequest(
 				_BACKUP_REPOSITORY_NAME, "es_backup");
 
-		searchEngineAdapter.execute(createSnapshotRepositoryRequest);
+		_searchEngineAdapter.execute(createSnapshotRepositoryRequest);
 	}
 
 	protected boolean hasBackupRepository() {
@@ -221,7 +221,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 				new GetSnapshotRepositoriesRequest(_BACKUP_REPOSITORY_NAME);
 
 			GetSnapshotRepositoriesResponse getSnapshotRepositoriesResponse =
-				searchEngineAdapter.execute(getSnapshotRepositoriesRequest);
+				_searchEngineAdapter.execute(getSnapshotRepositoriesRequest);
 
 			List<SnapshotRepositoryDetails> snapshotRepositoryDetailsList =
 				getSnapshotRepositoriesResponse.getSnapshotRepositoryDetails();
@@ -235,6 +235,30 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		}
 
 		return true;
+	}
+
+	@Reference
+	protected void setElasticsearchConnectionManager(
+		ElasticsearchConnectionManager elasticsearchConnectionManager) {
+
+		_elasticsearchConnectionManager = elasticsearchConnectionManager;
+	}
+
+	@Reference
+	protected void setIndexFactory(IndexFactory indexFactory) {
+		_indexFactory = indexFactory;
+	}
+
+	@Reference(unbind = "-")
+	protected void setIndexNameBuilder(IndexNameBuilder indexNameBuilder) {
+		_indexNameBuilder = indexNameBuilder;
+	}
+
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setSearchEngineAdapter(
+		SearchEngineAdapter searchEngineAdapter) {
+
+		_searchEngineAdapter = searchEngineAdapter;
 	}
 
 	protected void validateBackupName(String backupName)
@@ -289,7 +313,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 			ClusterHealthStatus.YELLOW);
 
 		HealthClusterResponse healthClusterResponse =
-			searchEngineAdapter.execute(healthClusterRequest);
+			_searchEngineAdapter.execute(healthClusterRequest);
 
 		if (healthClusterResponse.getClusterHealthStatus() ==
 				ClusterHealthStatus.RED) {
@@ -300,21 +324,14 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		}
 	}
 
-	@Reference
-	protected ElasticsearchConnectionManager elasticsearchConnectionManager;
-
-	@Reference
-	protected IndexFactory indexFactory;
-
-	@Reference
-	protected IndexNameBuilder indexNameBuilder;
-
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected SearchEngineAdapter searchEngineAdapter;
-
 	private static final String _BACKUP_REPOSITORY_NAME = "liferay_backup";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ElasticsearchSearchEngine.class);
+
+	private ElasticsearchConnectionManager _elasticsearchConnectionManager;
+	private IndexFactory _indexFactory;
+	private IndexNameBuilder _indexNameBuilder;
+	private SearchEngineAdapter _searchEngineAdapter;
 
 }

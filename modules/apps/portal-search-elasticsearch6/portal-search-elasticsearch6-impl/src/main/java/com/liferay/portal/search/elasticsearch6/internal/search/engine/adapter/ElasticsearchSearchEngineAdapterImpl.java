@@ -52,58 +52,89 @@ public class ElasticsearchSearchEngineAdapterImpl
 	public <T extends ClusterResponse> T execute(
 		ClusterRequest<T> clusterRequest) {
 
-		return clusterRequestExecutor.execute(clusterRequest);
+		return _clusterRequestExecutor.execute(clusterRequest);
 	}
 
 	@Override
 	public <S extends DocumentResponse> S execute(
 		DocumentRequest<S> documentRequest) {
 
-		return documentRequest.accept(documentRequestExecutor);
+		return documentRequest.accept(_documentRequestExecutor);
 	}
 
 	@Override
 	public <U extends IndexResponse> U execute(IndexRequest<U> indexRequest) {
-		return indexRequest.accept(indexRequestExecutor);
+		return indexRequest.accept(_indexRequestExecutor);
 	}
 
 	@Override
 	public <V extends SearchResponse> V execute(
 		SearchRequest<V> searchRequest) {
 
-		return searchRequest.accept(searchRequestExecutor);
+		return searchRequest.accept(_searchRequestExecutor);
 	}
 
 	@Override
 	public <W extends SnapshotResponse> W execute(
 		SnapshotRequest<W> snapshotRequest) {
 
-		return snapshotRequest.accept(snapshotRequestExecutor);
+		return snapshotRequest.accept(_snapshotRequestExecutor);
 	}
 
 	@Override
 	public String getQueryString(Query query) {
-		QueryBuilder queryBuilder = queryTranslator.translate(query, null);
+		QueryBuilder queryBuilder = _queryTranslator.translate(query, null);
 
 		return queryBuilder.toString();
 	}
 
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected ClusterRequestExecutor clusterRequestExecutor;
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setClusterRequestExecutor(
+		ClusterRequestExecutor clusterRequestExecutor) {
 
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected DocumentRequestExecutor documentRequestExecutor;
+		_clusterRequestExecutor = clusterRequestExecutor;
+	}
 
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected IndexRequestExecutor indexRequestExecutor;
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setDocumentRequestExecutor(
+		DocumentRequestExecutor documentRequestExecutor) {
 
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected QueryTranslator<QueryBuilder> queryTranslator;
+		_documentRequestExecutor = documentRequestExecutor;
+	}
 
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected SearchRequestExecutor searchRequestExecutor;
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setIndexRequestExecutor(
+		IndexRequestExecutor indexRequestExecutor) {
 
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected SnapshotRequestExecutor snapshotRequestExecutor;
+		_indexRequestExecutor = indexRequestExecutor;
+	}
+
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setQueryTranslator(
+		QueryTranslator<QueryBuilder> queryTranslator) {
+
+		_queryTranslator = queryTranslator;
+	}
+
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setSearchRequestExecutor(
+		SearchRequestExecutor searchRequestExecutor) {
+
+		_searchRequestExecutor = searchRequestExecutor;
+	}
+
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setSnapshotRequestExecutor(
+		SnapshotRequestExecutor snapshotRequestExecutor) {
+
+		_snapshotRequestExecutor = snapshotRequestExecutor;
+	}
+
+	private ClusterRequestExecutor _clusterRequestExecutor;
+	private DocumentRequestExecutor _documentRequestExecutor;
+	private IndexRequestExecutor _indexRequestExecutor;
+	private QueryTranslator<QueryBuilder> _queryTranslator;
+	private SearchRequestExecutor _searchRequestExecutor;
+	private SnapshotRequestExecutor _snapshotRequestExecutor;
 
 }

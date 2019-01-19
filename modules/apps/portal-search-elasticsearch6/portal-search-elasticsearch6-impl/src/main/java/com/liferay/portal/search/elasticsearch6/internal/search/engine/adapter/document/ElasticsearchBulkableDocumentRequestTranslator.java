@@ -55,7 +55,7 @@ public class ElasticsearchBulkableDocumentRequestTranslator
 		DeleteDocumentRequest deleteDocumentRequest,
 		BulkRequestBuilder searchEngineAdapterRequest) {
 
-		Client client = elasticsearchClientResolver.getClient();
+		Client client = _elasticsearchClientResolver.getClient();
 
 		DeleteRequestBuilder deleteRequestBuilder =
 			DeleteAction.INSTANCE.newRequestBuilder(client);
@@ -82,7 +82,7 @@ public class ElasticsearchBulkableDocumentRequestTranslator
 		IndexDocumentRequest indexDocumentRequest,
 		BulkRequestBuilder searchEngineAdapterRequest) {
 
-		Client client = elasticsearchClientResolver.getClient();
+		Client client = _elasticsearchClientResolver.getClient();
 
 		IndexRequestBuilder indexRequestBuilder =
 			IndexAction.INSTANCE.newRequestBuilder(client);
@@ -101,7 +101,7 @@ public class ElasticsearchBulkableDocumentRequestTranslator
 		Document document = indexDocumentRequest.getDocument();
 
 		String elasticsearchDocument =
-			elasticsearchDocumentFactory.getElasticsearchDocument(document);
+			_elasticsearchDocumentFactory.getElasticsearchDocument(document);
 
 		indexRequestBuilder.setSource(elasticsearchDocument, XContentType.JSON);
 
@@ -117,7 +117,7 @@ public class ElasticsearchBulkableDocumentRequestTranslator
 		UpdateDocumentRequest updateDocumentRequest,
 		BulkRequestBuilder searchEngineAdapterRequest) {
 
-		Client client = elasticsearchClientResolver.getClient();
+		Client client = _elasticsearchClientResolver.getClient();
 
 		UpdateRequestBuilder updateRequestBuilder =
 			UpdateAction.INSTANCE.newRequestBuilder(client);
@@ -136,7 +136,7 @@ public class ElasticsearchBulkableDocumentRequestTranslator
 		Document document = updateDocumentRequest.getDocument();
 
 		String elasticsearchDocument =
-			elasticsearchDocumentFactory.getElasticsearchDocument(document);
+			_elasticsearchDocumentFactory.getElasticsearchDocument(document);
 
 		updateRequestBuilder.setDoc(elasticsearchDocument, XContentType.JSON);
 
@@ -145,6 +145,20 @@ public class ElasticsearchBulkableDocumentRequestTranslator
 		}
 
 		return updateRequestBuilder;
+	}
+
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	@Reference(unbind = "-")
+	protected void setElasticsearchDocumentFactory(
+		ElasticsearchDocumentFactory elasticsearchDocumentFactory) {
+
+		_elasticsearchDocumentFactory = elasticsearchDocumentFactory;
 	}
 
 	protected void setIndexRequestBuilderId(
@@ -185,10 +199,7 @@ public class ElasticsearchBulkableDocumentRequestTranslator
 		updateRequestBuilder.setId(uid);
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
-
-	@Reference
-	protected ElasticsearchDocumentFactory elasticsearchDocumentFactory;
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
+	private ElasticsearchDocumentFactory _elasticsearchDocumentFactory;
 
 }

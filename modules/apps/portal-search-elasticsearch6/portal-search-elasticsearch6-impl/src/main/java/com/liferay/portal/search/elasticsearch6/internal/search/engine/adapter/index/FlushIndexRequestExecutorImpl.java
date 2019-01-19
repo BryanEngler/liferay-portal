@@ -63,7 +63,7 @@ public class FlushIndexRequestExecutorImpl
 					shardOperationFailedExceptions) {
 
 				IndexRequestShardFailure indexRequestShardFailure =
-					indexRequestShardFailureTranslator.translate(
+					_indexRequestShardFailureTranslator.translate(
 						shardOperationFailedException);
 
 				flushIndexResponse.addIndexRequestShardFailure(
@@ -77,7 +77,7 @@ public class FlushIndexRequestExecutorImpl
 	protected FlushRequestBuilder createFlushRequestBuilder(
 		FlushIndexRequest flushIndexRequest) {
 
-		Client client = elasticsearchClientResolver.getClient();
+		Client client = _elasticsearchClientResolver.getClient();
 
 		FlushRequestBuilder flushRequestBuilder =
 			FlushAction.INSTANCE.newRequestBuilder(client);
@@ -90,11 +90,23 @@ public class FlushIndexRequestExecutorImpl
 		return flushRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
 
-	@Reference
-	protected IndexRequestShardFailureTranslator
-		indexRequestShardFailureTranslator;
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	@Reference(unbind = "-")
+	protected void setIndexRequestShardFailureTranslator(
+		IndexRequestShardFailureTranslator indexRequestShardFailureTranslator) {
+
+		_indexRequestShardFailureTranslator =
+			indexRequestShardFailureTranslator;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
+	private IndexRequestShardFailureTranslator
+		_indexRequestShardFailureTranslator;
 
 }

@@ -48,7 +48,7 @@ public class HealthClusterRequestExecutorImpl
 			clusterHealthResponse.getStatus();
 
 		return new HealthClusterResponse(
-			clusterHealthStatusTranslator.translate(clusterHealthStatus),
+			_clusterHealthStatusTranslator.translate(clusterHealthStatus),
 			clusterHealthResponse.toString());
 	}
 
@@ -57,7 +57,7 @@ public class HealthClusterRequestExecutorImpl
 
 		ClusterHealthRequestBuilder clusterHealthRequestBuilder =
 			ClusterHealthAction.INSTANCE.newRequestBuilder(
-				elasticsearchClientResolver.getClient());
+				_elasticsearchClientResolver.getClient());
 
 		clusterHealthRequestBuilder.setIndices(
 			healthClusterRequest.getIndexNames());
@@ -73,17 +73,28 @@ public class HealthClusterRequestExecutorImpl
 
 		if (healthClusterRequest.getWaitForClusterHealthStatus() != null) {
 			clusterHealthRequestBuilder.setWaitForStatus(
-				clusterHealthStatusTranslator.translate(
+				_clusterHealthStatusTranslator.translate(
 					healthClusterRequest.getWaitForClusterHealthStatus()));
 		}
 
 		return clusterHealthRequestBuilder;
 	}
 
-	@Reference
-	protected ClusterHealthStatusTranslator clusterHealthStatusTranslator;
+	@Reference(unbind = "-")
+	protected void setClusterHealthStatusTranslator(
+		ClusterHealthStatusTranslator clusterHealthStatusTranslator) {
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+		_clusterHealthStatusTranslator = clusterHealthStatusTranslator;
+	}
+
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	private ClusterHealthStatusTranslator _clusterHealthStatusTranslator;
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
 
 }

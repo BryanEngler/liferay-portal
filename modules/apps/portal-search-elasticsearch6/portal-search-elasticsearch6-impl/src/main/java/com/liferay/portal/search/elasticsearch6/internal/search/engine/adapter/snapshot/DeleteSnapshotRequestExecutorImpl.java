@@ -53,7 +53,7 @@ public class DeleteSnapshotRequestExecutorImpl
 
 		DeleteSnapshotRequestBuilder deleteSnapshotRequestBuilder =
 			DeleteSnapshotAction.INSTANCE.newRequestBuilder(
-				elasticsearchClientResolver.getClient());
+				_elasticsearchClientResolver.getClient());
 
 		deleteSnapshotRequestBuilder.setRepository(
 			deleteSnapshotRequest.getRepositoryName());
@@ -63,7 +63,13 @@ public class DeleteSnapshotRequestExecutorImpl
 		return deleteSnapshotRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
 
 }

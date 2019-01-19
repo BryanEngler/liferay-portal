@@ -58,7 +58,7 @@ public class CreateSnapshotRequestExecutorImpl
 
 		CreateSnapshotRequestBuilder createSnapshotRequestBuilder =
 			CreateSnapshotAction.INSTANCE.newRequestBuilder(
-				elasticsearchClientResolver.getClient());
+				_elasticsearchClientResolver.getClient());
 
 		if (ArrayUtil.isNotEmpty(createSnapshotRequest.getIndexNames())) {
 			createSnapshotRequestBuilder.setIndices(
@@ -75,7 +75,13 @@ public class CreateSnapshotRequestExecutorImpl
 		return createSnapshotRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
 
 }

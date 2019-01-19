@@ -49,7 +49,7 @@ public class DeleteIndexRequestExecutorImpl
 	protected DeleteIndexRequestBuilder createDeleteIndexRequestBuilder(
 		DeleteIndexRequest deleteIndexRequest) {
 
-		Client client = elasticsearchClientResolver.getClient();
+		Client client = _elasticsearchClientResolver.getClient();
 
 		AdminClient adminClient = client.admin();
 
@@ -59,7 +59,7 @@ public class DeleteIndexRequestExecutorImpl
 			indicesAdminClient.prepareDelete(
 				deleteIndexRequest.getIndexNames());
 
-		IndicesOptions indicesOptions = indicesOptionsTranslator.translate(
+		IndicesOptions indicesOptions = _indicesOptionsTranslator.translate(
 			deleteIndexRequest.getIndicesOptions());
 
 		deleteIndexRequestBuilder.setIndicesOptions(indicesOptions);
@@ -67,10 +67,21 @@ public class DeleteIndexRequestExecutorImpl
 		return deleteIndexRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
 
-	@Reference
-	protected IndicesOptionsTranslator indicesOptionsTranslator;
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	@Reference(unbind = "-")
+	protected void setIndicesOptionsTranslator(
+		IndicesOptionsTranslator indicesOptionsTranslator) {
+
+		_indicesOptionsTranslator = indicesOptionsTranslator;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
+	private IndicesOptionsTranslator _indicesOptionsTranslator;
 
 }

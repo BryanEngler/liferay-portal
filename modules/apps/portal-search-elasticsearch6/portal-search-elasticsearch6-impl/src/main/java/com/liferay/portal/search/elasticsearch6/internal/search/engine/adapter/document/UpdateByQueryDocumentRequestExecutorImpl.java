@@ -63,14 +63,14 @@ public class UpdateByQueryDocumentRequestExecutorImpl
 	protected UpdateByQueryRequestBuilder createUpdateByQueryRequestBuilder(
 		UpdateByQueryDocumentRequest updateByQueryDocumentRequest) {
 
-		Client client = elasticsearchClientResolver.getClient();
+		Client client = _elasticsearchClientResolver.getClient();
 
 		UpdateByQueryRequestBuilder updateByQueryRequestBuilder =
 			UpdateByQueryAction.INSTANCE.newRequestBuilder(client);
 
 		Query query = updateByQueryDocumentRequest.getQuery();
 
-		QueryBuilder queryBuilder = queryTranslator.translate(query, null);
+		QueryBuilder queryBuilder = _queryTranslator.translate(query, null);
 
 		updateByQueryRequestBuilder.filter(queryBuilder);
 
@@ -92,10 +92,21 @@ public class UpdateByQueryDocumentRequestExecutorImpl
 		return updateByQueryRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
 
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected QueryTranslator<QueryBuilder> queryTranslator;
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setQueryTranslator(
+		QueryTranslator<QueryBuilder> queryTranslator) {
+
+		_queryTranslator = queryTranslator;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
+	private QueryTranslator<QueryBuilder> _queryTranslator;
 
 }

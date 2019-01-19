@@ -48,30 +48,46 @@ public class ElasticsearchClusterRequestExecutor
 	public HealthClusterResponse executeClusterRequest(
 		HealthClusterRequest healthClusterRequest) {
 
-		return healthClusterRequestExecutor.execute(healthClusterRequest);
+		return _healthClusterRequestExecutor.execute(healthClusterRequest);
 	}
 
 	@Override
 	public StateClusterResponse executeClusterRequest(
 		StateClusterRequest stateClusterRequest) {
 
-		return stateClusterRequestExecutor.execute(stateClusterRequest);
+		return _stateClusterRequestExecutor.execute(stateClusterRequest);
 	}
 
 	@Override
 	public StatsClusterResponse executeClusterRequest(
 		StatsClusterRequest statsClusterRequest) {
 
-		return statsClusterRequestExecutor.execute(statsClusterRequest);
+		return _statsClusterRequestExecutor.execute(statsClusterRequest);
 	}
 
-	@Reference
-	protected HealthClusterRequestExecutor healthClusterRequestExecutor;
+	@Reference(unbind = "-")
+	protected void setHealthClusterRequestExecutor(
+		HealthClusterRequestExecutor healthClusterRequestExecutor) {
 
-	@Reference
-	protected StateClusterRequestExecutor stateClusterRequestExecutor;
+		_healthClusterRequestExecutor = healthClusterRequestExecutor;
+	}
 
-	@Reference
-	protected StatsClusterRequestExecutor statsClusterRequestExecutor;
+	@Reference(unbind = "-")
+	protected void setStateClusterRequestExecutor(
+		StateClusterRequestExecutor stateClusterRequestExecutor) {
+
+		_stateClusterRequestExecutor = stateClusterRequestExecutor;
+	}
+
+	@Reference(unbind = "-")
+	protected void setStatsClusterRequestExecutor(
+		StatsClusterRequestExecutor statsClusterRequestExecutor) {
+
+		_statsClusterRequestExecutor = statsClusterRequestExecutor;
+	}
+
+	private HealthClusterRequestExecutor _healthClusterRequestExecutor;
+	private StateClusterRequestExecutor _stateClusterRequestExecutor;
+	private StatsClusterRequestExecutor _statsClusterRequestExecutor;
 
 }

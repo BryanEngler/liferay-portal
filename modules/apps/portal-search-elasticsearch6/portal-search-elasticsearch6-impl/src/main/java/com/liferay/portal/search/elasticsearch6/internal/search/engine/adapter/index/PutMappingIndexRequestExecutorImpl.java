@@ -52,7 +52,7 @@ public class PutMappingIndexRequestExecutorImpl
 	protected PutMappingRequestBuilder createPutMappingRequestBuilder(
 		PutMappingIndexRequest putMappingIndexRequest) {
 
-		Client client = elasticsearchClientResolver.getClient();
+		Client client = _elasticsearchClientResolver.getClient();
 
 		AdminClient adminClient = client.admin();
 
@@ -70,7 +70,13 @@ public class PutMappingIndexRequestExecutorImpl
 		return putMappingRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
 
 }

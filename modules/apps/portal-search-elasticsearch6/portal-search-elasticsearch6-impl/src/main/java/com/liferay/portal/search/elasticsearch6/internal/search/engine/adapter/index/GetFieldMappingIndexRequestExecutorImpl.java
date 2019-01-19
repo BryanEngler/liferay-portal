@@ -77,7 +77,7 @@ public class GetFieldMappingIndexRequestExecutorImpl
 		createGetFieldMappingsRequestBuilder(
 			GetFieldMappingIndexRequest getFieldMappingIndexRequest) {
 
-		Client client = elasticsearchClientResolver.getClient();
+		Client client = _elasticsearchClientResolver.getClient();
 
 		AdminClient adminClient = client.admin();
 
@@ -95,7 +95,13 @@ public class GetFieldMappingIndexRequestExecutorImpl
 		return getFieldMappingsRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
 
 }

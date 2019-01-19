@@ -65,7 +65,7 @@ public class RestoreSnapshotRequestExecutorImpl
 
 		RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder =
 			RestoreSnapshotAction.INSTANCE.newRequestBuilder(
-				elasticsearchClientResolver.getClient());
+				_elasticsearchClientResolver.getClient());
 
 		restoreSnapshotRequestBuilder.setIncludeAliases(
 			restoreSnapshotRequest.isIncludeAliases());
@@ -98,7 +98,13 @@ public class RestoreSnapshotRequestExecutorImpl
 		return restoreSnapshotRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
 
 }

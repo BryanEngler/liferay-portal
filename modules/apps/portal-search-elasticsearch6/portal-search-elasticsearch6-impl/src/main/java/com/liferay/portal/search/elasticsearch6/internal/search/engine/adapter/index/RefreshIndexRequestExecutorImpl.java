@@ -60,7 +60,7 @@ public class RefreshIndexRequestExecutorImpl
 					shardOperationFailedExceptions) {
 
 				IndexRequestShardFailure indexRequestShardFailure =
-					indexRequestShardFailureTranslator.translate(
+					_indexRequestShardFailureTranslator.translate(
 						shardOperationFailedException);
 
 				refreshIndexResponse.addIndexRequestShardFailure(
@@ -74,7 +74,7 @@ public class RefreshIndexRequestExecutorImpl
 	protected RefreshRequestBuilder createRefreshRequestBuilder(
 		RefreshIndexRequest refreshIndexRequest) {
 
-		Client client = elasticsearchClientResolver.getClient();
+		Client client = _elasticsearchClientResolver.getClient();
 
 		RefreshRequestBuilder refreshRequestBuilder =
 			RefreshAction.INSTANCE.newRequestBuilder(client);
@@ -84,11 +84,23 @@ public class RefreshIndexRequestExecutorImpl
 		return refreshRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
 
-	@Reference
-	protected IndexRequestShardFailureTranslator
-		indexRequestShardFailureTranslator;
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	@Reference(unbind = "-")
+	protected void setIndexRequestShardFailureTranslator(
+		IndexRequestShardFailureTranslator indexRequestShardFailureTranslator) {
+
+		_indexRequestShardFailureTranslator =
+			indexRequestShardFailureTranslator;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
+	private IndexRequestShardFailureTranslator
+		_indexRequestShardFailureTranslator;
 
 }

@@ -56,7 +56,7 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 
 	@Override
 	public void addDocument(SearchContext searchContext, Document document) {
-		String indexName = indexNameBuilder.getIndexName(
+		String indexName = _indexNameBuilder.getIndexName(
 			searchContext.getCompanyId());
 
 		IndexDocumentRequest indexDocumentRequest = new IndexDocumentRequest(
@@ -68,14 +68,14 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 			indexDocumentRequest.setRefresh(true);
 		}
 
-		searchEngineAdapter.execute(indexDocumentRequest);
+		_searchEngineAdapter.execute(indexDocumentRequest);
 	}
 
 	@Override
 	public void addDocuments(
 		SearchContext searchContext, Collection<Document> documents) {
 
-		String indexName = indexNameBuilder.getIndexName(
+		String indexName = _indexNameBuilder.getIndexName(
 			searchContext.getCompanyId());
 
 		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
@@ -96,23 +96,23 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 
 			});
 
-		searchEngineAdapter.execute(bulkDocumentRequest);
+		_searchEngineAdapter.execute(bulkDocumentRequest);
 	}
 
 	@Override
 	public void commit(SearchContext searchContext) {
-		String indexName = indexNameBuilder.getIndexName(
+		String indexName = _indexNameBuilder.getIndexName(
 			searchContext.getCompanyId());
 
 		RefreshIndexRequest refreshIndexRequest = new RefreshIndexRequest(
 			indexName);
 
-		searchEngineAdapter.execute(refreshIndexRequest);
+		_searchEngineAdapter.execute(refreshIndexRequest);
 	}
 
 	@Override
 	public void deleteDocument(SearchContext searchContext, String uid) {
-		String indexName = indexNameBuilder.getIndexName(
+		String indexName = _indexNameBuilder.getIndexName(
 			searchContext.getCompanyId());
 
 		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest(
@@ -124,14 +124,14 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 
 		deleteDocumentRequest.setType(DocumentTypes.LIFERAY);
 
-		searchEngineAdapter.execute(deleteDocumentRequest);
+		_searchEngineAdapter.execute(deleteDocumentRequest);
 	}
 
 	@Override
 	public void deleteDocuments(
 		SearchContext searchContext, Collection<String> uids) {
 
-		String indexName = indexNameBuilder.getIndexName(
+		String indexName = _indexNameBuilder.getIndexName(
 			searchContext.getCompanyId());
 
 		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
@@ -152,14 +152,14 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 
 			});
 
-		searchEngineAdapter.execute(bulkDocumentRequest);
+		_searchEngineAdapter.execute(bulkDocumentRequest);
 	}
 
 	@Override
 	public void deleteEntityDocuments(
 		SearchContext searchContext, String className) {
 
-		String indexName = indexNameBuilder.getIndexName(
+		String indexName = _indexNameBuilder.getIndexName(
 			searchContext.getCompanyId());
 
 		try {
@@ -184,7 +184,7 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 				deleteByQueryDocumentRequest.setRefresh(true);
 			}
 
-			searchEngineAdapter.execute(deleteByQueryDocumentRequest);
+			_searchEngineAdapter.execute(deleteByQueryDocumentRequest);
 		}
 		catch (ParseException pe) {
 			throw new SystemException(pe);
@@ -195,7 +195,7 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 	public void partiallyUpdateDocument(
 		SearchContext searchContext, Document document) {
 
-		String indexName = indexNameBuilder.getIndexName(
+		String indexName = _indexNameBuilder.getIndexName(
 			searchContext.getCompanyId());
 
 		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest(
@@ -207,14 +207,14 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 			updateDocumentRequest.setRefresh(true);
 		}
 
-		searchEngineAdapter.execute(updateDocumentRequest);
+		_searchEngineAdapter.execute(updateDocumentRequest);
 	}
 
 	@Override
 	public void partiallyUpdateDocuments(
 		SearchContext searchContext, Collection<Document> documents) {
 
-		String indexName = indexNameBuilder.getIndexName(
+		String indexName = _indexNameBuilder.getIndexName(
 			searchContext.getCompanyId());
 
 		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
@@ -236,7 +236,7 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 
 			});
 
-		searchEngineAdapter.execute(bulkDocumentRequest);
+		_searchEngineAdapter.execute(bulkDocumentRequest);
 	}
 
 	@Override
@@ -249,7 +249,7 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 
 	@Override
 	public void updateDocument(SearchContext searchContext, Document document) {
-		String indexName = indexNameBuilder.getIndexName(
+		String indexName = _indexNameBuilder.getIndexName(
 			searchContext.getCompanyId());
 
 		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
@@ -272,14 +272,14 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 
 		bulkDocumentRequest.addBulkableDocumentRequest(indexDocumentRequest);
 
-		searchEngineAdapter.execute(bulkDocumentRequest);
+		_searchEngineAdapter.execute(bulkDocumentRequest);
 	}
 
 	@Override
 	public void updateDocuments(
 		SearchContext searchContext, Collection<Document> documents) {
 
-		String indexName = indexNameBuilder.getIndexName(
+		String indexName = _indexNameBuilder.getIndexName(
 			searchContext.getCompanyId());
 
 		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
@@ -307,13 +307,22 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 					indexDocumentRequest);
 			});
 
-		searchEngineAdapter.execute(bulkDocumentRequest);
+		_searchEngineAdapter.execute(bulkDocumentRequest);
 	}
 
 	@Reference(unbind = "-")
-	protected IndexNameBuilder indexNameBuilder;
+	protected void setIndexNameBuilder(IndexNameBuilder indexNameBuilder) {
+		_indexNameBuilder = indexNameBuilder;
+	}
 
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected SearchEngineAdapter searchEngineAdapter;
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setSearchEngineAdapter(
+		SearchEngineAdapter searchEngineAdapter) {
+
+		_searchEngineAdapter = searchEngineAdapter;
+	}
+
+	private IndexNameBuilder _indexNameBuilder;
+	private SearchEngineAdapter _searchEngineAdapter;
 
 }

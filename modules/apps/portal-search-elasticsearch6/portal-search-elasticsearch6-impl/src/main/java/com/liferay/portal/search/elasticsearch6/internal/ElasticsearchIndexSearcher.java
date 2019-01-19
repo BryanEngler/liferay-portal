@@ -74,7 +74,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 	@Override
 	public String getQueryString(SearchContext searchContext, Query query) {
-		return searchEngineAdapter.getQueryString(query);
+		return _searchEngineAdapter.getQueryString(query);
 	}
 
 	@Override
@@ -98,7 +98,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 			if (end == QueryUtil.ALL_POS) {
 				end = GetterUtil.getInteger(
-					props.get(PropsKeys.INDEX_SEARCH_LIMIT));
+					_props.get(PropsKeys.INDEX_SEARCH_LIMIT));
 			}
 			else if (end < 0) {
 				throw new IllegalArgumentException("Invalid end " + end);
@@ -114,7 +114,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 					createSearchSearchRequest(searchContext, query, start, end);
 
 				SearchSearchResponse searchSearchResponse =
-					searchEngineAdapter.execute(searchSearchRequest);
+					_searchEngineAdapter.execute(searchSearchRequest);
 
 				if (_log.isInfoEnabled()) {
 					_log.info(
@@ -185,7 +185,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 				searchContext, query);
 
 			CountSearchResponse countSearchResponse =
-				searchEngineAdapter.execute(countSearchRequest);
+				_searchEngineAdapter.execute(countSearchRequest);
 
 			if (_log.isInfoEnabled()) {
 				_log.info(
@@ -324,7 +324,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			return selectedIndexNames;
 		}
 
-		String indexName = indexNameBuilder.getIndexName(
+		String indexName = _indexNameBuilder.getIndexName(
 			searchContext.getCompanyId());
 
 		return new String[] {indexName};
@@ -389,32 +389,48 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		baseSearchRequest.setRescoreQuery(searchRequest.getRescoreQuery());
 	}
 
-	@Reference
-	protected IndexNameBuilder indexNameBuilder;
+	@Reference(unbind = "-")
+	protected void setIndexNameBuilder(IndexNameBuilder indexNameBuilder) {
+		_indexNameBuilder = indexNameBuilder;
+	}
 
-	@Reference
-	protected Props props;
+	@Reference(unbind = "-")
+	protected void setProps(Props props) {
+		_props = props;
+	}
 
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected SearchEngineAdapter searchEngineAdapter;
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setSearchEngineAdapter(
+		SearchEngineAdapter searchEngineAdapter) {
 
-	@Reference
-	protected SearchRequestBuilderFactory searchRequestBuilderFactory;
+		_searchEngineAdapter = searchEngineAdapter;
+	}
 
-	@Reference
-	protected SearchResponseBuilderFactory searchResponseBuilderFactory;
+	@Reference(unbind = "-")
+	protected void setSearchRequestBuilderFactory(
+		SearchRequestBuilderFactory searchRequestBuilderFactory) {
+
+		_searchRequestBuilderFactory = searchRequestBuilderFactory;
+	}
+
+	@Reference(unbind = "-")
+	protected void setSearchResponseBuilderFactory(
+		SearchResponseBuilderFactory searchResponseBuilderFactory) {
+
+		_searchResponseBuilderFactory = searchResponseBuilderFactory;
+	}
 
 	private SearchRequestBuilder _getSearchRequestBuilder(
 		SearchContext searchContext) {
 
-		return searchRequestBuilderFactory.getSearchRequestBuilder(
+		return _searchRequestBuilderFactory.getSearchRequestBuilder(
 			searchContext);
 	}
 
 	private SearchResponseBuilder _getSearchResponseBuilder(
 		SearchContext searchContext) {
 
-		return searchResponseBuilderFactory.getSearchResponseBuilder(
+		return _searchResponseBuilderFactory.getSearchResponseBuilder(
 			searchContext);
 	}
 
@@ -422,6 +438,11 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		ElasticsearchIndexSearcher.class);
 
 	private volatile ElasticsearchConfiguration _elasticsearchConfiguration;
+	private IndexNameBuilder _indexNameBuilder;
 	private boolean _logExceptionsOnly;
+	private Props _props;
+	private SearchEngineAdapter _searchEngineAdapter;
+	private SearchRequestBuilderFactory _searchRequestBuilderFactory;
+	private SearchResponseBuilderFactory _searchResponseBuilderFactory;
 
 }

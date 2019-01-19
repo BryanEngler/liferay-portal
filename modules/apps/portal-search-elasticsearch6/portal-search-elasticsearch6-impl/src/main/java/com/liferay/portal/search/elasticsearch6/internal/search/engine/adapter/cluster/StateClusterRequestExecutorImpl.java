@@ -74,7 +74,7 @@ public class StateClusterRequestExecutorImpl
 
 		ClusterStateRequestBuilder clusterStateRequestBuilder =
 			ClusterStateAction.INSTANCE.newRequestBuilder(
-				elasticsearchClientResolver.getClient());
+				_elasticsearchClientResolver.getClient());
 
 		clusterStateRequestBuilder.setIndices(
 			stateClusterRequest.getIndexNames());
@@ -82,7 +82,13 @@ public class StateClusterRequestExecutorImpl
 		return clusterStateRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
 
 }

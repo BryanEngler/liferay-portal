@@ -67,7 +67,7 @@ public class GetSnapshotsRequestExecutorImpl
 
 		GetSnapshotsRequestBuilder getSnapshotsRequestBuilder =
 			GetSnapshotsAction.INSTANCE.newRequestBuilder(
-				elasticsearchClientResolver.getClient());
+				_elasticsearchClientResolver.getClient());
 
 		getSnapshotsRequestBuilder.setIgnoreUnavailable(
 			getSnapshotsRequest.isIgnoreUnavailable());
@@ -80,7 +80,13 @@ public class GetSnapshotsRequestExecutorImpl
 		return getSnapshotsRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
 
 }

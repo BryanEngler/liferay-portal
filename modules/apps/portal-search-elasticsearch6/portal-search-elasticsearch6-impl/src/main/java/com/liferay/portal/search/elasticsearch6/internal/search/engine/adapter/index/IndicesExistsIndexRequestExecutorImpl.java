@@ -52,7 +52,7 @@ public class IndicesExistsIndexRequestExecutorImpl
 	protected IndicesExistsRequestBuilder createIndicesExistsRequestBuilder(
 		IndicesExistsIndexRequest indicesExistsIndexRequest) {
 
-		Client client = elasticsearchClientResolver.getClient();
+		Client client = _elasticsearchClientResolver.getClient();
 
 		IndicesExistsRequestBuilder indicesExistsRequestBuilder =
 			IndicesExistsAction.INSTANCE.newRequestBuilder(client);
@@ -63,7 +63,13 @@ public class IndicesExistsIndexRequestExecutorImpl
 		return indicesExistsRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
 
 }

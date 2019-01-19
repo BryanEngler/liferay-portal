@@ -73,7 +73,7 @@ public class GetMappingIndexRequestExecutorImpl
 	protected GetMappingsRequestBuilder createGetMappingsRequestBuilder(
 		GetMappingIndexRequest getMappingIndexRequest) {
 
-		Client client = elasticsearchClientResolver.getClient();
+		Client client = _elasticsearchClientResolver.getClient();
 
 		AdminClient adminClient = client.admin();
 
@@ -89,7 +89,13 @@ public class GetMappingIndexRequestExecutorImpl
 		return getMappingsRequestBuilder;
 	}
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
 
 }

@@ -98,7 +98,7 @@ public class BulkDocumentRequestExecutorImpl
 	protected BulkRequestBuilder createBulkRequestBuilder(
 		BulkDocumentRequest bulkDocumentRequest) {
 
-		Client client = elasticsearchClientResolver.getClient();
+		Client client = _elasticsearchClientResolver.getClient();
 
 		BulkRequestBuilder bulkRequestBuilder =
 			BulkAction.INSTANCE.newRequestBuilder(client);
@@ -114,15 +114,15 @@ public class BulkDocumentRequestExecutorImpl
 			bulkableDocumentRequest.accept(
 				request -> {
 					if (request instanceof DeleteDocumentRequest) {
-						bulkableDocumentRequestTranslator.translate(
+						_bulkableDocumentRequestTranslator.translate(
 							(DeleteDocumentRequest)request, bulkRequestBuilder);
 					}
 					else if (request instanceof IndexDocumentRequest) {
-						bulkableDocumentRequestTranslator.translate(
+						_bulkableDocumentRequestTranslator.translate(
 							(IndexDocumentRequest)request, bulkRequestBuilder);
 					}
 					else if (request instanceof UpdateDocumentRequest) {
-						bulkableDocumentRequestTranslator.translate(
+						_bulkableDocumentRequestTranslator.translate(
 							(UpdateDocumentRequest)request, bulkRequestBuilder);
 					}
 					else {
@@ -135,12 +135,25 @@ public class BulkDocumentRequestExecutorImpl
 		return bulkRequestBuilder;
 	}
 
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected BulkableDocumentRequestTranslator
-		<DeleteRequestBuilder, IndexRequestBuilder, UpdateRequestBuilder,
-		 BulkRequestBuilder> bulkableDocumentRequestTranslator;
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setBulkableDocumentRequestTranslator(
+		BulkableDocumentRequestTranslator
+			<DeleteRequestBuilder, IndexRequestBuilder, UpdateRequestBuilder,
+			 BulkRequestBuilder> bulkableDocumentRequestTranslator) {
 
-	@Reference
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
+		_bulkableDocumentRequestTranslator = bulkableDocumentRequestTranslator;
+	}
+
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	private BulkableDocumentRequestTranslator
+		<DeleteRequestBuilder, IndexRequestBuilder, UpdateRequestBuilder,
+		 BulkRequestBuilder> _bulkableDocumentRequestTranslator;
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
 
 }

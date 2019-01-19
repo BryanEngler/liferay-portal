@@ -238,9 +238,9 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 
 		stopWatch.start();
 
-		Client client = elasticsearchClientResolver.getClient();
+		Client client = _elasticsearchClientResolver.getClient();
 
-		SuggestBuilder suggestBuilder = suggesterTranslator.translate(
+		SuggestBuilder suggestBuilder = _suggesterTranslator.translate(
 			suggester, searchContext);
 
 		if (suggester instanceof AggregateSuggester) {
@@ -251,7 +251,7 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 		}
 
 		SearchRequestBuilder searchRequestBuilder = client.prepareSearch(
-			indexNameBuilder.getIndexName(searchContext.getCompanyId()));
+			_indexNameBuilder.getIndexName(searchContext.getCompanyId()));
 
 		Map<String, SuggestionBuilder<?>> suggestionBuilders =
 			suggestBuilder.getSuggestions();
@@ -289,8 +289,8 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 
 		// See LPS-72507 and LPS-76500
 
-		if (localization != null) {
-			return localization;
+		if (_localization != null) {
+			return _localization;
 		}
 
 		return LocalizationUtil.getLocalization();
@@ -334,6 +334,29 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 			suggestionEntryOptions.get(0);
 
 		return suggestionEntryOption.getText();
+	}
+
+	@Reference(unbind = "-")
+	protected void setElasticsearchClientResolver(
+		ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		_elasticsearchClientResolver = elasticsearchClientResolver;
+	}
+
+	@Reference(unbind = "-")
+	protected void setIndexNameBuilder(IndexNameBuilder indexNameBuilder) {
+		_indexNameBuilder = indexNameBuilder;
+	}
+
+	protected void setLocalization(Localization localization) {
+		_localization = localization;
+	}
+
+	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	protected void setSuggesterTranslator(
+		SuggesterTranslator<SuggestBuilder> suggesterTranslator) {
+
+		_suggesterTranslator = suggesterTranslator;
 	}
 
 	protected SuggesterResult translate(
@@ -407,18 +430,12 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 		return suggesterResultEntry;
 	}
 
-	@Reference(unbind = "-")
-	protected ElasticsearchClientResolver elasticsearchClientResolver;
-
-	@Reference(unbind = "-")
-	protected IndexNameBuilder indexNameBuilder;
-
-	protected Localization localization;
-
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
-	protected SuggesterTranslator<SuggestBuilder> suggesterTranslator;
-
 	private static final Log _log = LogFactoryUtil.getLog(
 		ElasticsearchQuerySuggester.class);
+
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
+	private IndexNameBuilder _indexNameBuilder;
+	private Localization _localization;
+	private SuggesterTranslator<SuggestBuilder> _suggesterTranslator;
 
 }
