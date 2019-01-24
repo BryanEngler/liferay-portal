@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -253,7 +254,7 @@ public class HitsImpl implements Hits {
 
 	private String _collatedSpellCheckResult;
 	private Document[] _docs = _EMPTY_DOCUMENTS;
-	private final Map<String, Hits> _groupedHits = new HashMap<>();
+	private final Map<String, Hits> _groupedHits = new LinkedHashMap<>();
 	private int _length;
 	private Query _query;
 	private String[] _querySuggestions;
