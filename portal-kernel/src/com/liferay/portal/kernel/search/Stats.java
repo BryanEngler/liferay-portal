@@ -24,7 +24,7 @@ import java.io.Serializable;
 public class Stats implements Serializable {
 
 	public static final Stats STANDARD_STATS = new Stats(
-		true, true, true, true, true, true);
+		true, true, true, true, true);
 
 	public Stats() {
 	}
@@ -32,27 +32,15 @@ public class Stats implements Serializable {
 	public Stats(
 		boolean min, boolean max, boolean sum, boolean count, boolean missing) {
 
-		this(min, max, sum, count, missing, true);
-	}
-
-	public Stats(
-		boolean min, boolean max, boolean sum, boolean count, boolean missing,
-		boolean cardinality) {
-
 		_min = min;
 		_max = max;
 		_sum = sum;
 		_count = count;
 		_missing = missing;
-		_cardinality = cardinality;
 	}
 
 	public String getField() {
 		return _field;
-	}
-
-	public boolean isCardinality() {
-		return _cardinality;
 	}
 
 	public boolean isCount() {
@@ -60,8 +48,8 @@ public class Stats implements Serializable {
 	}
 
 	public boolean isEnabled() {
-		if (_cardinality || _count || _max || _mean || _min || _missing ||
-			_standardDeviation || _sum || _sumOfSquares) {
+		if (_count || _max || _mean || _min || _missing || _standardDeviation ||
+			_sum || _sumOfSquares) {
 
 			return true;
 		}
@@ -95,10 +83,6 @@ public class Stats implements Serializable {
 
 	public boolean isSumOfSquares() {
 		return _sumOfSquares;
-	}
-
-	public void setCardinality(boolean cardinality) {
-		_cardinality = cardinality;
 	}
 
 	public void setCount(boolean count) {
@@ -139,11 +123,9 @@ public class Stats implements Serializable {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(19);
 
-		sb.append("{_cardinality=");
-		sb.append(_cardinality);
-		sb.append(", _count=");
+		sb.append("{count=");
 		sb.append(_count);
 		sb.append(", field=");
 		sb.append(_field);
@@ -166,7 +148,6 @@ public class Stats implements Serializable {
 		return sb.toString();
 	}
 
-	private boolean _cardinality;
 	private boolean _count;
 	private String _field;
 	private boolean _max;
