@@ -58,7 +58,7 @@ public abstract class BaseStatisticsTestCase extends BaseIndexingTestCase {
 		StringBundler sb = new StringBundler(21);
 
 		sb.append("{cardinality=");
-		sb.append(statsResults.getCardinality());
+		//sb.append(statsResults.getCardinality());
 		sb.append(", count=");
 		sb.append(statsResults.getCount());
 		sb.append(", field=");
@@ -97,7 +97,7 @@ public abstract class BaseStatisticsTestCase extends BaseIndexingTestCase {
 
 		Stats stats = new Stats();
 
-		stats.setCardinality(true);
+		//stats.setCardinality(true);
 		stats.setCount(true);
 		stats.setField(field);
 		stats.setMax(true);
@@ -120,7 +120,7 @@ public abstract class BaseStatisticsTestCase extends BaseIndexingTestCase {
 
 		StatsResults expectedStatsResults = new StatsResults(field);
 
-		expectedStatsResults.setCardinality(31);
+		//expectedStatsResults.setCardinality(31);
 		expectedStatsResults.setCount(31);
 		expectedStatsResults.setMax(31);
 		expectedStatsResults.setMean(16);

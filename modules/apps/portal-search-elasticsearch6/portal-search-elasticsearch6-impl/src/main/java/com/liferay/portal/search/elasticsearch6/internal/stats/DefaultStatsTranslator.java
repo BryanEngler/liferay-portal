@@ -54,12 +54,12 @@ public class DefaultStatsTranslator implements StatsTranslator {
 
 		StatsResults statsResults = new StatsResults(field);
 
-		if (stats.isCardinality()) {
-			Cardinality cardinality = (Cardinality)aggregationMap.get(
-				field + "_cardinality");
-
-			statsResults.setCardinality(cardinality.getValue());
-		}
+//		if (stats.isCardinality()) {
+//			Cardinality cardinality = (Cardinality)aggregationMap.get(
+//				field + "_cardinality");
+//
+//			statsResults.setCardinality(cardinality.getValue());
+//		}
 
 		if (stats.isCount()) {
 			ValueCount valueCount = (ValueCount)aggregationMap.get(
@@ -128,14 +128,14 @@ public class DefaultStatsTranslator implements StatsTranslator {
 
 		String field = stats.getField();
 
-		if (stats.isCardinality()) {
-			CardinalityAggregationBuilder cardinalityAggregationBuilder =
-				AggregationBuilders.cardinality(field + "_cardinality");
-
-			cardinalityAggregationBuilder.field(field);
-
-			searchRequestBuilder.addAggregation(cardinalityAggregationBuilder);
-		}
+//		if (stats.isCardinality()) {
+//			CardinalityAggregationBuilder cardinalityAggregationBuilder =
+//				AggregationBuilders.cardinality(field + "_cardinality");
+//
+//			cardinalityAggregationBuilder.field(field);
+//
+//			searchRequestBuilder.addAggregation(cardinalityAggregationBuilder);
+//		}
 
 		if (stats.isCount()) {
 			ValueCountAggregationBuilder valueCountAggregationBuilder =
