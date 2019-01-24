@@ -27,6 +27,13 @@ import org.junit.Assert;
 public class AssertUtils {
 
 	public static void assertEquals(
+		String message, List<?> expectedList, List<?> actualList) {
+
+		Assert.assertEquals(
+			message, expectedList.toString(), actualList.toString());
+	}
+
+	public static void assertEquals(
 		String message, Map<?, ?> expectedMap, Map<?, ?> actualMap) {
 
 		Assert.assertEquals(
