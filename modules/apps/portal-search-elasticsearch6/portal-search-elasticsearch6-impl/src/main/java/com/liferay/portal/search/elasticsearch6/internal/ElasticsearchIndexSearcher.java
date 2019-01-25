@@ -411,6 +411,10 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	protected SearchResponseBuilderFactory searchResponseBuilderFactory;
 
 	private GroupBy _getGroupBy(SearchContext searchContext) {
+		if (searchContext.getGroupBy() == null) {
+			return null;
+		}
+
 		GroupBy groupBy = groupByFactory.getGroupBy(searchContext.getGroupBy());
 
 		groupBy.setTermsSize(
