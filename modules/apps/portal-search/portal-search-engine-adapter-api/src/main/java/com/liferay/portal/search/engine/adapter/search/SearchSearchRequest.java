@@ -96,6 +96,10 @@ public class SearchSearchRequest
 		return _stats;
 	}
 
+	public Map<String, com.liferay.portal.search.stats.Stats> getStatsMap() {
+		return _statsMap;
+	}
+
 	public boolean isHighlightEnabled() {
 		return _highlightEnabled;
 	}
@@ -118,6 +122,16 @@ public class SearchSearchRequest
 		}
 
 		_stats.putAll(stats);
+	}
+
+	public void putAllStatsMap(
+		Map<String, com.liferay.portal.search.stats.Stats> statsMap) {
+
+		if (_statsMap == null) {
+			_statsMap = new HashMap<>();
+		}
+
+		_statsMap.putAll(statsMap);
 	}
 
 	public void setAlternateUidFieldName(String alternateUidFieldName) {
@@ -186,6 +200,12 @@ public class SearchSearchRequest
 		_stats = stats;
 	}
 
+	public void setStatsMap(
+		Map<String, com.liferay.portal.search.stats.Stats> statsMap) {
+
+		_statsMap = statsMap;
+	}
+
 	private String _alternateUidFieldName;
 	private GroupBy _groupBy;
 	private boolean _highlightEnabled;
@@ -202,5 +222,6 @@ public class SearchSearchRequest
 	private Sort[] _sorts;
 	private int _start;
 	private Map<String, Stats> _stats;
+	private Map<String, com.liferay.portal.search.stats.Stats> _statsMap;
 
 }

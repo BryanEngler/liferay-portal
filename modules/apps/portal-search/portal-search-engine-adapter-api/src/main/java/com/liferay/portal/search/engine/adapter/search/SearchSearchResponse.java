@@ -17,6 +17,11 @@ package com.liferay.portal.search.engine.adapter.search;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.search.stats.StatsResults;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Michael C. Han
@@ -24,8 +29,16 @@ import com.liferay.portal.kernel.search.Hits;
 @ProviderType
 public class SearchSearchResponse extends BaseSearchResponse {
 
+	public void addStatsResults(StatsResults statsResults) {
+		_statsResultsMap.put(statsResults.getField(), statsResults);
+	}
+
 	public Hits getHits() {
 		return _hits;
+	}
+
+	public Map<String, StatsResults> getStatsResultsMap() {
+		return Collections.unmodifiableMap(_statsResultsMap);
 	}
 
 	public void setHits(Hits hits) {
@@ -33,5 +46,6 @@ public class SearchSearchResponse extends BaseSearchResponse {
 	}
 
 	private Hits _hits;
+	private final Map<String, StatsResults> _statsResultsMap = new HashMap<>();
 
 }
