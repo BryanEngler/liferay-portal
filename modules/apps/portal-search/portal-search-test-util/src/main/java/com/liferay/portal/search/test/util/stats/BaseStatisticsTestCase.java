@@ -19,14 +19,16 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Stats;
-import com.liferay.portal.kernel.search.StatsResults;
+import com.liferay.portal.search.stats.StatsResults;
 import com.liferay.portal.search.test.util.IdempotentRetryAssert;
 import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
 import com.liferay.portal.search.test.util.indexing.DocumentCreationHelpers;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -54,10 +56,22 @@ public abstract class BaseStatisticsTestCase extends BaseIndexingTestCase {
 			});
 	}
 
-	protected static String toString(StatsResults statsResults) {
-		StringBundler sb = new StringBundler(19);
+	@Test
+	public void testStatsAfterSearch() throws Exception {
+		doTestPresentAfter(IndexingTestHelper::search, true);
+	}
 
-		sb.append("{count=");
+	@Test
+	public void testStatsAfterSearchCount() throws Exception {
+		doTestPresentAfter(IndexingTestHelper::searchCount, false);
+	}
+
+	protected static String toString(StatsResults statsResults) {
+		StringBundler sb = new StringBundler(21);
+
+		sb.append("{cardinality=");
+		sb.append(statsResults.getCardinality());
+		sb.append(", count=");
 		sb.append(statsResults.getCount());
 		sb.append(", field=");
 		sb.append(statsResults.getField());
@@ -105,9 +119,22 @@ public abstract class BaseStatisticsTestCase extends BaseIndexingTestCase {
 
 		searchContext.addStats(stats);
 
+		HashMap<String, Boolean> statsCardinalityMap = new HashMap<>();
+
+		statsCardinalityMap.put(field, true);
+
+		searchContext.setAttribute("statsCardinalityMap", statsCardinalityMap);
+
 		Hits hits = search(searchContext);
 
-		Map<String, StatsResults> statsResultsMap = hits.getStatsResults();
+		Map<String, com.liferay.portal.kernel.search.StatsResults>
+			legacyStatsResultsMap = hits.getStatsResults();
+
+		Assert.assertNotNull(legacyStatsResultsMap);
+
+		Map<String, StatsResults> statsResultsMap =
+			(Map<String, StatsResults>)searchContext.getAttribute(
+				"stats.results.map");
 
 		Assert.assertNotNull(statsResultsMap);
 
@@ -117,6 +144,7 @@ public abstract class BaseStatisticsTestCase extends BaseIndexingTestCase {
 
 		StatsResults expectedStatsResults = new StatsResults(field);
 
+		expectedStatsResults.setCardinality(31);
 		expectedStatsResults.setCount(31);
 		expectedStatsResults.setMax(31);
 		expectedStatsResults.setMean(16);
@@ -128,9 +156,75 @@ public abstract class BaseStatisticsTestCase extends BaseIndexingTestCase {
 			toString(expectedStatsResults), toString(statsResults));
 	}
 
+	protected void assertStatsResultsMap(
+		Map<String, StatsResults> statsResultsMap, boolean present) {
+
+		if (present) {
+			Assert.assertNotNull(statsResultsMap);
+
+			StatsResults statsResults = statsResultsMap.get(
+				STATS_RESULTS_FIELD);
+
+			Assert.assertEquals(1, statsResults.getCardinality());
+		}
+		else {
+			Assert.assertNull(statsResultsMap);
+		}
+	}
+
+	protected void doTestPresentAfter(
+		Consumer<IndexingTestHelper> consumer, boolean present) {
+
+		addDocument(
+			document -> {
+			});
+
+		com.liferay.portal.search.stats.Stats stats =
+			new com.liferay.portal.search.stats.Stats();
+
+		stats.setField(STATS_RESULTS_FIELD);
+		stats.setCardinality(true);
+
+		Map<String, com.liferay.portal.search.stats.Stats> statsMap =
+			new HashMap<>();
+
+		statsMap.put(stats.getField(), stats);
+
+		assertSearch(
+			indexingTestHelper -> {
+				indexingTestHelper.defineRequest(
+					searchRequestBuilder -> {
+						searchRequestBuilder.statsMap(
+							statsMap
+						);
+					});
+
+				consumer.accept(indexingTestHelper);
+
+				indexingTestHelper.verifyContext(
+					searchContext -> {
+						Map<String, StatsResults> statsResultsMap =
+							(Map<String, StatsResults>)
+								searchContext.getAttribute("stats.results.map");
+
+						assertStatsResultsMap(statsResultsMap, present);
+					});
+
+				indexingTestHelper.verifyResponse(
+					searchResponse -> {
+						Map<String, StatsResults> statsResultsMap =
+							searchResponse.getStatsResultsMap();
+
+						assertStatsResultsMap(statsResultsMap, present);
+					});
+			});
+	}
+
 	protected static final String STAT_FIELD = Field.PRIORITY;
 
 	protected static final String STAT_SORTABLE_FIELD =
 		STAT_FIELD + "_Number_sortable";
+
+	protected static final String STATS_RESULTS_FIELD = Field.ENTRY_CLASS_NAME;
 
 }
