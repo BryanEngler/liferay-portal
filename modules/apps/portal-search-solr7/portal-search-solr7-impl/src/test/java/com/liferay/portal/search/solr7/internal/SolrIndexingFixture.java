@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.util.Digester;
 import com.liferay.portal.kernel.util.Localization;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.search.internal.legacy.groupby.GroupByFactoryImpl;
 import com.liferay.portal.search.internal.legacy.searcher.SearchRequestBuilderFactoryImpl;
 import com.liferay.portal.search.internal.legacy.searcher.SearchResponseBuilderFactoryImpl;
 import com.liferay.portal.search.solr7.internal.connection.SolrClientManager;
@@ -47,6 +48,7 @@ import com.liferay.portal.search.solr7.internal.filter.SolrFilterTranslator;
 import com.liferay.portal.search.solr7.internal.filter.TermFilterTranslatorImpl;
 import com.liferay.portal.search.solr7.internal.filter.TermsFilterTranslatorImpl;
 import com.liferay.portal.search.solr7.internal.groupby.DefaultGroupByTranslator;
+import com.liferay.portal.search.solr7.internal.groupby.GroupByTranslator;
 import com.liferay.portal.search.solr7.internal.query.BooleanQueryTranslatorImpl;
 import com.liferay.portal.search.solr7.internal.query.DisMaxQueryTranslatorImpl;
 import com.liferay.portal.search.solr7.internal.query.FuzzyQueryTranslatorImpl;
@@ -198,6 +200,14 @@ public class SolrIndexingFixture implements IndexingFixture {
 		};
 	}
 
+	protected GroupByTranslator createGroupByTranslator() {
+		return new DefaultGroupByTranslator() {
+			{
+				setGroupByFactory(new GroupByFactoryImpl());
+			}
+		};
+	}
+
 	protected IndexSearcher createIndexSearcher(
 		final SolrClientManager solrClientManager) {
 
@@ -205,7 +215,7 @@ public class SolrIndexingFixture implements IndexingFixture {
 			{
 				setFacetProcessor(_facetProcessor);
 				setFilterTranslator(createSolrFilterTranslator());
-				setGroupByTranslator(new DefaultGroupByTranslator());
+				setGroupByTranslator(createGroupByTranslator());
 				setProps(createProps());
 				setQuerySuggester(createSolrQuerySuggester(solrClientManager));
 				setQueryTranslator(createSolrQueryTranslator());
