@@ -14,13 +14,16 @@
 
 package com.liferay.portal.search.solr7.internal.groupby;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.GroupBy;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.highlight.HighlightUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.search.groupby.GroupBy;
+import com.liferay.portal.search.legacy.groupby.GroupByFactory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,6 +32,7 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.common.params.GroupParams;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Miguel Angelo Caldas Gallindo
@@ -40,9 +44,34 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 	public void translate(
 		SolrQuery solrQuery, SearchContext searchContext, int start, int end) {
 
-		GroupBy groupBy = searchContext.getGroupBy();
+		GroupBy groupBy = _groupByFactory.getGroupBy(
+			searchContext.getGroupBy());
 
-		configureGroups(solrQuery, searchContext, start, end, groupBy);
+		groupBy.setTermsSize(
+			GetterUtil.getInteger(
+				searchContext.getAttribute("groupByTermsSize")));
+
+		groupBy.setTermsSorts(
+			(Sort[])searchContext.getAttribute("groupByTermsSorts"));
+
+		groupBy.setTermsStart(
+			GetterUtil.getInteger(
+				searchContext.getAttribute("groupByTermsStart")));
+
+		configureGroups(solrQuery, groupBy);
+
+		addHighlights(solrQuery, searchContext.getQueryConfig());
+	}
+
+	protected void addDocsSort(
+		SolrQuery solrQuery, String sortFieldName, SolrQuery.ORDER order) {
+
+		solrQuery.set(
+			GroupParams.GROUP_SORT, sortFieldName + StringPool.SPACE + order);
+	}
+
+	protected void addDocsSorts(SolrQuery solrQuery, Sort[] sorts) {
+		addSorts(solrQuery, sorts, true);
 	}
 
 	protected void addHighlightedField(
@@ -74,7 +103,9 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 		}
 	}
 
-	protected void addSorts(SolrQuery solrQuery, Sort[] sorts) {
+	protected void addSorts(
+		SolrQuery solrQuery, Sort[] sorts, boolean sortDocs) {
+
 		if (ArrayUtil.isEmpty(sorts)) {
 			return;
 		}
@@ -86,7 +117,8 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 				continue;
 			}
 
-			String sortFieldName = Field.getSortFieldName(sort, "_score");
+			String sortFieldName = Field.getSortFieldName(
+				sort, _SOLR_SCORE_FIELD);
 
 			if (sortFieldNames.contains(sortFieldName)) {
 				continue;
@@ -96,41 +128,71 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 
 			SolrQuery.ORDER order = SolrQuery.ORDER.asc;
 
-			if (sort.isReverse() || sortFieldName.equals("_score")) {
+			if (sort.isReverse() || sortFieldName.equals(_SOLR_SCORE_FIELD)) {
 				order = SolrQuery.ORDER.desc;
 			}
 
-			solrQuery.addSort(new SolrQuery.SortClause(sortFieldName, order));
+			if (sortDocs) {
+				addDocsSort(solrQuery, sortFieldName, order);
+			}
+			else {
+				addTermsSort(solrQuery, sortFieldName, order);
+			}
 		}
 	}
 
-	protected void configureGroups(
-		SolrQuery solrQuery, SearchContext searchContext, int start, int end,
-		GroupBy groupBy) {
+	protected void addTermsSort(
+		SolrQuery solrQuery, String sortFieldName, SolrQuery.ORDER order) {
 
+		solrQuery.addSort(new SolrQuery.SortClause(sortFieldName, order));
+	}
+
+	protected void addTermsSorts(SolrQuery solrQuery, Sort[] sorts) {
+		addSorts(solrQuery, sorts, false);
+	}
+
+	protected void configureGroups(SolrQuery solrQuery, GroupBy groupBy) {
 		solrQuery.set(GroupParams.GROUP, true);
 		solrQuery.set(GroupParams.GROUP_FIELD, groupBy.getField());
 		solrQuery.set(GroupParams.GROUP_FORMAT, "grouped");
 		solrQuery.set(GroupParams.GROUP_TOTAL_COUNT, true);
 
-		int groupByStart = groupBy.getStart();
+		int termsStart = GetterUtil.getInteger(groupBy.getTermsStart());
 
-		if (groupByStart == 0) {
-			groupByStart = start;
+		if (termsStart > 0) {
+			solrQuery.set("start", termsStart);
 		}
 
-		solrQuery.set(GroupParams.GROUP_OFFSET, groupByStart);
+		int termsSize = GetterUtil.getInteger(groupBy.getTermsSize());
 
-		int groupBySize = groupBy.getSize();
-
-		if (groupBySize == 0) {
-			groupBySize = end - start;
+		if (termsSize > 0) {
+			solrQuery.set("rows", termsSize);
 		}
 
-		solrQuery.set(GroupParams.GROUP_LIMIT, groupBySize);
+		addTermsSorts(solrQuery, groupBy.getTermsSorts());
 
-		addHighlights(solrQuery, searchContext.getQueryConfig());
-		addSorts(solrQuery, searchContext.getSorts());
+		int docsStart = GetterUtil.getInteger(groupBy.getDocsStart());
+
+		if (docsStart > 0) {
+			solrQuery.set(GroupParams.GROUP_OFFSET, docsStart);
+		}
+
+		int docsSize = GetterUtil.getInteger(groupBy.getDocsSize());
+
+		if (docsSize > 0) {
+			solrQuery.set(GroupParams.GROUP_LIMIT, docsSize);
+		}
+
+		addDocsSorts(solrQuery, groupBy.getDocsSorts());
 	}
+
+	@Reference(unbind = "-")
+	protected void setGroupByFactory(GroupByFactory groupByFactory) {
+		_groupByFactory = groupByFactory;
+	}
+
+	private static final String _SOLR_SCORE_FIELD = "score";
+
+	private GroupByFactory _groupByFactory;
 
 }
