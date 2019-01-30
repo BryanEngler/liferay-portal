@@ -48,10 +48,13 @@ import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
 import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.legacy.searcher.SearchResponseBuilderFactory;
+import com.liferay.portal.search.legacy.stats.StatsFactory;
 import com.liferay.portal.search.searcher.SearchRequest;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.searcher.SearchResponseBuilder;
+import com.liferay.portal.search.stats.Stats;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.time.StopWatch;
@@ -126,6 +129,9 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 				}
 
 				populateResponse(searchSearchResponse, searchResponseBuilder);
+
+				searchResponseBuilder.statsResultsMap(
+					searchSearchResponse.getStatsResultsMap());
 
 				hits = searchSearchResponse.getHits();
 
@@ -246,7 +252,12 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		CountSearchRequest countSearchRequest = new CountSearchRequest();
 
-		prepare(countSearchRequest, query, searchContext);
+		SearchRequestBuilder searchRequestBuilder = _getSearchRequestBuilder(
+			searchContext);
+
+		SearchRequest searchRequest = searchRequestBuilder.build();
+
+		prepare(countSearchRequest, searchRequest, query, searchContext);
 
 		return countSearchRequest;
 	}
@@ -256,7 +267,12 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
 
-		prepare(searchSearchRequest, query, searchContext);
+		SearchRequestBuilder searchRequestBuilder = _getSearchRequestBuilder(
+			searchContext);
+
+		SearchRequest searchRequest = searchRequestBuilder.build();
+
+		prepare(searchSearchRequest, searchRequest, query, searchContext);
 
 		QueryConfig queryConfig = searchContext.getQueryConfig();
 
@@ -310,7 +326,14 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		searchSearchRequest.setStart(start);
 
 		searchSearchRequest.setSorts(searchContext.getSorts());
-		searchSearchRequest.setStats(searchContext.getStats());
+
+		Map<String, Stats> statsMap = searchRequest.getStatsMap();
+
+		if (statsMap == null) {
+			statsMap = _getStatsMap(searchContext);
+		}
+
+		searchSearchRequest.setStatsMap(statsMap);
 
 		return searchSearchRequest;
 	}
@@ -366,8 +389,8 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	}
 
 	protected void prepare(
-		BaseSearchRequest baseSearchRequest, Query query,
-		SearchContext searchContext) {
+		BaseSearchRequest baseSearchRequest, SearchRequest searchRequest,
+		Query query, SearchContext searchContext) {
 
 		QueryConfig queryConfig = searchContext.getQueryConfig();
 
@@ -377,11 +400,6 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		baseSearchRequest.setPostFilter(query.getPostFilter());
 		baseSearchRequest.setQuery(query);
-
-		SearchRequestBuilder searchRequestBuilder = _getSearchRequestBuilder(
-			searchContext);
-
-		SearchRequest searchRequest = searchRequestBuilder.build();
 
 		baseSearchRequest.setExplain(searchRequest.isExplain());
 		baseSearchRequest.setIncludeResponseString(
@@ -420,6 +438,11 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		_searchResponseBuilderFactory = searchResponseBuilderFactory;
 	}
 
+	@Reference(unbind = "-")
+	protected void setStatsFactory(StatsFactory statsFactory) {
+		_statsFactory = statsFactory;
+	}
+
 	private SearchRequestBuilder _getSearchRequestBuilder(
 		SearchContext searchContext) {
 
@@ -434,6 +457,34 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			searchContext);
 	}
 
+	private Map<String, Stats> _getStatsMap(SearchContext searchContext) {
+		Map<String, com.liferay.portal.kernel.search.Stats> lecacyStatsMap =
+			searchContext.getStats();
+
+		if (lecacyStatsMap.isEmpty()) {
+			return null;
+		}
+
+		Map<String, Stats> statsMap = new HashMap<>();
+
+		Map<String, Boolean> statsCardinalityMap =
+			(Map<String, Boolean>)searchContext.getAttribute(
+				"statsCardinalityMap");
+
+		for (Map.Entry<String, com.liferay.portal.kernel.search.Stats> entry :
+				lecacyStatsMap.entrySet()) {
+
+			Stats stats = _statsFactory.getStats(entry.getValue());
+
+			stats.setCardinality(
+				GetterUtil.getBoolean(statsCardinalityMap.get(entry.getKey())));
+
+			statsMap.put(entry.getKey(), stats);
+		}
+
+		return statsMap;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		ElasticsearchIndexSearcher.class);
 
@@ -444,5 +495,6 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	private SearchEngineAdapter _searchEngineAdapter;
 	private SearchRequestBuilderFactory _searchRequestBuilderFactory;
 	private SearchResponseBuilderFactory _searchResponseBuilderFactory;
+	private StatsFactory _statsFactory;
 
 }

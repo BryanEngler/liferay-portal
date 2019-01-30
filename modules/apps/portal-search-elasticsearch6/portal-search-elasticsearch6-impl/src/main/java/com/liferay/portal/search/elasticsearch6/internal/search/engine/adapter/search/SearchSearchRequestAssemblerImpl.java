@@ -16,7 +16,6 @@ package com.liferay.portal.search.elasticsearch6.internal.search.engine.adapter.
 
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.GroupBy;
-import com.liferay.portal.kernel.search.Stats;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -25,6 +24,7 @@ import com.liferay.portal.search.elasticsearch6.internal.highlight.HighlighterTr
 import com.liferay.portal.search.elasticsearch6.internal.sort.SortTranslator;
 import com.liferay.portal.search.elasticsearch6.internal.stats.StatsTranslator;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
+import com.liferay.portal.search.stats.Stats;
 
 import java.util.Map;
 
@@ -48,7 +48,7 @@ public class SearchSearchRequestAssemblerImpl
 		_commonSearchRequestBuilderAssembler.assemble(
 			searchRequestBuilder, searchSearchRequest);
 
-		Map<String, Stats> stats = searchSearchRequest.getStats();
+		Map<String, Stats> stats = searchSearchRequest.getStatsMap();
 
 		if (!MapUtil.isEmpty(stats)) {
 			stats.forEach(

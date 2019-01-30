@@ -15,9 +15,9 @@
 package com.liferay.portal.search.elasticsearch6.internal.search.response;
 
 import com.liferay.portal.kernel.search.GroupBy;
-import com.liferay.portal.kernel.search.Hits;
-import com.liferay.portal.kernel.search.Stats;
 import com.liferay.portal.kernel.search.facet.Facet;
+import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
+import com.liferay.portal.search.stats.Stats;
 
 import java.util.Locale;
 import java.util.Map;
@@ -29,7 +29,8 @@ import org.elasticsearch.action.search.SearchResponse;
  */
 public interface SearchResponseTranslator {
 
-	public Hits translate(
+	public void populate(
+		SearchSearchResponse searchSearchResponse,
 		SearchResponse searchResponse, Map<String, Facet> facetMap,
 		GroupBy groupBy, Map<String, Stats> statsMap,
 		String alternateUidFieldName, String[] highlightFieldNames,

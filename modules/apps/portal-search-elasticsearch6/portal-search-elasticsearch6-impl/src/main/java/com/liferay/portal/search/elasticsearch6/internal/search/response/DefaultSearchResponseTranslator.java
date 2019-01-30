@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.GroupBy;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.HitsImpl;
-import com.liferay.portal.kernel.search.Stats;
-import com.liferay.portal.kernel.search.StatsResults;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -33,6 +31,10 @@ import com.liferay.portal.search.elasticsearch6.internal.facet.FacetCollectorFac
 import com.liferay.portal.search.elasticsearch6.internal.facet.FacetUtil;
 import com.liferay.portal.search.elasticsearch6.internal.groupby.GroupByTranslator;
 import com.liferay.portal.search.elasticsearch6.internal.stats.StatsTranslator;
+import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
+import com.liferay.portal.search.legacy.stats.StatsResultsFactory;
+import com.liferay.portal.search.stats.Stats;
+import com.liferay.portal.search.stats.StatsResults;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +62,8 @@ public class DefaultSearchResponseTranslator
 	implements SearchResponseTranslator {
 
 	@Override
-	public Hits translate(
+	public void populate(
+		SearchSearchResponse searchSearchResponse,
 		SearchResponse searchResponse, Map<String, Facet> facetMap,
 		GroupBy groupBy, Map<String, Stats> statsMap,
 		String alternateUidFieldName, String[] highlightFieldNames,
@@ -74,15 +77,18 @@ public class DefaultSearchResponseTranslator
 		updateGroupedHits(
 			searchResponse, groupBy, hits, alternateUidFieldName,
 			highlightFieldNames, locale);
-		updateStatsResults(searchResponse, hits, statsMap);
+		updateStatsResults(
+			searchSearchResponse, searchResponse, hits, statsMap);
 
 		TimeValue timeValue = searchResponse.getTook();
 
 		hits.setSearchTime((float)timeValue.getSecondsFrac());
 
-		return processSearchHits(
+		processSearchHits(
 			searchHits, hits, alternateUidFieldName, highlightFieldNames,
 			locale);
+
+		searchSearchResponse.setHits(hits);
 	}
 
 	protected void addSnippets(
@@ -209,6 +215,13 @@ public class DefaultSearchResponseTranslator
 	}
 
 	@Reference(unbind = "-")
+	protected void setStatsResultsFactory(
+		StatsResultsFactory statsResultsFactory) {
+
+		_statsResultsFactory = statsResultsFactory;
+	}
+
+	@Reference(unbind = "-")
 	protected void setStatsTranslator(StatsTranslator statsTranslator) {
 		_statsTranslator = statsTranslator;
 	}
@@ -271,6 +284,7 @@ public class DefaultSearchResponseTranslator
 	}
 
 	protected void updateStatsResults(
+		SearchSearchResponse searchSearchResponse,
 		SearchResponse searchResponse, Hits hits, Map<String, Stats> statsMap) {
 
 		if ((statsMap == null) || statsMap.isEmpty()) {
@@ -293,11 +307,15 @@ public class DefaultSearchResponseTranslator
 			StatsResults statsResults = _statsTranslator.translate(
 				aggregationsMap, stats);
 
-			hits.addStatsResults(statsResults);
+			searchSearchResponse.addStatsResults(statsResults);
+
+			hits.addStatsResults(
+				_statsResultsFactory.getLegacyStatsResults(statsResults));
 		}
 	}
 
 	private SearchHitDocumentTranslator _searchHitDocumentTranslator;
+	private StatsResultsFactory _statsResultsFactory;
 	private StatsTranslator _statsTranslator;
 
 }
