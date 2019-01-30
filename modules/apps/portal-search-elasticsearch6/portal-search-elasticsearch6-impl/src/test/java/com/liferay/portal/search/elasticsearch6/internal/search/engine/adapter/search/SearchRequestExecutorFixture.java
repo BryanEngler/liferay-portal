@@ -28,6 +28,7 @@ import com.liferay.portal.search.elasticsearch6.internal.search.response.Default
 import com.liferay.portal.search.elasticsearch6.internal.sort.DefaultSortTranslator;
 import com.liferay.portal.search.elasticsearch6.internal.stats.DefaultStatsTranslator;
 import com.liferay.portal.search.engine.adapter.search.SearchRequestExecutor;
+import com.liferay.portal.search.internal.legacy.stats.StatsResultsFactoryImpl;
 
 /**
  * @author Michael C. Han
@@ -184,6 +185,8 @@ public class SearchRequestExecutorFixture {
 						{
 							setSearchHitDocumentTranslator(
 								new SearchHitDocumentTranslatorImpl());
+							setStatsResultsFactory(
+								new StatsResultsFactoryImpl());
 							setStatsTranslator(new DefaultStatsTranslator());
 						}
 					});
