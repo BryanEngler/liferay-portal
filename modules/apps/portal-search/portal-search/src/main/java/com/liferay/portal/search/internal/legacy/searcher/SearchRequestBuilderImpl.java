@@ -20,6 +20,10 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.search.searcher.SearchRequest;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
+import com.liferay.portal.search.stats.Stats;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author André de Oliveira
@@ -70,6 +74,15 @@ public class SearchRequestBuilderImpl implements SearchRequestBuilder {
 		return this;
 	}
 
+	@Override
+	public SearchRequestBuilder statsMap(Map<String, Stats> statsMap) {
+		HashMap<String, Stats> serializableMap = new HashMap<>(statsMap);
+
+		_searchContext.setAttribute(_STATS_MAP, serializableMap);
+
+		return this;
+	}
+
 	public class SearchRequestImpl implements SearchRequest {
 
 		@Override
@@ -79,6 +92,11 @@ public class SearchRequestBuilderImpl implements SearchRequestBuilder {
 
 		public SearchContext getSearchContext() {
 			return _searchContext;
+		}
+
+		@Override
+		public Map<String, Stats> getStatsMap() {
+			return (Map<String, Stats>)_searchContext.getAttribute(_STATS_MAP);
 		}
 
 		@Override
@@ -100,6 +118,8 @@ public class SearchRequestBuilderImpl implements SearchRequestBuilder {
 		"include.response.string";
 
 	private static final String _RESCORE_QUERY = "rescore.query";
+
+	private static final String _STATS_MAP = "stats.map";
 
 	private final SearchContext _searchContext;
 
