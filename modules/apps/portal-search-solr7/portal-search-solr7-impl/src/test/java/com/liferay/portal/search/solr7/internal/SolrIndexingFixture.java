@@ -25,6 +25,8 @@ import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.search.internal.legacy.searcher.SearchRequestBuilderFactoryImpl;
 import com.liferay.portal.search.internal.legacy.searcher.SearchResponseBuilderFactoryImpl;
+import com.liferay.portal.search.internal.legacy.stats.StatsFactoryImpl;
+import com.liferay.portal.search.internal.legacy.stats.StatsResultsFactoryImpl;
 import com.liferay.portal.search.solr7.internal.connection.SolrClientManager;
 import com.liferay.portal.search.solr7.internal.connection.TestSolrClientManager;
 import com.liferay.portal.search.solr7.internal.document.DefaultSolrDocumentFactory;
@@ -214,6 +216,8 @@ public class SolrIndexingFixture implements IndexingFixture {
 				setSearchResponseBuilderFactory(
 					new SearchResponseBuilderFactoryImpl());
 				setSolrClientManager(solrClientManager);
+				setStatsFactory(new StatsFactoryImpl());
+				setStatsResultsFactory(new StatsResultsFactoryImpl());
 				setStatsTranslator(new DefaultStatsTranslator());
 
 				activate(_properties);
