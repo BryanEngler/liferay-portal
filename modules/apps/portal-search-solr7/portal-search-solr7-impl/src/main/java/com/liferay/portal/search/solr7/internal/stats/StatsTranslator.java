@@ -14,8 +14,8 @@
 
 package com.liferay.portal.search.solr7.internal.stats;
 
-import com.liferay.portal.kernel.search.Stats;
-import com.liferay.portal.kernel.search.StatsResults;
+import com.liferay.portal.search.stats.Stats;
+import com.liferay.portal.search.stats.StatsResults;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FieldStatsInfo;

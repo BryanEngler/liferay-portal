@@ -15,8 +15,8 @@
 package com.liferay.portal.search.solr7.internal.stats;
 
 import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.search.Stats;
-import com.liferay.portal.kernel.search.StatsResults;
+import com.liferay.portal.search.stats.Stats;
+import com.liferay.portal.search.stats.StatsResults;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +37,14 @@ public class DefaultStatsTranslator implements StatsTranslator {
 		String field = stats.getField();
 
 		StatsResults statsResults = new StatsResults(field);
+
+		if (stats.isCardinality()) {
+			Long cardinality = fieldStatsInfo.getCardinality();
+
+			if (cardinality != null) {
+				statsResults.setCardinality(cardinality);
+			}
+		}
 
 		if (stats.isCount()) {
 			Long count = fieldStatsInfo.getCount();
@@ -111,7 +119,11 @@ public class DefaultStatsTranslator implements StatsTranslator {
 			return;
 		}
 
-		List<String> solrStats = new ArrayList<>(8);
+		List<String> solrStats = new ArrayList<>(9);
+
+		if (stats.isCardinality()) {
+			solrStats.add("cardinality");
+		}
 
 		if (stats.isCount()) {
 			solrStats.add("count");
