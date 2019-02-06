@@ -53,8 +53,10 @@ public class FacetBucketUtil {
 			return false;
 		}
 
-		if (term.equals(field.getValue())) {
-			return true;
+		for (String value : field.getValues()) {
+			if (term.equals(value)) {
+				return true;
+			}
 		}
 
 		return false;
