@@ -33,6 +33,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.time.FastDateFormat;
 
+import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.geo.GeoPoint;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
@@ -66,7 +67,7 @@ public class DefaultElasticsearchDocumentFactory
 
 		xContentBuilder.endObject();
 
-		return xContentBuilder.string();
+		return Strings.toString(xContentBuilder);
 	}
 
 	protected void addDates(XContentBuilder xContentBuilder, Field field)
