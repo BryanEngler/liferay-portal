@@ -82,6 +82,7 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.search.MatchQuery;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.Aggregation;
@@ -117,7 +118,8 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		QueryBuilder queryBuilder = queryTranslator.translate(
 			query, searchContext);
 
-		return queryBuilder.toString();
+		return StringUtil.replace(
+			queryBuilder.toString(), ZERO_TERMS_QUERY_STRING, StringPool.BLANK);
 	}
 
 	@Override
@@ -772,6 +774,9 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			hits.addStatsResults(statsResults);
 		}
 	}
+
+	protected static final String ZERO_TERMS_QUERY_STRING =
+		",\"zero_terms_query\":\"NONE\"";
 
 	@Reference
 	protected ElasticsearchConnectionManager elasticsearchConnectionManager;
