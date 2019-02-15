@@ -33,6 +33,7 @@ import java.util.Map;
 
 import org.apache.lucene.search.FuzzyQuery;
 
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.Strings;
@@ -65,20 +66,12 @@ public class CommonSearchResponseAssemblerImpl
 
 		setExecutionProfile(searchResponse, baseSearchResponse);
 		setExecutionTime(searchResponse, baseSearchResponse);
-
-		baseSearchResponse.setSearchRequestString(
-			StringUtil.removeSubstrings(
-				searchRequestBuilder.toString(), ADJUST_PURE_NEGATIVE_STRING,
-				FUZZY_TRANSPOSITIONS_STRING, ZERO_TERMS_QUERY_STRING));
-
-		if (baseSearchRequest.isIncludeResponseString()) {
-			baseSearchResponse.setSearchResponseString(
-				searchResponse.toString());
-		}
-
-		baseSearchResponse.setTerminatedEarly(
-			GetterUtil.getBoolean(searchResponse.isTerminatedEarly()));
-		baseSearchResponse.setTimedOut(searchResponse.isTimedOut());
+		setSearchRequestString(
+			searchRequestBuilder, baseSearchRequest, baseSearchResponse);
+		setSearchResponseString(
+			searchResponse, baseSearchRequest, baseSearchResponse);
+		setTerminatedEarly(searchResponse, baseSearchResponse);
+		setTimedOut(searchResponse, baseSearchResponse);
 
 		updateStatsResponses(
 			baseSearchResponse, searchResponse.getAggregations(),
@@ -152,9 +145,56 @@ public class CommonSearchResponseAssemblerImpl
 		baseSearchResponse.setExecutionTime(tookTimeValue.getMillis());
 	}
 
+	protected void setSearchRequestString(
+		SearchRequestBuilder searchRequestBuilder,
+		BaseSearchRequest baseSearchRequest,
+		BaseSearchResponse baseSearchResponse) {
+
+		baseSearchResponse.setSearchRequestString(
+			StringUtil.removeSubstrings(
+				toString(searchRequestBuilder), ADJUST_PURE_NEGATIVE_STRING,
+				FUZZY_TRANSPOSITIONS_STRING, ZERO_TERMS_QUERY_STRING));
+	}
+
+	protected void setSearchResponseString(
+		SearchResponse searchResponse, BaseSearchRequest baseSearchRequest,
+		BaseSearchResponse baseSearchResponse) {
+
+		if (baseSearchRequest.isIncludeResponseString()) {
+			baseSearchResponse.setSearchResponseString(
+				searchResponse.toString());
+		}
+	}
+
 	@Reference(unbind = "-")
 	protected void setStatsTranslator(StatsTranslator statsTranslator) {
 		_statsTranslator = statsTranslator;
+	}
+
+	protected void setTerminatedEarly(
+		SearchResponse searchResponse, BaseSearchResponse baseSearchResponse) {
+
+		baseSearchResponse.setTerminatedEarly(
+			GetterUtil.getBoolean(searchResponse.isTerminatedEarly()));
+	}
+
+	protected void setTimedOut(
+		SearchResponse searchResponse, BaseSearchResponse baseSearchResponse) {
+
+		baseSearchResponse.setTimedOut(searchResponse.isTimedOut());
+	}
+
+	protected String toString(SearchRequestBuilder searchRequestBuilder) {
+		try {
+			return searchRequestBuilder.toString();
+		}
+		catch (ElasticsearchException ee) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(ee, ee);
+			}
+
+			return ee.getMessage();
+		}
 	}
 
 	protected void updateStatsResponse(
