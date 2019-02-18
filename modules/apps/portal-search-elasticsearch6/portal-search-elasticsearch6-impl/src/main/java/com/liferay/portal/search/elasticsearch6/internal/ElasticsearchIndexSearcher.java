@@ -35,6 +35,8 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.search.aggregation.Aggregation;
+import com.liferay.portal.search.aggregation.pipeline.PipelineAggregation;
 import com.liferay.portal.search.constants.SearchContextAttributes;
 import com.liferay.portal.search.elasticsearch6.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch6.constants.ElasticsearchSearchContextAttributes;
@@ -372,7 +374,9 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		BaseSearchResponse baseSearchResponse,
 		SearchResponseBuilder searchResponseBuilder) {
 
-		searchResponseBuilder.requestString(
+		searchResponseBuilder.aggregationResultsMap(
+			baseSearchResponse.getAggregationResultsMap()
+		).requestString(
 			baseSearchResponse.getSearchRequestString()
 		).responseString(
 			baseSearchResponse.getSearchResponseString()
@@ -399,11 +403,35 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			searchRequest.isIncludeResponseString());
 		baseSearchRequest.setRescoreQuery(searchRequest.getRescoreQuery());
 		baseSearchRequest.setStatsRequests(searchRequest.getStatsRequests());
+
+		setAggregations(baseSearchRequest, searchRequest);
+		setPipelineAggregations(baseSearchRequest, searchRequest);
+	}
+
+	protected void setAggregations(
+		BaseSearchRequest baseSearchRequest, SearchRequest searchRequest) {
+
+		Map<String, Aggregation> map = searchRequest.getAggregationsMap();
+
+		for (Aggregation aggregation : map.values()) {
+			baseSearchRequest.addAggregation(aggregation);
+		}
 	}
 
 	@Reference(unbind = "-")
 	protected void setIndexNameBuilder(IndexNameBuilder indexNameBuilder) {
 		_indexNameBuilder = indexNameBuilder;
+	}
+
+	protected void setPipelineAggregations(
+		BaseSearchRequest baseSearchRequest, SearchRequest searchRequest) {
+
+		Map<String, PipelineAggregation> map =
+			searchRequest.getPipelineAggregationsMap();
+
+		for (PipelineAggregation aggregation : map.values()) {
+			baseSearchRequest.addPipelineAggregation(aggregation);
+		}
 	}
 
 	@Reference(unbind = "-")
