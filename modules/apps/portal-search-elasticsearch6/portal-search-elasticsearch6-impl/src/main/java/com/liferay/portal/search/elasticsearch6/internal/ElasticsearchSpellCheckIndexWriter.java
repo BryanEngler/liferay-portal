@@ -147,7 +147,7 @@ public class ElasticsearchSpellCheckIndexWriter
 
 			searchResponseScroller.prepare();
 
-			searchResponseScroller.scroll(_searchHitsProcessor);
+			while (searchResponseScroller.scroll(_searchHitsProcessor));
 		}
 		finally {
 			if (searchResponseScroller != null) {

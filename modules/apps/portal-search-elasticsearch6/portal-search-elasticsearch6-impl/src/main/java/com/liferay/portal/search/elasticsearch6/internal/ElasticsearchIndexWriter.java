@@ -202,7 +202,7 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 			try {
 				searchResponseScroller.prepare();
 
-				searchResponseScroller.scroll(_searchHitsProcessor);
+				while (searchResponseScroller.scroll(_searchHitsProcessor));
 			}
 			finally {
 				searchResponseScroller.close();
