@@ -39,7 +39,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Eudaldo Alonso
  */
 @Component(immediate = true, service = DocumentContributor.class)
-public class TrashedModelDocumentContributor implements DocumentContributor {
+public class TrashedDocumentContributor implements DocumentContributor {
 
 	@Override
 	public void contribute(Document document, BaseModel baseModel) {
@@ -133,7 +133,7 @@ public class TrashedModelDocumentContributor implements DocumentContributor {
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		TrashedModelDocumentContributor.class);
+		TrashedDocumentContributor.class);
 
 	private UserLocalService _userLocalService;
 
