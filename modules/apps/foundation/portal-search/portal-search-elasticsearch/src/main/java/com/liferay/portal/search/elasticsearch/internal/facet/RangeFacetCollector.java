@@ -60,8 +60,11 @@ public class RangeFacetCollector implements FacetCollector {
 			String key = StringUtil.replace(
 				bucket.getKeyAsString(), CharPool.DASH, _TO_STRING);
 
-			key = StringPool.OPEN_BRACKET.concat(key).concat(
-				StringPool.CLOSE_BRACKET);
+			key = StringPool.OPEN_BRACKET.concat(
+				key
+			).concat(
+				StringPool.CLOSE_BRACKET
+			);
 
 			termCollectorHolder.add(key, (int)bucket.getDocCount());
 		}
