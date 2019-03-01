@@ -374,7 +374,11 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		Object[] array = highlightField.fragments();
 
 		document.addText(
-			Field.SNIPPET.concat(StringPool.UNDERLINE).concat(snippetFieldName),
+			Field.SNIPPET.concat(
+				StringPool.UNDERLINE
+			).concat(
+				snippetFieldName
+			),
 			StringUtil.merge(array, StringPool.TRIPLE_PERIOD));
 	}
 
