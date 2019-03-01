@@ -31,7 +31,6 @@ public class SnapshotRequestExecutorFixture {
 	public SnapshotRequestExecutor createExecutor() {
 		return new ElasticsearchSnapshotRequestExecutor() {
 			{
-
 				createSnapshotRepositoryRequestExecutor =
 					createCreateSnapshotRepositoryRequestExecutor();
 				createSnapshotRequestExecutor =
