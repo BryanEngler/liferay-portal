@@ -77,15 +77,7 @@ public class ElasticsearchSearchEngineInformation
 
 			List<NodeInfo> nodesInfo = _getClusterNodes(client);
 
-			sb.append(" (cluster version: ");
-
-			NodeInfo firstNodeInfo = nodesInfo.get(0);
-
-			DiscoveryNode firstNode = firstNodeInfo.getNode();
-
-			sb.append(firstNode.getVersion());
-
-			sb.append(", nodes: ");
+			sb.append(" (cluster nodes and versions: ");
 
 			Stream<NodeInfo> stream = nodesInfo.stream();
 
@@ -93,7 +85,7 @@ public class ElasticsearchSearchEngineInformation
 				nodeInfo -> {
 					DiscoveryNode node = nodeInfo.getNode();
 
-					return node.getName();
+					return node.getName() + CharPool.SPACE + node.getVersion();
 				}
 			).collect(
 				Collectors.joining(StringPool.COMMA_AND_SPACE)
