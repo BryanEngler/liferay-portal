@@ -19,6 +19,8 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import com.liferay.portal.search.elasticsearch6.internal.connection.TestElasticsearchConnectionManager;
 import com.liferay.portal.search.engine.adapter.index.GetIndexIndexRequest;
 
+import java.util.Arrays;
+
 import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
 import org.elasticsearch.action.admin.indices.get.GetIndexRequestBuilder;
 
@@ -69,7 +71,7 @@ public class GetIndexIndexRequestExecutorTest {
 
 		String[] indices = getIndexRequest.indices();
 
-		Assert.assertEquals(1, indices.length);
+		Assert.assertEquals(Arrays.toString(indices), 1, indices.length);
 		Assert.assertEquals(_INDEX_NAME, indices[0]);
 	}
 
