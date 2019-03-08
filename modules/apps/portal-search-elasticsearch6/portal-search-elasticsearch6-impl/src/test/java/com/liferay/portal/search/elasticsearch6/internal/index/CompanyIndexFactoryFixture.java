@@ -34,9 +34,9 @@ public class CompanyIndexFactoryFixture {
 	}
 
 	public void createIndices() throws Exception {
-		AdminClient adminClient = _elasticsearchFixture.getAdminClient();
-
 		CompanyIndexFactory companyIndexFactory = getCompanyIndexFactory();
+
+		AdminClient adminClient = _elasticsearchFixture.getAdminClient();
 
 		companyIndexFactory.createIndices(
 			adminClient, RandomTestUtil.randomLong());
