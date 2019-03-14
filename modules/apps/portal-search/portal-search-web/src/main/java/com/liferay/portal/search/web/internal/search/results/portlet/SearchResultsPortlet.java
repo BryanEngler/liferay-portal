@@ -255,6 +255,11 @@ public class SearchResultsPortlet extends MVCPortlet {
 		SearchResultsSummariesHolder searchResultsSummariesHolder =
 			new SearchResultsSummariesHolder(documents.size());
 
+		Optional<String> keywordsOptional =
+			portletSharedSearchResponse.getKeywordsOptional();
+
+		String keywords = keywordsOptional.orElse(StringPool.BLANK);
+
 		PortletURLFactory portletURLFactory = getPortletURLFactory(
 			renderRequest, renderResponse);
 
@@ -265,9 +270,9 @@ public class SearchResultsPortlet extends MVCPortlet {
 		for (Document document : documents) {
 			SearchResultSummaryDisplayContext
 				searchResultSummaryDisplayContext = doBuildSummary(
-					document, renderRequest, renderResponse, themeDisplay,
-					portletURLFactory, searchResultsPortletPreferences,
-					searchResultPreferences);
+					document, keywords, renderRequest, renderResponse,
+					themeDisplay, portletURLFactory,
+					searchResultsPortletPreferences, searchResultPreferences);
 
 			if (searchResultSummaryDisplayContext != null) {
 				searchResultsSummariesHolder.put(
@@ -279,7 +284,7 @@ public class SearchResultsPortlet extends MVCPortlet {
 	}
 
 	protected SearchResultSummaryDisplayContext doBuildSummary(
-			Document document, RenderRequest renderRequest,
+			Document document, String keywords, RenderRequest renderRequest,
 			RenderResponse renderResponse, ThemeDisplay themeDisplay,
 			PortletURLFactory portletURLFactory,
 			SearchResultsPortletPreferences searchResultsPortletPreferences,
@@ -305,6 +310,8 @@ public class SearchResultsPortlet extends MVCPortlet {
 			true
 		).setIndexerRegistry(
 			indexerRegistry
+		).setKeywords(
+			keywords
 		).setLanguage(
 			language
 		).setLocale(

@@ -75,6 +75,14 @@ public class SearchResultSummaryDisplayContext implements Serializable {
 		return _iconId;
 	}
 
+	public String getIndex() {
+		return _index;
+	}
+
+	public String getKeywords() {
+		return _keywords;
+	}
+
 	public String getLocaleLanguageId() {
 		return _localeLanguageId;
 	}
@@ -101,6 +109,10 @@ public class SearchResultSummaryDisplayContext implements Serializable {
 
 	public String getTitle() {
 		return _title;
+	}
+
+	public String getUid() {
+		return _uid;
 	}
 
 	public String getViewURL() {
@@ -234,6 +246,14 @@ public class SearchResultSummaryDisplayContext implements Serializable {
 		_iconVisible = iconVisible;
 	}
 
+	public void setIndex(String index) {
+		_index = index;
+	}
+
+	public void setKeywords(String keywords) {
+		_keywords = keywords;
+	}
+
 	public void setLocaleLanguageId(String localeLanguageId) {
 		_localeLanguageId = localeLanguageId;
 	}
@@ -274,6 +294,10 @@ public class SearchResultSummaryDisplayContext implements Serializable {
 		_title = title;
 	}
 
+	public void setUid(String uid) {
+		_uid = uid;
+	}
+
 	public void setUserPortraitVisible(boolean userPortraitVisible) {
 		_userPortraitVisible = userPortraitVisible;
 	}
@@ -302,6 +326,8 @@ public class SearchResultSummaryDisplayContext implements Serializable {
 	private String _highlightedTitle;
 	private String _iconId;
 	private boolean _iconVisible;
+	private String _index;
+	private String _keywords;
 	private String _localeLanguageId;
 	private String _localeReminder;
 	private boolean _localeReminderVisible;
@@ -312,6 +338,7 @@ public class SearchResultSummaryDisplayContext implements Serializable {
 	private String _thumbnailURLString;
 	private boolean _thumbnailVisible;
 	private String _title;
+	private String _uid;
 	private boolean _userPortraitVisible;
 	private String _viewURL;
 
