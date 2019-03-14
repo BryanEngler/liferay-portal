@@ -304,6 +304,13 @@ public class SearchResultsPortlet extends MVCPortlet {
 			searchResultsPortletPreferences.isHighlightEnabled());
 		searchResultSummaryDisplayBuilder.setImageRequested(true);
 		searchResultSummaryDisplayBuilder.setIndexerRegistry(indexerRegistry);
+
+		Optional<String> keywordsOptional =
+			portletSharedSearchResponse.getKeywordsOptional();
+
+		searchResultSummaryDisplayBuilder.setKeywords(
+			keywordsOptional.orElse(StringPool.BLANK));
+
 		searchResultSummaryDisplayBuilder.setLanguage(language);
 		searchResultSummaryDisplayBuilder.setLocale(themeDisplay.getLocale());
 		searchResultSummaryDisplayBuilder.setPortletURLFactory(
