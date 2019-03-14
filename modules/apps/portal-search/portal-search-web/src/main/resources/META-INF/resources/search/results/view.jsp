@@ -14,12 +14,17 @@
  */
 --%>
 
-<%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
+<%@ page import="com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem" %><%@
+page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
+page import="com.liferay.portal.kernel.util.Constants" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
 page import="com.liferay.portal.search.web.internal.result.display.context.SearchResultFieldDisplayContext" %><%@
 page import="com.liferay.portal.search.web.internal.result.display.context.SearchResultSummaryDisplayContext" %><%@
 page import="com.liferay.portal.search.web.internal.search.results.portlet.SearchResultsPortletDisplayContext" %>
+
+<%@ page import="java.util.ArrayList" %><%@
+page import="java.util.List" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
@@ -27,7 +32,14 @@ page import="com.liferay.portal.search.web.internal.search.results.portlet.Searc
 
 <%@ taglib uri="http://liferay.com/tld/asset" prefix="liferay-asset" %><%@
 taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+taglib uri="http://liferay.com/tld/clay" prefix="clay" %><%@
+taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
+taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
+
+<liferay-frontend:defineObjects />
+
+<liferay-theme:defineObjects />
 
 <portlet:defineObjects />
 
@@ -87,6 +99,39 @@ com.liferay.portal.kernel.dao.search.SearchContainer<com.liferay.portal.kernel.s
 
 		<%
 		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext = java.util.Objects.requireNonNull(searchResultsPortletDisplayContext.getSearchResultSummaryDisplayContext(document));
+		%>
+
+		<portlet:actionURL name="/result/ranking" var="pinURL">
+			<portlet:param name="<%= Constants.CMD %>" value="pin" />
+			<portlet:param name="redirect" value="" />
+			<portlet:param name="index" value="<%= searchResultSummaryDisplayContext.getIndex() %>" />
+			<portlet:param name="keywords" value="<%= searchResultSummaryDisplayContext.getKeywords() %>" />
+			<portlet:param name="uid" value="<%= searchResultSummaryDisplayContext.getUid() %>" />
+		</portlet:actionURL>
+
+		<portlet:actionURL name="/result/ranking" var="hideURL">
+			<portlet:param name="<%= Constants.CMD %>" value="hide" />
+			<portlet:param name="redirect" value="" />
+			<portlet:param name="index" value="<%= searchResultSummaryDisplayContext.getIndex() %>" />
+			<portlet:param name="keywords" value="<%= searchResultSummaryDisplayContext.getKeywords() %>" />
+			<portlet:param name="uid" value="<%= searchResultSummaryDisplayContext.getUid() %>" />
+		</portlet:actionURL>
+
+		<%
+		DropdownItem pinDropdownItem = new DropdownItem();
+
+		pinDropdownItem.setLabel(LanguageUtil.get(request, "pin"));
+		pinDropdownItem.setHref(pinURL);
+
+		DropdownItem hideDropdownItem = new DropdownItem();
+
+		hideDropdownItem.setLabel(LanguageUtil.get(request, "hide"));
+		hideDropdownItem.setHref(hideURL);
+
+		List<DropdownItem> dropdownItems = new ArrayList();
+
+		dropdownItems.add(pinDropdownItem);
+		dropdownItems.add(hideDropdownItem);
 		%>
 
 		<c:choose>
@@ -207,6 +252,14 @@ com.liferay.portal.kernel.dao.search.SearchContainer<com.liferay.portal.kernel.s
 						</div>
 					</c:if>
 				</liferay-ui:search-container-column-text>
+
+				<c:if test="<%= permissionChecker.isCompanyAdmin() %>">
+					<liferay-ui:search-container-column-text>
+						<clay:dropdown-actions
+							dropdownItems="<%= dropdownItems %>"
+						/>
+					</liferay-ui:search-container-column-text>
+				</c:if>
 			</c:when>
 			<c:otherwise>
 				<liferay-ui:search-container-column-text

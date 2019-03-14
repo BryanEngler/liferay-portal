@@ -39,6 +39,7 @@ import com.liferay.portal.kernel.util.FastDateFormatConstants;
 import com.liferay.portal.kernel.util.FastDateFormatFactory;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.URLCodec;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.summary.Summary;
 import com.liferay.portal.search.summary.SummaryBuilder;
@@ -132,6 +133,10 @@ public class SearchResultSummaryDisplayBuilder {
 
 	public void setIndexerRegistry(IndexerRegistry indexerRegistry) {
 		_indexerRegistry = indexerRegistry;
+	}
+
+	public void setKeywords(String keywords) {
+		_keywords = keywords;
 	}
 
 	public void setLanguage(Language language) {
@@ -259,8 +264,11 @@ public class SearchResultSummaryDisplayBuilder {
 		buildCreatorUserName(searchResultSummaryDisplayContext);
 		buildDocumentForm(searchResultSummaryDisplayContext);
 		buildImage(searchResultSummaryDisplayContext, className, classPK);
+		buildIndex(searchResultSummaryDisplayContext);
+		buildKeywords(searchResultSummaryDisplayContext);
 		buildLocaleReminder(searchResultSummaryDisplayContext, summary);
 		buildModelResource(searchResultSummaryDisplayContext, className);
+		buildUid(searchResultSummaryDisplayContext);
 		buildUserPortrait(
 			searchResultSummaryDisplayContext, assetEntry, className);
 		buildViewURL(className, classPK, searchResultSummaryDisplayContext);
@@ -433,6 +441,20 @@ public class SearchResultSummaryDisplayBuilder {
 			});
 	}
 
+	protected void buildIndex(
+		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext) {
+
+		searchResultSummaryDisplayContext.setIndex(
+			"liferay-" + _themeDisplay.getCompanyId());
+	}
+
+	protected void buildKeywords(
+		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext) {
+
+		searchResultSummaryDisplayContext.setKeywords(
+			URLCodec.encodeURL(_keywords));
+	}
+
 	protected void buildLocaleReminder(
 		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext,
 		Summary summary) {
@@ -468,6 +490,12 @@ public class SearchResultSummaryDisplayBuilder {
 		searchResultSummaryDisplayContext.setTemporarilyUnavailable(true);
 
 		return searchResultSummaryDisplayContext;
+	}
+
+	protected void buildUid(
+		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext) {
+
+		searchResultSummaryDisplayContext.setUid(_document.getUID());
 	}
 
 	protected void buildUserPortrait(
@@ -681,6 +709,7 @@ public class SearchResultSummaryDisplayBuilder {
 	private boolean _highlightEnabled;
 	private boolean _imageRequested;
 	private IndexerRegistry _indexerRegistry;
+	private String _keywords;
 	private Language _language;
 	private Locale _locale;
 	private PortletURLFactory _portletURLFactory;
