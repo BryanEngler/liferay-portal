@@ -17,18 +17,21 @@ package com.liferay.portal.search.engine.adapter.document;
 /**
  * @author Michael C. Han
  */
-public interface BulkableDocumentRequestTranslator<R, S, T, U> {
+public interface BulkableDocumentRequestTranslator<R, S, T, U, V> {
 
 	public R translate(
 		DeleteDocumentRequest deleteDocumentRequest,
-		U searchEngineAdapterRequest);
+		V searchEngineAdapterRequest);
 
 	public S translate(
-		IndexDocumentRequest indexDocumentRequest,
-		U searchEngineAdapterRequest);
+		GetDocumentRequest getDocumentRequest, V searchEngineAdapterRequest);
 
 	public T translate(
+		IndexDocumentRequest indexDocumentRequest,
+		V searchEngineAdapterRequest);
+
+	public U translate(
 		UpdateDocumentRequest updateDocumentRequest,
-		U searchEngineAdapterRequest);
+		V searchEngineAdapterRequest);
 
 }
