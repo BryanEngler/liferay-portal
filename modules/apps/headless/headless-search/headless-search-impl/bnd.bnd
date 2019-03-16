@@ -1,0 +1,3 @@
+Bundle-Name: Liferay Headless Search Implementation
+Bundle-SymbolicName: com.liferay.headless.search.impl
+Bundle-Version: 1.0.0
