@@ -1,0 +1,6 @@
+Bundle-Name: Liferay Headless Search API
+Bundle-SymbolicName: com.liferay.headless.search.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.liferay.headless.search.dto.v1_0,\
+	com.liferay.headless.search.resource.v1_0

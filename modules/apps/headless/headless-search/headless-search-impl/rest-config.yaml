@@ -1,0 +1,8 @@
+apiDir: "../headless-search-api/src/main/java"
+apiPackagePath: "com.liferay.headless.search"
+application:
+    baseURI: "/headless-search"
+    className: "HeadlessSearchApplication"
+    name: "Liferay.Headless.Search"
+author: "Bryan Engler"
+testDir: "../headless-search-test/src/testIntegration/java"
