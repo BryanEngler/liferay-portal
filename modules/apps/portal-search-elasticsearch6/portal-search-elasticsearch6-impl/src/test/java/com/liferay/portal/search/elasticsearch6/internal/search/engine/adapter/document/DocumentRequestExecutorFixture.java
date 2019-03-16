@@ -22,6 +22,7 @@ import com.liferay.portal.search.engine.adapter.document.DocumentRequestExecutor
 
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
+import org.elasticsearch.action.get.GetRequestBuilder;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.update.UpdateRequestBuilder;
 
@@ -40,10 +41,11 @@ public class DocumentRequestExecutorFixture {
 	}
 
 	protected static BulkableDocumentRequestTranslator
-		<DeleteRequestBuilder, IndexRequestBuilder, UpdateRequestBuilder,
-		 BulkRequestBuilder> createBulkableDocumentRequestTranslator(
-			ElasticsearchClientResolver elasticsearchClientResolver,
-			ElasticsearchDocumentFactory elasticsearchDocumentFactory) {
+		<DeleteRequestBuilder, GetRequestBuilder, IndexRequestBuilder,
+		 UpdateRequestBuilder, BulkRequestBuilder>
+			createBulkableDocumentRequestTranslator(
+				ElasticsearchClientResolver elasticsearchClientResolver,
+				ElasticsearchDocumentFactory elasticsearchDocumentFactory) {
 
 		return new ElasticsearchBulkableDocumentRequestTranslator() {
 			{
@@ -57,7 +59,7 @@ public class DocumentRequestExecutorFixture {
 		createBulkDocumentRequestExecutor(
 			ElasticsearchClientResolver elasticsearchClientResolver,
 			BulkableDocumentRequestTranslator
-				<DeleteRequestBuilder, IndexRequestBuilder,
+				<DeleteRequestBuilder, GetRequestBuilder, IndexRequestBuilder,
 				 UpdateRequestBuilder, BulkRequestBuilder>
 					bulkableDocumentRequestTranslator) {
 
@@ -92,7 +94,7 @@ public class DocumentRequestExecutorFixture {
 	protected static DeleteDocumentRequestExecutor
 		createDeleteDocumentRequestExecutor(
 			BulkableDocumentRequestTranslator
-				<DeleteRequestBuilder, IndexRequestBuilder,
+				<DeleteRequestBuilder, GetRequestBuilder, IndexRequestBuilder,
 				 UpdateRequestBuilder, BulkRequestBuilder>
 					bulkableDocumentRequestTranslator) {
 
@@ -109,10 +111,12 @@ public class DocumentRequestExecutorFixture {
 		ElasticsearchDocumentFactory elasticsearchDocumentFactory) {
 
 		BulkableDocumentRequestTranslator
-			<DeleteRequestBuilder, IndexRequestBuilder, UpdateRequestBuilder,
-			 BulkRequestBuilder> bulkableDocumentRequestTranslator =
-				createBulkableDocumentRequestTranslator(
-					elasticsearchClientResolver, elasticsearchDocumentFactory);
+			<DeleteRequestBuilder, GetRequestBuilder, IndexRequestBuilder,
+			 UpdateRequestBuilder, BulkRequestBuilder>
+				bulkableDocumentRequestTranslator =
+					createBulkableDocumentRequestTranslator(
+						elasticsearchClientResolver,
+						elasticsearchDocumentFactory);
 
 		return new ElasticsearchDocumentRequestExecutor() {
 			{
@@ -142,7 +146,7 @@ public class DocumentRequestExecutorFixture {
 	protected static IndexDocumentRequestExecutor
 		createIndexDocumentRequestExecutor(
 			BulkableDocumentRequestTranslator
-				<DeleteRequestBuilder, IndexRequestBuilder,
+				<DeleteRequestBuilder, GetRequestBuilder, IndexRequestBuilder,
 				 UpdateRequestBuilder, BulkRequestBuilder>
 					bulkableDocumentRequestTranslator) {
 
@@ -176,7 +180,7 @@ public class DocumentRequestExecutorFixture {
 	protected static UpdateDocumentRequestExecutor
 		createUpdateDocumentRequestExecutor(
 			BulkableDocumentRequestTranslator
-				<DeleteRequestBuilder, IndexRequestBuilder,
+				<DeleteRequestBuilder, GetRequestBuilder, IndexRequestBuilder,
 				 UpdateRequestBuilder, BulkRequestBuilder>
 					bulkableDocumentRequestTranslator) {
 

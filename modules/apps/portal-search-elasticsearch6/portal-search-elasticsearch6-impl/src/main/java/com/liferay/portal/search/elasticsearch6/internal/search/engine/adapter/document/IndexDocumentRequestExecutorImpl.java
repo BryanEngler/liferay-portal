@@ -20,6 +20,7 @@ import com.liferay.portal.search.engine.adapter.document.IndexDocumentResponse;
 
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
+import org.elasticsearch.action.get.GetRequestBuilder;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.update.UpdateRequestBuilder;
@@ -56,14 +57,16 @@ public class IndexDocumentRequestExecutorImpl
 	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
 	protected void setBulkableDocumentRequestTranslator(
 		BulkableDocumentRequestTranslator
-			<DeleteRequestBuilder, IndexRequestBuilder, UpdateRequestBuilder,
-			 BulkRequestBuilder> bulkableDocumentRequestTranslator) {
+			<DeleteRequestBuilder, GetRequestBuilder, IndexRequestBuilder,
+			 UpdateRequestBuilder, BulkRequestBuilder>
+				bulkableDocumentRequestTranslator) {
 
 		_bulkableDocumentRequestTranslator = bulkableDocumentRequestTranslator;
 	}
 
 	private BulkableDocumentRequestTranslator
-		<DeleteRequestBuilder, IndexRequestBuilder, UpdateRequestBuilder,
-		 BulkRequestBuilder> _bulkableDocumentRequestTranslator;
+		<DeleteRequestBuilder, GetRequestBuilder, IndexRequestBuilder,
+		 UpdateRequestBuilder, BulkRequestBuilder>
+			_bulkableDocumentRequestTranslator;
 
 }

@@ -32,6 +32,7 @@ import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
+import org.elasticsearch.action.get.GetRequestBuilder;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.action.update.UpdateRequestBuilder;
@@ -143,8 +144,9 @@ public class BulkDocumentRequestExecutorImpl
 	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
 	protected void setBulkableDocumentRequestTranslator(
 		BulkableDocumentRequestTranslator
-			<DeleteRequestBuilder, IndexRequestBuilder, UpdateRequestBuilder,
-			 BulkRequestBuilder> bulkableDocumentRequestTranslator) {
+			<DeleteRequestBuilder, GetRequestBuilder, IndexRequestBuilder,
+			 UpdateRequestBuilder, BulkRequestBuilder>
+				bulkableDocumentRequestTranslator) {
 
 		_bulkableDocumentRequestTranslator = bulkableDocumentRequestTranslator;
 	}
@@ -160,8 +162,9 @@ public class BulkDocumentRequestExecutorImpl
 		BulkDocumentRequestExecutorImpl.class);
 
 	private BulkableDocumentRequestTranslator
-		<DeleteRequestBuilder, IndexRequestBuilder, UpdateRequestBuilder,
-		 BulkRequestBuilder> _bulkableDocumentRequestTranslator;
+		<DeleteRequestBuilder, GetRequestBuilder, IndexRequestBuilder,
+		 UpdateRequestBuilder, BulkRequestBuilder>
+			_bulkableDocumentRequestTranslator;
 	private ElasticsearchClientResolver _elasticsearchClientResolver;
 
 }
