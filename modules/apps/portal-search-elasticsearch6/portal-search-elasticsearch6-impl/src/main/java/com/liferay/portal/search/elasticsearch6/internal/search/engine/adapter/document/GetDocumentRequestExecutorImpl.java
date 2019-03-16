@@ -15,43 +15,38 @@
 package com.liferay.portal.search.elasticsearch6.internal.search.engine.adapter.document;
 
 import com.liferay.portal.search.engine.adapter.document.BulkableDocumentRequestTranslator;
-import com.liferay.portal.search.engine.adapter.document.UpdateDocumentRequest;
-import com.liferay.portal.search.engine.adapter.document.UpdateDocumentResponse;
+import com.liferay.portal.search.engine.adapter.document.GetDocumentRequest;
+import com.liferay.portal.search.engine.adapter.document.GetDocumentResponse;
 
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.get.GetRequestBuilder;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.update.UpdateRequestBuilder;
-import org.elasticsearch.action.update.UpdateResponse;
-import org.elasticsearch.rest.RestStatus;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Dylan Rebelak
+ * @author Bryan Engler
  */
-@Component(immediate = true, service = UpdateDocumentRequestExecutor.class)
-public class UpdateDocumentRequestExecutorImpl
-	implements UpdateDocumentRequestExecutor {
+@Component(immediate = true, service = GetDocumentRequestExecutor.class)
+public class GetDocumentRequestExecutorImpl
+	implements GetDocumentRequestExecutor {
 
 	@Override
-	public UpdateDocumentResponse execute(
-		UpdateDocumentRequest updateDocumentRequest) {
-
-		UpdateRequestBuilder updateRequestBuilder =
+	public GetDocumentResponse execute(GetDocumentRequest getDocumentRequest) {
+		GetRequestBuilder getRequestBuilder =
 			_bulkableDocumentRequestTranslator.translate(
-				updateDocumentRequest, null);
+				getDocumentRequest, null);
 
-		UpdateResponse updateResponse = updateRequestBuilder.get();
+		GetResponse getResponse = getRequestBuilder.get();
 
-		RestStatus restStatus = updateResponse.status();
+		GetDocumentResponse getDocumentResponse = new GetDocumentResponse(
+			getResponse.isExists(), getResponse.getSourceAsString());
 
-		UpdateDocumentResponse updateDocumentResponse =
-			new UpdateDocumentResponse(restStatus.getStatus());
-
-		return updateDocumentResponse;
+		return getDocumentResponse;
 	}
 
 	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")

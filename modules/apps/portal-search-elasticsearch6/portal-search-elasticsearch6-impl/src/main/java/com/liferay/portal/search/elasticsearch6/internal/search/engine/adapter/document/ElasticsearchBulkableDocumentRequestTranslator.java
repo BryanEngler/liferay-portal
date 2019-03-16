@@ -21,12 +21,15 @@ import com.liferay.portal.search.elasticsearch6.internal.connection.Elasticsearc
 import com.liferay.portal.search.elasticsearch6.internal.document.ElasticsearchDocumentFactory;
 import com.liferay.portal.search.engine.adapter.document.BulkableDocumentRequestTranslator;
 import com.liferay.portal.search.engine.adapter.document.DeleteDocumentRequest;
+import com.liferay.portal.search.engine.adapter.document.GetDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.IndexDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.UpdateDocumentRequest;
 
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.delete.DeleteAction;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
+import org.elasticsearch.action.get.GetAction;
+import org.elasticsearch.action.get.GetRequestBuilder;
 import org.elasticsearch.action.index.IndexAction;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.support.WriteRequest;
@@ -47,8 +50,8 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class ElasticsearchBulkableDocumentRequestTranslator
 	implements BulkableDocumentRequestTranslator
-		<DeleteRequestBuilder, IndexRequestBuilder, UpdateRequestBuilder,
-		 BulkRequestBuilder> {
+		<DeleteRequestBuilder, GetRequestBuilder, IndexRequestBuilder,
+		 UpdateRequestBuilder, BulkRequestBuilder> {
 
 	@Override
 	public DeleteRequestBuilder translate(
@@ -75,6 +78,24 @@ public class ElasticsearchBulkableDocumentRequestTranslator
 		}
 
 		return deleteRequestBuilder;
+	}
+
+	@Override
+	public GetRequestBuilder translate(
+		GetDocumentRequest getDocumentRequest,
+		BulkRequestBuilder searchEngineAdapterRequest) {
+
+		Client client = _elasticsearchClientResolver.getClient();
+
+		GetRequestBuilder getRequestBuilder =
+			GetAction.INSTANCE.newRequestBuilder(client);
+
+		getRequestBuilder.setId(getDocumentRequest.getUid());
+		getRequestBuilder.setIndex(getDocumentRequest.getIndexName());
+		getRequestBuilder.setRefresh(getDocumentRequest.isRefresh());
+		getRequestBuilder.setType(getDocumentRequest.getType());
+
+		return getRequestBuilder;
 	}
 
 	@Override

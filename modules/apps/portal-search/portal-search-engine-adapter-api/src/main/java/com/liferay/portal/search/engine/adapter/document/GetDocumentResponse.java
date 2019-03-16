@@ -14,24 +14,28 @@
 
 package com.liferay.portal.search.engine.adapter.document;
 
+import aQute.bnd.annotation.ProviderType;
+
 /**
- * @author Michael C. Han
+ * @author Bryan Engler
  */
-public interface BulkableDocumentRequestTranslator<R, S, T, U, V> {
+@ProviderType
+public class GetDocumentResponse implements DocumentResponse {
 
-	public R translate(
-		DeleteDocumentRequest deleteDocumentRequest,
-		V searchEngineAdapterRequest);
+	public GetDocumentResponse(boolean exists, String source) {
+		_exists = exists;
+		_source = source;
+	}
 
-	public S translate(
-		GetDocumentRequest getDocumentRequest, V searchEngineAdapterRequest);
+	public String getSource() {
+		return _source;
+	}
 
-	public T translate(
-		IndexDocumentRequest indexDocumentRequest,
-		V searchEngineAdapterRequest);
+	public boolean isExists() {
+		return _exists;
+	}
 
-	public U translate(
-		UpdateDocumentRequest updateDocumentRequest,
-		V searchEngineAdapterRequest);
+	private final boolean _exists;
+	private final String _source;
 
 }

@@ -12,26 +12,16 @@
  * details.
  */
 
-package com.liferay.portal.search.engine.adapter.document;
+package com.liferay.portal.search.elasticsearch6.internal.search.engine.adapter.document;
+
+import com.liferay.portal.search.engine.adapter.document.GetDocumentRequest;
+import com.liferay.portal.search.engine.adapter.document.GetDocumentResponse;
 
 /**
- * @author Michael C. Han
+ * @author Bryan Engler
  */
-public interface BulkableDocumentRequestTranslator<R, S, T, U, V> {
+public interface GetDocumentRequestExecutor {
 
-	public R translate(
-		DeleteDocumentRequest deleteDocumentRequest,
-		V searchEngineAdapterRequest);
-
-	public S translate(
-		GetDocumentRequest getDocumentRequest, V searchEngineAdapterRequest);
-
-	public T translate(
-		IndexDocumentRequest indexDocumentRequest,
-		V searchEngineAdapterRequest);
-
-	public U translate(
-		UpdateDocumentRequest updateDocumentRequest,
-		V searchEngineAdapterRequest);
+	public GetDocumentResponse execute(GetDocumentRequest getDocumentRequest);
 
 }
