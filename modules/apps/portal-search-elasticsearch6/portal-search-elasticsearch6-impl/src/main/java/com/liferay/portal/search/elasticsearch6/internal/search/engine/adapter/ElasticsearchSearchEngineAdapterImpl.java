@@ -56,9 +56,7 @@ public class ElasticsearchSearchEngineAdapterImpl
 			return _clusterRequestExecutor.execute(clusterRequest);
 		}
 		catch (RuntimeException re) {
-			_handle(re);
-
-			throw re;
+			throw _getRuntimeException(re);
 		}
 	}
 
@@ -70,9 +68,7 @@ public class ElasticsearchSearchEngineAdapterImpl
 			return documentRequest.accept(_documentRequestExecutor);
 		}
 		catch (RuntimeException re) {
-			_handle(re);
-
-			throw re;
+			throw _getRuntimeException(re);
 		}
 	}
 
@@ -82,9 +78,7 @@ public class ElasticsearchSearchEngineAdapterImpl
 			return indexRequest.accept(_indexRequestExecutor);
 		}
 		catch (RuntimeException re) {
-			_handle(re);
-
-			throw re;
+			throw _getRuntimeException(re);
 		}
 	}
 
@@ -96,9 +90,7 @@ public class ElasticsearchSearchEngineAdapterImpl
 			return searchRequest.accept(_searchRequestExecutor);
 		}
 		catch (RuntimeException re) {
-			_handle(re);
-
-			throw re;
+			throw _getRuntimeException(re);
 		}
 	}
 
@@ -110,9 +102,7 @@ public class ElasticsearchSearchEngineAdapterImpl
 			return snapshotRequest.accept(_snapshotRequestExecutor);
 		}
 		catch (RuntimeException re) {
-			_handle(re);
-
-			throw re;
+			throw _getRuntimeException(re);
 		}
 	}
 
@@ -124,9 +114,7 @@ public class ElasticsearchSearchEngineAdapterImpl
 			return queryBuilder.toString();
 		}
 		catch (RuntimeException re) {
-			_handle(re);
-
-			throw re;
+			throw _getRuntimeException(re);
 		}
 	}
 
@@ -176,29 +164,27 @@ public class ElasticsearchSearchEngineAdapterImpl
 		_throwOriginalExceptions = throwOriginalExceptions;
 	}
 
-	private RuntimeException _getClientSideSafeToLoadException(
-		String name, String message, StackTraceElement[] stackTrace) {
+	private RuntimeException _getRuntimeException(
+		RuntimeException runtimeException) {
 
-		RuntimeException re = new RuntimeException(name + ": " + message);
-
-		re.setStackTrace(stackTrace);
-
-		return re;
-	}
-
-	private void _handle(Throwable t) {
 		if (_throwOriginalExceptions) {
-			return;
+			return runtimeException;
 		}
 
-		Class<?> clazz = t.getClass();
+		Class<?> clazz = runtimeException.getClass();
 
 		String name = clazz.getName();
 
 		if (name.startsWith("org.elasticsearch")) {
-			throw _getClientSideSafeToLoadException(
-				name, t.toString(), t.getStackTrace());
+			RuntimeException newRuntimeException = new RuntimeException(
+				name + ": " + runtimeException.toString());
+
+			newRuntimeException.setStackTrace(runtimeException.getStackTrace());
+
+			return newRuntimeException;
 		}
+
+		return runtimeException;
 	}
 
 	private ClusterRequestExecutor _clusterRequestExecutor;
