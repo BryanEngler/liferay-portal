@@ -91,6 +91,29 @@ public class ElasticsearchFixture implements ElasticsearchClientResolver {
 		deleteTmpDir();
 	}
 
+	public ElasticsearchConnectionManager geElasticsearchConnectionManager() {
+		return new ElasticsearchConnectionManager() {
+
+			@Override
+			public AdminClient getAdminClient() {
+				Client client = getClient();
+
+				return client.admin();
+			}
+
+			@Override
+			public Client getClient() {
+				return _embeddedElasticsearchConnection.getClient();
+			}
+
+			@Override
+			public ElasticsearchConnection getElasticsearchConnection() {
+				return _embeddedElasticsearchConnection;
+			}
+
+		};
+	}
+
 	public AdminClient getAdminClient() {
 		Client client = getClient();
 
