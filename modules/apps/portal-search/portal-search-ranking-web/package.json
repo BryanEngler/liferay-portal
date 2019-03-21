@@ -1,0 +1,18 @@
+{
+	"dependencies": {
+		"clay-button": "^2.8.3",
+		"clay-icon": "2.2.0",
+		"metal-component": "^2.16.3",
+		"metal-soy": "^2.13.2"
+	},
+	"devDependencies": {
+		"liferay-npm-scripts": "1.2.0"
+	},
+	"name": "portal-search-ranking-web",
+	"scripts": {
+		"build": "liferay-npm-scripts build --soy --bundler",
+		"csf": "liferay-npm-scripts lint",
+		"format": "liferay-npm-scripts format"
+	},
+	"version": "1.0.0"
+}

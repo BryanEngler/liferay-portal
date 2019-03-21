@@ -14,4 +14,48 @@
  */
 --%>
 
-<h1>Search Ranking</h1>
+<%@ include file="/init.jsp" %>
+
+<%
+	String tabs = ParamUtil.getString(request, "tabs", "results-ranking");
+%>
+
+<clay:navigation-bar
+	inverted="<%= true %>"
+	navigationItems="<%=
+		new JSPNavigationItemList(pageContext) {
+			{
+				add(
+					navigationItem -> {
+						navigationItem.setActive(tabs.equals("results-ranking"));
+						navigationItem.setHref(renderResponse.createRenderURL(), "tabs", "results-ranking");
+						navigationItem.setLabel(LanguageUtil.get(request, "results-ranking"));
+					});
+				add(
+					navigationItem -> {
+						navigationItem.setActive(tabs.equals("field-weights"));
+						navigationItem.setHref(renderResponse.createRenderURL(), "tabs", "field-weights");
+						navigationItem.setLabel(LanguageUtil.get(request, "field-weights"));
+					});
+				add(
+					navigationItem -> {
+						navigationItem.setActive(tabs.equals("synonym-sets"));
+						navigationItem.setHref(renderResponse.createRenderURL(), "tabs", "synonym-sets");
+						navigationItem.setLabel(LanguageUtil.get(request, "synonym-sets"));
+					});
+			}
+		}
+	%>"
+/>
+
+<c:choose>
+	<c:when test='<%= tabs.equals("results-ranking") %>'>
+		<liferay-util:include page="/results-ranking.jsp" servletContext="<%= application %>" />
+	</c:when>
+	<c:when test='<%= tabs.equals("field-weights") %>'>
+		<liferay-util:include page="/field_mappings.jsp" servletContext="<%= application %>" />
+	</c:when>
+	<c:when test='<%= tabs.equals("synonym-sets") %>'>
+		<liferay-util:include page="/synonym-sets.jsp" servletContext="<%= application %>" />
+	</c:when>
+</c:choose>
