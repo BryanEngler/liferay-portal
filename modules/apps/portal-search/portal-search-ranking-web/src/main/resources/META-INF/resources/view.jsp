@@ -17,7 +17,7 @@
 <%@ include file="/init.jsp" %>
 
 <%
-	String tabs = ParamUtil.getString(request, "tabs", "results-ranking");
+String tabs = ParamUtil.getString(request, "tabs", "results-ranking");
 %>
 
 <clay:navigation-bar

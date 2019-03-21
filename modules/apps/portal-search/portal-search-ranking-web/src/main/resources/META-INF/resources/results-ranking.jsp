@@ -15,6 +15,7 @@
 --%>
 
 <%@ include file="/init.jsp" %>
+
 <%
 	/* TODO: Get list of result rankings when backend is done */
 	Map<String, Object> context = new HashMap<>();
@@ -25,6 +26,7 @@
 <clay:management-toolbar
 	showCreationMenu="<%= false %>"
 />
+
 <div class="closed container-fluid-1280 sidenav-container sidenav-right" id="<portlet:namespace />infoPanelId">
 	<soy:component-renderer
 		context="<%= context %>"

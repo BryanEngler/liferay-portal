@@ -8,6 +8,7 @@ import templates from './ResultRankings.soy';
 class ResultRankings {
 
 	_addNewRanking() {
+
 		/* TODO: Redirect to new ranking form */
 	}
 }

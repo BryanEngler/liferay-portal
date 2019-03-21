@@ -57,9 +57,10 @@ public class SearchRankingPortlet extends MVCPortlet {
 
 	@Override
 	public void render(
-		RenderRequest renderRequest, RenderResponse renderResponse)
+			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws IOException, PortletException {
 
 		super.render(renderRequest, renderResponse);
 	}
+
 }
