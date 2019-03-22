@@ -22,4 +22,7 @@ public class ResultsRankingPortletKeys {
 	public static final String RESULTS_RANKING =
 		"com_liferay_portal_search_ranking_web_portlet_ResultsRankingPortlet";
 
+	public static final String RESULTS_RANKING_DISPLAY_CONTEXT =
+		"RESULTS_RANKING_DISPLAY_CONTEXT";
+
 }
