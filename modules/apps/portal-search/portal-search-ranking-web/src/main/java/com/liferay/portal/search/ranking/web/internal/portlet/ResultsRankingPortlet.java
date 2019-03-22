@@ -15,7 +15,9 @@
 package com.liferay.portal.search.ranking.web.internal.portlet;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.search.ranking.web.internal.constants.ResultsRankingPortletKeys;
+import com.liferay.portal.search.ranking.web.internal.display.context.ResultsRankingPortletDisplayContext;
 
 import java.io.IOException;
 
@@ -24,7 +26,10 @@ import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Filipe Oshiro
@@ -60,7 +65,22 @@ public class ResultsRankingPortlet extends MVCPortlet {
 			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws IOException, PortletException {
 
+		HttpServletRequest httpServletRequest = portal.getHttpServletRequest(
+			renderRequest);
+
+		ResultsRankingPortletDisplayContext
+			resultsRankingPortletDisplayContext =
+				new ResultsRankingPortletDisplayContext(
+					httpServletRequest, renderRequest, renderResponse);
+
+		renderRequest.setAttribute(
+			ResultsRankingPortletKeys.RESULTS_RANKING_DISPLAY_CONTEXT,
+			resultsRankingPortletDisplayContext);
+
 		super.render(renderRequest, renderResponse);
 	}
+
+	@Reference
+	protected Portal portal;
 
 }
