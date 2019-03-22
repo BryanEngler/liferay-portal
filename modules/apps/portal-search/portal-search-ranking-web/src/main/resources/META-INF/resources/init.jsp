@@ -26,6 +26,8 @@ taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
 <%@ page import="com.liferay.frontend.taglib.clay.servlet.taglib.util.JSPNavigationItemList" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
+page import="com.liferay.portal.search.ranking.web.internal.display.context.ResultsRankingsDisplayContext" %><%@
+page import="com.liferay.portal.search.ranking.web.internal.constants.SearchRankingPortletKeys" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %>
 
 <%@ page import="java.util.ArrayList" %><%@

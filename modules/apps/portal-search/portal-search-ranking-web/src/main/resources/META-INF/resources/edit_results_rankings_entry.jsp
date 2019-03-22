@@ -16,21 +16,4 @@
 
 <%@ include file="/init.jsp" %>
 
-<%
-	/* TODO: Get list of result rankings when backend is done */
-	Map<String, Object> context = new HashMap<>();
-	List<Object> resultRankings = new ArrayList<>();
-	context.put("resultRankings", resultRankings);
-%>
-
-<clay:management-toolbar
-	showCreationMenu="<%= false %>"
-/>
-
-<div class="closed container-fluid-1280 sidenav-container sidenav-right" id="<portlet:namespace />infoPanelId">
-	<soy:component-renderer
-		context="<%= context %>"
-		module="js/ResultRankings.es"
-		templateNamespace="com.liferay.portal.search.ranking.web.ResultRankings.render"
-	/>
-</div>
+Test
