@@ -17,7 +17,7 @@
 <%@ include file="/init.jsp" %>
 
 <%
-String tabs = ParamUtil.getString(request, "tabs", "results-ranking");
+String tabs = ParamUtil.getString(request, "tabs", "results-rankings");
 %>
 
 <clay:navigation-bar
@@ -27,9 +27,9 @@ String tabs = ParamUtil.getString(request, "tabs", "results-ranking");
 			{
 				add(
 					navigationItem -> {
-						navigationItem.setActive(tabs.equals("results-ranking"));
-						navigationItem.setHref(renderResponse.createRenderURL(), "tabs", "results-ranking");
-						navigationItem.setLabel(LanguageUtil.get(request, "results-ranking"));
+						navigationItem.setActive(tabs.equals("results-rankings"));
+						navigationItem.setHref(renderResponse.createRenderURL(), "tabs", "results-rankings");
+						navigationItem.setLabel(LanguageUtil.get(request, "results-rankings"));
 					});
 				add(
 					navigationItem -> {
@@ -49,8 +49,8 @@ String tabs = ParamUtil.getString(request, "tabs", "results-ranking");
 />
 
 <c:choose>
-	<c:when test='<%= tabs.equals("results-ranking") %>'>
-		<liferay-util:include page="/results-ranking.jsp" servletContext="<%= application %>" />
+	<c:when test='<%= tabs.equals("results-rankings") %>'>
+		<liferay-util:include page="/view_results_rankings.jsp" servletContext="<%= application %>" />
 	</c:when>
 	<c:when test='<%= tabs.equals("field-weights") %>'>
 		<liferay-util:include page="/field_mappings.jsp" servletContext="<%= application %>" />
