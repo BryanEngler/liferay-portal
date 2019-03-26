@@ -54,7 +54,7 @@ ResultsRankingPortletDisplayContext resultsRankingPortletDisplayContext = (Resul
 			modelVar="resultsRankingsEntry"
 		>
 			<portlet:renderURL var="rowURL">
-				<portlet:param name="mvcRenderCommandName" value="editResultsRankingsEntry" />
+				<portlet:param name="mvcRenderCommandName" value="addResultsRankingsEntry" />
 				<portlet:param name="redirect" value="<%= currentURL %>" />
 				<portlet:param name="ResultsRankingsEntryId" value="0" />
 			</portlet:renderURL>

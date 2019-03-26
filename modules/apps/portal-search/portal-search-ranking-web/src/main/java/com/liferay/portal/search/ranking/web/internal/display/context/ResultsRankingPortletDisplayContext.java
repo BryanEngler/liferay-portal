@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
@@ -93,7 +94,8 @@ public class ResultsRankingPortletDisplayContext {
 					dropdownItem -> {
 						dropdownItem.setHref(
 							_renderResponse.createRenderURL(),
-							"mvcRenderCommandName", "editResultsRankingsEntry");
+							"mvcRenderCommandName", "addResultsRankingsEntry",
+							"redirect", PortalUtil.getCurrentURL(_request));
 						dropdownItem.setLabel(
 							LanguageUtil.get(_request, "new-ranking"));
 					});
