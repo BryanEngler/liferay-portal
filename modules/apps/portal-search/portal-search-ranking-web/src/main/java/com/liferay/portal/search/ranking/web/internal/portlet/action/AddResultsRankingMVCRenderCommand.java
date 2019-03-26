@@ -30,18 +30,18 @@ import org.osgi.service.component.annotations.Component;
 	immediate = true,
 	property = {
 		"javax.portlet.name=" + ResultsRankingPortletKeys.RESULTS_RANKING,
-		"mvc.command.name=editResultsRankingEntry"
+		"mvc.command.name=addResultsRankingEntry"
 	},
 	service = MVCRenderCommand.class
 )
-public class EditResultsRankingMVCRenderCommand implements MVCRenderCommand {
+public class AddResultsRankingMVCRenderCommand implements MVCRenderCommand {
 
 	@Override
 	public String render(
 			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws PortletException {
 
-		return "/edit_results_rankings.jsp";
+		return "/add_results_rankings.jsp";
 	}
 
 }
