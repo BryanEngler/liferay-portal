@@ -1,0 +1,166 @@
+.ReactModal__Body--open {
+	overflow: hidden;
+
+	.react-modal-backdrop {
+		background-color: rgba(57, 58, 80, 0.8);
+	}
+}
+
+.results-ranking-alias {
+	margin-bottom: 24px;
+
+	.alias-title {
+		padding-bottom: 10px;
+	}
+}
+
+.results-ranking-alias-modal{
+	.alias-modal-description {
+		font-size: 14px;
+		padding-bottom: 10px;
+	}
+}
+
+.results-ranking-add-result-modal {
+	.inline-scroller {
+		background-color: #F1F2F5;
+		max-height: 70vh;
+	}
+}
+
+.react-select-container {
+	width: 100%;
+
+	.react-select__control {
+		background-color: #F1F2F5;
+
+		&:hover{
+			border-color: unset;
+			box-shadow: none;
+		}
+
+		.react-select__multi-value, .react-select__multi-value__label, .react-select__multi-value__remove {
+			background-color: #FFF;
+			border-color: #CDCED9;
+			color: #6B6C7E;
+		}
+	}
+}
+
+.results-ranking-list {
+	margin-left: -1.5rem;
+	margin-right: -1.5rem;
+
+	.load-more-container {
+		margin: 24px 0;
+
+		.load-more-button {
+			display: block;
+			margin: 0 auto;
+		}
+	}
+
+	.results-ranking-tabs {
+		padding: 0 1.5rem 0;
+	}
+}
+
+.result-dropdown {
+	.dropdown-option-text {
+		margin-left: 10px;
+	}
+}
+
+.results-ranking-item {
+	border-left-width: 0;
+	border-radius: 0;
+	border-right-width: 0;
+
+	&.list-item-drag-hover {
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+		box-shadow: inset 0 4px 0 0 #0b5fff;
+	}
+
+	&.list-item-drag-hover-below {
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+		box-shadow: inset 0 -4px 0 0 #0b5fff;
+	}
+
+	&.list-item-dragging {
+		opacity: 0.4;
+	}
+
+	&.results-ranking-item-pinned {
+		.result-drag {
+			visibility: visible;
+		}
+
+		.result-pin {
+			visibility: visible;
+		}
+	}
+
+	&.results-ranking-item-hidden {
+		padding-left: 24px;
+
+		.result-hide {
+			visibility: visible;
+		}
+	}
+
+	.list-item-description {
+		margin-top: 8px;
+	}
+
+	.result-drag {
+		cursor: grab;
+		padding: 0;
+		visibility: hidden;
+
+		.result-drag-sticker {
+			width: unset;
+		}
+	}
+
+	.result-pin, .result-hide {
+		visibility: hidden;
+	}
+
+	&:hover {
+		.result-pin, .result-hide {
+			visibility: visible;
+		}
+	}
+
+	.result-icon {
+		font-size: 10px;
+		color: white;
+
+		svg {
+			font-size: 18px;
+		}
+	}
+
+	.icon-grey {
+		background-color: #6B6C7E;
+	}
+
+	.icon-purple {
+		background-color: #AF78FF;
+	}
+
+	.icon-red {
+		background-color: #FF5F5F;
+	}
+
+	.icon-blue {
+		background-color: #4B9BFF;
+	}
+
+	.click-count {
+		font-size: 12px;
+		line-height: 21px;
+	}
+}
