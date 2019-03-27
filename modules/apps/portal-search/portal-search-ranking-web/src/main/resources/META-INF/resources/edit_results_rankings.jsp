@@ -16,4 +16,20 @@
 
 <%@ include file="/init.jsp" %>
 
-Test
+<%
+String resultsRankingsRootElementId = renderResponse.getNamespace() + "-results-rankings-root";
+%>
+
+<div id="<%= resultsRankingsRootElementId %>"></div>
+
+<aui:script require='<%= npmResolvedPackageName + "/js/index.es as ResultsRankings" %>'>
+	ResultsRankings.default(
+		'<%= resultsRankingsRootElementId %>',
+		{
+			searchTerm: ''
+		},
+		{
+			spritemap: '<%= themeDisplay.getPathThemeImages() + "/lexicon/icons.svg" %>'
+		}
+	);
+</aui:script>
