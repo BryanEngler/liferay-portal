@@ -22,14 +22,8 @@ import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.search.BaseModelSearchResult;
-import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.Sort;
-import com.liferay.portal.kernel.search.SortFactoryUtil;
-import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -164,9 +158,16 @@ public class ResultsRankingPortletDisplayContext {
 		searchContainer.setRowChecker(
 			new EmptyOnClickRowChecker(_renderResponse));
 
+		searchContainer.setResults(_results);
+		searchContainer.setTotal(_results.size());
+
 		_searchContainer = searchContainer;
 
 		return _searchContainer;
+	}
+
+	public void setResults(List<Document> results) {
+		_results = results;
 	}
 
 	public String getSortingURL() {
@@ -304,6 +305,7 @@ public class ResultsRankingPortletDisplayContext {
 	private final RenderRequest _renderRequest;
 	private final RenderResponse _renderResponse;
 	private final HttpServletRequest _request;
+	private List<Document> _results;
 	private SearchContainer _searchContainer;
 	private final ThemeDisplay _themeDisplay;
 
