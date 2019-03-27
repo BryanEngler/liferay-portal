@@ -1,16 +1,30 @@
 {
 	"dependencies": {
-		"clay-button": "^2.8.3",
-		"clay-icon": "2.2.0",
-		"metal-component": "^2.16.3",
-		"metal-soy": "^2.13.2"
+		"classnames": "^2.2.6",
+		"lodash.isfunction": "^3.0.9",
+		"lodash.times": "^4.3.2",
+		"prop-types": "^15.6.2",
+		"react": "^16.6.3",
+		"react-dnd": "^7.0.2",
+		"react-dnd-html5-backend": "^7.0.2",
+		"react-dom": "^16.6.3",
+		"react-modal": "^3.8.1",
+		"react-select": "^2.4.2",
+		"react-tabs": "^3.0.0"
 	},
 	"devDependencies": {
+		"babel-plugin-module-resolver": "^3.2.0",
+		"babel-plugin-transform-class-properties": "^6.24.1",
+		"babel-plugin-transform-object-rest-spread": "^6.26.0",
+		"babel-preset-env": "^1.7.0",
+		"babel-preset-react": "^6.24.1",
 		"liferay-npm-scripts": "1.2.0"
 	},
+	"main": "js/index.es.js",
 	"name": "portal-search-ranking-web",
+	"private": true,
 	"scripts": {
-		"build": "liferay-npm-scripts build --soy --bundler",
+		"build": "liferay-npm-scripts build --bundler",
 		"csf": "liferay-npm-scripts lint",
 		"format": "liferay-npm-scripts format"
 	},
