@@ -1,0 +1,44 @@
+{
+	"ResultsRankingType": {
+		"properties": {
+			"aliases": {
+				"store": true,
+				"type": "keyword"
+			},
+			"displayDate": {
+				"format": "yyyyMMddHHmmss",
+				"store": true,
+				"type": "date"
+			},
+			"hidden_documents": {
+				"store": true,
+				"type": "keyword"
+			},
+			"index": {
+				"store": true,
+				"type": "keyword"
+			},
+			"keywords": {
+				"store": true,
+				"type": "keyword"
+			},
+			"modified": {
+				"format": "yyyyMMddHHmmss",
+				"store": true,
+				"type": "date"
+			},
+			"pinned_documents": {
+				"store": true,
+				"type": "keyword"
+			},
+			"status": {
+				"store": true,
+				"type": "keyword"
+			},
+			"uid": {
+				"store": true,
+				"type": "keyword"
+			}
+		}
+	}
+}
