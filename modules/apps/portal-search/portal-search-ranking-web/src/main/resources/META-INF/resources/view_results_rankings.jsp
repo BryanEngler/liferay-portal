@@ -62,20 +62,20 @@ ResultsRankingPortletDisplayContext resultsRankingPortletDisplayContext = (Resul
 			<liferay-ui:search-container-column-text
 				cssClass="table-cell-expand table-title"
 				href="<%= rowURL %>"
-				name="name"
-				value="Test Title"
+				name="keywords"
+				value="<%= resultsRankingsEntry.get("keywords") %>"
 			/>
 
 			<liferay-ui:search-container-column-text
 				cssClass="table-cell-expand-smallest table-cell-minw-150"
-				name="pinned"
-				value="0"
+				name="index"
+				value="<%= resultsRankingsEntry.get("index") %>"
 			/>
 
 			<liferay-ui:search-container-column-date
 				cssClass="table-cell-expand-smallest table-cell-minw-150 table-cell-ws-nowrap"
 				name="modified-date"
-				value="Test Date"
+				value="<%= resultsRankingsEntry.getDate("modified") %>"
 			/>
 		</liferay-ui:search-container-row>
 

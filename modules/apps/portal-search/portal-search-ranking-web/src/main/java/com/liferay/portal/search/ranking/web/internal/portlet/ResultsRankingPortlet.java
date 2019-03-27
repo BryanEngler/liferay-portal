@@ -15,7 +15,13 @@
 package com.liferay.portal.search.ranking.web.internal.portlet;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
+import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
+import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
+import com.liferay.portal.search.query.Queries;
+import com.liferay.portal.search.query.Query;
 import com.liferay.portal.search.ranking.web.internal.constants.ResultsRankingPortletKeys;
 import com.liferay.portal.search.ranking.web.internal.display.context.ResultsRankingPortletDisplayContext;
 
@@ -73,12 +79,39 @@ public class ResultsRankingPortlet extends MVCPortlet {
 				new ResultsRankingPortletDisplayContext(
 					httpServletRequest, renderRequest, renderResponse);
 
+		setResults(resultsRankingPortletDisplayContext);
+
 		renderRequest.setAttribute(
 			ResultsRankingPortletKeys.RESULTS_RANKING_DISPLAY_CONTEXT,
 			resultsRankingPortletDisplayContext);
 
 		super.render(renderRequest, renderResponse);
 	}
+
+	protected void setResults(
+		ResultsRankingPortletDisplayContext resultsRankingPortletDisplayContext) {
+
+		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
+
+		searchSearchRequest.setIndexNames("results-ranking");
+
+		Query matchAllQuery = queries.matchAll();
+
+		searchSearchRequest.setQuery(matchAllQuery);
+
+		SearchSearchResponse searchSearchResponse =
+			searchEngineAdapter.execute(searchSearchRequest);
+
+		Hits hits = searchSearchResponse.getHits();
+
+		resultsRankingPortletDisplayContext.setResults(hits.toList());
+	}
+
+	@Reference
+	protected Queries queries;
+
+	@Reference
+	protected SearchEngineAdapter searchEngineAdapter;
 
 	@Reference
 	private Portal _portal;
