@@ -36,6 +36,8 @@ portletDisplay.setURLBack(redirect);
 		</div>
 
 		<aui:input label="<%= StringPool.BLANK %>" name="search-term" placeholder="search-term" />
+		<aui:input label="<%= StringPool.BLANK %>" name="index-name" placeholder="index-name" />
+		<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.ADD %>" />
 	</liferay-frontend:edit-form-body>
 
 	<liferay-frontend:edit-form-footer>
