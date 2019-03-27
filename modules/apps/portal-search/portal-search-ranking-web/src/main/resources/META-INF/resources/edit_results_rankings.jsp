@@ -26,7 +26,7 @@ String resultsRankingsRootElementId = renderResponse.getNamespace() + "-results-
 	ResultsRankings.default(
 		'<%= resultsRankingsRootElementId %>',
 		{
-			searchTerm: ''
+			searchTerm: 'example'
 		},
 		{
 			spritemap: '<%= themeDisplay.getPathThemeImages() + "/lexicon/icons.svg" %>'
