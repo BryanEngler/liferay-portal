@@ -87,7 +87,7 @@ public class ElasticsearchSearchEngineInformation
 			return nodesString;
 		}
 		catch (Exception e) {
-			_log.error("Could not retrieve node information", e);
+			_log.error("Unable to get node information", e);
 
 			StringBundler sb = new StringBundler(4);
 
