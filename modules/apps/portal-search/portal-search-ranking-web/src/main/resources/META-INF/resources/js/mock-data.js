@@ -2,6 +2,7 @@ export function getMockResultsData(
 	amount = 1,
 	startId = 0,
 	level = 100,
+	searchBarTerm = '',
 	properties = {}
 ) {
 	let mockData = [];
@@ -15,6 +16,8 @@ export function getMockResultsData(
 
 		const typeOfItem = randomNum2 < 3 ? 'Document' : 'Web Content';
 
+		const k = searchBarTerm === '' ? i + startId : (i + startId) * 2;
+
 		mockData.push({
 			author: 'Juan Hidalgo',
 			clicks: Math.floor(randomNum),
@@ -24,9 +27,9 @@ export function getMockResultsData(
 			description:
 				'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod',
 			hidden: false,
-			id: startId + i + level,
-			pinned: startId + i < PINNED_AMOUNT,
-			title: `${startId + i + level} This is a ${typeOfItem} Example`,
+			id: k + level,
+			pinned: k < PINNED_AMOUNT,
+			title: `${k + level} This is a ${typeOfItem} Example`,
 			type: typeOfItem,
 			...properties
 		});

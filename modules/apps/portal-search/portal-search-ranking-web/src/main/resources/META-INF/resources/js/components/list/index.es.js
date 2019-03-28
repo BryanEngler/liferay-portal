@@ -17,7 +17,10 @@ class List extends Component {
 		onClickHide: PropTypes.func,
 		onClickPin: PropTypes.func,
 		onLoadResults: PropTypes.func,
+		onSearchBarEnter: PropTypes.func,
+		onUpdateSearchBarTerm: PropTypes.func,
 		onMove: PropTypes.func,
+		searchBarTerm: PropTypes.string,
 		totalResultsCount: PropTypes.number
 	};
 
@@ -68,12 +71,9 @@ class List extends Component {
 	};
 
 	_handleSelectAll = () => {
-		const {resultIds} = this.props;
-
-		this.setState(state => ({
-			selectedIds:
-				state.selectedIds.length === resultIds.length ? [] : resultIds
-		}));
+		this.setState({
+			selectedIds: this.props.resultIds
+		});
 	};
 
 	_handleTabSelect = (index, lastIndex) => {
@@ -97,6 +97,7 @@ class List extends Component {
 
 		return (
 			<Item
+				addedResult={item.addedResult}
 				author={item.author}
 				clicks={item.clicks}
 				date={item.date}
@@ -127,7 +128,10 @@ class List extends Component {
 			dataLoading,
 			onAddResultSubmit,
 			onClickPin,
-			resultIds
+			onSearchBarEnter,
+			onUpdateSearchBarTerm,
+			resultIds,
+			searchBarTerm
 		} = this.props;
 
 		const {selectedIds} = this.state;
@@ -139,9 +143,12 @@ class List extends Component {
 					onAddResultSubmit={onAddResultSubmit}
 					onClickHide={this._handleClickHide}
 					onClickPin={onClickPin}
+					onSearchBarEnter={onSearchBarEnter}
 					onSelectAll={this._handleSelectAll}
 					onSelectClear={this._handleSelectClear}
+					onUpdateSearchBarTerm={onUpdateSearchBarTerm}
 					resultIds={resultIds}
+					searchBarTerm={searchBarTerm}
 					selectedIds={selectedIds}
 				/>
 

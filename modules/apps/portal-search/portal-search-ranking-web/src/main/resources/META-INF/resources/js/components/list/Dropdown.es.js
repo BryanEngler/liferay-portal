@@ -101,21 +101,23 @@ class Dropdown extends Component {
 						</li>
 					)}
 
-					<li>
-						<a
-							className="dropdown-item"
-							href="#1"
-							onClick={onClickHide}
-						>
-							<ClayIcon iconName="hidden" />
+					{onClickHide && (
+						<li>
+							<a
+								className="dropdown-item"
+								href="#1"
+								onClick={onClickHide}
+							>
+								<ClayIcon iconName="hidden" />
 
-							<span className="dropdown-option-text">
-								{hidden
-									? getLang(`show-${addPlural}`)
-									: getLang(`hide-${addPlural}`)}
-							</span>
-						</a>
-					</li>
+								<span className="dropdown-option-text">
+									{hidden
+										? getLang(`show-${addPlural}`)
+										: getLang(`hide-${addPlural}`)}
+								</span>
+							</a>
+						</li>
+					)}
 				</ul>
 			</div>
 		);

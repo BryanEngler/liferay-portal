@@ -17,24 +17,21 @@ class SearchBar extends Component {
 		onAddResultSubmit: PropTypes.func,
 		onClickHide: PropTypes.func,
 		onClickPin: PropTypes.func,
+		onSearchBarEnter: PropTypes.func,
 		onSelectAll: PropTypes.func.isRequired,
 		onSelectClear: PropTypes.func.isRequired,
+		onUpdateSearchBarTerm: PropTypes.func,
 		resultIds: PropTypes.arrayOf(String),
-		selectedIds: PropTypes.arrayOf(String),
-		showAddResultButton: PropTypes.bool
+		searchBarTerm: PropTypes.string,
+		selectedIds: PropTypes.arrayOf(String)
 	};
 
 	static defaultProps = {
 		resultIds: [],
-		selectedIds: [],
-		showAddResultButton: true
+		selectedIds: []
 	};
 
 	selectAllCheckbox = React.createRef();
-
-	state = {
-		resultSearch: ''
-	};
 
 	/**
 	 * Sets the indeterminate state of the select all checkbox.
@@ -46,12 +43,18 @@ class SearchBar extends Component {
 			selectedIds.length > 0 && selectedIds.length !== resultIds.length;
 	}
 
+	_handleAllCheckbox = () => {
+		this.props.selectedIds.length > 0
+			? this.props.onSelectClear()
+			: this.props.onSelectAll();
+	};
+
 	_handleClickHide = () => {
 		this.props.onClickHide(this.props.selectedIds, !this._isAnyHidden());
 	};
 
 	_handleClickPin = () => {
-		const {dataMap, onClickPin, selectedIds} = this.props;
+		const {dataMap, onClickPin, onSelectClear, selectedIds} = this.props;
 
 		const unpinnedIds = selectedIds.filter(id => !dataMap[id].pinned);
 
@@ -60,25 +63,33 @@ class SearchBar extends Component {
 		} else {
 			onClickPin(selectedIds, false);
 		}
+
+		onSelectClear();
 	};
 
 	_handleSearchChange = event => {
 		event.preventDefault();
 
-		this.setState({
-			resultSearch: event.target.value
-		});
+		this.props.onUpdateSearchBarTerm(event.target.value);
 	};
 
 	_handleSearchEnter = () => {
-		console.log('fetch results');
-		//fetch results here!
+		this.props.onSearchBarEnter();
 	};
 
 	_handleSearchKeyDown = event => {
 		if (event.key === 'Enter') {
 			this._handleSearchEnter();
 		}
+	};
+
+	/**
+	 * Checks if any selected ids contain any added items.
+	 */
+	_isAnyAddedResult = () => {
+		const {dataMap, selectedIds} = this.props;
+
+		return selectedIds.some(id => dataMap[id].addedResult);
 	};
 
 	/**
@@ -102,13 +113,10 @@ class SearchBar extends Component {
 	render() {
 		const {
 			onAddResultSubmit,
-			onSelectAll,
 			resultIds,
-			selectedIds,
-			showAddResultButton
+			searchBarTerm,
+			selectedIds
 		} = this.props;
-
-		const {resultSearch} = this.state;
 
 		const classManagementBar = getCN(
 			'management-bar',
@@ -131,7 +139,7 @@ class SearchBar extends Component {
 											aria-label="Checkbox for search results"
 											checked={selectedIds.length > 0}
 											className="custom-control-input"
-											onChange={onSelectAll}
+											onChange={this._handleAllCheckbox}
 											ref={this.selectAllCheckbox}
 											type="checkbox"
 										/>
@@ -167,16 +175,19 @@ class SearchBar extends Component {
 
 									<ul className="navbar-nav" key="1">
 										<li className="nav-item">
-											<div className="nav-link nav-link-monospaced">
-												<ClayButton
-													borderless
-													className="component-action"
-													iconName="hidden"
-													onClick={
-														this._handleClickHide
-													}
-												/>
-											</div>
+											{!this._isAnyAddedResult() && (
+												<div className="nav-link nav-link-monospaced">
+													<ClayButton
+														borderless
+														className="component-action"
+														iconName="hidden"
+														onClick={
+															this
+																._handleClickHide
+														}
+													/>
+												</div>
+											)}
 										</li>
 
 										<li className="nav-item">
@@ -208,7 +219,9 @@ class SearchBar extends Component {
 													onClickPin={
 														this._handleClickPin
 													}
-													pinned={false}
+													pinned={
+														!this._isAnyUnpinned()
+													}
 													singular={
 														selectedIds.length === 1
 													}
@@ -240,7 +253,7 @@ class SearchBar extends Component {
 															'contains-text'
 														)}
 														type="text"
-														value={resultSearch}
+														value={searchBarTerm}
 													/>
 
 													<div className="input-group-inset-item input-group-inset-item-after">
@@ -261,7 +274,7 @@ class SearchBar extends Component {
 									</div>,
 
 									<div className="navbar-nav" key={1}>
-										{showAddResultButton && (
+										{onAddResultSubmit && (
 											<AddResult
 												onAddResultSubmit={
 													onAddResultSubmit

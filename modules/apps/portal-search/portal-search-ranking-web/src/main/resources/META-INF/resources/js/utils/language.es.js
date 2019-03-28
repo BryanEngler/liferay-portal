@@ -46,6 +46,7 @@ export const getLang = key => {
 		synonyms: 'Synonyms',
 		tag: 'Tag',
 		type: 'Type',
+		'unable-to-hide-added-results': 'Added results cannot be hidden',
 		'unpin-result': 'Unpin result',
 		'unpin-results': 'Unpin results',
 		user: 'User',
