@@ -62,9 +62,9 @@ public class ElasticsearchSearchEngineInformation
 				return StringPool.BLANK;
 			}
 
-			List<NodeInfo> nodesInfo = _getClusterNodes(client);
+			List<NodeInfo> nodeInfos = _getClusterNodes(client);
 
-			Stream<NodeInfo> stream = nodesInfo.stream();
+			Stream<NodeInfo> stream = nodeInfos.stream();
 
 			String nodesString = stream.map(
 				nodeInfo -> {
