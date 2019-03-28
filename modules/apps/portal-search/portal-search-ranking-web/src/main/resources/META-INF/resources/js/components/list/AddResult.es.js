@@ -70,14 +70,16 @@ class AddResult extends Component {
 							state.page * state.selectedDelta -
 								state.selectedDelta +
 								1,
-							500
+							500,
+							state.addResultSearchTerm
 						).data
 					)
 				},
 				results: getMockResultsData(
 					state.selectedDelta,
 					state.page * state.selectedDelta - state.selectedDelta + 1,
-					500
+					500,
+					state.addResultSearchTerm
 				)
 			}));
 		}, 1000);
@@ -155,10 +157,14 @@ class AddResult extends Component {
 		});
 	};
 
+	_handleSearchEnter = () => {
+		this._clearResultSelectedIds();
+		this._handlePageChange(1);
+	};
+
 	_handleSearchKeyDown = event => {
 		if (event.key === 'Enter') {
-			this._clearResultSelectedIds();
-			this._handlePageChange(1);
+			this._handleSearchEnter();
 		}
 	};
 
@@ -273,7 +279,7 @@ class AddResult extends Component {
 														iconName="search"
 														onClick={
 															this
-																._fetchSearchResults
+																._handleSearchEnter
 														}
 													/>
 												</div>
