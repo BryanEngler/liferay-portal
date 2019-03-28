@@ -5,6 +5,7 @@ import {DragSource as dragSource, DropTarget as dropTarget} from 'react-dnd';
 import {getEmptyImage} from 'react-dnd-html5-backend';
 import DRAG_TYPES from 'utils/drag-types.es';
 import {getLang, sub} from 'utils/language.es';
+import ClayButton from '../ClayButton.es';
 import ClayIcon from '../ClayIcon.es';
 import Dropdown from './Dropdown.es';
 import getCN from 'classnames';
@@ -180,6 +181,12 @@ class Item extends Component {
 		}
 	}
 
+	_handleAddedResultMouseOver = event => {
+		const message = getLang('search-your-engine-to-display-results');
+
+		Liferay.Portal.ToolTip.show(event.currentTarget, message);
+	};
+
 	_handleSelect = () => {
 		this.props.onSelect(this.props.id);
 	};
@@ -215,6 +222,7 @@ class Item extends Component {
 
 	render() {
 		const {
+			addedResult,
 			author,
 			canDrop,
 			clicks,
@@ -262,6 +270,7 @@ class Item extends Component {
 				'list-item-drag-hover-below':
 					index + 1 === hoverIndex && hoverIndex === lastIndex,
 				'list-item-dragging': dragging,
+				'results-ranking-item-added-result': addedResult,
 				'results-ranking-item-hidden': hidden,
 				'results-ranking-item-pinned': pinned
 			}
@@ -325,14 +334,24 @@ class Item extends Component {
 				{onClickHide && (
 					<div className="autofit-col">
 						<div className="result-hide">
-							<a
-								className="component-action"
-								href="#1"
-								onClick={this._handleHide}
-								role="button"
-							>
-								<ClayIcon iconName="hidden" />
-							</a>
+							{addedResult ? (
+								<ClayButton
+									borderless
+									className="component-action"
+									disabled
+									iconName="hidden"
+									monospaced
+									onMouseOver="_handleAddedResultMouseOver"
+								/>
+							) : (
+								<ClayButton
+									borderless
+									className="component-action"
+									iconName="hidden"
+									monospaced
+									onClick={this._handleHide}
+								/>
+							)}
 						</div>
 					</div>
 				)}
@@ -340,14 +359,13 @@ class Item extends Component {
 				{onClickPin && !hidden && (
 					<div className="autofit-col">
 						<div className="result-pin">
-							<a
+							<ClayButton
+								borderless
 								className="component-action"
-								href="#1"
+								iconName="lock"
+								monospaced
 								onClick={this._handlePin}
-								role="button"
-							>
-								<ClayIcon iconName="lock" />
-							</a>
+							/>
 						</div>
 					</div>
 				)}
@@ -356,7 +374,7 @@ class Item extends Component {
 					<div className="autofit-col">
 						<Dropdown
 							hidden={hidden}
-							onClickHide={this._handleHide}
+							onClickHide={addedResult ? null : this._handleHide}
 							onClickPin={this._handlePin}
 							pinned={pinned}
 						/>

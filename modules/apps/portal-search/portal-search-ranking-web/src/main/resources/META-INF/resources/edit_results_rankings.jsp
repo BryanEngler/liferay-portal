@@ -20,12 +20,15 @@
 String resultsRankingsRootElementId = renderResponse.getNamespace() + "-results-rankings-root";
 %>
 
+String redirect = ParamUtil.getString(request, "redirect");
+
 <div id="<%= resultsRankingsRootElementId %>"></div>
 
 <aui:script require='<%= npmResolvedPackageName + "/js/index.es as ResultsRankings" %>'>
 	ResultsRankings.default(
 		'<%= resultsRankingsRootElementId %>',
 		{
+			cancelUrl: '<%= HtmlUtil.escape(redirect) %>',
 			searchTerm: 'example'
 		},
 		{
