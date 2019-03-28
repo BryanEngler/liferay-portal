@@ -13,8 +13,8 @@ const createOption = label => ({
 
 class ReactSelectTags extends Component {
 	static propTypes = {
-		value: PropTypes.arrayOf(String),
-		onAction: PropTypes.func
+		onAction: PropTypes.func,
+		value: PropTypes.arrayOf(String)
 	};
 
 	state = {
@@ -22,7 +22,7 @@ class ReactSelectTags extends Component {
 		value: this.props.value
 	};
 
-	handleChange = (value, actionMeta) => {
+	handleChange = value => {
 		this.props.onAction(value);
 	};
 

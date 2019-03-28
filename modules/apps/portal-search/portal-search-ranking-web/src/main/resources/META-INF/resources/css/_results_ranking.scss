@@ -110,6 +110,12 @@
 		}
 	}
 
+	&.results-ranking-item-added-result {
+		.result-hide {
+			visibility: visible;
+		}
+	}
+
 	.list-item-description {
 		margin-top: 8px;
 	}
