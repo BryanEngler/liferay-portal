@@ -19,7 +19,7 @@ addDecorator(storyFn => (
 ));
 
 storiesOf('ResultsRankingForm', module).add('default', () => (
-	<ResultsRankingForm searchTerm="hello" />
+	<ResultsRankingForm cancelUrl="" searchTerm="hello" />
 ));
 
 storiesOf('PageToolbar', module)
@@ -27,14 +27,4 @@ storiesOf('PageToolbar', module)
 	.add('submit disabled', () => <PageToolbar submitDisabled />);
 
 storiesOf('Alias', module)
-	.add('empty list of aliases', () => <Alias keywords={[]} />)
-	.add('multiple aliases', () => (
-		<Alias
-			keywords={[
-				{label: 'one', value: 'one'},
-				{label: 'two', value: 'two'},
-				{label: 'three', value: 'three'},
-				{label: 'four', value: 'four'}
-			]}
-		/>
-	));
+	.add('empty list of aliases', () => <Alias keywords={[]} />);
