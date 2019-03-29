@@ -12,17 +12,29 @@
  * details.
  */
 
-package com.liferay.headless.search.resource.v1_0.test;
+package com.liferay.headless.search.resource.v1_0;
 
-import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.headless.search.dto.v1_0.SearchResult;
+import com.liferay.portal.kernel.model.Company;
 
-import org.junit.Ignore;
-import org.junit.runner.RunWith;
+import javax.annotation.Generated;
 
 /**
+ * To access this resource, run:
+ *
+ *     curl -u your@email.com:yourpassword -D - http://localhost:8080/o/headless-search/v1.0
+ *
  * @author Bryan Engler
+ * @generated
  */
-@Ignore
-@RunWith(Arquillian.class)
-public class ResultsResourceTest extends BaseResultsResourceTestCase {
+@Generated("")
+public interface SearchResultResource {
+
+	public SearchResult getSearchIndexKeywordsHiddenStartDelta(
+			String index, String keywords, String hidden, Long start,
+			Long delta)
+		throws Exception;
+
+	public void setContextCompany(Company contextCompany);
+
 }

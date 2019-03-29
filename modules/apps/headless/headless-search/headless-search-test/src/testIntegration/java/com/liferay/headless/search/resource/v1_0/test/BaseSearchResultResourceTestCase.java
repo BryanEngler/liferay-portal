@@ -20,8 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
-import com.liferay.headless.search.dto.v1_0.Results;
-import com.liferay.headless.search.resource.v1_0.ResultsResource;
+import com.liferay.headless.search.dto.v1_0.SearchResult;
+import com.liferay.headless.search.resource.v1_0.SearchResultResource;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
@@ -71,7 +71,7 @@ import org.junit.Test;
  * @generated
  */
 @Generated("")
-public abstract class BaseResultsResourceTestCase {
+public abstract class BaseSearchResultResourceTestCase {
 
 	@ClassRule
 	@Rule
@@ -98,24 +98,19 @@ public abstract class BaseResultsResourceTestCase {
 
 	@Test
 	public void testGetSearchIndexKeywordsHiddenStartDelta() throws Exception {
-		Results postResults =
-			testGetSearchIndexKeywordsHiddenStartDelta_addResults();
-
-		Results getResults = invokeGetSearchIndexKeywordsHiddenStartDelta(
-			postResults.getId());
-
-		assertEquals(postResults, getResults);
-		assertValid(getResults);
+		SearchResult postSearchResult =
+			testGetSearchIndexKeywordsHiddenStartDelta_addSearchResult();
 	}
 
-	protected Results testGetSearchIndexKeywordsHiddenStartDelta_addResults()
+	protected SearchResult
+			testGetSearchIndexKeywordsHiddenStartDelta_addSearchResult()
 		throws Exception {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
 
-	protected Results invokeGetSearchIndexKeywordsHiddenStartDelta(
+	protected SearchResult invokeGetSearchIndexKeywordsHiddenStartDelta(
 			String index, String keywords, String hidden, Long start,
 			Long delta)
 		throws Exception {
@@ -131,7 +126,7 @@ public abstract class BaseResultsResourceTestCase {
 		options.setLocation(location);
 
 		return _outputObjectMapper.readValue(
-			HttpUtil.URLtoString(options), Results.class);
+			HttpUtil.URLtoString(options), SearchResult.class);
 	}
 
 	protected Http.Response
@@ -162,35 +157,37 @@ public abstract class BaseResultsResourceTestCase {
 			expectedResponseCode, actualResponse.getResponseCode());
 	}
 
-	protected void assertEquals(Results results1, Results results2) {
+	protected void assertEquals(
+		SearchResult searchResult1, SearchResult searchResult2) {
+
 		Assert.assertTrue(
-			results1 + " does not equal " + results2,
-			equals(results1, results2));
+			searchResult1 + " does not equal " + searchResult2,
+			equals(searchResult1, searchResult2));
 	}
 
 	protected void assertEquals(
-		List<Results> resultses1, List<Results> resultses2) {
+		List<SearchResult> searchResults1, List<SearchResult> searchResults2) {
 
-		Assert.assertEquals(resultses1.size(), resultses2.size());
+		Assert.assertEquals(searchResults1.size(), searchResults2.size());
 
-		for (int i = 0; i < resultses1.size(); i++) {
-			Results results1 = resultses1.get(i);
-			Results results2 = resultses2.get(i);
+		for (int i = 0; i < searchResults1.size(); i++) {
+			SearchResult searchResult1 = searchResults1.get(i);
+			SearchResult searchResult2 = searchResults2.get(i);
 
-			assertEquals(results1, results2);
+			assertEquals(searchResult1, searchResult2);
 		}
 	}
 
 	protected void assertEqualsIgnoringOrder(
-		List<Results> resultses1, List<Results> resultses2) {
+		List<SearchResult> searchResults1, List<SearchResult> searchResults2) {
 
-		Assert.assertEquals(resultses1.size(), resultses2.size());
+		Assert.assertEquals(searchResults1.size(), searchResults2.size());
 
-		for (Results results1 : resultses1) {
+		for (SearchResult searchResult1 : searchResults1) {
 			boolean contains = false;
 
-			for (Results results2 : resultses2) {
-				if (equals(results1, results2)) {
+			for (SearchResult searchResult2 : searchResults2) {
+				if (equals(searchResult1, searchResult2)) {
 					contains = true;
 
 					break;
@@ -198,21 +195,22 @@ public abstract class BaseResultsResourceTestCase {
 			}
 
 			Assert.assertTrue(
-				resultses2 + " does not contain " + results1, contains);
+				searchResults2 + " does not contain " + searchResult1,
+				contains);
 		}
 	}
 
-	protected void assertValid(Results results) {
+	protected void assertValid(SearchResult searchResult) {
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
 
-	protected void assertValid(Page<Results> page) {
+	protected void assertValid(Page<SearchResult> page) {
 		boolean valid = false;
 
-		Collection<Results> resultses = page.getItems();
+		Collection<SearchResult> searchResults = page.getItems();
 
-		int size = resultses.size();
+		int size = searchResults.size();
 
 		if ((page.getLastPage() > 0) && (page.getPage() > 0) &&
 			(page.getPageSize() > 0) && (page.getTotalCount() > 0) &&
@@ -224,8 +222,10 @@ public abstract class BaseResultsResourceTestCase {
 		Assert.assertTrue(valid);
 	}
 
-	protected boolean equals(Results results1, Results results2) {
-		if (results1 == results2) {
+	protected boolean equals(
+		SearchResult searchResult1, SearchResult searchResult2) {
+
+		if (searchResult1 == searchResult2) {
 			return true;
 		}
 
@@ -233,13 +233,13 @@ public abstract class BaseResultsResourceTestCase {
 	}
 
 	protected Collection<EntityField> getEntityFields() throws Exception {
-		if (!(_resultsResource instanceof EntityModelResource)) {
+		if (!(_searchResultResource instanceof EntityModelResource)) {
 			throw new UnsupportedOperationException(
 				"Resource is not an instance of EntityModelResource");
 		}
 
 		EntityModelResource entityModelResource =
-			(EntityModelResource)_resultsResource;
+			(EntityModelResource)_searchResultResource;
 
 		EntityModel entityModel = entityModelResource.getEntityModel(
 			new MultivaluedHashMap());
@@ -265,7 +265,7 @@ public abstract class BaseResultsResourceTestCase {
 	}
 
 	protected String getFilterString(
-		EntityField entityField, String operator, Results results) {
+		EntityField entityField, String operator, SearchResult searchResult) {
 
 		StringBundler sb = new StringBundler();
 
@@ -279,35 +279,37 @@ public abstract class BaseResultsResourceTestCase {
 
 		if (entityFieldName.equals("resourceType")) {
 			sb.append("'");
-			sb.append(String.valueOf(results.getResourceType()));
+			sb.append(String.valueOf(searchResult.getResourceType()));
 			sb.append("'");
 
 			return sb.toString();
 		}
 
-		if (entityFieldName.equals("results")) {
-			sb.append("'");
-			sb.append(String.valueOf(results.getResults()));
-			sb.append("'");
+		if (entityFieldName.equals("documents")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
 
-			return sb.toString();
+		if (entityFieldName.equals("items")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
 		}
 
 		throw new IllegalArgumentException(
 			"Invalid entity field " + entityFieldName);
 	}
 
-	protected Results randomResults() {
-		return new Results() {
+	protected SearchResult randomSearchResult() {
+		return new SearchResult() {
 			{
 				resourceType = RandomTestUtil.randomString();
-				results = RandomTestUtil.randomString();
+				items = RandomTestUtil.randomLong();
 			}
 		};
 	}
 
-	protected Results randomPatchResults() {
-		return randomResults();
+	protected SearchResult randomPatchSearchResult() {
+		return randomSearchResult();
 	}
 
 	protected Group testGroup;
@@ -413,7 +415,7 @@ public abstract class BaseResultsResourceTestCase {
 	};
 
 	@Inject
-	private ResultsResource _resultsResource;
+	private SearchResultResource _searchResultResource;
 
 	private URL _resourceURL;
 

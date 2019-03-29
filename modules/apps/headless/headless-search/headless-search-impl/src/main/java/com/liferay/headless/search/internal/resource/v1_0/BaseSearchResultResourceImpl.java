@@ -14,8 +14,8 @@
 
 package com.liferay.headless.search.internal.resource.v1_0;
 
-import com.liferay.headless.search.dto.v1_0.Results;
-import com.liferay.headless.search.resource.v1_0.ResultsResource;
+import com.liferay.headless.search.dto.v1_0.SearchResult;
+import com.liferay.headless.search.resource.v1_0.SearchResultResource;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Company;
@@ -45,21 +45,22 @@ import javax.ws.rs.core.UriInfo;
  */
 @Generated("")
 @Path("/v1.0")
-public abstract class BaseResultsResourceImpl implements ResultsResource {
+public abstract class BaseSearchResultResourceImpl
+	implements SearchResultResource {
 
 	@Override
 	@GET
 	@Path("/search/{index}/{keywords}/{hidden}/{start}/{delta}")
 	@Produces("application/json")
-	@Tags(value = {@Tag(name = "Results")})
-	public Results getSearchIndexKeywordsHiddenStartDelta(
+	@Tags(value = {@Tag(name = "SearchResult")})
+	public SearchResult getSearchIndexKeywordsHiddenStartDelta(
 			@PathParam("index") String index,
 			@PathParam("keywords") String keywords,
 			@PathParam("hidden") String hidden, @PathParam("start") Long start,
 			@PathParam("delta") Long delta)
 		throws Exception {
 
-		return new Results();
+		return new SearchResult();
 	}
 
 	public void setContextCompany(Company contextCompany) {
@@ -75,11 +76,11 @@ public abstract class BaseResultsResourceImpl implements ResultsResource {
 		}
 
 		URI resourceURI = UriBuilder.fromResource(
-			BaseResultsResourceImpl.class
+			BaseSearchResultResourceImpl.class
 		).build();
 
 		URI methodURI = UriBuilder.fromMethod(
-			BaseResultsResourceImpl.class, methodName
+			BaseSearchResultResourceImpl.class, methodName
 		).build(
 			values
 		);
@@ -87,7 +88,7 @@ public abstract class BaseResultsResourceImpl implements ResultsResource {
 		return baseURIString + resourceURI.toString() + methodURI.toString();
 	}
 
-	protected void preparePatch(Results results) {
+	protected void preparePatch(SearchResult searchResult) {
 	}
 
 	protected <T, R> List<R> transform(

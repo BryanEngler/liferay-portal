@@ -99,11 +99,6 @@ public abstract class BaseDocumentResourceTestCase {
 	@Test
 	public void testGetDocumentIndexUid() throws Exception {
 		Document postDocument = testGetDocumentIndexUid_addDocument();
-
-		Document getDocument = invokeGetDocumentIndexUid(postDocument.getId());
-
-		assertEquals(postDocument, getDocument);
-		assertValid(getDocument);
 	}
 
 	protected Document testGetDocumentIndexUid_addDocument() throws Exception {
@@ -271,9 +266,73 @@ public abstract class BaseDocumentResourceTestCase {
 			return sb.toString();
 		}
 
-		if (entityFieldName.equals("source")) {
+		if (entityFieldName.equals("author")) {
 			sb.append("'");
-			sb.append(String.valueOf(document.getSource()));
+			sb.append(String.valueOf(document.getAuthor()));
+			sb.append("'");
+
+			return sb.toString();
+		}
+
+		if (entityFieldName.equals("clicks")) {
+			sb.append("'");
+			sb.append(String.valueOf(document.getClicks()));
+			sb.append("'");
+
+			return sb.toString();
+		}
+
+		if (entityFieldName.equals("date")) {
+			sb.append("'");
+			sb.append(String.valueOf(document.getDate()));
+			sb.append("'");
+
+			return sb.toString();
+		}
+
+		if (entityFieldName.equals("description")) {
+			sb.append("'");
+			sb.append(String.valueOf(document.getDescription()));
+			sb.append("'");
+
+			return sb.toString();
+		}
+
+		if (entityFieldName.equals("hidden")) {
+			sb.append("'");
+			sb.append(String.valueOf(document.getHidden()));
+			sb.append("'");
+
+			return sb.toString();
+		}
+
+		if (entityFieldName.equals("id")) {
+			sb.append("'");
+			sb.append(String.valueOf(document.getId()));
+			sb.append("'");
+
+			return sb.toString();
+		}
+
+		if (entityFieldName.equals("pinned")) {
+			sb.append("'");
+			sb.append(String.valueOf(document.getPinned()));
+			sb.append("'");
+
+			return sb.toString();
+		}
+
+		if (entityFieldName.equals("title")) {
+			sb.append("'");
+			sb.append(String.valueOf(document.getTitle()));
+			sb.append("'");
+
+			return sb.toString();
+		}
+
+		if (entityFieldName.equals("type")) {
+			sb.append("'");
+			sb.append(String.valueOf(document.getType()));
 			sb.append("'");
 
 			return sb.toString();
@@ -287,7 +346,15 @@ public abstract class BaseDocumentResourceTestCase {
 		return new Document() {
 			{
 				resourceType = RandomTestUtil.randomString();
-				source = RandomTestUtil.randomString();
+				author = RandomTestUtil.randomString();
+				clicks = RandomTestUtil.randomString();
+				date = RandomTestUtil.randomString();
+				description = RandomTestUtil.randomString();
+				hidden = RandomTestUtil.randomString();
+				id = RandomTestUtil.randomString();
+				pinned = RandomTestUtil.randomString();
+				title = RandomTestUtil.randomString();
+				type = RandomTestUtil.randomString();
 			}
 		};
 	}

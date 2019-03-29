@@ -17,6 +17,8 @@ package com.liferay.headless.search.internal.resource.v1_0;
 import com.liferay.headless.search.dto.v1_0.Document;
 import com.liferay.headless.search.resource.v1_0.DocumentResource;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.document.GetDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.GetDocumentResponse;
@@ -57,9 +59,13 @@ public class DocumentResourceImpl extends BaseDocumentResourceImpl {
 	private Document _toDocument(GetDocumentResponse getDocumentResponse)
 		throws PortalException {
 
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+			getDocumentResponse.getSource());
+
 		return new Document() {
 			{
-				source = getDocumentResponse.getSource();
+				author = jsonObject.getString("author");
+				id = jsonObject.getString("companyId");
 			}
 		};
 	}

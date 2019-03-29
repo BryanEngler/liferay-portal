@@ -62,20 +62,20 @@ public class Document {
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String resourceType;
 
-	public String getSource() {
-		return source;
+	public String getAuthor() {
+		return author;
 	}
 
-	public void setSource(String source) {
-		this.source = source;
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 
 	@JsonIgnore
-	public void setSource(
-		UnsafeSupplier<String, Exception> sourceUnsafeSupplier) {
+	public void setAuthor(
+		UnsafeSupplier<String, Exception> authorUnsafeSupplier) {
 
 		try {
-			source = sourceUnsafeSupplier.get();
+			author = authorUnsafeSupplier.get();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
@@ -84,7 +84,193 @@ public class Document {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected String source;
+	protected String author;
+
+	public String getClicks() {
+		return clicks;
+	}
+
+	public void setClicks(String clicks) {
+		this.clicks = clicks;
+	}
+
+	@JsonIgnore
+	public void setClicks(
+		UnsafeSupplier<String, Exception> clicksUnsafeSupplier) {
+
+		try {
+			clicks = clicksUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String clicks;
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	@JsonIgnore
+	public void setDate(UnsafeSupplier<String, Exception> dateUnsafeSupplier) {
+		try {
+			date = dateUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String date;
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	@JsonIgnore
+	public void setDescription(
+		UnsafeSupplier<String, Exception> descriptionUnsafeSupplier) {
+
+		try {
+			description = descriptionUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String description;
+
+	public String getHidden() {
+		return hidden;
+	}
+
+	public void setHidden(String hidden) {
+		this.hidden = hidden;
+	}
+
+	@JsonIgnore
+	public void setHidden(
+		UnsafeSupplier<String, Exception> hiddenUnsafeSupplier) {
+
+		try {
+			hidden = hiddenUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String hidden;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	@JsonIgnore
+	public void setId(UnsafeSupplier<String, Exception> idUnsafeSupplier) {
+		try {
+			id = idUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String id;
+
+	public String getPinned() {
+		return pinned;
+	}
+
+	public void setPinned(String pinned) {
+		this.pinned = pinned;
+	}
+
+	@JsonIgnore
+	public void setPinned(
+		UnsafeSupplier<String, Exception> pinnedUnsafeSupplier) {
+
+		try {
+			pinned = pinnedUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String pinned;
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	@JsonIgnore
+	public void setTitle(
+		UnsafeSupplier<String, Exception> titleUnsafeSupplier) {
+
+		try {
+			title = titleUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String title;
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	@JsonIgnore
+	public void setType(UnsafeSupplier<String, Exception> typeUnsafeSupplier) {
+		try {
+			type = typeUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String type;
 
 	public String toString() {
 		StringBundler sb = new StringBundler();
@@ -98,10 +284,66 @@ public class Document {
 		sb.append("\"");
 		sb.append(", ");
 
-		sb.append("\"source\": ");
+		sb.append("\"author\": ");
 
 		sb.append("\"");
-		sb.append(source);
+		sb.append(author);
+		sb.append("\"");
+		sb.append(", ");
+
+		sb.append("\"clicks\": ");
+
+		sb.append("\"");
+		sb.append(clicks);
+		sb.append("\"");
+		sb.append(", ");
+
+		sb.append("\"date\": ");
+
+		sb.append("\"");
+		sb.append(date);
+		sb.append("\"");
+		sb.append(", ");
+
+		sb.append("\"description\": ");
+
+		sb.append("\"");
+		sb.append(description);
+		sb.append("\"");
+		sb.append(", ");
+
+		sb.append("\"hidden\": ");
+
+		sb.append("\"");
+		sb.append(hidden);
+		sb.append("\"");
+		sb.append(", ");
+
+		sb.append("\"id\": ");
+
+		sb.append("\"");
+		sb.append(id);
+		sb.append("\"");
+		sb.append(", ");
+
+		sb.append("\"pinned\": ");
+
+		sb.append("\"");
+		sb.append(pinned);
+		sb.append("\"");
+		sb.append(", ");
+
+		sb.append("\"title\": ");
+
+		sb.append("\"");
+		sb.append(title);
+		sb.append("\"");
+		sb.append(", ");
+
+		sb.append("\"type\": ");
+
+		sb.append("\"");
+		sb.append(type);
 		sb.append("\"");
 
 		sb.append("}");

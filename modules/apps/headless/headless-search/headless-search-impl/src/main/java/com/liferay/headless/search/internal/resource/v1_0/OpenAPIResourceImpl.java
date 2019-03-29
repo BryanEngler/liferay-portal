@@ -78,7 +78,7 @@ public class OpenAPIResourceImpl {
 		{
 			add(DocumentResourceImpl.class);
 
-			add(ResultsResourceImpl.class);
+			add(SearchResultResourceImpl.class);
 
 			add(OpenAPIResourceImpl.class);
 		}

@@ -15,9 +15,9 @@
 package com.liferay.headless.search.internal.graphql.query.v1_0;
 
 import com.liferay.headless.search.dto.v1_0.Document;
-import com.liferay.headless.search.dto.v1_0.Results;
+import com.liferay.headless.search.dto.v1_0.SearchResult;
 import com.liferay.headless.search.resource.v1_0.DocumentResource;
-import com.liferay.headless.search.resource.v1_0.ResultsResource;
+import com.liferay.headless.search.resource.v1_0.SearchResultResource;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 
@@ -51,16 +51,17 @@ public class Query {
 
 	@GraphQLField
 	@GraphQLInvokeDetached
-	public Results getSearchIndexKeywordsHiddenStartDelta(
+	public SearchResult getSearchIndexKeywordsHiddenStartDelta(
 			@GraphQLName("index") String index,
 			@GraphQLName("keywords") String keywords,
 			@GraphQLName("hidden") String hidden,
 			@GraphQLName("start") Long start, @GraphQLName("delta") Long delta)
 		throws Exception {
 
-		ResultsResource resultsResource = _createResultsResource();
+		SearchResultResource searchResultResource =
+			_createSearchResultResource();
 
-		return resultsResource.getSearchIndexKeywordsHiddenStartDelta(
+		return searchResultResource.getSearchIndexKeywordsHiddenStartDelta(
 			index, keywords, hidden, start, delta);
 	}
 
@@ -78,19 +79,22 @@ public class Query {
 	private static final ServiceTracker<DocumentResource, DocumentResource>
 		_documentResourceServiceTracker;
 
-	private static ResultsResource _createResultsResource() throws Exception {
-		ResultsResource resultsResource =
-			_resultsResourceServiceTracker.getService();
+	private static SearchResultResource _createSearchResultResource()
+		throws Exception {
 
-		resultsResource.setContextCompany(
+		SearchResultResource searchResultResource =
+			_searchResultResourceServiceTracker.getService();
+
+		searchResultResource.setContextCompany(
 			CompanyLocalServiceUtil.getCompany(
 				CompanyThreadLocal.getCompanyId()));
 
-		return resultsResource;
+		return searchResultResource;
 	}
 
-	private static final ServiceTracker<ResultsResource, ResultsResource>
-		_resultsResourceServiceTracker;
+	private static final ServiceTracker
+		<SearchResultResource, SearchResultResource>
+			_searchResultResourceServiceTracker;
 
 	static {
 		Bundle bundle = FrameworkUtil.getBundle(Query.class);
@@ -102,13 +106,14 @@ public class Query {
 		documentResourceServiceTracker.open();
 
 		_documentResourceServiceTracker = documentResourceServiceTracker;
-		ServiceTracker<ResultsResource, ResultsResource>
-			resultsResourceServiceTracker = new ServiceTracker<>(
-				bundle.getBundleContext(), ResultsResource.class, null);
+		ServiceTracker<SearchResultResource, SearchResultResource>
+			searchResultResourceServiceTracker = new ServiceTracker<>(
+				bundle.getBundleContext(), SearchResultResource.class, null);
 
-		resultsResourceServiceTracker.open();
+		searchResultResourceServiceTracker.open();
 
-		_resultsResourceServiceTracker = resultsResourceServiceTracker;
+		_searchResultResourceServiceTracker =
+			searchResultResourceServiceTracker;
 	}
 
 }

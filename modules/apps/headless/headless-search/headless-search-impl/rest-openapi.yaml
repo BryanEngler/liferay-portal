@@ -26,16 +26,37 @@ components:
             properties:
                 resourceType:
                     type: string
-                source:
+                author:
+                    type: string
+                clicks:
+                    type: string
+                date:
+                    type: string
+                description:
+                    type: string
+                hidden:
+                    type: string
+                id:
+                    type: string
+                pinned:
+                    type: string
+                title:
+                    type: string
+                type:
                     type: string
             type: object
-        Results:
-            description: https://www.schema.org/Results
+        SearchResult:
+            description: https://www.schema.org/SearchResult
             properties:
                 resourceType:
                     type: string
-                results:
-                    type: string
+                documents:
+                    items:
+                        $ref: "#/components/schemas/Document"
+                    type: array
+                items:
+                    format: int64
+                    type: integer
             type: object
 info:
     description: ""
@@ -99,6 +120,6 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/Results"
+                                $ref: "#/components/schemas/SearchResult"
                     description: ""
-            tags: ["Results"]
+            tags: ["SearchResult"]

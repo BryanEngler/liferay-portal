@@ -33,10 +33,10 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @generated
  */
 @Generated("")
-@GraphQLName("Results")
+@GraphQLName("SearchResult")
 @JsonFilter("Liferay.Vulcan")
-@XmlRootElement(name = "Results")
-public class Results {
+@XmlRootElement(name = "SearchResult")
+public class SearchResult {
 
 	public String getResourceType() {
 		return resourceType;
@@ -62,20 +62,20 @@ public class Results {
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String resourceType;
 
-	public String getResults() {
-		return results;
+	public Document[] getDocuments() {
+		return documents;
 	}
 
-	public void setResults(String results) {
-		this.results = results;
+	public void setDocuments(Document[] documents) {
+		this.documents = documents;
 	}
 
 	@JsonIgnore
-	public void setResults(
-		UnsafeSupplier<String, Exception> resultsUnsafeSupplier) {
+	public void setDocuments(
+		UnsafeSupplier<Document[], Exception> documentsUnsafeSupplier) {
 
 		try {
-			results = resultsUnsafeSupplier.get();
+			documents = documentsUnsafeSupplier.get();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
@@ -84,7 +84,29 @@ public class Results {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected String results;
+	protected Document[] documents;
+
+	public Long getItems() {
+		return items;
+	}
+
+	public void setItems(Long items) {
+		this.items = items;
+	}
+
+	@JsonIgnore
+	public void setItems(UnsafeSupplier<Long, Exception> itemsUnsafeSupplier) {
+		try {
+			items = itemsUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Long items;
 
 	public String toString() {
 		StringBundler sb = new StringBundler();
@@ -98,11 +120,30 @@ public class Results {
 		sb.append("\"");
 		sb.append(", ");
 
-		sb.append("\"results\": ");
+		sb.append("\"documents\": ");
 
-		sb.append("\"");
-		sb.append(results);
-		sb.append("\"");
+		if (documents == null) {
+			sb.append("null");
+		}
+		else {
+			sb.append("[");
+
+			for (int i = 0; i < documents.length; i++) {
+				sb.append(documents[i]);
+
+				if ((i + 1) < documents.length) {
+					sb.append(", ");
+				}
+			}
+
+			sb.append("]");
+		}
+
+		sb.append(", ");
+
+		sb.append("\"items\": ");
+
+		sb.append(items);
 
 		sb.append("}");
 
