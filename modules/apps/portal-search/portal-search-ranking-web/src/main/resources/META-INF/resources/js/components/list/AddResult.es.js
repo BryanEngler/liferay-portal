@@ -3,7 +3,7 @@ import ClayButton from '../ClayButton.es';
 import getCN from 'classnames';
 import {getLang, sub} from 'utils/language.es';
 import Item from './Item.es';
-import {getMockResultsData} from 'mock-data.js';
+import {getMockResultsData} from 'test/mock-data.js';
 import PaginationBar from './PaginationBar.es';
 import {PropTypes} from 'prop-types';
 import ReactModal from 'react-modal';
