@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import Alias from './Alias.es';
 import {getLang} from 'utils/language.es';
 import List from './list/index.es';
-import {getMockResultsData} from 'mock-data.js';
+import {getMockResultsData} from 'test/mock-data.js';
 import PageToolbar from './PageToolbar.es';
 import {PropTypes} from 'prop-types';
 import {

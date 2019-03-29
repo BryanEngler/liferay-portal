@@ -56,6 +56,15 @@
 		"sass-loader": "^7.1.0",
 		"style-loader": "^0.23.1"
 	},
+	"jest": {
+		"setupFilesAfterEnv": [
+			"<rootDir>/test/js/setup.js"
+		],
+		"testPathIgnorePatterns": [
+			"<rootDir>/test/js/mock-data.js",
+			"<rootDir>/test/js/setup.js"
+		]
+	},
 	"main": "js/index.es.js",
 	"name": "portal-search-ranking-web",
 	"private": true,
