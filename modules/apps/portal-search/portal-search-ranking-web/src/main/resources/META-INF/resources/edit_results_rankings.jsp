@@ -17,10 +17,10 @@
 <%@ include file="/init.jsp" %>
 
 <%
+String redirect = ParamUtil.getString(request, "redirect");
+
 String resultsRankingsRootElementId = renderResponse.getNamespace() + "-results-rankings-root";
 %>
-
-String redirect = ParamUtil.getString(request, "redirect");
 
 <div id="<%= resultsRankingsRootElementId %>"></div>
 
