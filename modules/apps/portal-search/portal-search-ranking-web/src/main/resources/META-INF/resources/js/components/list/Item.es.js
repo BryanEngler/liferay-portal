@@ -159,7 +159,8 @@ class Item extends Component {
 		searchTerm: PropTypes.string,
 		selected: PropTypes.bool,
 		title: PropTypes.string,
-		type: PropTypes.string
+		type: PropTypes.string,
+		url: PropTypes.string
 	};
 
 	static defaultProps = {
@@ -249,7 +250,8 @@ class Item extends Component {
 			selected,
 			style,
 			title,
-			type
+			type,
+			url
 		} = this.props;
 
 		const colorScheme = {
@@ -324,7 +326,7 @@ class Item extends Component {
 					<section className="autofit-section">
 						<h4 className="list-group-title">
 							<span className="text-truncate-inline">
-								<a href="#1">{title}</a>
+								{url ? <a href={url}>{title}</a> : title}
 							</span>
 						</h4>
 

@@ -73,13 +73,13 @@ class Alias extends Component {
 							</div>
 
 							<div className="input-group-item input-group-item-shrink">
-								<a
-									className="link-outline link-outline-borderless link-outline-primary"
-									href="#1"
+								<ClayButton
+									borderless
+									displayStyle="primary"
 									onClick={this._handleOpenModal}
-								>
-									{getLang('add-an-alias')}
-								</a>
+									label={getLang('add-an-alias')}
+									size="sm"
+								/>
 							</div>
 						</div>
 					</div>
@@ -109,6 +109,7 @@ class Alias extends Component {
 							<div className="alias-modal-description">
 								{getLang('add-an-alias-description')}
 							</div>
+
 							<div className="form-group">
 								<label>{getLang('alias')}</label>
 
