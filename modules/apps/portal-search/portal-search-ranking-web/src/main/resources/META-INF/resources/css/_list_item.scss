@@ -1,0 +1,99 @@
+.list-item-root {
+	border-left-width: 0;
+	border-radius: 0;
+	border-right-width: 0;
+
+	.click-count {
+		font-size: 12px;
+		line-height: 21px;
+	}
+
+	.icon-grey {
+		background-color: $mainLighten28;
+	}
+
+	.icon-purple {
+		background-color: $chartPurple;
+	}
+
+	.icon-red {
+		background-color: $chartRed;
+	}
+
+	.icon-blue {
+		background-color: $chartBlue;
+	}
+
+	.list-item-description {
+		margin-top: 8px;
+	}
+
+	.result-drag {
+		cursor: grab;
+		padding: 0;
+		visibility: hidden;
+
+		.result-drag-sticker {
+			width: unset;
+		}
+	}
+
+	.result-icon {
+		color: $white;
+		font-size: 10px;
+
+		svg {
+			font-size: 18px;
+		}
+	}
+
+	.result-pin, .result-hide {
+		visibility: hidden;
+	}
+
+	&:hover {
+		.result-pin, .result-hide {
+			visibility: visible;
+		}
+	}
+
+	&.list-item-drag-hover {
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+		box-shadow: inset 0 4px 0 0 $primary;
+	}
+
+	&.list-item-drag-hover-below {
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+		box-shadow: inset 0 -4px 0 0 $primary;
+	}
+
+	&.list-item-dragging {
+		opacity: 0.4;
+	}
+
+	&.results-ranking-item-pinned {
+		.result-drag {
+			visibility: visible;
+		}
+
+		.result-pin {
+			visibility: visible;
+		}
+	}
+
+	&.results-ranking-item-hidden {
+		padding-left: 24px;
+
+		.result-hide {
+			visibility: visible;
+		}
+	}
+
+	&.results-ranking-item-added-result {
+		.result-hide {
+			visibility: visible;
+		}
+	}
+}

@@ -1,0 +1,17 @@
+.add-result-modal-root {
+	.inline-scroller {
+		background-color: $lightBackground;
+		max-height: 70vh;
+	}
+}
+
+.alias-modal-root {
+	.alias-modal-description {
+		font-size: 14px;
+		padding-bottom: 10px;
+	}
+}
+
+.react-modal-backdrop {
+	background-color: rgba(57, 58, 80, 0.8);
+}

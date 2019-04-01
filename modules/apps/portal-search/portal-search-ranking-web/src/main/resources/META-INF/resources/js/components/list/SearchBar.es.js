@@ -1,5 +1,5 @@
-import AddResult from './AddResult.es';
-import ClayButton from '../ClayButton.es';
+import AddResult from 'components/add_result/index.es';
+import ClayButton from 'components/shared/ClayButton.es';
 import Dropdown from './Dropdown.es';
 import getCN from 'classnames';
 import React, {Component} from 'react';
@@ -98,6 +98,7 @@ class SearchBar extends Component {
 
 	/**
 	 * Checks if any selected ids contain any added items.
+	 * @returns {boolean} True if any of the selected ids were added.
 	 */
 	_isAnyAddedResult = () => {
 		const {dataMap, selectedIds} = this.props;
@@ -107,6 +108,7 @@ class SearchBar extends Component {
 
 	/**
 	 * Checks if any selected ids contain any hidden items.
+	 * @returns {boolean} True if any selected ids are currently hidden.
 	 */
 	_isAnyHidden = () => {
 		const {dataMap, selectedIds} = this.props;
@@ -116,6 +118,7 @@ class SearchBar extends Component {
 
 	/**
 	 * Checks if any selected ids contain any unpinned items.
+	 * @returns {boolean} True if any selected ids are currently unpinned.
 	 */
 	_isAnyUnpinned = () => {
 		const {dataMap, selectedIds} = this.props;

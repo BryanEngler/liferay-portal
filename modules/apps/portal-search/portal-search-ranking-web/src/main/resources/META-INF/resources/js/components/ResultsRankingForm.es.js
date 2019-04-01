@@ -1,13 +1,14 @@
-import Alias from './Alias.es';
-import List from './list/index.es';
+import Alias from 'components/alias/index.es';
+import List from 'components/list/index.es';
 import PageToolbar from './PageToolbar.es';
 import React, {Component} from 'react';
+import ReactModal from 'react-modal';
 import {
 	ClayTab,
 	ClayTabList,
 	ClayTabPanel,
 	ClayTabs
-} from 'components/ClayTabs.es';
+} from 'components/shared/ClayTabs.es';
 import {getLang} from 'utils/language.es';
 import {getMockResultsData} from 'test/mock-data.js';
 import {
@@ -63,6 +64,8 @@ class ResultsRankingForm extends Component {
 	}
 
 	componentDidMount() {
+		ReactModal.setAppElement('.results-ranking-form-root');
+
 		this._handleFetchResultsData();
 		this._handleFetchResultsDataHidden();
 	}
@@ -370,7 +373,7 @@ class ResultsRankingForm extends Component {
 	};
 
 	/**
-	 * Handles updating the term in the searchbar, which gets applied for
+	 * Handles updating the term in the search bar, which gets applied for
 	 * fetching data.
 	 * @param {string} searchBarTerm The new term
 	 */
@@ -393,7 +396,7 @@ class ResultsRankingForm extends Component {
 	};
 
 	/**
-	 * Handles the searchbar enter, in which results are cleared and replaced
+	 * Handles the search bar enter, in which results are cleared and replaced
 	 * with fetched data with the new search parameter.
 	 */
 	_handleSearchBarEnter = () => {
@@ -414,6 +417,45 @@ class ResultsRankingForm extends Component {
 		return !resultIdsPinned.includes(id) && !resultIdsHidden.includes(id);
 	};
 
+	_renderHiddenInputs = () => (
+		<React.Fragment>
+			<input
+				id="aliases"
+				name="aliases"
+				type="hidden"
+				value={this.state.aliases}
+			/>
+
+			<input
+				id="hiddenAdded"
+				name="hiddenAdded"
+				type="hidden"
+				value={this._getHiddenAdded()}
+			/>
+
+			<input
+				id="hiddenRemoved"
+				name="hiddenRemoved"
+				type="hidden"
+				value={this._getHiddenRemoved()}
+			/>
+
+			<input
+				id="pinnedAdded"
+				name="pinnedAdded"
+				type="hidden"
+				value={this._getPinnedAdded()}
+			/>
+
+			<input
+				id="pinnedRemoved"
+				name="pinnedRemoved"
+				type="hidden"
+				value={this._getPinnedRemoved()}
+			/>
+		</React.Fragment>
+	);
+
 	render() {
 		const {cancelUrl, searchTerm} = this.props;
 
@@ -429,41 +471,8 @@ class ResultsRankingForm extends Component {
 		} = this.state;
 
 		return (
-			<div className="results-ranking-form">
-				<input
-					id="aliases"
-					name="aliases"
-					type="hidden"
-					value={aliases}
-				/>
-
-				<input
-					id="hiddenAdded"
-					name="hiddenAdded"
-					type="hidden"
-					value={this._getHiddenAdded()}
-				/>
-
-				<input
-					id="hiddenRemoved"
-					name="hiddenRemoved"
-					type="hidden"
-					value={this._getHiddenRemoved()}
-				/>
-
-				<input
-					id="pinnedAdded"
-					name="pinnedAdded"
-					type="hidden"
-					value={this._getPinnedAdded()}
-				/>
-
-				<input
-					id="pinnedRemoved"
-					name="pinnedRemoved"
-					type="hidden"
-					value={this._getPinnedRemoved()}
-				/>
+			<div className="results-ranking-form-root">
+				{this._renderHiddenInputs()}
 
 				<PageToolbar
 					onCancel={cancelUrl}
@@ -471,19 +480,23 @@ class ResultsRankingForm extends Component {
 				/>
 
 				<div className="container-fluid container-fluid-max-xl container-form-lg">
-					<Alias
-						keywords={aliases}
-						onClickDelete={this._handleRemoveAlias}
-						onClickSubmit={this._handleUpdateAlias}
-						searchTerm={searchTerm}
-					/>
+					<div className="sheet sheet-lg form-section-header">
+						<h2 className="sheet-title">{`"${searchTerm}"`}</h2>
 
-					<div className="sheet sheet-lg">
+						<Alias
+							keywords={aliases}
+							onClickDelete={this._handleRemoveAlias}
+							onClickSubmit={this._handleUpdateAlias}
+							searchTerm={searchTerm}
+						/>
+					</div>
+
+					<div className="sheet sheet-lg form-section-body">
 						<div className="sheet-text">
 							<strong>{getLang('results')}</strong>
 						</div>
 
-						<div className="results-ranking-list">
+						<div className="form-section-results-list">
 							<ClayTabs onSelect={this._handleTabSelect}>
 								<ClayTabList className="results-ranking-tabs">
 									<ClayTab>{getLang('visible')}</ClayTab>

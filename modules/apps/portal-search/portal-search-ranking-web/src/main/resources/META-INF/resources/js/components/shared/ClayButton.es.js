@@ -1,4 +1,4 @@
-import ClayIcon from './ClayIcon.es';
+import ClayIcon from 'components/shared/ClayIcon.es';
 import getCN from 'classnames';
 import React, {Component} from 'react';
 import {PropTypes} from 'prop-types';
@@ -39,7 +39,6 @@ class ClayButton extends Component {
 	render() {
 		const {
 			borderless,
-			children,
 			className,
 			displayStyle,
 			href,
