@@ -1,21 +1,21 @@
-import React, {Component} from 'react';
-import {PropTypes} from 'prop-types';
-import getCN from 'classnames';
 import ClayButton from '../ClayButton.es';
 import ClayIcon from '../ClayIcon.es';
+import getCN from 'classnames';
+import React, {Component} from 'react';
 import {getLang} from 'utils/language.es';
+import {PropTypes} from 'prop-types';
 
 class Dropdown extends Component {
-	static defaultProps = {
-		singular: true
-	};
-
 	static propTypes = {
 		hidden: PropTypes.bool,
 		onClickHide: PropTypes.func,
 		onClickPin: PropTypes.func,
 		pinned: PropTypes.bool,
 		singular: PropTypes.bool
+	};
+
+	static defaultProps = {
+		singular: true
 	};
 
 	constructor(props) {
@@ -42,18 +42,16 @@ class Dropdown extends Component {
 
 	_handleClickOutside = event => {
 		if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-			this.setState({
-				show: false
-			});
+			this.setState({show: false});
 		}
 	};
 
 	_handleDropdownToggle = event => {
 		event.preventDefault();
 
-		this.setState(state => ({
-			show: !state.show
-		}));
+		this.setState(
+			state => ({show: !state.show})
+		);
 	};
 
 	render() {
@@ -61,11 +59,15 @@ class Dropdown extends Component {
 
 		const {hidden, onClickHide, onClickPin, pinned, singular} = this.props;
 
-		const classHidden = getCN('dropdown-menu', 'dropdown-menu-right', {
-			show: show
-		});
+		const classHidden = getCN(
+			'dropdown-menu',
+			'dropdown-menu-right',
+			{
+				show
+			}
+		);
 
-		const addPlural = singular ? 'result' : 'results';
+		const resultLabel = singular ? 'result' : 'results';
 
 		return (
 			<div
@@ -77,9 +79,9 @@ class Dropdown extends Component {
 					aria-haspopup="true"
 					className="component-action dropdown-toggle"
 					data-toggle="dropdown"
+					iconName="ellipsis-v"
 					id="optionDropdown"
 					onClick={this._handleDropdownToggle}
-					iconName="ellipsis-v"
 				/>
 
 				<ul aria-labelledby="optionDropdown" className={classHidden}>
@@ -93,9 +95,9 @@ class Dropdown extends Component {
 								<ClayIcon iconName="lock" />
 
 								<span className="dropdown-option-text">
-									{pinned
-										? getLang(`unpin-${addPlural}`)
-										: getLang(`pin-${addPlural}`)}
+									{pinned ?
+										getLang(`unpin-${resultLabel}`) :
+										getLang(`pin-${resultLabel}`)}
 								</span>
 							</a>
 						</li>
@@ -111,9 +113,9 @@ class Dropdown extends Component {
 								<ClayIcon iconName="hidden" />
 
 								<span className="dropdown-option-text">
-									{hidden
-										? getLang(`show-${addPlural}`)
-										: getLang(`hide-${addPlural}`)}
+									{hidden ?
+										getLang(`show-${resultLabel}`) :
+										getLang(`hide-${resultLabel}`)}
 								</span>
 							</a>
 						</li>

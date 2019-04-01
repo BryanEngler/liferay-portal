@@ -1,13 +1,14 @@
-import React, {Component} from 'react';
 import AddResult from './AddResult.es';
-import {PropTypes} from 'prop-types';
 import ClayButton from '../ClayButton.es';
 import Dropdown from './Dropdown.es';
 import getCN from 'classnames';
+import React, {Component} from 'react';
 import {getLang, sub} from 'utils/language.es';
+import {PropTypes} from 'prop-types';
 
 class SearchBar extends Component {
 	static propTypes = {
+
 		/**
 		 * The data map of id to object it represents. Search bar needs to know
 		 * about the dataMap to determine which actions are allowed for the
@@ -39,14 +40,19 @@ class SearchBar extends Component {
 	componentDidUpdate() {
 		const {resultIds, selectedIds} = this.props;
 
-		this.selectAllCheckbox.current.indeterminate =
-			selectedIds.length > 0 && selectedIds.length !== resultIds.length;
+		const indeterminate = selectedIds.length > 0 &&
+			selectedIds.length !== resultIds.length;
+
+		this.selectAllCheckbox.current.indeterminate = indeterminate;
 	}
 
 	_handleAllCheckbox = () => {
-		this.props.selectedIds.length > 0
-			? this.props.onSelectClear()
-			: this.props.onSelectAll();
+		if (this.props.selectedIds.length > 0) {
+			this.props.onSelectClear();
+		}
+		else {
+			this.props.onSelectAll();
+		}
 	};
 
 	_handleClickHide = () => {
@@ -60,7 +66,8 @@ class SearchBar extends Component {
 
 		if (unpinnedIds.length) {
 			onClickPin(unpinnedIds, true);
-		} else {
+		}
+		else {
 			onClickPin(selectedIds, false);
 		}
 
@@ -82,6 +89,12 @@ class SearchBar extends Component {
 			this._handleSearchEnter();
 		}
 	};
+
+	/**
+	 * Checks if there are any items selected.
+	 * @returns {boolean} True if there is at least 1 item selected.
+	 */
+	_hasSelectedIds = () => this.props.selectedIds.length > 0;
 
 	/**
 	 * Checks if any selected ids contain any added items.
@@ -120,9 +133,9 @@ class SearchBar extends Component {
 
 		const classManagementBar = getCN(
 			'management-bar',
-			selectedIds.length > 0
-				? 'management-bar-primary'
-				: 'management-bar-light',
+			this._hasSelectedIds() ?
+				'management-bar-primary' :
+				'management-bar-light',
 			'navbar',
 			'navbar-expand-md'
 		);
@@ -137,7 +150,7 @@ class SearchBar extends Component {
 									<label>
 										<input
 											aria-label="Checkbox for search results"
-											checked={selectedIds.length > 0}
+											checked={this._hasSelectedIds()}
 											className="custom-control-input"
 											onChange={this._handleAllCheckbox}
 											ref={this.selectAllCheckbox}
@@ -150,139 +163,109 @@ class SearchBar extends Component {
 							</li>
 						</ul>
 
-						{selectedIds.length > 0
-							? [
-									<ul
-										className="navbar-nav navbar-nav-expand"
-										key="0"
-									>
-										<li className="nav-item">
-											<span className="navbar-text">
-												<strong>
-													{sub(
-														getLang(
-															'x-of-x-items-selected'
-														),
-														[
-															selectedIds.length,
-															resultIds.length
-														]
-													)}
-												</strong>
-											</span>
-										</li>
-									</ul>,
+						{this._hasSelectedIds() &&
+							<React.Fragment>
+								<ul className="navbar-nav navbar-nav-expand">
+									<li className="nav-item">
+										<span className="navbar-text">
+											<strong>
+												{sub(
+													getLang(
+														'x-of-x-items-selected'
+													),
+													[
+														selectedIds.length,
+														resultIds.length
+													]
+												)}
+											</strong>
+										</span>
+									</li>
+								</ul>
 
-									<ul className="navbar-nav" key="1">
-										<li className="nav-item">
-											{!this._isAnyAddedResult() && (
-												<div className="nav-link nav-link-monospaced">
-													<ClayButton
-														borderless
-														className="component-action"
-														iconName="hidden"
-														onClick={
-															this
-																._handleClickHide
-														}
-													/>
-												</div>
-											)}
-										</li>
-
-										<li className="nav-item">
-											{!this._isAnyHidden() && (
-												<div className="nav-link nav-link-monospaced">
-													<ClayButton
-														borderless
-														className="component-action"
-														iconName={
-															this._isAnyUnpinned()
-																? 'lock'
-																: 'unlock'
-														}
-														onClick={
-															this._handleClickPin
-														}
-													/>
-												</div>
-											)}
-										</li>
-
-										<li className="nav-item">
+								<ul className="navbar-nav">
+									<li className="nav-item">
+										{!this._isAnyAddedResult() && (
 											<div className="nav-link nav-link-monospaced">
-												<Dropdown
-													hidden={this._isAnyHidden()}
-													onClickHide={
-														this._handleClickHide
-													}
-													onClickPin={
-														this._handleClickPin
-													}
-													pinned={
-														!this._isAnyUnpinned()
-													}
-													singular={
-														selectedIds.length === 1
-													}
+												<ClayButton
+													borderless
+													className="component-action"
+													iconName="hidden"
+													onClick={this._handleClickHide}
 												/>
 											</div>
-										</li>
-									</ul>
-							  ]
-							: [
-									<div
-										className="navbar-nav navbar-nav-expand"
-										key={0}
-									>
-										<div className="container-fluid container-fluid-max-xl">
-											<div className="input-group">
-												<div className="input-group-item">
-													<input
-														aria-label="Search for"
-														className="form-control input-group-inset input-group-inset-after"
-														onChange={
-															this
-																._handleSearchChange
-														}
-														onKeyDown={
-															this
-																._handleSearchKeyDown
-														}
-														placeholder={getLang(
-															'contains-text'
-														)}
-														type="text"
-														value={searchBarTerm}
-													/>
+										)}
+									</li>
 
-													<div className="input-group-inset-item input-group-inset-item-after">
-														<ClayButton
-															displayStyle={
-																'unstyled'
-															}
-															iconName="search"
-															onClick={
-																this
-																	._handleSearchEnter
-															}
-														/>
-													</div>
+									<li className="nav-item">
+										{!this._isAnyHidden() && (
+											<div className="nav-link nav-link-monospaced">
+												<ClayButton
+													borderless
+													className="component-action"
+													iconName={
+														this._isAnyUnpinned() ?
+															'lock' :
+															'unlock'
+													}
+													onClick={this._handleClickPin}
+												/>
+											</div>
+										)}
+									</li>
+
+									<li className="nav-item">
+										<div className="nav-link nav-link-monospaced">
+											<Dropdown
+												hidden={this._isAnyHidden()}
+												onClickHide={this._handleClickHide}
+												onClickPin={this._handleClickPin}
+												pinned={!this._isAnyUnpinned()}
+												singular={selectedIds.length === 1}
+											/>
+										</div>
+									</li>
+								</ul>
+							</React.Fragment>
+						}
+
+						{!this._hasSelectedIds() &&
+							<React.Fragment>
+								<div className="navbar-nav navbar-nav-expand">
+									<div className="container-fluid container-fluid-max-xl">
+										<div className="input-group">
+											<div className="input-group-item">
+												<input
+													aria-label="Search for"
+													className="form-control input-group-inset input-group-inset-after"
+													onChange={this._handleSearchChange}
+													onKeyDown={this._handleSearchKeyDown}
+													placeholder={getLang('contains-text')}
+													type="text"
+													value={searchBarTerm}
+												/>
+
+												<div className="input-group-inset-item input-group-inset-item-after">
+													<ClayButton
+														displayStyle={'unstyled'}
+														iconName="search"
+														onClick={this._handleSearchEnter}
+													/>
 												</div>
 											</div>
 										</div>
-									</div>,
-
-									<div className="navbar-nav" key={1}>
-										{onAddResultSubmit && (
-											<AddResult
-												onAddResultSubmit={
-													onAddResultSubmit
-												}
-											/>
-										)}
 									</div>
-							  ]}
+								</div>
+
+								<div className="navbar-nav">
+									{onAddResultSubmit && (
+										<AddResult
+											onAddResultSubmit={onAddResultSubmit}
+										/>
+									)}
+								</div>
+							</React.Fragment>
+						}
 					</div>
 				</div>
 			</nav>
