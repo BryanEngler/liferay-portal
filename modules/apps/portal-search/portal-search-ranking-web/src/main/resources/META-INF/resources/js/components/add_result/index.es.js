@@ -1,6 +1,6 @@
-import ClayButton from '../ClayButton.es';
+import ClayButton from 'components/shared/ClayButton.es';
 import getCN from 'classnames';
-import Item from './Item.es';
+import Item from 'components/list/Item.es';
 import PaginationBar from './PaginationBar.es';
 import React, {Component} from 'react';
 import ReactModal from 'react-modal';
@@ -247,11 +247,12 @@ class AddResult extends Component {
 				/>
 
 				<ReactModal
-					className="modal-dialog modal-lg modal-full-screen-sm-down results-ranking-add-result-modal"
+					className="modal-dialog modal-lg modal-full-screen-sm-down add-result-modal-root"
 					contentLabel="addResultModal"
 					isOpen={showModal}
 					onRequestClose={this._handleCloseModal}
 					overlayClassName="modal-backdrop react-modal-backdrop"
+					portalClassName="results-ranking-modal-root"
 				>
 					<div className="modal-content">
 						<div className="modal-header">

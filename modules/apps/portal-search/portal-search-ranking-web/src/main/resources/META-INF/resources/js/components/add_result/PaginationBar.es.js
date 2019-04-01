@@ -1,4 +1,4 @@
-import ClayIcon from '../ClayIcon.es';
+import ClayIcon from 'components/shared/ClayIcon.es';
 import getCN from 'classnames';
 import Pagination from './Pagination.es';
 import React, {Component} from 'react';

@@ -1,4 +1,4 @@
-import ClayButton from './ClayButton.es';
+import ClayButton from 'components/shared/ClayButton.es';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 
@@ -24,6 +24,7 @@ class Tag extends Component {
 		return (
 			<span className="label label-dismissible label-lg label-secondary">
 				<span className="label-item label-item-expand">{label}</span>
+
 				<span className="label-item label-item-after">
 					<ClayButton
 						aria-label="Close"
