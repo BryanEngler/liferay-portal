@@ -1,6 +1,6 @@
 import getCN from 'classnames';
 import React, {Component} from 'react';
-import ThemeContext from '../ThemeContext.es';
+import ThemeContext from 'ThemeContext.es';
 import {PropTypes} from 'prop-types';
 
 class ClayIcon extends Component {

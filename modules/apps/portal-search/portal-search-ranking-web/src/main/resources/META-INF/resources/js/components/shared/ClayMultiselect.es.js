@@ -11,7 +11,7 @@ const createOption = label => ({
 	value: label
 });
 
-class ReactSelectTags extends Component {
+class ClayMultiselect extends Component {
 	static propTypes = {
 		onAction: PropTypes.func,
 		value: PropTypes.arrayOf(String)
@@ -56,7 +56,7 @@ class ReactSelectTags extends Component {
 
 		return (
 			<CreatableSelect
-				className="react-select-container"
+				className="multiselect-root"
 				classNamePrefix="react-select"
 				components={components}
 				inputValue={inputValue}
@@ -73,4 +73,4 @@ class ReactSelectTags extends Component {
 	}
 }
 
-export default ReactSelectTags;
+export default ClayMultiselect;

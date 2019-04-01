@@ -1,5 +1,5 @@
-import ClayButton from '../ClayButton.es';
-import ClayIcon from '../ClayIcon.es';
+import ClayButton from 'components/shared/ClayButton.es';
+import ClayIcon from 'components/shared/ClayIcon.es';
 import DRAG_TYPES from 'utils/drag-types.es';
 import Dropdown from './Dropdown.es';
 import getCN from 'classnames';
@@ -271,9 +271,9 @@ class Item extends Component {
 		);
 
 		const listClasses = getCN(
+			'list-item-root',
 			'list-group-item',
 			'list-group-item-flex',
-			'results-ranking-item',
 			{
 				'list-item-drag-hover': canDrop && index === hoverIndex,
 				'list-item-drag-hover-below':

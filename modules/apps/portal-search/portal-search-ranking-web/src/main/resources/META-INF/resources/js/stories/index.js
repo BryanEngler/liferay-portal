@@ -5,7 +5,7 @@ import {addDecorator, storiesOf} from '@storybook/react';
 import '../../css/main.scss';
 import 'clay-css/lib/css/atlas.css';
 
-import Alias from 'components/Alias.es';
+import Alias from 'components/alias/index.es';
 import PageToolbar from 'components/PageToolbar.es';
 import ResultsRankingForm from 'components/ResultsRankingForm.es';
 import ThemeContext from 'ThemeContext.es';
@@ -17,7 +17,9 @@ const context = {
 addDecorator(
 	storyFn => (
 		<ThemeContext.Provider value={context}>
-			{storyFn()}
+			<div className="results-rankings-root">
+				{storyFn()}
+			</div>
 		</ThemeContext.Provider>
 	)
 );

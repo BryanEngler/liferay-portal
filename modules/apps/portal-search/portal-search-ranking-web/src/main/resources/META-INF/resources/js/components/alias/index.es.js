@@ -1,17 +1,16 @@
-import ClayButton from './ClayButton.es';
+import ClayButton from 'components/shared/ClayButton.es';
+import ClayMultiselect from 'components/shared/ClayMultiselect.es';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import ReactModal from 'react-modal';
-import ReactSelectTags from './ReactSelectTags.es';
 import Tag from './Tag.es';
 import {getLang} from 'utils/language.es';
 
 class Alias extends Component {
 	static propTypes = {
 		keywords: PropTypes.arrayOf(String),
-		onClickDelete: PropTypes.func,
-		onClickSubmit: PropTypes.func,
-		searchTerm: PropTypes.string
+		onClickDelete: PropTypes.func.isRequired,
+		onClickSubmit: PropTypes.func.isRequired
 	};
 
 	state = {
@@ -45,52 +44,49 @@ class Alias extends Component {
 	};
 
 	render() {
-		const {keywords, onClickDelete, searchTerm} = this.props;
+		const {keywords, onClickDelete} = this.props;
 
 		const {modalKeywords} = this.state;
 
 		return (
-			<div className="results-ranking-alias">
-				<div className="sheet sheet-lg">
-					<h2 className="sheet-title">{`"${searchTerm}"`}</h2>
+			<div className="results-ranking-alias-root">
+				<div className="sheet-text">
+					<div className="alias-title">
+						<strong>{getLang('aliases')}</strong>
+					</div>
 
-					<div className="sheet-text">
-						<div className="alias-title">
-							<strong>{getLang('aliases')}</strong>
+					<div className="input-group">
+						<div className="input-group-item input-group-item-shrink">
+							{keywords.map(
+								word => (
+									<Tag
+										key={word}
+										label={word}
+										onClickDelete={onClickDelete}
+									/>
+								)
+							)}
 						</div>
 
-						<div className="input-group">
-							<div className="input-group-item input-group-item-shrink">
-								{keywords.map(
-									word => (
-										<Tag
-											key={word}
-											label={word}
-											onClickDelete={onClickDelete}
-										/>
-									)
-								)}
-							</div>
-
-							<div className="input-group-item input-group-item-shrink">
-								<ClayButton
-									borderless
-									displayStyle="primary"
-									onClick={this._handleOpenModal}
-									label={getLang('add-an-alias')}
-									size="sm"
-								/>
-							</div>
+						<div className="input-group-item input-group-item-shrink">
+							<ClayButton
+								borderless
+								displayStyle="primary"
+								label={getLang('add-an-alias')}
+								onClick={this._handleOpenModal}
+								size="sm"
+							/>
 						</div>
 					</div>
 				</div>
 
 				<ReactModal
-					className="modal-dialog modal-lg results-ranking-alias-modal"
+					className="modal-dialog modal-lg alias-modal-root"
 					contentLabel="aliasModal"
 					isOpen={this.state.showModal}
 					onRequestClose={this._handleCloseModal}
 					overlayClassName="modal-backdrop react-modal-backdrop"
+					portalClassName="results-ranking-modal-root"
 				>
 					<div className="modal-content">
 						<div className="modal-header">
@@ -113,7 +109,7 @@ class Alias extends Component {
 							<div className="form-group">
 								<label>{getLang('alias')}</label>
 
-								<ReactSelectTags
+								<ClayMultiselect
 									onAction={this._handleUpdate}
 									value={modalKeywords}
 								/>
