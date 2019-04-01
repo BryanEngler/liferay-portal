@@ -14,7 +14,7 @@
 					"ecmaVersion": 7
 				},
 				"plugins": [
-					"./node_modules/eslint-plugin-react"
+					"../../../node_modules/eslint-plugin-react"
 				],
 				"rules": {
 					"react/jsx-handler-names": [
@@ -51,6 +51,7 @@
 		"css-loader": "^2.1.1",
 		"eslint-plugin-react": "^7.12.4",
 		"http-proxy-middleware": "^0.19.1",
+		"liferay-lang-key-dev-loader": "^1.0.3",
 		"liferay-npm-scripts": "^1.4.9",
 		"node-sass": "^4.11.0",
 		"sass-loader": "^7.1.0",

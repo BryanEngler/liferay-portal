@@ -1,5 +1,7 @@
 import React from 'react';
 
-export default React.createContext({
-	spritemap: ''
-});
+export default React.createContext(
+	{
+		spritemap: ''
+	}
+);

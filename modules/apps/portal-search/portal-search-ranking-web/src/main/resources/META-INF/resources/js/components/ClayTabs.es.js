@@ -1,11 +1,14 @@
-import React from 'react';
 import getCN from 'classnames';
-import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
+import React from 'react';
+import {Tab, TabList, TabPanel, Tabs} from 'react-tabs';
 
 const ClayTab = ({children, selected, selectedClassName, ...otherProps}) => {
-	const classes = getCN('btn', 'btn-unstyled', 'nav-link', {
-		[selectedClassName]: selected
-	});
+	const classes = getCN(
+		'btn',
+		'btn-unstyled',
+		'nav-link',
+		{[selectedClassName]: selected}
+	);
 
 	return (
 		<Tab className="nav-item" selected={selected} {...otherProps}>

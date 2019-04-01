@@ -1,14 +1,14 @@
-import React, {Component} from 'react';
-import {findDOMNode} from 'react-dom';
-import {PropTypes} from 'prop-types';
-import {DragSource as dragSource, DropTarget as dropTarget} from 'react-dnd';
-import {getEmptyImage} from 'react-dnd-html5-backend';
-import DRAG_TYPES from 'utils/drag-types.es';
-import {getLang, sub} from 'utils/language.es';
 import ClayButton from '../ClayButton.es';
 import ClayIcon from '../ClayIcon.es';
+import DRAG_TYPES from 'utils/drag-types.es';
 import Dropdown from './Dropdown.es';
 import getCN from 'classnames';
+import React, {Component} from 'react';
+import {DragSource as dragSource, DropTarget as dropTarget} from 'react-dnd';
+import {findDOMNode} from 'react-dom';
+import {getEmptyImage} from 'react-dnd-html5-backend';
+import {getLang, sub} from 'utils/language.es';
+import {PropTypes} from 'prop-types';
 
 /**
  * Passes the required values to the drop target and drag preview.
@@ -16,22 +16,24 @@ import getCN from 'classnames';
  * @param {Object} props Component's current props
  * @returns {Object} The props to be passed to the drop target and drag preview.
  */
-function beginDrag({
-	author,
-	clicks,
-	date,
-	description,
-	extension,
-	hidden,
-	hoverIndex,
-	id,
-	index,
-	lastIndex,
-	pinned,
-	selected,
-	title,
-	type
-}) {
+function beginDrag(
+	{
+		author,
+		clicks,
+		date,
+		description,
+		extension,
+		hidden,
+		hoverIndex,
+		id,
+		index,
+		lastIndex,
+		pinned,
+		selected,
+		title,
+		type
+	}
+) {
 	return {
 		author,
 		clicks,
@@ -95,7 +97,8 @@ function hover(props, monitor, component) {
 
 	if (isHoverAbove(monitor, component)) {
 		onDragHover(index);
-	} else {
+	}
+	else {
 		onDragHover(index + 1);
 	}
 }
@@ -107,16 +110,18 @@ function hover(props, monitor, component) {
  * @param {DragDropContainer} component The component being hovered over.
  */
 function isHoverAbove(monitor, component) {
-	// Determine rectangle on screen
 	const hoverBoundingRect = findDOMNode(component).getBoundingClientRect();
 
 	// Get vertical middle
+
 	const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
 
 	// Determine mouse position
+
 	const clientOffset = monitor.getClientOffset();
 
 	// Get pixels to the top
+
 	const hoverClientY = clientOffset.y - hoverBoundingRect.top;
 
 	return hoverClientY < hoverMiddleY;
@@ -141,10 +146,10 @@ class Item extends Component {
 		extension: PropTypes.string,
 		hidden: PropTypes.bool,
 		hoverIndex: PropTypes.number,
-		lastIndex: PropTypes.number,
 		id: PropTypes.number,
 		index: PropTypes.number,
 		initialPinned: PropTypes.number,
+		lastIndex: PropTypes.number,
 		onClickHide: PropTypes.func,
 		onClickPin: PropTypes.func,
 		onDragHover: PropTypes.func,
@@ -175,9 +180,12 @@ class Item extends Component {
 		const {connectDragPreview} = this.props;
 
 		if (connectDragPreview) {
-			connectDragPreview(getEmptyImage(), {
-				captureDraggingState: true
-			});
+			connectDragPreview(
+				getEmptyImage(),
+				{
+					captureDraggingState: true
+				}
+			);
 		}
 	}
 
@@ -205,10 +213,9 @@ class Item extends Component {
 		let descriptionBlock = '';
 
 		if (description) {
-			const descriptionText =
-				description.length > 75
-					? `${description.slice(0, 75)}...`
-					: description;
+			const descriptionText = description.length > 75 ?
+				`${description.slice(0, 75)}...` :
+				description;
 
 			descriptionBlock = (
 				<p className="list-group-text list-item-description">
@@ -228,8 +235,8 @@ class Item extends Component {
 			clicks,
 			connectDragSource,
 			connectDropTarget,
-			dragging,
 			date,
+			dragging,
 			extension,
 			hidden,
 			hoverIndex,
@@ -251,9 +258,9 @@ class Item extends Component {
 			png: 'purple'
 		};
 
-		const colorSticker = colorScheme[extension]
-			? colorScheme[extension]
-			: 'grey';
+		const colorSticker = colorScheme[extension] ?
+			colorScheme[extension] :
+			'grey';
 
 		const classSticker = getCN(
 			`icon-${colorSticker}`,
@@ -325,7 +332,7 @@ class Item extends Component {
 							{`${author} - ${date}`}
 						</p>
 
-						<p className="list-group-subtext">[{type}]</p>
+						<p className="list-group-subtext">{`[${type}]`}</p>
 
 						{this._renderDescription()}
 					</section>
@@ -341,7 +348,7 @@ class Item extends Component {
 									disabled
 									iconName="hidden"
 									monospaced
-									onMouseOver="_handleAddedResultMouseOver"
+									onMouseOver={this._handleAddedResultMouseOver}
 								/>
 							) : (
 								<ClayButton

@@ -14,7 +14,7 @@
 	}
 }
 
-.results-ranking-alias-modal{
+.results-ranking-alias-modal {
 	.alias-modal-description {
 		font-size: 14px;
 		padding-bottom: 10px;
@@ -34,7 +34,7 @@
 	.react-select__control {
 		background-color: #F1F2F5;
 
-		&:hover{
+		&:hover {
 			border-color: unset;
 			box-shadow: none;
 		}
@@ -61,7 +61,7 @@
 	}
 
 	.results-ranking-tabs {
-		padding: 0 1.5rem 0;
+		padding: 0 1.5rem;
 	}
 }
 
@@ -79,13 +79,13 @@
 	&.list-item-drag-hover {
 		border-top-left-radius: 0;
 		border-top-right-radius: 0;
-		box-shadow: inset 0 4px 0 0 #0b5fff;
+		box-shadow: inset 0 4px 0 0 #0B5FFF;
 	}
 
 	&.list-item-drag-hover-below {
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
-		box-shadow: inset 0 -4px 0 0 #0b5fff;
+		box-shadow: inset 0 -4px 0 0 #0B5FFF;
 	}
 
 	&.list-item-dragging {
@@ -141,8 +141,8 @@
 	}
 
 	.result-icon {
+		color: #FFF;
 		font-size: 10px;
-		color: white;
 
 		svg {
 			font-size: 18px;
