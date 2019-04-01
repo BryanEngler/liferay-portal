@@ -1,34 +1,34 @@
-import React, {Component} from 'react';
-import {PropTypes} from 'prop-types';
-import HTML5Backend from 'react-dnd-html5-backend';
-import {DragDropContext as dragDropContext} from 'react-dnd';
-import Item from './Item.es';
-import SearchBar from './SearchBar.es';
-import {getLang} from '../../utils/language.es';
-import {toggleListItem} from '../../utils/util.es';
 import ClayButton from '../ClayButton.es';
+import HTML5Backend from 'react-dnd-html5-backend';
+import Item from './Item.es';
+import React, {Component} from 'react';
+import SearchBar from './SearchBar.es';
+import {DragDropContext as dragDropContext} from 'react-dnd';
+import {getLang} from '../../utils/language.es';
+import {PropTypes} from 'prop-types';
+import {toggleListItem} from '../../utils/util.es';
 
 class List extends Component {
 	static propTypes = {
-		dataMap: PropTypes.object,
 		dataLoading: PropTypes.bool,
-		resultIds: PropTypes.arrayOf(Number),
+		dataMap: PropTypes.object,
 		onAddResultSubmit: PropTypes.func,
 		onClickHide: PropTypes.func,
 		onClickPin: PropTypes.func,
 		onLoadResults: PropTypes.func,
+		onMove: PropTypes.func,
 		onSearchBarEnter: PropTypes.func,
 		onUpdateSearchBarTerm: PropTypes.func,
-		onMove: PropTypes.func,
+		resultIds: PropTypes.arrayOf(Number),
 		searchBarTerm: PropTypes.string,
 		totalResultsCount: PropTypes.number
 	};
 
 	static defaultProps = {
 		dataLoading: false,
+		resultIds: [],
 		resultIdsHidden: [],
-		resultIdsPinned: [],
-		resultIds: []
+		resultIdsPinned: []
 	};
 
 	state = {
@@ -41,9 +41,11 @@ class List extends Component {
 	 * removes itself from the selected ids list.
 	 */
 	_handleClickHide = (ids, hide) => {
-		this.setState(state => ({
-			selectedIds: state.selectedIds.filter(id => !ids.includes(id))
-		}));
+		this.setState(
+			state => (
+				{selectedIds: state.selectedIds.filter(id => !ids.includes(id))}
+			)
+		);
 
 		this.props.onClickHide(ids, hide);
 	};
@@ -57,9 +59,11 @@ class List extends Component {
 	};
 
 	_handleSelect = id => {
-		this.setState(state => ({
-			selectedIds: toggleListItem(state.selectedIds, id)
-		}));
+		this.setState(
+			state => (
+				{selectedIds: toggleListItem(state.selectedIds, id)}
+			)
+		);
 	};
 
 	/**
@@ -71,9 +75,7 @@ class List extends Component {
 	};
 
 	_handleSelectAll = () => {
-		this.setState({
-			selectedIds: this.props.resultIds
-		});
+		this.setState({selectedIds: this.props.resultIds});
 	};
 
 	_handleTabSelect = (index, lastIndex) => {
@@ -124,8 +126,8 @@ class List extends Component {
 
 	render() {
 		const {
-			dataMap,
 			dataLoading,
+			dataMap,
 			onAddResultSubmit,
 			onClickPin,
 			onSearchBarEnter,
@@ -153,8 +155,9 @@ class List extends Component {
 				/>
 
 				<ul className="list-group">
-					{resultIds.map((id, index, arr) =>
-						this._renderItem(id, index, arr)
+					{resultIds.map(
+						(id, index, arr) =>
+							this._renderItem(id, index, arr)
 					)}
 				</ul>
 

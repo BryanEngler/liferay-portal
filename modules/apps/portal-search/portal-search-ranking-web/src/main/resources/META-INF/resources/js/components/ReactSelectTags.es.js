@@ -1,6 +1,6 @@
+import CreatableSelect from 'react-select/lib/Creatable';
 import React, {Component} from 'react';
 import {PropTypes} from 'prop-types';
-import CreatableSelect from 'react-select/lib/Creatable';
 
 const components = {
 	DropdownIndicator: null
@@ -22,30 +22,31 @@ class ReactSelectTags extends Component {
 		value: this.props.value
 	};
 
-	handleChange = value => {
+	_handleChange = value => {
 		this.props.onAction(value);
 	};
 
-	handleInputChange = inputValue => {
+	_handleInputChange = inputValue => {
 		this.setState({inputValue});
 	};
 
-	handleKeyDown = event => {
+	_handleKeyDown = event => {
 		const {value} = this.props;
 		const {inputValue} = this.state;
 
-		if (!inputValue) return;
+		if (!inputValue) {
+			return;
+		}
+
 		switch (event.key) {
-			case 'Enter':
-			case 'Tab':
-			case ',':
-				this.props.onAction([...value, createOption(inputValue)]);
-				this.setState({
-					inputValue: ''
-				});
-				event.preventDefault();
-				break;
-			default:
+		case 'Enter':
+		case 'Tab':
+		case ',':
+			this.props.onAction([...value, createOption(inputValue)]);
+			this.setState({inputValue: ''});
+			event.preventDefault();
+			break;
+		default:
 		}
 	};
 
@@ -62,9 +63,9 @@ class ReactSelectTags extends Component {
 				isClearable
 				isMulti
 				menuIsOpen={false}
-				onChange={this.handleChange}
-				onInputChange={this.handleInputChange}
-				onKeyDown={this.handleKeyDown}
+				onChange={this._handleChange}
+				onInputChange={this._handleInputChange}
+				onKeyDown={this._handleKeyDown}
 				placeholder=""
 				value={value}
 			/>
