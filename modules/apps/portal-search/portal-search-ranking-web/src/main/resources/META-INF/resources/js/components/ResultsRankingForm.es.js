@@ -1,5 +1,4 @@
 import Alias from './Alias.es';
-import DragLayer from './list/DragLayer.es';
 import List from './list/index.es';
 import PageToolbar from './PageToolbar.es';
 import React, {Component} from 'react';
@@ -485,8 +484,6 @@ class ResultsRankingForm extends Component {
 						</div>
 
 						<div className="results-ranking-list">
-							<DragLayer />
-
 							<ClayTabs onSelect={this._handleTabSelect}>
 								<ClayTabList className="results-ranking-tabs">
 									<ClayTab>{getLang('visible')}</ClayTab>
