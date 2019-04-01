@@ -29,20 +29,33 @@
 }
 
 .react-select-container {
-	width: 100%;
-
 	.react-select__control {
 		background-color: #F1F2F5;
+		border-color: #E7E7ED;
+		box-shadow: none;
 
 		&:hover {
-			border-color: unset;
-			box-shadow: none;
+			border-color: #E7E7ED;
 		}
 
 		.react-select__multi-value, .react-select__multi-value__label, .react-select__multi-value__remove {
 			background-color: #FFF;
+			border: 0;
 			border-color: #CDCED9;
 			color: #6B6C7E;
+		}
+	}
+
+	.react-select__control--is-focused {
+		background-color: #F0F5FF;
+		border-color: #80ACFF;
+		box-shadow: none;
+		color: #272833;
+		outline: 0;
+
+		&:hover{
+			border-color: #80ACFF;
+			box-shadow: none;
 		}
 	}
 }
