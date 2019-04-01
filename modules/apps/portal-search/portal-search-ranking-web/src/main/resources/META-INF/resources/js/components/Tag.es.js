@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import ClayButton from './ClayButton.es';
+import PropTypes from 'prop-types';
+import React, {Component} from 'react';
 
 class Tag extends Component {
 	static propTypes = {

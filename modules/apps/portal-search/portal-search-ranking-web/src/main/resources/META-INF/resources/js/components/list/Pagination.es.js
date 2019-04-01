@@ -1,9 +1,10 @@
-import React, {Component} from 'react';
-import {PropTypes} from 'prop-types';
 import ClayIcon from '../ClayIcon.es';
 import getCN from 'classnames';
 import isFunction from 'lodash.isfunction';
+import React, {Component} from 'react';
 import times from 'lodash.times';
+import {getLang} from 'utils/language.es';
+import {PropTypes} from 'prop-types';
 
 const DEFAULT_PAGE = 1;
 
@@ -70,28 +71,28 @@ class PaginationEllipsis extends React.Component {
 
 	_handleClickOutside = event => {
 		if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-			this.setState({
-				show: false
-			});
+			this.setState({show: false});
 		}
 	};
 
 	_handleDropdownToggle = event => {
 		event.preventDefault();
 
-		this.setState(state => ({
-			show: !state.show
-		}));
+		this.setState(state => ({show: !state.show}));
 	};
 
 	render() {
 		const {href, items, onChange} = this.props;
 
-		const show = this.state.show;
+		const {show} = this.state;
 
-		const classHidden = getCN('dropdown-menu', 'dropdown-menu-top-center', {
-			show: show
-		});
+		const classHidden = getCN(
+			'dropdown-menu',
+			'dropdown-menu-top-center',
+			{
+				show
+			}
+		);
 
 		return (
 			<div className="dropdown page-item" ref={this.setWrapperRef}>
@@ -104,19 +105,22 @@ class PaginationEllipsis extends React.Component {
 					onClick={this._handleDropdownToggle}
 					role="button"
 				>
-					...
+					{'...'}
 				</a>
+
 				<ul className={classHidden}>
-					{items.map(item => (
-						<PaginationEllipsisItem
-							href={href}
-							key={item}
-							onChange={onChange}
-							page={item}
-						>
-							{item}
-						</PaginationEllipsisItem>
-					))}
+					{items.map(
+						item => (
+							<PaginationEllipsisItem
+								href={href}
+								key={item}
+								onChange={onChange}
+								page={item}
+							>
+								{item}
+							</PaginationEllipsisItem>
+						)
+					)}
 				</ul>
 			</div>
 		);
@@ -149,7 +153,13 @@ class PaginationItem extends React.Component {
 	render() {
 		const {active, children, disabled, href, page} = this.props;
 
-		const classes = getCN('page-item', {active, disabled});
+		const classes = getCN(
+			'page-item',
+			{
+				active,
+				disabled
+			}
+		);
 
 		return (
 			<li className={classes}>
@@ -202,6 +212,7 @@ class Pagination extends Component {
 
 		if (frontBuffer > 1) {
 			const start = 1;
+
 			const numOfItems = frontBuffer - 2;
 
 			const removedItems = pages.slice(start, start + numOfItems);
@@ -224,6 +235,7 @@ class Pagination extends Component {
 
 		if (backBuffer < total) {
 			const start = pages.indexOf(backBuffer + 1);
+
 			const numOfItems = total - backBuffer - 1;
 
 			const removedItems = pages.slice(start, start + numOfItems);
@@ -248,9 +260,15 @@ class Pagination extends Component {
 	render() {
 		const {href, onChange, page, total} = this.props;
 
-		const classPrevious = getCN('page-item', {disabled: page === 1});
+		const classPrevious = getCN(
+			'page-item',
+			{disabled: page === 1}
+		);
 
-		const classNext = getCN('page-item', {disabled: page === total});
+		const classNext = getCN(
+			'page-item',
+			{disabled: page === total}
+		);
 
 		return (
 			<ul className="pagination">
@@ -258,34 +276,40 @@ class Pagination extends Component {
 					<a
 						className="page-link"
 						href={href}
+						onClick={this._handlePageChangePrevious}
 						role="button"
 						tabIndex="-1"
-						onClick={this._handlePageChangePrevious}
 					>
 						<ClayIcon iconName="angle-left" />
-						<span className="sr-only">Previous</span>
+
+						<span className="sr-only">{getLang('previous')}</span>
 					</a>
 				</li>
-				{this.getPages().map((item, index) => (
-					<PaginationItem
-						active={page === item}
-						href={href}
-						key={index}
-						onChange={onChange}
-						page={isFunction(item) ? -1 : item}
-					>
-						{item}
-					</PaginationItem>
-				))}
+
+				{this.getPages().map(
+					(item, index) => (
+						<PaginationItem
+							active={page === item}
+							href={href}
+							key={index}
+							onChange={onChange}
+							page={isFunction(item) ? -1 : item}
+						>
+							{item}
+						</PaginationItem>
+					)
+				)}
+
 				<li className={classNext}>
 					<a
 						className="page-link"
 						href={href}
-						role="button"
 						onClick={this._handlePageChangeNext}
+						role="button"
 					>
 						<ClayIcon iconName="angle-right" />
-						<span className="sr-only">Next</span>
+
+						<span className="sr-only">{getLang('next')}</span>
 					</a>
 				</li>
 			</ul>

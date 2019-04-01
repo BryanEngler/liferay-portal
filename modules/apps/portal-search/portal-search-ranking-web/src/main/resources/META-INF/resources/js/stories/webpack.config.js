@@ -11,12 +11,14 @@ const path = require('path');
  * Additional documentation can be read here:
  * https://storybook.js.org/docs/configurations/custom-webpack-config/
  */
-module.exports = async ({ config, mode }) => {
-	config.module.rules.push({
-		test: /\.scss$/,
-		loaders: ['style-loader', 'css-loader', 'sass-loader'],
-		include: path.resolve(__dirname, '../../'),
-	});
+module.exports = async({config, mode}) => {
+	config.module.rules.push(
+		{
+			include: path.resolve(__dirname, '../../'),
+			loaders: ['style-loader', 'css-loader', 'sass-loader'],
+			test: /\.scss$/
+		}
+	);
 
 	return config;
 };

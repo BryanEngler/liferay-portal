@@ -1,5 +1,5 @@
-import React from 'react';
 import Item from './Item.es';
+import React from 'react';
 
 const DRAG_PREVIEW_STYLES = {
 	border: '2px solid #80ACFF',
