@@ -1,4 +1,5 @@
 import ClayButton from '../ClayButton.es';
+import DragLayer from './DragLayer.es';
 import HTML5Backend from 'react-dnd-html5-backend';
 import Item from './Item.es';
 import React, {Component} from 'react';
@@ -140,6 +141,8 @@ class List extends Component {
 
 		return (
 			<div className="results-ranking-list-root">
+				<DragLayer />
+
 				<SearchBar
 					dataMap={dataMap}
 					onAddResultSubmit={onAddResultSubmit}
