@@ -1,4 +1,4 @@
-import ClayButton from '../ClayButton.es';
+import ClayButton from '../shared/ClayButton.es';
 import DragLayer from './DragLayer.es';
 import HTML5Backend from 'react-dnd-html5-backend';
 import Item from './Item.es';
