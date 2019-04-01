@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
 import ClayButton from './ClayButton.es';
-import {getLang} from 'utils/language.es';
 import PropTypes from 'prop-types';
+import React, {Component} from 'react';
 import ReactModal from 'react-modal';
 import ReactSelectTags from './ReactSelectTags.es';
 import Tag from './Tag.es';
+import {getLang} from 'utils/language.es';
 
 class Alias extends Component {
 	static propTypes = {
@@ -24,10 +24,12 @@ class Alias extends Component {
 	};
 
 	_handleOpenModal = () => {
-		this.setState({
-			modalKeywords: [],
-			showModal: true
-		});
+		this.setState(
+			{
+				modalKeywords: [],
+				showModal: true
+			}
+		);
 	};
 
 	_handleSubmit = () => {
@@ -39,9 +41,7 @@ class Alias extends Component {
 	};
 
 	_handleUpdate = value => {
-		this.setState({
-			modalKeywords: value
-		});
+		this.setState({modalKeywords: value});
 	};
 
 	render() {
@@ -61,13 +61,15 @@ class Alias extends Component {
 
 						<div className="input-group">
 							<div className="input-group-item input-group-item-shrink">
-								{keywords.map(word => (
-									<Tag
-										key={word}
-										label={word}
-										onClickDelete={onClickDelete}
-									/>
-								))}
+								{keywords.map(
+									word => (
+										<Tag
+											key={word}
+											label={word}
+											onClickDelete={onClickDelete}
+										/>
+									)
+								)}
 							</div>
 
 							<div className="input-group-item input-group-item-shrink">
@@ -84,10 +86,10 @@ class Alias extends Component {
 				</div>
 
 				<ReactModal
-					isOpen={this.state.showModal}
-					contentLabel="aliasModal"
-					onRequestClose={this._handleCloseModal}
 					className="modal-dialog modal-lg results-ranking-alias-modal"
+					contentLabel="aliasModal"
+					isOpen={this.state.showModal}
+					onRequestClose={this._handleCloseModal}
 					overlayClassName="modal-backdrop react-modal-backdrop"
 				>
 					<div className="modal-content">
@@ -111,8 +113,8 @@ class Alias extends Component {
 								<label>{getLang('alias')}</label>
 
 								<ReactSelectTags
-									value={modalKeywords}
 									onAction={this._handleUpdate}
+									value={modalKeywords}
 								/>
 
 								<div className="form-feedback-group">
