@@ -38,8 +38,12 @@ export function move(list, from, to) {
  * @param {Array|number|string} toRemove The id or ids to remove.
  */
 export function removeIdFromList(list = [], toRemove) {
-	return list.filter(curId =>
-		isArray(toRemove) ? !toRemove.includes(curId) : curId !== toRemove
+	return list.filter(
+		curId => {
+			return isArray(toRemove) ?
+				!toRemove.includes(curId) :
+				curId !== toRemove;
+		}
 	);
 }
 
@@ -67,9 +71,9 @@ export function resultsDataToMap(resultsData) {
  * @param {number|string} id The value of the item to add or remove.
  */
 export function toggleListItem(list, id) {
-	return list.includes(id)
-		? list.filter(value => value !== id)
-		: [...list, id];
+	return list.includes(id) ?
+		list.filter(value => value !== id) :
+		[...list, id];
 }
 
 /**
@@ -80,10 +84,13 @@ export function toggleListItem(list, id) {
  * @returns {Object} The updated dataMap.
  */
 export function updateDataMap(dataMap, ids, properties) {
-	return ids.reduce((updatedDataMap, id) => {
-		return {
-			...updatedDataMap,
-			[id]: {...dataMap[id], ...properties}
-		};
-	}, dataMap);
+	return ids.reduce(
+		(updatedDataMap, id) => {
+			return {
+				...updatedDataMap,
+				[id]: {...dataMap[id], ...properties}
+			};
+		},
+		dataMap
+	);
 }

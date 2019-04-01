@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
-import {PropTypes} from 'prop-types';
-import ThemeContext from '../ThemeContext.es';
 import getCN from 'classnames';
+import React, {Component} from 'react';
+import ThemeContext from '../ThemeContext.es';
+import {PropTypes} from 'prop-types';
 
 class ClayIcon extends Component {
 	static contextType = ThemeContext;
@@ -14,9 +14,13 @@ class ClayIcon extends Component {
 	render() {
 		const {className, iconName} = this.props;
 
-		const classes = getCN('lexicon-icon', `lexicon-icon-${iconName}`, {
-			[className]: className
-		});
+		const classes = getCN(
+			'lexicon-icon',
+			`lexicon-icon-${iconName}`,
+			{
+				[className]: className
+			}
+		);
 
 		return (
 			<svg aria-hidden="true" className={classes} viewBox="0 0 512 512">
