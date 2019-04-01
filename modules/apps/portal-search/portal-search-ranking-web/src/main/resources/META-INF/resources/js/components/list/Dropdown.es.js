@@ -54,6 +54,14 @@ class Dropdown extends Component {
 		);
 	};
 
+	_handleDropdownAction = actionFn => event => {
+		event.preventDefault();
+
+		actionFn(event);
+
+		this.setState({show: false});
+	};
+
 	render() {
 		const show = this.state.show;
 
@@ -89,8 +97,8 @@ class Dropdown extends Component {
 						<li>
 							<a
 								className="dropdown-item"
-								href="#1"
-								onClick={onClickPin}
+								href="#"
+								onClick={this._handleDropdownAction(onClickPin)}
 							>
 								<ClayIcon iconName="lock" />
 
@@ -107,8 +115,8 @@ class Dropdown extends Component {
 						<li>
 							<a
 								className="dropdown-item"
-								href="#1"
-								onClick={onClickHide}
+								href="#"
+								onClick={this._handleDropdownAction(onClickHide)}
 							>
 								<ClayIcon iconName="hidden" />
 

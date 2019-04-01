@@ -39,6 +39,7 @@ class ClayButton extends Component {
 	render() {
 		const {
 			borderless,
+			children,
 			className,
 			displayStyle,
 			href,
