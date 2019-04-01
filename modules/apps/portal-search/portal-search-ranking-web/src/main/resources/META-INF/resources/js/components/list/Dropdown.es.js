@@ -1,5 +1,5 @@
-import ClayButton from '../ClayButton.es';
-import ClayIcon from '../ClayIcon.es';
+import ClayButton from 'components/shared/ClayButton.es';
+import ClayIcon from 'components/shared/ClayIcon.es';
 import getCN from 'classnames';
 import React, {Component} from 'react';
 import {getLang} from 'utils/language.es';
@@ -69,6 +69,7 @@ class Dropdown extends Component {
 
 		const classHidden = getCN(
 			'dropdown-menu',
+			'dropdown-menu-indicator-start',
 			'dropdown-menu-right',
 			{
 				show
@@ -100,13 +101,13 @@ class Dropdown extends Component {
 								href="#"
 								onClick={this._handleDropdownAction(onClickPin)}
 							>
-								<ClayIcon iconName="lock" />
+								<div className="dropdown-item-indicator">
+									<ClayIcon iconName="lock" />
+								</div>
 
-								<span className="dropdown-option-text">
-									{pinned ?
-										getLang(`unpin-${resultLabel}`) :
-										getLang(`pin-${resultLabel}`)}
-								</span>
+								{pinned ?
+									getLang(`unpin-${resultLabel}`) :
+									getLang(`pin-${resultLabel}`)}
 							</a>
 						</li>
 					)}
@@ -118,13 +119,13 @@ class Dropdown extends Component {
 								href="#"
 								onClick={this._handleDropdownAction(onClickHide)}
 							>
-								<ClayIcon iconName="hidden" />
+								<div className="dropdown-item-indicator">
+									<ClayIcon iconName="hidden" />
+								</div>
 
-								<span className="dropdown-option-text">
-									{hidden ?
-										getLang(`show-${resultLabel}`) :
-										getLang(`hide-${resultLabel}`)}
-								</span>
+								{hidden ?
+									getLang(`show-${resultLabel}`) :
+									getLang(`hide-${resultLabel}`)}
 							</a>
 						</li>
 					)}
