@@ -1,4 +1,4 @@
-import ClayIcon from '../ClayIcon.es';
+import ClayIcon from 'components/shared/ClayIcon.es';
 import getCN from 'classnames';
 import isFunction from 'lodash.isfunction';
 import React, {Component} from 'react';

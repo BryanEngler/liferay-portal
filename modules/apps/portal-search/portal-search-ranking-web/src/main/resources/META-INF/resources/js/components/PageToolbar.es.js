@@ -1,4 +1,4 @@
-import ClayButton from './ClayButton.es';
+import ClayButton from 'components/shared/ClayButton.es';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import {getLang} from 'utils/language.es';
