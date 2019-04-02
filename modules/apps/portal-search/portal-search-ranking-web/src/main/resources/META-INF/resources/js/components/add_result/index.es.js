@@ -4,7 +4,7 @@ import Item from 'components/list/Item.es';
 import PaginationBar from './PaginationBar.es';
 import React, {Component} from 'react';
 import ReactModal from 'react-modal';
-import {getMockResultsData} from 'test/mock-data.js';
+import {getMockResultsData} from 'utils/mock-data.js';
 import {PropTypes} from 'prop-types';
 import {resultsDataToMap} from 'utils/util.es';
 import {sub} from 'utils/language.es';
