@@ -51,31 +51,53 @@ ResultsRankingPortletDisplayContext resultsRankingPortletDisplayContext = (Resul
 		<liferay-ui:search-container-row
 			className="com.liferay.portal.kernel.search.Document"
 			keyProperty="resultsRankingsEntryId"
-			modelVar="resultsRankingsEntry"
+			modelVar="document"
 		>
+
+			<%
+			ResultsRankingDisplayContext resultsRankingDisplayContext = java.util.Objects.requireNonNull(resultsRankingPortletDisplayContext.getResultsRankingDisplayContext(document));
+			%>
+
 			<portlet:renderURL var="rowURL">
 				<portlet:param name="mvcRenderCommandName" value="addResultsRankingsEntry" />
 				<portlet:param name="redirect" value="<%= currentURL %>" />
-				<portlet:param name="ResultsRankingsEntryId" value="0" />
+				<portlet:param name="uid" value="<%= resultsRankingDisplayContext.getUid() %>" />
 			</portlet:renderURL>
 
 			<liferay-ui:search-container-column-text
 				cssClass="table-cell-expand table-title"
 				href="<%= rowURL %>"
-				name="name"
-				value="Test Title"
+				name="search-term-aliases"
+				value="<%= resultsRankingDisplayContext.getKeywords() %>"
 			/>
 
 			<liferay-ui:search-container-column-text
 				cssClass="table-cell-expand-smallest table-cell-minw-150"
-				name="pinned"
-				value="0"
+				name="pinned-results"
+				value="<%= resultsRankingDisplayContext.getPinned() %>"
+			/>
+
+			<liferay-ui:search-container-column-text
+				cssClass="table-cell-expand-smallest table-cell-minw-150"
+				name="hidden-results"
+				value="<%= resultsRankingDisplayContext.getHidden() %>"
 			/>
 
 			<liferay-ui:search-container-column-date
 				cssClass="table-cell-expand-smallest table-cell-minw-150 table-cell-ws-nowrap"
 				name="modified-date"
-				value="Test Date"
+				value="<%= resultsRankingDisplayContext.getModifiedDate() %>"
+			/>
+
+			<liferay-ui:search-container-column-date
+				cssClass="table-cell-expand-smallest table-cell-minw-150 table-cell-ws-nowrap"
+				name="display-date"
+				value="<%= resultsRankingDisplayContext.getDisplayDate() %>"
+			/>
+
+			<liferay-ui:search-container-column-status
+				name="status"
+				status="<%= 0 %>"
 			/>
 		</liferay-ui:search-container-row>
 

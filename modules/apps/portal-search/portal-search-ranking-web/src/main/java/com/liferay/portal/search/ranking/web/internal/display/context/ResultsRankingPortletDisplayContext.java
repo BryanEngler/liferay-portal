@@ -21,19 +21,21 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.search.BaseModelSearchResult;
-import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.Sort;
-import com.liferay.portal.kernel.search.SortFactoryUtil;
-import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.Html;
+import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
+import com.liferay.portal.search.query.Queries;
+import com.liferay.portal.search.ranking.web.internal.request.SearchRankingRequest;
+import com.liferay.portal.search.ranking.web.internal.request.SearchRankingResponse;
+import com.liferay.portal.search.searcher.Searcher;
 
 import java.util.List;
 import java.util.Objects;
@@ -50,19 +52,28 @@ import javax.servlet.http.HttpServletRequest;
 public class ResultsRankingPortletDisplayContext {
 
 	public ResultsRankingPortletDisplayContext(
-		HttpServletRequest request, RenderRequest renderRequest,
-		RenderResponse renderResponse) {
+		HttpServletRequest httpServletRequest, Language language,
+		Queries queries, RenderRequest renderRequest,
+		RenderResponse renderResponse, Searcher searcher,
+		SearchRequestBuilderFactory searchRequestBuilderFactory) {
 
-		_request = request;
+		_httpServletRequest = httpServletRequest;
+		_language = language;
 		_renderRequest = renderRequest;
 		_renderResponse = renderResponse;
 
-		_themeDisplay = (ThemeDisplay)_request.getAttribute(
+		_themeDisplay = (ThemeDisplay)_httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
+
+		_resultsRankingsHolder = _rankingSearch(
+			queries, searcher, searchRequestBuilderFactory);
 	}
 
 	public List<DropdownItem> getActionDropdownItems() {
 		return new DropdownItemList() {
+
+			private static final long serialVersionUID = 1L;
+
 			{
 				add(
 					dropdownItem -> {
@@ -70,13 +81,14 @@ public class ResultsRankingPortletDisplayContext {
 							"action", "deleteResultRankingsEntries");
 						dropdownItem.setIcon("times");
 						dropdownItem.setLabel(
-							LanguageUtil.get(_request, "delete"));
+							LanguageUtil.get(_httpServletRequest, "delete"));
 						dropdownItem.setQuickAction(true);
 					});
 			}
 		};
 	}
 
+	@SuppressWarnings("deprecation")
 	public String getClearResultsURL() {
 		PortletURL clearResultsURL = _getPortletURL();
 
@@ -87,15 +99,20 @@ public class ResultsRankingPortletDisplayContext {
 
 	public CreationMenu getCreationMenu() {
 		return new CreationMenu() {
+
+			private static final long serialVersionUID = 1L;
+
 			{
 				addPrimaryDropdownItem(
 					dropdownItem -> {
 						dropdownItem.setHref(
 							_renderResponse.createRenderURL(),
 							"mvcRenderCommandName", "addResultsRankingsEntry",
-							"redirect", PortalUtil.getCurrentURL(_request));
+							"redirect",
+							PortalUtil.getCurrentURL(_httpServletRequest));
 						dropdownItem.setLabel(
-							LanguageUtil.get(_request, "new-ranking"));
+							LanguageUtil.get(
+								_httpServletRequest, "new-ranking"));
 					});
 			}
 		};
@@ -114,20 +131,24 @@ public class ResultsRankingPortletDisplayContext {
 
 	public List<DropdownItem> getFilterItemsDropdownItems() {
 		return new DropdownItemList() {
+
+			private static final long serialVersionUID = 1L;
+
 			{
 				addGroup(
 					dropdownGroupItem -> {
 						dropdownGroupItem.setDropdownItems(
 							_getFilterNavigationDropdownItems());
 						dropdownGroupItem.setLabel(
-							LanguageUtil.get(_request, "filter-by-navigation"));
+							LanguageUtil.get(
+								_httpServletRequest, "filter-by-navigation"));
 					});
 				addGroup(
 					dropdownGroupItem -> {
 						dropdownGroupItem.setDropdownItems(
 							_getOrderByDropdownItems());
 						dropdownGroupItem.setLabel(
-							LanguageUtil.get(_request, "order-by"));
+							LanguageUtil.get(_httpServletRequest, "order-by"));
 					});
 			}
 		};
@@ -138,9 +159,16 @@ public class ResultsRankingPortletDisplayContext {
 			return _orderByType;
 		}
 
-		_orderByType = ParamUtil.getString(_request, "orderByType", "asc");
+		_orderByType = ParamUtil.getString(
+			_httpServletRequest, "orderByType", "asc");
 
 		return _orderByType;
+	}
+
+	public ResultsRankingDisplayContext getResultsRankingDisplayContext(
+		Document document) {
+
+		return _resultsRankingsHolder.get(document);
 	}
 
 	public String getSearchActionURL() {
@@ -149,17 +177,25 @@ public class ResultsRankingPortletDisplayContext {
 		return portletURL.toString();
 	}
 
-	public SearchContainer getSearchContainer() throws PortalException {
+	public SearchContainer<Document> getSearchContainer() {
 		if (_searchContainer != null) {
 			return _searchContainer;
 		}
 
-		SearchContainer searchContainer = new SearchContainer(
-			_renderRequest, _getPortletURL(), null, "there-are-no-entries");
+		Html html = HtmlUtil.getHtml();
+
+		String emptyResultMessage = _language.format(
+			_httpServletRequest, "no-custom-results-yet",
+			"<strong>" + html.escape(_getKeywords()) + "</strong>", false);
+
+		SearchContainer<Document> searchContainer = new SearchContainer<>(
+			_renderRequest, _getPortletURL(), null, emptyResultMessage);
 
 		searchContainer.setId("resultRankingsEntries");
 		searchContainer.setOrderByCol(_getOrderByCol());
+
 		// searchContainer.setOrderByComparator(_getOrderByComparator());
+
 		searchContainer.setOrderByType(getOrderByType());
 		searchContainer.setRowChecker(
 			new EmptyOnClickRowChecker(_renderResponse));
@@ -169,6 +205,7 @@ public class ResultsRankingPortletDisplayContext {
 		return _searchContainer;
 	}
 
+	@SuppressWarnings("deprecation")
 	public String getSortingURL() {
 		PortletURL sortingURL = _getPortletURL();
 
@@ -203,13 +240,16 @@ public class ResultsRankingPortletDisplayContext {
 
 	private List<DropdownItem> _getFilterNavigationDropdownItems() {
 		return new DropdownItemList() {
+
+			private static final long serialVersionUID = 1L;
+
 			{
 				add(
 					dropdownItem -> {
 						dropdownItem.setActive(true);
 						dropdownItem.setHref(_renderResponse.createRenderURL());
 						dropdownItem.setLabel(
-							LanguageUtil.get(_request, "all"));
+							LanguageUtil.get(_httpServletRequest, "all"));
 					});
 			}
 		};
@@ -220,7 +260,7 @@ public class ResultsRankingPortletDisplayContext {
 			return _keywords;
 		}
 
-		_keywords = ParamUtil.getString(_request, "keywords");
+		_keywords = ParamUtil.getString(_httpServletRequest, "keywords");
 
 		return _keywords;
 	}
@@ -238,17 +278,19 @@ public class ResultsRankingPortletDisplayContext {
 
 	private List<DropdownItem> _getOrderByDropdownItems() {
 		return new DropdownItemList() {
+
+			private static final long serialVersionUID = 1L;
+
 			{
 				add(
 					dropdownItem -> {
 						dropdownItem.setActive(
-							Objects.equals(
-								_getOrderByCol(), "modified-date"));
+							Objects.equals(_getOrderByCol(), "modified-date"));
 						dropdownItem.setHref(
-							_getPortletURL(), "orderByCol",
-							"modified-date");
+							_getPortletURL(), "orderByCol", "modified-date");
 						dropdownItem.setLabel(
-							LanguageUtil.get(_request, "modified-date"));
+							LanguageUtil.get(
+								_httpServletRequest, "modified-date"));
 					});
 				add(
 					dropdownItem -> {
@@ -257,12 +299,13 @@ public class ResultsRankingPortletDisplayContext {
 						dropdownItem.setHref(
 							_getPortletURL(), "orderByCol", "name");
 						dropdownItem.setLabel(
-							LanguageUtil.get(_request, "name"));
+							LanguageUtil.get(_httpServletRequest, "name"));
 					});
 			}
 		};
 	}
 
+	@SuppressWarnings("deprecation")
 	private PortletURL _getPortletURL() {
 		PortletURL portletURL = _renderResponse.createRenderURL();
 
@@ -297,14 +340,55 @@ public class ResultsRankingPortletDisplayContext {
 		return false;
 	}
 
+	private ResultsRankingsHolder _rankingSearch(
+		Queries queries, Searcher searcher,
+		SearchRequestBuilderFactory searchRequestBuilderFactory) {
+
+		SearchRankingRequest searchRankingRequest = new SearchRankingRequest(
+			_httpServletRequest, queries, getSearchContainer(), searcher,
+			searchRequestBuilderFactory, _themeDisplay);
+
+		SearchRankingResponse searchRankingResponse =
+			searchRankingRequest.search();
+
+		List<Document> documents = searchRankingResponse.getDocuments();
+
+		if (documents.isEmpty()) {
+			_searchContainer = null;
+
+			return null;
+		}
+
+		_searchContainer.setSearch(true);
+		_searchContainer.setResults(documents);
+		_searchContainer.setTotal(searchRankingResponse.getTotalHits());
+
+		final ResultsRankingsHolder resultsRankingsHolder =
+			new ResultsRankingsHolder(documents.size());
+
+		documents.forEach(
+			document -> {
+				ResultsRankingDisplayContext resultsRankingDisplayContext =
+					new ResultsRankingDisplayContext(
+						document, _themeDisplay.getLocale());
+
+				resultsRankingsHolder.put(
+					document, resultsRankingDisplayContext);
+			});
+
+		return resultsRankingsHolder;
+	}
+
 	private String _displayStyle;
+	private final HttpServletRequest _httpServletRequest;
 	private String _keywords;
+	private final Language _language;
 	private String _orderByCol;
 	private String _orderByType;
 	private final RenderRequest _renderRequest;
 	private final RenderResponse _renderResponse;
-	private final HttpServletRequest _request;
-	private SearchContainer _searchContainer;
+	private final ResultsRankingsHolder _resultsRankingsHolder;
+	private SearchContainer<Document> _searchContainer;
 	private final ThemeDisplay _themeDisplay;
 
 }
