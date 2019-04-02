@@ -2,8 +2,8 @@ import ClayIcon from 'components/shared/ClayIcon.es';
 import getCN from 'classnames';
 import Pagination from './Pagination.es';
 import React, {Component} from 'react';
-import {getLang, sub} from 'utils/language.es';
 import {PropTypes} from 'prop-types';
+import {sub} from 'utils/language.es';
 
 const deltaValues = [5, 10, 20, 30, 50];
 
@@ -132,7 +132,7 @@ class PaginationBar extends Component {
 						href={href}
 						onClick={this._handleDropdownToggle}
 					>
-						{sub(getLang('x-items'), [selectedDelta])}
+						{sub(Liferay.Language.get('x-items'), [selectedDelta])}
 						<ClayIcon iconName="caret-double-l" />
 					</a>
 
@@ -151,7 +151,7 @@ class PaginationBar extends Component {
 
 				<div className="pagination-results">
 					{sub(
-						getLang('showing-x-to-x-of-x-entries'),
+						Liferay.Language.get('showing-x-to-x-of-x-entries'),
 						[
 							start - selectedDelta + 1,
 							Math.min(start, totalItems),

@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import ReactModal from 'react-modal';
 import Tag from './Tag.es';
-import {getLang} from 'utils/language.es';
 
 class Alias extends Component {
 	static propTypes = {
@@ -52,7 +51,7 @@ class Alias extends Component {
 			<div className="results-ranking-alias-root">
 				<div className="sheet-text">
 					<div className="alias-title">
-						<strong>{getLang('aliases')}</strong>
+						<strong>{Liferay.Language.get('aliases')}</strong>
 					</div>
 
 					<div className="input-group">
@@ -72,7 +71,7 @@ class Alias extends Component {
 							<ClayButton
 								borderless
 								displayStyle="primary"
-								label={getLang('add-an-alias')}
+								label={Liferay.Language.get('add-an-alias')}
 								onClick={this._handleOpenModal}
 								size="sm"
 							/>
@@ -91,7 +90,7 @@ class Alias extends Component {
 					<div className="modal-content">
 						<div className="modal-header">
 							<div className="modal-title">
-								{getLang('add-an-alias')}
+								{Liferay.Language.get('add-an-alias')}
 							</div>
 
 							<ClayButton
@@ -103,11 +102,11 @@ class Alias extends Component {
 
 						<div className="modal-body">
 							<div className="alias-modal-description">
-								{getLang('add-an-alias-description')}
+								{Liferay.Language.get('add-an-alias-description')}
 							</div>
 
 							<div className="form-group">
-								<label>{getLang('alias')}</label>
+								<label>{Liferay.Language.get('alias')}</label>
 
 								<ClayMultiselect
 									onAction={this._handleUpdate}
@@ -116,7 +115,7 @@ class Alias extends Component {
 
 								<div className="form-feedback-group">
 									<div className="form-text">
-										{getLang('add-an-alias-instruction')}
+										{Liferay.Language.get('add-an-alias-instruction')}
 									</div>
 								</div>
 							</div>
@@ -128,7 +127,7 @@ class Alias extends Component {
 									<div className="btn-group-item">
 										<ClayButton
 											borderless
-											label={getLang('cancel')}
+											label={Liferay.Language.get('cancel')}
 											onClick={this._handleCloseModal}
 										/>
 									</div>
@@ -139,7 +138,7 @@ class Alias extends Component {
 												modalKeywords.length === 0
 											}
 											displayStyle="primary"
-											label={getLang('add')}
+											label={Liferay.Language.get('add')}
 											onClick={this._handleSubmit}
 										/>
 									</div>

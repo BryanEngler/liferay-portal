@@ -3,8 +3,8 @@ import ClayButton from 'components/shared/ClayButton.es';
 import Dropdown from './Dropdown.es';
 import getCN from 'classnames';
 import React, {Component} from 'react';
-import {getLang, sub} from 'utils/language.es';
 import {PropTypes} from 'prop-types';
+import {sub} from 'utils/language.es';
 
 class SearchBar extends Component {
 	static propTypes = {
@@ -173,7 +173,7 @@ class SearchBar extends Component {
 										<span className="navbar-text">
 											<strong>
 												{sub(
-													getLang(
+													Liferay.Language.get(
 														'x-of-x-items-selected'
 													),
 													[
@@ -221,10 +221,10 @@ class SearchBar extends Component {
 										<div className="nav-link nav-link-monospaced">
 											<Dropdown
 												hidden={this._isAnyHidden()}
+												itemCount={selectedIds.length}
 												onClickHide={this._handleClickHide}
 												onClickPin={this._handleClickPin}
 												pinned={!this._isAnyUnpinned()}
-												singular={selectedIds.length === 1}
 											/>
 										</div>
 									</li>
@@ -243,7 +243,7 @@ class SearchBar extends Component {
 													className="form-control input-group-inset input-group-inset-after"
 													onChange={this._handleSearchChange}
 													onKeyDown={this._handleSearchKeyDown}
-													placeholder={getLang('contains-text')}
+													placeholder={Liferay.Language.get('contains-text')}
 													type="text"
 													value={searchBarTerm}
 												/>
