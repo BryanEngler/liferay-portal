@@ -9,7 +9,7 @@ import {
 	ClayTabPanel,
 	ClayTabs
 } from 'components/shared/ClayTabs.es';
-import {getMockResultsData} from 'test/mock-data.js';
+import {getMockResultsData} from 'utils/mock-data.js';
 import {
 	move,
 	removeIdFromList,
