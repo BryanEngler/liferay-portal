@@ -9,7 +9,6 @@ import {
 	ClayTabPanel,
 	ClayTabs
 } from 'components/shared/ClayTabs.es';
-import {getLang} from 'utils/language.es';
 import {getMockResultsData} from 'test/mock-data.js';
 import {
 	move,
@@ -493,15 +492,15 @@ class ResultsRankingForm extends Component {
 
 					<div className="sheet sheet-lg form-section-body">
 						<div className="sheet-text">
-							<strong>{getLang('results')}</strong>
+							<strong>{Liferay.Language.get('results')}</strong>
 						</div>
 
 						<div className="form-section-results-list">
 							<ClayTabs onSelect={this._handleTabSelect}>
 								<ClayTabList className="results-ranking-tabs">
-									<ClayTab>{getLang('visible')}</ClayTab>
+									<ClayTab>{Liferay.Language.get('visible')}</ClayTab>
 
-									<ClayTab>{getLang('hidden')}</ClayTab>
+									<ClayTab>{Liferay.Language.get('hidden')}</ClayTab>
 								</ClayTabList>
 
 								<ClayTabPanel>
