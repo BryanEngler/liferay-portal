@@ -12,13 +12,26 @@ const path = require('path');
  * https://storybook.js.org/docs/configurations/custom-webpack-config/
  */
 module.exports = async({config, mode}) => {
-	config.module.rules.push(
+	config.module.rules = [
+		...config.module.rules,
 		{
 			include: path.resolve(__dirname, '../../'),
 			loaders: ['style-loader', 'css-loader', 'sass-loader'],
 			test: /\.scss$/
+		},
+		{
+			exclude: /node_modules/,
+			test: /\.js$/,
+			use: [
+				{
+					loader: 'liferay-lang-key-dev-loader',
+					options: {
+						path: './src/main/resources/content/Language.properties'
+					}
+				}
+			]
 		}
-	);
+	];
 
 	return config;
 };

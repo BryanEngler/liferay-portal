@@ -2,20 +2,20 @@ import ClayButton from 'components/shared/ClayButton.es';
 import ClayIcon from 'components/shared/ClayIcon.es';
 import getCN from 'classnames';
 import React, {Component} from 'react';
-import {getLang} from 'utils/language.es';
+import {getPluralMessage} from 'utils/language.es';
 import {PropTypes} from 'prop-types';
 
 class Dropdown extends Component {
 	static propTypes = {
 		hidden: PropTypes.bool,
+		itemCount: PropTypes.number,
 		onClickHide: PropTypes.func,
 		onClickPin: PropTypes.func,
-		pinned: PropTypes.bool,
-		singular: PropTypes.bool
+		pinned: PropTypes.bool
 	};
 
 	static defaultProps = {
-		singular: true
+		itemCount: 1
 	};
 
 	constructor(props) {
@@ -65,7 +65,7 @@ class Dropdown extends Component {
 	render() {
 		const show = this.state.show;
 
-		const {hidden, onClickHide, onClickPin, pinned, singular} = this.props;
+		const {hidden, itemCount, onClickHide, onClickPin, pinned} = this.props;
 
 		const classHidden = getCN(
 			'dropdown-menu',
@@ -75,8 +75,6 @@ class Dropdown extends Component {
 				show
 			}
 		);
-
-		const resultLabel = singular ? 'result' : 'results';
 
 		return (
 			<div
@@ -106,8 +104,17 @@ class Dropdown extends Component {
 								</div>
 
 								{pinned ?
-									getLang(`unpin-${resultLabel}`) :
-									getLang(`pin-${resultLabel}`)}
+									getPluralMessage(
+										Liferay.Language.get('unpin-result'),
+										Liferay.Language.get('unpin-results'),
+										itemCount
+									) :
+									getPluralMessage(
+										Liferay.Language.get('pin-result'),
+										Liferay.Language.get('pin-results'),
+										itemCount
+									)
+								}
 							</a>
 						</li>
 					)}
@@ -124,8 +131,17 @@ class Dropdown extends Component {
 								</div>
 
 								{hidden ?
-									getLang(`show-${resultLabel}`) :
-									getLang(`hide-${resultLabel}`)}
+									getPluralMessage(
+										Liferay.Language.get('show-result'),
+										Liferay.Language.get('show-results'),
+										itemCount
+									) :
+									getPluralMessage(
+										Liferay.Language.get('hide-result'),
+										Liferay.Language.get('hide-results'),
+										itemCount
+									)
+								}
 							</a>
 						</li>
 					)}

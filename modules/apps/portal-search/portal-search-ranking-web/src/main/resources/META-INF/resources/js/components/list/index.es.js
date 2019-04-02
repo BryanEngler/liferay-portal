@@ -5,7 +5,6 @@ import Item from './Item.es';
 import React, {Component} from 'react';
 import SearchBar from './SearchBar.es';
 import {DragDropContext as dragDropContext} from 'react-dnd';
-import {getLang} from '../../utils/language.es';
 import {PropTypes} from 'prop-types';
 import {toggleListItem} from '../../utils/util.es';
 
@@ -174,7 +173,7 @@ class List extends Component {
 					<div className="load-more-container">
 						<ClayButton
 							className="load-more-button"
-							label={getLang('load-more-results')}
+							label={Liferay.Language.get('load-more-results')}
 							onClick={this._handleLoadMoreResults}
 						/>
 					</div>

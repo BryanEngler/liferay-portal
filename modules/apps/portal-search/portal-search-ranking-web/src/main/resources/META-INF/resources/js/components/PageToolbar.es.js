@@ -1,7 +1,6 @@
 import ClayButton from 'components/shared/ClayButton.es';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
-import {getLang} from 'utils/language.es';
 
 class PageToolbar extends Component {
 	static props = {
@@ -26,14 +25,14 @@ class PageToolbar extends Component {
 							<ClayButton
 								borderless
 								href={onCancel}
-								label={getLang('cancel')}
+								label={Liferay.Language.get('cancel')}
 								size="sm"
 							/>
 						</li>
 
 						<li className="tbar-item">
 							<ClayButton
-								label={getLang('save-as-draft')}
+								label={Liferay.Language.get('save-as-draft')}
 								size="sm"
 							/>
 						</li>
@@ -42,7 +41,7 @@ class PageToolbar extends Component {
 							<ClayButton
 								disabled={submitDisabled}
 								displayStyle="primary"
-								label={getLang('publish')}
+								label={Liferay.Language.get('publish')}
 								size="sm"
 								type="submit"
 							/>

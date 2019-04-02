@@ -7,8 +7,8 @@ import React, {Component} from 'react';
 import {DragSource as dragSource, DropTarget as dropTarget} from 'react-dnd';
 import {findDOMNode} from 'react-dom';
 import {getEmptyImage} from 'react-dnd-html5-backend';
-import {getLang, sub} from 'utils/language.es';
 import {PropTypes} from 'prop-types';
+import {sub} from 'utils/language.es';
 
 /**
  * Passes the required values to the drop target and drag preview.
@@ -191,7 +191,7 @@ class Item extends Component {
 	}
 
 	_handleAddedResultMouseOver = event => {
-		const message = getLang('search-your-engine-to-display-results');
+		const message = Liferay.Language.get('search-your-engine-to-display-results');
 
 		Liferay.Portal.ToolTip.show(event.currentTarget, message);
 	};
@@ -392,7 +392,7 @@ class Item extends Component {
 
 				<div className="click-count list-group-text sticker-bottom-right">
 					{sub(
-						getLang('clicks-x'),
+						Liferay.Language.get('clicks-x'),
 						[<b key="CLICK_COUNT">{clicks}</b>],
 						false
 					)}
