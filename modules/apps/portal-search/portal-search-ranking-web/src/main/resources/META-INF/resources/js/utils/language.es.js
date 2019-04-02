@@ -1,64 +1,19 @@
 const SPLIT_REGEX = /({\d+})/g;
 
 /**
- * Liferay function to get the language key string.
- * @param {string} key Language key string to retrieve.
+ * Uses the singular language key if the count is 1. Otherwise uses the plural
+ * language key.
+ * @param {string} singular The language key in singular form.
+ * @param {string} plural The language key in plural form.
+ * @param {number} count The amount to display in the message.
+ * @param {boolean} toString If the message should be converted to a string.
+ * @return {(string|Array)} The translated message.
  */
-// export const getLang = key => Liferay.Language.get(key);
+export function getPluralMessage(singular, plural, count = 0, toString) {
+	const message = count === 1 ? singular : plural;
 
-/**
- * @TODO Replace this function with the getLang function above when moving this
- * inside portal code.
- */
-export const getLang = key => {
-	const KEY_MAP = {
-		add: 'Add',
-		'add-a-result': 'Add a Result',
-		'add-an-alias': 'Add an Alias',
-		'add-an-alias-description':
-			'A short description to explain how aliases work',
-		'add-an-alias-instruction':
-			'Type a comma or press enter to input an alias',
-		alias: 'Alias',
-		aliases: 'Aliases',
-		cancel: 'Cancel',
-		'clear-all-selected': 'Clear All Selected',
-		'clicks-x': 'Clicks {0}',
-		'contains-text': 'Contains text',
-		'customize-results-for-x': 'Customize Results for "{0}"',
-		hidden: 'Hidden',
-		'hide-result': 'Hide result',
-		'hide-results': 'Hide results',
-		'items-selected': 'items selected',
-		'load-more-results': 'Load More Results',
-		modified: 'Modified',
-		'pin-result': 'Pin result',
-		'pin-results': 'Pin results',
-		publish: 'Publish',
-		results: 'Results',
-		'save-as-draft': 'Save as Draft',
-		'search-your-engine': 'Search your engine',
-		'search-your-engine-to-display-results':
-			'Search your engine to display results',
-		'show-result': 'Show result',
-		'show-results': 'Show results',
-		'showing-x-to-x-of-x-entries': 'Showing {0} to {1} of {2} entries.',
-		synonyms: 'Synonyms',
-		tag: 'Tag',
-		type: 'Type',
-		'unable-to-hide-added-results': 'Added results cannot be hidden',
-		'unpin-result': 'Unpin result',
-		'unpin-results': 'Unpin results',
-		user: 'User',
-		visible: 'Visible',
-		'x-items': '{0} items',
-		'x-items-selected': '{0} items selected',
-		'x-of-x-items-selected': '{0} of {1} items selected',
-		'x-to-x-of-x-results': '{0}-{1} of {2} results'
-	};
-
-	return KEY_MAP[key] || key;
-};
+	return sub(message, [count], toString);
+}
 
 /**
  * Utility function for substituting variables into language keys.
