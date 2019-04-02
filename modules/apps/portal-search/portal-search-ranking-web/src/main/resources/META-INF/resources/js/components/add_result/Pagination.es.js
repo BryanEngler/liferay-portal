@@ -3,7 +3,6 @@ import getCN from 'classnames';
 import isFunction from 'lodash.isfunction';
 import React, {Component} from 'react';
 import times from 'lodash.times';
-import {getLang} from 'utils/language.es';
 import {PropTypes} from 'prop-types';
 
 const DEFAULT_PAGE = 1;
@@ -282,7 +281,7 @@ class Pagination extends Component {
 					>
 						<ClayIcon iconName="angle-left" />
 
-						<span className="sr-only">{getLang('previous')}</span>
+						<span className="sr-only">{Liferay.Language.get('previous')}</span>
 					</a>
 				</li>
 
@@ -309,7 +308,7 @@ class Pagination extends Component {
 					>
 						<ClayIcon iconName="angle-right" />
 
-						<span className="sr-only">{getLang('next')}</span>
+						<span className="sr-only">{Liferay.Language.get('next')}</span>
 					</a>
 				</li>
 			</ul>

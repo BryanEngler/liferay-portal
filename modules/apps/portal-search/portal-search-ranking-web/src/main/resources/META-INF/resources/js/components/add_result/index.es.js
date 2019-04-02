@@ -4,10 +4,10 @@ import Item from 'components/list/Item.es';
 import PaginationBar from './PaginationBar.es';
 import React, {Component} from 'react';
 import ReactModal from 'react-modal';
-import {getLang, sub} from 'utils/language.es';
 import {getMockResultsData} from 'test/mock-data.js';
 import {PropTypes} from 'prop-types';
 import {resultsDataToMap} from 'utils/util.es';
+import {sub} from 'utils/language.es';
 import {toggleListItem} from '../../utils/util.es';
 
 const DELTAS = [5, 10, 20, 40, 50];
@@ -242,7 +242,7 @@ class AddResult extends Component {
 				<ClayButton
 					displayStyle="primary"
 					key="ADD_RESULT_BUTTON"
-					label={getLang('add-a-result')}
+					label={Liferay.Language.get('add-a-result')}
 					onClick={this._handleAddResult}
 				/>
 
@@ -257,7 +257,7 @@ class AddResult extends Component {
 					<div className="modal-content">
 						<div className="modal-header">
 							<div className="modal-title">
-								{getLang('add-a-result')}
+								{Liferay.Language.get('add-a-result')}
 							</div>
 
 							<ClayButton
@@ -278,7 +278,7 @@ class AddResult extends Component {
 													className="form-control input-group-inset input-group-inset-after"
 													onChange={this._handleSearchChange}
 													onKeyDown={this._handleSearchKeyDown}
-													placeholder={getLang(
+													placeholder={Liferay.Language.get(
 														'search-your-engine'
 													)}
 													type="text"
@@ -337,13 +337,13 @@ class AddResult extends Component {
 														<span className="navbar-text">
 															{addResultSelectedIds.length > 0 ?
 																sub(
-																	getLang('x-items-selected'),
+																	Liferay.Language.get('x-items-selected'),
 																	[
 																		addResultSelectedIds.length
 																	]
 																) :
 																sub(
-																	getLang('x-to-x-of-x-results'),
+																	Liferay.Language.get('x-x-of-x-results'),
 																	[
 																		start - selectedDelta + 1,
 																		Math.min(start, results.items),
@@ -359,7 +359,7 @@ class AddResult extends Component {
 														<li className="nav-item nav-item-shrink">
 															<ClayButton
 																borderless
-																label={getLang(
+																label={Liferay.Language.get(
 																	'clear-all-selected'
 																)}
 																onClick={this._handleClearAllSelected}
@@ -411,7 +411,7 @@ class AddResult extends Component {
 												<span className="loading-animation" />
 											</div>
 										) : (
-											getLang('search-your-engine-to-display-results')
+											Liferay.Language.get('search-your-engine-to-display-results')
 										)}
 									</div>
 								</div>
@@ -424,7 +424,7 @@ class AddResult extends Component {
 									<div className="btn-group-item">
 										<ClayButton
 											borderless
-											label={getLang('cancel')}
+											label={Liferay.Language.get('cancel')}
 											onClick={this._handleCloseModal}
 										/>
 									</div>
@@ -433,7 +433,7 @@ class AddResult extends Component {
 										<ClayButton
 											disabled={addResultSelectedIds.length === 0}
 											displayStyle="primary"
-											label={getLang('add')}
+											label={Liferay.Language.get('add')}
 											onClick={this._handleSubmit}
 										/>
 									</div>
