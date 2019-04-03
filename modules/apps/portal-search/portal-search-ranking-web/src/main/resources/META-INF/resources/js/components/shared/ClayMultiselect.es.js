@@ -32,6 +32,7 @@ class ClayMultiselect extends Component {
 
 	_handleKeyDown = event => {
 		const {value} = this.props;
+
 		const {inputValue} = this.state;
 
 		if (!inputValue) {
@@ -42,9 +43,14 @@ class ClayMultiselect extends Component {
 		case 'Enter':
 		case 'Tab':
 		case ',':
-			this.props.onAction([...value, createOption(inputValue)]);
+			if (!value.map(item => item.value).includes(inputValue)) {
+				this.props.onAction([...value, createOption(inputValue)]);
+			}
+
 			this.setState({inputValue: ''});
+
 			event.preventDefault();
+
 			break;
 		default:
 		}

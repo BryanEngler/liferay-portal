@@ -7,6 +7,7 @@ import {PropTypes} from 'prop-types';
 
 class Dropdown extends Component {
 	static propTypes = {
+		addedResult: PropTypes.bool,
 		hidden: PropTypes.bool,
 		itemCount: PropTypes.number,
 		onClickHide: PropTypes.func,
@@ -15,6 +16,7 @@ class Dropdown extends Component {
 	};
 
 	static defaultProps = {
+		addedResult: false,
 		itemCount: 1
 	};
 
@@ -65,7 +67,7 @@ class Dropdown extends Component {
 	render() {
 		const show = this.state.show;
 
-		const {hidden, itemCount, onClickHide, onClickPin, pinned} = this.props;
+		const {addedResult, hidden, itemCount, onClickHide, onClickPin, pinned} = this.props;
 
 		const classHidden = getCN(
 			'dropdown-menu',
@@ -119,7 +121,7 @@ class Dropdown extends Component {
 						</li>
 					)}
 
-					{onClickHide && (
+					{!addedResult && onClickHide && (
 						<li>
 							<a
 								className="dropdown-item"

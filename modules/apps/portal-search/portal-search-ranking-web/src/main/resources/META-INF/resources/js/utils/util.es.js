@@ -61,7 +61,15 @@ export function isArray(val) {
  * @return {Object} The new object that uses id as the key.
  */
 export function resultsDataToMap(resultsData) {
-	return resultsData.reduce((acc, cur) => ({...acc, [cur.id]: cur}), {});
+	return resultsData.reduce(
+		(acc, cur) => (
+			{
+				...acc,
+				[cur.id]: cur
+			}
+		),
+		{}
+	);
 }
 
 /**
@@ -88,7 +96,10 @@ export function updateDataMap(dataMap, ids, properties) {
 		(updatedDataMap, id) => {
 			return {
 				...updatedDataMap,
-				[id]: {...dataMap[id], ...properties}
+				[id]: {
+					...dataMap[id],
+					...properties
+				}
 			};
 		},
 		dataMap
