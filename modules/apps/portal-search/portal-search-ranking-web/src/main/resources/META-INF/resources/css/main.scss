@@ -2,6 +2,7 @@
 
 .results-rankings-root, .results-ranking-modal-root {
 	@import 'alias';
+	@import 'empty_state';
 	@import 'list';
 	@import 'list_item';
 	@import 'modal';

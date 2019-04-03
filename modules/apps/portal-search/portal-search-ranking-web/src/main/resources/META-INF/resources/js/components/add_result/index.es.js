@@ -1,10 +1,12 @@
 import ClayButton from 'components/shared/ClayButton.es';
+import ClayEmptyState from 'components/shared/ClayEmptyState.es';
 import getCN from 'classnames';
 import Item from 'components/list/Item.es';
 import PaginationBar from './PaginationBar.es';
 import React, {Component} from 'react';
 import ReactModal from 'react-modal';
-import {getMockResultsData} from 'utils/mock-data.js';
+import ThemeContext from 'ThemeContext.es';
+import {fetchDocuments} from 'utils/api.es';
 import {PropTypes} from 'prop-types';
 import {resultsDataToMap} from 'utils/util.es';
 import {sub} from 'utils/language.es';
@@ -13,6 +15,8 @@ import {toggleListItem} from '../../utils/util.es';
 const DELTAS = [5, 10, 20, 40, 50];
 
 class AddResult extends Component {
+	static contextType = ThemeContext;
+
 	static propTypes = {
 		onAddResultSubmit: PropTypes.func
 	};
@@ -24,6 +28,7 @@ class AddResult extends Component {
 		addResultSelectedIds: [],
 		dataLoading: false,
 		dataMap: {},
+		displayInitialMessage: true,
 		page: 1,
 		results: {},
 		selectedDelta: 10,
@@ -55,48 +60,50 @@ class AddResult extends Component {
 			const currentResultSelectedIds = this._getCurrentResultSelectedIds();
 
 			checkboxElement.indeterminate = addResultSelectedIds.length > 0 &&
-				currentResultSelectedIds.length !== results.data.length;
+				currentResultSelectedIds.length !== results.items.length;
 		}
 	}
 
 	_fetchSearchResults = () => {
+		const {addResultSearchTerm, page, selectedDelta} = this.state;
+
 		this.setState({dataLoading: true});
 
-		setTimeout(
-			() => {
+		fetchDocuments(
+			{
+				companyId: this.context.companyId,
+				end: page * selectedDelta,
+				hidden: false,
+				keywords: addResultSearchTerm,
+				searchIndex: this.context.searchIndex,
+				start: (page * selectedDelta) - selectedDelta + 1
+			}
+		).then(
+			({items, total}) => {
 				this.setState(
 					state => (
 						{
 							dataLoading: false,
 							dataMap: {
 								...state.dataMap,
-								...resultsDataToMap(
-									getMockResultsData(
-										state.selectedDelta,
-										state.page * state.selectedDelta - state.selectedDelta + 1,
-										500,
-										state.addResultSearchTerm
-									).data
-								)
+								...resultsDataToMap(items)
 							},
-							results: getMockResultsData(
-								state.selectedDelta,
-								state.page * state.selectedDelta - state.selectedDelta + 1,
-								500,
-								state.addResultSearchTerm
-							)
+							displayInitialMessage: false,
+							results: {
+								items,
+								total
+							}
 						}
 					)
 				);
-			},
-			1000
+			}
 		);
 	};
 
 	_getCurrentResultSelectedIds = () => {
 		const {addResultSelectedIds, results} = this.state;
 
-		const currentResultIds = results.data.map(
+		const currentResultIds = results.items.map(
 			result => result.id
 		);
 
@@ -126,7 +133,12 @@ class AddResult extends Component {
 	};
 
 	_handleCloseModal = () => {
-		this.setState({showModal: false});
+		this.setState(
+			{
+				displayInitialMessage: true,
+				showModal: false
+			}
+		);
 	};
 
 	_handleDeltaChange = item => {
@@ -134,14 +146,13 @@ class AddResult extends Component {
 			state => ({
 				page: Math.ceil((state.page * state.selectedDelta - state.selectedDelta + 1) / item),
 				selectedDelta: item
-			})
+			}),
+			this._fetchSearchResults
 		);
-
-		this._fetchSearchResults();
 	};
 
 	_handleDeselectAll = () => {
-		const currentResultIds = this.state.results.data.map(
+		const currentResultIds = this.state.results.items.map(
 			result => result.id
 		);
 
@@ -159,9 +170,10 @@ class AddResult extends Component {
 	};
 
 	_handlePageChange = item => {
-		this.setState({page: item});
-
-		this._fetchSearchResults();
+		this.setState(
+			{page: item},
+			this._fetchSearchResults
+		);
 	};
 
 	_handleSearchChange = event => {
@@ -197,7 +209,7 @@ class AddResult extends Component {
 			state => ({
 				addResultSelectedIds: [
 					...state.addResultSelectedIds,
-					...state.results.data.map(result => result.id)
+					...state.results.items.map(result => result.id)
 				]
 			})
 		);
@@ -220,6 +232,7 @@ class AddResult extends Component {
 			addResultSearchTerm,
 			addResultSelectedIds,
 			dataLoading,
+			displayInitialMessage,
 			page,
 			results,
 			selectedDelta,
@@ -247,7 +260,7 @@ class AddResult extends Component {
 				/>
 
 				<ReactModal
-					className="modal-dialog modal-lg modal-full-screen-sm-down add-result-modal-root"
+					className="modal-dialog modal-dialog-lg modal-full-screen-sm-down add-result-modal-root"
 					contentLabel="addResultModal"
 					isOpen={showModal}
 					onRequestClose={this._handleCloseModal}
@@ -299,19 +312,19 @@ class AddResult extends Component {
 							</div>
 						</div>
 
-						{results.items && results.data ? (
-							<div className="modal-body inline-scroller">
-								{dataLoading && (
-									<div className="list-group sheet">
-										<div className="sheet-title">
-											<div className="load-more-container">
-												<span className="loading-animation" />
-											</div>
+						<div className="modal-body inline-scroller">
+							{dataLoading && (
+								<div className="list-group sheet">
+									<div className="sheet-title">
+										<div className="load-more-container">
+											<span className="loading-animation" />
 										</div>
 									</div>
-								)}
+								</div>
+							)}
 
-								{!dataLoading && (
+							{!dataLoading && (
+								results.total && results.items ?
 									<React.Fragment>
 										<div className={classManagementBar}>
 											<div className="container-fluid container-fluid-max-xl">
@@ -321,7 +334,7 @@ class AddResult extends Component {
 															<label>
 																<input
 																	aria-label="Checkbox for search results"
-																	checked={this._getCurrentResultSelectedIds().length === results.data.length}
+																	checked={this._getCurrentResultSelectedIds().length === results.items.length}
 																	className="custom-control-input"
 																	onChange={this._handleAllCheckbox}
 																	ref={this.selectAllCheckbox}
@@ -346,8 +359,8 @@ class AddResult extends Component {
 																	Liferay.Language.get('x-x-of-x-results'),
 																	[
 																		start - selectedDelta + 1,
-																		Math.min(start, results.items),
-																		results.items
+																		Math.min(start, results.total),
+																		results.total
 																	]
 																)
 															}
@@ -372,7 +385,7 @@ class AddResult extends Component {
 										</div>
 
 										<ul className="list-group">
-											{results.data.map(
+											{results.items.map(
 												result => (
 													<Item
 														author={result.author}
@@ -390,33 +403,28 @@ class AddResult extends Component {
 												)
 											)}
 										</ul>
-									</React.Fragment>
-								)}
 
-								<PaginationBar
-									deltas={DELTAS}
-									onDeltaChange={this._handleDeltaChange}
-									onPageChange={this._handlePageChange}
-									page={page}
-									selectedDelta={selectedDelta}
-									totalItems={results.items}
-								/>
-							</div>
-						) : (
-							<div className="modal-body inline-scroller">
-								<div className="sheet">
-									<div className="sheet-text text-center">
-										{dataLoading ? (
-											<div className="load-more-container">
-												<span className="loading-animation" />
-											</div>
-										) : (
-											Liferay.Language.get('search-your-engine-to-display-results')
-										)}
+										<PaginationBar
+											deltas={DELTAS}
+											onDeltaChange={this._handleDeltaChange}
+											onPageChange={this._handlePageChange}
+											page={page}
+											selectedDelta={selectedDelta}
+											totalItems={results.total}
+										/>
+									</React.Fragment> :
+									<div className="sheet">
+										{displayInitialMessage ?
+											<ClayEmptyState
+												description={Liferay.Language.get('search-your-engine-to-display-results')}
+												displayState="empty"
+												title={Liferay.Language.get('search-your-engine')}
+											/> :
+											<ClayEmptyState />
+										}
 									</div>
-								</div>
-							</div>
-						)}
+							)}
+						</div>
 
 						<div className="modal-footer">
 							<div className="modal-item-last">
