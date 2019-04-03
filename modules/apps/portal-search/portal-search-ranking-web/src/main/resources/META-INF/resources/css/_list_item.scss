@@ -8,6 +8,19 @@
 		line-height: 21px;
 	}
 
+	/**
+	* This is a fix for mouse events to properly fire for disabled buttons.
+	* Otherwise, the tooltip will not hide after leaving the button.
+	*/
+
+	.disabled-button-tooltip {
+		cursor: not-allowed;
+
+		button {
+			pointer-events: none;
+		}
+	}
+
 	.icon-grey {
 		background-color: $mainLighten28;
 	}
@@ -40,6 +53,7 @@
 
 	.result-icon {
 		color: $white;
+		font-family: inherit;
 		font-size: 10px;
 
 		svg {
@@ -86,12 +100,6 @@
 	&.results-ranking-item-hidden {
 		padding-left: 24px;
 
-		.result-hide {
-			visibility: visible;
-		}
-	}
-
-	&.results-ranking-item-added-result {
 		.result-hide {
 			visibility: visible;
 		}
