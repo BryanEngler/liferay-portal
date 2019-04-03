@@ -18,6 +18,7 @@ class SearchBar extends Component {
 		onAddResultSubmit: PropTypes.func,
 		onClickHide: PropTypes.func,
 		onClickPin: PropTypes.func,
+		onRemoveSelect: PropTypes.func,
 		onSearchBarEnter: PropTypes.func,
 		onSelectAll: PropTypes.func.isRequired,
 		onSelectClear: PropTypes.func.isRequired,
@@ -56,11 +57,13 @@ class SearchBar extends Component {
 	};
 
 	_handleClickHide = () => {
+		this.props.onRemoveSelect(this.props.selectedIds);
+
 		this.props.onClickHide(this.props.selectedIds, !this._isAnyHidden());
 	};
 
 	_handleClickPin = () => {
-		const {dataMap, onClickPin, onSelectClear, selectedIds} = this.props;
+		const {dataMap, onClickPin, onRemoveSelect, selectedIds} = this.props;
 
 		const unpinnedIds = selectedIds.filter(id => !dataMap[id].pinned);
 
@@ -68,10 +71,10 @@ class SearchBar extends Component {
 			onClickPin(unpinnedIds, true);
 		}
 		else {
+			onRemoveSelect(selectedIds.filter(id => dataMap[id].addedResult));
+
 			onClickPin(selectedIds, false);
 		}
-
-		onSelectClear();
 	};
 
 	_handleSearchChange = event => {
@@ -140,7 +143,8 @@ class SearchBar extends Component {
 				'management-bar-primary' :
 				'management-bar-light',
 			'navbar',
-			'navbar-expand-md'
+			'navbar-expand-md',
+			'search-bar-root'
 		);
 
 		return (
@@ -220,6 +224,7 @@ class SearchBar extends Component {
 									<li className="nav-item">
 										<div className="nav-link nav-link-monospaced">
 											<Dropdown
+												addedResult={this._isAnyAddedResult()}
 												hidden={this._isAnyHidden()}
 												itemCount={selectedIds.length}
 												onClickHide={this._handleClickHide}
@@ -260,13 +265,13 @@ class SearchBar extends Component {
 									</div>
 								</div>
 
-								<div className="navbar-nav">
-									{onAddResultSubmit && (
+								{onAddResultSubmit && (
+									<div className="navbar-nav">
 										<AddResult
 											onAddResultSubmit={onAddResultSubmit}
 										/>
-									)}
-								</div>
+									</div>
+								)}
 							</React.Fragment>
 						}
 					</div>

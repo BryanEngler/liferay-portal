@@ -45,6 +45,8 @@ String resultsRankingsRootElementId = renderResponse.getNamespace() + "-results-
 			searchTerm: 'example'
 		},
 		{
+			companyId: '<%= themeDisplay.getCompanyId() %>',
+			searchIndex: '',
 			spritemap: '<%= themeDisplay.getPathThemeImages() + "/lexicon/icons.svg" %>'
 		}
 	);

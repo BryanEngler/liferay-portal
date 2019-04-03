@@ -80,7 +80,7 @@ class Alias extends Component {
 				</div>
 
 				<ReactModal
-					className="modal-dialog modal-lg alias-modal-root"
+					className="modal-dialog modal-dialog-lg alias-modal-root"
 					contentLabel="aliasModal"
 					isOpen={this.state.showModal}
 					onRequestClose={this._handleCloseModal}

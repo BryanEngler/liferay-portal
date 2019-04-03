@@ -139,6 +139,7 @@ const DND_PROPS = {
 class Item extends Component {
 	static propTypes = {
 		...DND_PROPS,
+		addedResult: PropTypes.bool,
 		author: PropTypes.string,
 		clicks: PropTypes.number,
 		date: PropTypes.string,
@@ -146,7 +147,7 @@ class Item extends Component {
 		extension: PropTypes.string,
 		hidden: PropTypes.bool,
 		hoverIndex: PropTypes.number,
-		id: PropTypes.number,
+		id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 		index: PropTypes.number,
 		initialPinned: PropTypes.number,
 		lastIndex: PropTypes.number,
@@ -154,6 +155,7 @@ class Item extends Component {
 		onClickPin: PropTypes.func,
 		onDragHover: PropTypes.func,
 		onMove: PropTypes.func,
+		onRemoveSelect: PropTypes.func,
 		onSelect: PropTypes.func,
 		pinned: PropTypes.bool,
 		searchTerm: PropTypes.string,
@@ -191,7 +193,7 @@ class Item extends Component {
 	}
 
 	_handleAddedResultMouseOver = event => {
-		const message = Liferay.Language.get('search-your-engine-to-display-results');
+		const message = Liferay.Language.get('added-results-cannot-be-hidden');
 
 		Liferay.Portal.ToolTip.show(event.currentTarget, message);
 	};
@@ -201,10 +203,16 @@ class Item extends Component {
 	};
 
 	_handlePin = () => {
+		if (this.props.addedResult) {
+			this.props.onRemoveSelect([this.props.id]);
+		}
+
 		this.props.onClickPin([this.props.id], !this.props.pinned);
 	};
 
 	_handleHide = () => {
+		this.props.onRemoveSelect([this.props.id]);
+
 		this.props.onClickHide([this.props.id], !this.props.hidden);
 	};
 
@@ -344,14 +352,18 @@ class Item extends Component {
 					<div className="autofit-col">
 						<div className="result-hide">
 							{addedResult ? (
-								<ClayButton
-									borderless
-									className="component-action"
-									disabled
-									iconName="hidden"
-									monospaced
+								<span
+									className="disabled-button-tooltip"
 									onMouseOver={this._handleAddedResultMouseOver}
-								/>
+								>
+									<ClayButton
+										borderless
+										className="component-action lfr-portal-tooltip"
+										disabled
+										iconName="hidden"
+										monospaced
+									/>
+								</span>
 							) : (
 								<ClayButton
 									borderless
@@ -382,8 +394,9 @@ class Item extends Component {
 				{onClickPin && onClickHide && (
 					<div className="autofit-col">
 						<Dropdown
+							addedResult={addedResult}
 							hidden={hidden}
-							onClickHide={addedResult ? null : this._handleHide}
+							onClickHide={this._handleHide}
 							onClickPin={this._handlePin}
 							pinned={pinned}
 						/>
