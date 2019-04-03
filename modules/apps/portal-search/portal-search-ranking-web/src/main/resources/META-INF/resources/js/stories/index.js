@@ -1,37 +1,42 @@
 import React from 'react';
-
 import {addDecorator, storiesOf} from '@storybook/react';
+import {array, boolean, text, withKnobs} from '@storybook/addon-knobs';
+import {withA11y} from '@storybook/addon-a11y';
 
 import '../../css/main.scss';
-import 'clay-css/lib/css/atlas.css';
 
 import Alias from 'components/alias/index.es';
 import PageToolbar from 'components/PageToolbar.es';
 import ResultsRankingForm from 'components/ResultsRankingForm.es';
 import ThemeContext from 'ThemeContext.es';
 
-const context = {
-	spritemap: '/o/admin-theme/images/lexicon/icons.svg'
-};
+addDecorator(withA11y);
+addDecorator(withKnobs);
 
 addDecorator(
-	storyFn => (
-		<ThemeContext.Provider value={context}>
-			<div className="results-rankings-root">
-				{storyFn()}
-			</div>
-		</ThemeContext.Provider>
-	)
+	storyFn => {
+		const context = {
+			spritemap: '/o/admin-theme/images/lexicon/icons.svg'
+		};
+
+		return (
+			<ThemeContext.Provider value={context}>
+				<div className="results-rankings-root">
+					{storyFn()}
+				</div>
+			</ThemeContext.Provider>
+		);
+	}
+);
 );
 
 storiesOf('ResultsRankingForm', module).add(
 	'default',
-	() => <ResultsRankingForm cancelUrl="" searchTerm="hello" />
+	() => <ResultsRankingForm cancelUrl="" searchTerm={text('Search Term', 'example')} />
 );
 
 storiesOf('PageToolbar', module)
-	.add('submit enabled', () => <PageToolbar submitDisabled={false} />)
-	.add('submit disabled', () => <PageToolbar submitDisabled />);
+	.add('default', () => <PageToolbar submitDisabled={boolean('Disabled', false)} />);
 
 storiesOf('Alias', module)
-	.add('empty list of aliases', () => <Alias keywords={[]} />);
+	.add('default', () => <Alias keywords={array('Keywords', [], ',')} />);
