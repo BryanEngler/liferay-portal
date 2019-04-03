@@ -3,13 +3,14 @@ import List from 'components/list/index.es';
 import PageToolbar from './PageToolbar.es';
 import React, {Component} from 'react';
 import ReactModal from 'react-modal';
+import ThemeContext from 'ThemeContext.es';
 import {
 	ClayTab,
 	ClayTabList,
 	ClayTabPanel,
 	ClayTabs
 } from 'components/shared/ClayTabs.es';
-import {getMockResultsData} from 'utils/mock-data.js';
+import {fetchDocuments} from 'utils/api.es';
 import {
 	move,
 	removeIdFromList,
@@ -18,7 +19,11 @@ import {
 } from 'utils/util.es';
 import {PropTypes} from 'prop-types';
 
+const DELTA = 10;
+
 class ResultsRankingForm extends Component {
+	static contextType = ThemeContext;
+
 	static propTypes = {
 		cancelUrl: PropTypes.string.isRequired,
 		searchTerm: PropTypes.string.isRequired
@@ -93,14 +98,19 @@ class ResultsRankingForm extends Component {
 	 * Returns a boolean of whether the alias list has changed.
 	 */
 	_getAliasUnchanged = () =>
-		this._initialAliases.length === this.state.aliases.length && this._initialAliases.every(item => this.state.aliases.includes(item));
+		this._initialAliases.length === this.state.aliases.length &&
+			this._initialAliases.every(item => this.state.aliases.includes(item));
 
 	/**
 	 * Checks whether changes have been made for submission. Checks the lengths of
 	 * each hidden/pinned added/removed array and the aliases list.
 	 */
 	_getDisablePublish = () =>
-		this._getAliasUnchanged() && this._getHiddenAdded().length === 0 && this._getHiddenRemoved().length === 0 && this._getPinnedRemoved().length === 0 && this._getPinnedAdded().length === 0;
+		this._getAliasUnchanged() &&
+			this._getHiddenAdded().length === 0 &&
+			this._getHiddenRemoved().length === 0 &&
+			this._getPinnedRemoved().length === 0 &&
+			this._getPinnedAdded().length === 0;
 
 	/**
 	 * Gets the added changes in hidden from the initial and current states.
@@ -208,37 +218,35 @@ class ResultsRankingForm extends Component {
 	/**
 	 * Retrieves results data from a search term. This will also handle loading
 	 * more data to the results list.
-	 * @TODO
-	 * - Swap out mock data
-	 * - Remove simulated loading with setTimeout
 	 */
 	_handleFetchResultsData = () => {
 		this.setState({dataLoading: true});
 
-		setTimeout(
-			() => {
-				const dataResponse = getMockResultsData(
-					10,
-					this._initialResultIds.length,
-					100,
-					this.state.searchBarTerm,
-					{
-						hidden: false
-					}
-				);
+		const visibleIdList = this._getResultIdsVisible();
 
-				const mappedData = resultsDataToMap(dataResponse.data);
+		fetchDocuments(
+			{
+				companyId: this.context.companyId,
+				end: visibleIdList.length + DELTA,
+				hidden: false,
+				keywords: this.props.searchTerm,
+				searchIndex: this.context.searchIndex,
+				start: visibleIdList.length + 1
+			}
+		).then(
+			({items, total}) => {
+				const mappedData = resultsDataToMap(items);
 
-				const pinnedIds = dataResponse.data
+				const pinnedIds = items
 					.filter(({pinned}) => pinned)
 					.map(({id}) => id);
+
+				const ids = items.map(({id}) => id);
 
 				this._initialResultIdsPinned = [
 					...this._initialResultIdsPinned,
 					...pinnedIds
 				];
-
-				const ids = dataResponse.data.map(({id}) => id);
 
 				this._initialResultIds = [...this._initialResultIds, ...ids];
 
@@ -246,54 +254,69 @@ class ResultsRankingForm extends Component {
 					state => (
 						{
 							dataLoading: false,
-							dataMap: {...state.dataMap,
-								...mappedData},
-							resultIds: [...state.resultIds, ...ids],
-							resultIdsPinned: [...state.resultIdsPinned, ...pinnedIds],
-							totalResultsVisibleCount: dataResponse.items
+							dataMap: {
+								...state.dataMap,
+								...mappedData
+							},
+							resultIds: [
+								...state.resultIds,
+								...ids
+							],
+							resultIdsPinned: [
+								...state.resultIdsPinned,
+								...pinnedIds
+							],
+							totalResultsVisibleCount: total
 						}
 					)
 				);
-			},
-			2000
+			}
 		);
 	};
 
 	/**
 	 * Retrieves only the hidden data. This is used for showing hidden results
 	 * in the hidden tab.
-	 * @TODO
-	 * - Swap out mock data
 	 */
 	_handleFetchResultsDataHidden = () => {
-		const dataResponse = getMockResultsData(
-			10,
-			this._initialResultIdsHidden.length,
-			400,
-			this.state.searchBarTerm,
+		const {resultIdsHidden} = this.state;
+
+		fetchDocuments(
 			{
-				hidden: true
+				companyId: this.context.companyId,
+				end: resultIdsHidden.length + DELTA,
+				hidden: true,
+				keywords: this.props.searchTerm,
+				searchIndex: this.context.searchIndex,
+				start: resultIdsHidden.length + 1
 			}
-		);
+		).then(
+			({items, total}) => {
+				const mappedData = resultsDataToMap(items);
 
-		const mappedData = resultsDataToMap(dataResponse.data);
+				const ids = items.map(({id}) => id);
 
-		const ids = dataResponse.data.map(({id}) => id);
+				this._initialResultIdsHidden = [
+					...this._initialResultIdsHidden,
+					...ids
+				];
 
-		this._initialResultIdsHidden = [
-			...this._initialResultIdsHidden,
-			...ids
-		];
-
-		this.setState(
-			state => (
-				{
-					dataMap: {...state.dataMap,
-						...mappedData},
-					resultIdsHidden: [...state.resultIdsHidden, ...ids],
-					totalResultsHiddenCount: dataResponse.items
-				}
-			)
+				this.setState(
+					state => (
+						{
+							dataMap: {
+								...state.dataMap,
+								...mappedData
+							},
+							resultIdsHidden: [
+								...state.resultIdsHidden,
+								...ids
+							],
+							totalResultsHiddenCount: total
+						}
+					)
+				);
+			}
 		);
 	};
 
