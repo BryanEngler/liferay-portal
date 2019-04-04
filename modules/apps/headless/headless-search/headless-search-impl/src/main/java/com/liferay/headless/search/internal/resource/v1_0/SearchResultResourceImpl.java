@@ -17,21 +17,19 @@ package com.liferay.headless.search.internal.resource.v1_0;
 import com.liferay.headless.search.dto.v1_0.SearchResult;
 import com.liferay.headless.search.resource.v1_0.SearchResultResource;
 
-import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.Hits;
-import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
-import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
-import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
-import com.liferay.portal.search.query.BooleanQuery;
-import com.liferay.portal.search.query.Queries;
-import com.liferay.portal.search.query.Query;
+import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
+import com.liferay.portal.search.searcher.SearchRequest;
+import com.liferay.portal.search.searcher.SearchRequestBuilder;
+import com.liferay.portal.search.searcher.SearchResponse;
+import com.liferay.portal.search.searcher.Searcher;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
+
+import java.util.List;
 
 /**
  * @author Bryan Engler
@@ -47,42 +45,38 @@ public class SearchResultResourceImpl extends BaseSearchResultResourceImpl {
 			String index, String keywords, String hidden, Long start, Long delta)
 		throws Exception {
 
-		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
+		SearchContext searchContext = new SearchContext();
 
-		searchSearchRequest.setIndexNames(index);
+		searchContext.setKeywords(keywords);
+		searchContext.setStart(start.intValue());
+		searchContext.setEnd(start.intValue() + delta.intValue());
+		searchContext.setCompanyId(start);
 
-		BooleanQuery booleanQuery = queries.booleanQuery();
+		SearchRequestBuilder searchRequestBuilder =
+			searchRequestBuilderFactory.getSearchRequestBuilder(
+				searchContext);
 
-		Query matchTitleQuery = queries.match("companyId", keywords);
+		SearchRequest searchRequest = searchRequestBuilder.build();
 
-		booleanQuery.addMustQueryClauses(matchTitleQuery);
+		SearchResponse searchResponse = searcher.search(searchRequest);
 
-		searchSearchRequest.setQuery(booleanQuery);
-		searchSearchRequest.setStart(start.intValue());
-		searchSearchRequest.setSize(delta.intValue());
-
-		SearchSearchResponse searchSearchResponse =
-			searchEngineAdapter.execute(searchSearchRequest);
-
-		Hits hits = searchSearchResponse.getHits();
-
-		return _toResults(hits);
+		return _toResults(searchResponse);
 	}
 
 	@Reference
-	protected Queries queries;
+	protected SearchRequestBuilderFactory searchRequestBuilderFactory;
 
 	@Reference
-	protected SearchEngineAdapter searchEngineAdapter;
+	protected Searcher searcher;
 
-	private SearchResult _toResults(Hits hits) throws Exception {
-		Document[] docs = hits.getDocs();
+	private SearchResult _toResults(SearchResponse searchResponse) throws Exception {
+		List<Document> docs = searchResponse.getDocuments71();
 
 		com.liferay.headless.search.dto.v1_0.Document[] restDocuments =
-				new com.liferay.headless.search.dto.v1_0.Document[docs.length];
+				new com.liferay.headless.search.dto.v1_0.Document[docs.size()];
 
-		for (int i = 0; i< docs.length; i++) {
-			Document document = docs[i];
+		for (int i = 0; i< docs.size(); i++) {
+			Document document = docs.get(i);
 
 			com.liferay.headless.search.dto.v1_0.Document restDocument =
 				new com.liferay.headless.search.dto.v1_0.Document() {
@@ -105,7 +99,7 @@ public class SearchResultResourceImpl extends BaseSearchResultResourceImpl {
 
 		return new SearchResult() {
 			{
-				items = Long.valueOf(docs.length);
+				items = Long.valueOf(docs.size());
 				documents = restDocuments;
 			}
 		};
