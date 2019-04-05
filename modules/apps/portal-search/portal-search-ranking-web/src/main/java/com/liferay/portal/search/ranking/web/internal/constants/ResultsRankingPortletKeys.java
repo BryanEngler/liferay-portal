@@ -17,12 +17,12 @@ package com.liferay.portal.search.ranking.web.internal.constants;
 /**
  * @author Filipe Oshiro
  */
-public class SearchRankingPortletKeys {
+public class ResultsRankingPortletKeys {
+
+	public static final String RESULTS_RANKING =
+		"com_liferay_portal_search_ranking_web_portlet_ResultsRankingPortlet";
 
 	public static final String RESULTS_RANKING_DISPLAY_CONTEXT =
 		"RESULTS_RANKING_DISPLAY_CONTEXT";
-
-	public static final String SEARCH_RANKING =
-		"com_liferay_portal_search_ranking_web_portlet_SearchRankingPortlet";
 
 }

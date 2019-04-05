@@ -16,8 +16,8 @@ package com.liferay.portal.search.ranking.web.internal.portlet;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.search.ranking.web.internal.constants.SearchRankingPortletKeys;
-import com.liferay.portal.search.ranking.web.internal.display.context.ResultsRankingsDisplayContext;
+import com.liferay.portal.search.ranking.web.internal.constants.ResultsRankingPortletKeys;
+import com.liferay.portal.search.ranking.web.internal.display.context.ResultsRankingPortletDisplayContext;
 
 import java.io.IOException;
 
@@ -51,14 +51,14 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.expiration-cache=0",
 		"javax.portlet.init-param.template-path=/META-INF/resources/",
 		"javax.portlet.init-param.view-template=/view.jsp",
-		"javax.portlet.name=" + SearchRankingPortletKeys.SEARCH_RANKING,
+		"javax.portlet.name=" + ResultsRankingPortletKeys.RESULTS_RANKING,
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=power-user,user",
 		"javax.portlet.supports.mime-type=text/html"
 	},
 	service = Portlet.class
 )
-public class SearchRankingPortlet extends MVCPortlet {
+public class ResultsRankingPortlet extends MVCPortlet {
 
 	@Override
 	public void render(
@@ -68,13 +68,14 @@ public class SearchRankingPortlet extends MVCPortlet {
 		HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(
 			renderRequest);
 
-		ResultsRankingsDisplayContext resultsRankingsDisplayContext =
-			new ResultsRankingsDisplayContext(
-				httpServletRequest, renderRequest, renderResponse);
+		ResultsRankingPortletDisplayContext
+			resultsRankingPortletDisplayContext =
+				new ResultsRankingPortletDisplayContext(
+					httpServletRequest, renderRequest, renderResponse);
 
 		renderRequest.setAttribute(
-			SearchRankingPortletKeys.RESULTS_RANKING_DISPLAY_CONTEXT,
-				resultsRankingsDisplayContext);
+			ResultsRankingPortletKeys.RESULTS_RANKING_DISPLAY_CONTEXT,
+			resultsRankingPortletDisplayContext);
 
 		super.render(renderRequest, renderResponse);
 	}

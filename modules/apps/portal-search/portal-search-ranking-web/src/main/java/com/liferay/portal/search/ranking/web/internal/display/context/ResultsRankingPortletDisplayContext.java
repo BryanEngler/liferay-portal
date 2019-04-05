@@ -47,9 +47,9 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author Kevin Tan
  */
-public class ResultsRankingsDisplayContext {
+public class ResultsRankingPortletDisplayContext {
 
-	public ResultsRankingsDisplayContext(
+	public ResultsRankingPortletDisplayContext(
 		HttpServletRequest request, RenderRequest renderRequest,
 		RenderResponse renderResponse) {
 

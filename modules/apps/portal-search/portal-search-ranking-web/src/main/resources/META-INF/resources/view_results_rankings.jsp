@@ -17,24 +17,24 @@
 <%@ include file="/init.jsp" %>
 
 <%
-ResultsRankingsDisplayContext resultsRankingsDisplayContext = (ResultsRankingsDisplayContext)request.getAttribute(SearchRankingPortletKeys.RESULTS_RANKING_DISPLAY_CONTEXT);
+ResultsRankingPortletDisplayContext resultsRankingPortletDisplayContext = (ResultsRankingPortletDisplayContext)request.getAttribute(ResultsRankingPortletKeys.RESULTS_RANKING_DISPLAY_CONTEXT);
 %>
 
 <clay:management-toolbar
-	actionDropdownItems="<%= resultsRankingsDisplayContext.getActionDropdownItems() %>"
-	clearResultsURL="<%= resultsRankingsDisplayContext.getClearResultsURL() %>"
+	actionDropdownItems="<%= resultsRankingPortletDisplayContext.getActionDropdownItems() %>"
+	clearResultsURL="<%= resultsRankingPortletDisplayContext.getClearResultsURL() %>"
 	componentId="resultsRankingEntriesManagementToolbar"
-	creationMenu="<%= resultsRankingsDisplayContext.getCreationMenu() %>"
-	disabled="<%= resultsRankingsDisplayContext.isDisabledManagementBar() %>"
-	filterDropdownItems="<%= resultsRankingsDisplayContext.getFilterItemsDropdownItems() %>"
-	itemsTotal="<%= resultsRankingsDisplayContext.getTotalItems() %>"
-	searchActionURL="<%= resultsRankingsDisplayContext.getSearchActionURL() %>"
+	creationMenu="<%= resultsRankingPortletDisplayContext.getCreationMenu() %>"
+	disabled="<%= resultsRankingPortletDisplayContext.isDisabledManagementBar() %>"
+	filterDropdownItems="<%= resultsRankingPortletDisplayContext.getFilterItemsDropdownItems() %>"
+	itemsTotal="<%= resultsRankingPortletDisplayContext.getTotalItems() %>"
+	searchActionURL="<%= resultsRankingPortletDisplayContext.getSearchActionURL() %>"
 	searchContainerId="resultsRankingEntries"
 	searchFormName="searchFm"
 	selectable="<%= true %>"
-	showCreationMenu="<%= resultsRankingsDisplayContext.isShowCreationMenu() %>"
-	sortingOrder="<%= resultsRankingsDisplayContext.getOrderByType() %>"
-	sortingURL="<%= resultsRankingsDisplayContext.getSortingURL() %>"
+	showCreationMenu="<%= resultsRankingPortletDisplayContext.isShowCreationMenu() %>"
+	sortingOrder="<%= resultsRankingPortletDisplayContext.getOrderByType() %>"
+	sortingURL="<%= resultsRankingPortletDisplayContext.getSortingURL() %>"
 />
 
 <portlet:actionURL name="deleteResultsRankingsEntry" var="deleteResultsRankingsEntryURL">
@@ -46,7 +46,7 @@ ResultsRankingsDisplayContext resultsRankingsDisplayContext = (ResultsRankingsDi
 
 	<liferay-ui:search-container
 		id="resultsRankingEntries"
-		searchContainer="<%= resultsRankingsDisplayContext.getSearchContainer() %>"
+		searchContainer="<%= resultsRankingPortletDisplayContext.getSearchContainer() %>"
 	>
 		<liferay-ui:search-container-row
 			className="com.liferay.portal.kernel.search.Document"

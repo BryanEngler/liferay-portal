@@ -18,7 +18,7 @@ import com.liferay.application.list.BasePanelApp;
 import com.liferay.application.list.PanelApp;
 import com.liferay.application.list.constants.PanelCategoryKeys;
 import com.liferay.portal.kernel.model.Portlet;
-import com.liferay.portal.search.ranking.web.internal.constants.SearchRankingPortletKeys;
+import com.liferay.portal.search.ranking.web.internal.constants.ResultsRankingPortletKeys;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -34,16 +34,16 @@ import org.osgi.service.component.annotations.Reference;
 	},
 	service = PanelApp.class
 )
-public class SearchRankingPanelApp extends BasePanelApp {
+public class ResultsRankingPanelApp extends BasePanelApp {
 
 	@Override
 	public String getPortletId() {
-		return SearchRankingPortletKeys.SEARCH_RANKING;
+		return ResultsRankingPortletKeys.RESULTS_RANKING;
 	}
 
 	@Override
 	@Reference(
-		target = "(javax.portlet.name=" + SearchRankingPortletKeys.SEARCH_RANKING + ")",
+		target = "(javax.portlet.name=" + ResultsRankingPortletKeys.RESULTS_RANKING + ")",
 		unbind = "-"
 	)
 	public void setPortlet(Portlet portlet) {
