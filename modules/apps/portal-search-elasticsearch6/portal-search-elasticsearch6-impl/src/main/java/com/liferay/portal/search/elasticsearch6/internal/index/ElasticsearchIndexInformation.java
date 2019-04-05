@@ -68,10 +68,11 @@ public class ElasticsearchIndexInformation implements IndexInformation {
 		getFieldMappingsRequest = getFieldMappingsRequest.indices(index);
 		getFieldMappingsRequest = getFieldMappingsRequest.fields("*");
 
-		ActionFuture<GetFieldMappingsResponse> getFieldMappingsResponseFuture =
-			indicesAdminClient.getFieldMappings(getFieldMappingsRequest);
+		ActionFuture<GetFieldMappingsResponse>
+			getFieldMappingsResponseActionFuture =
+				indicesAdminClient.getFieldMappings(getFieldMappingsRequest);
 
-		return getFieldMappingsResponseFuture.actionGet();
+		return getFieldMappingsResponseActionFuture.actionGet();
 	}
 
 	protected GetIndexResponse getGetIndexResponse() {

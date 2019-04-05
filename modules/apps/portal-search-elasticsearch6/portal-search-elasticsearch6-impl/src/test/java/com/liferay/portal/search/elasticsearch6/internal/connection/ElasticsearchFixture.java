@@ -146,10 +146,10 @@ public class ElasticsearchFixture implements ElasticsearchClientResolver {
 		clusterHealthRequest.waitForNoRelocatingShards(true);
 		clusterHealthRequest.waitForStatus(healthExpectations.getStatus());
 
-		ActionFuture<ClusterHealthResponse> health = clusterAdminClient.health(
-			clusterHealthRequest);
+		ActionFuture<ClusterHealthResponse> healthActionFuture =
+			clusterAdminClient.health(clusterHealthRequest);
 
-		return health.actionGet();
+		return healthActionFuture.actionGet();
 	}
 
 	public Map<String, Object> getElasticsearchConfigurationProperties() {
