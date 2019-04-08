@@ -32,7 +32,6 @@ page import="com.liferay.portal.kernel.util.Constants" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
 page import="com.liferay.portal.search.ranking.web.internal.constants.ResultsRankingPortletKeys" %><%@
-page import="com.liferay.portal.search.ranking.web.internal.display.context.ResultsRankingDisplayContext" %><%@
 page import="com.liferay.portal.search.ranking.web.internal.display.context.ResultsRankingPortletDisplayContext" %>
 
 <liferay-frontend:defineObjects />
