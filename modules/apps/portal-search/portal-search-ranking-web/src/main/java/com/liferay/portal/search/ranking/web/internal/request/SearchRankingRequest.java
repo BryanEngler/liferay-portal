@@ -16,7 +16,6 @@ package com.liferay.portal.search.ranking.web.internal.request;
 
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
@@ -25,6 +24,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.search.constants.SearchContextAttributes;
 import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.query.Queries;
+import com.liferay.portal.search.ranking.web.internal.display.context.ResultsRankingEntryDisplayContext;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.searcher.SearchResponse;
 import com.liferay.portal.search.searcher.Searcher;
@@ -38,7 +38,8 @@ public class SearchRankingRequest {
 
 	public SearchRankingRequest(
 		HttpServletRequest httpServletRequest, Queries queries,
-		SearchContainer<Document> searchContainer, Searcher searcher,
+		SearchContainer<ResultsRankingEntryDisplayContext> searchContainer,
+		Searcher searcher,
 		SearchRequestBuilderFactory searchRequestBuilderFactory,
 		ThemeDisplay themeDisplay) {
 
@@ -64,11 +65,7 @@ public class SearchRankingRequest {
 		SearchRankingResponse searchRankingResponse =
 			new SearchRankingResponse();
 
-		searchResponse.withHits(
-			hits -> {
-				searchRankingResponse.setDocuments(hits.toList());
-				searchRankingResponse.setTotalHits(hits.getLength());
-			});
+		searchRankingResponse.setSearchHits(searchResponse.getSearchHits());
 
 		return searchRankingResponse;
 	}
@@ -90,8 +87,8 @@ public class SearchRankingRequest {
 		_searchContext.setTimeZone(_themeDisplay.getTimeZone());
 		_searchContext.setUserId(_themeDisplay.getUserId());
 
-		_searchContext.setEnd(_searchContainer.getEnd());
-		_searchContext.setStart(_searchContainer.getStart());
+		//_searchContext.setEnd(_searchContainer.getEnd());
+		//_searchContext.setStart(_searchContainer.getStart());
 
 		QueryConfig queryConfig = _searchContext.getQueryConfig();
 
@@ -102,9 +99,9 @@ public class SearchRankingRequest {
 		return _searchContext;
 	}
 
-
 	private final Queries _queries;
-	private final SearchContainer<Document> _searchContainer;
+	private final SearchContainer<ResultsRankingEntryDisplayContext>
+		_searchContainer;
 	private final SearchContext _searchContext;
 	private final Searcher _searcher;
 	private final SearchRequestBuilderFactory _searchRequestBuilderFactory;

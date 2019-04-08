@@ -25,7 +25,9 @@ portletDisplay.setURLBack(redirect);
 
 <portlet:actionURL name="/results_ranking/edit" var="addResultsRankingEntryURL" />
 
-<liferay-frontend:edit-form action="<%= addResultsRankingEntryURL %>">
+<liferay-frontend:edit-form
+	action="<%= addResultsRankingEntryURL %>"
+>
 	<liferay-frontend:edit-form-body>
 		<h2 class="sheet-title">
 			<liferay-ui:message key="enter-a-search-term" />
@@ -37,6 +39,7 @@ portletDisplay.setURLBack(redirect);
 
 		<aui:input label="<%= StringPool.BLANK %>" name="search-term" placeholder="search-term" />
 		<aui:input label="<%= StringPool.BLANK %>" name="index-name" placeholder="index-name" />
+		<aui:input label="<%= StringPool.BLANK %>" name="aliases" placeholder="aliases" />
 		<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.ADD %>" />
 	</liferay-frontend:edit-form-body>
 
