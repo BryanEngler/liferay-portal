@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Html;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -31,12 +30,15 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.search.hits.SearchHit;
+import com.liferay.portal.search.hits.SearchHits;
 import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.search.ranking.web.internal.request.SearchRankingRequest;
 import com.liferay.portal.search.ranking.web.internal.request.SearchRankingResponse;
 import com.liferay.portal.search.searcher.Searcher;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -65,8 +67,7 @@ public class ResultsRankingPortletDisplayContext {
 		_themeDisplay = (ThemeDisplay)_httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		_resultsRankingsHolder = _rankingSearch(
-			queries, searcher, searchRequestBuilderFactory);
+		_search(queries, searcher, searchRequestBuilderFactory);
 	}
 
 	public List<DropdownItem> getActionDropdownItems() {
@@ -165,19 +166,15 @@ public class ResultsRankingPortletDisplayContext {
 		return _orderByType;
 	}
 
-	public ResultsRankingDisplayContext getResultsRankingDisplayContext(
-		Document document) {
-
-		return _resultsRankingsHolder.get(document);
-	}
-
 	public String getSearchActionURL() {
 		PortletURL portletURL = _getPortletURL();
 
 		return portletURL.toString();
 	}
 
-	public SearchContainer<Document> getSearchContainer() {
+	public SearchContainer<ResultsRankingEntryDisplayContext>
+		getSearchContainer() {
+
 		if (_searchContainer != null) {
 			return _searchContainer;
 		}
@@ -188,8 +185,9 @@ public class ResultsRankingPortletDisplayContext {
 			_httpServletRequest, "no-custom-results-yet",
 			"<strong>" + html.escape(_getKeywords()) + "</strong>", false);
 
-		SearchContainer<Document> searchContainer = new SearchContainer<>(
-			_renderRequest, _getPortletURL(), null, emptyResultMessage);
+		SearchContainer<ResultsRankingEntryDisplayContext> searchContainer =
+			new SearchContainer<>(
+				_renderRequest, _getPortletURL(), null, emptyResultMessage);
 
 		searchContainer.setId("resultRankingsEntries");
 		searchContainer.setOrderByCol(_getOrderByCol());
@@ -340,7 +338,7 @@ public class ResultsRankingPortletDisplayContext {
 		return false;
 	}
 
-	private ResultsRankingsHolder _rankingSearch(
+	private void _search(
 		Queries queries, Searcher searcher,
 		SearchRequestBuilderFactory searchRequestBuilderFactory) {
 
@@ -351,32 +349,38 @@ public class ResultsRankingPortletDisplayContext {
 		SearchRankingResponse searchRankingResponse =
 			searchRankingRequest.search();
 
-		List<Document> documents = searchRankingResponse.getDocuments();
+		SearchHits searchHits = searchRankingResponse.getSearchHits();
 
-		if (documents.isEmpty()) {
+		List<SearchHit> searchHitList = searchHits.getSearchHits();
+
+		if (searchHitList.isEmpty()) {
 			_searchContainer = null;
 
-			return null;
+			return;
 		}
 
 		_searchContainer.setSearch(true);
-		_searchContainer.setResults(documents);
 		_searchContainer.setTotal(searchRankingResponse.getTotalHits());
 
-		final ResultsRankingsHolder resultsRankingsHolder =
-			new ResultsRankingsHolder(documents.size());
+		List<ResultsRankingEntryDisplayContext>
+			resultsRankingEntryDisplayContexts = new ArrayList<>();
 
-		documents.forEach(
-			document -> {
-				ResultsRankingDisplayContext resultsRankingDisplayContext =
-					new ResultsRankingDisplayContext(
-						document, _themeDisplay.getLocale());
+		searchHitList.forEach(
+			searchHit -> {
+				ResultsRankingEntryDisplayContextBuilder
+					resultsRankingEntryDisplayContextBuilder =
+						new ResultsRankingEntryDisplayContextBuilder(
+							searchHit.getDocument());
 
-				resultsRankingsHolder.put(
-					document, resultsRankingDisplayContext);
+				ResultsRankingEntryDisplayContext
+					resultsRankingEntryDisplayContext =
+						resultsRankingEntryDisplayContextBuilder.build();
+
+				resultsRankingEntryDisplayContexts.add(
+					resultsRankingEntryDisplayContext);
 			});
 
-		return resultsRankingsHolder;
+		_searchContainer.setResults(resultsRankingEntryDisplayContexts);
 	}
 
 	private String _displayStyle;
@@ -387,8 +391,7 @@ public class ResultsRankingPortletDisplayContext {
 	private String _orderByType;
 	private final RenderRequest _renderRequest;
 	private final RenderResponse _renderResponse;
-	private final ResultsRankingsHolder _resultsRankingsHolder;
-	private SearchContainer<Document> _searchContainer;
+	private SearchContainer<ResultsRankingEntryDisplayContext> _searchContainer;
 	private final ThemeDisplay _themeDisplay;
 
 }

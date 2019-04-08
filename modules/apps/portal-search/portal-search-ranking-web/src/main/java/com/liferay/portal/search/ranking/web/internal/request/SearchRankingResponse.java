@@ -16,6 +16,7 @@ package com.liferay.portal.search.ranking.web.internal.request;
 
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.search.Document;
+import com.liferay.portal.search.hits.SearchHits;
 import com.liferay.portal.search.searcher.SearchResponse;
 
 import java.util.List;
@@ -50,6 +51,10 @@ public class SearchRankingResponse {
 		return _searchContainer;
 	}
 
+	public SearchHits getSearchHits() {
+		return _searchHits;
+	}
+
 	public SearchResponse getSearchResponse() {
 		return _searchResponse;
 	}
@@ -78,6 +83,10 @@ public class SearchRankingResponse {
 		_searchContainer = searchContainer;
 	}
 
+	public void setSearchHits(SearchHits searchHits) {
+		_searchHits = searchHits;
+	}
+
 	public void setSearchResponse(SearchResponse searchResponse) {
 		_searchResponse = searchResponse;
 	}
@@ -91,6 +100,7 @@ public class SearchRankingResponse {
 	private int _paginationDelta;
 	private int _paginationStart;
 	private SearchContainer<Document> _searchContainer;
+	private SearchHits _searchHits;
 	private SearchResponse _searchResponse;
 	private int _totalHits;
 

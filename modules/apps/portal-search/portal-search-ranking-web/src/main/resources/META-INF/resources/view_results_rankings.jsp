@@ -49,50 +49,59 @@ ResultsRankingPortletDisplayContext resultsRankingPortletDisplayContext = (Resul
 		searchContainer="<%= resultsRankingPortletDisplayContext.getSearchContainer() %>"
 	>
 		<liferay-ui:search-container-row
-			className="com.liferay.portal.kernel.search.Document"
+			className="com.liferay.portal.search.ranking.web.internal.display.context.ResultsRankingEntryDisplayContext"
 			keyProperty="resultsRankingsEntryId"
-			modelVar="document"
+			modelVar="resultsRankingEntryDisplayContext"
 		>
-
-			<%
-			ResultsRankingDisplayContext resultsRankingDisplayContext = java.util.Objects.requireNonNull(resultsRankingPortletDisplayContext.getResultsRankingDisplayContext(document));
-			%>
-
 			<portlet:renderURL var="rowURL">
-				<portlet:param name="mvcRenderCommandName" value="addResultsRankingsEntry" />
+				<portlet:param name="mvcRenderCommandName" value="editResultsRankingsEntry" />
 				<portlet:param name="redirect" value="<%= currentURL %>" />
-				<portlet:param name="uid" value="<%= resultsRankingDisplayContext.getUid() %>" />
+				<portlet:param name="uid" value="<%= resultsRankingEntryDisplayContext.getUid() %>" />
 			</portlet:renderURL>
 
 			<liferay-ui:search-container-column-text
 				cssClass="table-cell-expand table-title"
 				href="<%= rowURL %>"
-				name="search-term-aliases"
-				value="<%= resultsRankingDisplayContext.getKeywords() %>"
+				name="search-terms"
+				value="<%= resultsRankingEntryDisplayContext.getKeywords() %>"
+			/>
+
+			<liferay-ui:search-container-column-text
+				cssClass="table-cell-expand"
+				href="<%= rowURL %>"
+				name="aliases"
+				value="<%= resultsRankingEntryDisplayContext.getAliases() %>"
+			/>
+
+			<liferay-ui:search-container-column-text
+				cssClass="table-cell-expand-smallest table-cell-minw-150"
+				href="<%= rowURL %>"
+				name="index"
+				value="<%= resultsRankingEntryDisplayContext.getIndex() %>"
 			/>
 
 			<liferay-ui:search-container-column-text
 				cssClass="table-cell-expand-smallest table-cell-minw-150"
 				name="pinned-results"
-				value="<%= resultsRankingDisplayContext.getPinned() %>"
+				value="<%= resultsRankingEntryDisplayContext.getPinnedResultsCount() %>"
 			/>
 
 			<liferay-ui:search-container-column-text
 				cssClass="table-cell-expand-smallest table-cell-minw-150"
 				name="hidden-results"
-				value="<%= resultsRankingDisplayContext.getHidden() %>"
+				value="<%= resultsRankingEntryDisplayContext.getHiddenResultsCount() %>"
 			/>
 
 			<liferay-ui:search-container-column-date
 				cssClass="table-cell-expand-smallest table-cell-minw-150 table-cell-ws-nowrap"
 				name="modified-date"
-				value="<%= resultsRankingDisplayContext.getModifiedDate() %>"
+				value="<%= resultsRankingEntryDisplayContext.getModifiedDate() %>"
 			/>
 
 			<liferay-ui:search-container-column-date
 				cssClass="table-cell-expand-smallest table-cell-minw-150 table-cell-ws-nowrap"
 				name="display-date"
-				value="<%= resultsRankingDisplayContext.getDisplayDate() %>"
+				value="<%= resultsRankingEntryDisplayContext.getDisplayDate() %>"
 			/>
 
 			<liferay-ui:search-container-column-status
