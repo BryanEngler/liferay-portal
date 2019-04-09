@@ -87,7 +87,7 @@ class Alias extends Component {
 					overlayClassName="modal-backdrop react-modal-backdrop"
 					portalClassName="results-ranking-modal-root"
 				>
-					<div className="modal-content">
+					<div className="modal-content" data-testid="alias-modal">
 						<div className="modal-header">
 							<div className="modal-title">
 								{Liferay.Language.get('add-an-alias')}

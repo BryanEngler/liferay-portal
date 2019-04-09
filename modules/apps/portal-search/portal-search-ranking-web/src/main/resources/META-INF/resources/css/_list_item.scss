@@ -42,11 +42,10 @@
 	}
 
 	.result-drag {
-		cursor: grab;
 		padding: 0;
-		visibility: hidden;
 
 		.result-drag-sticker {
+			cursor: grab;
 			width: unset;
 		}
 	}
@@ -88,10 +87,6 @@
 	}
 
 	&.results-ranking-item-pinned {
-		.result-drag {
-			visibility: visible;
-		}
-
 		.result-pin {
 			visibility: visible;
 
@@ -105,9 +100,5 @@
 				color: inherit;
 			}
 		}
-	}
-
-	&.results-ranking-item-hidden {
-		padding-left: 24px;
 	}
 }

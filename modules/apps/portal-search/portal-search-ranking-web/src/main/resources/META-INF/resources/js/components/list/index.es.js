@@ -171,7 +171,7 @@ class List extends Component {
 				/>
 
 				{!!resultIds.length && (
-					<ul className="list-group">
+					<ul className="list-group" data-testid="results-list-group">
 						{resultIds.map(
 							(id, index, arr) =>
 								this._renderItem(id, index, arr)

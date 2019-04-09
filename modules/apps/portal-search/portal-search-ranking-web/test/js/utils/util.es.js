@@ -7,7 +7,7 @@ import {
 
 const RESULTS_LIST = [
 	{
-		author: 'Juan Hidalgo',
+		author: 'Test Test',
 		clicks: 289,
 		date: 'Apr 18 2018, 11:04 AM',
 		description:
@@ -17,7 +17,7 @@ const RESULTS_LIST = [
 		type: 'Web Content'
 	},
 	{
-		author: 'Juan Hidalgo',
+		author: 'Test Test',
 		clicks: 8,
 		date: 'Apr 18 2018, 11:04 AM',
 		extension: 'png',
