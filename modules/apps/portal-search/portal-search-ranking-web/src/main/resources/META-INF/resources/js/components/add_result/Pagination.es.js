@@ -261,16 +261,18 @@ class Pagination extends Component {
 
 		const classPrevious = getCN(
 			'page-item',
+			'page-item-previous',
 			{disabled: page === 1}
 		);
 
 		const classNext = getCN(
 			'page-item',
+			'page-item-next',
 			{disabled: page === total}
 		);
 
 		return (
-			<ul className="pagination">
+			<ul className="pagination" data-testid="pagination">
 				<li className={classPrevious}>
 					<a
 						className="page-link"

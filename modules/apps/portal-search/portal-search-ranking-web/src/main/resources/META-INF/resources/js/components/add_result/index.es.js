@@ -328,7 +328,7 @@ class AddResult extends Component {
 					overlayClassName="modal-backdrop react-modal-backdrop"
 					portalClassName="results-ranking-modal-root"
 				>
-					<div className="modal-content">
+					<div className="modal-content" data-testid="add-result-modal">
 						<div className="modal-header">
 							<div className="modal-title">
 								{Liferay.Language.get('add-a-result')}
@@ -445,7 +445,7 @@ class AddResult extends Component {
 											</div>
 										</div>
 
-										<ul className="list-group">
+										<ul className="list-group" data-testid="add-result-items">
 											{results.items.map(
 												result => (
 													<Item

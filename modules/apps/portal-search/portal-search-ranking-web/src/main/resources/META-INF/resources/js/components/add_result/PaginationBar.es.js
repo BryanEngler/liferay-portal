@@ -122,6 +122,7 @@ class PaginationBar extends Component {
 			<div className="pagination-bar">
 				<div
 					className="dropdown pagination-items-per-page"
+					data-testid="pagination-delta"
 					ref={this.setWrapperRef}
 				>
 					<a
