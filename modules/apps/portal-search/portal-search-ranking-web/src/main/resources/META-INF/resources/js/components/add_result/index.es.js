@@ -72,11 +72,11 @@ class AddResult extends Component {
 		fetchDocuments(
 			{
 				companyId: this.context.companyId,
-				end: page * selectedDelta,
+				end: (page * selectedDelta) - 1,
 				hidden: false,
 				keywords: addResultSearchTerm,
 				searchIndex: this.context.searchIndex,
-				start: (page * selectedDelta) - selectedDelta + 1
+				start: (page * selectedDelta) - selectedDelta
 			}
 		).then(
 			({items, total}) => {

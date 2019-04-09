@@ -227,11 +227,11 @@ class ResultsRankingForm extends Component {
 		fetchDocuments(
 			{
 				companyId: this.context.companyId,
-				end: visibleIdList.length + DELTA,
+				end: visibleIdList.length + DELTA - 1,
 				hidden: false,
 				keywords: this.props.searchTerm,
 				searchIndex: this.context.searchIndex,
-				start: visibleIdList.length + 1
+				start: visibleIdList.length
 			}
 		).then(
 			({items, total}) => {
@@ -284,11 +284,11 @@ class ResultsRankingForm extends Component {
 		fetchDocuments(
 			{
 				companyId: this.context.companyId,
-				end: resultIdsHidden.length + DELTA,
+				end: resultIdsHidden.length + DELTA - 1,
 				hidden: true,
 				keywords: this.props.searchTerm,
 				searchIndex: this.context.searchIndex,
-				start: resultIdsHidden.length + 1
+				start: resultIdsHidden.length
 			}
 		).then(
 			({items, total}) => {
