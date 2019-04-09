@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -100,8 +101,11 @@ public class CreateResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 				resultsRankingIndexer.addResultsRanking(resultsRanking);
 			}
 			else {
-				throw new Exception(
-					"ranking already exists for keywords/aliases");
+				SessionErrors.add(actionRequest, Exception.class);
+
+				actionResponse.setRenderParameter("mvcPath", "/error.jsp");
+
+				return;
 			}
 		}
 		else if (cmd.equals("update")) {
