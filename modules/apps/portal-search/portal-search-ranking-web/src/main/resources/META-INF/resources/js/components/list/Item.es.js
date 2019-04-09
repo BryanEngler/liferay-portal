@@ -261,6 +261,7 @@ class Item extends Component {
 			extension,
 			hidden,
 			hoverIndex,
+			id,
 			index,
 			lastIndex,
 			onClickHide,
@@ -310,19 +311,22 @@ class Item extends Component {
 		return connectDropTarget(
 			<li
 				className={listClasses}
+				data-testid={id}
 				onMouseEnter={this._handleMouseEnter}
 				onMouseLeave={this._handleMouseLeave}
 				style={style}
 			>
-				{onDragHover && !hidden && (
-					<div className="autofit-col result-drag">
-						{connectDragSource(
-							<span className="result-drag-sticker sticker sticker-secondary">
-								<ClayIcon iconName="drag" />
-							</span>
-						)}
-					</div>
-				)}
+				<div
+					className="autofit-col result-drag"
+					data-testid="DRAG_ICON"
+					style={{visibility: pinned ? 'visible' : 'hidden'}}
+				>
+					{connectDragSource(
+						<span className="result-drag-sticker sticker sticker-secondary">
+							<ClayIcon iconName="drag" />
+						</span>
+					)}
+				</div>
 
 				<div className="autofit-col">
 					<div className="custom-control custom-checkbox">
