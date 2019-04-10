@@ -27,9 +27,7 @@ class List extends Component {
 
 	static defaultProps = {
 		dataLoading: false,
-		resultIds: [],
-		resultIdsHidden: [],
-		resultIdsPinned: []
+		resultIds: []
 	};
 
 	state = {
@@ -145,6 +143,7 @@ class List extends Component {
 
 				<SearchBar
 					dataMap={dataMap}
+					disableSearch={!resultIds.length && !this._hasMoreData()}
 					onAddResultSubmit={onAddResultSubmit}
 					onClickHide={onClickHide}
 					onClickPin={onClickPin}
