@@ -15,6 +15,7 @@ class SearchBar extends Component {
 		 * selected items.
 		 */
 		dataMap: PropTypes.object.isRequired,
+		disableSearch: PropTypes.bool,
 		onAddResultSubmit: PropTypes.func,
 		onClickHide: PropTypes.func,
 		onClickPin: PropTypes.func,
@@ -29,6 +30,7 @@ class SearchBar extends Component {
 	};
 
 	static defaultProps = {
+		disableSearch: false,
 		resultIds: [],
 		selectedIds: []
 	};
@@ -132,6 +134,7 @@ class SearchBar extends Component {
 	render() {
 		const {
 			onAddResultSubmit,
+			disableSearch,
 			resultIds,
 			searchBarTerm,
 			selectedIds
@@ -246,6 +249,7 @@ class SearchBar extends Component {
 												<input
 													aria-label="Search for"
 													className="form-control input-group-inset input-group-inset-after"
+													disabled={disableSearch}
 													onChange={this._handleSearchChange}
 													onKeyDown={this._handleSearchKeyDown}
 													placeholder={Liferay.Language.get('contains-text')}

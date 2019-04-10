@@ -235,13 +235,14 @@ class ResultsRankingForm extends Component {
 			}
 		).then(
 			({items, total}) => {
-				const mappedData = resultsDataToMap(items);
+				const mappedData = items ? resultsDataToMap(items) : {};
 
-				const pinnedIds = items
-					.filter(({pinned}) => pinned)
-					.map(({id}) => id);
+				const pinnedIds = items ?
+					items.filter(({pinned}) => pinned)
+						.map(({id}) => id) :
+					[];
 
-				const ids = items.map(({id}) => id);
+				const ids = items ? items.map(({id}) => id) : [];
 
 				this._initialResultIdsPinned = [
 					...this._initialResultIdsPinned,
@@ -292,9 +293,9 @@ class ResultsRankingForm extends Component {
 			}
 		).then(
 			({items, total}) => {
-				const mappedData = resultsDataToMap(items);
+				const mappedData = items ? resultsDataToMap(items) : {};
 
-				const ids = items.map(({id}) => id);
+				const ids = items ? items.map(({id}) => id) : [];
 
 				this._initialResultIdsHidden = [
 					...this._initialResultIdsHidden,
@@ -340,6 +341,31 @@ class ResultsRankingForm extends Component {
 	};
 
 	/**
+	 * Handles removing an alias.
+	 * @param {String} label Removes the alias with given label.
+	 */
+	_handleRemoveAlias = label => {
+		this.setState(
+			state => (
+				{
+					aliases: state.aliases.filter(item => item !== label)
+				}
+			)
+		);
+	};
+
+	/**
+	 * Handles the search bar enter, in which results are cleared and replaced
+	 * with fetched data with the new search parameter.
+	 */
+	_handleSearchBarEnter = () => {
+		this._clearResultsData();
+
+		this._handleFetchResultsData();
+		this._handleFetchResultsDataHidden();
+	};
+
+	/**
 	 * Handles adding to the alias list and filters out duplicate words.
 	 * @param {array} value The value of the new aliases (array of String).
 	 */
@@ -376,11 +402,15 @@ class ResultsRankingForm extends Component {
 			}
 		);
 
+		const addedResultsIds = addedResultsDataList.map(({id}) => id);
+
 		this.setState(
 			state => (
 				{
-					dataMap: {...state.dataMap,
-						...newMappedData},
+					dataMap: {
+						...state.dataMap,
+						...newMappedData
+					},
 					resultIdsPinned: [
 						...addedResultsDataList
 							.filter(
@@ -388,7 +418,10 @@ class ResultsRankingForm extends Component {
 							)
 							.map(({id}) => id),
 						...state.resultIdsPinned
-					]
+					],
+					resultIdsHidden: state.resultIdsHidden.filter(
+						id => !addedResultsIds.includes(id)
+					)
 				}
 			)
 		);
@@ -401,31 +434,6 @@ class ResultsRankingForm extends Component {
 	 */
 	_handleUpdateSearchBarTerm = searchBarTerm => {
 		this.setState({searchBarTerm});
-	};
-
-	/**
-	 * Handles removing an alias.
-	 * @param {String} label Removes the alias with given label.
-	 */
-	_handleRemoveAlias = label => {
-		this.setState(
-			state => (
-				{
-					aliases: state.aliases.filter(item => item !== label)
-				}
-			)
-		);
-	};
-
-	/**
-	 * Handles the search bar enter, in which results are cleared and replaced
-	 * with fetched data with the new search parameter.
-	 */
-	_handleSearchBarEnter = () => {
-		this._clearResultsData();
-
-		this._handleFetchResultsData();
-		this._handleFetchResultsDataHidden();
 	};
 
 	/**
@@ -547,7 +555,9 @@ class ResultsRankingForm extends Component {
 										searchBarTerm={searchBarTerm}
 										selected={selected}
 										totalResultsCount={
-											totalResultsVisibleCount
+											totalResultsVisibleCount -
+											this._getHiddenAdded().length +
+											this._getHiddenRemoved().length
 										}
 									/>
 								</ClayTabPanel>
@@ -570,7 +580,9 @@ class ResultsRankingForm extends Component {
 										searchBarTerm={searchBarTerm}
 										selected={selected}
 										totalResultsCount={
-											totalResultsHiddenCount
+											totalResultsHiddenCount -
+											this._getHiddenRemoved().length +
+											this._getHiddenAdded().length
 										}
 									/>
 								</ClayTabPanel>
