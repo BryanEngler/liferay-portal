@@ -47,6 +47,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.junit.AfterClass;
@@ -75,6 +76,25 @@ public abstract class BaseExpandoTestCase extends BaseIndexingTestCase {
 	@AfterClass
 	public static void tearDownClassBaseExpandoTestCase() {
 		RegistryUtil.setRegistry(null);
+	}
+
+	@Test
+	public void testColumnNameWithPeriod() throws Exception {
+		String keywordColumnName =
+			"expando__keyword__custom_fields__column.name";
+		String textColumnName = "expando__custom_fields__column.name";
+
+		Function<String, DocumentCreationHelper> addKeyword =
+			value -> addKeyword(keywordColumnName, value);
+
+		Function<String, DocumentCreationHelper> addText = value -> addText(
+			textColumnName, value);
+
+		addDocuments(addKeyword, Arrays.asList("keyword"));
+		addDocuments(addText, Arrays.asList("text"));
+
+		assertSearch(keywordColumnName, textColumnName, "keyword", 1);
+		assertSearch(keywordColumnName, textColumnName, "text", 1);
 	}
 
 	@Test
@@ -134,18 +154,26 @@ public abstract class BaseExpandoTestCase extends BaseIndexingTestCase {
 	}
 
 	protected DocumentCreationHelper addKeyword(String value) {
-		return document -> {
-			document.addKeyword(Field.STATUS, _FIELD_KEYWORD + value);
+		return addKeyword(_FIELD_KEYWORD, value);
+	}
 
-			document.addKeyword(_FIELD_KEYWORD, value);
+	protected DocumentCreationHelper addKeyword(String name, String value) {
+		return document -> {
+			document.addKeyword(Field.STATUS, name + value);
+
+			document.addKeyword(name, value);
 		};
 	}
 
 	protected DocumentCreationHelper addText(String value) {
-		return document -> {
-			document.addKeyword(Field.STATUS, _FIELD_TEXT + value);
+		return addText(_FIELD_TEXT, value);
+	}
 
-			document.addText(_FIELD_TEXT, value);
+	protected DocumentCreationHelper addText(String name, String value) {
+		return document -> {
+			document.addKeyword(Field.STATUS, name + value);
+
+			document.addText(name, value);
 		};
 	}
 
@@ -153,7 +181,20 @@ public abstract class BaseExpandoTestCase extends BaseIndexingTestCase {
 		throws Exception {
 
 		IdempotentRetryAssert.retryAssert(
-			3, TimeUnit.SECONDS, () -> doAssertSearch(keywords, expectedCount));
+			3, TimeUnit.SECONDS,
+			() -> doAssertSearch(
+				_FIELD_KEYWORD, _FIELD_TEXT, keywords, expectedCount));
+	}
+
+	protected void assertSearch(
+			String keywordFieldName, String textFieldName, String keywords,
+			int expectedCount)
+		throws Exception {
+
+		IdempotentRetryAssert.retryAssert(
+			3, TimeUnit.SECONDS,
+			() -> doAssertSearch(
+				keywordFieldName, textFieldName, keywords, expectedCount));
 	}
 
 	protected ExpandoBridge createExpandoBridge(
@@ -203,12 +244,14 @@ public abstract class BaseExpandoTestCase extends BaseIndexingTestCase {
 		return expandoBridgeFactory;
 	}
 
-	protected ExpandoBridgeIndexer createExpandoBridgeIndexer() {
+	protected ExpandoBridgeIndexer createExpandoBridgeIndexer(
+		String keywordFieldName, String textFieldName) {
+
 		ExpandoBridgeIndexer expandoBridgeIndexer = Mockito.mock(
 			ExpandoBridgeIndexer.class);
 
 		Mockito.doReturn(
-			_FIELD_KEYWORD
+			keywordFieldName
 		).when(
 			expandoBridgeIndexer
 		).encodeFieldName(
@@ -217,7 +260,7 @@ public abstract class BaseExpandoTestCase extends BaseIndexingTestCase {
 		);
 
 		Mockito.doReturn(
-			_FIELD_TEXT
+			textFieldName
 		).when(
 			expandoBridgeIndexer
 		).encodeFieldName(
@@ -270,11 +313,12 @@ public abstract class BaseExpandoTestCase extends BaseIndexingTestCase {
 		return expandoColumnLocalService;
 	}
 
-	protected ExpandoQueryContributorHelper
-		createExpandoQueryContributorHelper() {
+	protected ExpandoQueryContributorHelper createExpandoQueryContributorHelper(
+		String keywordFieldName, String textFieldName) {
 
 		return new ExpandoQueryContributorHelper(
-			createExpandoBridgeFactory(), createExpandoBridgeIndexer(),
+			createExpandoBridgeFactory(),
+			createExpandoBridgeIndexer(keywordFieldName, textFieldName),
 			createExpandoColumnLocalService(), null);
 	}
 
@@ -293,7 +337,9 @@ public abstract class BaseExpandoTestCase extends BaseIndexingTestCase {
 		return unicodeProperties;
 	}
 
-	protected Void doAssertSearch(String keywords, int expectedCount)
+	protected Void doAssertSearch(
+			String keywordFieldName, String textFieldName, String keywords,
+			int expectedCount)
 		throws Exception {
 
 		BooleanQuery booleanQuery = new BooleanQueryImpl();
@@ -301,7 +347,8 @@ public abstract class BaseExpandoTestCase extends BaseIndexingTestCase {
 		SearchContext searchContext = createSearchContext();
 
 		ExpandoQueryContributorHelper expandoQueryContributorHelper =
-			createExpandoQueryContributorHelper();
+			createExpandoQueryContributorHelper(
+				keywordFieldName, textFieldName);
 
 		expandoQueryContributorHelper.setAndSearch(searchContext.isAndSearch());
 		expandoQueryContributorHelper.setBooleanQuery(booleanQuery);
