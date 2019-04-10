@@ -535,12 +535,6 @@ public class Field implements Serializable {
 					"Name must not contain ", StringPool.COMMA, ": ", name));
 		}
 
-		if (name.contains(StringPool.PERIOD)) {
-			throw new IllegalArgumentException(
-				StringBundler.concat(
-					"Name must not contain ", StringPool.PERIOD, ": ", name));
-		}
-
 		if (name.contains(StringPool.POUND)) {
 			throw new IllegalArgumentException(
 				StringBundler.concat(
