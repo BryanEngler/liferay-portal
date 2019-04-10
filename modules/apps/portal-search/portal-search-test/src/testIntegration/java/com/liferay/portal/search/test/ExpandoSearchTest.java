@@ -108,6 +108,20 @@ public class ExpandoSearchTest {
 	}
 
 	@Test
+	public void testColumnNameWithPeriod() throws Exception {
+		String columnName = "column.name";
+
+		addExpandoColumn(
+			User.class, columnName, ExpandoColumnConstants.INDEX_TYPE_TEXT);
+
+		String columnValue = "Software Engineer";
+
+		addUser(columnName, columnValue);
+
+		assertSearch(columnValue, columnValue);
+	}
+
+	@Test
 	public void testIndexerWithMultipleSearchClassNames() throws Exception {
 		String columnName = "searchClassNamesColumn";
 
