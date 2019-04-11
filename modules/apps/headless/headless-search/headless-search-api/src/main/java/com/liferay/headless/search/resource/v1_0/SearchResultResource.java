@@ -30,9 +30,12 @@ import javax.annotation.Generated;
 @Generated("")
 public interface SearchResultResource {
 
-	public SearchResult getSearchCompanyIdKeywordsHiddenFromSize(
-			Long companyId, String keywords, String hidden, Long from,
-			Long size)
+	public SearchResult getSearchHiddenCompanyIndexKeywordsFromSize(
+			Long companyId, String index, String keywords, Long from, Long size)
+		throws Exception;
+
+	public SearchResult getSearchCompanyKeywordsFromSize(
+			Long companyId, String keywords, Long from, Long size)
 		throws Exception;
 
 	public void setContextCompany(Company contextCompany);

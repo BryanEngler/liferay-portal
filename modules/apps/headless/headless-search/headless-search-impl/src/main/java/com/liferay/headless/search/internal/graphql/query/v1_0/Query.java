@@ -68,10 +68,10 @@ public class Query {
 
 	@GraphQLField
 	@GraphQLInvokeDetached
-	public SearchResult getSearchCompanyIdKeywordsHiddenFromSize(
+	public SearchResult getSearchHiddenCompanyIndexKeywordsFromSize(
 			@GraphQLName("companyId") Long companyId,
+			@GraphQLName("index") String index,
 			@GraphQLName("keywords") String keywords,
-			@GraphQLName("hidden") String hidden,
 			@GraphQLName("from") Long from, @GraphQLName("size") Long size)
 		throws Exception {
 
@@ -79,8 +79,25 @@ public class Query {
 			_searchResultResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			searchResultResource ->
-				searchResultResource.getSearchCompanyIdKeywordsHiddenFromSize(
-					companyId, keywords, hidden, from, size));
+				searchResultResource.
+					getSearchHiddenCompanyIndexKeywordsFromSize(
+						companyId, index, keywords, from, size));
+	}
+
+	@GraphQLField
+	@GraphQLInvokeDetached
+	public SearchResult getSearchCompanyKeywordsFromSize(
+			@GraphQLName("companyId") Long companyId,
+			@GraphQLName("keywords") String keywords,
+			@GraphQLName("from") Long from, @GraphQLName("size") Long size)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_searchResultResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			searchResultResource ->
+				searchResultResource.getSearchCompanyKeywordsFromSize(
+					companyId, keywords, from, size));
 	}
 
 	private <T, R, E1 extends Throwable, E2 extends Throwable> R

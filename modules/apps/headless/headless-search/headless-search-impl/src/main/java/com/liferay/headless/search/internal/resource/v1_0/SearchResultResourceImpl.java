@@ -19,8 +19,18 @@ import com.liferay.headless.search.resource.v1_0.SearchResultResource;
 
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
+import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
+import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
 import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
+import com.liferay.portal.search.query.BooleanQuery;
+import com.liferay.portal.search.query.Queries;
+import com.liferay.portal.search.query.TermQuery;
+import com.liferay.portal.search.query.TermsQuery;
 import com.liferay.portal.search.searcher.SearchRequest;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.searcher.SearchResponse;
@@ -29,6 +39,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,9 +52,90 @@ import java.util.List;
 public class SearchResultResourceImpl extends BaseSearchResultResourceImpl {
 
 	@Override
-	public SearchResult getSearchCompanyIdKeywordsHiddenFromSize(
-			Long companyId, String keywords, String hidden, Long from, Long size)
+	public SearchResult getSearchHiddenCompanyIndexKeywordsFromSize( //hidden docs
+			Long companyId, String index, String keywords, Long from, Long size)
 		throws Exception {
+//get hidden doc uids
+		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
+
+		searchSearchRequest.setIndexNames(index);
+
+		BooleanQuery booleanQuery = queries.booleanQuery();
+
+		TermQuery keywordsTermQuery = queries.term("keywords", keywords);
+		TermQuery companyIdTermQuery = queries.term("index", "liferay-"+ companyId);
+
+		booleanQuery.addMustQueryClauses(keywordsTermQuery, companyIdTermQuery);
+
+		searchSearchRequest.setQuery(booleanQuery);
+
+		SearchSearchResponse searchSearchResponse =
+			searchEngineAdapter.execute(searchSearchRequest);
+
+		Hits hits = searchSearchResponse.getHits();
+
+		Document[] documents = hits.getDocs();
+
+		Document document = documents[0];
+
+		String[] hidden_doc_uids = document.getValues("hidden_documents");
+//
+		SearchContext searchContext = new SearchContext();
+
+		searchContext.setCompanyId(companyId);
+		searchContext.setStart(from.intValue());
+		searchContext.setEnd(from.intValue() + size.intValue());
+
+		SearchSearchRequest searchSearchRequest2 = new SearchSearchRequest();
+
+		searchSearchRequest2.setIndexNames("liferay-"+ companyId);
+
+		TermsQuery termsQuery = queries.terms("uid");
+
+		termsQuery.addValues(hidden_doc_uids);
+
+		searchSearchRequest2.setQuery(termsQuery);
+
+		SearchSearchResponse searchSearchResponse2 =
+			searchEngineAdapter.execute(searchSearchRequest2);
+
+		Hits hits1 = searchSearchResponse2.getHits();
+
+		return _toResults(hits1.toList());
+	}
+
+	@Override
+	public SearchResult getSearchCompanyKeywordsFromSize( //all docs (minus hidden)
+			Long companyId, String keywords, Long from, Long size)
+		throws Exception {
+
+		//get hidden doc uids
+		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
+
+		searchSearchRequest.setIndexNames("results-ranking");
+
+		BooleanQuery booleanQuery = queries.booleanQuery();
+
+		TermQuery keywordsTermQuery = queries.term("keywords", keywords);
+		TermQuery companyIdTermQuery = queries.term("index", "liferay-"+ companyId);
+
+		booleanQuery.addMustQueryClauses(keywordsTermQuery, companyIdTermQuery);
+
+		searchSearchRequest.setQuery(booleanQuery);
+
+		SearchSearchResponse searchSearchResponse =
+			searchEngineAdapter.execute(searchSearchRequest);
+
+		Hits hits = searchSearchResponse.getHits();
+
+		Document[] documents = hits.getDocs();
+
+		Document document = documents[0];
+
+		String[] hidden_doc_uids = document.getValues("hidden_documents");
+
+		List<String> hiddenUids = ListUtil.fromArray(hidden_doc_uids);
+//
 
 		SearchContext searchContext = new SearchContext();
 
@@ -60,8 +152,26 @@ public class SearchResultResourceImpl extends BaseSearchResultResourceImpl {
 
 		SearchResponse searchResponse = searcher.search(searchRequest);
 
-		return _toResults(searchResponse);
+		List<Document> docs = searchResponse.getDocuments71();
+
+		List<Document> filteredDocs = new ArrayList<>();
+
+		for (Document document1 : docs) {
+			String uid = document1.getUID();
+
+			if (!hiddenUids.contains(uid)) {
+				filteredDocs.add(document1);
+			}
+		}
+
+		return _toResults(filteredDocs);
 	}
+
+	@Reference
+	protected Queries queries;
+
+	@Reference
+	protected SearchEngineAdapter searchEngineAdapter;
 
 	@Reference
 	protected SearchRequestBuilderFactory searchRequestBuilderFactory;
@@ -69,14 +179,20 @@ public class SearchResultResourceImpl extends BaseSearchResultResourceImpl {
 	@Reference
 	protected Searcher searcher;
 
-	private SearchResult _toResults(SearchResponse searchResponse) throws Exception {
-		List<Document> docs = searchResponse.getDocuments71();
-
+	private SearchResult _toResults(List<Document> docs) throws Exception {
 		com.liferay.headless.search.dto.v1_0.Document[] restDocuments =
 				new com.liferay.headless.search.dto.v1_0.Document[docs.size()];
 
 		for (int i = 0; i< docs.size(); i++) {
 			Document document = docs.get(i);
+
+			String title = document.get(Field.TITLE + "_en_US");
+
+			if (Validator.isBlank(title)) {
+				title = document.get(Field.TITLE);
+			}
+
+			final String docTitle = title;
 
 			com.liferay.headless.search.dto.v1_0.Document restDocument =
 				new com.liferay.headless.search.dto.v1_0.Document() {
@@ -87,7 +203,7 @@ public class SearchResultResourceImpl extends BaseSearchResultResourceImpl {
 					hidden = document.get(Field.HIDDEN);
 					id = document.get(Field.UID);
 					pinned = true;
-					title = document.get(Field.TITLE + "_en_US");
+					title = docTitle;
 					type = document.get(Field.ENTRY_CLASS_NAME);
 				}
 			};

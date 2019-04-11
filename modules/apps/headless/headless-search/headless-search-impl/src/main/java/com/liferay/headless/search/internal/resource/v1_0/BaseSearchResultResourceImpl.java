@@ -49,13 +49,28 @@ public abstract class BaseSearchResultResourceImpl
 
 	@Override
 	@GET
-	@Path("/search/{companyId}/{keywords}/{hidden}/{from}/{size}")
+	@Path("/search/hidden/{companyId}/{index}/{keywords}/{from}/{size}")
 	@Produces("application/json")
 	@Tags(value = {@Tag(name = "SearchResult")})
-	public SearchResult getSearchCompanyIdKeywordsHiddenFromSize(
+	public SearchResult getSearchHiddenCompanyIndexKeywordsFromSize(
+			@NotNull @PathParam("companyId") Long companyId,
+			@NotNull @PathParam("index") String index,
+			@NotNull @PathParam("keywords") String keywords,
+			@NotNull @PathParam("from") Long from,
+			@NotNull @PathParam("size") Long size)
+		throws Exception {
+
+		return new SearchResult();
+	}
+
+	@Override
+	@GET
+	@Path("/search/{companyId}/{keywords}/{from}/{size}")
+	@Produces("application/json")
+	@Tags(value = {@Tag(name = "SearchResult")})
+	public SearchResult getSearchCompanyKeywordsFromSize(
 			@NotNull @PathParam("companyId") Long companyId,
 			@NotNull @PathParam("keywords") String keywords,
-			@NotNull @PathParam("hidden") String hidden,
 			@NotNull @PathParam("from") Long from,
 			@NotNull @PathParam("size") Long size)
 		throws Exception {
@@ -67,7 +82,8 @@ public abstract class BaseSearchResultResourceImpl
 		this.contextCompany = contextCompany;
 	}
 
-	protected void preparePatch(SearchResult searchResult) {
+	protected void preparePatch(
+		SearchResult searchResult, SearchResult existingSearchResult) {
 	}
 
 	protected <T, R> List<R> transform(

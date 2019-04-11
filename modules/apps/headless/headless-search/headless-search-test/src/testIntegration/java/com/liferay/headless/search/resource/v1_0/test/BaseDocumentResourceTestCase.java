@@ -386,8 +386,37 @@ public abstract class BaseDocumentResourceTestCase {
 		return randomDocument();
 	}
 
+	protected static final ObjectMapper inputObjectMapper = new ObjectMapper() {
+		{
+			setFilterProvider(
+				new SimpleFilterProvider() {
+					{
+						addFilter(
+							"Liferay.Vulcan",
+							SimpleBeanPropertyFilter.serializeAll());
+					}
+				});
+			setSerializationInclusion(JsonInclude.Include.NON_NULL);
+		}
+	};
+	protected static final ObjectMapper outputObjectMapper =
+		new ObjectMapper() {
+			{
+				setFilterProvider(
+					new SimpleFilterProvider() {
+						{
+							addFilter(
+								"Liferay.Vulcan",
+								SimpleBeanPropertyFilter.serializeAll());
+						}
+					});
+			}
+		};
+
+	protected String contentType = "application/json";
 	protected Group irrelevantGroup;
 	protected Group testGroup;
+	protected String userNameAndPassword = "test@liferay.com:test";
 
 	protected static class Page<T> {
 
@@ -433,15 +462,13 @@ public abstract class BaseDocumentResourceTestCase {
 
 		options.addHeader("Accept", "application/json");
 
-		String userNameAndPassword = "test@liferay.com:test";
-
 		String encodedUserNameAndPassword = Base64.encode(
 			userNameAndPassword.getBytes());
 
 		options.addHeader(
 			"Authorization", "Basic " + encodedUserNameAndPassword);
 
-		options.addHeader("Content-Type", "application/json");
+		options.addHeader("Content-Type", contentType);
 
 		return options;
 	}
@@ -475,31 +502,6 @@ public abstract class BaseDocumentResourceTestCase {
 
 	};
 	private static DateFormat _dateFormat;
-	private final static ObjectMapper _inputObjectMapper = new ObjectMapper() {
-		{
-			setFilterProvider(
-				new SimpleFilterProvider() {
-					{
-						addFilter(
-							"Liferay.Vulcan",
-							SimpleBeanPropertyFilter.serializeAll());
-					}
-				});
-			setSerializationInclusion(JsonInclude.Include.NON_NULL);
-		}
-	};
-	private final static ObjectMapper _outputObjectMapper = new ObjectMapper() {
-		{
-			setFilterProvider(
-				new SimpleFilterProvider() {
-					{
-						addFilter(
-							"Liferay.Vulcan",
-							SimpleBeanPropertyFilter.serializeAll());
-					}
-				});
-		}
-	};
 
 	@Inject
 	private DocumentResource _documentResource;

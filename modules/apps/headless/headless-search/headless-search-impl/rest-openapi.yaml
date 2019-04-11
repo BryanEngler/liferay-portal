@@ -66,6 +66,7 @@ openapi: 3.0.1
 paths:
     "/document/{index}/{uid}":
         get:
+            operationId: getDocument
             parameters:
                 - in: path
                   name: index
@@ -85,8 +86,49 @@ paths:
                                 $ref: "#/components/schemas/Document"
                     description: ""
             tags: ["Document"]
-    "/search/{companyId}/{keywords}/{hidden}/{from}/{size}":
+    "/search/hidden/{companyId}/{index}/{keywords}/{from}/{size}":
         get:
+            operationId: getSearchHiddenCompanyIndexKeywordsFromSize
+            parameters:
+                - in: path
+                  name: companyId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: path
+                  name: index
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: keywords
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: from
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: path
+                  name: size
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/SearchResult"
+                    description: ""
+            tags: ["SearchResult"]
+    "/search/{companyId}/{keywords}/{from}/{size}":
+        get:
+            operationId: getSearchCompanyKeywordsFromSize
             parameters:
                 - in: path
                   name: companyId
@@ -96,11 +138,6 @@ paths:
                       type: integer
                 - in: path
                   name: keywords
-                  required: true
-                  schema:
-                      type: string
-                - in: path
-                  name: hidden
                   required: true
                   schema:
                       type: string

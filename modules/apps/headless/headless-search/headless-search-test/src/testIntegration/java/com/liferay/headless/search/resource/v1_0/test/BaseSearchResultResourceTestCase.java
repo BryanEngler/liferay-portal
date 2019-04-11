@@ -102,15 +102,14 @@ public abstract class BaseSearchResultResourceTestCase {
 	}
 
 	@Test
-	public void testGetSearchCompanyIdKeywordsHiddenFromSize()
+	public void testGetSearchHiddenCompanyIndexKeywordsFromSize()
 		throws Exception {
 
 		Assert.assertTrue(true);
 	}
 
-	protected SearchResult invokeGetSearchCompanyIdKeywordsHiddenFromSize(
-			Long companyId, String keywords, String hidden, Long from,
-			Long size)
+	protected SearchResult invokeGetSearchHiddenCompanyIndexKeywordsFromSize(
+			Long companyId, String index, String keywords, Long from, Long size)
 		throws Exception {
 
 		Http.Options options = _createHttpOptions();
@@ -118,8 +117,8 @@ public abstract class BaseSearchResultResourceTestCase {
 		String location =
 			_resourceURL +
 				_toPath(
-					"/search/{companyId}/{keywords}/{hidden}/{from}/{size}",
-					keywords, hidden, from, size);
+					"/search/hidden/{companyId}/{index}/{keywords}/{from}/{size}",
+					companyId, index, keywords, from, size);
 
 		options.setLocation(location);
 
@@ -140,8 +139,8 @@ public abstract class BaseSearchResultResourceTestCase {
 	}
 
 	protected Http.Response
-			invokeGetSearchCompanyIdKeywordsHiddenFromSizeResponse(
-				Long companyId, String keywords, String hidden, Long from,
+			invokeGetSearchHiddenCompanyIndexKeywordsFromSizeResponse(
+				Long companyId, String index, String keywords, Long from,
 				Long size)
 		throws Exception {
 
@@ -150,8 +149,62 @@ public abstract class BaseSearchResultResourceTestCase {
 		String location =
 			_resourceURL +
 				_toPath(
-					"/search/{companyId}/{keywords}/{hidden}/{from}/{size}",
-					keywords, hidden, from, size);
+					"/search/hidden/{companyId}/{index}/{keywords}/{from}/{size}",
+					companyId, index, keywords, from, size);
+
+		options.setLocation(location);
+
+		HttpUtil.URLtoByteArray(options);
+
+		return options.getResponse();
+	}
+
+	@Test
+	public void testGetSearchCompanyKeywordsFromSize() throws Exception {
+		Assert.assertTrue(true);
+	}
+
+	protected SearchResult invokeGetSearchCompanyKeywordsFromSize(
+			Long companyId, String keywords, Long from, Long size)
+		throws Exception {
+
+		Http.Options options = _createHttpOptions();
+
+		String location =
+			_resourceURL +
+				_toPath(
+					"/search/{companyId}/{keywords}/{from}/{size}", companyId,
+					keywords, from, size);
+
+		options.setLocation(location);
+
+		String string = HttpUtil.URLtoString(options);
+
+		if (_log.isDebugEnabled()) {
+			_log.debug("HTTP response: " + string);
+		}
+
+		try {
+			return _outputObjectMapper.readValue(string, SearchResult.class);
+		}
+		catch (Exception e) {
+			_log.error("Unable to process HTTP response: " + string, e);
+
+			throw e;
+		}
+	}
+
+	protected Http.Response invokeGetSearchCompanyKeywordsFromSizeResponse(
+			Long companyId, String keywords, Long from, Long size)
+		throws Exception {
+
+		Http.Options options = _createHttpOptions();
+
+		String location =
+			_resourceURL +
+				_toPath(
+					"/search/{companyId}/{keywords}/{from}/{size}", companyId,
+					keywords, from, size);
 
 		options.setLocation(location);
 
@@ -326,8 +379,37 @@ public abstract class BaseSearchResultResourceTestCase {
 		return randomSearchResult();
 	}
 
+	protected static final ObjectMapper inputObjectMapper = new ObjectMapper() {
+		{
+			setFilterProvider(
+				new SimpleFilterProvider() {
+					{
+						addFilter(
+							"Liferay.Vulcan",
+							SimpleBeanPropertyFilter.serializeAll());
+					}
+				});
+			setSerializationInclusion(JsonInclude.Include.NON_NULL);
+		}
+	};
+	protected static final ObjectMapper outputObjectMapper =
+		new ObjectMapper() {
+			{
+				setFilterProvider(
+					new SimpleFilterProvider() {
+						{
+							addFilter(
+								"Liferay.Vulcan",
+								SimpleBeanPropertyFilter.serializeAll());
+						}
+					});
+			}
+		};
+
+	protected String contentType = "application/json";
 	protected Group irrelevantGroup;
 	protected Group testGroup;
+	protected String userNameAndPassword = "test@liferay.com:test";
 
 	protected static class Page<T> {
 
@@ -373,15 +455,13 @@ public abstract class BaseSearchResultResourceTestCase {
 
 		options.addHeader("Accept", "application/json");
 
-		String userNameAndPassword = "test@liferay.com:test";
-
 		String encodedUserNameAndPassword = Base64.encode(
 			userNameAndPassword.getBytes());
 
 		options.addHeader(
 			"Authorization", "Basic " + encodedUserNameAndPassword);
 
-		options.addHeader("Content-Type", "application/json");
+		options.addHeader("Content-Type", contentType);
 
 		return options;
 	}
@@ -415,31 +495,6 @@ public abstract class BaseSearchResultResourceTestCase {
 
 	};
 	private static DateFormat _dateFormat;
-	private final static ObjectMapper _inputObjectMapper = new ObjectMapper() {
-		{
-			setFilterProvider(
-				new SimpleFilterProvider() {
-					{
-						addFilter(
-							"Liferay.Vulcan",
-							SimpleBeanPropertyFilter.serializeAll());
-					}
-				});
-			setSerializationInclusion(JsonInclude.Include.NON_NULL);
-		}
-	};
-	private final static ObjectMapper _outputObjectMapper = new ObjectMapper() {
-		{
-			setFilterProvider(
-				new SimpleFilterProvider() {
-					{
-						addFilter(
-							"Liferay.Vulcan",
-							SimpleBeanPropertyFilter.serializeAll());
-					}
-				});
-		}
-	};
 
 	@Inject
 	private SearchResultResource _searchResultResource;
