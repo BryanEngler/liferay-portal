@@ -17,14 +17,16 @@ export function fetchDocuments(config) {
 	let url = `${DOCUMENT_API_BASE_URL}
 		/${companyId}
 		/${keywords}
-		/${hidden}
 		/${from}
 		/${size}`;
 
-	// @TODO Remove. This is for getting mocked hidden results.
-
 	if (hidden) {
-		url = 'http://www.mocky.io/v2/5cabd9ab3000002900103266';
+		url = `http://localhost:8080/o/headless-search/v1.0/search/hidden
+		/${companyId}
+		/${searchIndex}
+		/${keywords}
+		/${from}
+		/${size}`;
 	}
 
 	return fetch(url)

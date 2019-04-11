@@ -35,6 +35,8 @@ String redirect = ParamUtil.getString(request, "redirect");
 String resultsRankingsRootElementId = renderResponse.getNamespace() + "-results-rankings-root";
 
 String keywords = ParamUtil.getString(request, "keywords");
+
+String indexName = "results-ranking";
 %>
 
 <div id="<%= resultsRankingsRootElementId %>"></div>
@@ -48,7 +50,7 @@ String keywords = ParamUtil.getString(request, "keywords");
 		},
 		{
 			companyId: '<%= themeDisplay.getCompanyId() %>',
-			searchIndex: '',
+			searchIndex: '<%= indexName %>',
 			spritemap: '<%= themeDisplay.getPathThemeImages() + "/lexicon/icons.svg" %>'
 		}
 	);

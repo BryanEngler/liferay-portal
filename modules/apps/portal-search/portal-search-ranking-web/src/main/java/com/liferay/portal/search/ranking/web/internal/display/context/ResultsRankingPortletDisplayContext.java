@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.hits.SearchHit;
 import com.liferay.portal.search.hits.SearchHits;
 import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
@@ -56,7 +57,7 @@ public class ResultsRankingPortletDisplayContext {
 	public ResultsRankingPortletDisplayContext(
 		HttpServletRequest httpServletRequest, Language language,
 		Queries queries, RenderRequest renderRequest,
-		RenderResponse renderResponse, Searcher searcher,
+		RenderResponse renderResponse, SearchEngineAdapter searchEngineAdapter,
 		SearchRequestBuilderFactory searchRequestBuilderFactory) {
 
 		_httpServletRequest = httpServletRequest;
@@ -67,7 +68,7 @@ public class ResultsRankingPortletDisplayContext {
 		_themeDisplay = (ThemeDisplay)_httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		_search(queries, searcher, searchRequestBuilderFactory);
+		_search(queries, searchEngineAdapter, searchRequestBuilderFactory);
 	}
 
 	public List<DropdownItem> getActionDropdownItems() {
@@ -339,11 +340,11 @@ public class ResultsRankingPortletDisplayContext {
 	}
 
 	private void _search(
-		Queries queries, Searcher searcher,
+		Queries queries, SearchEngineAdapter searchEngineAdapter,
 		SearchRequestBuilderFactory searchRequestBuilderFactory) {
 
 		SearchRankingRequest searchRankingRequest = new SearchRankingRequest(
-			_httpServletRequest, queries, getSearchContainer(), searcher,
+			_httpServletRequest, queries, getSearchContainer(), searchEngineAdapter,
 			searchRequestBuilderFactory, _themeDisplay);
 
 		SearchRankingResponse searchRankingResponse =
