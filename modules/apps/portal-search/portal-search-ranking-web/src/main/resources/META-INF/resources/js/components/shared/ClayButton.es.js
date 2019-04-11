@@ -39,6 +39,7 @@ class ClayButton extends Component {
 	render() {
 		const {
 			borderless,
+			children,
 			className,
 			displayStyle,
 			href,
@@ -79,6 +80,8 @@ class ClayButton extends Component {
 						iconName={iconName}
 					/>
 				)}
+
+				{children}
 			</button>
 		);
 	}
