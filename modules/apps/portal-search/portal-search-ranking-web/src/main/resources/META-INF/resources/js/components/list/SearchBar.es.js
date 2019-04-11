@@ -215,8 +215,8 @@ class SearchBar extends Component {
 													className="component-action"
 													iconName={
 														this._isAnyUnpinned() ?
-															'lock' :
-															'unlock'
+															'pin' :
+															'unpin'
 													}
 													onClick={this._handleClickPin}
 												/>
