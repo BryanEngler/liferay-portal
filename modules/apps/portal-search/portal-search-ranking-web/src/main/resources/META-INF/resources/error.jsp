@@ -3,4 +3,3 @@
 <liferay-ui:error-header />
 
 <liferay-ui:error exception="<%= Exception.class %>" message="ranking-already-exists-for-the-keyword-alias" />
-

@@ -42,4 +42,11 @@
 		margin-left: -1.5rem;
 		margin-right: -1.5rem;
 	}
+
+	@media (max-width: 767.98px) {
+		.results-ranking-list-root {
+			margin-left: -1rem;
+			margin-right: -1rem;
+		}
+	}
 }

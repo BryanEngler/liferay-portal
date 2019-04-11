@@ -12,7 +12,7 @@ const DOCUMENT_API_BASE_URL = 'http://localhost:8080/o/headless-search/v1.0/sear
  * @param {number} config.from
  */
 export function fetchDocuments(config) {
-	const {companyId, size, hidden, keywords, searchIndex, from} = config;
+	const {companyId, from, hidden, keywords, searchIndex, size} = config;
 
 	let url = `${DOCUMENT_API_BASE_URL}
 		/${companyId}
