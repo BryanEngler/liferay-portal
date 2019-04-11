@@ -54,8 +54,8 @@
 						"store": true,
 						"type": "text"
 					},
-					"match": "expando__keyword__*",
-					"match_mapping_type": "string"
+					"match_mapping_type": "string",
+					"path_match": "expando__keyword__*"
 				}
 			},
 			{
@@ -463,8 +463,8 @@
 						"store": true,
 						"type": "text"
 					},
-					"match": "expando__*",
-					"match_mapping_type": "string"
+					"match_mapping_type": "string",
+					"path_match": "expando__*"
 				}
 			}
 		],
