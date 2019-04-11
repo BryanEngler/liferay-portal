@@ -133,8 +133,8 @@ class SearchBar extends Component {
 
 	render() {
 		const {
-			onAddResultSubmit,
 			disableSearch,
+			onAddResultSubmit,
 			resultIds,
 			searchBarTerm,
 			selectedIds
@@ -153,7 +153,7 @@ class SearchBar extends Component {
 		return (
 			<nav className={classManagementBar}>
 				<div className="container-fluid container-fluid-max-xl">
-					<div className="navbar-form navbar-form-autofit navbar-overlay navbar-overlay-sm-down">
+					<div className="navbar-form navbar-form-autofit navbar-overlay">
 						<ul className="navbar-nav">
 							<li className="nav-item">
 								<div className="custom-control custom-checkbox">
