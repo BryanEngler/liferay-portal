@@ -171,6 +171,10 @@ class Item extends Component {
 		connectDropTarget: val => val
 	};
 
+	state = {
+		hovering: false
+	};
+
 	/**
 	 * Use empty image as a drag preview so browsers don't draw it and
 	 * we can draw what we want on the custom drag layer instead.
@@ -196,6 +200,14 @@ class Item extends Component {
 		const message = Liferay.Language.get('added-results-cannot-be-hidden');
 
 		Liferay.Portal.ToolTip.show(event.currentTarget, message);
+	};
+
+	_handleMouseEnter = () => {
+		this.setState({hovering: true});
+	};
+
+	_handleMouseLeave = () => {
+		this.setState({hovering: false});
 	};
 
 	_handleSelect = () => {
@@ -262,6 +274,8 @@ class Item extends Component {
 			url
 		} = this.props;
 
+		const {hovering} = this.state;
+
 		const colorScheme = {
 			doc: 'blue',
 			pdf: 'red',
@@ -294,7 +308,12 @@ class Item extends Component {
 		);
 
 		return connectDropTarget(
-			<li className={listClasses} style={style}>
+			<li
+				className={listClasses}
+				onMouseEnter={this._handleMouseEnter}
+				onMouseLeave={this._handleMouseLeave}
+				style={style}
+			>
 				{onDragHover && !hidden && (
 					<div className="autofit-col result-drag">
 						{connectDragSource(
@@ -368,24 +387,32 @@ class Item extends Component {
 								<ClayButton
 									borderless
 									className="component-action"
-									iconName="hidden"
+									iconName={hidden ? 'view' : 'hidden'}
 									monospaced
 									onClick={this._handleHide}
+									title={hidden ?
+										Liferay.Language.get('show-result') :
+										Liferay.Language.get('hide-result')
+									}
 								/>
 							)}
 						</div>
 					</div>
 				)}
 
-				{onClickPin && !hidden && (
+				{onClickPin && (
 					<div className="autofit-col">
 						<div className="result-pin">
 							<ClayButton
 								borderless
 								className="component-action"
-								iconName="lock"
+								iconName={hovering && pinned ? 'unpin' : 'pin'}
 								monospaced
 								onClick={this._handlePin}
+								title={pinned ?
+									Liferay.Language.get('unpin-result') :
+									Liferay.Language.get('pin-result')
+								}
 							/>
 						</div>
 					</div>

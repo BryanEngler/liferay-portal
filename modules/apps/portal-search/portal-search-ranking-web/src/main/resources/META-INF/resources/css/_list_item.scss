@@ -94,14 +94,20 @@
 
 		.result-pin {
 			visibility: visible;
+
+			button {
+				color: $main;
+			}
+		}
+
+		&:hover {
+			.result-pin button {
+				color: inherit;
+			}
 		}
 	}
 
 	&.results-ranking-item-hidden {
 		padding-left: 24px;
-
-		.result-hide {
-			visibility: visible;
-		}
 	}
 }
