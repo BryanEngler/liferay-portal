@@ -12,7 +12,7 @@ const DOCUMENT_API_BASE_URL = 'http://www.mocky.io/v2/5cabd1073000002900103260';
  * @param {number} config.from
  */
 export function fetchDocuments(config) {
-	const {companyId, size, hidden, keywords, searchIndex, from} = config;
+	const {companyId, from, hidden, keywords, searchIndex, size} = config;
 
 	let url = `${DOCUMENT_API_BASE_URL}
 		/${searchIndex}

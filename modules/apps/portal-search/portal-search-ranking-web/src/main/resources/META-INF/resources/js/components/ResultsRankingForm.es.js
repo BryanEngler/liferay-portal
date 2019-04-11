@@ -411,6 +411,9 @@ class ResultsRankingForm extends Component {
 						...state.dataMap,
 						...newMappedData
 					},
+					resultIdsHidden: state.resultIdsHidden.filter(
+						id => !addedResultsIds.includes(id)
+					),
 					resultIdsPinned: [
 						...addedResultsDataList
 							.filter(
@@ -418,10 +421,7 @@ class ResultsRankingForm extends Component {
 							)
 							.map(({id}) => id),
 						...state.resultIdsPinned
-					],
-					resultIdsHidden: state.resultIdsHidden.filter(
-						id => !addedResultsIds.includes(id)
-					)
+					]
 				}
 			)
 		);
