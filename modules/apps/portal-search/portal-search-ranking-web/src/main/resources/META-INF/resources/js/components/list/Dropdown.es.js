@@ -65,9 +65,17 @@ class Dropdown extends Component {
 	};
 
 	render() {
-		const show = this.state.show;
 
-		const {addedResult, hidden, itemCount, onClickHide, onClickPin, pinned} = this.props;
+		const {
+			addedResult,
+			hidden,
+			itemCount,
+			onClickHide,
+			onClickPin,
+			pinned
+		} = this.props;
+
+		const {show} = this.state;
 
 		const classHidden = getCN(
 			'dropdown-menu',
@@ -94,15 +102,18 @@ class Dropdown extends Component {
 				/>
 
 				<ul aria-labelledby="optionDropdown" className={classHidden}>
-					{!hidden && (
+					{onClickPin && (
 						<li>
-							<a
+							<ClayButton
 								className="dropdown-item"
-								href="#"
+								displayStyle="link"
 								onClick={this._handleDropdownAction(onClickPin)}
+								size="sm"
 							>
 								<div className="dropdown-item-indicator">
-									<ClayIcon iconName="lock" />
+									<ClayIcon
+										iconName={pinned ? 'unpin' : 'pin'}
+									/>
 								</div>
 
 								{pinned ?
@@ -117,19 +128,20 @@ class Dropdown extends Component {
 										itemCount
 									)
 								}
-							</a>
+							</ClayButton>
 						</li>
 					)}
 
 					{!addedResult && onClickHide && (
 						<li>
-							<a
+							<ClayButton
 								className="dropdown-item"
-								href="#"
+								displayStyle="link"
 								onClick={this._handleDropdownAction(onClickHide)}
+								size="sm"
 							>
 								<div className="dropdown-item-indicator">
-									<ClayIcon iconName="hidden" />
+									<ClayIcon iconName={hidden ? 'view' : 'hidden'} />
 								</div>
 
 								{hidden ?
@@ -144,7 +156,7 @@ class Dropdown extends Component {
 										itemCount
 									)
 								}
-							</a>
+							</ClayButton>
 						</li>
 					)}
 				</ul>
