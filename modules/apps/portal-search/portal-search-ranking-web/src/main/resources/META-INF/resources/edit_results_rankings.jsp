@@ -44,6 +44,8 @@ String keywords = ParamUtil.getString(request, "keywords");
 		'<%= resultsRankingsRootElementId %>',
 		{
 			cancelUrl: '<%= HtmlUtil.escape(redirect) %>',
+			fetchDocumentsUrl: '',
+			fetchDocumentsHiddenUrl: '',
 			searchTerm: '<%= HtmlUtil.escape(keywords) %>'
 		},
 		{
