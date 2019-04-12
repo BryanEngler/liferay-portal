@@ -26,8 +26,8 @@ class ResultsRankingForm extends Component {
 
 	static propTypes = {
 		cancelUrl: PropTypes.string.isRequired,
-		fetchDocumentsUrl: PropTypes.string.isRequired,
 		fetchDocumentsHiddenUrl: PropTypes.string.isRequired,
+		fetchDocumentsUrl: PropTypes.string.isRequired,
 		searchTerm: PropTypes.string.isRequired
 	};
 
@@ -495,7 +495,11 @@ class ResultsRankingForm extends Component {
 	);
 
 	render() {
-		const {cancelUrl, searchTerm} = this.props;
+		const {
+			cancelUrl,
+			fetchDocumentsUrl,
+			searchTerm
+		} = this.props;
 
 		const {
 			aliases,
@@ -546,6 +550,7 @@ class ResultsRankingForm extends Component {
 									<List
 										dataLoading={dataLoading}
 										dataMap={dataMap}
+										fetchDocumentsUrl={fetchDocumentsUrl}
 										onAddResultSubmit={
 											this._handleUpdateAddResultIds
 										}
@@ -574,6 +579,7 @@ class ResultsRankingForm extends Component {
 									<List
 										dataLoading={dataLoading}
 										dataMap={dataMap}
+										fetchDocumentsUrl={fetchDocumentsUrl}
 										onClickHide={this._handleClickHide}
 										onClickPin={this._handleClickPin}
 										onLoadResults={
