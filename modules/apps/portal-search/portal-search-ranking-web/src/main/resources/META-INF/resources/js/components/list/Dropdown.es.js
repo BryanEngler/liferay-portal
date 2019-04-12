@@ -65,7 +65,6 @@ class Dropdown extends Component {
 	};
 
 	render() {
-
 		const {
 			addedResult,
 			hidden,
