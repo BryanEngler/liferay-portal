@@ -1,34 +1,22 @@
-// @TODO Replace with real endpoint. i.e. /o/headless-search/v1.0/search
-
-const DOCUMENT_API_BASE_URL = 'http://www.mocky.io/v2/5cabd1073000002900103260';
+import Uri from 'metal-uri';
 
 /**
- * Fetches documents.
- * @param {number} config.companyId
- * @param {number} config.size
- * @param {boolean} config.hidden
- * @param {string} config.searchIndex
- * @param {string} config.keywords
- * @param {number} config.from
+ * Fetches documents and maps the data response to the expected object shape
+ * of {items: [{}, {}, ...], total: 10}.
+ * @param {string} url The base url to fetch documents.
+ * @param {Object} params The url parameters to be included in the request.
+ * @returns {Promise} The fetch request promise.
  */
-export function fetchDocuments(config) {
-	const {companyId, from, hidden, keywords, searchIndex, size} = config;
+export function fetchDocuments(url, params) {
+	const fetchUri = new Uri(url);
 
-	let url = `${DOCUMENT_API_BASE_URL}
-		/${searchIndex}
-		/${keywords}
-		/${hidden}
-		/${companyId}
-		/${from}
-		/${size}`;
-
-	// @TODO Remove. This is for getting mocked hidden results.
-
-	if (hidden) {
-		url = 'http://www.mocky.io/v2/5cabd9ab3000002900103266';
+	for (const property in params) {
+		if (params[property]) {
+			fetchUri.setParameterValue(property, params[property]);
+		}
 	}
 
-	return fetch(url)
+	return fetch(fetchUri)
 		.then(response => response.json())
 		.then(
 			data => (
