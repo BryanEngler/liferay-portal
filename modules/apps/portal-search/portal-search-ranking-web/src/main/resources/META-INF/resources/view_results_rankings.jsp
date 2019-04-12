@@ -70,6 +70,7 @@ ResultsRankingPortletDisplayContext resultsRankingPortletDisplayContext = (Resul
 				<portlet:param name="mvcRenderCommandName" value="editResultsRankingEntry" />
 				<portlet:param name="redirect" value="<%= currentURL %>" />
 				<portlet:param name="uid" value="<%= resultsRankingEntryDisplayContext.getUid() %>" />
+				<portlet:param name="keywords" value="<%= resultsRankingEntryDisplayContext.getKeywords() %>" />
 			</portlet:renderURL>
 
 			<liferay-ui:search-container-column-text
