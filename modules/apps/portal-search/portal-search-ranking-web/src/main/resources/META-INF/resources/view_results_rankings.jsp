@@ -71,6 +71,7 @@ ResultsRankingPortletDisplayContext resultsRankingPortletDisplayContext = (Resul
 				<portlet:param name="redirect" value="<%= currentURL %>" />
 				<portlet:param name="uid" value="<%= resultsRankingEntryDisplayContext.getUid() %>" />
 				<portlet:param name="keywords" value="<%= resultsRankingEntryDisplayContext.getKeywords() %>" />
+				<portlet:param name="companyId" value="<%= String.valueOf(themeDisplay.getCompanyId()) %>" />
 			</portlet:renderURL>
 
 			<liferay-ui:search-container-column-text

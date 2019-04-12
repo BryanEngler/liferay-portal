@@ -18,10 +18,14 @@
 
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
+taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 
 <%@ page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %>
+
+<%@ page import="com.liferay.portal.search.ranking.web.internal.constants.ResultsRankingPortletKeys" %>
+<%@ page import="com.liferay.portal.kernel.util.Constants" %>
 
 <liferay-frontend:defineObjects />
 
@@ -34,18 +38,32 @@ String redirect = ParamUtil.getString(request, "redirect");
 
 String resultsRankingsRootElementId = renderResponse.getNamespace() + "-results-rankings-root";
 
+String uid = ParamUtil.getString(request, "uid");
 String keywords = ParamUtil.getString(request, "keywords");
+String companyId = ParamUtil.getString(request, "companyId");
 %>
 
 <div id="<%= resultsRankingsRootElementId %>"></div>
+
+<liferay-portlet:resourceURL id="/results_ranking/get_results" portletName="<%= ResultsRankingPortletKeys.RESULTS_RANKING %>" var="resultsRankingResourceURL" >
+	<portlet:param name="resultsRankingUid" value="<%= uid %>" />
+	<portlet:param name="keywords" value="<%= keywords %>" />
+	<portlet:param name="companyId" value="<%= companyId %>" />
+	<portlet:param name="<%= Constants.CMD %>" value="getVisibleResults" />
+</liferay-portlet:resourceURL>
+
+<liferay-portlet:resourceURL id="/results_ranking/get_results" portletName="<%= ResultsRankingPortletKeys.RESULTS_RANKING %>" var="hiddenResultsRankingResourceURL" >
+	<portlet:param name="resultsRankingUid" value="<%= uid %>" />
+	<portlet:param name="<%= Constants.CMD %>" value="getHiddenResults" />
+</liferay-portlet:resourceURL>
 
 <aui:script require='<%= npmResolvedPackageName + "/js/index.es as ResultsRankings" %>'>
 	ResultsRankings.default(
 		'<%= resultsRankingsRootElementId %>',
 		{
 			cancelUrl: '<%= HtmlUtil.escape(redirect) %>',
-			fetchDocumentsUrl: '',
-			fetchDocumentsHiddenUrl: '',
+			fetchDocumentsUrl: '<%= resultsRankingResourceURL %>',
+			fetchDocumentsHiddenUrl: '<%= hiddenResultsRankingResourceURL %>',
 			searchTerm: '<%= HtmlUtil.escape(keywords) %>'
 		},
 		{
