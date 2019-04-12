@@ -18,6 +18,7 @@ class AddResult extends Component {
 	static contextType = ThemeContext;
 
 	static propTypes = {
+		fetchDocumentsUrl: PropTypes.string,
 		onAddResultSubmit: PropTypes.func
 	};
 
@@ -70,6 +71,7 @@ class AddResult extends Component {
 		this.setState({dataLoading: true});
 
 		fetchDocuments(
+			this.props.fetchDocumentsUrl,
 			{
 				companyId: this.context.companyId,
 				from: (page * selectedDelta) - selectedDelta,

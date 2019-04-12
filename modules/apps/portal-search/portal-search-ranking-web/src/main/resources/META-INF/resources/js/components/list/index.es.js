@@ -13,6 +13,7 @@ class List extends Component {
 	static propTypes = {
 		dataLoading: PropTypes.bool,
 		dataMap: PropTypes.object,
+		fetchDocumentsUrl: PropTypes.string,
 		onAddResultSubmit: PropTypes.func,
 		onClickHide: PropTypes.func,
 		onClickPin: PropTypes.func,
@@ -44,8 +45,8 @@ class List extends Component {
 	};
 
 	/**
-	 * Passes along the same arguments from the onClickHide prop, but also
-	 * removes itself from the selected ids list.
+	 * Used in case where pinning/hiding needs to remove itself from the
+	 * selected ids list.
 	 */
 	_handleRemoveSelect = ids => {
 		this.setState(
@@ -126,6 +127,7 @@ class List extends Component {
 		const {
 			dataLoading,
 			dataMap,
+			fetchDocumentsUrl,
 			onAddResultSubmit,
 			onClickHide,
 			onClickPin,
@@ -144,6 +146,7 @@ class List extends Component {
 				<SearchBar
 					dataMap={dataMap}
 					disableSearch={!resultIds.length && !this._hasMoreData()}
+					fetchDocumentsUrl={fetchDocumentsUrl}
 					onAddResultSubmit={onAddResultSubmit}
 					onClickHide={onClickHide}
 					onClickPin={onClickPin}
