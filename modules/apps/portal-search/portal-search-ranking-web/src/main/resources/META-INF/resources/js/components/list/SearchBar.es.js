@@ -16,6 +16,7 @@ class SearchBar extends Component {
 		 */
 		dataMap: PropTypes.object.isRequired,
 		disableSearch: PropTypes.bool,
+		fetchDocumentsUrl: PropTypes.string,
 		onAddResultSubmit: PropTypes.func,
 		onClickHide: PropTypes.func,
 		onClickPin: PropTypes.func,
@@ -70,6 +71,8 @@ class SearchBar extends Component {
 		const unpinnedIds = selectedIds.filter(id => !dataMap[id].pinned);
 
 		if (unpinnedIds.length) {
+			onRemoveSelect(selectedIds.filter(id => dataMap[id].hidden));
+
 			onClickPin(unpinnedIds, true);
 		}
 		else {
@@ -134,6 +137,7 @@ class SearchBar extends Component {
 	render() {
 		const {
 			disableSearch,
+			fetchDocumentsUrl,
 			onAddResultSubmit,
 			resultIds,
 			searchBarTerm,
@@ -200,7 +204,11 @@ class SearchBar extends Component {
 												<ClayButton
 													borderless
 													className="component-action"
-													iconName="hidden"
+													iconName={
+														this._isAnyHidden() ?
+															'view' :
+															'hidden'
+													}
 													onClick={this._handleClickHide}
 												/>
 											</div>
@@ -208,20 +216,18 @@ class SearchBar extends Component {
 									</li>
 
 									<li className="nav-item">
-										{!this._isAnyHidden() && (
-											<div className="nav-link nav-link-monospaced">
-												<ClayButton
-													borderless
-													className="component-action"
-													iconName={
-														this._isAnyUnpinned() ?
-															'pin' :
-															'unpin'
-													}
-													onClick={this._handleClickPin}
-												/>
-											</div>
-										)}
+										<div className="nav-link nav-link-monospaced">
+											<ClayButton
+												borderless
+												className="component-action"
+												iconName={
+													this._isAnyUnpinned() ?
+														'pin' :
+														'unpin'
+												}
+												onClick={this._handleClickPin}
+											/>
+										</div>
 									</li>
 
 									<li className="nav-item">
@@ -272,6 +278,7 @@ class SearchBar extends Component {
 								{onAddResultSubmit && (
 									<div className="navbar-nav">
 										<AddResult
+											fetchDocumentsUrl={fetchDocumentsUrl}
 											onAddResultSubmit={onAddResultSubmit}
 										/>
 									</div>
