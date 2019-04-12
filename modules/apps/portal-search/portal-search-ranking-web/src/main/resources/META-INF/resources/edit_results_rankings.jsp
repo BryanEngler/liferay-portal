@@ -33,6 +33,8 @@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
 String redirect = ParamUtil.getString(request, "redirect");
 
 String resultsRankingsRootElementId = renderResponse.getNamespace() + "-results-rankings-root";
+
+String keywords = ParamUtil.getString(request, "keywords");
 %>
 
 <div id="<%= resultsRankingsRootElementId %>"></div>
@@ -42,7 +44,7 @@ String resultsRankingsRootElementId = renderResponse.getNamespace() + "-results-
 		'<%= resultsRankingsRootElementId %>',
 		{
 			cancelUrl: '<%= HtmlUtil.escape(redirect) %>',
-			searchTerm: 'example'
+			searchTerm: '<%= HtmlUtil.escape(keywords) %>'
 		},
 		{
 			companyId: '<%= themeDisplay.getCompanyId() %>',
