@@ -26,6 +26,8 @@ class ResultsRankingForm extends Component {
 
 	static propTypes = {
 		cancelUrl: PropTypes.string.isRequired,
+		fetchDocumentsUrl: PropTypes.string.isRequired,
+		fetchDocumentsHiddenUrl: PropTypes.string.isRequired,
 		searchTerm: PropTypes.string.isRequired
 	};
 
@@ -225,6 +227,7 @@ class ResultsRankingForm extends Component {
 		const visibleIdList = this._getResultIdsVisible();
 
 		fetchDocuments(
+			this.props.fetchDocumentsUrl,
 			{
 				companyId: this.context.companyId,
 				from: visibleIdList.length,
@@ -283,6 +286,7 @@ class ResultsRankingForm extends Component {
 		const {resultIdsHidden} = this.state;
 
 		fetchDocuments(
+			this.props.fetchDocumentsHiddenUrl,
 			{
 				companyId: this.context.companyId,
 				from: resultIdsHidden.length,
