@@ -17,11 +17,11 @@ package com.liferay.portal.search.ranking.web.internal.portlet;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.search.ranking.web.internal.constants.ResultsRankingPortletKeys;
 import com.liferay.portal.search.ranking.web.internal.display.context.ResultsRankingPortletDisplayContext;
-import com.liferay.portal.search.searcher.Searcher;
 
 import java.io.IOException;
 
@@ -76,7 +76,8 @@ public class ResultsRankingPortlet extends MVCPortlet {
 			resultsRankingPortletDisplayContext =
 				new ResultsRankingPortletDisplayContext(
 					httpServletRequest, language, queries, renderRequest,
-					renderResponse, searcher, searchRequestBuilderFactory);
+					renderResponse, searchEngineAdapter,
+					searchRequestBuilderFactory);
 
 		renderRequest.setAttribute(
 			ResultsRankingPortletKeys.RESULTS_RANKING_DISPLAY_CONTEXT,
@@ -95,7 +96,7 @@ public class ResultsRankingPortlet extends MVCPortlet {
 	protected Queries queries;
 
 	@Reference
-	protected Searcher searcher;
+	protected SearchEngineAdapter searchEngineAdapter;
 
 	@Reference
 	protected SearchRequestBuilderFactory searchRequestBuilderFactory;

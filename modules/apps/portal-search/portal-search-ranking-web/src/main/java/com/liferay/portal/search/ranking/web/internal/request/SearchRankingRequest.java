@@ -22,12 +22,12 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchContextFactory;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.search.constants.SearchContextAttributes;
+import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
+import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
+import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
 import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.search.ranking.web.internal.display.context.ResultsRankingEntryDisplayContext;
-import com.liferay.portal.search.searcher.SearchRequestBuilder;
-import com.liferay.portal.search.searcher.SearchResponse;
-import com.liferay.portal.search.searcher.Searcher;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -39,33 +39,32 @@ public class SearchRankingRequest {
 	public SearchRankingRequest(
 		HttpServletRequest httpServletRequest, Queries queries,
 		SearchContainer<ResultsRankingEntryDisplayContext> searchContainer,
-		Searcher searcher,
+		SearchEngineAdapter searchEngineAdapter,
 		SearchRequestBuilderFactory searchRequestBuilderFactory,
 		ThemeDisplay themeDisplay) {
 
 		_queries = queries;
 		_searchContext = SearchContextFactory.getInstance(httpServletRequest);
 		_searchContainer = searchContainer;
-		_searcher = searcher;
+		_searchEngineAdapter = searchEngineAdapter;
 		_searchRequestBuilderFactory = searchRequestBuilderFactory;
 		_themeDisplay = themeDisplay;
 	}
 
 	public SearchRankingResponse search() {
-		SearchContext searchContext = buildSearchContext();
+		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
 
-		SearchRequestBuilder searchRequestBuilder =
-			_searchRequestBuilderFactory.getSearchRequestBuilder(searchContext);
+		searchSearchRequest.setIndexNames("results-ranking");
+		searchSearchRequest.setQuery(_queries.matchAll());
 
-		searchRequestBuilder.query(_queries.matchAll());
-
-		SearchResponse searchResponse = _searcher.search(
-			searchRequestBuilder.build());
+		SearchSearchResponse searchSearchResponse =
+			_searchEngineAdapter.execute(searchSearchRequest);
 
 		SearchRankingResponse searchRankingResponse =
 			new SearchRankingResponse();
 
-		searchRankingResponse.setSearchHits(searchResponse.getSearchHits());
+		searchRankingResponse.setSearchHits(
+			searchSearchResponse.getSearchHits());
 
 		return searchRankingResponse;
 	}
@@ -103,7 +102,7 @@ public class SearchRankingRequest {
 	private final SearchContainer<ResultsRankingEntryDisplayContext>
 		_searchContainer;
 	private final SearchContext _searchContext;
-	private final Searcher _searcher;
+	private final SearchEngineAdapter _searchEngineAdapter;
 	private final SearchRequestBuilderFactory _searchRequestBuilderFactory;
 	private final ThemeDisplay _themeDisplay;
 
