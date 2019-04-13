@@ -1,5 +1,5 @@
 import ClayButton from 'components/shared/ClayButton.es';
-import ClayEmptyState from 'components/shared/ClayEmptyState.es';
+import ClayEmptyState, {DISPLAY_STATES} from 'components/shared/ClayEmptyState.es';
 import DragLayer from './DragLayer.es';
 import HTML5Backend from 'react-dnd-html5-backend';
 import Item from './Item.es';
@@ -13,6 +13,7 @@ class List extends Component {
 	static propTypes = {
 		dataLoading: PropTypes.bool,
 		dataMap: PropTypes.object,
+		displayError: PropTypes.bool,
 		fetchDocumentsUrl: PropTypes.string,
 		onAddResultSubmit: PropTypes.func,
 		onClickHide: PropTypes.func,
@@ -88,6 +89,13 @@ class List extends Component {
 		return resultIds.length < totalResultsCount;
 	};
 
+	/**
+	 * Render the item. If the item id isn't found on the dataMap, nothing
+	 * will be rendered for the item.
+	 * @param {string} id The item id.
+	 * @param {number} index The item's position in the list.
+	 * @param {Array} arr The full list of items.
+	 */
 	_renderItem = (id, index, arr) => {
 		const {dataMap, onClickHide, onClickPin, onMove} = this.props;
 
@@ -95,7 +103,7 @@ class List extends Component {
 
 		const item = dataMap[id];
 
-		return (
+		return item ? (
 			<Item
 				addedResult={item.addedResult}
 				author={item.author}
@@ -120,13 +128,15 @@ class List extends Component {
 				title={item.title}
 				type={item.type}
 			/>
-		);
+		) :
+			null;
 	};
 
 	render() {
 		const {
 			dataLoading,
 			dataMap,
+			displayError,
 			fetchDocumentsUrl,
 			onAddResultSubmit,
 			onClickHide,
@@ -177,7 +187,20 @@ class List extends Component {
 
 				{!dataLoading &&
 					<React.Fragment>
-						{!resultIds.length && <ClayEmptyState />}
+						{!displayError &&
+							!resultIds.length &&
+								<ClayEmptyState />
+						}
+
+						{displayError &&
+							<ClayEmptyState
+								actionLabel={Liferay.Language.get('try-again')}
+								description={Liferay.Language.get('an-error-has-occurred-and-we-were-unable-to-load-the-results')}
+								displayState={DISPLAY_STATES.EMPTY}
+								onClickAction={this._handleLoadMoreResults}
+								title={Liferay.Language.get('unable-to-load-content')}
+							/>
+						}
 
 						{this._hasMoreData() && (
 							<div className="load-more-container">
