@@ -93,7 +93,7 @@ class SearchBar extends Component {
 	};
 
 	_handleSearchKeyDown = event => {
-		if (event.key === 'Enter') {
+		if (event.key === 'Enter' && event.currentTarget.value.trim()) {
 			this._handleSearchEnter();
 		}
 	};
@@ -166,6 +166,7 @@ class SearchBar extends Component {
 											aria-label="Checkbox for search results"
 											checked={this._hasSelectedIds()}
 											className="custom-control-input"
+											disabled={!resultIds.length}
 											onChange={this._handleAllCheckbox}
 											ref={this.selectAllCheckbox}
 											type="checkbox"

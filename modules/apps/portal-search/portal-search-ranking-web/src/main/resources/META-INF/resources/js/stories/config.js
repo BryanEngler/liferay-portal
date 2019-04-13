@@ -9,21 +9,7 @@ addParameters(
 			 * Default: 'Storybook'
 			 * @type {String}
 			 */
-			'theme.brandTitle': 'Search Ranking',
-
-			/**
-			 * Display panel that shows addon configurations.
-			 * Default: true
-			 * @type {Boolean}
-			 */
-			showPanel: false,
-
-			/**
-			 * Show/hide tool bar.
-			 * Default: true
-			 * @type {Boolean}
-			 */
-			isToolshown: false
+			'theme.brandTitle': 'Search Ranking'
 		}
 	}
 );

@@ -1,5 +1,7 @@
 import ClayButton from 'components/shared/ClayButton.es';
-import ClayEmptyState from 'components/shared/ClayEmptyState.es';
+import ClayEmptyState, {
+	DISPLAY_STATES
+} from 'components/shared/ClayEmptyState.es';
 import getCN from 'classnames';
 import Item from 'components/list/Item.es';
 import PaginationBar from './PaginationBar.es';
@@ -18,8 +20,8 @@ class AddResult extends Component {
 	static contextType = ThemeContext;
 
 	static propTypes = {
-		fetchDocumentsUrl: PropTypes.string,
-		onAddResultSubmit: PropTypes.func
+		fetchDocumentsUrl: PropTypes.string.isRequired,
+		onAddResultSubmit: PropTypes.func.isRequired
 	};
 
 	selectAllCheckbox = React.createRef();
@@ -29,6 +31,7 @@ class AddResult extends Component {
 		addResultSelectedIds: [],
 		dataLoading: false,
 		dataMap: {},
+		displayError: false,
 		displayInitialMessage: true,
 		page: 1,
 		results: {},
@@ -68,7 +71,12 @@ class AddResult extends Component {
 	_fetchSearchResults = () => {
 		const {addResultSearchTerm, page, selectedDelta} = this.state;
 
-		this.setState({dataLoading: true});
+		this.setState(
+			{
+				dataLoading: true,
+				displayError: false
+			}
+		);
 
 		fetchDocuments(
 			this.props.fetchDocumentsUrl,
@@ -97,6 +105,18 @@ class AddResult extends Component {
 							}
 						}
 					)
+				);
+			}
+		).catch(
+			() => {
+				setTimeout(
+					() => this.setState(
+						{
+							dataLoading: false,
+							displayError: true
+						}
+					),
+					1000
 				);
 			}
 		);
@@ -137,6 +157,7 @@ class AddResult extends Component {
 	_handleCloseModal = () => {
 		this.setState(
 			{
+				displayError: false,
 				displayInitialMessage: true,
 				showModal: false
 			}
@@ -191,7 +212,7 @@ class AddResult extends Component {
 	};
 
 	_handleSearchKeyDown = event => {
-		if (event.key === 'Enter') {
+		if (event.key === 'Enter' && event.currentTarget.value.trim()) {
 			this._handleSearchEnter();
 		}
 	};
@@ -229,12 +250,50 @@ class AddResult extends Component {
 		this._handleCloseModal();
 	};
 
+	/**
+	 * Renders the empty state. Conditionally shows 3 different empty states:
+	 * 1) Initial message with help text.
+	 * 2) Empty result message when a search returns no matches.
+	 * 3) Error message when a search request fails to resolve.
+	 */
+	_renderEmptyState = () => {
+		const {displayError, displayInitialMessage} = this.state;
+
+		let emptyState = <ClayEmptyState />;
+
+		if (displayError) {
+			emptyState = (
+				<ClayEmptyState
+					actionLabel={Liferay.Language.get('try-again')}
+					description={Liferay.Language.get('an-error-has-occurred-and-we-were-unable-to-load-the-results')}
+					displayState={DISPLAY_STATES.EMPTY}
+					onClickAction={this._handleSearchEnter}
+					title={Liferay.Language.get('unable-to-load-content')}
+				/>
+			);
+		}
+		else if (displayInitialMessage) {
+			emptyState = (
+				<ClayEmptyState
+					description={Liferay.Language.get('search-your-engine-to-display-results')}
+					displayState="empty"
+					title={Liferay.Language.get('search-your-engine')}
+				/>
+			);
+		}
+
+		return (
+			<div className="sheet">
+				{emptyState}
+			</div>
+		);
+	}
+
 	render() {
 		const {
 			addResultSearchTerm,
 			addResultSelectedIds,
 			dataLoading,
-			displayInitialMessage,
 			page,
 			results,
 			selectedDelta,
@@ -415,16 +474,7 @@ class AddResult extends Component {
 											totalItems={results.total}
 										/>
 									</React.Fragment> :
-									<div className="sheet">
-										{displayInitialMessage ?
-											<ClayEmptyState
-												description={Liferay.Language.get('search-your-engine-to-display-results')}
-												displayState="empty"
-												title={Liferay.Language.get('search-your-engine')}
-											/> :
-											<ClayEmptyState />
-										}
-									</div>
+									this._renderEmptyState()
 							)}
 						</div>
 
