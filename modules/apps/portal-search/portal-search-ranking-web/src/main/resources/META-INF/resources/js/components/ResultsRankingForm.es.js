@@ -32,31 +32,72 @@ class ResultsRankingForm extends Component {
 	};
 
 	state = {
-		addResultIds: [],
+
+		/**
+		 * A list of strings of aliases.
+		 * @type {Array}
+		 */
 		aliases: [],
+
+		/**
+		 * Display a loading spinner while data is fetching.
+		 * @type {boolean}
+		 */
 		dataLoading: false,
 
 		/**
 		 * Map of all the data. Key is the ID and value is the data object.
+		 * @type {Object}
 		 */
 		dataMap: {},
 
 		/**
+		 * Display an error message when a data fetch request fails.
+		 * @type {boolean}
+		 */
+		displayError: false,
+
+		/**
+		 * Display an error message when a data fetch request fails for the
+		 * hidden results tab.
+		 * @type {boolean}
+		 */
+		displayErrorHidden: false,
+
+		/**
 		 * A full list of IDs which include hidden and pinned items.
+		 * @type {Array}
 		 */
 		resultIds: [],
 
 		/**
 		 * The list of IDs that are currently hidden.
+		 * @type {Array}
 		 */
 		resultIdsHidden: [],
 
 		/**
 		 * The list of IDs that are currently pinned.
+		 * @type {Array}
 		 */
 		resultIdsPinned: [],
+
+		/**
+		 * The current value of the search bar to filter results.
+		 * @type {string}
+		 */
 		searchBarTerm: '',
+
+		/**
+		 * Total number of hidden results returned from the fetch request.
+		 * @type {number}
+		 */
 		totalResultsHiddenCount: 0,
+
+		/**
+		 * Total number of non-hidden results returned from the fetch request.
+		 * @type {number}
+		 */
 		totalResultsVisibleCount: 0
 	};
 
@@ -226,11 +267,16 @@ class ResultsRankingForm extends Component {
 	 * more data to the results list.
 	 */
 	_handleFetchResultsData = () => {
-		this.setState({dataLoading: true});
+		this.setState(
+			{
+				dataLoading: true,
+				displayError: false
+			}
+		);
 
 		const visibleIdList = this._getResultIdsVisible();
 
-		fetchDocuments(
+		return fetchDocuments(
 			this.props.fetchDocumentsUrl,
 			{
 				companyId: this.context.companyId,
@@ -279,6 +325,22 @@ class ResultsRankingForm extends Component {
 					)
 				);
 			}
+		).catch(
+			() => {
+
+				// Delay showing error message so the user has confirmation
+				// when attempting to reload the content after an error.
+
+				setTimeout(
+					() => this.setState(
+						{
+							dataLoading: false,
+							displayError: true
+						}
+					),
+					1000
+				);
+			}
 		);
 	};
 
@@ -287,9 +349,16 @@ class ResultsRankingForm extends Component {
 	 * in the hidden tab.
 	 */
 	_handleFetchResultsDataHidden = () => {
+		this.setState(
+			{
+				dataLoading: true,
+				displayError: false
+			}
+		);
+
 		const {resultIdsHidden} = this.state;
 
-		fetchDocuments(
+		return fetchDocuments(
 			this.props.fetchDocumentsHiddenUrl,
 			{
 				companyId: this.context.companyId,
@@ -313,6 +382,7 @@ class ResultsRankingForm extends Component {
 				this.setState(
 					state => (
 						{
+							dataLoading: false,
 							dataMap: {
 								...state.dataMap,
 								...mappedData
@@ -324,6 +394,22 @@ class ResultsRankingForm extends Component {
 							totalResultsHiddenCount: total
 						}
 					)
+				);
+			}
+		).catch(
+			() => {
+
+				// Delay showing error message so the user has confirmation
+				// when attempting to reload the content after an error.
+
+				setTimeout(
+					() => this.setState(
+						{
+							dataLoading: false,
+							displayErrorHidden: true
+						}
+					),
+					1000
 				);
 			}
 		);
@@ -505,6 +591,8 @@ class ResultsRankingForm extends Component {
 			aliases,
 			dataLoading,
 			dataMap,
+			displayError,
+			displayErrorHidden,
 			resultIdsHidden,
 			searchBarTerm,
 			selected,
@@ -550,6 +638,7 @@ class ResultsRankingForm extends Component {
 									<List
 										dataLoading={dataLoading}
 										dataMap={dataMap}
+										displayError={displayError}
 										fetchDocumentsUrl={fetchDocumentsUrl}
 										onAddResultSubmit={
 											this._handleUpdateAddResultIds
@@ -579,7 +668,7 @@ class ResultsRankingForm extends Component {
 									<List
 										dataLoading={dataLoading}
 										dataMap={dataMap}
-										fetchDocumentsUrl={fetchDocumentsUrl}
+										displayError={displayErrorHidden}
 										onClickHide={this._handleClickHide}
 										onClickPin={this._handleClickPin}
 										onLoadResults={
