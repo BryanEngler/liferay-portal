@@ -23,8 +23,8 @@ class ClayIcon extends Component {
 		);
 
 		return (
-			<svg aria-hidden="true" className={classes} viewBox="0 0 512 512">
-				<use xlinkHref={`${this.context.spritemap}#${iconName}`} />
+			<svg aria-hidden="true" className={classes} key={iconName} viewBox="0 0 512 512">
+				<use href={`${this.context.spritemap}#${iconName}`} />
 			</svg>
 		);
 	}
