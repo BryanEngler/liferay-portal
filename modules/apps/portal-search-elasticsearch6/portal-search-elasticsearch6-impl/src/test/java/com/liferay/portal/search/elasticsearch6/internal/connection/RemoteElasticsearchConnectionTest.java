@@ -18,7 +18,9 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.test.util.PropsTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.util.InetAddressUtil;
 import com.liferay.portal.search.elasticsearch6.configuration.OperationMode;
+import com.liferay.portal.util.InetAddressProviderImpl;
 
 import java.net.InetSocketAddress;
 
@@ -40,6 +42,7 @@ public class RemoteElasticsearchConnectionTest {
 
 	@Before
 	public void setUp() {
+		InetAddressUtil.setInetAddressProvider(new InetAddressProviderImpl());
 		_remoteElasticsearchConnection = new RemoteElasticsearchConnection();
 
 		_remoteElasticsearchConnection.props = PropsTestUtil.setProps(
