@@ -44,6 +44,7 @@ public class RemoteElasticsearchConnectionTest {
 	public void setUp() {
 		InetAddressProviderUtil.setInetAddressProvider(
 			new InetAddressProviderImpl());
+
 		_remoteElasticsearchConnection = new RemoteElasticsearchConnection();
 
 		_remoteElasticsearchConnection.props = PropsTestUtil.setProps(
