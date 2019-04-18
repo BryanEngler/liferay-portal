@@ -25,7 +25,6 @@ import java.net.InetSocketAddress;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.TransportAddress;
@@ -41,19 +40,19 @@ public class RemoteElasticsearchConnectionTest {
 
 	@Before
 	public void setUp() {
-		Map<String, Object> propertiesMap = new HashMap<String, Object>() {
-			{
-				put(
-					PropsKeys.DNS_SECURITY_ADDRESS_TIMEOUT_SECONDS,
-					String.valueOf(2));
-				put(PropsKeys.DNS_SECURITY_THREAD_LIMIT, String.valueOf(10));
-			}
-		};
-
 		_remoteElasticsearchConnection = new RemoteElasticsearchConnection();
 
 		_remoteElasticsearchConnection.props = PropsTestUtil.setProps(
-			propertiesMap);
+			new HashMap<String, Object>() {
+				{
+					put(
+						PropsKeys.DNS_SECURITY_ADDRESS_TIMEOUT_SECONDS,
+						String.valueOf(2));
+					put(
+						PropsKeys.DNS_SECURITY_THREAD_LIMIT,
+						String.valueOf(10));
+				}
+			});
 	}
 
 	@Test
