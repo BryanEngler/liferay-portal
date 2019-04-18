@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.InetAddressUtil;
+import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -449,6 +450,75 @@ public class HttpImpl implements Http {
 	@Deprecated
 	public HttpClient getClient(HostConfiguration hostConfiguration) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getCompleteOriginalURL(HttpServletRequest request) {
+		boolean forwarded = false;
+
+		if (request.getAttribute(
+				JavaConstants.JAVAX_SERVLET_FORWARD_REQUEST_URI) != null) {
+
+			forwarded = true;
+		}
+
+		String requestURL = null;
+		String queryString = null;
+
+		if (forwarded) {
+			requestURL = PortalUtil.getAbsoluteURL(
+				request,
+				(String)request.getAttribute(
+					JavaConstants.JAVAX_SERVLET_FORWARD_REQUEST_URI));
+
+			queryString = (String)request.getAttribute(
+				JavaConstants.JAVAX_SERVLET_FORWARD_QUERY_STRING);
+		}
+		else {
+			requestURL = String.valueOf(request.getRequestURL());
+
+			queryString = request.getQueryString();
+		}
+
+		StringBuffer sb = new StringBuffer();
+
+		sb.append(requestURL);
+
+		if (queryString != null) {
+			sb.append(StringPool.QUESTION);
+			sb.append(queryString);
+		}
+
+		String proxyPath = PortalUtil.getPathProxy();
+
+		if (Validator.isNotNull(proxyPath)) {
+			int x =
+				sb.indexOf(Http.PROTOCOL_DELIMITER) +
+					Http.PROTOCOL_DELIMITER.length();
+
+			int y = sb.indexOf(StringPool.SLASH, x);
+
+			sb.insert(y, proxyPath);
+		}
+
+		String completeURL = sb.toString();
+
+		if (request.isRequestedSessionIdFromURL()) {
+			HttpSession session = request.getSession();
+
+			String sessionId = session.getId();
+
+			completeURL = PortalUtil.getURLWithSessionId(
+				completeURL, sessionId);
+		}
+
+		if (_log.isWarnEnabled()) {
+			if (completeURL.contains("?&")) {
+				_log.warn("Invalid url " + completeURL);
+			}
+		}
+
+		return completeURL;
 	}
 
 	@Override

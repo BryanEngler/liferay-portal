@@ -984,6 +984,11 @@ public class TemplateContextHelper {
 		}
 
 		@Override
+		public String getCompleteOriginalURL(HttpServletRequest request) {
+			return _http.getCompleteOriginalURL(request);
+		}
+
+		@Override
 		public String getCompleteURL(HttpServletRequest request) {
 			return _http.getCompleteURL(request);
 		}
