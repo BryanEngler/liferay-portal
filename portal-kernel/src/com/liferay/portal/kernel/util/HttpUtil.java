@@ -100,6 +100,10 @@ public class HttpUtil {
 		return getHttp().fixPath(path, leading, trailing);
 	}
 
+	public static String getCompleteOriginalURL(HttpServletRequest request) {
+		return getHttp().getCompleteOriginalURL(request);
+	}
+
 	public static String getCompleteURL(HttpServletRequest request) {
 		return getHttp().getCompleteURL(request);
 	}

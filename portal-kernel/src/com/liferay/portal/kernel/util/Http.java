@@ -93,6 +93,8 @@ public interface Http {
 
 	public String fixPath(String path, boolean leading, boolean trailing);
 
+	public String getCompleteOriginalURL(HttpServletRequest request);
+
 	public String getCompleteURL(HttpServletRequest request);
 
 	public Cookie[] getCookies();
