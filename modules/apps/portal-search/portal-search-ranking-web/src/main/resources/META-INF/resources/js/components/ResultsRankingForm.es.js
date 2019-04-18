@@ -21,6 +21,10 @@ import {PropTypes} from 'prop-types';
 
 const DELTA = 10;
 
+const HiddenInput = ({name, value}) => (
+	<input id={name} name={name} type="hidden" value={value} />
+);
+
 class ResultsRankingForm extends Component {
 	static contextType = ThemeContext;
 
@@ -28,7 +32,12 @@ class ResultsRankingForm extends Component {
 		cancelUrl: PropTypes.string.isRequired,
 		fetchDocumentsHiddenUrl: PropTypes.string.isRequired,
 		fetchDocumentsUrl: PropTypes.string.isRequired,
+		initialAliases: PropTypes.arrayOf(String),
 		searchTerm: PropTypes.string.isRequired
+	};
+
+	static defaultProps = {
+		initialAliases: []
 	};
 
 	state = {
@@ -37,7 +46,7 @@ class ResultsRankingForm extends Component {
 		 * A list of strings of aliases.
 		 * @type {Array}
 		 */
-		aliases: [],
+		aliases: this.props.initialAliases,
 
 		/**
 		 * Display a loading spinner while data is fetching.
@@ -104,7 +113,6 @@ class ResultsRankingForm extends Component {
 	constructor(props) {
 		super(props);
 
-		this._initialAliases = this.state.aliases;
 		this._initialResultIds = [];
 		this._initialResultIdsHidden = [];
 		this._initialResultIdsPinned = [];
@@ -141,8 +149,8 @@ class ResultsRankingForm extends Component {
 	 * Returns a boolean of whether the alias list has changed.
 	 */
 	_getAliasUnchanged = () =>
-		this._initialAliases.length === this.state.aliases.length &&
-			this._initialAliases.every(item => this.state.aliases.includes(item));
+		this.props.initialAliases.length === this.state.aliases.length &&
+			this.props.initialAliases.every(item => this.state.aliases.includes(item));
 
 	/**
 	 * Checks whether changes have been made for submission. Checks the lengths of
@@ -541,45 +549,6 @@ class ResultsRankingForm extends Component {
 		return !resultIdsPinned.includes(id) && !resultIdsHidden.includes(id);
 	};
 
-	_renderHiddenInputs = () => (
-		<React.Fragment>
-			<input
-				id="aliases"
-				name="aliases"
-				type="hidden"
-				value={this.state.aliases}
-			/>
-
-			<input
-				id="hiddenAdded"
-				name="hiddenAdded"
-				type="hidden"
-				value={this._getHiddenAdded()}
-			/>
-
-			<input
-				id="hiddenRemoved"
-				name="hiddenRemoved"
-				type="hidden"
-				value={this._getHiddenRemoved()}
-			/>
-
-			<input
-				id="pinnedAdded"
-				name="pinnedAdded"
-				type="hidden"
-				value={this._getPinnedAdded()}
-			/>
-
-			<input
-				id="pinnedRemoved"
-				name="pinnedRemoved"
-				type="hidden"
-				value={this._getPinnedRemoved()}
-			/>
-		</React.Fragment>
-	);
-
 	render() {
 		const {
 			cancelUrl,
@@ -602,7 +571,11 @@ class ResultsRankingForm extends Component {
 
 		return (
 			<div className="results-ranking-form-root">
-				{this._renderHiddenInputs()}
+				<HiddenInput name="aliases" value={this.state.aliases} />
+				<HiddenInput name="hiddenAdded" value={this._getHiddenAdded()} />
+				<HiddenInput name="hiddenRemoved" value={this._getHiddenRemoved()} />
+				<HiddenInput name="pinnedAdded" value={this._getPinnedAdded()} />
+				<HiddenInput name="pinnedRemoved" value={this._getPinnedRemoved()} />
 
 				<PageToolbar
 					onCancel={cancelUrl}
