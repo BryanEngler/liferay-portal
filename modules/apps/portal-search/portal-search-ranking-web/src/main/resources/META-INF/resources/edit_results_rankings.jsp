@@ -63,6 +63,7 @@ String companyId = ParamUtil.getString(request, "companyId");
 			cancelUrl: '<%= HtmlUtil.escape(redirect) %>',
 			fetchDocumentsHiddenUrl: '<%= hiddenResultsRankingResourceURL %>',
 			fetchDocumentsUrl: '<%= resultsRankingResourceURL %>',
+			initialAliases: [],
 			searchTerm: '<%= HtmlUtil.escape(keywords) %>'
 		},
 		{
