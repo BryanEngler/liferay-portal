@@ -85,14 +85,21 @@ ResultsRankingPortletDisplayContext resultsRankingPortletDisplayContext = (Resul
 
 			<liferay-ui:search-container-column-text
 				cssClass="table-cell-expand"
-				href="<%= rowURL %>"
 				name="aliases"
 				value="<%= resultsRankingEntryDisplayContext.getAliases() %>"
 			/>
 
+			<portlet:actionURL name="/results_ranking/edit" var="deleteResultsRankingEntryURL2">
+				<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.DELETE %>" />
+				<portlet:param name="redirect" value="<%= currentURL %>" />
+				<portlet:param name="uid" value="<%= resultsRankingEntryDisplayContext.getUid() %>" />
+				<portlet:param name="keywords" value="<%= resultsRankingEntryDisplayContext.getKeywords() %>" />
+				<portlet:param name="companyId" value="<%= String.valueOf(themeDisplay.getCompanyId()) %>" />
+			</portlet:actionURL>
+
 			<liferay-ui:search-container-column-text
 				cssClass="table-cell-expand-smallest table-cell-minw-150"
-				href="<%= rowURL %>"
+				href="<%= deleteResultsRankingEntryURL2 %>"
 				name="index"
 				value="<%= resultsRankingEntryDisplayContext.getIndex() %>"
 			/>
