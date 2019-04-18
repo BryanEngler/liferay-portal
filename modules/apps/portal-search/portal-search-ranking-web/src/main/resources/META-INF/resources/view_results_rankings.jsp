@@ -77,17 +77,19 @@ ResultsRankingPortletDisplayContext resultsRankingPortletDisplayContext = (Resul
 			</portlet:renderURL>
 
 			<liferay-ui:search-container-column-text
-				cssClass="table-cell-expand table-title"
-				href="<%= rowURL %>"
-				name="search-terms"
-				value="<%= resultsRankingEntryDisplayContext.getKeywords() %>"
-			/>
-
-			<liferay-ui:search-container-column-text
 				cssClass="table-cell-expand"
-				name="aliases"
-				value="<%= resultsRankingEntryDisplayContext.getAliases() %>"
-			/>
+				name="search-term-aliases"
+			>
+				<div class="list-group-title">
+					<a href="<%= rowURL %>">
+						<%= resultsRankingEntryDisplayContext.getKeywords() %>
+					</a>
+				</div>
+
+				<div class="list-group-subtext">
+					<%= resultsRankingEntryDisplayContext.getAliases() %>
+				</div>
+			</liferay-ui:search-container-column-text>
 
 			<liferay-ui:search-container-column-text
 				cssClass="table-cell-expand-smallest table-cell-minw-150"
