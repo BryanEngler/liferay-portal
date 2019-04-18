@@ -50,7 +50,7 @@ portletDisplay.setURLBack(redirect);
 			<liferay-ui:message key="customize-how-users-see-results-for-a-given-search-query" />
 		</div>
 
-		<aui:input label="<%= StringPool.BLANK %>" name="search-term" placeholder="search-term" />
+		<aui:input label="<%= StringPool.BLANK %>" name="keywords" placeholder="search-term" />
 		<aui:input label="<%= StringPool.BLANK %>" name="index-name" placeholder="index-name" />
 		<aui:input label="<%= StringPool.BLANK %>" name="aliases" placeholder="aliases" />
 		<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.ADD %>" />
