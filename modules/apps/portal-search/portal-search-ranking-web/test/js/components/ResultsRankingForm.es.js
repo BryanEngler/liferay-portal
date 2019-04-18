@@ -2,7 +2,6 @@ import React from 'react';
 import ResultsRankingForm from 'components/ResultsRankingForm.es';
 import {cleanup, fireEvent, render, waitForElement} from 'react-testing-library';
 import 'jest-dom/extend-expect';
-import '@babel/polyfill';
 
 jest.mock('utils/api.es');
 
