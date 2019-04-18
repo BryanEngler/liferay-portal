@@ -266,7 +266,6 @@ class Item extends Component {
 			lastIndex,
 			onClickHide,
 			onClickPin,
-			onDragHover,
 			pinned,
 			selected,
 			style,
