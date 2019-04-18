@@ -18,15 +18,14 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.test.util.PropsTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.kernel.util.InetAddressProviderUtil;
+import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.search.elasticsearch6.configuration.OperationMode;
-import com.liferay.portal.util.InetAddressProviderImpl;
 
 import java.net.InetSocketAddress;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.TransportAddress;
@@ -42,13 +41,19 @@ public class RemoteElasticsearchConnectionTest {
 
 	@Before
 	public void setUp() {
-		InetAddressProviderUtil.setInetAddressProvider(
-			new InetAddressProviderImpl());
+		Map<String, Object> propertiesMap = new HashMap<String, Object>() {
+			{
+				put(
+					PropsKeys.DNS_SECURITY_ADDRESS_TIMEOUT_SECONDS,
+					String.valueOf(2));
+				put(PropsKeys.DNS_SECURITY_THREAD_LIMIT, String.valueOf(10));
+			}
+		};
 
 		_remoteElasticsearchConnection = new RemoteElasticsearchConnection();
 
 		_remoteElasticsearchConnection.props = PropsTestUtil.setProps(
-			Collections.emptyMap());
+			propertiesMap);
 	}
 
 	@Test
