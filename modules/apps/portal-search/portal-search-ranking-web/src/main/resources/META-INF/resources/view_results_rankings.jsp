@@ -134,6 +134,11 @@ ResultsRankingPortletDisplayContext resultsRankingPortletDisplayContext = (Resul
 				name="status"
 				status="<%= 0 %>"
 			/>
+
+			<liferay-ui:search-container-column-jsp
+				cssClass="entry-action-column"
+				path="/view_results_rankings_entry_action.jsp"
+			/>
 		</liferay-ui:search-container-row>
 
 		<liferay-ui:search-iterator
@@ -141,3 +146,34 @@ ResultsRankingPortletDisplayContext resultsRankingPortletDisplayContext = (Resul
 		/>
 	</liferay-ui:search-container>
 </aui:form>
+
+<aui:script>
+	var deleteResultsRankingsEntries = function() {
+		if (confirm('<liferay-ui:message key="are-you-sure-you-want-to-delete-this" />')) {
+			var form = document.querySelector('#<portlet:namespace />resultsRankingEntriesFm');
+
+			if (form) {
+				submitForm(form);
+			}
+		}
+	};
+
+	var ACTIONS = {
+		'deleteResultsRankingsEntries': deleteResultsRankingsEntries
+	};
+
+	Liferay.componentReady('resultsRankingEntriesManagementToolbar').then(
+		function(managementToolbar) {
+			managementToolbar.on(
+				'actionItemClicked',
+				function(event) {
+					var itemData = event.data.item.data;
+
+					if (itemData && itemData.action && ACTIONS[itemData.action]) {
+						ACTIONS[itemData.action]();
+					}
+				}
+			);
+		}
+	);
+</aui:script>
