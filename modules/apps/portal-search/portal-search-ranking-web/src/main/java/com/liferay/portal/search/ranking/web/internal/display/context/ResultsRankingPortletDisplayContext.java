@@ -80,7 +80,7 @@ public class ResultsRankingPortletDisplayContext {
 				add(
 					dropdownItem -> {
 						dropdownItem.putData(
-							"action", "deleteResultRankingsEntries");
+							"action", "deleteResultsRankingsEntries");
 						dropdownItem.setIcon("times");
 						dropdownItem.setLabel(
 							LanguageUtil.get(_httpServletRequest, "delete"));
