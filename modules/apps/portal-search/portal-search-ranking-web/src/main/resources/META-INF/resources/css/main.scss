@@ -1,8 +1,9 @@
 @import "variables";
 
-.results-rankings-root, .results-ranking-modal-root {
+.portlet-search-ranking, .results-rankings-root, .results-ranking-modal-root {
 	@import "alias";
 	@import "empty_state";
+	@import "loading";
 	@import "list";
 	@import "list_item";
 	@import "modal";

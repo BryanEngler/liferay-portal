@@ -13,7 +13,6 @@ describe(
 		it(
 			'should have a list of tags available',
 			() => {
-
 				const {container} = render(
 					<Alias
 						keywords={['one', 'two', 'three']}
@@ -34,7 +33,6 @@ describe(
 		it(
 			'should not show a modal by default',
 			() => {
-
 				const {queryByTestId} = render(
 					<Alias
 						keywords={['one', 'two', 'three']}
@@ -51,7 +49,6 @@ describe(
 		it(
 			'should render a modal when the add an alias button gets clicked',
 			() => {
-
 				const {getByText, queryByTestId} = render(
 					<Alias
 						keywords={['one', 'two', 'three']}
@@ -70,7 +67,6 @@ describe(
 		it(
 			'should close the modal after the cancel button gets clicked',
 			() => {
-
 				const {getByText, queryByTestId} = render(
 					<Alias
 						keywords={['one', 'two', 'three']}
@@ -91,7 +87,6 @@ describe(
 		it(
 			'should prompt to input an alias',
 			() => {
-
 				const {getByText, queryByText} = render(
 					<Alias
 						keywords={['one', 'two', 'three']}
@@ -110,14 +105,11 @@ describe(
 		it(
 			'should have the modal with a default disabled add button',
 			() => {
-
-				const onClickSubmit = jest.fn();
-
 				const {getByText, queryByTestId} = render(
 					<Alias
 						keywords={['one', 'two', 'three']}
 						onClickDelete={jest.fn()}
-						onClickSubmit={onClickSubmit}
+						onClickSubmit={jest.fn()}
 						searchTerm={'example'}
 					/>
 				);
@@ -127,6 +119,24 @@ describe(
 				const modal = queryByTestId(MODAL_ID);
 
 				expect(modal.querySelector('.modal-footer .btn-primary')).toHaveAttribute('disabled');
+			}
+		);
+
+		it(
+			'should not render blank keywords',
+			() => {
+				const {container} = render(
+					<Alias
+						keywords={['', ' ']}
+						onClickDelete={jest.fn()}
+						onClickSubmit={jest.fn()}
+						searchTerm={'example'}
+					/>
+				);
+
+				const tagsElement = container.querySelectorAll('.label-item');
+
+				expect(tagsElement.length).toBe(0);
 			}
 		);
 	}
