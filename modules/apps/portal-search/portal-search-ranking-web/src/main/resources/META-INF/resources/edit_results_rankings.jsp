@@ -21,10 +21,15 @@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 
-<%@ page import="com.liferay.portal.kernel.util.Constants" %><%@
+<%@ page import="com.liferay.petra.string.StringPool" %><%@
+page import="com.liferay.portal.kernel.util.Constants" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
+page import="com.liferay.portal.kernel.util.StringUtil" %><%@
+page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.search.ranking.web.internal.constants.ResultsRankingPortletKeys" %>
+
+<%@ page import="javax.portlet.PortletURL" %>
 
 <liferay-frontend:defineObjects />
 
@@ -35,14 +40,25 @@ page import="com.liferay.portal.search.ranking.web.internal.constants.ResultsRan
 <%
 String redirect = ParamUtil.getString(request, "redirect");
 
+if (Validator.isNull(redirect)) {
+	PortletURL portletURL = renderResponse.createRenderURL();
+
+	redirect = portletURL.toString();
+}
+
 String resultsRankingsRootElementId = renderResponse.getNamespace() + "-results-rankings-root";
 
 String uid = ParamUtil.getString(request, "uid");
 String keywords = ParamUtil.getString(request, "keywords");
 String companyId = ParamUtil.getString(request, "companyId");
+String[] aliases = StringUtil.split(ParamUtil.getString(request, "aliases"), StringPool.COMMA);
 %>
 
-<div id="<%= resultsRankingsRootElementId %>"></div>
+<div id="<%= resultsRankingsRootElementId %>">
+	<div class="loading-animation-container">
+		<span aria-hidden="true" class="loading-animation"></span>
+	</div>
+</div>
 
 <liferay-portlet:resourceURL id="/results_ranking/get_results" portletName="<%= ResultsRankingPortletKeys.RESULTS_RANKING %>" var="resultsRankingResourceURL">
 	<portlet:param name="resultsRankingUid" value="<%= uid %>" />
@@ -63,7 +79,7 @@ String companyId = ParamUtil.getString(request, "companyId");
 			cancelUrl: '<%= HtmlUtil.escape(redirect) %>',
 			fetchDocumentsHiddenUrl: '<%= hiddenResultsRankingResourceURL %>',
 			fetchDocumentsUrl: '<%= resultsRankingResourceURL %>',
-			initialAliases: [],
+			initialAliases: <%= (aliases.length > 0) ? "['" + StringUtil.merge(aliases, "','") + "']" : "[]" %>,
 			searchTerm: '<%= HtmlUtil.escape(keywords) %>'
 		},
 		{

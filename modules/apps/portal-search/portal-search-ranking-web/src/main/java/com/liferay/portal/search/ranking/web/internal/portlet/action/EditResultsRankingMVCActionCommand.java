@@ -149,6 +149,9 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 			"mvcRenderCommandName", "editResultsRankingEntry");
 		portletURL.setParameter(Constants.CMD, Constants.UPDATE, false);
 		portletURL.setParameter("redirect", redirect, false);
+		portletURL.setParameter(
+			"aliases", StringUtil.merge(aliases, StringPool.COMMA), false);
+		portletURL.setParameter("keywords", keywords, false);
 		portletURL.setWindowState(actionRequest.getWindowState());
 
 		sendRedirect(actionRequest, actionResponse, portletURL.toString());

@@ -5,6 +5,15 @@ import React, {Component} from 'react';
 import ReactModal from 'react-modal';
 import Tag from './Tag.es';
 
+/**
+ * Filters out empty strings from the passed in array.
+ * @param {Array} list The list of strings to filter.
+ * @returns {Array} The filtered list.
+ */
+function filterEmptyStrings(list) {
+	return list.filter(item => item.trim());
+}
+
 class Alias extends Component {
 	static propTypes = {
 		keywords: PropTypes.arrayOf(String),
@@ -56,7 +65,7 @@ class Alias extends Component {
 
 					<div className="input-group">
 						<div className="input-group-item input-group-item-shrink">
-							{keywords.map(
+							{filterEmptyStrings(keywords).map(
 								word => (
 									<Tag
 										key={word}
