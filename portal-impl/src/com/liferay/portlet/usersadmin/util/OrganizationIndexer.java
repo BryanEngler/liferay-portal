@@ -37,6 +37,7 @@ import com.liferay.portal.kernel.search.filter.TermsFilter;
 import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 import com.liferay.portal.kernel.search.generic.WildcardQueryImpl;
 import com.liferay.portal.kernel.service.OrganizationLocalServiceUtil;
+import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -56,9 +57,8 @@ import javax.portlet.PortletResponse;
  * @author Zsigmond Rab
  * @author Hugo Huijser
  * @author Marco Leo
- * @deprecated As of Judson (7.1.x), since 7.1.0
  */
-@Deprecated
+@OSGiBeanProperties
 public class OrganizationIndexer extends BaseIndexer<Organization> {
 
 	public static final String CLASS_NAME = Organization.class.getName();
