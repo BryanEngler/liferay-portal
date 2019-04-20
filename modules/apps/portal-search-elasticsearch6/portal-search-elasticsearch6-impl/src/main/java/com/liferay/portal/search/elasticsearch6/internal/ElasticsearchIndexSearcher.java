@@ -89,8 +89,26 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		stopWatch.start();
 
 		try {
-			int start = searchContext.getStart();
-			int end = searchContext.getEnd();
+			SearchRequest searchRequest = getSearchRequest(searchContext);
+
+			Integer from = searchRequest.getFrom();
+			Integer size = searchRequest.getSize();
+
+			int end;
+			int start;
+
+			if ((from == null) && (size != null)) {
+				end = size;
+				start = 0;
+			}
+			else if ((from != null) && (size != null)) {
+				end = from + size;
+				start = from;
+			}
+			else {
+				end = searchContext.getEnd();
+				start = searchContext.getStart();
+			}
 
 			if (start == QueryUtil.ALL_POS) {
 				start = 0;
@@ -114,7 +132,8 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 			while (true) {
 				SearchSearchRequest searchSearchRequest =
-					createSearchSearchRequest(searchContext, query, start, end);
+					createSearchSearchRequest(
+						searchRequest, searchContext, query, start, end);
 
 				SearchSearchResponse searchSearchResponse =
 					_searchEngineAdapter.execute(searchSearchRequest);
@@ -254,11 +273,10 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	}
 
 	protected SearchSearchRequest createSearchSearchRequest(
-		SearchContext searchContext, Query query, int start, int end) {
+		SearchRequest searchRequest, SearchContext searchContext, Query query,
+		int start, int end) {
 
 		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
-
-		SearchRequest searchRequest = getSearchRequest(searchContext);
 
 		prepare(searchSearchRequest, searchRequest, query, searchContext);
 
@@ -402,6 +420,8 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		searchResponseBuilder.aggregationResultsMap(
 			baseSearchResponse.getAggregationResultsMap()
+		).count(
+			baseSearchResponse.getCount()
 		).requestString(
 			baseSearchResponse.getSearchRequestString()
 		).responseString(
