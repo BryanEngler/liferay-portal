@@ -21,6 +21,7 @@ import com.liferay.portal.search.constants.SearchContextAttributes;
 import com.liferay.portal.search.elasticsearch6.constants.ElasticsearchSearchContextAttributes;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.internal.legacy.searcher.SearchRequestBuilderFactoryImpl;
+import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.test.util.indexing.DocumentFixture;
 
 import org.junit.After;
@@ -39,7 +40,12 @@ public class ElasticsearchIndexSearcherTest {
 	public void setUp() {
 		_documentFixture.setUp();
 
-		_elasticsearchIndexSearcher = createElasticsearchIndexSearcher();
+		SearchRequestBuilderFactory searchRequestBuilderFactory =
+			new SearchRequestBuilderFactoryImpl();
+
+		_elasticsearchIndexSearcher = createElasticsearchIndexSearcher(
+			searchRequestBuilderFactory);
+		_searchRequestBuilderFactory = searchRequestBuilderFactory;
 	}
 
 	@After
@@ -63,6 +69,9 @@ public class ElasticsearchIndexSearcherTest {
 
 		SearchSearchRequest searchSearchRequest =
 			_elasticsearchIndexSearcher.createSearchSearchRequest(
+				_searchRequestBuilderFactory.builder(
+					searchContext
+				).build(),
 				searchContext, Mockito.mock(Query.class), 0, 0);
 
 		Assert.assertTrue(searchSearchRequest.isBasicFacetSelection());
@@ -72,18 +81,19 @@ public class ElasticsearchIndexSearcherTest {
 	}
 
 	protected static ElasticsearchIndexSearcher
-		createElasticsearchIndexSearcher() {
+		createElasticsearchIndexSearcher(
+			SearchRequestBuilderFactory searchRequestBuilderFactory) {
 
 		return new ElasticsearchIndexSearcher() {
 			{
 				setIndexNameBuilder(String::valueOf);
-				setSearchRequestBuilderFactory(
-					new SearchRequestBuilderFactoryImpl());
+				setSearchRequestBuilderFactory(searchRequestBuilderFactory);
 			}
 		};
 	}
 
 	private final DocumentFixture _documentFixture = new DocumentFixture();
 	private ElasticsearchIndexSearcher _elasticsearchIndexSearcher;
+	private SearchRequestBuilderFactory _searchRequestBuilderFactory;
 
 }
