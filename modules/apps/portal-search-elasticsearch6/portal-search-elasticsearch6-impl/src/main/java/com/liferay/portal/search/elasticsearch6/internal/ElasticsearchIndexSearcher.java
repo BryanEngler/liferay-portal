@@ -89,13 +89,13 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		stopWatch.start();
 
 		try {
+			int end = searchContext.getEnd();
+			int start = searchContext.getStart();
+
 			SearchRequest searchRequest = getSearchRequest(searchContext);
 
 			Integer from = searchRequest.getFrom();
 			Integer size = searchRequest.getSize();
-
-			int end;
-			int start;
 
 			if ((from == null) && (size != null)) {
 				end = size;
@@ -104,10 +104,6 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			else if ((from != null) && (size != null)) {
 				end = from + size;
 				start = from;
-			}
-			else {
-				end = searchContext.getEnd();
-				start = searchContext.getStart();
 			}
 
 			if (start == QueryUtil.ALL_POS) {
