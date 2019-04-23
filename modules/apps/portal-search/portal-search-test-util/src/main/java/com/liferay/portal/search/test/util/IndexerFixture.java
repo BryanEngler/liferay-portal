@@ -91,6 +91,17 @@ public class IndexerFixture<T> {
 		}
 	}
 
+	public Document[] search(SearchContext searchContext) {
+		try {
+			Hits hits = _indexer.search(searchContext);
+
+			return hits.getDocs();
+		}
+		catch (PortalException pe) {
+			throw new RuntimeException(pe);
+		}
+	}
+
 	public Document[] search(String keywords) {
 		try {
 			return search(TestPropsValues.getUserId(), keywords, null);
