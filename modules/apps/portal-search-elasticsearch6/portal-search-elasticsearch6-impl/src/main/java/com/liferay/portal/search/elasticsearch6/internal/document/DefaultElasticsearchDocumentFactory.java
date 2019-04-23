@@ -105,6 +105,8 @@ public class DefaultElasticsearchDocumentFactory
 
 		if (values.isEmpty()) {
 			addFieldValueless(field, xContentBuilder);
+
+			return;
 		}
 
 		if (values.size() == 1) {
