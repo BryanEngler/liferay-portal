@@ -1,4 +1,5 @@
 import Alias from 'components/alias/index.es';
+import FormValueDebugger from 'utils/FormValueDebugger.es';
 import List from 'components/list/index.es';
 import PageToolbar from './PageToolbar.es';
 import React, {Component} from 'react';
@@ -32,6 +33,7 @@ class ResultsRankingForm extends Component {
 		cancelUrl: PropTypes.string.isRequired,
 		fetchDocumentsHiddenUrl: PropTypes.string.isRequired,
 		fetchDocumentsUrl: PropTypes.string.isRequired,
+		formName: PropTypes.string.isRequired,
 		initialAliases: PropTypes.arrayOf(String),
 		searchTerm: PropTypes.string.isRequired
 	};
@@ -107,7 +109,13 @@ class ResultsRankingForm extends Component {
 		 * Total number of non-hidden results returned from the fetch request.
 		 * @type {number}
 		 */
-		totalResultsVisibleCount: 0
+		totalResultsVisibleCount: 0,
+
+		/**
+		 * Determines if the form submission is save as draft or publish.
+		 * @type {string}
+		 */
+		workflowAction: ''
 	};
 
 	constructor(props) {
@@ -443,6 +451,21 @@ class ResultsRankingForm extends Component {
 	};
 
 	/**
+	 * Handles the publishing of the form. Sets the workflow action input and
+	 * submits the form.
+	 */
+	_handlePublish = () => {
+		this.setState(
+			{
+				workflowAction: this.context.constants.WORKFLOW_ACTION_PUBLISH
+			},
+			() => {
+				submitForm(document[this.props.formName]);
+			}
+		);
+	}
+
+	/**
 	 * Handles removing an alias.
 	 * @param {String} label Removes the alias with given label.
 	 */
@@ -455,6 +478,21 @@ class ResultsRankingForm extends Component {
 			)
 		);
 	};
+
+	/**
+	 * Handles the saving the form as a draft. Sets the workflow action input
+	 * and submits the form.
+	 */
+	_handleSaveAsDraft = () => {
+		this.setState(
+			{
+				workflowAction: this.context.constants.WORKFLOW_ACTION_SAVE_DRAFT
+			},
+			() => {
+				submitForm(document[this.props.formName]);
+			}
+		);
+	}
 
 	/**
 	 * Handles the search bar enter, in which results are cleared and replaced
@@ -550,6 +588,8 @@ class ResultsRankingForm extends Component {
 	};
 
 	render() {
+		const {namespace} = this.context;
+
 		const {
 			cancelUrl,
 			fetchDocumentsUrl,
@@ -566,19 +606,23 @@ class ResultsRankingForm extends Component {
 			searchBarTerm,
 			selected,
 			totalResultsHiddenCount,
-			totalResultsVisibleCount
+			totalResultsVisibleCount,
+			workflowAction
 		} = this.state;
 
 		return (
 			<div className="results-ranking-form-root">
-				<HiddenInput name="aliases" value={this.state.aliases} />
-				<HiddenInput name="hiddenAdded" value={this._getHiddenAdded()} />
-				<HiddenInput name="hiddenRemoved" value={this._getHiddenRemoved()} />
-				<HiddenInput name="pinnedAdded" value={this._getPinnedAdded()} />
-				<HiddenInput name="pinnedRemoved" value={this._getPinnedRemoved()} />
+				<HiddenInput name={`${namespace}aliases`} value={aliases} />
+				<HiddenInput name={`${namespace}hiddenAdded`} value={this._getHiddenAdded()} />
+				<HiddenInput name={`${namespace}hiddenRemoved`} value={this._getHiddenRemoved()} />
+				<HiddenInput name={`${namespace}pinnedAdded`} value={this._getPinnedAdded()} />
+				<HiddenInput name={`${namespace}pinnedRemoved`} value={this._getPinnedRemoved()} />
+				<HiddenInput name={`${namespace}workflowAction`} value={workflowAction} />
 
 				<PageToolbar
 					onCancel={cancelUrl}
+					onPublish={this._handlePublish}
+					onSaveAsDraft={this._handleSaveAsDraft}
 					submitDisabled={this._getDisablePublish()}
 				/>
 
@@ -667,6 +711,35 @@ class ResultsRankingForm extends Component {
 						</div>
 					</div>
 				</div>
+
+				<FormValueDebugger
+					values={[
+						{
+							name: `${namespace}aliases`,
+							value: aliases
+						},
+						{
+							name: `${namespace}hiddenAdded`,
+							value: this._getHiddenAdded()
+						},
+						{
+							name: `${namespace}hiddenRemoved`,
+							value: this._getHiddenRemoved()
+						},
+						{
+							name: `${namespace}pinnedAdded`,
+							value: this._getPinnedAdded()
+						},
+						{
+							name: `${namespace}pinnedRemoved`,
+							value: this._getPinnedRemoved()
+						},
+						{
+							name: `${namespace}workflowAction`,
+							value: workflowAction
+						}
+					]}
+				/>
 			</div>
 		);
 	}
