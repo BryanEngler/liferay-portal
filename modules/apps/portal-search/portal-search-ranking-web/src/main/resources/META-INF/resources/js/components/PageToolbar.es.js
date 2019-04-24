@@ -5,6 +5,8 @@ import React, {Component} from 'react';
 class PageToolbar extends Component {
 	static props = {
 		onCancel: PropTypes.string,
+		onPublish: PropTypes.func,
+		onSaveAsDraft: PropTypes.func,
 		submitDisabled: PropTypes.bool
 	};
 
@@ -13,7 +15,12 @@ class PageToolbar extends Component {
 	};
 
 	render() {
-		const {onCancel, submitDisabled} = this.props;
+		const {
+			onCancel,
+			onPublish,
+			onSaveAsDraft,
+			submitDisabled
+		} = this.props;
 
 		return (
 			<nav className="page-toolbar-root tbar upper-tbar">
@@ -33,6 +40,7 @@ class PageToolbar extends Component {
 						<li className="tbar-item">
 							<ClayButton
 								label={Liferay.Language.get('save-as-draft')}
+								onClick={onSaveAsDraft}
 								size="sm"
 							/>
 						</li>
@@ -42,6 +50,7 @@ class PageToolbar extends Component {
 								disabled={submitDisabled}
 								displayStyle="primary"
 								label={Liferay.Language.get('publish')}
+								onClick={onPublish}
 								size="sm"
 								type="submit"
 							/>

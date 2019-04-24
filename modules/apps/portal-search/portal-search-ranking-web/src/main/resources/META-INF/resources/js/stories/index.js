@@ -20,6 +20,11 @@ addDecorator(withKnobs);
 addDecorator(
 	storyFn => {
 		const context = {
+			constants: {
+				WORKFLOW_ACTION_PUBLISH: '1',
+				WORKFLOW_ACTION_SAVE_DRAFT: '2'
+			},
+			namespace: '_com_liferay_portal_search_ranking_web_portlet_ResultsRankingPortlet_',
 			spritemap: '/o/admin-theme/images/lexicon/icons.svg'
 		};
 
@@ -47,6 +52,7 @@ storiesOf('Main|ResultsRankingForm', module)
 				cancelUrl=""
 				fetchDocumentsHiddenUrl=""
 				fetchDocumentsUrl=""
+				saveActionUrl="#"
 				searchTerm={text('Search Term', 'example')}
 			/>
 		)
@@ -59,6 +65,7 @@ storiesOf('Main|ResultsRankingForm', module)
 				fetchDocumentsHiddenUrl="http://www.mocky.io/v2/5cabd9ab3000002900103266"
 				fetchDocumentsUrl="http://www.mocky.io/v2/5cabd1073000002900103260"
 				initialAliases={['one', 'two', 'three']}
+				saveActionUrl="#"
 				searchTerm={text('Search Term', 'example')}
 			/>
 		)
