@@ -76,8 +76,8 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 
 		String cmd = ParamUtil.getString(actionRequest, Constants.CMD);
 
-		String[] aliases = StringUtil.split(
-			ParamUtil.getString(actionRequest, "aliases"), StringPool.SPACE);
+		String[] aliases = ParamUtil.getStringValues(actionRequest, "aliases");
+
 		Date displayDate = null;
 		//ParamUtil.getDate(actionRequest, "displayDate", null);
 		String[] hiddenDocuments = ParamUtil.getStringValues(
