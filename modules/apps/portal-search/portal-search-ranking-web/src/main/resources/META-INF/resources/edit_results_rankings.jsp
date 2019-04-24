@@ -27,6 +27,7 @@ page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
 page import="com.liferay.portal.kernel.util.StringUtil" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
+page import="com.liferay.portal.kernel.workflow.WorkflowConstants" %><%@
 page import="com.liferay.portal.search.ranking.web.internal.constants.ResultsRankingPortletKeys" %>
 
 <%@ page import="javax.portlet.PortletURL" %>
@@ -54,11 +55,21 @@ String companyId = ParamUtil.getString(request, "companyId");
 String[] aliases = StringUtil.split(ParamUtil.getString(request, "aliases"), StringPool.COMMA);
 %>
 
-<div id="<%= resultsRankingsRootElementId %>">
-	<div class="loading-animation-container">
-		<span aria-hidden="true" class="loading-animation"></span>
+<portlet:actionURL name="/results_ranking/edit" var="addResultsRankingEntryURL" />
+
+<aui:form action="<%= addResultsRankingEntryURL %>" name="editResultsRankingsFm" onSubmit="event.preventDefault();">
+	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
+	<aui:input name="companyId" type="hidden" value="<%= companyId %>" />
+	<aui:input name="keywords" type="hidden" value="<%= keywords %>" />
+	<aui:input name="uid" type="hidden" value="<%= uid %>" />
+	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
+
+	<div id="<%= resultsRankingsRootElementId %>">
+		<div class="loading-animation-container">
+			<span aria-hidden="true" class="loading-animation"></span>
+		</div>
 	</div>
-</div>
+</aui:form>
 
 <liferay-portlet:resourceURL id="/results_ranking/get_results" portletName="<%= ResultsRankingPortletKeys.RESULTS_RANKING %>" var="resultsRankingResourceURL">
 	<portlet:param name="resultsRankingUid" value="<%= uid %>" />
@@ -79,11 +90,17 @@ String[] aliases = StringUtil.split(ParamUtil.getString(request, "aliases"), Str
 			cancelUrl: '<%= HtmlUtil.escape(redirect) %>',
 			fetchDocumentsHiddenUrl: '<%= hiddenResultsRankingResourceURL %>',
 			fetchDocumentsUrl: '<%= resultsRankingResourceURL %>',
+			formName: '<portlet:namespace />editResultsRankingsFm',
 			initialAliases: <%= (aliases.length > 0) ? "['" + StringUtil.merge(aliases, "','") + "']" : "[]" %>,
 			searchTerm: '<%= HtmlUtil.escape(keywords) %>'
 		},
 		{
 			companyId: '<%= themeDisplay.getCompanyId() %>',
+			constants: {
+				WORKFLOW_ACTION_PUBLISH: '<%= WorkflowConstants.ACTION_PUBLISH %>',
+				WORKFLOW_ACTION_SAVE_DRAFT: '<%= WorkflowConstants.ACTION_SAVE_DRAFT %>'
+			},
+			namespace: '<portlet:namespace />',
 			searchIndex: '',
 			spritemap: '<%= themeDisplay.getPathThemeImages() + "/lexicon/icons.svg" %>'
 		}

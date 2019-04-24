@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.search.document.Document;
 import com.liferay.portal.search.document.DocumentBuilder;
 import com.liferay.portal.search.document.DocumentBuilderFactory;
@@ -109,6 +110,8 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 		resultsRanking.setStatus(status);
 		resultsRanking.setUid(uid);
 
+		String redirect = ParamUtil.getString(actionRequest, "redirect");
+
 		if (cmd.equals(Constants.ADD)) {
 			boolean exists = resultsRankingIndexer.exists(resultsRanking);
 
@@ -124,8 +127,35 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 
 				return;
 			}
+
+			redirect = getSaveAndContinueRedirect(
+				actionRequest, resultsRanking, redirect);
 		}
 		else if (cmd.equals(Constants.UPDATE)) {
+			String[] hiddenAdded = ParamUtil.getStringValues(
+				actionRequest, "hiddenAdded");
+			String[] hiddenRemoved = ParamUtil.getStringValues(
+				actionRequest, "hiddenRemoved");
+			String[] pinnedAdded = ParamUtil.getStringValues(
+				actionRequest, "pinnedAdded");
+			String[] pinnedRemoved = ParamUtil.getStringValues(
+				actionRequest, "pinnedRemoved");
+
+			int workflowAction = ParamUtil.getInteger(
+				actionRequest, "workflowAction",
+				WorkflowConstants.ACTION_PUBLISH);
+
+			if (workflowAction == WorkflowConstants.ACTION_SAVE_DRAFT) {
+
+				// @TODO Save draft action
+
+			}
+			else {
+
+				// @TODO Publish action
+
+			}
+
 			resultsRankingIndexer.updateResultsRanking(resultsRanking);
 
 			updateIndexDocuments(resultsRanking, false);
@@ -136,25 +166,7 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 			updateIndexDocuments(resultsRanking, true);
 		}
 
-		String redirect = ParamUtil.getString(actionRequest, "redirect");
-
-		PortletConfig portletConfig = (PortletConfig)actionRequest.getAttribute(
-			JavaConstants.JAVAX_PORTLET_CONFIG);
-
-		LiferayPortletURL portletURL = PortletURLFactoryUtil.create(
-			actionRequest, portletConfig.getPortletName(),
-			PortletRequest.RENDER_PHASE);
-
-		portletURL.setParameter(
-			"mvcRenderCommandName", "editResultsRankingEntry");
-		portletURL.setParameter(Constants.CMD, Constants.UPDATE, false);
-		portletURL.setParameter("redirect", redirect, false);
-		portletURL.setParameter(
-			"aliases", StringUtil.merge(aliases, StringPool.COMMA), false);
-		portletURL.setParameter("keywords", keywords, false);
-		portletURL.setWindowState(actionRequest.getWindowState());
-
-		sendRedirect(actionRequest, actionResponse, portletURL.toString());
+		sendRedirect(actionRequest, actionResponse, redirect);
 	}
 
 	protected Document getDocument(String index, String uid) {
@@ -291,6 +303,30 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 
 			searchEngineAdapter.execute(bulkDocumentRequest);
 		}
+	}
+
+	protected String getSaveAndContinueRedirect(
+		ActionRequest actionRequest, ResultsRanking resultsRanking,
+		String redirect)
+		throws Exception {
+
+		PortletConfig portletConfig = (PortletConfig)actionRequest.getAttribute(
+			JavaConstants.JAVAX_PORTLET_CONFIG);
+
+		LiferayPortletURL portletURL = PortletURLFactoryUtil.create(
+			actionRequest, portletConfig.getPortletName(),
+			PortletRequest.RENDER_PHASE);
+
+		portletURL.setParameter(
+			"mvcRenderCommandName", "editResultsRankingEntry");
+		portletURL.setParameter(Constants.CMD, Constants.UPDATE, false);
+		portletURL.setParameter("redirect", redirect, false);
+		portletURL.setParameter(
+			"aliases", StringUtil.merge(resultsRanking.getAliases(), StringPool.COMMA), false);
+		portletURL.setParameter("keywords", resultsRanking.getKeywords(), false);
+		portletURL.setWindowState(actionRequest.getWindowState());
+
+		return portletURL.toString();
 	}
 
 	@Reference
