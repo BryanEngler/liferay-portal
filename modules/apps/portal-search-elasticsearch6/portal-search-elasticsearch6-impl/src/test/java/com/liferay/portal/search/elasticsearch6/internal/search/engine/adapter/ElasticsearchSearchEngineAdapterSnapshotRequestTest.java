@@ -417,9 +417,7 @@ public class ElasticsearchSearchEngineAdapterSnapshotRequestTest {
 		GetSnapshotsResponse getSnapshotsResponse =
 			getSnapshotsRequestBuilder.get();
 
-		List<SnapshotInfo> snapshotInfos = getSnapshotsResponse.getSnapshots();
-
-		return snapshotInfos;
+		return getSnapshotsResponse.getSnapshots();
 	}
 
 	private static final String _INDEX_NAME = "test_request_index";

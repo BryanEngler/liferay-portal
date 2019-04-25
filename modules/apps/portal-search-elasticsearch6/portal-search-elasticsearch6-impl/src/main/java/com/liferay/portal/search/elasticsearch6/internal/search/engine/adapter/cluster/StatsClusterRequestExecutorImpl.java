@@ -63,13 +63,9 @@ public class StatsClusterRequestExecutorImpl
 			ClusterHealthStatus clusterHealthStatus =
 				clusterStatsResponse.getStatus();
 
-			StatsClusterResponse statsClusterResponse =
-				new StatsClusterResponse(
-					clusterHealthStatusTranslator.translate(
-						clusterHealthStatus),
-					Strings.toString(xContentBuilder));
-
-			return statsClusterResponse;
+			return new StatsClusterResponse(
+				clusterHealthStatusTranslator.translate(clusterHealthStatus),
+				Strings.toString(xContentBuilder));
 		}
 		catch (IOException ioe) {
 			throw new SystemException(ioe);
@@ -79,11 +75,8 @@ public class StatsClusterRequestExecutorImpl
 	protected ClusterStatsRequestBuilder createClusterStatsRequestBuilder(
 		StatsClusterRequest statsClusterRequest) {
 
-		ClusterStatsRequestBuilder clusterStatsRequestBuilder =
-			ClusterStatsAction.INSTANCE.newRequestBuilder(
-				elasticsearchConnectionManager.getClient());
-
-		return clusterStatsRequestBuilder;
+		return ClusterStatsAction.INSTANCE.newRequestBuilder(
+			elasticsearchConnectionManager.getClient());
 	}
 
 	@Reference
