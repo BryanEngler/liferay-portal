@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -80,8 +81,6 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 
 		Date displayDate = null;
 		//ParamUtil.getDate(actionRequest, "displayDate", null);
-		String[] hiddenDocuments = ParamUtil.getStringValues(
-			actionRequest, "hiddenDocuments");
 
 		String index = ParamUtil.getString(actionRequest, "index-name");
 
@@ -93,8 +92,6 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 
 		String keywords = ParamUtil.getString(actionRequest, "keywords");
 		Date modifiedDate = new Date();
-		String[] pinnedDocuments = ParamUtil.getStringValues(
-			actionRequest, "pinnedDocuments");
 		int status = ParamUtil.getInteger(actionRequest, "status");
 		String uid = ParamUtil.getString(actionRequest, "uid");
 
@@ -102,11 +99,9 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 
 		resultsRanking.setAliases(aliases);
 		resultsRanking.setDisplayDate(displayDate);
-		resultsRanking.setHiddenDocuments(hiddenDocuments);
 		resultsRanking.setIndex(index);
 		resultsRanking.setKeywords(keywords);
 		resultsRanking.setModifiedDate(modifiedDate);
-		resultsRanking.setPinnedDocuments(pinnedDocuments);
 		resultsRanking.setStatus(status);
 		resultsRanking.setUid(uid);
 
@@ -132,6 +127,12 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 				actionRequest, resultsRanking, redirect);
 		}
 		else if (cmd.equals(Constants.UPDATE)) {
+			Document document =
+				resultsRankingIndexer.getResultsRanking(resultsRanking);
+
+			List<String> hiddenDocuments =
+				document.getStrings("hidden_documents");
+
 			String[] hiddenAdded = ParamUtil.getStringValues(
 				actionRequest, "hiddenAdded");
 			String[] hiddenRemoved = ParamUtil.getStringValues(
@@ -140,6 +141,15 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 				actionRequest, "pinnedAdded");
 			String[] pinnedRemoved = ParamUtil.getStringValues(
 				actionRequest, "pinnedRemoved");
+
+			hiddenDocuments.addAll(ListUtil.fromArray(hiddenAdded));
+			hiddenDocuments.removeAll(ListUtil.fromArray(hiddenRemoved));
+
+			List<String> pinnedDocuments = document.getStrings(
+				"pinned_documents");
+
+			pinnedDocuments.addAll(ListUtil.fromArray(pinnedAdded));
+			pinnedDocuments.removeAll(ListUtil.fromArray(pinnedRemoved));
 
 			int workflowAction = ParamUtil.getInteger(
 				actionRequest, "workflowAction",
@@ -156,9 +166,14 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 
 			}
 
+			resultsRanking.setHiddenDocuments(
+				ArrayUtil.toStringArray(hiddenDocuments));
+			resultsRanking.setPinnedDocuments(
+				ArrayUtil.toStringArray(pinnedDocuments));
+
 			resultsRankingIndexer.updateResultsRanking(resultsRanking);
 
-			updateIndexDocuments(resultsRanking, false);
+			updateIndexDocuments(resultsRanking, false); //need to pass in added/removed uids
 		}
 		else if (cmd.equals(Constants.DELETE)) {
 			resultsRankingIndexer.deleteResultsRanking(resultsRanking);
@@ -193,86 +208,100 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 
 		List<Document> documents = new ArrayList<>();
 
-		for (String pinnedDocument : resultsRanking.getPinnedDocuments()) {
-			String[] pinnedDocumentParts = StringUtil.split(
-				pinnedDocument, StringPool.DASH);
+		String[] pinnedDocuments = resultsRanking.getPinnedDocuments();
 
-			String position = pinnedDocumentParts[0];
+		if (pinnedDocuments != null) {
+			for (String pinnedDocument : pinnedDocuments) {
+				String[] pinnedDocumentParts = StringUtil.split(
+					pinnedDocument, StringPool.DASH);
 
-			String uid = pinnedDocumentParts[1];
+				String position = pinnedDocumentParts[0];
 
-			Document document = getDocument(resultsRanking.getIndex(), uid);
+				String uid = pinnedDocumentParts[1];
 
-			String keywords = resultsRanking.getKeywords();
+				Document document = getDocument(resultsRanking.getIndex(), uid);
 
-			List<Object> pinnedKeywords = document.getValues(
-				"custom_ranking_pinned_keywords");
+				String keywords = resultsRanking.getKeywords();
 
-			DocumentBuilder builder = documentBuilderFactory.builder(document);
+				List<Object> pinnedKeywords = document.getValues(
+					"custom_ranking_pinned_keywords");
 
-			if (remove && pinnedKeywords.contains(keywords)) {
-				pinnedKeywords.remove(keywords);
+				DocumentBuilder builder =
+					documentBuilderFactory.builder(document);
+
+				if (remove && pinnedKeywords.contains(keywords)) {
+					pinnedKeywords.remove(keywords);
+				}
+				else if (!pinnedKeywords.contains(keywords)) {
+					pinnedKeywords.add(keywords);
+				}
+
+				if (ListUtil.isEmpty(pinnedKeywords)) {
+					builder.unsetValue("custom_ranking_pinned_keywords");
+				}
+				else {
+					builder.setValues(
+						"custom_ranking_pinned_keywords", pinnedKeywords);
+				}
+
+				List<Object> pinnedPositions = document.getValues(
+					"custom_ranking_pinned_positions");
+
+				if (remove &&
+					pinnedPositions.contains(keywords + "_" + position)) {
+					pinnedPositions.remove(keywords + "_" + position);
+				}
+				else {
+					pinnedPositions.add(keywords + "_" + position);
+				}
+
+				if (ListUtil.isEmpty(pinnedPositions)) {
+					builder.unsetValue("custom_ranking_pinned_positions");
+				}
+				else {
+					builder.setValues(
+						"custom_ranking_pinned_positions", pinnedPositions);
+				}
+
+				documents.add(builder.build());
 			}
-			else if (!pinnedKeywords.contains(keywords)) {
-				pinnedKeywords.add(keywords);
-			}
-
-			if (ListUtil.isEmpty(pinnedKeywords)) {
-				builder.unsetValue("custom_ranking_pinned_keywords");
-			}
-			else {
-				builder.setValues(
-					"custom_ranking_pinned_keywords", pinnedKeywords);
-			}
-
-			List<Object> pinnedPositions = document.getValues(
-				"custom_ranking_pinned_positions");
-
-			if (remove && pinnedPositions.contains(keywords + "_" + position)) {
-				pinnedPositions.remove(keywords + "_" + position);
-			}
-			else {
-				pinnedPositions.add(keywords + "_" + position);
-			}
-
-			if (ListUtil.isEmpty(pinnedPositions)) {
-				builder.unsetValue("custom_ranking_pinned_positions");
-			}
-			else {
-				builder.setValues(
-					"custom_ranking_pinned_positions", pinnedPositions);
-			}
-
-			documents.add(builder.build());
 		}
 
-		for (String hiddenDocumentUid : resultsRanking.getHiddenDocuments()) {
-			Document document = getDocument(
-				resultsRanking.getIndex(), hiddenDocumentUid);
+		String[] hiddenDocumentUids = resultsRanking.getHiddenDocuments();
 
-			DocumentBuilder builder = documentBuilderFactory.builder(document);
+		if (ArrayUtil.isNotEmpty(hiddenDocumentUids)) {
+			for (String hiddenDocumentUid : hiddenDocumentUids) {
+				Document document = getDocument(
+					resultsRanking.getIndex(), hiddenDocumentUid);
 
-			String keywords = resultsRanking.getKeywords();
+				DocumentBuilder builder =
+					documentBuilderFactory.builder(document);
 
-			List<Object> hiddenKeywords = document.getValues(
-				"custom_ranking_hidden_keywords");
+				String keywords = resultsRanking.getKeywords();
 
-			if (remove && hiddenKeywords.contains(keywords)) {
-				hiddenKeywords.remove(keywords);
+				List<Object> hiddenKeywords = document.getValues(
+					"custom_ranking_hidden_keywords");
+
+				List<Object> newHiddenKeywords =
+					new ArrayList<>(hiddenKeywords);
+
+				if (remove && newHiddenKeywords.contains(keywords)) {
+					newHiddenKeywords.remove(keywords);
+				}
+				else if (!newHiddenKeywords.contains(keywords)) {
+					newHiddenKeywords.add(keywords);
+				}
+
+				if (ListUtil.isEmpty(newHiddenKeywords)) {
+					builder.unsetValue("custom_ranking_hidden_keywords");
+				}
+				else {
+					builder.setValues(
+						"custom_ranking_hidden_keywords", newHiddenKeywords);
+				}
+
+				documents.add(builder.build());
 			}
-			else {
-				hiddenKeywords.add(keywords);
-			}
-
-			if (ListUtil.isEmpty(hiddenKeywords)) {
-				builder.unsetValue("custom_ranking_hidden_keywords");
-			}
-			else {
-				builder.setValues(
-					"custom_ranking_hidden_keywords", hiddenKeywords);
-			}
-
-			documents.add(builder.build());
 		}
 
 		return documents;

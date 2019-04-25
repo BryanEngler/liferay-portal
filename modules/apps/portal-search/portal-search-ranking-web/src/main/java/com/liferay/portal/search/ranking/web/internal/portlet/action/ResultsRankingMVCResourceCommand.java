@@ -15,17 +15,16 @@
 package com.liferay.portal.search.ranking.web.internal.portlet.action;
 
 import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
-import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.search.document.Document;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.document.GetDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.GetDocumentResponse;
@@ -38,6 +37,7 @@ import com.liferay.portal.search.searcher.Searcher;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.portlet.PortletException;
 import javax.portlet.ResourceRequest;
@@ -76,26 +76,27 @@ public class ResultsRankingMVCResourceCommand implements MVCResourceCommand {
 		return false;
 	}
 
-	protected JSONObject getDocumentJSONObject(String index, String uid) {
-		try {
-			GetDocumentRequest getDocumentRequest = new GetDocumentRequest(
-				index, uid);
+	protected Document getDocument(
+		String index, String uid, String type, String[] storedFields) {
 
-			GetDocumentResponse getDocumentResponse =
-				searchEngineAdapter.execute(getDocumentRequest);
+		GetDocumentRequest getDocumentRequest = new GetDocumentRequest(
+			index, uid);
 
-			if (!getDocumentResponse.isExists()) {
-				return null;
-			}
+		getDocumentRequest.setType(type);
+		getDocumentRequest.setStoredFields(storedFields);
 
-			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
-				getDocumentResponse.getSource());
+		GetDocumentResponse getDocumentResponse =
+			searchEngineAdapter.execute(getDocumentRequest);
 
-			return jsonObject;
-		}
-		catch (JSONException jsone) {
+		if (!getDocumentResponse.isExists()) {
 			return null;
 		}
+
+		return getDocumentResponse.getDocument();
+	}
+
+	protected String getResultsRankingIndexType() {
+		return "ResultsRankingType";
 	}
 
 	protected String getResultsRankingIndexName() {
@@ -114,42 +115,20 @@ public class ResultsRankingMVCResourceCommand implements MVCResourceCommand {
 	private JSONObject _translate(Document document) {
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
-		String title = document.get(Field.TITLE + "_en_US");
+		String title = document.getString(Field.TITLE + "_en_US");
 
 		if (Validator.isBlank(title)) {
-			title = document.get(Field.TITLE);
+			title = document.getString(Field.TITLE);
 		}
 
-		jsonObject.put("author", document.get(Field.USER_NAME));
-		jsonObject.put("clicks", document.get("clicks"));
-		jsonObject.put("description", document.get(Field.DESCRIPTION));
-		jsonObject.put("hidden", document.get(Field.HIDDEN));
-		jsonObject.put("id", document.get(Field.UID));
+		jsonObject.put("author", document.getString(Field.USER_NAME));
+		jsonObject.put("clicks", document.getString("clicks"));
+		jsonObject.put("description", document.getString(Field.DESCRIPTION));
+		jsonObject.put("hidden", document.getString(Field.HIDDEN));
+		jsonObject.put("id", document.getString(Field.UID));
 		jsonObject.put("pinned", true);
 		jsonObject.put("title", title);
-		jsonObject.put("type", document.get(Field.ENTRY_CLASS_NAME));
-
-		return jsonObject;
-	}
-
-	private JSONObject _translate(JSONObject documentJSONObject) {
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
-
-		String title = documentJSONObject.getString(Field.TITLE + "_en_US");
-
-		if (Validator.isBlank(title)) {
-			title = documentJSONObject.getString(Field.TITLE);
-		}
-
-		jsonObject.put("author", documentJSONObject.get(Field.USER_NAME));
-		jsonObject.put("clicks", documentJSONObject.get("clicks"));
-		jsonObject.put(
-			"description", documentJSONObject.get(Field.DESCRIPTION));
-		jsonObject.put("hidden", documentJSONObject.get(Field.HIDDEN));
-		jsonObject.put("id", documentJSONObject.get(Field.UID));
-		jsonObject.put("pinned", true);
-		jsonObject.put("title", title);
-		jsonObject.put("type", documentJSONObject.get(Field.ENTRY_CLASS_NAME));
+		jsonObject.put("type", document.getString(Field.ENTRY_CLASS_NAME));
 
 		return jsonObject;
 	}
@@ -161,28 +140,25 @@ public class ResultsRankingMVCResourceCommand implements MVCResourceCommand {
 		String resultsRankingUid = ParamUtil.getString(
 			resourceRequest, "resultsRankingUid");
 
-		JSONObject resultsRankingDocumentJSONObject = getDocumentJSONObject(
-			getResultsRankingIndexName(), resultsRankingUid);
+		Document resultsRankingDocument = getDocument(
+			getResultsRankingIndexName(), resultsRankingUid,
+			getResultsRankingIndexType(), _STORED_FIELDS);
 
-		JSONArray hiddenDocumentUids =
-			(JSONArray)resultsRankingDocumentJSONObject.get("hidden_documents");
+		List<String> hiddenDocumentUids =
+			resultsRankingDocument.getStrings("hidden_documents");
 
-		String index = resultsRankingDocumentJSONObject.getString("index");
+		String index = resultsRankingDocument.getString("index");
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
-		int from = ParamUtil.getInteger(resourceRequest, "from", 0);
-		int size = ParamUtil.getInteger(
-			resourceRequest, "size", hiddenDocumentUids.length());
+		for (String hiddenDocumentUid : hiddenDocumentUids) {
+			Document hiddenDocument = getDocument(
+				index, hiddenDocumentUid, "LiferayDocumentType",
+					new String[] {"title", "title_en_US", Field.HIDDEN,
+						Field.ENTRY_CLASS_NAME, Field.UID, Field.USER_NAME});
 
-		for (int i = from; i < size; i++) {
-			String hiddenDocumentUid = hiddenDocumentUids.getString(i);
-
-			JSONObject hiddenDocumentJSONObject = getDocumentJSONObject(
-				index, hiddenDocumentUid);
-
-			if (hiddenDocumentJSONObject != null) {
-				jsonArray.put(_translate(hiddenDocumentJSONObject));
+			if (hiddenDocument != null) {
+				jsonArray.put(_translate(hiddenDocument));
 			}
 		}
 
@@ -207,18 +183,12 @@ public class ResultsRankingMVCResourceCommand implements MVCResourceCommand {
 		String resultsRankingUid = ParamUtil.getString(
 			resourceRequest, "resultsRankingUid");
 
-		JSONObject resultsRankingDocumentJSONObject = getDocumentJSONObject(
-			getResultsRankingIndexName(), resultsRankingUid);
+		Document resultsRankingDocument = getDocument(
+			getResultsRankingIndexName(), resultsRankingUid,
+			getResultsRankingIndexType(), _STORED_FIELDS);
 
-		JSONArray hiddenDocumentUids =
-			(JSONArray)resultsRankingDocumentJSONObject.get("hidden_documents");
-
-		List<String> hiddenUids = new ArrayList<>();
-
-		if (hiddenDocumentUids != null) {
-			hiddenDocumentUids.forEach(
-				string -> hiddenUids.add((String)string));
-		}
+		List<String> hiddenUids =
+			resultsRankingDocument.getStrings("hidden_documents");
 
 		SearchContext searchContext = new SearchContext();
 
@@ -239,17 +209,19 @@ public class ResultsRankingMVCResourceCommand implements MVCResourceCommand {
 
 		SearchResponse searchResponse = searcher.search(searchRequest);
 
-		List<Document> docs = searchResponse.getDocuments71();
+		Stream<Document> docs = searchResponse.getDocumentsStream();
 
 		List<Document> filteredDocs = new ArrayList<>();
 
-		for (Document document1 : docs) {
-			String uid = document1.getUID();
+		docs.forEach(
+			document -> {
+				String uid = document.getString(Field.UID);
 
-			if (!hiddenUids.contains(uid)) {
-				filteredDocs.add(document1);
+				if (!hiddenUids.contains(uid)) {
+					filteredDocs.add(document);
+				}
 			}
-		}
+		);
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
@@ -270,5 +242,10 @@ public class ResultsRankingMVCResourceCommand implements MVCResourceCommand {
 			throw new PortletException(e);
 		}
 	}
+
+	private static final String[] _STORED_FIELDS = {
+		"aliases", "displayDate", "hidden_documents", "index", "keywords",
+		"modified", "pinned_documents", "status", "uid"
+	};
 
 }
