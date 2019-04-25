@@ -15,7 +15,9 @@
 --%>
 
 <%@ page import="com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem" %><%@
+page import="com.liferay.petra.string.StringPool" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
+page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
 page import="com.liferay.portal.kernel.util.Constants" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
@@ -34,6 +36,7 @@ page import="java.util.List" %>
 taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
 taglib uri="http://liferay.com/tld/clay" prefix="clay" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
+taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
@@ -52,33 +55,6 @@ if (searchResultsPortletDisplayContext.isRenderNothing()) {
 
 com.liferay.portal.kernel.dao.search.SearchContainer<com.liferay.portal.kernel.search.Document> searchContainer1 = searchResultsPortletDisplayContext.getSearchContainer();
 %>
-
-<style>
-	.taglib-asset-tags-summary a.badge, .taglib-asset-tags-summary a.badge:hover {
-		color: #65B6F0;
-	}
-
-	.search-total-label {
-		margin-top: 35px;
-	}
-
-	.search-asset-type-sticker {
-		color: #869CAD;
-	}
-
-	.search-document-content {
-		font-weight: 400;
-	}
-
-	.search-result-thumbnail-img {
-		height: 44px;
-		width: 44px;
-	}
-
-	.tabular-list-group .list-group-item-content h6.search-document-tags {
-		margin-top: 13px;
-	}
-</style>
 
 <p class="search-total-label text-default">
 	<%= searchContainer1.getTotal() %> results for <strong><%= HtmlUtil.escape(searchResultsPortletDisplayContext.getKeywords()) %></strong>
@@ -99,39 +75,6 @@ com.liferay.portal.kernel.dao.search.SearchContainer<com.liferay.portal.kernel.s
 
 		<%
 		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext = java.util.Objects.requireNonNull(searchResultsPortletDisplayContext.getSearchResultSummaryDisplayContext(document));
-		%>
-
-		<portlet:actionURL name="/result/ranking" var="pinURL">
-			<portlet:param name="<%= Constants.CMD %>" value="pin" />
-			<portlet:param name="redirect" value="" />
-			<portlet:param name="index" value="<%= searchResultSummaryDisplayContext.getIndex() %>" />
-			<portlet:param name="keywords" value="<%= searchResultSummaryDisplayContext.getKeywords() %>" />
-			<portlet:param name="uid" value="<%= searchResultSummaryDisplayContext.getUid() %>" />
-		</portlet:actionURL>
-
-		<portlet:actionURL name="/result/ranking" var="hideURL">
-			<portlet:param name="<%= Constants.CMD %>" value="hide" />
-			<portlet:param name="redirect" value="" />
-			<portlet:param name="index" value="<%= searchResultSummaryDisplayContext.getIndex() %>" />
-			<portlet:param name="keywords" value="<%= searchResultSummaryDisplayContext.getKeywords() %>" />
-			<portlet:param name="uid" value="<%= searchResultSummaryDisplayContext.getUid() %>" />
-		</portlet:actionURL>
-
-		<%
-		DropdownItem pinDropdownItem = new DropdownItem();
-
-		pinDropdownItem.setLabel(LanguageUtil.get(request, "pin"));
-		pinDropdownItem.setHref(pinURL);
-
-		DropdownItem hideDropdownItem = new DropdownItem();
-
-		hideDropdownItem.setLabel(LanguageUtil.get(request, "hide"));
-		hideDropdownItem.setHref(hideURL);
-
-		List<DropdownItem> dropdownItems = new ArrayList();
-
-		dropdownItems.add(pinDropdownItem);
-		dropdownItems.add(hideDropdownItem);
 		%>
 
 		<c:choose>
@@ -280,13 +223,47 @@ com.liferay.portal.kernel.dao.search.SearchContainer<com.liferay.portal.kernel.s
 					</c:if>
 				</liferay-ui:search-container-column-text>
 
-				<c:if test="<%= permissionChecker.isCompanyAdmin() %>">
 					<liferay-ui:search-container-column-text>
-						<clay:dropdown-actions
-							dropdownItems="<%= dropdownItems %>"
-						/>
+
+						<liferay-ui:icon-menu
+							direction="left-side"
+							icon="<%= StringPool.BLANK %>"
+							markupView="lexicon"
+							message="<%= StringPool.BLANK %>"
+							showWhenSingleIcon="<%= true %>"
+							showExpanded="<%= row == null %>"
+						>
+							<liferay-portlet:renderURL var="pinPOP" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+								<portlet:param name="keywords" value="<%= searchResultSummaryDisplayContext.getKeywords() %>" />
+								<portlet:param name="mvcPath" value="/search/results/pin_result.jsp" />
+								<portlet:param name="index" value="<%= searchResultSummaryDisplayContext.getIndex() %>" />
+								<portlet:param name="uid" value="<%= searchResultSummaryDisplayContext.getUid() %>" />
+								<portlet:param name="redirect" value="<%= currentURL %>" />
+							</liferay-portlet:renderURL>
+
+							<liferay-ui:icon
+								message="pin"
+								onClick='<%= "javascript:" + renderResponse.getNamespace() + "pinResult('" + pinPOP + "');" %>'
+								url="javascript:;"
+							/>
+
+							<liferay-portlet:renderURL var="hidePOP" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+								<portlet:param name="keywords" value="<%= searchResultSummaryDisplayContext.getKeywords() %>" />
+								<portlet:param name="mvcPath" value="/search/results/hide_result.jsp" />
+								<portlet:param name="index" value="<%= searchResultSummaryDisplayContext.getIndex() %>" />
+								<portlet:param name="uid" value="<%= searchResultSummaryDisplayContext.getUid() %>" />
+								<portlet:param name="redirect" value="<%= currentURL %>" />
+							</liferay-portlet:renderURL>
+
+							<liferay-ui:icon
+								message="hide"
+								onClick='<%= "javascript:" + renderResponse.getNamespace() + "hideResult('" + hidePOP + "');" %>'
+								url="javascript:;"
+							/>
+
+						</liferay-ui:icon-menu>
+
 					</liferay-ui:search-container-column-text>
-				</c:if>
 			</c:when>
 			<c:otherwise>
 				<liferay-ui:search-container-column-text
@@ -308,6 +285,50 @@ com.liferay.portal.kernel.dao.search.SearchContainer<com.liferay.portal.kernel.s
 		/>
 	</aui:form>
 </liferay-ui:search-container>
+
+<aui:script>
+	function <portlet:namespace />pinResult(uri) {
+		Liferay.Util.openWindow(
+			{
+				dialog: {
+					destroyOnHide: true,
+					height: 380,
+					resizable: false,
+					width: 600
+				},
+				dialogIframe: {
+					bodyCssClass: 'dialog-with-footer task-dialog'
+				},
+				id: '<portlet:namespace />pinResultDialog',
+				title: '<liferay-ui:message key="pin-this-result-to-a-custom-ranking" />',
+				uri: uri
+			}
+		);
+	}
+
+	function <portlet:namespace />hideResult(uri) {
+		Liferay.Util.openWindow(
+			{
+				dialog: {
+					destroyOnHide: true,
+					height: 380,
+					resizable: false,
+					width: 600
+				},
+				dialogIframe: {
+					bodyCssClass: 'dialog-with-footer task-dialog'
+				},
+				id: '<portlet:namespace />hideResultDialog',
+				title: '<liferay-ui:message key="hide-this-result-in-a-custom-ranking" />',
+				uri: uri
+			}
+		);
+	}
+
+	function <portlet:namespace />refreshPortlet(uri) {
+		location.href = uri;
+	}
+</aui:script>
 
 <aui:script use="aui-base">
 	A.one('#<portlet:namespace />searchContainerTag').delegate(
