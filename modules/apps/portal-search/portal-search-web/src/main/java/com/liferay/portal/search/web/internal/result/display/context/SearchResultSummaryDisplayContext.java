@@ -53,6 +53,10 @@ public class SearchResultSummaryDisplayContext implements Serializable {
 		return _creatorUserName;
 	}
 
+	public String getCurrentURL() {
+		return _currentURL;
+	}
+
 	public List<SearchResultFieldDisplayContext>
 		getDocumentFormFieldDisplayContexts() {
 
@@ -227,6 +231,10 @@ public class SearchResultSummaryDisplayContext implements Serializable {
 		_creatorVisible = writtenByVisible;
 	}
 
+	public void setCurrentURL(String currentURL) {
+		_currentURL = currentURL;
+	}
+
 	public void setDocumentFormFieldDisplayContexts(
 		List<SearchResultFieldDisplayContext>
 			documentFormFieldDisplayContexts) {
@@ -339,6 +347,7 @@ public class SearchResultSummaryDisplayContext implements Serializable {
 	private String _className;
 	private long _classPK;
 	private String _content;
+	private String _currentURL;
 	private boolean _contentVisible;
 	private String _creationDateString;
 	private boolean _creationDateVisible;

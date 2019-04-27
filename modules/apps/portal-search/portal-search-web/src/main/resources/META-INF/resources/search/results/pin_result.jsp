@@ -14,14 +14,6 @@
  */
 --%>
 
-<%@ page import="com.liferay.frontend.taglib.clay.servlet.taglib.util.SelectOption" %><%@
-page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
-page import="com.liferay.portal.kernel.util.Constants" %><%@
-page import="com.liferay.portal.kernel.util.ParamUtil" %>
-
-<%@ page import="java.util.ArrayList" %><%@
-page import="java.util.List" %>
-
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
 <%@ taglib uri="http://liferay.com/tld/asset" prefix="liferay-asset" %><%@
@@ -32,9 +24,24 @@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
+<%@ page import="com.liferay.frontend.taglib.clay.servlet.taglib.util.SelectOption" %><%@
+page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
+page import="com.liferay.portal.kernel.util.Constants" %><%@
+page import="com.liferay.portal.kernel.util.ParamUtil" %>
+
+<%@ page import="java.util.ArrayList" %><%@
+page import="java.util.List" %>
+
+<%@ page import="com.liferay.portal.kernel.portlet.PortletProvider" %>
+<%@ page import="com.liferay.portal.kernel.portlet.PortletProviderUtil" %>
+<%@ page import="com.liferay.portal.kernel.search.Document" %>
+
+<%@ page import="javax.portlet.PortletURL" %>
+
 <liferay-frontend:defineObjects />
+
 <liferay-theme:defineObjects />
-<liferay-trash:defineObjects />
+
 <portlet:defineObjects />
 
 <%
@@ -46,19 +53,18 @@ String redirect = ParamUtil.getString(request, "redirect");
 List<SelectOption> selectOptions = new ArrayList<>();
 %>
 
+<%
+PortletURL resultsRankingEditURL = PortletProviderUtil.getPortletURL(request, Document.class.getName(), PortletProvider.Action.EDIT);
+
+resultsRankingEditURL.setParameter("redirect", redirect);
+%>
+
 <%-- need to update selectOptions to contain existing ranking words --%>
 
 <portlet:actionURL name="/result/ranking" var="pinURL">
 	<portlet:param name="<%= Constants.CMD %>" value="pin" />
 	<portlet:param name="redirect" value="" />
 </portlet:actionURL>
-
-<portlet:renderURL var="newRankingURL">
-	<portlet:param name="<%= Constants.CMD %>" value="pin" />
-	<portlet:param name="redirect" value="" />
-	<portlet:param name="index" value="<%= index %>" />
-	<portlet:param name="uid" value="<%= uid %>" />
-</portlet:renderURL>
 
 <div class="task-action">
 	<aui:form action="<%= pinURL %>" method="post" name="pinFm" onSubmit="event.preventDefault();">
@@ -69,6 +75,7 @@ List<SelectOption> selectOptions = new ArrayList<>();
 			<div class="search-results-search-modal-description">
 				<liferay-ui:message key="pin-this-result-description" />
 			</div>
+
 			<div class="form-group">
 				<clay:select
 					label="<%=LanguageUtil.get(request, "ranking") %>"
@@ -76,17 +83,24 @@ List<SelectOption> selectOptions = new ArrayList<>();
 					options="<%= selectOptions %>"
 				/>
 			</div>
+
 			<div class="form-group">
 				<label><%=LanguageUtil.get(request, "or") %></label>
+
 				<div>
+					<%
+					String newRankingRedirect = "Liferay.Util.getOpener()." + renderResponse.getNamespace() + "refreshPortlet('" + resultsRankingEditURL.toString() + "');";
+					%>
+
 					<aui:button
 						icon="icon-plus"
 						name="newRanking"
+						onClick="<%= newRankingRedirect %>"
 						value="new-ranking"
 					/>
 				</div>
 			</div>
-        </div>
+		</div>
 
 		<div class="modal-footer">
 			<div class="btn-group">
@@ -120,7 +134,9 @@ List<SelectOption> selectOptions = new ArrayList<>();
 				A.io.request(
 					'<%= pinURL.toString() %>',
 					{
-						form: {id: '<portlet:namespace />pinFm'},
+						form: {
+							id: '<portlet:namespace />pinFm'
+						},
 						method: 'POST',
 						on: {
 							success: function() {
@@ -130,17 +146,6 @@ List<SelectOption> selectOptions = new ArrayList<>();
 						}
 					}
 				);
-			}
-		);
-	}
-
-	var newRanking = A.one('#<portlet:namespace />newRanking');
-
-	if (newRanking) {
-		newRanking.on(
-			'click',
-			function(event) {
-				Liferay.Util.getOpener().<portlet:namespace />refreshPortlet('<%= newRankingURL %>');
 			}
 		);
 	}
