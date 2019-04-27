@@ -238,7 +238,7 @@ com.liferay.portal.kernel.dao.search.SearchContainer<com.liferay.portal.kernel.s
 								<portlet:param name="mvcPath" value="/search/results/pin_result.jsp" />
 								<portlet:param name="index" value="<%= searchResultSummaryDisplayContext.getIndex() %>" />
 								<portlet:param name="uid" value="<%= searchResultSummaryDisplayContext.getUid() %>" />
-								<portlet:param name="redirect" value="<%= currentURL %>" />
+								<portlet:param name="redirect" value="<%= searchResultSummaryDisplayContext.getCurrentURL() %>" />
 							</liferay-portlet:renderURL>
 
 							<liferay-ui:icon
@@ -252,7 +252,7 @@ com.liferay.portal.kernel.dao.search.SearchContainer<com.liferay.portal.kernel.s
 								<portlet:param name="mvcPath" value="/search/results/hide_result.jsp" />
 								<portlet:param name="index" value="<%= searchResultSummaryDisplayContext.getIndex() %>" />
 								<portlet:param name="uid" value="<%= searchResultSummaryDisplayContext.getUid() %>" />
-								<portlet:param name="redirect" value="<%= currentURL %>" />
+								<portlet:param name="redirect" value="<%= searchResultSummaryDisplayContext.getCurrentURL() %>" />
 							</liferay-portlet:renderURL>
 
 							<liferay-ui:icon

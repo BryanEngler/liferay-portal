@@ -312,12 +312,12 @@ public class SearchResultSummaryDisplayBuilder {
 			return null;
 		}
 
-		return build(summary, className, classPK, assetRenderer);
+		return build(summary, className, classPK, assetRenderer, _currentURL);
 	}
 
 	protected SearchResultSummaryDisplayContext build(
 			Summary summary, String className, long classPK,
-			AssetRenderer<?> assetRenderer)
+			AssetRenderer<?> assetRenderer, String currentURL)
 		throws PortalException, PortletException {
 
 		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext =
@@ -331,6 +331,7 @@ public class SearchResultSummaryDisplayBuilder {
 			searchResultSummaryDisplayContext.setContentVisible(true);
 		}
 
+		searchResultSummaryDisplayContext.setCurrentURL(currentURL);
 		searchResultSummaryDisplayContext.setHighlightedTitle(
 			summary.getTitle());
 		searchResultSummaryDisplayContext.setPortletURL(
