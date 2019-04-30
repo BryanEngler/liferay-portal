@@ -56,6 +56,7 @@ public class SearchRankingRequest {
 
 		searchSearchRequest.setIndexNames("results-ranking");
 		searchSearchRequest.setQuery(_queries.matchAll());
+		searchSearchRequest.setFetchSource(true); //check
 
 		SearchSearchResponse searchSearchResponse =
 			_searchEngineAdapter.execute(searchSearchRequest);
