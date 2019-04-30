@@ -32,6 +32,9 @@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
 <%
 String redirect = ParamUtil.getString(request, "redirect");
 
+String resultActionCmd = ParamUtil.getString(request, "resultActionCmd");
+String resultActionUid = ParamUtil.getString(request, "resultActionUid");
+
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(redirect);
 %>
@@ -51,6 +54,8 @@ portletDisplay.setURLBack(redirect);
 		</div>
 
 		<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.ADD %>" />
+		<aui:input name="resultActionCmd" type="hidden" value="<%= resultActionCmd %>" />
+		<aui:input name="resultActionUid" type="hidden" value="<%= resultActionUid %>" />
 
 		<aui:input label="<%= StringPool.BLANK %>" name="keywords" placeholder="search-term" />
 		<aui:input label="<%= StringPool.BLANK %>" name="index-name" placeholder="index-name" />
