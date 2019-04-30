@@ -14,6 +14,8 @@
  */
 --%>
 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
 <%@ taglib uri="http://liferay.com/tld/asset" prefix="liferay-asset" %><%@
@@ -26,15 +28,15 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.frontend.taglib.clay.servlet.taglib.util.SelectOption" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
+page import="com.liferay.portal.kernel.portlet.PortletProvider" %><%@
+page import="com.liferay.portal.kernel.portlet.PortletProviderUtil" %><%@
+page import="com.liferay.portal.kernel.search.Document" %><%@
 page import="com.liferay.portal.kernel.util.Constants" %><%@
-page import="com.liferay.portal.kernel.util.ParamUtil" %>
+page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
+page import="com.liferay.portal.search.constants.SearchRankingConstants" %>
 
 <%@ page import="java.util.ArrayList" %><%@
 page import="java.util.List" %>
-
-<%@ page import="com.liferay.portal.kernel.portlet.PortletProvider" %>
-<%@ page import="com.liferay.portal.kernel.portlet.PortletProviderUtil" %>
-<%@ page import="com.liferay.portal.kernel.search.Document" %>
 
 <%@ page import="javax.portlet.PortletURL" %>
 
@@ -45,10 +47,12 @@ page import="java.util.List" %>
 <portlet:defineObjects />
 
 <%
-String keywords = ParamUtil.getString(request, "keywords");
-String index = ParamUtil.getString(request, "index");
-String uid = ParamUtil.getString(request, "uid");
 String redirect = ParamUtil.getString(request, "redirect");
+
+String cmd = ParamUtil.getString(request, Constants.CMD, SearchRankingConstants.PIN);
+String index = ParamUtil.getString(request, "index");
+String keywords = ParamUtil.getString(request, "keywords");
+String uid = ParamUtil.getString(request, "uid");
 
 List<SelectOption> selectOptions = new ArrayList<>();
 %>
@@ -57,23 +61,32 @@ List<SelectOption> selectOptions = new ArrayList<>();
 PortletURL resultsRankingEditURL = PortletProviderUtil.getPortletURL(request, Document.class.getName(), PortletProvider.Action.EDIT);
 
 resultsRankingEditURL.setParameter("redirect", redirect);
+resultsRankingEditURL.setParameter("resultActionCmd", cmd);
+resultsRankingEditURL.setParameter("resultActionUid", uid);
 %>
 
-<%-- need to update selectOptions to contain existing ranking words --%>
+<%-- @TODO Update selectOptions to contain existing ranking words --%>
 
-<portlet:actionURL name="/result/ranking" var="pinURL">
-	<portlet:param name="<%= Constants.CMD %>" value="pin" />
+<portlet:actionURL name="/result/ranking" var="actionURL">
+	<portlet:param name="<%= Constants.CMD %>" value="<%= cmd %>" />
 	<portlet:param name="redirect" value="" />
 </portlet:actionURL>
 
 <div class="task-action">
-	<aui:form action="<%= pinURL %>" method="post" name="pinFm" onSubmit="event.preventDefault();">
+	<aui:form action="<%= actionURL %>" method="post" name="resultRankingFm" onSubmit="event.preventDefault();">
 		<aui:input name="index" type="hidden" value="<%= index %>" />
 		<aui:input name="uid" type="hidden" value="<%= uid %>" />
 
 		<div class="modal-body task-action-content">
 			<div class="search-results-search-modal-description">
-				<liferay-ui:message key="pin-this-result-description" />
+				<c:choose>
+					<c:when test="<%= cmd == SearchRankingConstants.PIN %>">
+						<liferay-ui:message key="pin-this-result-description" />
+					</c:when>
+					<c:otherwise>
+						<liferay-ui:message key="hide-this-result-description" />
+					</c:otherwise>
+				</c:choose>
 			</div>
 
 			<div class="form-group">
@@ -85,7 +98,9 @@ resultsRankingEditURL.setParameter("redirect", redirect);
 			</div>
 
 			<div class="form-group">
-				<label><%=LanguageUtil.get(request, "or") %></label>
+				<label>
+					<liferay-ui:message key="or" />
+				</label>
 
 				<div>
 					<%
@@ -132,16 +147,16 @@ resultsRankingEditURL.setParameter("redirect", redirect);
 			'click',
 			function(event) {
 				A.io.request(
-					'<%= pinURL.toString() %>',
+					'<%= actionURL.toString() %>',
 					{
 						form: {
-							id: '<portlet:namespace />pinFm'
+							id: '<portlet:namespace />resultRankingFm'
 						},
 						method: 'POST',
 						on: {
 							success: function() {
 								Liferay.Util.getOpener().<portlet:namespace />refreshPortlet('<%= redirect.toString() %>');
-								Liferay.Util.getWindow('<portlet:namespace />pinResultDialog').destroy();
+								Liferay.Util.getWindow('<portlet:namespace />resultRankingDialog').destroy();
 							}
 						}
 					}
