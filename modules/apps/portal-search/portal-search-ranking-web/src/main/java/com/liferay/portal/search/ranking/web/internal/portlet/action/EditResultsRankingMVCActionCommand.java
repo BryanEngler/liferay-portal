@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.search.constants.SearchRankingConstants;
 import com.liferay.portal.search.ranking.web.internal.constants.ResultsRankingPortletKeys;
 import com.liferay.portal.search.ranking.web.internal.index.ResultsRanking;
 import com.liferay.portal.search.ranking.web.internal.index.ResultsRankingIndexer;
@@ -85,11 +86,27 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 				return;
 			}
 
+			ResultsRanking resultsRanking = new ResultsRanking();
+
+			String resultActionCmd = ParamUtil.getString(
+				actionRequest, "resultActionCmd");
+			String resultActionUid = ParamUtil.getString(
+				actionRequest, "resultActionUid");
+
+			String[] documentList = {resultActionUid};
+
+			if (!resultActionCmd.isEmpty() && !resultActionUid.isEmpty()) {
+				if (resultActionCmd.equals(SearchRankingConstants.PIN)) {
+					resultsRanking.setPinnedDocuments(documentList);
+				}
+				else {
+					resultsRanking.setHiddenDocuments(documentList);
+				}
+			}
+
 			String keywords = ParamUtil.getString(actionRequest, "keywords");
 			Date displayDate = null;
 			Date modifiedDate = new Date();
-
-			ResultsRanking resultsRanking = new ResultsRanking();
 
 			resultsRanking.setDisplayDate(displayDate);
 			resultsRanking.setIndex(index);
