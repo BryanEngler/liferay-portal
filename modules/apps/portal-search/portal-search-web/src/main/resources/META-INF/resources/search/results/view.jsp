@@ -14,20 +14,6 @@
  */
 --%>
 
-<%@ page import="com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem" %><%@
-page import="com.liferay.petra.string.StringPool" %><%@
-page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
-page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
-page import="com.liferay.portal.kernel.util.Constants" %><%@
-page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
-page import="com.liferay.portal.kernel.util.WebKeys" %><%@
-page import="com.liferay.portal.search.web.internal.result.display.context.SearchResultFieldDisplayContext" %><%@
-page import="com.liferay.portal.search.web.internal.result.display.context.SearchResultSummaryDisplayContext" %><%@
-page import="com.liferay.portal.search.web.internal.search.results.portlet.SearchResultsPortletDisplayContext" %>
-
-<%@ page import="java.util.ArrayList" %><%@
-page import="java.util.List" %>
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
@@ -39,6 +25,21 @@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
+
+<%@ page import="com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem" %><%@
+page import="com.liferay.petra.string.StringPool" %><%@
+page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
+page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
+page import="com.liferay.portal.kernel.util.Constants" %><%@
+page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
+page import="com.liferay.portal.kernel.util.WebKeys" %><%@
+page import="com.liferay.portal.search.constants.SearchRankingConstants" %><%@
+page import="com.liferay.portal.search.web.internal.result.display.context.SearchResultFieldDisplayContext" %><%@
+page import="com.liferay.portal.search.web.internal.result.display.context.SearchResultSummaryDisplayContext" %><%@
+page import="com.liferay.portal.search.web.internal.search.results.portlet.SearchResultsPortletDisplayContext" %>
+
+<%@ page import="java.util.ArrayList" %><%@
+page import="java.util.List" %>
 
 <liferay-frontend:defineObjects />
 
@@ -224,44 +225,46 @@ com.liferay.portal.kernel.dao.search.SearchContainer<com.liferay.portal.kernel.s
 				</liferay-ui:search-container-column-text>
 
 					<liferay-ui:search-container-column-text>
+						<c:if test="<%= permissionChecker.isCompanyAdmin() %>">
+							<liferay-ui:icon-menu
+								direction="left-side"
+								icon="<%= StringPool.BLANK %>"
+								markupView="lexicon"
+								message="<%= StringPool.BLANK %>"
+								showWhenSingleIcon="<%= true %>"
+								showExpanded="<%= row == null %>"
+							>
+								<liferay-portlet:renderURL var="pinResultURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+									<portlet:param name="mvcPath" value="/search/results/result_ranking_action.jsp" />
+									<portlet:param name="redirect" value="<%= searchResultSummaryDisplayContext.getCurrentURL() %>" />
+									<portlet:param name="<%= Constants.CMD %>" value="<%= SearchRankingConstants.PIN %>" />
+									<portlet:param name="index" value="<%= searchResultSummaryDisplayContext.getIndex() %>" />
+									<portlet:param name="keywords" value="<%= searchResultSummaryDisplayContext.getKeywords() %>" />
+									<portlet:param name="uid" value="<%= searchResultSummaryDisplayContext.getUid() %>" />
+								</liferay-portlet:renderURL>
 
-						<liferay-ui:icon-menu
-							direction="left-side"
-							icon="<%= StringPool.BLANK %>"
-							markupView="lexicon"
-							message="<%= StringPool.BLANK %>"
-							showWhenSingleIcon="<%= true %>"
-							showExpanded="<%= row == null %>"
-						>
-							<liferay-portlet:renderURL var="pinPOP" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
-								<portlet:param name="keywords" value="<%= searchResultSummaryDisplayContext.getKeywords() %>" />
-								<portlet:param name="mvcPath" value="/search/results/pin_result.jsp" />
-								<portlet:param name="index" value="<%= searchResultSummaryDisplayContext.getIndex() %>" />
-								<portlet:param name="uid" value="<%= searchResultSummaryDisplayContext.getUid() %>" />
-								<portlet:param name="redirect" value="<%= searchResultSummaryDisplayContext.getCurrentURL() %>" />
-							</liferay-portlet:renderURL>
+								<liferay-ui:icon
+									message="pin"
+									onClick='<%= "javascript:" + renderResponse.getNamespace() + "openResultRankingDialog('" + pinResultURL + "', '" + SearchRankingConstants.PIN + "');" %>'
+									url="javascript:;"
+								/>
 
-							<liferay-ui:icon
-								message="pin"
-								onClick='<%= "javascript:" + renderResponse.getNamespace() + "pinResult('" + pinPOP + "');" %>'
-								url="javascript:;"
-							/>
+								<liferay-portlet:renderURL var="hideResultURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+									<portlet:param name="mvcPath" value="/search/results/result_ranking_action.jsp" />
+									<portlet:param name="redirect" value="<%= searchResultSummaryDisplayContext.getCurrentURL() %>" />
+									<portlet:param name="<%= Constants.CMD %>" value="<%= SearchRankingConstants.HIDE %>" />
+									<portlet:param name="index" value="<%= searchResultSummaryDisplayContext.getIndex() %>" />
+									<portlet:param name="keywords" value="<%= searchResultSummaryDisplayContext.getKeywords() %>" />
+									<portlet:param name="uid" value="<%= searchResultSummaryDisplayContext.getUid() %>" />
+								</liferay-portlet:renderURL>
 
-							<liferay-portlet:renderURL var="hidePOP" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
-								<portlet:param name="keywords" value="<%= searchResultSummaryDisplayContext.getKeywords() %>" />
-								<portlet:param name="mvcPath" value="/search/results/hide_result.jsp" />
-								<portlet:param name="index" value="<%= searchResultSummaryDisplayContext.getIndex() %>" />
-								<portlet:param name="uid" value="<%= searchResultSummaryDisplayContext.getUid() %>" />
-								<portlet:param name="redirect" value="<%= searchResultSummaryDisplayContext.getCurrentURL() %>" />
-							</liferay-portlet:renderURL>
-
-							<liferay-ui:icon
-								message="hide"
-								onClick='<%= "javascript:" + renderResponse.getNamespace() + "hideResult('" + hidePOP + "');" %>'
-								url="javascript:;"
-							/>
-
-						</liferay-ui:icon-menu>
+								<liferay-ui:icon
+									message="hide"
+									onClick='<%= "javascript:" + renderResponse.getNamespace() + "openResultRankingDialog('" + hideResultURL + "', '" + SearchRankingConstants.HIDE + "');" %>'
+									url="javascript:;"
+								/>
+							</liferay-ui:icon-menu>
+						</c:if>
 
 					</liferay-ui:search-container-column-text>
 			</c:when>
@@ -287,7 +290,7 @@ com.liferay.portal.kernel.dao.search.SearchContainer<com.liferay.portal.kernel.s
 </liferay-ui:search-container>
 
 <aui:script>
-	function <portlet:namespace />pinResult(uri) {
+	function <portlet:namespace />openResultRankingDialog(uri, action) {
 		Liferay.Util.openWindow(
 			{
 				dialog: {
@@ -299,27 +302,10 @@ com.liferay.portal.kernel.dao.search.SearchContainer<com.liferay.portal.kernel.s
 				dialogIframe: {
 					bodyCssClass: 'dialog-with-footer task-dialog'
 				},
-				id: '<portlet:namespace />pinResultDialog',
-				title: '<liferay-ui:message key="pin-this-result-to-a-custom-ranking" />',
-				uri: uri
-			}
-		);
-	}
-
-	function <portlet:namespace />hideResult(uri) {
-		Liferay.Util.openWindow(
-			{
-				dialog: {
-					destroyOnHide: true,
-					height: 380,
-					resizable: false,
-					width: 600
-				},
-				dialogIframe: {
-					bodyCssClass: 'dialog-with-footer task-dialog'
-				},
-				id: '<portlet:namespace />hideResultDialog',
-				title: '<liferay-ui:message key="hide-this-result-in-a-custom-ranking" />',
+				id: '<portlet:namespace />resultRankingDialog',
+				title: action === '<%= SearchRankingConstants.PIN %>' ?
+					'<liferay-ui:message key="pin-this-result-to-a-custom-ranking" />' :
+					'<liferay-ui:message key="hide-this-result-in-a-custom-ranking" />',
 				uri: uri
 			}
 		);
