@@ -85,14 +85,12 @@ ResultsRankingPortletDisplayContext resultsRankingPortletDisplayContext = (Resul
 
 			<liferay-ui:search-container-column-text
 				cssClass="table-cell-expand"
-				href="<%= rowURL %>"
 				name="aliases"
 				value="<%= resultsRankingEntryDisplayContext.getAliases() %>"
 			/>
 
 			<liferay-ui:search-container-column-text
 				cssClass="table-cell-expand-smallest table-cell-minw-150"
-				href="<%= rowURL %>"
 				name="index"
 				value="<%= resultsRankingEntryDisplayContext.getIndex() %>"
 			/>

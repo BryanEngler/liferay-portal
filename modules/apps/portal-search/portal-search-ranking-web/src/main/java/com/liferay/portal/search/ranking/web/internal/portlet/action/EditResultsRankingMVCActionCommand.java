@@ -75,7 +75,7 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 			index = "liferay-" + companyId;
 		}
 
-		String keywords = ParamUtil.getString(actionRequest, "search-term");
+		String keywords = ParamUtil.getString(actionRequest, "keywords");
 		Date modifiedDate = new Date();
 		String[] pinnedDocuments = ParamUtil.getStringValues(
 			actionRequest, "pinnedDocuments");
