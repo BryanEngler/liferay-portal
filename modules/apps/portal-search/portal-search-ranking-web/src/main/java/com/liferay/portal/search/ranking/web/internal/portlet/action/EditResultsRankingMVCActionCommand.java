@@ -36,6 +36,7 @@ import com.liferay.portal.search.ranking.web.internal.index.ResultsRankingIndexe
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -93,14 +94,24 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 			String resultActionUid = ParamUtil.getString(
 				actionRequest, "resultActionUid");
 
-			String[] documentList = {resultActionUid};
-
 			if (!resultActionCmd.isEmpty() && !resultActionUid.isEmpty()) {
 				if (resultActionCmd.equals(SearchRankingConstants.PIN)) {
-					resultsRanking.setPinnedDocuments(documentList);
+
+					List<Map<String, String>> pinnedDoucments =
+						new ArrayList<>();
+
+					Map<String, String> pinnedDoucment = new HashMap<>();
+
+					pinnedDoucment.put("uid", resultActionUid);
+					pinnedDoucment.put("position", "0");
+
+					pinnedDoucments.add(pinnedDoucment);
+
+					resultsRanking.setPinnedDocuments(pinnedDoucments);
 				}
 				else {
-					resultsRanking.setHiddenDocuments(documentList);
+					resultsRanking.setHiddenDocuments(
+						ListUtil.fromString(resultActionUid));
 				}
 			}
 
@@ -140,9 +151,9 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 			resultsRanking.setAliases(aliases);
 
 			String[] hiddenAdded = ParamUtil.getStringValues(
-				actionRequest, "hiddenAdded");
+				actionRequest, "hiddenIdsAdded");
 			String[] hiddenRemoved = ParamUtil.getStringValues(
-				actionRequest, "hiddenRemoved");
+				actionRequest, "hiddenIdsRemoved");
 
 			List<String> hiddenDocuments =
 				resultsRanking.getHiddenDocuments();
@@ -156,10 +167,12 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 
 			resultsRanking.setHiddenDocuments(hiddenDocuments);
 
-			String[] pinnedAdded = ParamUtil.getStringValues(
-				actionRequest, "pinnedAdded");
-			String[] pinnedRemoved = ParamUtil.getStringValues(
-				actionRequest, "pinnedRemoved");
+			String[] pinnedIds = ParamUtil.getStringValues(
+				actionRequest, "pinnedIds");
+			int pinnedIdsEndIndex = ParamUtil.getInteger(
+				actionRequest, "pinnedIdsEndIndex");
+			int pinnedIdsStartIndex = ParamUtil.getInteger(
+				actionRequest, "pinnedIdsStartIndex");
 
 			List<Map<String, String>> originalPinnedDocuments =
 				resultsRanking.getPinnedDocuments();
@@ -167,6 +180,15 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 			List<Map<String, String>> newPinnedDocuments = new ArrayList<>();
 
 			//process pinned documents
+
+			for (int i = 0; i < pinnedIds.length; i++) {
+				Map<String, String> doc = new HashMap<>();
+
+				doc.put("position", String.valueOf(i));
+				doc.put("uid", pinnedIds[i]);
+
+				newPinnedDocuments.add(doc);
+			}
 
 			if (ListUtil.isNotEmpty(newPinnedDocuments)) {
 				resultsRanking.setPinnedDocuments(newPinnedDocuments);
