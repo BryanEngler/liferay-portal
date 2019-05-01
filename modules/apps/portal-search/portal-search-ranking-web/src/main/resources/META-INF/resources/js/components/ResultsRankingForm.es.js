@@ -51,6 +51,18 @@ class ResultsRankingForm extends Component {
 		aliases: this.props.initialAliases,
 
 		/**
+		 * Stores the original start and end indexes for submitting to be able
+		 * to update the stored pinned ids.
+		 * @type {Object}
+		 */
+		changeIndex: {
+			pinned: {
+				end: 0,
+				start: 0
+			}
+		},
+
+		/**
 		 * Display a loading spinner while data is fetching.
 		 * @type {boolean}
 		 */
@@ -88,7 +100,7 @@ class ResultsRankingForm extends Component {
 		resultIdsHidden: [],
 
 		/**
-		 * The list of IDs that are currently pinned.
+		 * The list of IDs that are currently pinned. This is in sorted order.
 		 * @type {Array}
 		 */
 		resultIdsPinned: [],
@@ -159,6 +171,32 @@ class ResultsRankingForm extends Component {
 	_getAliasUnchanged = () =>
 		this.props.initialAliases.length === this.state.aliases.length &&
 			this.props.initialAliases.every(item => this.state.aliases.includes(item));
+
+	/**
+	 * Increments the `end` property of the changeIndex state by the `DELTA`.
+	 * @param {number} increment The amount the new value should increase by.
+	 */
+	_updateChangeIndex = (increment = DELTA) => {
+		const property = 'pinned';
+
+		this.setState(
+			({changeIndex, resultIdsPinned}) => {
+				const maxValue = resultIdsPinned.length - 1;
+
+				const newValue = changeIndex[property].end + increment;
+
+				return ({
+					changeIndex: {
+						...changeIndex,
+						[property]: {
+							...changeIndex[property],
+							end: newValue > maxValue ? maxValue : newValue
+						}
+					}
+				});
+			}
+		);
+	};
 
 	/**
 	 * Checks whether changes have been made for submission. Checks the lengths of
@@ -338,7 +376,10 @@ class ResultsRankingForm extends Component {
 							],
 							totalResultsVisibleCount: total
 						}
-					)
+					),
+					() => {
+						this._updateChangeIndex();
+					}
 				);
 			}
 		).catch(
@@ -598,11 +639,13 @@ class ResultsRankingForm extends Component {
 
 		const {
 			aliases,
+			changeIndex,
 			dataLoading,
 			dataMap,
 			displayError,
 			displayErrorHidden,
 			resultIdsHidden,
+			resultIdsPinned,
 			searchBarTerm,
 			selected,
 			totalResultsHiddenCount,
@@ -613,10 +656,11 @@ class ResultsRankingForm extends Component {
 		return (
 			<div className="results-ranking-form-root">
 				<HiddenInput name={`${namespace}aliases`} value={aliases} />
-				<HiddenInput name={`${namespace}hiddenAdded`} value={this._getHiddenAdded()} />
-				<HiddenInput name={`${namespace}hiddenRemoved`} value={this._getHiddenRemoved()} />
-				<HiddenInput name={`${namespace}pinnedAdded`} value={this._getPinnedAdded()} />
-				<HiddenInput name={`${namespace}pinnedRemoved`} value={this._getPinnedRemoved()} />
+				<HiddenInput name={`${namespace}hiddenIdsAdded`} value={this._getHiddenAdded()} />
+				<HiddenInput name={`${namespace}hiddenIdsRemoved`} value={this._getHiddenRemoved()} />
+				<HiddenInput name={`${namespace}pinnedIds`} value={resultIdsPinned} />
+				<HiddenInput name={`${namespace}pinnedIdsEndIndex`} value={changeIndex.pinned.end} />
+				<HiddenInput name={`${namespace}pinnedIdsStartIndex`} value={changeIndex.pinned.start} />
 				<HiddenInput name={`${namespace}workflowAction`} value={workflowAction} />
 
 				<PageToolbar
@@ -719,20 +763,24 @@ class ResultsRankingForm extends Component {
 							value: aliases
 						},
 						{
-							name: `${namespace}hiddenAdded`,
+							name: `${namespace}hiddenIdsAdded`,
 							value: this._getHiddenAdded()
 						},
 						{
-							name: `${namespace}hiddenRemoved`,
+							name: `${namespace}hiddenIdsRemoved`,
 							value: this._getHiddenRemoved()
 						},
 						{
-							name: `${namespace}pinnedAdded`,
-							value: this._getPinnedAdded()
+							name: `${namespace}pinnedIds`,
+							value: resultIdsPinned
 						},
 						{
-							name: `${namespace}pinnedRemoved`,
-							value: this._getPinnedRemoved()
+							name: `${namespace}pinnedIdsEndIndex`,
+							value: changeIndex.pinned.end
+						},
+						{
+							name: `${namespace}pinnedIdsStartIndex`,
+							value: changeIndex.pinned.start
 						},
 						{
 							name: `${namespace}workflowAction`,
