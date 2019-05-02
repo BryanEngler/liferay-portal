@@ -69,7 +69,7 @@ class ClayButton extends Component {
 				{label}
 			</a>
 		) : (
-			<button className={classes} type={type} {...otherProps}>
+			<button aria-label={classes} className={classes} type={type} {...otherProps}>
 				{label}
 
 				{iconName && (

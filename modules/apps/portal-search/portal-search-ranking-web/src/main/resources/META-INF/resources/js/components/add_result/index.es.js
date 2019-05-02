@@ -447,7 +447,7 @@ class AddResult extends Component {
 
 										<ul className="list-group" data-testid="add-result-items">
 											{results.items.map(
-												result => (
+												(result, index) => (
 													<Item
 														author={result.author}
 														clicks={result.clicks}
@@ -455,6 +455,7 @@ class AddResult extends Component {
 														extension={result.extension}
 														hidden={result.hidden}
 														id={result.id}
+														index={index}
 														key={result.id}
 														onSelect={this._handleSelect}
 														selected={addResultSelectedIds.includes(result.id)}

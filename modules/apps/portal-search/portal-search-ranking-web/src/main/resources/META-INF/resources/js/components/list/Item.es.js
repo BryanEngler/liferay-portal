@@ -7,8 +7,11 @@ import React, {Component} from 'react';
 import {DragSource as dragSource, DropTarget as dropTarget} from 'react-dnd';
 import {findDOMNode} from 'react-dom';
 import {getEmptyImage} from 'react-dnd-html5-backend';
+import {KEY_CODES} from 'utils/constants.es';
 import {PropTypes} from 'prop-types';
 import {sub} from 'utils/language.es';
+
+const ROOT_CLASS = 'list-item-root';
 
 /**
  * Passes the required values to the drop target and drag preview.
@@ -145,19 +148,23 @@ class Item extends Component {
 		date: PropTypes.string,
 		description: PropTypes.string,
 		extension: PropTypes.string,
+		focus: PropTypes.bool,
 		hidden: PropTypes.bool,
 		hoverIndex: PropTypes.number,
 		id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 		index: PropTypes.number,
 		initialPinned: PropTypes.number,
 		lastIndex: PropTypes.number,
+		onBlur: PropTypes.func,
 		onClickHide: PropTypes.func,
 		onClickPin: PropTypes.func,
 		onDragHover: PropTypes.func,
+		onFocus: PropTypes.func,
 		onMove: PropTypes.func,
 		onRemoveSelect: PropTypes.func,
 		onSelect: PropTypes.func,
 		pinned: PropTypes.bool,
+		reorder: PropTypes.bool,
 		searchTerm: PropTypes.string,
 		selected: PropTypes.bool,
 		title: PropTypes.string,
@@ -170,6 +177,8 @@ class Item extends Component {
 		connectDragSource: val => val,
 		connectDropTarget: val => val
 	};
+
+	rootRef = React.createRef();
 
 	state = {
 		hovering: false
@@ -196,11 +205,61 @@ class Item extends Component {
 		}
 	}
 
+	/**
+	 * Use HTMLElement focus method so that pressing tab will focus starting
+	 * from the currently focused item. This is needed when using arrow keys to
+	 * change focus between items.
+	 * @param {Object} prevProps The previous props before updating.
+	 */
+	componentDidUpdate(prevProps) {
+		const {focus} = this.props;
+
+		if (prevProps.focus !== focus && focus) {
+			this.rootRef.current.focus();
+		}
+	}
+
 	_handleAddedResultMouseOver = event => {
 		const message = Liferay.Language.get('added-results-cannot-be-hidden');
 
 		Liferay.Portal.ToolTip.show(event.currentTarget, message);
 	};
+
+	_handleFocus = event => {
+		if (event.target.classList.contains(ROOT_CLASS)) {
+			const {index, onFocus} = this.props;
+
+			onFocus(index);
+		}
+	}
+
+	_handleHide = () => {
+		const {hidden, id, onBlur, onClickHide, onRemoveSelect} = this.props;
+
+		onRemoveSelect([id]);
+
+		onClickHide([id], !hidden);
+
+		if (onBlur) {
+			onBlur();
+		}
+	};
+
+	_handleKeyDown = event => {
+		const {focus} = this.props;
+
+		if (focus) {
+			if (event.key === KEY_CODES.S) {
+				this._handleSelect();
+			}
+			else if (event.key === KEY_CODES.P) {
+				this._handlePin();
+			}
+			else if (event.key === KEY_CODES.H) {
+				this._handleHide();
+			}
+		}
+	}
 
 	_handleMouseEnter = () => {
 		this.setState({hovering: true});
@@ -211,21 +270,19 @@ class Item extends Component {
 	};
 
 	_handleSelect = () => {
-		this.props.onSelect(this.props.id);
+		const {id, onSelect} = this.props;
+
+		onSelect(id);
 	};
 
 	_handlePin = () => {
-		if (this.props.addedResult) {
-			this.props.onRemoveSelect([this.props.id]);
+		const {addedResult, id, onClickPin, onRemoveSelect, pinned} = this.props;
+
+		if (addedResult) {
+			onRemoveSelect([id]);
 		}
 
-		this.props.onClickPin([this.props.id], !this.props.pinned);
-	};
-
-	_handleHide = () => {
-		this.props.onRemoveSelect([this.props.id]);
-
-		this.props.onClickHide([this.props.id], !this.props.hidden);
+		onClickPin([id], !pinned);
 	};
 
 	_renderDescription = () => {
@@ -259,14 +316,17 @@ class Item extends Component {
 			date,
 			dragging,
 			extension,
+			focus,
 			hidden,
 			hoverIndex,
 			id,
 			index,
 			lastIndex,
+			onBlur,
 			onClickHide,
 			onClickPin,
 			pinned,
+			reorder,
 			selected,
 			style,
 			title,
@@ -293,7 +353,7 @@ class Item extends Component {
 		);
 
 		const listClasses = getCN(
-			'list-item-root',
+			ROOT_CLASS,
 			'list-group-item',
 			'list-group-item-flex',
 			{
@@ -302,8 +362,10 @@ class Item extends Component {
 					index + 1 === hoverIndex && hoverIndex === lastIndex,
 				'list-item-dragging': dragging,
 				'results-ranking-item-added-result': addedResult,
+				'results-ranking-item-focus': focus,
 				'results-ranking-item-hidden': hidden,
-				'results-ranking-item-pinned': pinned
+				'results-ranking-item-pinned': pinned,
+				'results-ranking-item-reorder': reorder
 			}
 		);
 
@@ -311,9 +373,14 @@ class Item extends Component {
 			<li
 				className={listClasses}
 				data-testid={id}
+				onBlur={onBlur}
+				onFocus={this._handleFocus}
+				onKeyDown={this._handleKeyDown}
 				onMouseEnter={this._handleMouseEnter}
 				onMouseLeave={this._handleMouseLeave}
+				ref={this.rootRef}
 				style={style}
+				tabIndex={0}
 			>
 				<div
 					className="autofit-col result-drag"
@@ -331,6 +398,7 @@ class Item extends Component {
 					<div className="custom-control custom-checkbox">
 						<label>
 							<input
+								aria-label="select-checkbox"
 								checked={selected}
 								className="custom-control-input"
 								onChange={this._handleSelect}
@@ -354,11 +422,11 @@ class Item extends Component {
 
 				<div className="autofit-col autofit-col-expand">
 					<section className="autofit-section">
-						<h4 className="list-group-title">
+						<div className="list-group-title">
 							<span className="text-truncate-inline">
 								{url ? <a href={url}>{title}</a> : title}
 							</span>
-						</h4>
+						</div>
 
 						<p className="list-group-subtext">
 							{`${author} - ${date}`}

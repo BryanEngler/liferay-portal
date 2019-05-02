@@ -56,6 +56,14 @@ export function isArray(val) {
 }
 
 /**
+ * Checks if a value is null.
+ * @param {*} val The value to check.
+ */
+export function isNull(val) {
+	return val === null;
+}
+
+/**
  * Creates an object that maps the data id to corresponding object.
  * @param {Array} resultsData The items in search results.
  * @return {Object} The new object that uses id as the key.

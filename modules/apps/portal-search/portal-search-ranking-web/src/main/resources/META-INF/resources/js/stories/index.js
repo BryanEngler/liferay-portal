@@ -62,8 +62,8 @@ storiesOf('Main|ResultsRankingForm', module)
 		() => (
 			<ResultsRankingForm
 				cancelUrl=""
-				fetchDocumentsHiddenUrl="http://www.mocky.io/v2/5cabd9ab3000002900103266"
-				fetchDocumentsUrl="http://www.mocky.io/v2/5cabd1073000002900103260"
+				fetchDocumentsHiddenUrl="http://www.mocky.io/v2/5cd31439310000e29a339bbd"
+				fetchDocumentsUrl="http://www.mocky.io/v2/5cca1d49310000bf0312ce66"
 				initialAliases={['one', 'two', 'three']}
 				saveActionUrl="#"
 				searchTerm={text('Search Term', 'example')}

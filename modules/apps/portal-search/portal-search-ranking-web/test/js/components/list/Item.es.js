@@ -8,6 +8,8 @@ jest.mock('react-dnd', () => ({
 	DropTarget: el => el => el
 }));
 
+const DROPDOWN_TOGGLE_ID = 'dropdown-toggle';
+
 describe(
 	'Item',
 	() => {
@@ -17,7 +19,7 @@ describe(
 			'should show the dropdown when clicked on',
 			() => {
 
-				const {container} = render(
+				const {container, getByTestId} = render(
 					<Item
 						addedResult={false}
 						author={'Test Test'}
@@ -44,7 +46,7 @@ describe(
 					/>
 				);
 
-				fireEvent.click(container.querySelector('button#optionDropdown'));
+				fireEvent.click(getByTestId(DROPDOWN_TOGGLE_ID));
 
 				expect(container.querySelector('.dropdown-menu')).toHaveClass('show');
 			}

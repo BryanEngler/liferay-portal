@@ -277,12 +277,12 @@ class SearchBar extends Component {
 								</div>
 
 								{onAddResultSubmit && (
-									<div className="navbar-nav">
+									<ul className="navbar-nav">
 										<AddResult
 											fetchDocumentsUrl={fetchDocumentsUrl}
 											onAddResultSubmit={onAddResultSubmit}
 										/>
-									</div>
+									</ul>
 								)}
 							</React.Fragment>
 						}

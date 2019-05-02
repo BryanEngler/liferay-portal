@@ -94,9 +94,9 @@ class Dropdown extends Component {
 					aria-expanded="false"
 					aria-haspopup="true"
 					className="component-action dropdown-toggle"
+					data-testid="dropdown-toggle"
 					data-toggle="dropdown"
 					iconName="ellipsis-v"
-					id="optionDropdown"
 					onClick={this._handleDropdownToggle}
 				/>
 

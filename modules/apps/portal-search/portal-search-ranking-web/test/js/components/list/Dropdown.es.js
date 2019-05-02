@@ -3,6 +3,8 @@ import Dropdown from 'components/list/Dropdown.es';
 import {cleanup, fireEvent, render} from 'react-testing-library';
 import 'jest-dom/extend-expect';
 
+const DROPDOWN_TOGGLE_ID = 'dropdown-toggle';
+
 describe(
 	'Dropdown',
 	() => {
@@ -238,7 +240,7 @@ describe(
 			'should show the dropdown when clicked on',
 			() => {
 
-				const {container} = render(
+				const {container, getByTestId} = render(
 					<Dropdown
 						addedResult={false}
 						hidden={false}
@@ -248,7 +250,7 @@ describe(
 					/>
 				);
 
-				fireEvent.click(container.querySelector('button#optionDropdown'));
+				fireEvent.click(getByTestId(DROPDOWN_TOGGLE_ID));
 
 				expect(container.querySelector('.dropdown-menu')).toHaveClass('show');
 			}
