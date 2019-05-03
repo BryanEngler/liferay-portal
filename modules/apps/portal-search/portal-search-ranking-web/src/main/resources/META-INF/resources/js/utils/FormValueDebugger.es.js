@@ -40,8 +40,10 @@ const FormValueDebugger = ({values}) => (
 
 		<table className="table table-bordered table-striped">
 			<thead>
-				<th>{'Name'}</th>
-				<th>{'Value'}</th>
+				<tr>
+					<th>{'Name'}</th>
+					<th>{'Value'}</th>
+				</tr>
 			</thead>
 
 			<tbody>

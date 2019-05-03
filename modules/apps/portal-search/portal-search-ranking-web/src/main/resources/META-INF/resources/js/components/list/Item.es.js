@@ -3,7 +3,7 @@ import ClayIcon from 'components/shared/ClayIcon.es';
 import DRAG_TYPES from 'utils/drag-types.es';
 import Dropdown from './Dropdown.es';
 import getCN from 'classnames';
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import {DragSource as dragSource, DropTarget as dropTarget} from 'react-dnd';
 import {findDOMNode} from 'react-dom';
 import {getEmptyImage} from 'react-dnd-html5-backend';
@@ -12,6 +12,11 @@ import {PropTypes} from 'prop-types';
 import {sub} from 'utils/language.es';
 
 const ROOT_CLASS = 'list-item-root';
+
+const HOVER_TYPES = {
+	BOTTOM: 'bottom',
+	TOP: 'top'
+};
 
 /**
  * Passes the required values to the drop target and drag preview.
@@ -27,16 +32,17 @@ function beginDrag(
 		description,
 		extension,
 		hidden,
-		hoverIndex,
 		id,
 		index,
-		lastIndex,
+		onBlur,
 		pinned,
 		selected,
 		title,
 		type
 	}
 ) {
+	onBlur();
+
 	return {
 		author,
 		clicks,
@@ -44,10 +50,8 @@ function beginDrag(
 		description,
 		extension,
 		hidden,
-		hoverIndex,
 		id,
 		index,
-		lastIndex,
 		pinned,
 		selected,
 		title,
@@ -63,11 +67,30 @@ function beginDrag(
  * @returns {boolean} True if the target should accept the item.
  */
 function canDrop(props, monitor) {
-	const {hoverIndex, pinned} = props;
+	const {index: dropIndex, pinned} = props;
 
-	const {index: itemIndex} = monitor.getItem();
+	const {index: dragIndex} = monitor.getItem();
 
-	return pinned && itemIndex !== hoverIndex && itemIndex + 1 !== hoverIndex;
+	return pinned && dragIndex !== dropIndex;
+}
+
+/**
+ * Passes necessary values for the `endDrag` method.
+ *
+ * hoveringBelow: For determining if the index should be +1 if below.
+ * index: For the position of where the move the dragged item.
+ *
+ * @param {Object} props The current props of the component being dropped.
+ * @param {DropTargetMonitor} monitor
+ * @param {DragDropContainer} component The drop target component.
+ */
+function drop({index}, monitor, component) {
+	const decoratedComponent = component.getDecoratedComponentInstance();
+
+	return {
+		hoverPosition: decoratedComponent.state.hoverPosition,
+		index
+	};
 }
 
 /**
@@ -78,31 +101,59 @@ function canDrop(props, monitor) {
  * @param {DropTargetMonitor} monitor
  */
 function endDrag(props, monitor) {
-	const {hoverIndex, onMove} = props;
+	const {onFocus, onMove} = props;
 
-	const {index: itemIndex} = monitor.getItem();
+	const {index: dragIndex} = monitor.getItem();
 
 	if (monitor.didDrop()) {
-		onMove(itemIndex, hoverIndex);
-	}
+		const {hoverPosition, index: dropIndex} = monitor.getDropResult();
 
-	props.onDragHover(null);
+		const destIndex = hoverPosition === HOVER_TYPES.TOP ?
+			dropIndex :
+			dropIndex + 1;
+
+		const focusIndex = dragIndex < destIndex ?
+			destIndex - 1 :
+			destIndex;
+
+		if (hoverPosition !== null) {
+			onMove(dragIndex, destIndex);
+		}
+
+		onFocus(hoverPosition !== null ? focusIndex : dragIndex);
+	}
+	else {
+		onFocus(dragIndex);
+	}
 }
 
 /**
- * Updates the hover indicator line.
+ * Updates the hover indicator line. Performs logic to hide the hover indicator
+ * for hovering over a different item, but moving to the same index. This is
+ * done here instead of ideally in `canDrop` so the state doesn't need to be
+ * lifted to a parent component. This also means though that everywhere we
+ * depend on `canDrop` we have to also have to check `hoverPosition !== null`.
  * @param {Object} props The component's current props.
  * @param {DropTargetMonitor} monitor
  * @param {DragDropContainer} component The component being hovered over.
  */
 function hover(props, monitor, component) {
-	const {index, onDragHover} = props;
+	const {index: dropIndex} = props;
 
-	if (isHoverAbove(monitor, component)) {
-		onDragHover(index);
+	const {index: dragIndex} = monitor.getItem();
+
+	const hoverAbove = isHoverAbove(monitor, component);
+
+	const destIndex = hoverAbove ? dropIndex - 1 : dropIndex + 1;
+
+	if (dragIndex === destIndex) {
+		component.setState({hoverPosition: null});
+	}
+	else if (hoverAbove) {
+		component.setState({hoverPosition: HOVER_TYPES.TOP});
 	}
 	else {
-		onDragHover(index + 1);
+		component.setState({hoverPosition: HOVER_TYPES.BOTTOM});
 	}
 }
 
@@ -115,15 +166,15 @@ function hover(props, monitor, component) {
 function isHoverAbove(monitor, component) {
 	const hoverBoundingRect = findDOMNode(component).getBoundingClientRect();
 
-	// Get vertical middle
+	// Get vertical middle.
 
 	const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
 
-	// Determine mouse position
+	// Determine mouse position.
 
 	const clientOffset = monitor.getClientOffset();
 
-	// Get pixels to the top
+	// Get pixels to the top.
 
 	const hoverClientY = clientOffset.y - hoverBoundingRect.top;
 
@@ -135,11 +186,10 @@ const DND_PROPS = {
 	connectDragPreview: PropTypes.func,
 	connectDragSource: PropTypes.func,
 	connectDropTarget: PropTypes.func,
-	dragging: PropTypes.bool,
-	hovering: PropTypes.bool
+	dragging: PropTypes.bool
 };
 
-class Item extends Component {
+class Item extends PureComponent {
 	static propTypes = {
 		...DND_PROPS,
 		addedResult: PropTypes.bool,
@@ -150,15 +200,12 @@ class Item extends Component {
 		extension: PropTypes.string,
 		focus: PropTypes.bool,
 		hidden: PropTypes.bool,
-		hoverIndex: PropTypes.number,
 		id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 		index: PropTypes.number,
 		initialPinned: PropTypes.number,
-		lastIndex: PropTypes.number,
 		onBlur: PropTypes.func,
 		onClickHide: PropTypes.func,
 		onClickPin: PropTypes.func,
-		onDragHover: PropTypes.func,
 		onFocus: PropTypes.func,
 		onMove: PropTypes.func,
 		onRemoveSelect: PropTypes.func,
@@ -181,7 +228,8 @@ class Item extends Component {
 	rootRef = React.createRef();
 
 	state = {
-		hovering: false
+		hovering: false,
+		hoverPosition: null
 	};
 
 	/**
@@ -318,13 +366,11 @@ class Item extends Component {
 			extension,
 			focus,
 			hidden,
-			hoverIndex,
 			id,
-			index,
-			lastIndex,
 			onBlur,
 			onClickHide,
 			onClickPin,
+			over,
 			pinned,
 			reorder,
 			selected,
@@ -334,7 +380,7 @@ class Item extends Component {
 			url
 		} = this.props;
 
-		const {hovering} = this.state;
+		const {hovering, hoverPosition} = this.state;
 
 		const colorScheme = {
 			doc: 'blue',
@@ -357,9 +403,12 @@ class Item extends Component {
 			'list-group-item',
 			'list-group-item-flex',
 			{
-				'list-item-drag-hover': canDrop && index === hoverIndex,
-				'list-item-drag-hover-below':
-					index + 1 === hoverIndex && hoverIndex === lastIndex,
+				'item-drop-indicator-above': over &&
+					canDrop &&
+					hoverPosition === HOVER_TYPES.TOP,
+				'item-drop-indicator-below': over &&
+					canDrop &&
+					hoverPosition === HOVER_TYPES.BOTTOM,
 				'list-item-dragging': dragging,
 				'results-ranking-item-added-result': addedResult,
 				'results-ranking-item-focus': focus,
@@ -412,11 +461,10 @@ class Item extends Component {
 
 				<div className="autofit-col">
 					<span className={classSticker}>
-						{extension ? (
-							extension.toUpperCase()
-						) : (
+						{extension ?
+							extension.toUpperCase() :
 							<ClayIcon iconName="web-content" />
-						)}
+						}
 					</span>
 				</div>
 
@@ -530,10 +578,12 @@ export default dropTarget(
 	DRAG_TYPES.LIST_ITEM,
 	{
 		canDrop,
+		drop,
 		hover
 	},
 	(connect, monitor) => ({
 		canDrop: monitor.canDrop(),
-		connectDropTarget: connect.dropTarget()
+		connectDropTarget: connect.dropTarget(),
+		over: monitor.isOver()
 	})
 )(ItemWithDrag);

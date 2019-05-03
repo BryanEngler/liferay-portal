@@ -3,14 +3,14 @@ import ClayEmptyState, {DISPLAY_STATES} from 'components/shared/ClayEmptyState.e
 import DragLayer from './DragLayer.es';
 import HTML5Backend from 'react-dnd-html5-backend';
 import Item from './Item.es';
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import SearchBar from './SearchBar.es';
 import {DragDropContext as dragDropContext} from 'react-dnd';
 import {isNull, toggleListItem} from 'utils/util.es';
 import {KEY_CODES} from 'utils/constants.es';
 import {PropTypes} from 'prop-types';
 
-class List extends Component {
+class List extends PureComponent {
 	static propTypes = {
 		dataLoading: PropTypes.bool,
 		dataMap: PropTypes.object,
@@ -212,15 +212,12 @@ class List extends Component {
 				extension={item.extension}
 				focus={index === focusIndex}
 				hidden={item.hidden}
-				hoverIndex={this.state.hoverIndex}
 				id={item.id}
 				index={index}
 				key={item.id}
-				lastIndex={arr.length}
 				onBlur={this._handleItemBlur}
 				onClickHide={onClickHide}
 				onClickPin={this._handleClickPin}
-				onDragHover={this._handleDragHover}
 				onFocus={this._handleItemFocus}
 				onMove={onMove}
 				onRemoveSelect={this._handleRemoveSelect}

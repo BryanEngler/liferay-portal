@@ -1,4 +1,5 @@
 import {
+	isDefined,
 	move,
 	resultsDataToMap,
 	toggleListItem,
@@ -30,6 +31,22 @@ const RESULTS_LIST = [
 const TEST_LIST = [{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}];
 
 describe('utils', () => {
+	describe('isDefined', () => {
+		it('should return true for a defined variable', () => {
+			const definedVariable = 'test';
+
+			expect(isDefined(definedVariable)).toBeTruthy();
+			expect(isDefined('')).toBeTruthy();
+			expect(isDefined(0)).toBeTruthy();
+			expect(isDefined(-1)).toBeTruthy();
+			expect(isDefined(null)).toBeTruthy();
+		});
+
+		it('should return false for an undefined variable', () => {
+			expect(isDefined(undefined)).not.toBeTruthy();
+		});
+	});
+
 	describe('move', () => {
 		it('should return an array with an item moved downward', () => {
 			expect(move(TEST_LIST, 0, 2)).toEqual([

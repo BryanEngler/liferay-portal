@@ -74,6 +74,29 @@
 		}
 	}
 
+	&.item-drop-indicator-above:before {
+		background-color: $primary;
+		content: '';
+		height: 4px;
+		left: 0;
+		position: absolute;
+		top: -2px;
+		width: 100%;
+		z-index: 1;
+	}
+
+	&.item-drop-indicator-below:after {
+		background-color: $primary;
+		content: '';
+		bottom: -3px;
+		height: 4px;
+		left: 0;
+		position: absolute;
+		opacity: 1;
+		width: 100%;
+		z-index: 1;
+	}
+
 	&.list-item-drag-hover {
 		border-top-left-radius: 0;
 		border-top-right-radius: 0;

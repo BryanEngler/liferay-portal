@@ -14,6 +14,7 @@ import {
 } from 'components/shared/ClayTabs.es';
 import {fetchDocuments} from 'utils/api.es';
 import {
+	isDefined,
 	move,
 	removeIdFromList,
 	resultsDataToMap,
@@ -517,17 +518,22 @@ class ResultsRankingForm extends Component {
 	 * @param {number} toIndex The new index that the item will be moved to.
 	 */
 	_handleMove = (fromIndex, toIndex) => {
-		this.setState(
-			state => (
-				{
-					resultIdsPinned: move(
-						state.resultIdsPinned,
-						fromIndex,
-						toIndex
-					)
-				}
-			)
-		);
+		if (isDefined(fromIndex) &&
+			isDefined(toIndex) &&
+			fromIndex !== toIndex) {
+
+			this.setState(
+				state => (
+					{
+						resultIdsPinned: move(
+							state.resultIdsPinned,
+							fromIndex,
+							toIndex
+						)
+					}
+				)
+			);
+		}
 	};
 
 	/**

@@ -10,6 +10,14 @@ export function insertAtIndex(list, index, item) {
 }
 
 /**
+ * Checks if a variable is defined.
+ * @param {*} variable The variable to check.
+ */
+export function isDefined(variable) {
+	return typeof variable !== 'undefined';
+}
+
+/**
  * Removes an item at the specified index.
  * @param {Array} list The list the where an item will be removed.
  * @param {number} index The position where the item will be removed.
