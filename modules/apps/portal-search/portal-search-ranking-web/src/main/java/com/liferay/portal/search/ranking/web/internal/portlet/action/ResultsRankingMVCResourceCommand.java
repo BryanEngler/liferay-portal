@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.util.Constants;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.document.Document;
@@ -161,16 +162,18 @@ public class ResultsRankingMVCResourceCommand implements MVCResourceCommand {
 		List<String> hiddenDocumentUids =
 			(List<String>)resultsRankingDocument.getValue("hidden_documents");
 
-		String index = resultsRankingDocument.getString("index");
-
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
-		for (String hiddenDocumentUid : hiddenDocumentUids) {
-			Document hiddenDocument = getDocument(
-				index, hiddenDocumentUid, "LiferayDocumentType");
+		if (ListUtil.isNotEmpty(hiddenDocumentUids)) {
+			String index = resultsRankingDocument.getString("index");
 
-			if (hiddenDocument != null) {
-				jsonArray.put(_translate(hiddenDocument, false, true));
+			for (String hiddenDocumentUid : hiddenDocumentUids) {
+				Document hiddenDocument = getDocument(
+					index, hiddenDocumentUid, "LiferayDocumentType");
+
+				if (hiddenDocument != null) {
+					jsonArray.put(_translate(hiddenDocument, false, true));
+				}
 			}
 		}
 

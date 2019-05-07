@@ -125,7 +125,10 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 			resultsRanking.setModifiedDate(modifiedDate);
 			resultsRanking.setStatus(WorkflowConstants.STATUS_DRAFT);
 
-			resultsRankingIndexer.addResultsRanking(resultsRanking);
+			String resultsRankingUid =
+				resultsRankingIndexer.addResultsRanking(resultsRanking);
+
+			resultsRanking.setUid(resultsRankingUid);
 
 			redirect = getSaveAndContinueRedirect(
 				actionRequest, resultsRanking, redirect);
