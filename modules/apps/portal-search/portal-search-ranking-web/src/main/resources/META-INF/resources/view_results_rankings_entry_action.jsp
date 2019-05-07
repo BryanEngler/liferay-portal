@@ -46,7 +46,7 @@ ResultsRankingEntryDisplayContext resultsRankingEntryDisplayContext = (ResultsRa
 	<portlet:renderURL var="editURL">
 		<portlet:param name="mvcRenderCommandName" value="editResultsRankingEntry" />
 		<portlet:param name="redirect" value="<%= currentURL %>" />
-		<portlet:param name="uid" value="<%= resultsRankingEntryDisplayContext.getUid() %>" />
+		<portlet:param name="resultsRankingUid" value="<%= resultsRankingEntryDisplayContext.getUid() %>" />
 		<portlet:param name="aliases" value="<%= resultsRankingEntryDisplayContext.getAliases() %>" />
 		<portlet:param name="companyId" value="<%= String.valueOf(themeDisplay.getCompanyId()) %>" />
 		<portlet:param name="keywords" value="<%= resultsRankingEntryDisplayContext.getKeywords() %>" />
@@ -60,7 +60,7 @@ ResultsRankingEntryDisplayContext resultsRankingEntryDisplayContext = (ResultsRa
 	<portlet:actionURL name="/results_ranking/edit" var="deleteURL">
 		<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.DELETE %>" />
 		<portlet:param name="redirect" value="<%= currentURL %>" />
-		<portlet:param name="uid" value="<%= resultsRankingEntryDisplayContext.getUid() %>" />
+		<portlet:param name="resultsRankingUid" value="<%= resultsRankingEntryDisplayContext.getUid() %>" />
 	</portlet:actionURL>
 
 	<liferay-ui:icon-delete

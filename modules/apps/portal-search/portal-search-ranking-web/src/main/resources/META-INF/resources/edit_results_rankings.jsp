@@ -49,7 +49,7 @@ if (Validator.isNull(redirect)) {
 
 String resultsRankingsRootElementId = renderResponse.getNamespace() + "-results-rankings-root";
 
-String uid = ParamUtil.getString(request, "uid");
+String resultsRankingUid = ParamUtil.getString(request, "resultsRankingUid");
 String keywords = ParamUtil.getString(request, "keywords");
 String companyId = ParamUtil.getString(request, "companyId");
 String[] aliases = StringUtil.split(ParamUtil.getString(request, "aliases"), StringPool.COMMA_AND_SPACE);
@@ -61,7 +61,7 @@ String[] aliases = StringUtil.split(ParamUtil.getString(request, "aliases"), Str
 	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
 	<aui:input name="companyId" type="hidden" value="<%= companyId %>" />
 	<aui:input name="keywords" type="hidden" value="<%= keywords %>" />
-	<aui:input name="uid" type="hidden" value="<%= uid %>" />
+	<aui:input name="resultsRankingUid" type="hidden" value="<%= resultsRankingUid %>" />
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
 
 	<div id="<%= resultsRankingsRootElementId %>">
@@ -72,14 +72,14 @@ String[] aliases = StringUtil.split(ParamUtil.getString(request, "aliases"), Str
 </aui:form>
 
 <liferay-portlet:resourceURL id="/results_ranking/get_results" portletName="<%= ResultsRankingPortletKeys.RESULTS_RANKING %>" var="resultsRankingResourceURL">
-	<portlet:param name="resultsRankingUid" value="<%= uid %>" />
+	<portlet:param name="resultsRankingUid" value="<%= resultsRankingUid %>" />
 	<portlet:param name="keywords" value="<%= keywords %>" />
 	<portlet:param name="companyId" value="<%= companyId %>" />
 	<portlet:param name="<%= Constants.CMD %>" value="getVisibleResults" />
 </liferay-portlet:resourceURL>
 
 <liferay-portlet:resourceURL id="/results_ranking/get_results" portletName="<%= ResultsRankingPortletKeys.RESULTS_RANKING %>" var="hiddenResultsRankingResourceURL">
-	<portlet:param name="resultsRankingUid" value="<%= uid %>" />
+	<portlet:param name="resultsRankingUid" value="<%= resultsRankingUid %>" />
 	<portlet:param name="<%= Constants.CMD %>" value="getHiddenResults" />
 </liferay-portlet:resourceURL>
 

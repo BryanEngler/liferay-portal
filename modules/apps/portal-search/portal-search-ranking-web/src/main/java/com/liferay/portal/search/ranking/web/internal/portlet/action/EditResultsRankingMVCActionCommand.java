@@ -143,7 +143,7 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 			}
 
 			String resultsRankingUid =
-				ParamUtil.getString(actionRequest, "uid");
+				ParamUtil.getString(actionRequest, "resultsRankingUid");
 
 			ResultsRanking resultsRanking =
 				resultsRankingIndexer.getResultsRanking(resultsRankingUid);
@@ -219,7 +219,7 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 		}
 		else if (cmd.equals(Constants.DELETE)) {
 			String resultsRankingUid =
-				ParamUtil.getString(actionRequest, "uid");
+				ParamUtil.getString(actionRequest, "resultsRankingUid");
 
 			resultsRankingIndexer.deleteResultsRanking(resultsRankingUid);
 		}
@@ -244,6 +244,8 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 		portletURL.setParameter(Constants.CMD, Constants.UPDATE, false);
 		portletURL.setParameter("redirect", redirect, false);
 		portletURL.setParameter(
+			"resultsRankingUid", resultsRanking.getUid(), false);
+		portletURL.setParameter(
 			"aliases",
 			StringUtil.merge(
 				resultsRanking.getAliases(), StringPool.COMMA), false);
@@ -255,7 +257,8 @@ public class EditResultsRankingMVCActionCommand extends BaseMVCActionCommand {
 	}
 
 	protected boolean rankingExistsForAliases(ActionRequest actionRequest) {
-		String resultsRankingUid = ParamUtil.getString(actionRequest, "uid");
+		String resultsRankingUid = ParamUtil.getString(actionRequest,
+			"resultsRankingUid");
 
 		String index = ParamUtil.getString(actionRequest, "index-name");
 

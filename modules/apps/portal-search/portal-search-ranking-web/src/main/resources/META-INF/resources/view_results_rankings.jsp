@@ -24,6 +24,7 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.portal.kernel.util.Constants" %><%@
 page import="com.liferay.portal.search.ranking.web.internal.constants.ResultsRankingPortletKeys" %><%@
+page import="com.liferay.portal.search.ranking.web.internal.display.context.ResultsRankingEntryDisplayContext" %><%@
 page import="com.liferay.portal.search.ranking.web.internal.display.context.ResultsRankingPortletDisplayContext" %>
 
 <liferay-frontend:defineObjects />
@@ -65,13 +66,15 @@ ResultsRankingPortletDisplayContext resultsRankingPortletDisplayContext = (Resul
 	>
 		<liferay-ui:search-container-row
 			className="com.liferay.portal.search.ranking.web.internal.display.context.ResultsRankingEntryDisplayContext"
-			keyProperty="resultsRankingsEntryId"
-			modelVar="resultsRankingEntryDisplayContext"
+			modelVar="resultsRankingEntryDisplayContextModelVar"
 		>
+
+			<% ResultsRankingEntryDisplayContext resultsRankingEntryDisplayContext = resultsRankingEntryDisplayContextModelVar; %>
+
 			<portlet:renderURL var="rowURL">
 				<portlet:param name="mvcRenderCommandName" value="editResultsRankingEntry" />
 				<portlet:param name="redirect" value="<%= currentURL %>" />
-				<portlet:param name="uid" value="<%= resultsRankingEntryDisplayContext.getUid() %>" />
+				<portlet:param name="resultsRankingUid" value="<%= resultsRankingEntryDisplayContext.getUid() %>" />
 				<portlet:param name="aliases" value="<%= resultsRankingEntryDisplayContext.getAliases() %>" />
 				<portlet:param name="companyId" value="<%= String.valueOf(themeDisplay.getCompanyId()) %>" />
 				<portlet:param name="keywords" value="<%= resultsRankingEntryDisplayContext.getKeywords() %>" />
