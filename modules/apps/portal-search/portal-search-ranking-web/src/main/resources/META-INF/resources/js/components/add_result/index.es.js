@@ -71,6 +71,8 @@ class AddResult extends Component {
 	_fetchSearchResults = () => {
 		const {addResultSearchTerm, page, selectedDelta} = this.state;
 
+		const {companyId, namespace} = this.context;
+
 		this.setState(
 			{
 				dataLoading: true,
@@ -81,12 +83,10 @@ class AddResult extends Component {
 		fetchDocuments(
 			this.props.fetchDocumentsUrl,
 			{
-				companyId: this.context.companyId,
-				from: (page * selectedDelta) - selectedDelta,
-				hidden: false,
-				keywords: addResultSearchTerm,
-				searchIndex: this.context.searchIndex,
-				size: selectedDelta
+				[`${namespace}companyId`]: companyId,
+				[`${namespace}from`]: (page * selectedDelta) - selectedDelta,
+				[`${namespace}keywords`]: addResultSearchTerm,
+				[`${namespace}size`]: selectedDelta
 			}
 		).then(
 			({items, total}) => {

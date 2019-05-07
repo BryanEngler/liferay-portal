@@ -1,3 +1,7 @@
+export const FETCH_HIDDEN_DOCUMENTS_URL = '/getHidden';
+
+export const FETCH_VISIBLE_DOCUMENTS_URL = '/getVisible';
+
 export function getMockResultsData(
 	size = 10,
 	startId = 0,

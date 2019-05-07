@@ -1,6 +1,7 @@
 import React from 'react';
 import ResultsRankingForm from 'components/ResultsRankingForm.es';
 import {cleanup, fireEvent, render, waitForElement, within} from 'react-testing-library';
+import {FETCH_HIDDEN_DOCUMENTS_URL, FETCH_VISIBLE_DOCUMENTS_URL} from 'test/mock-data';
 import 'jest-dom/extend-expect';
 
 jest.mock('utils/api.es');
@@ -27,8 +28,8 @@ describe(
 				const {container} = render(
 					<ResultsRankingForm
 						cancelUrl={'cancel'}
-						fetchDocumentsHiddenUrl=""
-						fetchDocumentsUrl=""
+						fetchDocumentsHiddenUrl={FETCH_HIDDEN_DOCUMENTS_URL}
+						fetchDocumentsUrl={FETCH_VISIBLE_DOCUMENTS_URL}
 						searchTerm={'example'}
 					/>
 				);
@@ -44,8 +45,8 @@ describe(
 				const {getByTestId} = render(
 					<ResultsRankingForm
 						cancelUrl={'cancel'}
-						fetchDocumentsHiddenUrl=""
-						fetchDocumentsUrl=""
+						fetchDocumentsHiddenUrl={FETCH_HIDDEN_DOCUMENTS_URL}
+						fetchDocumentsUrl={FETCH_VISIBLE_DOCUMENTS_URL}
 						searchTerm={''}
 					/>
 				);
@@ -63,8 +64,8 @@ describe(
 				const {getByTestId, getByText} = render(
 					<ResultsRankingForm
 						cancelUrl={'cancel'}
-						fetchDocumentsHiddenUrl=""
-						fetchDocumentsUrl=""
+						fetchDocumentsHiddenUrl={FETCH_HIDDEN_DOCUMENTS_URL}
+						fetchDocumentsUrl={FETCH_VISIBLE_DOCUMENTS_URL}
 						searchTerm={''}
 					/>
 				);
@@ -84,8 +85,8 @@ describe(
 				const {container} = render(
 					<ResultsRankingForm
 						cancelUrl={'cancel'}
-						fetchDocumentsHiddenUrl=""
-						fetchDocumentsUrl=""
+						fetchDocumentsHiddenUrl={FETCH_HIDDEN_DOCUMENTS_URL}
+						fetchDocumentsUrl={FETCH_VISIBLE_DOCUMENTS_URL}
 						initialAliases={['one', 'two', 'three']}
 						searchTerm={''}
 					/>
@@ -106,8 +107,8 @@ describe(
 				const {container} = render(
 					<ResultsRankingForm
 						cancelUrl={'cancel'}
-						fetchDocumentsHiddenUrl=""
-						fetchDocumentsUrl=""
+						fetchDocumentsHiddenUrl={FETCH_HIDDEN_DOCUMENTS_URL}
+						fetchDocumentsUrl={FETCH_VISIBLE_DOCUMENTS_URL}
 						initialAliases={['one', 'two', 'three']}
 						searchTerm={''}
 					/>
@@ -130,8 +131,8 @@ describe(
 				const {container, getByTestId, getByText} = render(
 					<ResultsRankingForm
 						cancelUrl={'cancel'}
-						fetchDocumentsHiddenUrl=""
-						fetchDocumentsUrl=""
+						fetchDocumentsHiddenUrl={FETCH_HIDDEN_DOCUMENTS_URL}
+						fetchDocumentsUrl={FETCH_VISIBLE_DOCUMENTS_URL}
 						searchTerm={''}
 					/>
 				);
@@ -153,8 +154,8 @@ describe(
 				const {container, getByTestId, getByText} = render(
 					<ResultsRankingForm
 						cancelUrl={'cancel'}
-						fetchDocumentsHiddenUrl=""
-						fetchDocumentsUrl=""
+						fetchDocumentsHiddenUrl={FETCH_HIDDEN_DOCUMENTS_URL}
+						fetchDocumentsUrl={FETCH_VISIBLE_DOCUMENTS_URL}
 						searchTerm={''}
 					/>
 				);
@@ -178,8 +179,8 @@ describe(
 				const {container, getByTestId, getByText} = render(
 					<ResultsRankingForm
 						cancelUrl={'cancel'}
-						fetchDocumentsHiddenUrl=""
-						fetchDocumentsUrl=""
+						fetchDocumentsHiddenUrl={FETCH_HIDDEN_DOCUMENTS_URL}
+						fetchDocumentsUrl={FETCH_VISIBLE_DOCUMENTS_URL}
 						searchTerm={''}
 					/>
 				);
@@ -201,8 +202,8 @@ describe(
 				const {container, getByTestId, getByText} = render(
 					<ResultsRankingForm
 						cancelUrl={'cancel'}
-						fetchDocumentsHiddenUrl=""
-						fetchDocumentsUrl=""
+						fetchDocumentsHiddenUrl={FETCH_HIDDEN_DOCUMENTS_URL}
+						fetchDocumentsUrl={FETCH_VISIBLE_DOCUMENTS_URL}
 						searchTerm={''}
 					/>
 				);
@@ -226,8 +227,8 @@ describe(
 				const {container, getByTestId, getByText} = render(
 					<ResultsRankingForm
 						cancelUrl={'cancel'}
-						fetchDocumentsHiddenUrl=""
-						fetchDocumentsUrl=""
+						fetchDocumentsHiddenUrl={FETCH_HIDDEN_DOCUMENTS_URL}
+						fetchDocumentsUrl={FETCH_VISIBLE_DOCUMENTS_URL}
 						searchTerm={''}
 					/>
 				);
@@ -249,8 +250,8 @@ describe(
 				const {container, getByTestId, getByText} = render(
 					<ResultsRankingForm
 						cancelUrl={'cancel'}
-						fetchDocumentsHiddenUrl=""
-						fetchDocumentsUrl=""
+						fetchDocumentsHiddenUrl={FETCH_HIDDEN_DOCUMENTS_URL}
+						fetchDocumentsUrl={FETCH_VISIBLE_DOCUMENTS_URL}
 						searchTerm={''}
 					/>
 				);
@@ -276,8 +277,8 @@ describe(
 				const {container, getByTestId, getByText} = render(
 					<ResultsRankingForm
 						cancelUrl={'cancel'}
-						fetchDocumentsHiddenUrl=""
-						fetchDocumentsUrl=""
+						fetchDocumentsHiddenUrl={FETCH_HIDDEN_DOCUMENTS_URL}
+						fetchDocumentsUrl={FETCH_VISIBLE_DOCUMENTS_URL}
 						searchTerm={''}
 					/>
 				);
@@ -301,8 +302,8 @@ describe(
 				const {container, getByTestId, getByText} = render(
 					<ResultsRankingForm
 						cancelUrl={'cancel'}
-						fetchDocumentsHiddenUrl=""
-						fetchDocumentsUrl=""
+						fetchDocumentsHiddenUrl={FETCH_HIDDEN_DOCUMENTS_URL}
+						fetchDocumentsUrl={FETCH_VISIBLE_DOCUMENTS_URL}
 						searchTerm={''}
 					/>
 				);
@@ -330,8 +331,8 @@ describe(
 				const {container, getByTestId, getByText} = render(
 					<ResultsRankingForm
 						cancelUrl={'cancel'}
-						fetchDocumentsHiddenUrl=""
-						fetchDocumentsUrl=""
+						fetchDocumentsHiddenUrl={FETCH_HIDDEN_DOCUMENTS_URL}
+						fetchDocumentsUrl={FETCH_VISIBLE_DOCUMENTS_URL}
 						searchTerm={''}
 					/>
 				);
@@ -363,8 +364,8 @@ describe(
 				const {container, getByTestId} = render(
 					<ResultsRankingForm
 						cancelUrl={'cancel'}
-						fetchDocumentsHiddenUrl=""
-						fetchDocumentsUrl=""
+						fetchDocumentsHiddenUrl={FETCH_HIDDEN_DOCUMENTS_URL}
+						fetchDocumentsUrl={FETCH_VISIBLE_DOCUMENTS_URL}
 						searchTerm={''}
 					/>
 				);
@@ -387,8 +388,8 @@ describe(
 				const {container, getByTestId} = render(
 					<ResultsRankingForm
 						cancelUrl=""
-						fetchDocumentsHiddenUrl=""
-						fetchDocumentsUrl=""
+						fetchDocumentsHiddenUrl={FETCH_HIDDEN_DOCUMENTS_URL}
+						fetchDocumentsUrl={FETCH_VISIBLE_DOCUMENTS_URL}
 						searchTerm=""
 					/>
 				);

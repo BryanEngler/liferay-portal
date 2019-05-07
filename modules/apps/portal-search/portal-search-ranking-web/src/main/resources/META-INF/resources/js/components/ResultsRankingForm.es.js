@@ -355,17 +355,17 @@ class ResultsRankingForm extends Component {
 			}
 		);
 
+		const {companyId, namespace} = this.context;
+
 		const visibleIdList = this._getResultIdsVisible();
 
 		return fetchDocuments(
 			this.props.fetchDocumentsUrl,
 			{
-				companyId: this.context.companyId,
-				from: visibleIdList.length,
-				hidden: false,
-				keywords: this.props.searchTerm,
-				searchIndex: this.context.searchIndex,
-				size: DELTA
+				[`${namespace}companyId`]: companyId,
+				[`${namespace}from`]: visibleIdList.length,
+				[`${namespace}keywords`]: this.props.searchTerm,
+				[`${namespace}size`]: DELTA
 			}
 		).then(
 			({items, total}) => {
@@ -446,15 +446,15 @@ class ResultsRankingForm extends Component {
 
 		const {resultIdsHidden} = this.state;
 
+		const {companyId, namespace} = this.context;
+
 		return fetchDocuments(
 			this.props.fetchDocumentsHiddenUrl,
 			{
-				companyId: this.context.companyId,
-				from: resultIdsHidden.length,
-				hidden: true,
-				keywords: this.props.searchTerm,
-				searchIndex: this.context.searchIndex,
-				size: DELTA
+				[`${namespace}companyId`]: companyId,
+				[`${namespace}from`]: resultIdsHidden.length,
+				[`${namespace}keywords`]: this.props.searchTerm,
+				[`${namespace}size`]: DELTA
 			}
 		).then(
 			({items, total}) => {

@@ -5,7 +5,6 @@ export default React.createContext(
 		companyId: '',
 		constants: {},
 		namespace: '',
-		searchIndex: '',
 		spritemap: ''
 	}
 );

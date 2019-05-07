@@ -73,7 +73,6 @@ String[] aliases = StringUtil.split(ParamUtil.getString(request, "aliases"), Str
 
 <liferay-portlet:resourceURL id="/results_ranking/get_results" portletName="<%= ResultsRankingPortletKeys.RESULTS_RANKING %>" var="resultsRankingResourceURL">
 	<portlet:param name="resultsRankingUid" value="<%= resultsRankingUid %>" />
-	<portlet:param name="keywords" value="<%= keywords %>" />
 	<portlet:param name="companyId" value="<%= companyId %>" />
 	<portlet:param name="<%= Constants.CMD %>" value="getVisibleResults" />
 </liferay-portlet:resourceURL>
@@ -101,7 +100,6 @@ String[] aliases = StringUtil.split(ParamUtil.getString(request, "aliases"), Str
 				WORKFLOW_ACTION_SAVE_DRAFT: '<%= WorkflowConstants.ACTION_SAVE_DRAFT %>'
 			},
 			namespace: '<portlet:namespace />',
-			searchIndex: '',
 			spritemap: '<%= themeDisplay.getPathThemeImages() + "/lexicon/icons.svg" %>'
 		}
 	);
