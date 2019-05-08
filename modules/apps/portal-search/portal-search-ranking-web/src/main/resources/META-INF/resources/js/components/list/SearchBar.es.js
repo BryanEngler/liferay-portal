@@ -1,7 +1,7 @@
 import AddResult from 'components/add_result/index.es';
 import ClayButton from 'components/shared/ClayButton.es';
-import Dropdown from './Dropdown.es';
 import getCN from 'classnames';
+import ItemDropdown from './ItemDropdown.es';
 import React, {Component} from 'react';
 import {PropTypes} from 'prop-types';
 import {sub} from 'utils/language.es';
@@ -163,7 +163,7 @@ class SearchBar extends Component {
 								<div className="custom-control custom-checkbox">
 									<label>
 										<input
-											aria-label="Checkbox for search results"
+											aria-label={Liferay.Language.get('select-all')}
 											checked={this._hasSelectedIds()}
 											className="custom-control-input"
 											disabled={!resultIds.length}
@@ -233,7 +233,7 @@ class SearchBar extends Component {
 
 									<li className="nav-item">
 										<div className="nav-link nav-link-monospaced">
-											<Dropdown
+											<ItemDropdown
 												addedResult={this._isAnyAddedResult()}
 												hidden={this._isAnyHidden()}
 												itemCount={selectedIds.length}
@@ -254,7 +254,7 @@ class SearchBar extends Component {
 										<div className="input-group">
 											<div className="input-group-item">
 												<input
-													aria-label="Search for"
+													aria-label={Liferay.Language.get('search')}
 													className="form-control input-group-inset input-group-inset-after"
 													disabled={disableSearch}
 													onChange={this._handleSearchChange}

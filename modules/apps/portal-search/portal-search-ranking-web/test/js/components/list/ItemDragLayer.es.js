@@ -1,10 +1,10 @@
-import DragLayer from 'components/list/DragLayer.es';
+import ItemDragLayer from 'components/list/ItemDragLayer.es';
 import React from 'react';
 import {cleanup, render} from 'react-testing-library';
 import 'jest-dom/extend-expect';
 
 describe(
-	'DragLayer',
+	'ItemDragLayer',
 	() => {
 		afterEach(cleanup);
 
@@ -12,7 +12,7 @@ describe(
 			'should render when dragging',
 			() => {
 				const {container} = render(
-					<DragLayer.DecoratedComponent dragging />
+					<ItemDragLayer.DecoratedComponent dragging />
 				);
 
 				expect(container.firstChild).not.toBeNull();
@@ -24,7 +24,7 @@ describe(
 			'should not render by default',
 			() => {
 				const {container} = render(
-					<DragLayer.DecoratedComponent />
+					<ItemDragLayer.DecoratedComponent />
 				);
 
 				expect(container.firstChild).toBeNull();

@@ -38,17 +38,14 @@ class ErrorBoundary extends Component {
 	}
 
 	render() {
-		if (this.state.hasError) {
-			return (
-				<ClayEmptyState
-					description={Liferay.Language.get('an-error-has-occurred-and-we-were-unable-to-load-the-results')}
-					displayState={DISPLAY_STATES.EMPTY}
-					title={Liferay.Language.get('unable-to-load-content')}
-				/>
-			);
-		}
-
-		return this.props.children;
+		return this.state.hasError ? (
+			<ClayEmptyState
+				description={Liferay.Language.get('an-error-has-occurred-and-we-were-unable-to-load-the-results')}
+				displayState={DISPLAY_STATES.EMPTY}
+				title={Liferay.Language.get('unable-to-load-content')}
+			/>
+		) :
+			this.props.children;
 	}
 }
 

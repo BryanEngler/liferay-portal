@@ -34,7 +34,7 @@ function getItemStyles(props) {
 		};
 }
 
-const DragLayer = props => {
+const ItemDragLayer = props => {
 	const {dragging, item, itemType} = props;
 
 	function renderItem() {
@@ -58,4 +58,4 @@ export default DndDragLayer(
 		item: monitor.getItem(),
 		itemType: monitor.getItemType()
 	})
-)(DragLayer);
+)(ItemDragLayer);

@@ -1,12 +1,12 @@
 import React from 'react';
-import Dropdown from 'components/list/Dropdown.es';
+import ItemDropdown from 'components/list/ItemDropdown.es';
 import {cleanup, fireEvent, render} from 'react-testing-library';
 import 'jest-dom/extend-expect';
 
 const DROPDOWN_TOGGLE_ID = 'dropdown-toggle';
 
 describe(
-	'Dropdown',
+	'ItemDropdown',
 	() => {
 		afterEach(cleanup);
 
@@ -15,7 +15,7 @@ describe(
 			() => {
 
 				const {queryByText} = render(
-					<Dropdown
+					<ItemDropdown
 						addedResult={false}
 						hidden={false}
 						onClickHide={jest.fn()}
@@ -34,7 +34,7 @@ describe(
 			() => {
 
 				const {queryByText} = render(
-					<Dropdown
+					<ItemDropdown
 						addedResult={false}
 						hidden={false}
 						itemCount={2}
@@ -53,7 +53,7 @@ describe(
 			() => {
 
 				const {queryByText} = render(
-					<Dropdown
+					<ItemDropdown
 						addedResult={false}
 						hidden={false}
 						onClickHide={jest.fn()}
@@ -72,7 +72,7 @@ describe(
 			() => {
 
 				const {queryByText} = render(
-					<Dropdown
+					<ItemDropdown
 						addedResult={false}
 						hidden={false}
 						itemCount={2}
@@ -91,7 +91,7 @@ describe(
 			() => {
 
 				const {queryByText} = render(
-					<Dropdown
+					<ItemDropdown
 						addedResult={false}
 						hidden={false}
 						onClickHide={jest.fn()}
@@ -110,7 +110,7 @@ describe(
 			() => {
 
 				const {queryByText} = render(
-					<Dropdown
+					<ItemDropdown
 						addedResult={false}
 						hidden={false}
 						itemCount={2}
@@ -129,7 +129,7 @@ describe(
 			() => {
 
 				const {queryByText} = render(
-					<Dropdown
+					<ItemDropdown
 						addedResult={false}
 						hidden={true}
 						onClickHide={jest.fn()}
@@ -148,7 +148,7 @@ describe(
 			() => {
 
 				const {queryByText} = render(
-					<Dropdown
+					<ItemDropdown
 						addedResult={false}
 						hidden={true}
 						itemCount={2}
@@ -167,7 +167,7 @@ describe(
 			() => {
 
 				const {queryByText} = render(
-					<Dropdown
+					<ItemDropdown
 						addedResult={true}
 						hidden={false}
 						onClickHide={jest.fn()}
@@ -185,7 +185,7 @@ describe(
 			() => {
 
 				const {queryByText} = render(
-					<Dropdown
+					<ItemDropdown
 						addedResult={true}
 						hidden={true}
 						onClickHide={jest.fn()}
@@ -204,7 +204,7 @@ describe(
 			() => {
 
 				const {queryByText} = render(
-					<Dropdown
+					<ItemDropdown
 						addedResult={true}
 						hidden={true}
 						itemCount={2}
@@ -223,7 +223,7 @@ describe(
 			() => {
 
 				const {queryByText} = render(
-					<Dropdown
+					<ItemDropdown
 						addedResult={true}
 						hidden={false}
 						onClickPin={jest.fn()}
@@ -241,7 +241,7 @@ describe(
 			() => {
 
 				const {container, getByTestId} = render(
-					<Dropdown
+					<ItemDropdown
 						addedResult={false}
 						hidden={false}
 						onClickHide={jest.fn()}
@@ -263,7 +263,7 @@ describe(
 				const onClickHide = jest.fn();
 
 				const {getByText} = render(
-					<Dropdown
+					<ItemDropdown
 						addedResult={false}
 						hidden={false}
 						onClickHide={onClickHide}
@@ -285,7 +285,7 @@ describe(
 				const onClickPin = jest.fn();
 
 				const {getByText} = render(
-					<Dropdown
+					<ItemDropdown
 						addedResult={false}
 						hidden={false}
 						onClickHide={jest.fn()}

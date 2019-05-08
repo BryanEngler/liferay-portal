@@ -45,6 +45,10 @@
 		margin-top: 8px;
 	}
 
+	.quick-action-menu {
+		background-color: transparent;
+	}
+
 	.result-drag {
 		padding: 0;
 
@@ -64,13 +68,18 @@
 		}
 	}
 
-	.result-pin, .result-hide {
-		visibility: hidden;
+	.result-pin-icon-display {
+		display: flex;
+
+		button {
+			color: $main;
+			pointer-events: none;
+		}
 	}
 
 	&:hover {
-		.result-pin, .result-hide {
-			visibility: visible;
+		.quick-action-menu.result-pin-icon-display {
+			display: none;
 		}
 	}
 
@@ -87,12 +96,12 @@
 
 	&.item-drop-indicator-below:after {
 		background-color: $primary;
-		content: '';
 		bottom: -3px;
+		content: '';
 		height: 4px;
 		left: 0;
-		position: absolute;
 		opacity: 1;
+		position: absolute;
 		width: 100%;
 		z-index: 1;
 	}
@@ -111,22 +120,6 @@
 
 	&.list-item-dragging {
 		opacity: 0.4;
-	}
-
-	&.results-ranking-item-pinned {
-		.result-pin {
-			visibility: visible;
-
-			button {
-				color: $main;
-			}
-		}
-
-		&:hover {
-			.result-pin button {
-				color: inherit;
-			}
-		}
 	}
 
 	&.results-ranking-item-focus {

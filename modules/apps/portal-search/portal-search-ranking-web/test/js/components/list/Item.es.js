@@ -1,6 +1,6 @@
 import React from 'react';
 import Item from 'components/list/Item.es';
-import {cleanup, fireEvent, render} from 'react-testing-library';
+import {cleanup, fireEvent, render, within} from 'react-testing-library';
 import 'jest-dom/extend-expect';
 
 jest.mock('react-dnd', () => ({
@@ -9,6 +9,10 @@ jest.mock('react-dnd', () => ({
 }));
 
 const DROPDOWN_TOGGLE_ID = 'dropdown-toggle';
+
+const HIDE_BUTTON_LABEL = 'Hide Result';
+
+const UNPIN_BUTTON_LABEL = 'Unpin Result';
 
 describe(
 	'Item',
@@ -228,7 +232,7 @@ describe(
 					/>
 				);
 
-				fireEvent.click(container.querySelector('.result-hide button'));
+				fireEvent.click(within(container).getByTitle(HIDE_BUTTON_LABEL));
 
 				expect(onClickHide.mock.calls.length).toBe(1);
 			}
@@ -267,7 +271,7 @@ describe(
 					/>
 				);
 
-				fireEvent.click(container.querySelector('.result-pin button'));
+				fireEvent.click(within(container).getByTitle(UNPIN_BUTTON_LABEL));
 
 				expect(onClickPin.mock.calls.length).toBe(1);
 			}

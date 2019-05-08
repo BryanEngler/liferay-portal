@@ -27,7 +27,7 @@ class Tag extends Component {
 
 				<span className="label-item label-item-after">
 					<ClayButton
-						aria-label="Close"
+						aria-label={Liferay.Language.get('close')}
 						className="close"
 						iconName="times"
 						onClick={this._handleDelete}

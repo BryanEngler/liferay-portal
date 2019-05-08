@@ -1,6 +1,6 @@
 import React from 'react';
 import ResultsRankingForm from 'components/ResultsRankingForm.es';
-import {cleanup, fireEvent, render, waitForElement} from 'react-testing-library';
+import {cleanup, fireEvent, render, waitForElement, within} from 'react-testing-library';
 import 'jest-dom/extend-expect';
 
 jest.mock('utils/api.es');
@@ -10,6 +10,10 @@ const RESULTS_LIST_ID = 'results-list-group';
 const HIDDEN_IDS_ADDED_INPUT_SELECTOR = '#hiddenIdsAdded';
 
 const HIDDEN_IDS_REMOVED_INPUT_SELECTOR = '#hiddenIdsRemoved';
+
+const HIDE_BUTTON_LABEL = 'Hide Result';
+
+const SHOW_BUTTON_LABEL = 'Show Result';
 
 describe(
 	'ResultsRankingForm',
@@ -230,7 +234,7 @@ describe(
 
 				await waitForElement(() => getByTestId(RESULTS_LIST_ID));
 
-				fireEvent.click(getByTestId('100').querySelector('.result-hide button'));
+				fireEvent.click(within(getByTestId('100')).getByTitle(HIDE_BUTTON_LABEL));
 
 				expect(container.querySelector(HIDDEN_IDS_ADDED_INPUT_SELECTOR).value).toEqual('100');
 
@@ -253,11 +257,11 @@ describe(
 
 				await waitForElement(() => getByTestId(RESULTS_LIST_ID));
 
-				fireEvent.click(getByTestId('105').querySelector('.result-hide button'));
+				fireEvent.click(within(getByTestId('105')).getByTitle(HIDE_BUTTON_LABEL));
 
 				fireEvent.click(getByText('Hidden'));
 
-				fireEvent.click(getByTestId('105').querySelector('.result-hide button'));
+				fireEvent.click(within(getByTestId('105')).getByTitle(SHOW_BUTTON_LABEL));
 
 				expect(container.querySelector(HIDDEN_IDS_ADDED_INPUT_SELECTOR).value).toEqual('');
 
@@ -282,7 +286,7 @@ describe(
 
 				await waitForElement(() => getByTestId(RESULTS_LIST_ID));
 
-				fireEvent.click(getByTestId('200').querySelector('.result-hide button'));
+				fireEvent.click(within(getByTestId('200')).getByTitle(SHOW_BUTTON_LABEL));
 
 				expect(container.querySelector(HIDDEN_IDS_REMOVED_INPUT_SELECTOR).value).toEqual('200');
 
@@ -307,11 +311,11 @@ describe(
 
 				await waitForElement(() => getByTestId(RESULTS_LIST_ID));
 
-				fireEvent.click(getByTestId('200').querySelector('.result-hide button'));
+				fireEvent.click(within(getByTestId('200')).getByTitle(SHOW_BUTTON_LABEL));
 
 				fireEvent.click(getByText('Visible'));
 
-				fireEvent.click(getByTestId('200').querySelector('.result-hide button'));
+				fireEvent.click(within(getByTestId('200')).getByTitle(HIDE_BUTTON_LABEL));
 
 				expect(container.querySelector(HIDDEN_IDS_REMOVED_INPUT_SELECTOR).value).toEqual('');
 

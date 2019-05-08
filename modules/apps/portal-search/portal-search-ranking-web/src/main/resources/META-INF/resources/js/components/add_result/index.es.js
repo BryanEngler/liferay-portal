@@ -348,13 +348,11 @@ class AddResult extends Component {
 										<div className="input-group">
 											<div className="input-group-item">
 												<input
-													aria-label="Search for"
+													aria-label={Liferay.Language.get('search-your-engine')}
 													className="form-control input-group-inset input-group-inset-after"
 													onChange={this._handleSearchChange}
 													onKeyDown={this._handleSearchKeyDown}
-													placeholder={Liferay.Language.get(
-														'search-your-engine'
-													)}
+													placeholder={Liferay.Language.get('search-your-engine')}
 													type="text"
 													value={addResultSearchTerm}
 												/>
@@ -394,7 +392,7 @@ class AddResult extends Component {
 														<div className="custom-control custom-checkbox">
 															<label>
 																<input
-																	aria-label="Checkbox for search results"
+																	aria-label={Liferay.Language.get('select-all')}
 																	checked={this._getCurrentResultSelectedIds().length === results.items.length}
 																	className="custom-control-input"
 																	onChange={this._handleAllCheckbox}

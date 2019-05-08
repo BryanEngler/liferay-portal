@@ -6,6 +6,8 @@ import {withA11y} from '@storybook/addon-a11y';
 
 import Alias from 'components/alias/index.es';
 import ClayEmptyState from 'components/shared/ClayEmptyState.es';
+import Item from 'components/list/Item.es';
+import ItemDragPreview from 'components/list/ItemDragPreview.es';
 import List from 'components/list/index.es';
 import PageToolbar from 'components/PageToolbar.es';
 import ResultsRankingForm from 'components/ResultsRankingForm.es';
@@ -78,7 +80,16 @@ storiesOf('Components|PageToolbar', module)
 
 storiesOf('Components|Alias', module)
 	.addDecorator(withSheet)
-	.add('default', () => <Alias keywords={array('Keywords', [], ',')} />);
+	.add(
+		'default',
+		() => (
+			<Alias
+				keywords={array('Keywords', [], ',')}
+				onClickDelete={action('onClickDelete')}
+				onClickSubmit={action('onClickSubmit')}
+			/>
+		)
+	);
 
 storiesOf('Components|List', module)
 	.addDecorator(withSheet)
@@ -118,6 +129,24 @@ storiesOf('Components|List', module)
 				fetchDocumentsUrl=""
 				onAddResultSubmit={action('onAddResultSubmit')}
 				onLoadResults={action('load-results')}
+			/>
+		)
+	)
+	.add(
+		'item',
+		() => (
+			<div className="list-group">
+				<Item.DecoratedComponent
+					{...mockDataMap['1']}
+				/>
+			</div>
+		)
+	)
+	.add(
+		'item drag preview',
+		() => (
+			<ItemDragPreview
+				{...mockDataMap['1']}
 			/>
 		)
 	);

@@ -3,7 +3,6 @@
 exports[`ClayButton should render 1`] = `
 <DocumentFragment>
   <button
-    aria-label="btn btn-secondary"
     class="btn btn-secondary"
     type="button"
   />

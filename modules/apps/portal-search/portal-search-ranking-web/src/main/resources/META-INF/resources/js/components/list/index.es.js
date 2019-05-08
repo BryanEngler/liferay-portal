@@ -1,8 +1,8 @@
 import ClayButton from 'components/shared/ClayButton.es';
 import ClayEmptyState, {DISPLAY_STATES} from 'components/shared/ClayEmptyState.es';
-import DragLayer from './DragLayer.es';
 import HTML5Backend from 'react-dnd-html5-backend';
 import Item from './Item.es';
+import ItemDragLayer from './ItemDragLayer.es';
 import React, {PureComponent} from 'react';
 import SearchBar from './SearchBar.es';
 import {DragDropContext as dragDropContext} from 'react-dnd';
@@ -36,28 +36,17 @@ class List extends PureComponent {
 
 	state = {
 		focusIndex: null,
-		hoverIndex: null,
 		reorder: false,
 		selectedIds: []
 	};
 
-	_handleDragHover = index => {
-		this.setState({hoverIndex: index});
-	};
-
-	_handleFocus = index => {
-		this.setState({focusIndex: index});
-	}
-
 	_handleItemBlur = () => {
-		this._handleFocus(null);
+		this._handleItemFocus(null);
 		this._handleReorder(false);
 	}
 
 	_handleItemFocus = index => {
-		if (!this.state.reorder) {
-			this._handleFocus(index);
-		}
+		this.setState({focusIndex: index});
 	}
 
 	/**
@@ -81,7 +70,7 @@ class List extends PureComponent {
 
 		const pinLength = resultIdsPinned ? resultIdsPinned.length : 0;
 
-		if (event.key === KEY_CODES.SPACE) {
+		if (event.key === KEY_CODES.SPACE || event.key == KEY_CODES.ENTER) {
 			event.preventDefault();
 
 			this._handleReorder(!reorder && focusIndex < pinLength);
@@ -96,7 +85,7 @@ class List extends PureComponent {
 						onMove(focusIndex, focusIndex + 2);
 					}
 
-					this._handleFocus(focusIndex + 1);
+					this._handleItemFocus(focusIndex + 1);
 				}
 			}
 		}
@@ -108,12 +97,7 @@ class List extends PureComponent {
 					onMove(focusIndex, focusIndex - 1);
 				}
 
-				this._handleFocus(focusIndex - 1);
-			}
-		}
-		else if (event.key === KEY_CODES.TAB) {
-			if (reorder) {
-				event.preventDefault();
+				this._handleItemFocus(focusIndex - 1);
 			}
 		}
 	}
@@ -179,13 +163,17 @@ class List extends PureComponent {
 	_handleClickPin = (ids, pinned) => {
 		this.props.onClickPin(ids, pinned);
 
-		this.setState((state, props) => {
-			const newFocusIndex = props.resultIds.indexOf(ids[0]);
+		if (!isNull(this.state.focusIndex)) {
+			this.setState(
+				(state, props) => {
+					const newFocusIndex = props.resultIds.indexOf(ids[0]);
 
-			return (
-				{focusIndex: newFocusIndex > -1 ? newFocusIndex : null}
+					return (
+						{focusIndex: newFocusIndex > -1 ? newFocusIndex : null}
+					);
+				}
 			);
-		});
+		}
 	}
 
 	/**
@@ -251,7 +239,7 @@ class List extends PureComponent {
 
 		return (
 			<div className="results-ranking-list-root">
-				<DragLayer />
+				<ItemDragLayer />
 
 				<SearchBar
 					dataMap={dataMap}
@@ -272,7 +260,7 @@ class List extends PureComponent {
 
 				{!!resultIds.length && (
 					<ul
-						className="list-group"
+						className="list-group show-quick-actions-on-hover"
 						data-testid="results-list-group"
 						onKeyDown={this._handleKeyDown}
 					>

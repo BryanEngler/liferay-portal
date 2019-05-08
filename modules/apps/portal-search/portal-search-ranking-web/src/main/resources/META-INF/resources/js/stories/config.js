@@ -5,6 +5,12 @@ addParameters(
 		options: {
 
 			/**
+			 * show/hide tool bar
+			 * @type {Boolean}
+			 */
+			isToolshown: true,
+
+			/**
 			 * Name to display in the top left corner
 			 * Default: 'Storybook'
 			 * @type {String}

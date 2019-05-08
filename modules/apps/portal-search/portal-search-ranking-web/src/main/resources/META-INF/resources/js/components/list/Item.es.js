@@ -1,8 +1,8 @@
 import ClayButton from 'components/shared/ClayButton.es';
 import ClayIcon from 'components/shared/ClayIcon.es';
 import DRAG_TYPES from 'utils/drag-types.es';
-import Dropdown from './Dropdown.es';
 import getCN from 'classnames';
+import ItemDropdown from './ItemDropdown.es';
 import React, {PureComponent} from 'react';
 import {DragSource as dragSource, DropTarget as dropTarget} from 'react-dnd';
 import {findDOMNode} from 'react-dom';
@@ -11,12 +11,30 @@ import {KEY_CODES} from 'utils/constants.es';
 import {PropTypes} from 'prop-types';
 import {sub} from 'utils/language.es';
 
-const ROOT_CLASS = 'list-item-root';
-
 const HOVER_TYPES = {
 	BOTTOM: 'bottom',
 	TOP: 'top'
 };
+
+const ROOT_CLASS = 'list-item-root';
+
+/**
+ * Component used for displaying a pin icon when an item is pinned. This should
+ * be identical to the pin quick action button so that when hovered over, the
+ * icons should align exactly on top of each other. This icon should not be
+ * focusable or clickable.
+ */
+const ResultPinIconDisplay = () => (
+	<div className="quick-action-menu result-pin-icon-display">
+		<ClayButton
+			borderless
+			className="component-action quick-action-item"
+			iconName="pin"
+			monospaced
+			tabIndex="-1"
+		/>
+	</div>
+);
 
 /**
  * Passes the required values to the drop target and drag preview.
@@ -133,6 +151,7 @@ function endDrag(props, monitor) {
  * done here instead of ideally in `canDrop` so the state doesn't need to be
  * lifted to a parent component. This also means though that everywhere we
  * depend on `canDrop` we have to also have to check `hoverPosition !== null`.
+ *
  * @param {Object} props The component's current props.
  * @param {DropTargetMonitor} monitor
  * @param {DragDropContainer} component The component being hovered over.
@@ -159,22 +178,21 @@ function hover(props, monitor, component) {
 
 /**
  * A helper method for drag and drop methods.
- * Checks if the mouse is hovering over an item's top-half.
+ *
+ * Checks if the mouse is hovering over an item's top-half by:
+ * 1) hoverMiddleY: Get vertical middle.
+ * 2) clientOffset: Determine mouse position.
+ * 3) hoverClientY: Get pixels to the top.
+ *
  * @param {DropTargetMonitor} monitor
  * @param {DragDropContainer} component The component being hovered over.
  */
 function isHoverAbove(monitor, component) {
 	const hoverBoundingRect = findDOMNode(component).getBoundingClientRect();
 
-	// Get vertical middle.
-
 	const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
 
-	// Determine mouse position.
-
 	const clientOffset = monitor.getClientOffset();
-
-	// Get pixels to the top.
 
 	const hoverClientY = clientOffset.y - hoverBoundingRect.top;
 
@@ -222,13 +240,17 @@ class Item extends PureComponent {
 	static defaultProps = {
 		connectDragPreview: val => val,
 		connectDragSource: val => val,
-		connectDropTarget: val => val
+		connectDropTarget: val => val,
+		onBlur: () => {},
+		onFocus: () => {},
+		onMove: () => {},
+		onRemoveSelect: () => {},
+		onSelect: () => {}
 	};
 
 	rootRef = React.createRef();
 
 	state = {
-		hovering: false,
 		hoverPosition: null
 	};
 
@@ -273,6 +295,10 @@ class Item extends PureComponent {
 		Liferay.Portal.ToolTip.show(event.currentTarget, message);
 	};
 
+	_handleBlur = () => {
+		this.props.onBlur();
+	}
+
 	_handleFocus = event => {
 		if (event.target.classList.contains(ROOT_CLASS)) {
 			const {index, onFocus} = this.props;
@@ -309,20 +335,6 @@ class Item extends PureComponent {
 		}
 	}
 
-	_handleMouseEnter = () => {
-		this.setState({hovering: true});
-	};
-
-	_handleMouseLeave = () => {
-		this.setState({hovering: false});
-	};
-
-	_handleSelect = () => {
-		const {id, onSelect} = this.props;
-
-		onSelect(id);
-	};
-
 	_handlePin = () => {
 		const {addedResult, id, onClickPin, onRemoveSelect, pinned} = this.props;
 
@@ -331,6 +343,12 @@ class Item extends PureComponent {
 		}
 
 		onClickPin([id], !pinned);
+	};
+
+	_handleSelect = () => {
+		const {id, onSelect} = this.props;
+
+		onSelect(id);
 	};
 
 	_renderDescription = () => {
@@ -367,7 +385,6 @@ class Item extends PureComponent {
 			focus,
 			hidden,
 			id,
-			onBlur,
 			onClickHide,
 			onClickPin,
 			over,
@@ -380,7 +397,7 @@ class Item extends PureComponent {
 			url
 		} = this.props;
 
-		const {hovering, hoverPosition} = this.state;
+		const {hoverPosition} = this.state;
 
 		const colorScheme = {
 			doc: 'blue',
@@ -422,11 +439,9 @@ class Item extends PureComponent {
 			<li
 				className={listClasses}
 				data-testid={id}
-				onBlur={onBlur}
+				onBlur={this._handleBlur}
 				onFocus={this._handleFocus}
 				onKeyDown={this._handleKeyDown}
-				onMouseEnter={this._handleMouseEnter}
-				onMouseLeave={this._handleMouseLeave}
 				ref={this.rootRef}
 				style={style}
 				tabIndex={0}
@@ -447,7 +462,7 @@ class Item extends PureComponent {
 					<div className="custom-control custom-checkbox">
 						<label>
 							<input
-								aria-label="select-checkbox"
+								aria-label={Liferay.Language.get('select')}
 								checked={selected}
 								className="custom-control-input"
 								onChange={this._handleSelect}
@@ -486,17 +501,19 @@ class Item extends PureComponent {
 					</section>
 				</div>
 
-				{onClickHide && (
-					<div className="autofit-col">
-						<div className="result-hide">
-							{addedResult ? (
+				<div className="autofit-col">
+					{pinned && <ResultPinIconDisplay />}
+
+					<div className="quick-action-menu">
+						{onClickHide && (
+							addedResult ? (
 								<span
 									className="disabled-button-tooltip"
 									onMouseOver={this._handleAddedResultMouseOver}
 								>
 									<ClayButton
 										borderless
-										className="component-action lfr-portal-tooltip"
+										className="component-action quick-action-item lfr-portal-tooltip"
 										disabled
 										iconName="hidden"
 										monospaced
@@ -505,7 +522,7 @@ class Item extends PureComponent {
 							) : (
 								<ClayButton
 									borderless
-									className="component-action"
+									className="component-action quick-action-item"
 									iconName={hidden ? 'view' : 'hidden'}
 									monospaced
 									onClick={this._handleHide}
@@ -514,18 +531,14 @@ class Item extends PureComponent {
 										Liferay.Language.get('hide-result')
 									}
 								/>
-							)}
-						</div>
-					</div>
-				)}
+							)
+						)}
 
-				{onClickPin && (
-					<div className="autofit-col">
-						<div className="result-pin">
+						{onClickPin && (
 							<ClayButton
 								borderless
-								className="component-action"
-								iconName={hovering && pinned ? 'unpin' : 'pin'}
+								className="component-action quick-action-item"
+								iconName={pinned ? 'unpin' : 'pin'}
 								monospaced
 								onClick={this._handlePin}
 								title={pinned ?
@@ -533,21 +546,17 @@ class Item extends PureComponent {
 									Liferay.Language.get('pin-result')
 								}
 							/>
-						</div>
+						)}
 					</div>
-				)}
 
-				{onClickPin && onClickHide && (
-					<div className="autofit-col">
-						<Dropdown
-							addedResult={addedResult}
-							hidden={hidden}
-							onClickHide={this._handleHide}
-							onClickPin={this._handlePin}
-							pinned={pinned}
-						/>
-					</div>
-				)}
+					<ItemDropdown
+						addedResult={addedResult}
+						hidden={hidden}
+						onClickHide={this._handleHide}
+						onClickPin={this._handlePin}
+						pinned={pinned}
+					/>
+				</div>
 
 				<div className="click-count list-group-text sticker-bottom-right">
 					{sub(

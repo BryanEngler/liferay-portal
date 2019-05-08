@@ -5,7 +5,7 @@ import React, {Component} from 'react';
 import {getPluralMessage} from 'utils/language.es';
 import {PropTypes} from 'prop-types';
 
-class Dropdown extends Component {
+class ItemDropdown extends Component {
 	static propTypes = {
 		addedResult: PropTypes.bool,
 		hidden: PropTypes.bool,
@@ -71,7 +71,8 @@ class Dropdown extends Component {
 			itemCount,
 			onClickHide,
 			onClickPin,
-			pinned
+			pinned,
+			...otherProps
 		} = this.props;
 
 		const {show} = this.state;
@@ -89,10 +90,12 @@ class Dropdown extends Component {
 			<div
 				className="dropdown dropdown-action result-dropdown"
 				ref={this.setWrapperRef}
+				{...otherProps}
 			>
 				<ClayButton
 					aria-expanded="false"
 					aria-haspopup="true"
+					borderless
 					className="component-action dropdown-toggle"
 					data-testid="dropdown-toggle"
 					data-toggle="dropdown"
@@ -100,7 +103,7 @@ class Dropdown extends Component {
 					onClick={this._handleDropdownToggle}
 				/>
 
-				<ul aria-labelledby="optionDropdown" className={classHidden}>
+				<ul className={classHidden}>
 					{onClickPin && (
 						<li>
 							<ClayButton
@@ -164,4 +167,4 @@ class Dropdown extends Component {
 	}
 }
 
-export default Dropdown;
+export default ItemDropdown;
