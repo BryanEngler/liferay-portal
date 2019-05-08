@@ -28,6 +28,8 @@ public class ElasticsearchIndexingFixtureFactory {
 	}
 
 	private static final ElasticsearchIndexingFixture
-		_elasticsearchIndexingFixture = builder().build();
+		ElasticsearchIndexingFixtureBuilder builder = builder();
+
+		_elasticsearchIndexingFixture = builder.build();
 
 }
