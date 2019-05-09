@@ -211,6 +211,11 @@ class SearchBar extends Component {
 															'hidden'
 													}
 													onClick={this._handleClickHide}
+													title={
+														this._isAnyUnpinned() ?
+															Liferay.Language.get('show-result') :
+															Liferay.Language.get('hide-result')
+													}
 												/>
 											</div>
 										)}
@@ -227,6 +232,11 @@ class SearchBar extends Component {
 														'unpin'
 												}
 												onClick={this._handleClickPin}
+												title={
+													this._isAnyUnpinned() ?
+														Liferay.Language.get('pin-result') :
+														Liferay.Language.get('unpin-result')
+												}
 											/>
 										</div>
 									</li>
@@ -269,6 +279,7 @@ class SearchBar extends Component {
 														displayStyle={'unstyled'}
 														iconName="search"
 														onClick={this._handleSearchEnter}
+														title={Liferay.Language.get('search-icon')}
 													/>
 												</div>
 											</div>

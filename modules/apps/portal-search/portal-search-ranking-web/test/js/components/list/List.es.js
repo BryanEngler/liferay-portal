@@ -174,5 +174,64 @@ describe(
 				expect(queryByText('Items Selected')).not.toBeInTheDocument();
 			}
 		);
+
+		it(
+			'should focus on the id',
+			() => {
+				const mockLoad = jest.fn();
+
+				const {getByTestId} = render(
+					<List
+						dataLoading={false}
+						dataMap={DATA_MAP}
+						onClickHide={jest.fn()}
+						onLoadResults={mockLoad}
+						onSearchBarEnter={jest.fn()}
+						onUpdateSearchBarTerm={jest.fn()}
+						resultIds={[102, 104, 103]}
+						searchBarTerm={''}
+						selected={[104]}
+						totalResultsCount={300}
+					/>
+				);
+
+				fireEvent.focus(getByTestId('102'));
+
+				const focusedElement = document.activeElement;
+
+				expect(focusedElement).toBe(getByTestId('102'));
+			}
+		);
+
+		it(
+			'should add classes of focus and reorder on the id',
+			() => {
+				const mockLoad = jest.fn();
+
+				const {getByTestId} = render(
+					<List
+						dataLoading={false}
+						dataMap={DATA_MAP}
+						onClickHide={jest.fn()}
+						onLoadResults={mockLoad}
+						onSearchBarEnter={jest.fn()}
+						onUpdateSearchBarTerm={jest.fn()}
+						resultIds={[102, 104, 103]}
+						searchBarTerm={''}
+						selected={[104]}
+						totalResultsCount={300}
+					/>
+				);
+
+				fireEvent.focus(getByTestId('102'));
+
+				fireEvent.keyDown(getByTestId('102'), {key: ' ',
+					code: 32
+				});
+
+				expect(getByTestId('102')).toHaveClass('results-ranking-item-focus');
+				expect(getByTestId('102')).not.toHaveClass('results-ranking-item-reorder');
+			}
+		);
 	}
 );
