@@ -433,7 +433,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 				if (!geoHashes.isEmpty()) {
 					geoDistanceSort.addGeoHash(
-						geoHashes.toArray(new String[geoHashes.size()]));
+						geoHashes.toArray(new String[0]));
 				}
 
 				sortBuilder = geoDistanceSortBuilder;
@@ -645,7 +645,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			}
 		}
 
-		hits.setDocs(documents.toArray(new Document[documents.size()]));
+		hits.setDocs(documents.toArray(new Document[0]));
 		hits.setLength((int)searchHits.getTotalHits());
 		hits.setQuery(query);
 		hits.setQueryTerms(new String[0]);

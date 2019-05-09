@@ -40,8 +40,7 @@ public class MoreLikeThisQueryTranslatorImpl
 		Collection<String> fields = moreLikeThisQuery.getFields();
 
 		MoreLikeThisQueryBuilder moreLikeThisQueryBuilder =
-			QueryBuilders.moreLikeThisQuery(
-				fields.toArray(new String[fields.size()]));
+			QueryBuilders.moreLikeThisQuery(fields.toArray(new String[0]));
 
 		if (Validator.isNotNull(moreLikeThisQuery.getAnalyzer())) {
 			moreLikeThisQueryBuilder.analyzer(moreLikeThisQuery.getAnalyzer());
@@ -113,7 +112,7 @@ public class MoreLikeThisQueryTranslatorImpl
 
 		if (!stopWords.isEmpty()) {
 			moreLikeThisQueryBuilder.stopWords(
-				stopWords.toArray(new String[stopWords.size()]));
+				stopWords.toArray(new String[0]));
 		}
 
 		if (moreLikeThisQuery.getTermBoost() != null) {

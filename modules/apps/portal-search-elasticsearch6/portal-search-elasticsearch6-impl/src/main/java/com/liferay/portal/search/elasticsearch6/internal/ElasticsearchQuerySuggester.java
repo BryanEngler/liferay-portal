@@ -197,7 +197,7 @@ public class ElasticsearchQuerySuggester implements QuerySuggester {
 			}
 		}
 
-		return keywordQueries.toArray(new String[keywordQueries.size()]);
+		return keywordQueries.toArray(new String[0]);
 	}
 
 	protected PhraseSuggester createQuerySuggester(

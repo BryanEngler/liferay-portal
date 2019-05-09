@@ -112,7 +112,7 @@ public class DefaultElasticsearchDocumentFactory
 				return;
 			}
 
-			values = valuesList.toArray(new String[valuesList.size()]);
+			values = valuesList.toArray(new String[0]);
 
 			addField(xContentBuilder, field, name, values);
 

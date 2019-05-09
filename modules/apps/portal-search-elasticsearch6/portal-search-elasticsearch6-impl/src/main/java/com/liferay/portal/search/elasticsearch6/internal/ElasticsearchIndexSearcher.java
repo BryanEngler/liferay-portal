@@ -448,8 +448,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 				GeoDistanceSortBuilder geoDistanceSortBuilder =
 					SortBuilders.geoDistanceSort(
-						sortFieldName,
-						geoPoints.toArray(new GeoPoint[geoPoints.size()]));
+						sortFieldName, geoPoints.toArray(new GeoPoint[0]));
 
 				geoDistanceSortBuilder.geoDistance(GeoDistance.ARC);
 
@@ -457,7 +456,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 				if (!geoHashes.isEmpty()) {
 					geoDistanceSort.addGeoHash(
-						geoHashes.toArray(new String[geoHashes.size()]));
+						geoHashes.toArray(new String[0]));
 				}
 
 				sortBuilder = geoDistanceSortBuilder;
@@ -670,7 +669,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			}
 		}
 
-		hits.setDocs(documents.toArray(new Document[documents.size()]));
+		hits.setDocs(documents.toArray(new Document[0]));
 		hits.setLength((int)searchHits.getTotalHits());
 		hits.setQuery(query);
 		hits.setQueryTerms(new String[0]);

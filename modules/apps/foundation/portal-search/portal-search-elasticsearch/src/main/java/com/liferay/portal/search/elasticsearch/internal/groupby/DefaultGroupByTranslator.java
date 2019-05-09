@@ -170,7 +170,7 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 
 				if (!geoHashes.isEmpty()) {
 					geoDistanceSort.addGeoHash(
-						geoHashes.toArray(new String[geoHashes.size()]));
+						geoHashes.toArray(new String[0]));
 				}
 
 				sortBuilder = geoDistanceSortBuilder;
