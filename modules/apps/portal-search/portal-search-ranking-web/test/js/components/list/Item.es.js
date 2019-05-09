@@ -32,11 +32,9 @@ describe(
 						description={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod'}
 						extension={''}
 						hidden={false}
-						hoverIndex={jest.fn()}
 						id={101}
 						index={1}
 						key={101}
-						lastIndex={3}
 						onClickHide={jest.fn()}
 						onClickPin={jest.fn()}
 						onDragHover={jest.fn()}
@@ -69,11 +67,9 @@ describe(
 						description={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod'}
 						extension={''}
 						hidden={false}
-						hoverIndex={jest.fn()}
 						id={101}
 						index={1}
 						key={101}
-						lastIndex={3}
 						onClickHide={jest.fn()}
 						onClickPin={jest.fn()}
 						onDragHover={jest.fn()}
@@ -107,11 +103,9 @@ describe(
 						description={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod'}
 						extension={''}
 						hidden={false}
-						hoverIndex={jest.fn()}
 						id={101}
 						index={1}
 						key={101}
-						lastIndex={3}
 						onClickHide={jest.fn()}
 						onClickPin={jest.fn()}
 						onDragHover={jest.fn()}
@@ -142,11 +136,9 @@ describe(
 						description={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod'}
 						extension={''}
 						hidden={false}
-						hoverIndex={jest.fn()}
 						id={101}
 						index={1}
 						key={101}
-						lastIndex={3}
 						onClickHide={jest.fn()}
 						onClickPin={jest.fn()}
 						onDragHover={jest.fn()}
@@ -177,11 +169,9 @@ describe(
 						description={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod'}
 						extension={''}
 						hidden={false}
-						hoverIndex={jest.fn()}
 						id={101}
 						index={1}
 						key={101}
-						lastIndex={3}
 						onClickHide={jest.fn()}
 						onClickPin={jest.fn()}
 						onDragHover={jest.fn()}
@@ -214,11 +204,9 @@ describe(
 						description={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod'}
 						extension={''}
 						hidden={false}
-						hoverIndex={jest.fn()}
 						id={101}
 						index={1}
 						key={101}
-						lastIndex={3}
 						onClickHide={onClickHide}
 						onClickPin={jest.fn()}
 						onDragHover={jest.fn()}
@@ -253,11 +241,9 @@ describe(
 						description={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod'}
 						extension={''}
 						hidden={false}
-						hoverIndex={jest.fn()}
 						id={101}
 						index={1}
 						key={101}
-						lastIndex={3}
 						onClickHide={jest.fn()}
 						onClickPin={onClickPin}
 						onDragHover={jest.fn()}
@@ -274,6 +260,129 @@ describe(
 				fireEvent.click(within(container).getByTitle(UNPIN_BUTTON_LABEL));
 
 				expect(onClickPin.mock.calls.length).toBe(1);
+			}
+		);
+
+		it(
+			'should call the onFocus event when focused',
+			() => {
+
+				const onFocus = jest.fn();
+
+				const {getByTestId} = render(
+					<Item
+						addedResult={false}
+						author={'Test Test'}
+						clicks={289}
+						date={'Apr 18 2018, 11:04 AM'}
+						description={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod'}
+						extension={''}
+						focus={false}
+						hidden={false}
+						id={101}
+						index={1}
+						key={101}
+						onBlur={jest.fn()}
+						onClickHide={jest.fn()}
+						onClickPin={jest.fn()}
+						onDragHover={jest.fn()}
+						onFocus={onFocus}
+						onMove={jest.fn()}
+						onRemoveSelect={jest.fn()}
+						onSelect={jest.fn()}
+						pinned={true}
+						reorder={true}
+						selected={true}
+						title={'This is a Web Content Example'}
+						type={'Web Content'}
+					/>
+				);
+
+				fireEvent.focus(getByTestId('101'));
+
+				expect(onFocus.mock.calls.length).toBe(1);
+			}
+		);
+
+		it(
+			'should call the onBlur event when un-focused',
+			() => {
+
+				const onBlur = jest.fn();
+
+				const {getByTestId} = render(
+					<Item
+						addedResult={false}
+						author={'Test Test'}
+						clicks={289}
+						date={'Apr 18 2018, 11:04 AM'}
+						description={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod'}
+						extension={''}
+						focus={false}
+						hidden={false}
+						id={101}
+						index={1}
+						key={101}
+						onBlur={onBlur}
+						onClickHide={jest.fn()}
+						onClickPin={jest.fn()}
+						onDragHover={jest.fn()}
+						onFocus={jest.fn()}
+						onMove={jest.fn()}
+						onRemoveSelect={jest.fn()}
+						onSelect={jest.fn()}
+						pinned={true}
+						reorder={true}
+						selected={true}
+						title={'This is a Web Content Example'}
+						type={'Web Content'}
+					/>
+				);
+
+				fireEvent.blur(getByTestId('101'));
+
+				expect(onBlur.mock.calls.length).toBe(1);
+			}
+		);
+
+		it(
+			'should not call the onFocus event when a button within is focused',
+			() => {
+
+				const onFocus = jest.fn();
+
+				const {getByTitle} = render(
+					<Item
+						addedResult={false}
+						author={'Test Test'}
+						clicks={289}
+						date={'Apr 18 2018, 11:04 AM'}
+						description={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod'}
+						extension={''}
+						focus={false}
+						hidden={false}
+						id={101}
+						index={1}
+						key={101}
+						onBlur={jest.fn()}
+						onClickHide={jest.fn()}
+						onClickPin={jest.fn()}
+						onDragHover={jest.fn()}
+						onFocus={onFocus}
+						onMove={jest.fn()}
+						onRemoveSelect={jest.fn()}
+						onSelect={jest.fn()}
+						pinned={true}
+						reorder={true}
+						selected={true}
+						title={'This is a Web Content Example'}
+						type={'Web Content'}
+					/>
+				);
+
+				fireEvent.focus(getByTitle('Unpin Result'));
+
+				expect(onFocus.mock.calls.length).toBe(0);
 			}
 		);
 	}

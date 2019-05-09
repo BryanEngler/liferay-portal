@@ -101,6 +101,7 @@ class ItemDropdown extends Component {
 					data-toggle="dropdown"
 					iconName="ellipsis-v"
 					onClick={this._handleDropdownToggle}
+					title={Liferay.Language.get('toggle-dropdown')}
 				/>
 
 				<ul className={classHidden}>

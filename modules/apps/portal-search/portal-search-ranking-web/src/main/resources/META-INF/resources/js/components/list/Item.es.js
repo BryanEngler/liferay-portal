@@ -33,6 +33,7 @@ const ResultPinIconDisplay = () => (
 			iconName="pin"
 			monospaced
 			tabIndex="-1"
+			title={Liferay.Language.get('pinned-result')}
 		/>
 	</div>
 );
@@ -529,6 +530,7 @@ class Item extends PureComponent {
 										disabled
 										iconName="hidden"
 										monospaced
+										title={Liferay.Language.get('hide-result')}
 									/>
 								</span>
 							) : (
