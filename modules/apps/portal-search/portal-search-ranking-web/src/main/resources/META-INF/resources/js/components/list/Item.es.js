@@ -7,6 +7,7 @@ import React, {PureComponent} from 'react';
 import {DragSource as dragSource, DropTarget as dropTarget} from 'react-dnd';
 import {findDOMNode} from 'react-dom';
 import {getEmptyImage} from 'react-dnd-html5-backend';
+import {isNil} from 'utils/util.es';
 import {KEY_CODES} from 'utils/constants.es';
 import {PropTypes} from 'prop-types';
 import {sub} from 'utils/language.es';
@@ -238,14 +239,18 @@ class Item extends PureComponent {
 	};
 
 	static defaultProps = {
+		author: '',
 		connectDragPreview: val => val,
 		connectDragSource: val => val,
 		connectDropTarget: val => val,
+		date: '',
 		onBlur: () => {},
 		onFocus: () => {},
 		onMove: () => {},
 		onRemoveSelect: () => {},
-		onSelect: () => {}
+		onSelect: () => {},
+		title: '-',
+		type: ''
 	};
 
 	rootRef = React.createRef();
@@ -427,6 +432,7 @@ class Item extends PureComponent {
 					canDrop &&
 					hoverPosition === HOVER_TYPES.BOTTOM,
 				'list-item-dragging': dragging,
+				'list-item-has-clicks': !isNil(clicks),
 				'results-ranking-item-added-result': addedResult,
 				'results-ranking-item-focus': focus,
 				'results-ranking-item-hidden': hidden,
@@ -491,11 +497,17 @@ class Item extends PureComponent {
 							</span>
 						</div>
 
-						<p className="list-group-subtext">
-							{`${author} - ${date}`}
-						</p>
+						{(author || date) &&
+							<p className="list-group-subtext">
+								{author && <span className="author">{author}</span>}
 
-						<p className="list-group-subtext">{`[${type}]`}</p>
+								{date && <span className="date">{date}</span>}
+							</p>
+						}
+
+						{type &&
+							<p className="list-group-subtext">{`[${type}]`}</p>
+						}
 
 						{this._renderDescription()}
 					</section>
@@ -558,13 +570,15 @@ class Item extends PureComponent {
 					/>
 				</div>
 
-				<div className="click-count list-group-text sticker-bottom-right">
-					{sub(
-						Liferay.Language.get('clicks-x'),
-						[<b key="CLICK_COUNT">{clicks}</b>],
-						false
-					)}
-				</div>
+				{!isNil(clicks) &&
+					<div className="click-count list-group-text sticker-bottom-right">
+						{sub(
+							Liferay.Language.get('clicks-x'),
+							[<b key="CLICK_COUNT">{clicks}</b>],
+							false
+						)}
+					</div>
+				}
 			</li>
 		);
 	}

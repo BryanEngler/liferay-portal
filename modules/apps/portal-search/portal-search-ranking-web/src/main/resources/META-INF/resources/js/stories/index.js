@@ -139,6 +139,30 @@ storiesOf('Components|List', module)
 				<Item.DecoratedComponent
 					{...mockDataMap['1']}
 				/>
+
+				<Item.DecoratedComponent
+					{...mockDataMap['1']}
+					hidden
+					pinned={false}
+				/>
+
+				<Item.DecoratedComponent />
+
+				<Item.DecoratedComponent
+					date="Apr 18 2018, 11:04 AM"
+					title="Item with date only"
+				/>
+
+				<Item.DecoratedComponent
+					author="Test Test"
+					date="Apr 18 2018, 11:04 AM"
+					title="Item with date and title"
+				/>
+
+				<Item.DecoratedComponent
+					clicks="100"
+					title="Item with title and clicks"
+				/>
 			</div>
 		)
 	)

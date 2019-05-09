@@ -89,7 +89,7 @@ describe(
 
 				const subtitles = container.querySelectorAll('.list-group-subtext');
 
-				expect(subtitles[0]).toHaveTextContent('Test Test - Apr 18 2018, 11:04 AM');
+				expect(subtitles[0]).toHaveTextContent('Test TestApr 18 2018, 11:04 AM');
 				expect(subtitles[1]).toHaveTextContent('[Web Content]');
 			}
 		);

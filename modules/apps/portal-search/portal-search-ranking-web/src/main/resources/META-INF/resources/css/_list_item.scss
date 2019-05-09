@@ -45,6 +45,14 @@
 		margin-top: 8px;
 	}
 
+	.list-group-subtext {
+		.author + .date {
+			&:before {
+				content: ' - ';
+			}
+		}
+	}
+
 	.quick-action-menu {
 		background-color: transparent;
 	}
@@ -120,6 +128,10 @@
 
 	&.list-item-dragging {
 		opacity: 0.4;
+	}
+
+	&.list-item-has-clicks {
+		min-height: 96px;
 	}
 
 	&.results-ranking-item-focus {

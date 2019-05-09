@@ -1,5 +1,5 @@
 import {
-	isDefined,
+	isNil,
 	move,
 	resultsDataToMap,
 	toggleListItem,
@@ -31,19 +31,21 @@ const RESULTS_LIST = [
 const TEST_LIST = [{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}];
 
 describe('utils', () => {
-	describe('isDefined', () => {
-		it('should return true for a defined variable', () => {
+	describe('isNil', () => {
+		it('should return false for a defined variable', () => {
 			const definedVariable = 'test';
 
-			expect(isDefined(definedVariable)).toBeTruthy();
-			expect(isDefined('')).toBeTruthy();
-			expect(isDefined(0)).toBeTruthy();
-			expect(isDefined(-1)).toBeTruthy();
-			expect(isDefined(null)).toBeTruthy();
+			expect(isNil(definedVariable)).not.toBeTruthy();
+			expect(isNil('test')).not.toBeTruthy();
+			expect(isNil('')).not.toBeTruthy();
+			expect(isNil(1)).not.toBeTruthy();
+			expect(isNil(0)).not.toBeTruthy();
+			expect(isNil(-1)).not.toBeTruthy();
 		});
 
-		it('should return false for an undefined variable', () => {
-			expect(isDefined(undefined)).not.toBeTruthy();
+		it('should return true for an undefined or null variable', () => {
+			expect(isNil(null)).toBeTruthy();
+			expect(isNil(undefined)).toBeTruthy();
 		});
 	});
 
