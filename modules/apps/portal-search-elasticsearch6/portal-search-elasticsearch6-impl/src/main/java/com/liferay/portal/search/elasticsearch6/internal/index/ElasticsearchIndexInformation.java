@@ -14,15 +14,12 @@
 
 package com.liferay.portal.search.elasticsearch6.internal.index;
 
-import com.liferay.portal.kernel.json.JSONFactory;
-import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchConnectionManager;
+import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.index.IndexInformation;
 
-import org.elasticsearch.action.ActionFuture;
-import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
+import org.elasticsearch.action.admin.indices.get.GetIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
-import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsRequest;
-import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
+import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequestBuilder;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.IndicesAdminClient;
@@ -44,48 +41,28 @@ public class ElasticsearchIndexInformation implements IndexInformation {
 
 	@Override
 	public String getFieldMappings(String indexName) {
-		GetFieldMappingsResponse getFieldMappingsResponse =
-			getGetFieldMappingsResponse(indexName);
+		IndicesAdminClient indicesAdminClient = getIndicesAdminClient();
 
-		return Strings.toString(getFieldMappingsResponse, true, true);
+		GetMappingsRequestBuilder getMappingsRequestBuilder =
+			indicesAdminClient.prepareGetMappings(indexName);
+
+		return Strings.toString(getMappingsRequestBuilder.get(), true, true);
 	}
 
 	@Override
 	public String[] getIndexNames() {
-		GetIndexResponse getIndexResponse = getGetIndexResponse();
+		IndicesAdminClient indicesAdminClient = getIndicesAdminClient();
+
+		GetIndexRequestBuilder getIndexRequestBuilder =
+			indicesAdminClient.prepareGetIndex();
+
+		GetIndexResponse getIndexResponse = getIndexRequestBuilder.get();
 
 		return getIndexResponse.getIndices();
 	}
 
-	protected GetFieldMappingsResponse getGetFieldMappingsResponse(
-		String index) {
-
-		IndicesAdminClient indicesAdminClient = getIndicesAdminClient();
-
-		GetFieldMappingsRequest getFieldMappingsRequest =
-			new GetFieldMappingsRequest();
-
-		getFieldMappingsRequest = getFieldMappingsRequest.indices(index);
-		getFieldMappingsRequest = getFieldMappingsRequest.fields("*");
-
-		ActionFuture<GetFieldMappingsResponse>
-			getFieldMappingsResponseActionFuture =
-				indicesAdminClient.getFieldMappings(getFieldMappingsRequest);
-
-		return getFieldMappingsResponseActionFuture.actionGet();
-	}
-
-	protected GetIndexResponse getGetIndexResponse() {
-		IndicesAdminClient indicesAdminClient = getIndicesAdminClient();
-
-		ActionFuture<GetIndexResponse> getIndexResponseFuture =
-			indicesAdminClient.getIndex(new GetIndexRequest());
-
-		return getIndexResponseFuture.actionGet();
-	}
-
 	protected IndicesAdminClient getIndicesAdminClient() {
-		Client client = elasticsearchConnectionManager.getClient();
+		Client client = elasticsearchClientResolver.getClient();
 
 		AdminClient adminClient = client.admin();
 
@@ -93,12 +70,9 @@ public class ElasticsearchIndexInformation implements IndexInformation {
 	}
 
 	@Reference
-	protected ElasticsearchConnectionManager elasticsearchConnectionManager;
+	protected ElasticsearchClientResolver elasticsearchClientResolver;
 
 	@Reference
 	protected IndexNameBuilder indexNameBuilder;
-
-	@Reference
-	protected JSONFactory jsonFactory;
 
 }
