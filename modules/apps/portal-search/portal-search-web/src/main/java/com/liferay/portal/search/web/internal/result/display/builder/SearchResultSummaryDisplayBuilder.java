@@ -277,9 +277,8 @@ public class SearchResultSummaryDisplayBuilder {
 			searchResultSummaryDisplayContext.setAssetCategoriesOrTagsVisible(
 				true);
 			searchResultSummaryDisplayContext.setFieldAssetCategoryIds(
-				Field.ASSET_CATEGORY_IDS);
-			searchResultSummaryDisplayContext.setFieldAssetTagNames(
-				Field.ASSET_TAG_NAMES);
+				"category");
+			searchResultSummaryDisplayContext.setFieldAssetTagNames("tag");
 		}
 	}
 
