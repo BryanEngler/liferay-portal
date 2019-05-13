@@ -43,7 +43,7 @@ public class PortletURLFactoryImpl implements PortletURLFactory {
 
 	@Override
 	public PortletURL getPortletURL() throws PortletException {
-		PortletURL portletURL = new NullPortletURL() {
+		return new NullPortletURL() {
 
 			@Override
 			public void setParameter(String name, String value) {
@@ -114,10 +114,8 @@ public class PortletURLFactoryImpl implements PortletURLFactory {
 			private String _getCurrentCompleteURL() {
 				PortletRequest portletRequest = _getPortletRequest();
 
-				String currentCompleteURL = (String)portletRequest.getAttribute(
+				return (String)portletRequest.getAttribute(
 					"CURRENT_COMPLETE_URL");
-
-				return currentCompleteURL;
 			}
 
 			private void _setURL(String paramName, String[] paramValues) {
@@ -125,15 +123,15 @@ public class PortletURLFactoryImpl implements PortletURLFactory {
 
 				StringBundler urlSB = null;
 
-				for (int i = 0; i < paramValues.length; i++) {
-					if (!currentCompleteURL.contains(paramValues[i])) {
+				for (String paramValue : paramValues) {
+					if (!currentCompleteURL.contains(paramValue)) {
 						urlSB = new StringBundler(5);
 
 						urlSB.append(currentCompleteURL);
 						urlSB.append(StringPool.AMPERSAND);
 						urlSB.append(paramName);
 						urlSB.append(StringPool.EQUAL);
-						urlSB.append(paramValues[i]);
+						urlSB.append(paramValue);
 					}
 					else {
 						urlSB = new StringBundler(1);
@@ -151,7 +149,6 @@ public class PortletURLFactoryImpl implements PortletURLFactory {
 
 		};
 
-		return portletURL;
 	}
 
 	private PortletRequest _getPortletRequest() {
