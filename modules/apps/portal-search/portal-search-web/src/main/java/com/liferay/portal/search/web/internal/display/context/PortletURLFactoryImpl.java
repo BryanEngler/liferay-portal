@@ -148,7 +148,6 @@ public class PortletURLFactoryImpl implements PortletURLFactory {
 			private String _url;
 
 		};
-
 	}
 
 	private PortletRequest _getPortletRequest() {
