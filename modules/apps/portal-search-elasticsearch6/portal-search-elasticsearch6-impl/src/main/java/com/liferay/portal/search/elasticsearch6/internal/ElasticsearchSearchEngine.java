@@ -231,7 +231,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 			}
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			_log.error(e, e);
 		}
 
 		return true;
