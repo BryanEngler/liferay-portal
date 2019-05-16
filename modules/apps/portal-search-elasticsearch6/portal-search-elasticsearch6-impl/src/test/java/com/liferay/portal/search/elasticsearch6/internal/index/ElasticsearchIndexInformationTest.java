@@ -36,10 +36,16 @@ public class ElasticsearchIndexInformationTest {
 
 	@Before
 	public void setUp() throws Exception {
-		setUpElasticsearchFixture();
+		ElasticsearchFixture elasticsearchFixture = new ElasticsearchFixture(
+			getClass());
 
-		setUpCompanyIndexFactoryFixture();
-		setUpElasticsearchIndexInformation();
+		elasticsearchFixture.setUp();
+
+		_companyIndexFactoryFixture = createCompanyIndexFactoryFixture(
+			elasticsearchFixture);
+		_elasticsearchFixture = elasticsearchFixture;
+		_elasticsearchIndexInformation = createElasticsearchIndexInformation(
+			elasticsearchFixture);
 	}
 
 	@After
@@ -87,8 +93,28 @@ public class ElasticsearchIndexInformationTest {
 	@Rule
 	public TestName testName = new TestName();
 
+	protected static ElasticsearchIndexInformation
+		createElasticsearchIndexInformation(
+			ElasticsearchFixture elasticsearchFixture) {
+
+		return new ElasticsearchIndexInformation() {
+			{
+				elasticsearchClientResolver = elasticsearchFixture;
+				indexNameBuilder =
+					ElasticsearchIndexInformationTest::getIndexNameBuilder;
+			}
+		};
+	}
+
 	protected static String getIndexNameBuilder(long companyId) {
 		return "test-" + companyId;
+	}
+
+	protected CompanyIndexFactoryFixture createCompanyIndexFactoryFixture(
+		ElasticsearchFixture elasticsearchFixture) {
+
+		return new CompanyIndexFactoryFixture(
+			elasticsearchFixture, testName.getMethodName());
 	}
 
 	protected JSONObject loadJSONObject(String suffix) throws Exception {
@@ -97,29 +123,6 @@ public class ElasticsearchIndexInformationTest {
 			"ElasticsearchIndexInformationTest-" + suffix + ".json");
 
 		return _jsonFactory.createJSONObject(json);
-	}
-
-	protected void setUpCompanyIndexFactoryFixture() {
-		_companyIndexFactoryFixture = new CompanyIndexFactoryFixture(
-			_elasticsearchFixture, testName.getMethodName());
-	}
-
-	protected void setUpElasticsearchFixture() throws Exception {
-		_elasticsearchFixture = new ElasticsearchFixture(
-			ElasticsearchIndexInformationTest.class.getSimpleName());
-
-		_elasticsearchFixture.setUp();
-	}
-
-	protected void setUpElasticsearchIndexInformation() {
-		_elasticsearchIndexInformation = new ElasticsearchIndexInformation() {
-			{
-				elasticsearchConnectionManager =
-					_elasticsearchFixture.geElasticsearchConnectionManager();
-				indexNameBuilder =
-					ElasticsearchIndexInformationTest::getIndexNameBuilder;
-			}
-		};
 	}
 
 	private CompanyIndexFactoryFixture _companyIndexFactoryFixture;
