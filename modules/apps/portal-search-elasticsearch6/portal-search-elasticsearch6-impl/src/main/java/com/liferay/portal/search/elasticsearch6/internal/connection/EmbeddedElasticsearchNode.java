@@ -49,6 +49,7 @@ public class EmbeddedElasticsearchNode extends Node {
 
 		try {
 			LogConfigurator.registerErrorListener();
+
 			LogConfigurator.configure(environment);
 		}
 		catch (Exception e) {
