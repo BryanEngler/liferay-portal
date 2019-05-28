@@ -94,15 +94,10 @@ public interface SearchRequestBuilder {
 	public SearchRequestBuilder highlightFields(String... highlightFields);
 
 	/**
-<<<<<<< HEAD
-	 * Enables inclusion of the search engine's response string with the
-	 * returned results.
-=======
-	 * Provides a top hits aggregations for each of the specified fields.
+	 * Provides a top hits aggregation for each of the specified fields.
 	 *
-	 * @param groupByRequests the grouping that is enabled for each field
-	 *
-	 * @return the same builder
+	 * @param  groupByRequests the grouping that is enabled for each field
+	 * @return search request builder
 	 *
 	 * @review
 	 */
@@ -111,10 +106,6 @@ public interface SearchRequestBuilder {
 
 	/**
 	 * Enables inclusion of the search engine's response string with results.
-	 *
-	 * @param includeResponseString whether to include the response string
-	 * @return the same builder
->>>>>>> LPS-84440 portal-search-api: Add portal-search-api support for GroupBy with GroupByRequest / GroupByResponse
 	 *
 	 * @param  includeResponseString whether to include the response string
 	 * @return the search request builder
