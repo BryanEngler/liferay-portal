@@ -56,6 +56,13 @@
 				"stopwords": "_spanish_",
 				"type": "stop"
 			}
+		},
+		"normalizer": {
+			"keyword_lowercase": {
+				"type": "custom",
+				"char_filter": [],
+				"filter": ["lowercase"]
+			}
 		}
 	}
 }

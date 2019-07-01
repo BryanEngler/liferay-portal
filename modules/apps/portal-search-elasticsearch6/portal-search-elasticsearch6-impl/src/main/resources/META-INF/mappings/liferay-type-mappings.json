@@ -50,9 +50,9 @@
 			{
 				"template_expando_keyword": {
 					"mapping": {
-						"analyzer" : "keyword_lowercase",
+						"normalizer": "keyword_lowercase",
 						"store": true,
-						"type": "text"
+						"type": "keyword"
 					},
 					"match": "expando__keyword__*",
 					"match_mapping_type": "string"
