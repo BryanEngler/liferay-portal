@@ -82,9 +82,8 @@ public class AnalyzeIndexRequestExecutorImpl
 	protected AnalyzeRequestBuilder createAnalyzeRequestBuilder(
 		AnalyzeIndexRequest analyzeIndexRequest) {
 
-		AnalyzeRequestBuilder analyzeRequestBuilder =
-			AnalyzeAction.INSTANCE.newRequestBuilder(
-				_elasticsearchClientResolver.getClient());
+		AnalyzeRequestBuilder analyzeRequestBuilder = new AnalyzeRequestBuilder(
+			_elasticsearchClientResolver.getClient(), AnalyzeAction.INSTANCE);
 
 		if (Validator.isNotNull(analyzeIndexRequest.getAnalyzer())) {
 			analyzeRequestBuilder.setAnalyzer(
