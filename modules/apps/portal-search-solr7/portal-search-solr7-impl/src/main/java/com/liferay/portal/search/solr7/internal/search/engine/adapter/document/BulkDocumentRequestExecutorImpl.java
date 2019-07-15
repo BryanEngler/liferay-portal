@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrResponse;
@@ -133,8 +134,9 @@ public class BulkDocumentRequestExecutorImpl
 
 		UpdateRequest updateRequest = new UpdateRequest();
 
-		List<String> uids = deleteDocumentRequests.stream(
-		).map(
+		Stream<DeleteDocumentRequest> stream = deleteDocumentRequests.stream();
+
+		List<String> uids = stream.map(
 			DeleteDocumentRequest::getUid
 		).collect(
 			Collectors.toList()
@@ -156,8 +158,9 @@ public class BulkDocumentRequestExecutorImpl
 
 		modifiableSolrParams.set(CommonParams.QT, "/get");
 
-		String[] ids = getDocumentRequests.stream(
-		).map(
+		Stream<GetDocumentRequest> stream = getDocumentRequests.stream();
+
+		String[] ids = stream.map(
 			GetDocumentRequest::getId
 		).toArray(
 			String[]::new
