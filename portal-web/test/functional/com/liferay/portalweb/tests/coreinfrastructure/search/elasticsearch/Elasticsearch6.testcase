@@ -34,9 +34,9 @@ definition {
 			portlet = "Search");
 
 		SearchAdministration.assertEngineVendorAndVersions(
-			clientVersion = "6.5.0",
+			clientVersion = "6.8.1",
 			engineVendor = "Elasticsearch",
-			serverVersion = "6.5.0");
+			serverVersion = "6.8.1");
 
 		Navigator.gotoNavItem(navItem = "Field Mappings");
 
