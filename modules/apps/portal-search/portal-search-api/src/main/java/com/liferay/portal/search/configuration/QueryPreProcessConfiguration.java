@@ -34,8 +34,16 @@ public interface QueryPreProcessConfiguration {
 
 	@Meta.AD(
 		deflt = "emailAddress|license|path|properties|screenName|tag|treePath|userName",
-		name = "field-name-patterns", required = false
+		description = "field-name-patterns-help", name = "field-name-patterns",
+		required = false
 	)
 	public String[] fieldNamePatterns();
+
+	@Meta.AD(
+		deflt = "content_ja_JP",
+		description = "prefix-field-name-patterns-help",
+		name = "prefix-field-name-patterns", required = false
+	)
+	public String[] prefixFieldNamePatterns();
 
 }
