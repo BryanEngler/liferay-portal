@@ -48,6 +48,10 @@ public class FieldQueryBuilderFactoryImpl implements FieldQueryBuilderFactory {
 			return substringQueryBuilder;
 		}
 
+		if (queryPreProcessConfiguration.isPrefixSearchAlways(field)) {
+			return titleQueryBuilder;
+		}
+
 		if (_descriptionFields.contains(field)) {
 			return descriptionQueryBuilder;
 		}

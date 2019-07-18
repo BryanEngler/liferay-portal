@@ -15,17 +15,18 @@
 package com.liferay.portal.search.internal.analysis;
 
 import com.liferay.petra.string.CharPool;
-import com.liferay.portal.kernel.search.query.QueryPreProcessConfiguration;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.analysis.FieldQueryBuilder;
 import com.liferay.portal.search.analysis.FieldQueryBuilderFactory;
+import com.liferay.portal.search.query.field.QueryPreProcessConfiguration;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -47,6 +48,10 @@ public class FieldQueryBuilderFactoryImpl implements FieldQueryBuilderFactory {
 	public FieldQueryBuilder getQueryBuilder(String field) {
 		if (queryPreProcessConfiguration.isSubstringSearchAlways(field)) {
 			return substringQueryBuilder;
+		}
+
+		if (queryPreProcessConfiguration.isPrefixSearchAlways(field)) {
+			return titleQueryBuilder;
 		}
 
 		if (_descriptionFields.contains(field)) {

@@ -14,26 +14,91 @@
 
 package com.liferay.portal.search.internal.query.field;
 
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.search.query.field.QueryPreProcessConfiguration;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Michael C. Han
  */
-@Component(service = QueryPreProcessConfiguration.class)
+@Component(
+	configurationPid = "com.liferay.portal.search.configuration.QueryPreProcessConfiguration",
+	immediate = true, service = QueryPreProcessConfiguration.class
+)
 public class QueryPreProcessConfigurationImpl
 	implements QueryPreProcessConfiguration {
 
 	@Override
-	public boolean isSubstringSearchAlways(String fieldName) {
-		return queryPreProcessConfiguration.isSubstringSearchAlways(fieldName);
+	public boolean isPrefixSearchAlways(String fieldName) {
+		if (_prefixFieldNamePatterns.containsKey(fieldName)) {
+			return true;
+		}
+
+		for (Pattern pattern : _prefixFieldNamePatterns.values()) {
+			Matcher matcher = pattern.matcher(fieldName);
+
+			if (matcher.matches()) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
-	@Reference
-	protected
-		com.liferay.portal.kernel.search.query.QueryPreProcessConfiguration
-			queryPreProcessConfiguration;
+	@Override
+	public boolean isSubstringSearchAlways(String fieldName) {
+		if (_substringFieldNamePatterns.containsKey(fieldName)) {
+			return true;
+		}
+
+		for (Pattern pattern : _substringFieldNamePatterns.values()) {
+			Matcher matcher = pattern.matcher(fieldName);
+
+			if (matcher.matches()) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	@Activate
+	protected void activate(Map<String, Object> properties) {
+		com.liferay.portal.search.configuration.QueryPreProcessConfiguration
+			queryPreProcessConfiguration = ConfigurableUtil.createConfigurable(
+				com.liferay.portal.search.configuration.
+					QueryPreProcessConfiguration.class,
+				properties);
+
+		String[] prefixFieldNamePatterns =
+			queryPreProcessConfiguration.prefixFieldNamePatterns();
+
+		for (String prefixFieldNamePattern : prefixFieldNamePatterns) {
+			_prefixFieldNamePatterns.put(
+				prefixFieldNamePattern,
+				Pattern.compile(prefixFieldNamePattern));
+		}
+
+		String[] substringFieldNamePatterns =
+			queryPreProcessConfiguration.fieldNamePatterns();
+
+		for (String substringFieldNamePattern : substringFieldNamePatterns) {
+			_substringFieldNamePatterns.put(
+				substringFieldNamePattern,
+				Pattern.compile(substringFieldNamePattern));
+		}
+	}
+
+	private final Map<String, Pattern> _prefixFieldNamePatterns =
+		new LinkedHashMap<>();
+	private final Map<String, Pattern> _substringFieldNamePatterns =
+		new LinkedHashMap<>();
 
 }
