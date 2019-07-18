@@ -38,7 +38,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = {"description.fields=description", "title.fields=title"},
+	property = {"description.fields=description", "title.fields=name|title"},
 	service = FieldQueryBuilderFactory.class
 )
 public class FieldQueryBuilderFactoryImpl implements FieldQueryBuilderFactory {
@@ -54,6 +54,10 @@ public class FieldQueryBuilderFactoryImpl implements FieldQueryBuilderFactory {
 		}
 
 		if (_titleFields.contains(field)) {
+			return titleQueryBuilder;
+		}
+
+		if (field.endsWith("_ja_JP")) {
 			return titleQueryBuilder;
 		}
 
