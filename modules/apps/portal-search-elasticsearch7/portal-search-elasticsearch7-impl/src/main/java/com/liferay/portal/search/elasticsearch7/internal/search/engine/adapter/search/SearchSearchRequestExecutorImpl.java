@@ -14,6 +14,11 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.search;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -44,6 +49,13 @@ public class SearchSearchRequestExecutorImpl
 
 		_searchSearchRequestAssembler.assemble(
 			searchRequestBuilder, searchSearchRequest);
+
+		String debugRequestString = _getDebugRequestString(
+			searchRequestBuilder);
+
+		if (_log.isDebugEnabled()) {
+			_log.debug("Search query: " + debugRequestString);
+		}
 
 		SearchResponse searchResponse = searchRequestBuilder.get();
 
@@ -83,6 +95,23 @@ public class SearchSearchRequestExecutorImpl
 		SearchSearchResponseAssembler searchSearchResponseAssembler) {
 
 		_searchSearchResponseAssembler = searchSearchResponseAssembler;
+	}
+
+	private String _getDebugRequestString(
+		SearchRequestBuilder searchRequestBuilder) {
+
+		GsonBuilder gsonBuilder = new GsonBuilder();
+
+		gsonBuilder.setPrettyPrinting();
+
+		Gson gson = gsonBuilder.create();
+
+		JsonParser jsonParser = new JsonParser();
+
+		JsonElement jsonElement = jsonParser.parse(
+			searchRequestBuilder.toString());
+
+		return gson.toJson(jsonElement);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
