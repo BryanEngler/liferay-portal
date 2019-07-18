@@ -261,8 +261,6 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 
 		QueryConfig queryConfig = searchContext.getQueryConfig();
 
-		searchSearchRequest.setAllFieldsSelected(
-			queryConfig.isAllFieldsSelected());
 		searchSearchRequest.setAlternateUidFieldName(
 			queryConfig.getAlternateUidFieldName());
 		searchSearchRequest.setGroupBy(searchContext.getGroupBy());
@@ -290,8 +288,15 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 
 		searchSearchRequest.setPostFilter(query.getPostFilter());
 		searchSearchRequest.setScoreEnabled(queryConfig.isScoreEnabled());
-		searchSearchRequest.setSelectedFieldNames(
-			queryConfig.getSelectedFieldNames());
+
+		if (queryConfig.isAllFieldsSelected()) {
+			searchSearchRequest.setSelectedFieldNames("all_fields_selected");
+		}
+		else {
+			searchSearchRequest.setSelectedFieldNames(
+				queryConfig.getSelectedFieldNames());
+		}
+
 		searchSearchRequest.setSize(end - start);
 		searchSearchRequest.setSorts(searchContext.getSorts());
 		searchSearchRequest.setSorts(searchRequest.getSorts());
