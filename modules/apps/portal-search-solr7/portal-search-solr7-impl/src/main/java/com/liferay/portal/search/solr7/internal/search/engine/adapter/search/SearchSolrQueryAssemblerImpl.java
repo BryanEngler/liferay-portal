@@ -195,12 +195,12 @@ public class SearchSolrQueryAssemblerImpl implements SearchSolrQueryAssembler {
 	protected void setSelectedFields(
 		SolrQuery solrQuery, SearchSearchRequest searchSearchRequest) {
 
-		if (searchSearchRequest.isAllFieldsSelected()) {
-			return;
-		}
-
 		Set<String> selectedFieldNames = SetUtil.fromArray(
 			searchSearchRequest.getSelectedFieldNames());
+
+		if (selectedFieldNames.contains("all_fields_selected")) {
+			return;
+		}
 
 		if (!selectedFieldNames.contains(Field.UID)) {
 			selectedFieldNames.add(Field.UID);
