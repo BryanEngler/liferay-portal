@@ -104,13 +104,7 @@ public class DLFileEntryFileNameSearchTest {
 
 		addFileEntriesWithTitleSameAsFileName("One.jpg", "Two.JPG");
 
-		if (isSearchEngine("Elasticsearch")) {
-			assertSearch("jp", Arrays.asList("One.jpg"));
-		}
-
-		if (isSearchEngine("Solr")) {
-			assertSearch("jp", Arrays.asList("One.jpg", "Two.JPG"));
-		}
+		assertSearch("jp", Arrays.asList("One.jpg", "Two.JPG"));
 	}
 
 	@Test
