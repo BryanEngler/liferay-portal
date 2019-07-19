@@ -49,12 +49,16 @@ public class FieldQueryBuilderFactoryImpl implements FieldQueryBuilderFactory {
 			return substringQueryBuilder;
 		}
 
-		if (_descriptionFields.contains(field)) {
-			return descriptionQueryBuilder;
+		for (String descriptionField : _descriptionFields) {
+			if (field.startsWith(descriptionField)) {
+				return descriptionQueryBuilder;
+			}
 		}
 
-		if (_titleFields.contains(field)) {
-			return titleQueryBuilder;
+		for (String titleField : _titleFields) {
+			if (field.startsWith(titleField)) {
+				return titleQueryBuilder;
+			}
 		}
 
 		if (field.endsWith("_ja_JP")) {
