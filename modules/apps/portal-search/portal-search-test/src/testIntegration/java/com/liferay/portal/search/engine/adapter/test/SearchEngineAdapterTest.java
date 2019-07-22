@@ -218,7 +218,7 @@ public class SearchEngineAdapterTest {
 			getIndexName(), uid);
 
 		deleteDocumentRequest.setRefresh(refresh);
-		deleteDocumentRequest.setType("LiferayDocumentType");
+		deleteDocumentRequest.setType("_doc");
 
 		return deleteDocumentRequest;
 	}
@@ -228,7 +228,7 @@ public class SearchEngineAdapterTest {
 			getIndexName(), uid);
 
 		getDocumentRequest.setRefresh(true);
-		getDocumentRequest.setType("LiferayDocumentType");
+		getDocumentRequest.setType("_doc");
 
 		GetDocumentResponse getDocumentResponse = _searchEngineAdapter.execute(
 			getDocumentRequest);
@@ -249,7 +249,7 @@ public class SearchEngineAdapterTest {
 		IndexDocumentRequest indexDocumentRequest = new IndexDocumentRequest(
 			getIndexName(), documentBuilder.build());
 
-		indexDocumentRequest.setType("LiferayDocumentType");
+		indexDocumentRequest.setType("_doc");
 		indexDocumentRequest.setRefresh(refresh);
 
 		return indexDocumentRequest;
@@ -284,7 +284,7 @@ public class SearchEngineAdapterTest {
 			getIndexName(), uid, documentBuilder.build());
 
 		updateDocumentRequest.setRefresh(true);
-		updateDocumentRequest.setType("LiferayDocumentType");
+		updateDocumentRequest.setType("_doc");
 
 		_searchEngineAdapter.execute(updateDocumentRequest);
 	}
