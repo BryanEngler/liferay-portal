@@ -80,7 +80,8 @@ public class CommonSearchRequestBuilderAssemblerImpl
 	}
 
 	protected QueryBuilder combine(
-		QueryBuilder queryBuilder, List<ComplexQueryPart> complexQueryParts) {
+		QueryBuilder queryBuilder, List<ComplexQueryPart> complexQueryParts,
+		boolean mainQueryInShouldClause) {
 
 		if (complexQueryParts.isEmpty()) {
 			return queryBuilder;
@@ -89,7 +90,12 @@ public class CommonSearchRequestBuilderAssemblerImpl
 		BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 
 		if (queryBuilder != null) {
-			boolQueryBuilder.must(queryBuilder);
+			if (mainQueryInShouldClause) {
+				boolQueryBuilder.should(queryBuilder);
+			}
+			else {
+				boolQueryBuilder.must(queryBuilder);
+			}
 		}
 
 		BooleanQuery booleanQuery =
@@ -149,7 +155,8 @@ public class CommonSearchRequestBuilderAssemblerImpl
 			queryBuilder, legacyQueryBuilder);
 
 		return combine(
-			combinedQueryBuilder, baseSearchRequest.getComplexQueryParts());
+			combinedQueryBuilder, baseSearchRequest.getComplexQueryParts(),
+			baseSearchRequest.getMainQueryInShouldClause());
 	}
 
 	protected void setAggregations(

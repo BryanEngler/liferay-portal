@@ -411,6 +411,8 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		baseSearchRequest.setExplain(searchRequest.isExplain());
 		baseSearchRequest.setIncludeResponseString(
 			searchRequest.isIncludeResponseString());
+		baseSearchRequest.setMainQueryInShouldClause(
+			searchRequest.isMainQueryInShouldClause());
 		baseSearchRequest.setPostFilterQuery(
 			searchRequest.getPostFilterQuery());
 		baseSearchRequest.setRescoreQuery(searchRequest.getRescoreQuery());
