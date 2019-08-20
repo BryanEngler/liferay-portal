@@ -116,4 +116,6 @@ public interface SearchRequest {
 	 */
 	public boolean isIncludeResponseString();
 
+	public boolean isMainQueryInShouldClause();
+
 }

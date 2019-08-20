@@ -120,6 +120,9 @@ public interface SearchRequestBuilder {
 
 	public SearchRequestBuilder indexes(String... indexes);
 
+	public SearchRequestBuilder mainQueryInShouldClause(
+		boolean mainQueryInShouldClause);
+
 	public SearchRequestBuilder modelIndexerClasses(Class<?>... classes);
 
 	public void paginationStartParameterName(
