@@ -280,6 +280,17 @@ public class SearchRequestBuilderImpl implements SearchRequestBuilder {
 	}
 
 	@Override
+	public SearchRequestBuilder mainQueryInShouldClause(
+		boolean mainQueryInShouldClause) {
+
+		withSearchRequestImpl(
+			searchRequestImpl -> searchRequestImpl.setMainQueryInShouldClause(
+				mainQueryInShouldClause));
+
+		return this;
+	}
+
+	@Override
 	public SearchRequestBuilder modelIndexerClasses(Class<?>... classes) {
 		withSearchRequestImpl(
 			searchRequestImpl -> searchRequestImpl.setModelIndexerClasses(

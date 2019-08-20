@@ -66,6 +66,7 @@ public class SearchRequestImpl implements SearchRequest, Serializable {
 		_groupByRequests.addAll(searchRequestImpl._groupByRequests);
 		_includeContributors.addAll(searchRequestImpl._includeContributors);
 		_includeResponseString = searchRequestImpl._includeResponseString;
+		_mainQueryInShouldClause = searchRequestImpl._mainQueryInShouldClause;
 		_modelIndexerClasses.addAll(searchRequestImpl._modelIndexerClasses);
 		_pipelineAggregationsMap.putAll(
 			searchRequestImpl._pipelineAggregationsMap);
@@ -251,6 +252,11 @@ public class SearchRequestImpl implements SearchRequest, Serializable {
 		return _includeResponseString;
 	}
 
+	@Override
+	public boolean isMainQueryInShouldClause() {
+		return _mainQueryInShouldClause;
+	}
+
 	public void setBasicFacetSelection(boolean basicFacetSelection) {
 		_basicFacetSelection = basicFacetSelection;
 
@@ -305,6 +311,10 @@ public class SearchRequestImpl implements SearchRequest, Serializable {
 		QueryConfig queryConfig = _searchContext.getQueryConfig();
 
 		queryConfig.setSelectedIndexNames(indexes);
+	}
+
+	public void setMainQueryInShouldClause(boolean mainQueryInShouldClause) {
+		_mainQueryInShouldClause = mainQueryInShouldClause;
 	}
 
 	public void setModelIndexerClasses(Class<?>... classes) {
@@ -371,6 +381,7 @@ public class SearchRequestImpl implements SearchRequest, Serializable {
 	private final List<GroupByRequest> _groupByRequests = new ArrayList<>();
 	private final List<String> _includeContributors = new ArrayList<>();
 	private boolean _includeResponseString;
+	private boolean _mainQueryInShouldClause;
 	private final List<Class<?>> _modelIndexerClasses = new ArrayList<>();
 	private String _paginationStartParameterName;
 	private final Map<String, PipelineAggregation> _pipelineAggregationsMap =

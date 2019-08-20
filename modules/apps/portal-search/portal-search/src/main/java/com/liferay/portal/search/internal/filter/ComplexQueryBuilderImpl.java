@@ -143,16 +143,7 @@ public class ComplexQueryBuilderImpl implements ComplexQueryBuilder {
 				return null;
 			}
 
-			Query query = getQuery(complexQueryPart);
-
-			if (query == null) {
-				return null;
-			}
-
-			query.setBoost(complexQueryPart.getBoost());
-			query.setQueryName(complexQueryPart.getName());
-
-			return query;
+			return getQuery(complexQueryPart);
 		}
 
 		protected Query buildQuery(String type, String field, String value) {
@@ -307,7 +298,14 @@ public class ComplexQueryBuilderImpl implements ComplexQueryBuilder {
 			String type = GetterUtil.getString(complexQueryPart.getType());
 			String value = GetterUtil.getString(complexQueryPart.getValue());
 
-			return buildQuery(type, field, value);
+			Query query = buildQuery(type, field, value);
+
+			if (query != null) {
+				query.setBoost(complexQueryPart.getBoost());
+				query.setQueryName(complexQueryPart.getName());
+			}
+
+			return query;
 		}
 
 		protected BooleanQuery getRootBooleanQuery() {
