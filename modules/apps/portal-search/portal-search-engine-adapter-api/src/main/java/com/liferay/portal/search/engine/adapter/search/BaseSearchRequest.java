@@ -82,6 +82,10 @@ public abstract class BaseSearchRequest {
 		return _indexNames;
 	}
 
+	public boolean getMainQueryInShouldClause() {
+		return _mainQueryInShouldClause;
+	}
+
 	public Float getMinimumScore() {
 		return _minimumScore;
 	}
@@ -186,6 +190,10 @@ public abstract class BaseSearchRequest {
 		_indexNames = indexNames;
 	}
 
+	public void setMainQueryInShouldClause(boolean mainQueryInShouldClause) {
+		_mainQueryInShouldClause = mainQueryInShouldClause;
+	}
+
 	public void setMinimumScore(Float minimumScore) {
 		_minimumScore = minimumScore;
 	}
@@ -240,6 +248,7 @@ public abstract class BaseSearchRequest {
 	private final Map<String, Float> _indexBoosts = new LinkedHashMap<>();
 	private String[] _indexNames;
 	private com.liferay.portal.kernel.search.Query _legacyQuery;
+	private boolean _mainQueryInShouldClause;
 	private Float _minimumScore;
 	private final Map<String, PipelineAggregation> _pipelineAggregationsMap =
 		new LinkedHashMap<>();
