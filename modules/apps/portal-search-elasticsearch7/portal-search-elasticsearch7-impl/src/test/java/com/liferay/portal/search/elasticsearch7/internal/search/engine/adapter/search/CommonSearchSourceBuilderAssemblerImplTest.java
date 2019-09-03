@@ -47,7 +47,7 @@ import org.junit.rules.TestName;
 /**
  * @author Wade Cao
  */
-public class CommonSearchRequestBuilderAssemblerImplTest {
+public class CommonSearchSourceBuilderAssemblerImplTest {
 
 	@Before
 	public void setUp() throws Exception {
