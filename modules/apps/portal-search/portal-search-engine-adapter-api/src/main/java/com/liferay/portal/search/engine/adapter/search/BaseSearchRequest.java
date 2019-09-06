@@ -20,6 +20,7 @@ import com.liferay.portal.search.aggregation.Aggregation;
 import com.liferay.portal.search.aggregation.pipeline.PipelineAggregation;
 import com.liferay.portal.search.filter.ComplexQueryPart;
 import com.liferay.portal.search.query.Query;
+import com.liferay.portal.search.rescore.Rescore;
 import com.liferay.portal.search.stats.StatsRequest;
 
 import java.util.ArrayList;
@@ -110,8 +111,16 @@ public abstract class BaseSearchRequest {
 		return _requestCache;
 	}
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link #getRescores()}
+	 */
+	@Deprecated
 	public Query getRescoreQuery() {
 		return _rescoreQuery;
+	}
+
+	public List<Rescore> getRescores() {
+		return _rescores;
 	}
 
 	public List<StatsRequest> getStatsRequests() {
@@ -210,8 +219,17 @@ public abstract class BaseSearchRequest {
 		_requestCache = requestCache;
 	}
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by
+	 *             {@link #setRescores(List)}
+	 */
+	@Deprecated
 	public void setRescoreQuery(Query rescoreQuery) {
 		_rescoreQuery = rescoreQuery;
+	}
+
+	public void setRescores(List<Rescore> rescores) {
+		_rescores = rescores;
 	}
 
 	public void setStatsRequests(Collection<StatsRequest> statsRequests) {
@@ -248,6 +266,7 @@ public abstract class BaseSearchRequest {
 	private Query _query;
 	private Boolean _requestCache;
 	private Query _rescoreQuery;
+	private List<Rescore> _rescores;
 	private List<StatsRequest> _statsRequests = Collections.emptyList();
 	private Long _timeoutInMilliseconds;
 	private Boolean _trackTotalHits;
