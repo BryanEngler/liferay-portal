@@ -22,6 +22,7 @@ import com.liferay.portal.search.filter.ComplexQueryPart;
 import com.liferay.portal.search.groupby.GroupByRequest;
 import com.liferay.portal.search.internal.searcher.SearchRequestImpl;
 import com.liferay.portal.search.query.Query;
+import com.liferay.portal.search.rescore.Rescore;
 import com.liferay.portal.search.searcher.FacetContext;
 import com.liferay.portal.search.searcher.SearchRequest;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
@@ -324,10 +325,22 @@ public class SearchRequestBuilderImpl implements SearchRequestBuilder {
 		return this;
 	}
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link #rescores(List)}
+	 */
+	@Deprecated
 	@Override
 	public SearchRequestBuilder rescoreQuery(Query query) {
 		withSearchRequestImpl(
 			searchRequestImpl -> searchRequestImpl.setRescoreQuery(query));
+
+		return this;
+	}
+
+	@Override
+	public SearchRequestBuilder rescores(List<Rescore> rescores) {
+		withSearchRequestImpl(
+			searchRequestImpl -> searchRequestImpl.setRescores(rescores));
 
 		return this;
 	}

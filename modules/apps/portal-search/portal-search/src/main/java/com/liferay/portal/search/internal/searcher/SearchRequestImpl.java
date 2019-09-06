@@ -24,6 +24,7 @@ import com.liferay.portal.search.constants.SearchContextAttributes;
 import com.liferay.portal.search.filter.ComplexQueryPart;
 import com.liferay.portal.search.groupby.GroupByRequest;
 import com.liferay.portal.search.query.Query;
+import com.liferay.portal.search.rescore.Rescore;
 import com.liferay.portal.search.searcher.SearchRequest;
 import com.liferay.portal.search.sort.Sort;
 import com.liferay.portal.search.stats.StatsRequest;
@@ -207,9 +208,18 @@ public class SearchRequestImpl implements SearchRequest, Serializable {
 		return _searchContext.getKeywords();
 	}
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link #getRescores()}
+	 */
+	@Deprecated
 	@Override
 	public Query getRescoreQuery() {
 		return _rescoreQuery;
+	}
+
+	@Override
+	public List<Rescore> getRescores() {
+		return _rescores;
 	}
 
 	public SearchContext getSearchContext() {
@@ -331,8 +341,17 @@ public class SearchRequestImpl implements SearchRequest, Serializable {
 		_searchContext.setKeywords(queryString);
 	}
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by
+	 *             {@link #setRescores(List)}
+	 */
+	@Deprecated
 	public void setRescoreQuery(Query query) {
 		_rescoreQuery = query;
+	}
+
+	public void setRescores(List<Rescore> rescores) {
+		_rescores = rescores;
 	}
 
 	public void setSelectedFieldNames(String... selectedFieldNames) {
@@ -378,6 +397,7 @@ public class SearchRequestImpl implements SearchRequest, Serializable {
 	private Query _postFilterQuery;
 	private Query _query;
 	private Query _rescoreQuery;
+	private List<Rescore> _rescores;
 	private final SearchContext _searchContext;
 	private Integer _size;
 	private final List<Sort> _sorts = new ArrayList<>();
