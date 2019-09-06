@@ -53,6 +53,8 @@ public interface QueryVisitor<T> {
 
 	public T visit(IdsQuery idsQuery);
 
+	public T visit(LearnToRankQuery learnToRankQuery);
+
 	public T visit(MatchAllQuery matchAllQuery);
 
 	public T visit(MatchPhrasePrefixQuery matchPhrasePrefixQuery);

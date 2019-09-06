@@ -19,6 +19,7 @@ import com.liferay.portal.search.aggregation.pipeline.PipelineAggregation;
 import com.liferay.portal.search.filter.ComplexQueryPart;
 import com.liferay.portal.search.groupby.GroupByRequest;
 import com.liferay.portal.search.query.Query;
+import com.liferay.portal.search.rescore.Rescore;
 import com.liferay.portal.search.sort.Sort;
 import com.liferay.portal.search.stats.StatsRequest;
 
@@ -77,11 +78,17 @@ public interface SearchRequest {
 	public String getQueryString();
 
 	/**
-	 * Provides a secondary query to reorder the top documents returned.
-	 *
-	 * @return the rescore query
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link #getRescores()}
 	 */
+	@Deprecated
 	public Query getRescoreQuery();
+
+	/**
+	 * Provides secondary queries to reorder the top documents returned.
+	 *
+	 * @return the rescore queries
+	 */
+	public List<Rescore> getRescores();
 
 	public Integer getSize();
 

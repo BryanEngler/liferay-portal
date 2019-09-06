@@ -75,6 +75,8 @@ public interface Queries {
 
 	public IdsQuery ids();
 
+	public LearnToRankQuery learnToRank();
+
 	public MatchQuery match(String field, Object value);
 
 	public MatchAllQuery matchAll();

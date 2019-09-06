@@ -43,6 +43,7 @@ Export-Package:\
 	com.liferay.portal.search.query.function.score,\
 	com.liferay.portal.search.query.geolocation,\
 	com.liferay.portal.search.query.util,\
+	com.liferay.portal.search.rescore,\
 	com.liferay.portal.search.script,\
 	com.liferay.portal.search.searcher,\
 	com.liferay.portal.search.significance,\

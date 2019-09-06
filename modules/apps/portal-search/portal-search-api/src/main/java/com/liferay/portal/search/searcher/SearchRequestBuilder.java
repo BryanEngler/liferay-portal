@@ -20,9 +20,11 @@ import com.liferay.portal.search.aggregation.pipeline.PipelineAggregation;
 import com.liferay.portal.search.filter.ComplexQueryPart;
 import com.liferay.portal.search.groupby.GroupByRequest;
 import com.liferay.portal.search.query.Query;
+import com.liferay.portal.search.rescore.Rescore;
 import com.liferay.portal.search.sort.Sort;
 import com.liferay.portal.search.stats.StatsRequest;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -132,12 +134,18 @@ public interface SearchRequestBuilder {
 	public SearchRequestBuilder queryString(String queryString);
 
 	/**
-	 * Provides a secondary query to reorder the top documents returned.
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link #rescores(List)}
+	 */
+	@Deprecated
+	public SearchRequestBuilder rescoreQuery(Query rescoreQuery);
+
+	/**
+	 * Provides secondary queries to reorder the top documents returned.
 	 *
-	 * @param  rescoreQuery the rescore query
+	 * @param  rescores the rescore queries
 	 * @return the search request builder
 	 */
-	public SearchRequestBuilder rescoreQuery(Query rescoreQuery);
+	public SearchRequestBuilder rescores(List<Rescore> rescores);
 
 	public SearchRequestBuilder size(Integer size);
 
