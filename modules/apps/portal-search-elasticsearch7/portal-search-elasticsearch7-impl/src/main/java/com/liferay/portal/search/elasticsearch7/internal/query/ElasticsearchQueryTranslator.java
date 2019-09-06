@@ -29,6 +29,7 @@ import com.liferay.portal.search.query.GeoDistanceRangeQuery;
 import com.liferay.portal.search.query.GeoPolygonQuery;
 import com.liferay.portal.search.query.GeoShapeQuery;
 import com.liferay.portal.search.query.IdsQuery;
+import com.liferay.portal.search.query.LearnToRankQuery;
 import com.liferay.portal.search.query.MatchAllQuery;
 import com.liferay.portal.search.query.MatchPhrasePrefixQuery;
 import com.liferay.portal.search.query.MatchPhraseQuery;
@@ -159,6 +160,11 @@ public class ElasticsearchQueryTranslator
 	@Override
 	public QueryBuilder visit(IdsQuery idsQuery) {
 		return _idsQueryTranslator.translate(idsQuery);
+	}
+
+	@Override
+	public QueryBuilder visit(LearnToRankQuery learnToRankQuery) {
+		return _learnToRankQueryTranslator.translate(learnToRankQuery);
 	}
 
 	@Override
@@ -358,6 +364,13 @@ public class ElasticsearchQueryTranslator
 	}
 
 	@Reference(unbind = "-")
+	protected void setLearnToRankQueryTranslator(
+		LearnToRankQueryTranslator learnToRankQueryTranslator) {
+
+		_learnToRankQueryTranslator = learnToRankQueryTranslator;
+	}
+
+	@Reference(unbind = "-")
 	protected void setMatchAllQueryTranslator(
 		MatchAllQueryTranslator matchAllQueryTranslator) {
 
@@ -498,6 +511,7 @@ public class ElasticsearchQueryTranslator
 	private GeoPolygonQueryTranslator _geoPolygonQueryTranslator;
 	private GeoShapeQueryTranslator _geoShapeQueryTranslator;
 	private IdsQueryTranslator _idsQueryTranslator;
+	private LearnToRankQueryTranslator _learnToRankQueryTranslator;
 	private MatchAllQueryTranslator _matchAllQueryTranslator;
 	private MatchPhrasePrefixQueryTranslator _matchPhrasePrefixQueryTranslator;
 	private MatchPhraseQueryTranslator _matchPhraseQueryTranslator;

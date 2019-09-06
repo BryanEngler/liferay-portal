@@ -8,6 +8,7 @@ configurations {
 }
 
 dependencies {
+	compileInclude files("/Users/bryan/Downloads/ltr-1.1.1-es7.2.0/ltr-1.1.1-es7.2.0.jar")
 	compileInclude group: "com.carrotsearch", name: "hppc", version: "0.7.1"
 	compileInclude group: "com.fasterxml.jackson.dataformat", name: "jackson-dataformat-cbor", version: "2.9.8"
 	compileInclude group: "com.fasterxml.jackson.dataformat", name: "jackson-dataformat-smile", version: "2.9.8"

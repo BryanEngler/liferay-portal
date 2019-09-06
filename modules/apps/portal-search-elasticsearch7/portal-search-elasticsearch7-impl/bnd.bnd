@@ -2,6 +2,8 @@ Bundle-Name: Liferay Portal Search Elasticsearch 7 Implementation
 Bundle-SymbolicName: com.liferay.portal.search.elasticsearch7.impl
 Bundle-Version: 1.0.0
 Import-Package:\
+	!ciir.umass.edu.*,\
+	\
 	!com.barchart.udt.*,\
 	\
 	!com.beust.jcommander.*,\
