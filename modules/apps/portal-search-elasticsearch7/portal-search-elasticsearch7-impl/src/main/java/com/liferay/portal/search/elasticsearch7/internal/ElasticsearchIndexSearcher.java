@@ -48,10 +48,16 @@ import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
 import com.liferay.portal.search.index.IndexNameBuilder;
 import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.legacy.searcher.SearchResponseBuilderFactory;
+import com.liferay.portal.search.query.LearnToRankQuery;
+import com.liferay.portal.search.query.Queries;
+import com.liferay.portal.search.rescore.Rescore;
+import com.liferay.portal.search.rescore.RescoreBuilder;
+import com.liferay.portal.search.rescore.RescoreBuilderFactory;
 import com.liferay.portal.search.searcher.SearchRequest;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.searcher.SearchResponseBuilder;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -347,6 +353,26 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		SearchRequestBuilder searchRequestBuilder = _getSearchRequestBuilder(
 			searchContext);
 
+		boolean ltr = false;
+
+		if (ltr) {
+			RescoreBuilder rescoreBuilder =
+				rescoreBuilderFactory.getRescoreBuilder();
+
+			LearnToRankQuery learnToRankQuery = queries.learnToRank();
+
+			learnToRankQuery.setModelName("test_6");
+			learnToRankQuery.addParam("keywords", "alien");
+
+			Rescore rescore = rescoreBuilder.query(
+				learnToRankQuery
+			).windowSize(
+				1000
+			).build();
+
+			searchRequestBuilder.rescores(Arrays.asList(rescore));
+		}
+
 		return searchRequestBuilder.build();
 	}
 
@@ -503,6 +529,12 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		_searchResponseBuilderFactory = searchResponseBuilderFactory;
 	}
+
+	@Reference
+	protected Queries queries;
+
+	@Reference
+	protected RescoreBuilderFactory rescoreBuilderFactory;
 
 	private SearchRequestBuilder _getSearchRequestBuilder(
 		SearchContext searchContext) {
