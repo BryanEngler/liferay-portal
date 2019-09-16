@@ -163,7 +163,7 @@ public abstract class BaseSubstringFieldQueryBuilderTestCase
 		assertSearch(
 			"null",
 			Arrays.asList(
-				"null", "anulled", "the word null is in this sentence",
+				"anulled", "null", "the word null is in this sentence",
 				"ultimate nullifier"));
 	}
 
@@ -303,36 +303,36 @@ public abstract class BaseSubstringFieldQueryBuilderTestCase
 		assertSearch(
 			"M A S H",
 			Arrays.asList(
-				"m*a*s*h", "m... a... s... h", "aaa+bbb-ccc{ddd]",
-				"aaa bbb ccc ddd", "who? when? where?", "who. when. where."));
+				"m*a*s*h", "m... a... s... h", "aaa bbb ccc ddd", "aaa+bbb-ccc{ddd]",
+				"who. when. where.", "who? when? where?"));
 		assertSearch(
 			"M* A* *S *H",
 			Arrays.asList(
-				"m*a*s*h", "m... a... s... h", "aaa+bbb-ccc{ddd]",
-				"aaa bbb ccc ddd", "who? when? where?", "who. when. where."));
+				"m*a*s*h", "m... a... s... h", "aaa bbb ccc ddd", "aaa+bbb-ccc{ddd]",
+				"who. when. where.", "who? when? where?"));
 
 		assertSearch(
-			"When?", Arrays.asList("who? when? where?", "who. when. where."));
+			"When?", Arrays.asList("who. when. where.", "who? when? where?"));
 		assertSearch(
 			"Who? When?",
-			Arrays.asList("who? when? where?", "who. when. where."));
+			Arrays.asList("who. when. where.", "who? when? where?"));
 		assertSearch(
 			"Who? *en? Where?",
-			Arrays.asList("who? when? where?", "who. when. where."));
+			Arrays.asList("who. when. where.", "who? when? where?"));
 		assertSearch(
 			"Who? * Where?",
 			Arrays.asList(
-				"who? when? where?", "who. when. where.", "aaa+bbb-ccc{ddd]",
-				"aaa bbb ccc ddd", "m*a*s*h", "m... a... s... h"));
+				"who. when. where.", "who? when? where?", "aaa bbb ccc ddd",
+				"aaa+bbb-ccc{ddd]", "m*a*s*h", "m... a... s... h"));
 		assertSearch(
 			"Who?   When?   Where?",
-			Arrays.asList("who? when? where?", "who. when. where."));
+			Arrays.asList("who. when. where.", "who? when? where?"));
 		assertSearch(
 			"Wh?? W?en? Wher??",
-			Arrays.asList("who? when? where?", "who. when. where."));
+			Arrays.asList("who. when. where.", "who? when? where?"));
 		assertSearch(
 			"Wh* W*en* Wher*",
-			Arrays.asList("who? when? where?", "who. when. where."));
+			Arrays.asList("who. when. where.", "who? when? where?"));
 	}
 
 	@Override

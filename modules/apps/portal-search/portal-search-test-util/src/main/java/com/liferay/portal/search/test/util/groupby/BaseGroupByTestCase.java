@@ -613,7 +613,8 @@ public abstract class BaseGroupByTestCase extends BaseIndexingTestCase {
 			try {
 				addDocument(
 					DocumentCreationHelpers.twoKeywords(
-						field, name, SORT_FIELD, String.valueOf(i)));
+						field, new String[] {name}, SORT_FIELD,
+						new String[] {String.valueOf(i)}));
 			}
 			catch (RuntimeException re) {
 				throw re;

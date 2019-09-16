@@ -59,7 +59,8 @@ public class DocumentCreationHelpers {
 	}
 
 	public static DocumentCreationHelper twoKeywords(
-		String fieldName1, String value1, String fieldName2, String value2) {
+		String fieldName1, String[] value1, String fieldName2,
+		String[] value2) {
 
 		return document -> {
 			document.addKeyword(fieldName1, value1);
