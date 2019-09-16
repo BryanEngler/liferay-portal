@@ -20,6 +20,8 @@ import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.filter.TermFilter;
 import com.liferay.portal.search.analysis.FieldQueryBuilder;
+import com.liferay.portal.search.internal.sort.FieldSortImpl;
+import com.liferay.portal.search.internal.sort.ScoreSortImpl;
 import com.liferay.portal.search.test.util.DocumentsAssert;
 import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
 import com.liferay.portal.search.test.util.indexing.DocumentCreationHelpers;
@@ -43,7 +45,9 @@ public abstract class BaseFieldQueryBuilderTestCase
 			values = transformed;
 		}
 
-		addDocument(DocumentCreationHelpers.singleText(getField(), values));
+		addDocument(
+			DocumentCreationHelpers.twoKeywords(
+				getField(), values, _getSortField(), values));
 
 		String[] values2 = values;
 
@@ -95,6 +99,11 @@ public abstract class BaseFieldQueryBuilderTestCase
 		assertSearch(
 			indexingTestHelper -> {
 				prepareSearch(indexingTestHelper, keywords);
+
+				indexingTestHelper.defineRequest(
+					searchRequestBuilder -> searchRequestBuilder.sorts(
+						new ScoreSortImpl(),
+						new FieldSortImpl(_getSortField())));
 
 				indexingTestHelper.search();
 
@@ -170,6 +179,10 @@ public abstract class BaseFieldQueryBuilderTestCase
 					hits -> DocumentsAssert.assertCount(
 						keywords, hits.getDocs(), getField(), size));
 			});
+	}
+
+	private String _getSortField() {
+		return getField() + "_sortable";
 	}
 
 }

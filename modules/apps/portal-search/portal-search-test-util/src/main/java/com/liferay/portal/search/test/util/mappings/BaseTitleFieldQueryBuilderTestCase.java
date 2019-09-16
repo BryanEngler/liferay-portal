@@ -307,9 +307,9 @@ public abstract class BaseTitleFieldQueryBuilderTestCase
 
 		assertSearch(
 			"AAA+???-CCC?DDD]",
-			Arrays.asList("AAA+BBB-CCC{DDD]", "AAA BBB CCC DDD"));
+			Arrays.asList("AAA BBB CCC DDD", "AAA+BBB-CCC{DDD]"));
 		assertSearch(
-			"AAA+*{DDD*", Arrays.asList("AAA+BBB-CCC{DDD]", "AAA BBB CCC DDD"));
+			"AAA+*{DDD*", Arrays.asList("AAA BBB CCC DDD", "AAA+BBB-CCC{DDD]"));
 		assertSearch("AA?+BB?-CC?{DD?]", Arrays.asList());
 		assertSearch("AA*+BB*-CC*{DD*]", Arrays.asList());
 
@@ -319,19 +319,19 @@ public abstract class BaseTitleFieldQueryBuilderTestCase
 			"M* A* *S *H", Arrays.asList("M*A*S*H", "M... A... S... H"));
 
 		assertSearch(
-			"When?", Arrays.asList("Who? When? Where?", "Who. When. Where."));
+			"When?", Arrays.asList("Who. When. Where.", "Who? When? Where?"));
 		assertSearch(
 			"Who? When?",
-			Arrays.asList("Who? When? Where?", "Who. When. Where."));
+			Arrays.asList("Who. When. Where.", "Who? When? Where?"));
 		assertSearch(
 			"Who? *en? Where?",
-			Arrays.asList("Who? When? Where?", "Who. When. Where."));
+			Arrays.asList("Who. When. Where.", "Who? When? Where?"));
 		assertSearch(
 			"Who? * Where?",
-			Arrays.asList("Who? When? Where?", "Who. When. Where."));
+			Arrays.asList("Who. When. Where.", "Who? When? Where?"));
 		assertSearch(
 			"Who?   When?   Where?",
-			Arrays.asList("Who? When? Where?", "Who. When. Where."));
+			Arrays.asList("Who. When. Where.", "Who? When? Where?"));
 		assertSearch("Wh?? W?en? Wher??", Arrays.asList());
 		assertSearch("Wh* W*en* Wher*", Arrays.asList());
 	}
