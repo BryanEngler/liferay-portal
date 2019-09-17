@@ -129,6 +129,14 @@ public class SearchResultSummaryDisplayBuilder {
 		return this;
 	}
 
+	public SearchResultSummaryDisplayBuilder setCategoryParameter(
+		String categoryParameter) {
+
+		_categoryParameter = categoryParameter;
+
+		return this;
+	}
+
 	public SearchResultSummaryDisplayBuilder setCurrentURL(String currentURL) {
 		_currentURL = currentURL;
 
@@ -270,6 +278,14 @@ public class SearchResultSummaryDisplayBuilder {
 		return this;
 	}
 
+	public SearchResultSummaryDisplayBuilder setTagParameter(
+		String tagParameter) {
+
+		_tagParameter = tagParameter;
+
+		return this;
+	}
+
 	public SearchResultSummaryDisplayBuilder setThemeDisplay(
 		ThemeDisplay themeDisplay) {
 
@@ -362,8 +378,9 @@ public class SearchResultSummaryDisplayBuilder {
 			searchResultSummaryDisplayContext.setAssetCategoriesOrTagsVisible(
 				true);
 			searchResultSummaryDisplayContext.setFieldAssetCategoryIds(
-				"category");
-			searchResultSummaryDisplayContext.setFieldAssetTagNames("tag");
+				_categoryParameter);
+			searchResultSummaryDisplayContext.setFieldAssetTagNames(
+				_tagParameter);
 		}
 	}
 
@@ -901,6 +918,7 @@ public class SearchResultSummaryDisplayBuilder {
 	private boolean _abridged;
 	private AssetEntryLocalService _assetEntryLocalService;
 	private AssetRendererFactoryLookup _assetRendererFactoryLookup;
+	private String _categoryParameter;
 	private String _currentURL;
 	private Document _document;
 	private DocumentBuilderFactory _documentBuilderFactory;
@@ -921,6 +939,7 @@ public class SearchResultSummaryDisplayBuilder {
 	private SearchResultPreferences _searchResultPreferences;
 	private SearchResultViewURLSupplier _searchResultViewURLSupplier;
 	private SummaryBuilderFactory _summaryBuilderFactory;
+	private String _tagParameter;
 	private ThemeDisplay _themeDisplay;
 
 }
