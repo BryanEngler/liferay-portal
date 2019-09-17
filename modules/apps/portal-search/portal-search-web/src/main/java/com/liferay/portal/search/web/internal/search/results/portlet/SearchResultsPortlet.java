@@ -266,8 +266,8 @@ public class SearchResultsPortlet extends MVCPortlet {
 			SearchResultSummaryDisplayContext
 				searchResultSummaryDisplayContext = doBuildSummary(
 					document, renderRequest, renderResponse, themeDisplay,
-					portletURLFactory, searchResultsPortletPreferences,
-					searchResultPreferences);
+					portletURLFactory, searchResponse,
+					searchResultsPortletPreferences, searchResultPreferences);
 
 			if (searchResultSummaryDisplayContext != null) {
 				searchResultsSummariesHolder.put(
@@ -281,10 +281,18 @@ public class SearchResultsPortlet extends MVCPortlet {
 	protected SearchResultSummaryDisplayContext doBuildSummary(
 			Document document, RenderRequest renderRequest,
 			RenderResponse renderResponse, ThemeDisplay themeDisplay,
-			PortletURLFactory portletURLFactory,
+			PortletURLFactory portletURLFactory, SearchResponse searchResponse,
 			SearchResultsPortletPreferences searchResultsPortletPreferences,
 			SearchResultPreferences searchResultPreferences)
 		throws Exception {
+
+		String categoryParameter = searchResponse.withSearchContextGet(
+			searchContext -> (String)searchContext.getAttribute(
+				"categoryParameter"));
+
+		String tagParameter = searchResponse.withSearchContextGet(
+			searchContext -> (String)searchContext.getAttribute(
+				"tagParameter"));
 
 		SearchResultSummaryDisplayBuilder searchResultSummaryDisplayBuilder =
 			new SearchResultSummaryDisplayBuilder();
@@ -293,6 +301,8 @@ public class SearchResultsPortlet extends MVCPortlet {
 			assetEntryLocalService
 		).setAssetRendererFactoryLookup(
 			assetRendererFactoryLookup
+		).setCategoryParameter(
+			categoryParameter
 		).setCurrentURL(
 			getCurrentURL(renderRequest)
 		).setDocument(
@@ -327,6 +337,8 @@ public class SearchResultsPortlet extends MVCPortlet {
 			searchResultPreferences
 		).setSummaryBuilderFactory(
 			summaryBuilderFactory
+		).setTagParameter(
+			tagParameter
 		).setThemeDisplay(
 			themeDisplay
 		);

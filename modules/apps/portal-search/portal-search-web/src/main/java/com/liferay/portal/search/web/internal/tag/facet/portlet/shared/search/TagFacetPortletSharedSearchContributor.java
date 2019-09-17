@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.web.internal.tag.facet.portlet.shared.search;
 
+import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.search.facet.tag.TagFacetSearchContributor;
 import com.liferay.portal.search.web.internal.tag.facet.constants.TagFacetPortletKeys;
 import com.liferay.portal.search.web.internal.tag.facet.portlet.TagFacetPortletPreferences;
@@ -42,6 +43,12 @@ public class TagFacetPortletSharedSearchContributor
 		TagFacetPortletPreferences tagFacetPortletPreferences =
 			new TagFacetPortletPreferencesImpl(
 				portletSharedSearchSettings.getPortletPreferencesOptional());
+
+		SearchContext searchContext =
+			portletSharedSearchSettings.getSearchContext();
+
+		searchContext.setAttribute(
+			"tagParameter", tagFacetPortletPreferences.getParameterName());
 
 		tagFacetSearchContributor.contribute(
 			portletSharedSearchSettings.getSearchRequestBuilder(),

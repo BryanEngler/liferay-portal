@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.web.internal.category.facet.portlet.shared.search;
 
+import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -47,6 +48,13 @@ public class CategoryFacetPortletSharedSearchContributor
 		CategoryFacetPortletPreferences categoryFacetPortletPreferences =
 			new CategoryFacetPortletPreferencesImpl(
 				portletSharedSearchSettings.getPortletPreferencesOptional());
+
+		SearchContext searchContext =
+			portletSharedSearchSettings.getSearchContext();
+
+		searchContext.setAttribute(
+			"categoryParameter",
+			categoryFacetPortletPreferences.getParameterName());
 
 		categoryFacetSearchContributor.contribute(
 			portletSharedSearchSettings.getSearchRequestBuilder(),
