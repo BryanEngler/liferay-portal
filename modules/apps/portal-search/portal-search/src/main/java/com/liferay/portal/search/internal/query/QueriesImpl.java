@@ -103,6 +103,13 @@ public class QueriesImpl implements Queries {
 
 	@Override
 	public MoreLikeThisQuery.DocumentIdentifier documentIdentifier(
+		String index, String id) {
+
+		return new MoreLikeThisQueryImpl.DocumentIdentifierImpl(index, id);
+	}
+
+	@Override
+	public MoreLikeThisQuery.DocumentIdentifier documentIdentifier(
 		String index, String type, String id) {
 
 		return new MoreLikeThisQueryImpl.DocumentIdentifierImpl(
@@ -161,6 +168,11 @@ public class QueriesImpl implements Queries {
 	@Override
 	public GeoShapeQuery geoShape(String field, Shape shape) {
 		return new GeoShapeQueryImpl(field, shape);
+	}
+
+	@Override
+	public GeoShapeQuery geoShape(String field, String indexedShapeId) {
+		return new GeoShapeQueryImpl(field, indexedShapeId);
 	}
 
 	@Override
