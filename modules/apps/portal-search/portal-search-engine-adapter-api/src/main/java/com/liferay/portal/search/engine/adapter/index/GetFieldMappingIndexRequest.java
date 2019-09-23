@@ -20,11 +20,22 @@ package com.liferay.portal.search.engine.adapter.index;
 public class GetFieldMappingIndexRequest
 	implements IndexRequest<GetFieldMappingIndexResponse> {
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
+	 *             #GetFieldMappingIndexRequest(String[], String[])}
+	 */
+	@Deprecated
 	public GetFieldMappingIndexRequest(
 		String[] indexNames, String mappingName, String[] fields) {
 
 		_indexNames = indexNames;
 		_mappingName = mappingName;
+		_fields = fields;
+	}
+
+	public GetFieldMappingIndexRequest(String[] indexNames, String[] fields) {
+		_indexNames = indexNames;
+		_mappingName = null;
 		_fields = fields;
 	}
 
@@ -44,6 +55,10 @@ public class GetFieldMappingIndexRequest
 		return _indexNames;
 	}
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	@Override
 	public String getMappingName() {
 		return _mappingName;

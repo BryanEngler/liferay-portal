@@ -20,6 +20,17 @@ package com.liferay.portal.search.engine.adapter.index;
 public class PutMappingIndexRequest
 	implements IndexRequest<PutMappingIndexResponse> {
 
+	public PutMappingIndexRequest(String[] indexNames, String mapping) {
+		_indexNames = indexNames;
+		_mappingName = null;
+		_mapping = mapping;
+	}
+
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
+	 *             #PutMappingIndexRequest(String[], String)}
+	 */
+	@Deprecated
 	public PutMappingIndexRequest(
 		String[] indexNames, String mappingName, String mapping) {
 
@@ -44,6 +55,10 @@ public class PutMappingIndexRequest
 		return _mapping;
 	}
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	@Override
 	public String getMappingName() {
 		return _mappingName;

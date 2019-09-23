@@ -60,6 +60,10 @@ public class GetDocumentRequest
 		return _storedFields;
 	}
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	public String getType() {
 		return _type;
 	}
@@ -92,6 +96,10 @@ public class GetDocumentRequest
 		_storedFields = storedFields;
 	}
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	public void setType(String type) {
 		_type = type;
 	}

@@ -135,6 +135,10 @@ public abstract class BaseSearchRequest {
 		return _trackTotalHits;
 	}
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	public String[] getTypes() {
 		return _types;
 	}
@@ -244,6 +248,10 @@ public abstract class BaseSearchRequest {
 		_trackTotalHits = trackTotalHits;
 	}
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	public void setTypes(String... types) {
 		_types = types;
 	}
