@@ -26,10 +26,18 @@ public interface IdsQuery extends Query {
 
 	public void addIds(String... ids);
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	public void addTypes(String... types);
 
 	public Set<String> getIds();
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	public Set<String> getTypes();
 
 }
