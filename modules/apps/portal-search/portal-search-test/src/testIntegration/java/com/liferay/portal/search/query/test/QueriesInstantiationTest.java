@@ -18,6 +18,7 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.search.geolocation.GeoDistance;
 import com.liferay.portal.search.geolocation.GeoLocationPoint;
+import com.liferay.portal.search.geolocation.Shape;
 import com.liferay.portal.search.query.BooleanQuery;
 import com.liferay.portal.search.query.BoostingQuery;
 import com.liferay.portal.search.query.CommonTermsQuery;
@@ -135,9 +136,17 @@ public class QueriesInstantiationTest {
 	}
 
 	@Test
-	public void testDocumentIdentifier() {
+	public void testDocumentIdentifier1() {
 		MoreLikeThisQuery.DocumentIdentifier documentIdentifier =
 			_queries.documentIdentifier("index", "type", "id");
+
+		Assert.assertNotNull(documentIdentifier);
+	}
+
+	@Test
+	public void testDocumentIdentifier2() {
+		MoreLikeThisQuery.DocumentIdentifier documentIdentifier =
+			_queries.documentIdentifier("index", "id");
 
 		Assert.assertNotNull(documentIdentifier);
 	}
@@ -211,11 +220,18 @@ public class QueriesInstantiationTest {
 
 	@Test
 	public void testGeoShapeQuery1() {
-		Assert.assertNotNull(_queries.geoShape("field", null));
+		Shape shape = null;
+
+		Assert.assertNotNull(_queries.geoShape("field", shape));
 	}
 
 	@Test
 	public void testGeoShapeQuery2() {
+		Assert.assertNotNull(_queries.geoShape("field", "indexedShapeId"));
+	}
+
+	@Test
+	public void testGeoShapeQuery3() {
 		GeoShapeQuery geoShapeQuery = _queries.geoShape(
 			"field", "indexedShapeId", "indexedShapeType");
 
