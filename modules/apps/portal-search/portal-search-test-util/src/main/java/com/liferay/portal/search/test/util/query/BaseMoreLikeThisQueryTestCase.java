@@ -69,8 +69,7 @@ public abstract class BaseMoreLikeThisQueryTestCase
 				"java eclipse", "eclipse liferay", "java liferay eclipse");
 
 			MoreLikeThisQuery.DocumentIdentifier documentIdentifier =
-				queries.documentIdentifier(
-					String.valueOf(getCompanyId()), "LiferayDocumentType", id);
+				queries.documentIdentifier(String.valueOf(getCompanyId()), id);
 
 			MoreLikeThisQuery moreLikeThisQuery = queries.moreLikeThis(
 				Collections.singleton(documentIdentifier));
@@ -216,7 +215,7 @@ public abstract class BaseMoreLikeThisQueryTestCase
 		SearchEngineAdapter searchEngineAdapter = getSearchEngineAdapter();
 
 		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest(
-			String.valueOf(getCompanyId()), "LiferayDocumentType", id);
+			String.valueOf(getCompanyId()), id);
 
 		searchEngineAdapter.execute(deleteDocumentRequest);
 	}
@@ -232,8 +231,6 @@ public abstract class BaseMoreLikeThisQueryTestCase
 
 		IndexDocumentRequest indexDocumentRequest = new IndexDocumentRequest(
 			String.valueOf(getCompanyId()), document);
-
-		indexDocumentRequest.setType("LiferayDocumentType");
 
 		IndexDocumentResponse indexDocumentResponse =
 			searchEngineAdapter.execute(indexDocumentRequest);
