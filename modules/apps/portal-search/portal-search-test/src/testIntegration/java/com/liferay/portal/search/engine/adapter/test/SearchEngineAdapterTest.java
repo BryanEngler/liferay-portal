@@ -163,9 +163,7 @@ public class SearchEngineAdapterTest {
 			else {
 				Assert.assertTrue(
 					message,
-					message.startsWith(
-						"org.elasticsearch.index.IndexNotFoundException: [" +
-							index + "] IndexNotFoundException[no such index"));
+					message.contains("reason=no such index [" + index + "]"));
 			}
 		}
 	}
@@ -226,6 +224,7 @@ public class SearchEngineAdapterTest {
 		GetDocumentRequest getDocumentRequest = new GetDocumentRequest(
 			getIndexName(), uid);
 
+		getDocumentRequest.setFetchSource(true);
 		getDocumentRequest.setRefresh(true);
 
 		GetDocumentResponse getDocumentResponse = _searchEngineAdapter.execute(
