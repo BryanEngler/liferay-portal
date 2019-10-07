@@ -23,11 +23,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsRequest;
-import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.GetFieldMappingsRequest;
+import org.elasticsearch.client.indices.GetFieldMappingsResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -51,25 +51,16 @@ public class GetFieldMappingIndexRequestExecutorImpl
 		GetFieldMappingsResponse getFieldMappingsResponse =
 			getGetFieldMappingsResponse(getFieldMappingsRequest);
 
-		Map
-			<String,
-			 Map
-				 <String,
-				  Map<String, GetFieldMappingsResponse.FieldMappingMetaData>>>
-					mappings = getFieldMappingsResponse.mappings();
+		Map<String, Map<String, GetFieldMappingsResponse.FieldMappingMetaData>>
+			mappings = getFieldMappingsResponse.mappings();
 
 		Map<String, String> fieldMappings = new HashMap<>();
 
 		for (String indexName : getFieldMappingIndexRequest.getIndexNames()) {
-			Map
-				<String,
-				 Map<String, GetFieldMappingsResponse.FieldMappingMetaData>>
-					map1 = mappings.get(indexName);
+			Map<String, GetFieldMappingsResponse.FieldMappingMetaData> map =
+				mappings.get(indexName);
 
-			Map<String, GetFieldMappingsResponse.FieldMappingMetaData> map2 =
-				map1.get(getFieldMappingIndexRequest.getMappingName());
-
-			fieldMappings.put(indexName, map2.toString());
+			fieldMappings.put(indexName, map.toString());
 		}
 
 		return new GetFieldMappingIndexResponse(fieldMappings);
@@ -84,8 +75,6 @@ public class GetFieldMappingIndexRequestExecutorImpl
 		getFieldMappingsRequest.fields(getFieldMappingIndexRequest.getFields());
 		getFieldMappingsRequest.indices(
 			getFieldMappingIndexRequest.getIndexNames());
-		getFieldMappingsRequest.types(
-			getFieldMappingIndexRequest.getMappingName());
 
 		return getFieldMappingsRequest;
 	}

@@ -56,7 +56,6 @@ public class ElasticsearchBulkableDocumentRequestTranslator
 
 		deleteRequest.id(deleteDocumentRequest.getUid());
 		deleteRequest.index(deleteDocumentRequest.getIndexName());
-		deleteRequest.type(deleteDocumentRequest.getType());
 
 		return deleteRequest;
 	}
@@ -76,7 +75,6 @@ public class ElasticsearchBulkableDocumentRequestTranslator
 		getRequest.index(getDocumentRequest.getIndexName());
 		getRequest.refresh(getDocumentRequest.isRefresh());
 		getRequest.storedFields(getDocumentRequest.getStoredFields());
-		getRequest.type(_getType(getDocumentRequest.getType()));
 
 		return getRequest;
 	}
@@ -90,7 +88,6 @@ public class ElasticsearchBulkableDocumentRequestTranslator
 
 		indexRequest.id(_getUid(indexDocumentRequest));
 		indexRequest.index(indexDocumentRequest.getIndexName());
-		indexRequest.type(_getType(indexDocumentRequest.getType()));
 
 		return indexRequest;
 	}
@@ -106,7 +103,6 @@ public class ElasticsearchBulkableDocumentRequestTranslator
 
 		updateRequest.id(_getUid(updateDocumentRequest));
 		updateRequest.index(updateDocumentRequest.getIndexName());
-		updateRequest.type(_getType(updateDocumentRequest.getType()));
 
 		return updateRequest;
 	}
@@ -116,14 +112,6 @@ public class ElasticsearchBulkableDocumentRequestTranslator
 		ElasticsearchDocumentFactory elasticsearchDocumentFactory) {
 
 		_elasticsearchDocumentFactory = elasticsearchDocumentFactory;
-	}
-
-	private String _getType(String type) {
-		if (type != null) {
-			return type;
-		}
-
-		return "_doc";
 	}
 
 	private String _getUid(IndexDocumentRequest indexDocumentRequest) {

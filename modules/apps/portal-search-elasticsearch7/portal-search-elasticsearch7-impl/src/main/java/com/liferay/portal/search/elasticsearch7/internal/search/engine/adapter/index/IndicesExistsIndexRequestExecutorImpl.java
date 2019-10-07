@@ -20,10 +20,10 @@ import com.liferay.portal.search.engine.adapter.index.IndicesExistsIndexResponse
 
 import java.io.IOException;
 
-import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.GetIndexRequest;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -46,11 +46,7 @@ public class IndicesExistsIndexRequestExecutorImpl
 	protected GetIndexRequest createGetIndexRequest(
 		IndicesExistsIndexRequest indicesExistsIndexRequest) {
 
-		GetIndexRequest getIndexRequest = new GetIndexRequest();
-
-		getIndexRequest.indices(indicesExistsIndexRequest.getIndexNames());
-
-		return getIndexRequest;
+		return new GetIndexRequest(indicesExistsIndexRequest.getIndexNames());
 	}
 
 	protected boolean indicesExists(GetIndexRequest getIndexRequest) {

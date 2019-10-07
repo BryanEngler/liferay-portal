@@ -32,14 +32,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.elasticsearch.action.ActionResponse;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
-import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequest;
-import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse;
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.indices.CreateIndexRequest;
+import org.elasticsearch.client.indices.GetMappingsRequest;
+import org.elasticsearch.client.indices.GetMappingsResponse;
+import org.elasticsearch.client.indices.PutMappingRequest;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
-import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.compress.CompressedXContent;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentType;
@@ -47,9 +46,9 @@ import org.elasticsearch.common.xcontent.XContentType;
 /**
  * @author André de Oliveira
  */
-public class LiferayDocumentTypeFactory implements TypeMappingsHelper {
+public class LiferayTypeMappingsFactory implements TypeMappingsHelper {
 
-	public LiferayDocumentTypeFactory(
+	public LiferayTypeMappingsFactory(
 		IndicesClient indicesClient, JSONFactory jsonFactory) {
 
 		_indicesClient = indicesClient;
@@ -61,12 +60,7 @@ public class LiferayDocumentTypeFactory implements TypeMappingsHelper {
 		PutMappingRequest putMappingRequest = new PutMappingRequest(indexName);
 
 		putMappingRequest.source(
-			mergeDynamicTemplates(
-				source, indexName,
-				LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE),
-			XContentType.JSON);
-		putMappingRequest.type(
-			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE);
+			mergeDynamicTemplates(source, indexName), XContentType.JSON);
 
 		try {
 			ActionResponse actionResponse = _indicesClient.putMapping(
@@ -79,18 +73,15 @@ public class LiferayDocumentTypeFactory implements TypeMappingsHelper {
 		}
 	}
 
-	public void createLiferayDocumentTypeMappings(
+	public void createLiferayIndexTypeMappings(
 		CreateIndexRequest createIndexRequest, String mappings) {
 
-		createIndexRequest.mapping(
-			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE, mappings,
-			XContentType.JSON);
+		createIndexRequest.mapping(mappings, XContentType.JSON);
 	}
 
 	public void createOptionalDefaultTypeMappings(String indexName) {
 		String name = StringUtil.replace(
-			LiferayTypeMappingsConstants.
-				LIFERAY_DOCUMENT_TYPE_MAPPING_FILE_NAME,
+			LiferayTypeMappingsConstants.LIFERAY_TYPE_MAPPINGS_FILE_NAME,
 			".json", "-optional-defaults.json");
 
 		String optionalDefaultTypeMappings = ResourceUtil.getResourceAsString(
@@ -113,10 +104,9 @@ public class LiferayDocumentTypeFactory implements TypeMappingsHelper {
 
 		String requiredDefaultMappings = ResourceUtil.getResourceAsString(
 			getClass(),
-			LiferayTypeMappingsConstants.
-				LIFERAY_DOCUMENT_TYPE_MAPPING_FILE_NAME);
+			LiferayTypeMappingsConstants.LIFERAY_TYPE_MAPPINGS_FILE_NAME);
 
-		createLiferayDocumentTypeMappings(
+		createLiferayIndexTypeMappings(
 			createIndexRequest, requiredDefaultMappings);
 	}
 
@@ -129,11 +119,10 @@ public class LiferayDocumentTypeFactory implements TypeMappingsHelper {
 		}
 	}
 
-	protected String getMappings(String indexName, String typeName) {
+	protected String getMappings(String indexName) {
 		GetMappingsRequest getMappingsRequest = new GetMappingsRequest();
 
 		getMappingsRequest.indices(indexName);
-		getMappingsRequest.types(typeName);
 
 		GetMappingsResponse getMappingsResponse = null;
 
@@ -145,12 +134,9 @@ public class LiferayDocumentTypeFactory implements TypeMappingsHelper {
 			throw new RuntimeException(ioe);
 		}
 
-		ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>>
-			map = getMappingsResponse.mappings();
+		Map<String, MappingMetaData> mappings = getMappingsResponse.mappings();
 
-		ImmutableOpenMap<String, MappingMetaData> mappings = map.get(indexName);
-
-		MappingMetaData mappingMetaData = mappings.get(typeName);
+		MappingMetaData mappingMetaData = mappings.get(indexName);
 
 		CompressedXContent compressedXContent = mappingMetaData.source();
 
@@ -171,40 +157,25 @@ public class LiferayDocumentTypeFactory implements TypeMappingsHelper {
 		return jsonArray3;
 	}
 
-	protected String mergeDynamicTemplates(
-		String source, String indexName, String typeName) {
-
+	protected String mergeDynamicTemplates(String source, String indexName) {
 		JSONObject sourceJSONObject = createJSONObject(source);
 
-		JSONObject sourceTypeJSONObject = sourceJSONObject;
+		JSONArray sourceDynamicTemplatesJSONArray =
+			sourceJSONObject.getJSONArray("dynamic_templates");
 
-		if (sourceJSONObject.has(typeName)) {
-			sourceTypeJSONObject = sourceJSONObject.getJSONObject(typeName);
-		}
-
-		JSONArray sourceTypeTemplatesJSONArray =
-			sourceTypeJSONObject.getJSONArray("dynamic_templates");
-
-		if (sourceTypeTemplatesJSONArray == null) {
+		if (sourceDynamicTemplatesJSONArray == null) {
 			return sourceJSONObject.toString();
 		}
 
-		String mappings = getMappings(indexName, typeName);
+		JSONObject mappingsJSONObject = createJSONObject(
+			getMappings(indexName));
 
-		JSONObject mappingsJSONObject = createJSONObject(mappings);
-
-		JSONObject mappingsTypeJSONObject = mappingsJSONObject;
-
-		if (mappingsJSONObject.has(typeName)) {
-			mappingsTypeJSONObject = mappingsJSONObject.getJSONObject(typeName);
-		}
-
-		JSONArray typeTemplatesJSONArray = mappingsTypeJSONObject.getJSONArray(
+		JSONArray dynamicTemplatesJSONArray = mappingsJSONObject.getJSONArray(
 			"dynamic_templates");
 
-		sourceTypeJSONObject.put(
+		sourceJSONObject.put(
 			"dynamic_templates",
-			merge(typeTemplatesJSONArray, sourceTypeTemplatesJSONArray));
+			merge(dynamicTemplatesJSONArray, sourceDynamicTemplatesJSONArray));
 
 		return sourceJSONObject.toString();
 	}
@@ -222,7 +193,7 @@ public class LiferayDocumentTypeFactory implements TypeMappingsHelper {
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		LiferayDocumentTypeFactory.class);
+		LiferayTypeMappingsFactory.class);
 
 	private final IndicesClient _indicesClient;
 	private final JSONFactory _jsonFactory;

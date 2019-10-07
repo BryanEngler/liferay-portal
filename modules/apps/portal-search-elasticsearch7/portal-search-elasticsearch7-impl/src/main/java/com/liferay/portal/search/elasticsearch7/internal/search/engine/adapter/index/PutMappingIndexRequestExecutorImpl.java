@@ -20,11 +20,11 @@ import com.liferay.portal.search.engine.adapter.index.PutMappingIndexResponse;
 
 import java.io.IOException;
 
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.PutMappingRequest;
 import org.elasticsearch.common.xcontent.XContentType;
 
 import org.osgi.service.component.annotations.Component;

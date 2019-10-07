@@ -35,11 +35,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.elasticsearch.action.ActionResponse;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.indices.CreateIndexRequest;
+import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentType;
 
@@ -123,16 +123,16 @@ public class CompanyIndexFactory implements IndexFactory {
 		_indexSettingsContributors.add(indexSettingsContributor);
 	}
 
-	protected void addLiferayDocumentTypeMappings(
+	protected void addLiferayIndexTypeMappings(
 		CreateIndexRequest createIndexRequest,
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
+		LiferayTypeMappingsFactory liferayTypeMappingsFactory) {
 
 		if (Validator.isNotNull(_overrideTypeMappings)) {
-			liferayDocumentTypeFactory.createLiferayDocumentTypeMappings(
+			liferayTypeMappingsFactory.createLiferayIndexTypeMappings(
 				createIndexRequest, _overrideTypeMappings);
 		}
 		else {
-			liferayDocumentTypeFactory.createRequiredDefaultTypeMappings(
+			liferayTypeMappingsFactory.createRequiredDefaultTypeMappings(
 				createIndexRequest);
 		}
 	}
@@ -141,13 +141,13 @@ public class CompanyIndexFactory implements IndexFactory {
 		CreateIndexRequest createIndexRequest = new CreateIndexRequest(
 			indexName);
 
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory =
-			new LiferayDocumentTypeFactory(indicesClient, jsonFactory);
+		LiferayTypeMappingsFactory liferayTypeMappingsFactory =
+			new LiferayTypeMappingsFactory(indicesClient, jsonFactory);
 
-		setSettings(createIndexRequest, liferayDocumentTypeFactory);
+		setSettings(createIndexRequest, liferayTypeMappingsFactory);
 
-		addLiferayDocumentTypeMappings(
-			createIndexRequest, liferayDocumentTypeFactory);
+		addLiferayIndexTypeMappings(
+			createIndexRequest, liferayTypeMappingsFactory);
 
 		try {
 			ActionResponse actionResponse = indicesClient.create(
@@ -159,7 +159,7 @@ public class CompanyIndexFactory implements IndexFactory {
 			throw new RuntimeException(ioe);
 		}
 
-		updateLiferayDocumentType(indexName, liferayDocumentTypeFactory);
+		updateLiferayIndexTypeMappings(indexName, liferayTypeMappingsFactory);
 	}
 
 	protected String getIndexName(long companyId) {
@@ -167,9 +167,7 @@ public class CompanyIndexFactory implements IndexFactory {
 	}
 
 	protected boolean hasIndex(IndicesClient indicesClient, String indexName) {
-		GetIndexRequest getIndexRequest = new GetIndexRequest();
-
-		getIndexRequest.indices(indexName);
+		GetIndexRequest getIndexRequest = new GetIndexRequest(indexName);
 
 		try {
 			return indicesClient.exists(
@@ -188,13 +186,13 @@ public class CompanyIndexFactory implements IndexFactory {
 
 	protected void loadAdditionalTypeMappings(
 		String indexName,
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
+		LiferayTypeMappingsFactory liferayTypeMappingsFactory) {
 
 		if (Validator.isNull(_additionalTypeMappings)) {
 			return;
 		}
 
-		liferayDocumentTypeFactory.addTypeMappings(
+		liferayTypeMappingsFactory.addTypeMappings(
 			indexName, _additionalTypeMappings);
 	}
 
@@ -244,13 +242,13 @@ public class CompanyIndexFactory implements IndexFactory {
 
 	protected void loadTypeMappingsContributors(
 		String indexName,
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
+		LiferayTypeMappingsFactory liferayTypeMappingsFactory) {
 
 		for (IndexSettingsContributor indexSettingsContributor :
 				_indexSettingsContributors) {
 
 			indexSettingsContributor.contribute(
-				indexName, liferayDocumentTypeFactory);
+				indexName, liferayTypeMappingsFactory);
 		}
 	}
 
@@ -284,11 +282,11 @@ public class CompanyIndexFactory implements IndexFactory {
 
 	protected void setSettings(
 		CreateIndexRequest createIndexRequest,
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
+		LiferayTypeMappingsFactory liferayTypeMappingsFactory) {
 
 		Settings.Builder builder = Settings.builder();
 
-		liferayDocumentTypeFactory.createRequiredDefaultAnalyzers(builder);
+		liferayTypeMappingsFactory.createRequiredDefaultAnalyzers(builder);
 
 		SettingsBuilder settingsBuilder = new SettingsBuilder(builder);
 
@@ -305,19 +303,19 @@ public class CompanyIndexFactory implements IndexFactory {
 		createIndexRequest.settings(builder);
 	}
 
-	protected void updateLiferayDocumentType(
+	protected void updateLiferayIndexTypeMappings(
 		String indexName,
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
+		LiferayTypeMappingsFactory liferayTypeMappingsFactory) {
 
 		if (Validator.isNotNull(_overrideTypeMappings)) {
 			return;
 		}
 
-		loadAdditionalTypeMappings(indexName, liferayDocumentTypeFactory);
+		loadAdditionalTypeMappings(indexName, liferayTypeMappingsFactory);
 
-		loadTypeMappingsContributors(indexName, liferayDocumentTypeFactory);
+		loadTypeMappingsContributors(indexName, liferayTypeMappingsFactory);
 
-		liferayDocumentTypeFactory.createOptionalDefaultTypeMappings(indexName);
+		liferayTypeMappingsFactory.createOptionalDefaultTypeMappings(indexName);
 	}
 
 	@Reference

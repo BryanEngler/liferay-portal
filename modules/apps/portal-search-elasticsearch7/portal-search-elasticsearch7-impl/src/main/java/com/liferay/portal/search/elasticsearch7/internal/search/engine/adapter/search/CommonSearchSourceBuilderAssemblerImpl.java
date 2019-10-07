@@ -79,7 +79,6 @@ public class CommonSearchSourceBuilderAssemblerImpl
 		setStatsRequests(searchSourceBuilder, baseSearchRequest);
 		setTimeout(searchSourceBuilder, baseSearchRequest);
 		setTrackTotalHits(searchSourceBuilder, baseSearchRequest);
-		setTypes(searchRequest, baseSearchRequest);
 
 		searchRequest.source(searchSourceBuilder);
 	}
@@ -395,14 +394,6 @@ public class CommonSearchSourceBuilderAssemblerImpl
 		if (baseSearchRequest.getTrackTotalHits() != null) {
 			searchSourceBuilder.trackTotalHits(
 				baseSearchRequest.getTrackTotalHits());
-		}
-	}
-
-	protected void setTypes(
-		SearchRequest searchRequest, BaseSearchRequest baseSearchRequest) {
-
-		if (baseSearchRequest.getTypes() != null) {
-			searchRequest.types(baseSearchRequest.getTypes());
 		}
 	}
 

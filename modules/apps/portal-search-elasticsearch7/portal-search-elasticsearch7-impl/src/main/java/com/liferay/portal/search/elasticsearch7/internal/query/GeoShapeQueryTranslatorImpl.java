@@ -100,8 +100,8 @@ public class GeoShapeQueryTranslatorImpl implements GeoShapeQueryTranslator {
 		if (geoShapeQuery.getIndexedShapeId() != null) {
 			GeoShapeQueryBuilder geoShapeQueryBuilder =
 				QueryBuilders.geoShapeQuery(
-					geoShapeQuery.getField(), geoShapeQuery.getIndexedShapeId(),
-					geoShapeQuery.getIndexedShapeType());
+					geoShapeQuery.getField(),
+					geoShapeQuery.getIndexedShapeId());
 
 			if (geoShapeQuery.getIndexedShapeIndex() != null) {
 				geoShapeQueryBuilder.indexedShapeIndex(

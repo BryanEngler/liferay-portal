@@ -23,13 +23,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequest;
-import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse;
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.GetMappingsRequest;
+import org.elasticsearch.client.indices.GetMappingsResponse;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
-import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.compress.CompressedXContent;
 
 import org.osgi.service.component.annotations.Component;
@@ -52,17 +51,12 @@ public class GetMappingIndexRequestExecutorImpl
 		GetMappingsResponse getMappingsResponse = getGetMappingsResponse(
 			getMappingsRequest);
 
-		ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>>
-			mappings = getMappingsResponse.mappings();
+		Map<String, MappingMetaData> mappings = getMappingsResponse.mappings();
 
 		Map<String, String> indexMappings = new HashMap<>();
 
 		for (String indexName : getMappingIndexRequest.getIndexNames()) {
-			ImmutableOpenMap<String, MappingMetaData> indexMapping =
-				mappings.get(indexName);
-
-			MappingMetaData mappingMetaData = indexMapping.get(
-				getMappingIndexRequest.getMappingName());
+			MappingMetaData mappingMetaData = mappings.get(indexName);
 
 			CompressedXContent mappingContent = mappingMetaData.source();
 
@@ -78,7 +72,6 @@ public class GetMappingIndexRequestExecutorImpl
 		GetMappingsRequest getMappingsRequest = new GetMappingsRequest();
 
 		getMappingsRequest.indices(getMappingIndexRequest.getIndexNames());
-		getMappingsRequest.types(getMappingIndexRequest.getMappingName());
 
 		return getMappingsRequest;
 	}

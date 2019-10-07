@@ -16,19 +16,23 @@ package com.liferay.portal.search.elasticsearch7.internal.index;
 
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
+import com.liferay.portal.search.elasticsearch7.internal.util.JSONUtil;
 import com.liferay.portal.search.index.IndexInformation;
 import com.liferay.portal.search.index.IndexNameBuilder;
 
 import java.io.IOException;
 
-import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
-import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
-import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequest;
-import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse;
+import java.util.Map;
+
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.Strings;
+import org.elasticsearch.client.indices.GetIndexRequest;
+import org.elasticsearch.client.indices.GetIndexResponse;
+import org.elasticsearch.client.indices.GetMappingsRequest;
+import org.elasticsearch.client.indices.GetMappingsResponse;
+import org.elasticsearch.cluster.metadata.MappingMetaData;
+import org.elasticsearch.common.compress.CompressedXContent;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -53,14 +57,18 @@ public class ElasticsearchIndexInformation implements IndexInformation {
 		GetMappingsResponse getMappingsResponse = getMappingsResponse(
 			getMappingsRequest);
 
-		return Strings.toString(getMappingsResponse, true, true);
+		Map<String, MappingMetaData> mappings = getMappingsResponse.mappings();
+
+		MappingMetaData mappingMetaData = mappings.get(indexName);
+
+		CompressedXContent compressedXContent = mappingMetaData.source();
+
+		return JSONUtil.getPrettyPrintedJSONString(compressedXContent);
 	}
 
 	@Override
 	public String[] getIndexNames() {
-		GetIndexRequest getIndexRequest = new GetIndexRequest();
-
-		getIndexRequest.indices(StringPool.STAR);
+		GetIndexRequest getIndexRequest = new GetIndexRequest(StringPool.STAR);
 
 		GetIndexResponse getIndexResponse = getIndexResponse(getIndexRequest);
 
