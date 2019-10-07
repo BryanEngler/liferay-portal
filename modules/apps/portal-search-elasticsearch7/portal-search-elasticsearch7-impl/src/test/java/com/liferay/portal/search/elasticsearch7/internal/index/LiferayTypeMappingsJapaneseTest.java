@@ -38,8 +38,7 @@ public class LiferayTypeMappingsJapaneseTest {
 		_liferayIndexFixture.setUp();
 
 		_singleFieldFixture = new SingleFieldFixture(
-			_liferayIndexFixture.getRestHighLevelClient(), indexName,
-			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE);
+			_liferayIndexFixture.getRestHighLevelClient(), indexName);
 
 		_singleFieldFixture.setField(_PREFIX + "_ja");
 		_singleFieldFixture.setQueryBuilderFactory(QueryBuilderFactories.MATCH);

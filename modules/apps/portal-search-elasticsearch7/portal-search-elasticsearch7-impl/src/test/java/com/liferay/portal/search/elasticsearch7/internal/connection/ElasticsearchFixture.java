@@ -37,12 +37,12 @@ import org.apache.commons.io.FileUtils;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
-import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
 import org.elasticsearch.client.ClusterClient;
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.GetIndexRequest;
+import org.elasticsearch.client.indices.GetIndexResponse;
 import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.common.unit.TimeValue;
 
@@ -132,9 +132,7 @@ public class ElasticsearchFixture implements ElasticsearchClientResolver {
 
 		IndicesClient indicesClient = restHighLevelClient.indices();
 
-		GetIndexRequest getIndexRequest = new GetIndexRequest();
-
-		getIndexRequest.indices(indices);
+		GetIndexRequest getIndexRequest = new GetIndexRequest(indices);
 
 		try {
 			return indicesClient.get(getIndexRequest, RequestOptions.DEFAULT);

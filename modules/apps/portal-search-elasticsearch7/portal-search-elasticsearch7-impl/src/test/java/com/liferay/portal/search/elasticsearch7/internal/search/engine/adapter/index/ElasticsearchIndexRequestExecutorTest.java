@@ -50,7 +50,7 @@ public class ElasticsearchIndexRequestExecutorTest {
 	@Test
 	public void testExecuteGetFieldMappingIndexRequest() {
 		GetFieldMappingIndexRequest getFieldMappingIndexRequest =
-			new GetFieldMappingIndexRequest(null, null, null);
+			new GetFieldMappingIndexRequest(null, null);
 
 		_elasticsearchIndexRequestExecutor.executeIndexRequest(
 			getFieldMappingIndexRequest);
@@ -65,7 +65,7 @@ public class ElasticsearchIndexRequestExecutorTest {
 	@Test
 	public void testExecuteGetMappingIndexRequest() {
 		GetMappingIndexRequest getMappingIndexRequest =
-			new GetMappingIndexRequest(null, null);
+			new GetMappingIndexRequest(null);
 
 		_elasticsearchIndexRequestExecutor.executeIndexRequest(
 			getMappingIndexRequest);
@@ -80,7 +80,7 @@ public class ElasticsearchIndexRequestExecutorTest {
 	@Test
 	public void testExecutePutMappingIndexRequest() {
 		PutMappingIndexRequest putMappingIndexRequest =
-			new PutMappingIndexRequest(null, null, null);
+			new PutMappingIndexRequest(null, null);
 
 		_elasticsearchIndexRequestExecutor.executeIndexRequest(
 			putMappingIndexRequest);

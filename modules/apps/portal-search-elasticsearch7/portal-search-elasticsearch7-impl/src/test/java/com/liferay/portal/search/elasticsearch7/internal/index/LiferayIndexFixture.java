@@ -41,16 +41,14 @@ public class LiferayIndexFixture {
 		RestHighLevelClient restHighLevelClient = getRestHighLevelClient();
 
 		FieldMappingAssert.assertAnalyzer(
-			analyzer, field, LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE,
-			_index.getName(), restHighLevelClient.indices());
+			analyzer, field, _index.getName(), restHighLevelClient.indices());
 	}
 
 	public void assertType(String field, String type) throws Exception {
 		RestHighLevelClient restHighLevelClient = getRestHighLevelClient();
 
 		FieldMappingAssert.assertType(
-			type, field, LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE,
-			_index.getName(), restHighLevelClient.indices());
+			type, field, _index.getName(), restHighLevelClient.indices());
 	}
 
 	public Index getIndex() {
@@ -98,9 +96,7 @@ public class LiferayIndexFixture {
 	}
 
 	protected IndexRequest getIndexRequest() {
-		return new IndexRequest(
-			_index.getName(),
-			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE);
+		return new IndexRequest(_index.getName());
 	}
 
 	private final ElasticsearchFixture _elasticsearchFixture;

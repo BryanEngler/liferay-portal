@@ -31,11 +31,11 @@ import java.io.IOException;
 
 import java.util.Arrays;
 
-import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
-import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.GetIndexRequest;
+import org.elasticsearch.client.indices.GetIndexResponse;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -189,9 +189,7 @@ public class InstantIndexesTest {
 	}
 
 	protected void assertIndexesExist(String... expectedIndices) {
-		GetIndexRequest getIndexRequest = new GetIndexRequest();
-
-		getIndexRequest.indices(expectedIndices);
+		GetIndexRequest getIndexRequest = new GetIndexRequest(expectedIndices);
 
 		GetIndexResponse getIndexResponse = getIndexResponse(getIndexRequest);
 

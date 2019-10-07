@@ -22,8 +22,8 @@ import com.liferay.portal.search.elasticsearch7.internal.connection.Elasticsearc
 
 import java.util.Collections;
 
-import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.GetIndexResponse;
 import org.elasticsearch.indices.InvalidIndexNameException;
 
 import org.junit.After;

@@ -22,11 +22,10 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsRequest;
-import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
-import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsResponse.FieldMappingMetaData;
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.indices.GetFieldMappingsRequest;
+import org.elasticsearch.client.indices.GetFieldMappingsResponse;
 
 import org.junit.Assert;
 
@@ -37,18 +36,17 @@ import org.junit.Assert;
 public class FieldMappingAssert {
 
 	public static void assertAnalyzer(
-			String expectedValue, String field, String type, String index,
+			String expectedValue, String field, String index,
 			IndicesClient indicesClient)
 		throws Exception {
 
 		assertFieldMappingMetaData(
-			expectedValue, "analyzer", field, type, index, indicesClient);
+			expectedValue, "analyzer", field, index, indicesClient);
 	}
 
 	public static void assertFieldMappingMetaData(
 			final String expectedValue, final String key, final String field,
-			final String type, final String index,
-			final IndicesClient indicesClient)
+			final String index, final IndicesClient indicesClient)
 		throws Exception {
 
 		IdempotentRetryAssert.retryAssert(
@@ -58,7 +56,7 @@ public class FieldMappingAssert {
 				@Override
 				public Void call() throws Exception {
 					doAssertFieldMappingMetaData(
-						expectedValue, key, field, type, index, indicesClient);
+						expectedValue, key, field, index, indicesClient);
 
 					return null;
 				}
@@ -67,20 +65,20 @@ public class FieldMappingAssert {
 	}
 
 	public static void assertType(
-			String expectedValue, String field, String type, String index,
+			String expectedValue, String field, String index,
 			IndicesClient indicesClient)
 		throws Exception {
 
 		assertFieldMappingMetaData(
-			expectedValue, "type", field, type, index, indicesClient);
+			expectedValue, "type", field, index, indicesClient);
 	}
 
 	protected static void doAssertFieldMappingMetaData(
-		String expectedValue, String key, String field, String type,
-		String index, IndicesClient indicesClient) {
+		String expectedValue, String key, String field, String index,
+		IndicesClient indicesClient) {
 
-		FieldMappingMetaData fieldMappingMetaData = getFieldMapping(
-			field, type, index, indicesClient);
+		GetFieldMappingsResponse.FieldMappingMetaData fieldMappingMetaData =
+			getFieldMapping(field, index, indicesClient);
 
 		String value = getFieldMappingMetaDataValue(
 			fieldMappingMetaData, field, key);
@@ -88,22 +86,22 @@ public class FieldMappingAssert {
 		Assert.assertEquals(expectedValue, value);
 	}
 
-	protected static FieldMappingMetaData getFieldMapping(
-		String field, String type, String index, IndicesClient indicesClient) {
+	protected static GetFieldMappingsResponse.FieldMappingMetaData
+		getFieldMapping(
+			String field, String index, IndicesClient indicesClient) {
 
 		GetFieldMappingsRequest getFieldMappingsRequest =
 			new GetFieldMappingsRequest();
 
 		getFieldMappingsRequest.fields(field);
 		getFieldMappingsRequest.indices(index);
-		getFieldMappingsRequest.types(type);
 
 		try {
 			GetFieldMappingsResponse getFieldMappingsResponse =
 				indicesClient.getFieldMapping(
 					getFieldMappingsRequest, RequestOptions.DEFAULT);
 
-			return getFieldMappingsResponse.fieldMappings(index, type, field);
+			return getFieldMappingsResponse.fieldMappings(index, field);
 		}
 		catch (IOException ioe) {
 			throw new RuntimeException(ioe);
@@ -112,7 +110,8 @@ public class FieldMappingAssert {
 
 	@SuppressWarnings("unchecked")
 	protected static String getFieldMappingMetaDataValue(
-		FieldMappingMetaData fieldMappingMetaData, String field, String key) {
+		GetFieldMappingsResponse.FieldMappingMetaData fieldMappingMetaData,
+		String field, String key) {
 
 		Map<String, Object> mappings = fieldMappingMetaData.sourceAsMap();
 

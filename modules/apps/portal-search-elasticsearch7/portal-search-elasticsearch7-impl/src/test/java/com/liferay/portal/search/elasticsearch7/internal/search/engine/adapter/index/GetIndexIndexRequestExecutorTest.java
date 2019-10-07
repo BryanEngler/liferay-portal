@@ -19,7 +19,7 @@ import com.liferay.portal.search.engine.adapter.index.GetIndexIndexRequest;
 
 import java.util.Arrays;
 
-import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
+import org.elasticsearch.client.indices.GetIndexRequest;
 
 import org.junit.After;
 import org.junit.Assert;

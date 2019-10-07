@@ -16,6 +16,7 @@ package com.liferay.portal.search.elasticsearch7.internal.index;
 
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchFixture;
 import com.liferay.portal.search.elasticsearch7.internal.connection.IndexName;
@@ -27,14 +28,12 @@ import com.liferay.portal.search.elasticsearch7.settings.TypeMappingsHelper;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
+import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.cluster.metadata.MappingMetaData;
-import org.elasticsearch.common.collect.ImmutableOpenMap;
+import org.elasticsearch.client.indices.GetIndexResponse;
 import org.elasticsearch.common.settings.Settings;
 
 import org.junit.After;
@@ -42,6 +41,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TestName;
 
 /**
@@ -64,8 +64,7 @@ public class CompanyIndexFactoryTest {
 
 		_singleFieldFixture = new SingleFieldFixture(
 			_elasticsearchFixture.getRestHighLevelClient(),
-			new IndexName(_companyIndexFactoryFixture.getIndexName()),
-			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE);
+			new IndexName(_companyIndexFactoryFixture.getIndexName()));
 	}
 
 	@After
@@ -103,6 +102,11 @@ public class CompanyIndexFactoryTest {
 
 	@Test
 	public void testAdditionalTypeMappingsWithRootType() throws Exception {
+		expectedException.expect(ElasticsearchStatusException.class);
+		expectedException.expectMessage(
+			"Root mapping definition has unsupported parameters:  " +
+				"[LiferayDocumentType");
+
 		_companyIndexFactory.setAdditionalTypeMappings(
 			loadAdditionalTypeMappingsWithRootType());
 
@@ -112,6 +116,11 @@ public class CompanyIndexFactoryTest {
 	@Test
 	public void testAdditionalTypeMappingsWithRootTypeFromContributor()
 		throws Exception {
+
+		expectedException.expect(ElasticsearchStatusException.class);
+		expectedException.expectMessage(
+			"Root mapping definition has unsupported parameters:  " +
+				"[LiferayDocumentType");
 
 		addIndexSettingsContributor(loadAdditionalTypeMappingsWithRootType());
 
@@ -155,7 +164,7 @@ public class CompanyIndexFactoryTest {
 
 		createIndices();
 
-		assertIndicesExist(LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE);
+		assertIndicesExist(StringUtil.toLowerCase(testName.getMethodName()));
 	}
 
 	@Test
@@ -245,7 +254,7 @@ public class CompanyIndexFactoryTest {
 
 		createIndices();
 
-		assertIndicesExist(LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE);
+		assertIndicesExist(StringUtil.toLowerCase(testName.getMethodName()));
 	}
 
 	@Test
@@ -271,6 +280,9 @@ public class CompanyIndexFactoryTest {
 
 		assertNoAnalyzer(field);
 	}
+
+	@Rule
+	public ExpectedException expectedException = ExpectedException.none();
 
 	@Rule
 	public TestName testName = new TestName();
@@ -331,8 +343,7 @@ public class CompanyIndexFactoryTest {
 			_elasticsearchFixture.getRestHighLevelClient();
 
 		FieldMappingAssert.assertAnalyzer(
-			analyzer, field, LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE,
-			_companyIndexFactoryFixture.getIndexName(),
+			analyzer, field, _companyIndexFactoryFixture.getIndexName(),
 			restHighLevelClient.indices());
 	}
 
@@ -340,16 +351,11 @@ public class CompanyIndexFactoryTest {
 		GetIndexResponse getIndexResponse = _elasticsearchFixture.getIndex(
 			_companyIndexFactoryFixture.getIndexName());
 
-		ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>>
-			mappings = getIndexResponse.getMappings();
-
-		Iterator<ImmutableOpenMap<String, MappingMetaData>> iterator =
-			mappings.valuesIt();
-
-		ImmutableOpenMap<String, MappingMetaData> map = iterator.next();
+		String[] indicies = getIndexResponse.getIndices();
 
 		for (String indexName : indexNames) {
-			Assert.assertTrue(indexName, map.containsKey(indexName));
+			Assert.assertTrue(
+				indexName, ArrayUtil.contains(indicies, indexName));
 		}
 	}
 
@@ -362,8 +368,7 @@ public class CompanyIndexFactoryTest {
 			_elasticsearchFixture.getRestHighLevelClient();
 
 		FieldMappingAssert.assertType(
-			type, field, LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE,
-			_companyIndexFactoryFixture.getIndexName(),
+			type, field, _companyIndexFactoryFixture.getIndexName(),
 			restHighLevelClient.indices());
 	}
 
@@ -383,8 +388,7 @@ public class CompanyIndexFactoryTest {
 		GetIndexResponse getIndexResponse = _elasticsearchFixture.getIndex(
 			name);
 
-		ImmutableOpenMap<String, Settings> immutableOpenMap =
-			getIndexResponse.getSettings();
+		Map<String, Settings> immutableOpenMap = getIndexResponse.getSettings();
 
 		return immutableOpenMap.get(name);
 	}

@@ -70,7 +70,7 @@ public class CreateIndexRequestExecutorTest {
 				}
 			};
 
-		org.elasticsearch.action.admin.indices.create.CreateIndexRequest
+		org.elasticsearch.client.indices.CreateIndexRequest
 			elasticsearchCreateIndexRequest =
 				createIndexRequestExecutorImpl.createCreateIndexRequest(
 					createIndexRequest);

@@ -41,9 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -51,6 +49,8 @@ import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.CreateIndexRequest;
+import org.elasticsearch.client.indices.PutMappingRequest;
 import org.elasticsearch.common.xcontent.XContentType;
 
 import org.junit.After;
@@ -96,7 +96,7 @@ public class ElasticsearchSearchEngineAdapterSearchRequestTest {
 		sb.append("\"keywordSuggestion\" : {\n\"type\" : \"completion\"\n");
 		sb.append("}\n\n}\n}");
 
-		_putMapping(_MAPPING_NAME, sb.toString());
+		_putMapping(sb.toString());
 	}
 
 	@After
@@ -401,7 +401,6 @@ public class ElasticsearchSearchEngineAdapterSearchRequestTest {
 
 		indexRequest.id(document.getUID());
 		indexRequest.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
-		indexRequest.type(_MAPPING_NAME);
 
 		ElasticsearchDocumentFactory elasticsearchDocumentFactory =
 			new DefaultElasticsearchDocumentFactory();
@@ -419,12 +418,11 @@ public class ElasticsearchSearchEngineAdapterSearchRequestTest {
 		}
 	}
 
-	private void _putMapping(String mappingName, String mappingSource) {
+	private void _putMapping(String mappingSource) {
 		PutMappingRequest putMappingRequest = new PutMappingRequest(
 			_INDEX_NAME);
 
 		putMappingRequest.source(mappingSource, XContentType.JSON);
-		putMappingRequest.type(mappingName);
 
 		try {
 			_indicesClient.putMapping(
@@ -443,8 +441,6 @@ public class ElasticsearchSearchEngineAdapterSearchRequestTest {
 
 	private static final String _LOCALIZED_FIELD_NAME =
 		"spellCheckKeyword_en_US";
-
-	private static final String _MAPPING_NAME = "test_mapping";
 
 	private final DocumentFixture _documentFixture = new DocumentFixture();
 	private ElasticsearchFixture _elasticsearchFixture;

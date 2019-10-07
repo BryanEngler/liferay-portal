@@ -67,10 +67,6 @@ import java.util.Map;
 
 import org.apache.http.util.EntityUtils;
 
-import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
-import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequest;
-import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse;
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
@@ -78,12 +74,16 @@ import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.GetIndexRequest;
+import org.elasticsearch.client.indices.GetMappingsRequest;
+import org.elasticsearch.client.indices.GetMappingsResponse;
+import org.elasticsearch.client.indices.PutMappingRequest;
 import org.elasticsearch.cluster.metadata.IndexMetaData;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
-import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.xcontent.XContentType;
 
 import org.junit.After;
@@ -221,11 +221,10 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 
 	@Test
 	public void testExecuteAnalyzeIndexRequestWithFieldName() {
-		String mappingName = "testAnalyze";
 		String mappingSource =
 			"{\"properties\":{\"keywordTestField\":{\"type\":\"keyword\"}}}";
 
-		_putMapping(mappingName, mappingSource);
+		_putMapping(mappingSource);
 
 		AnalyzeIndexRequest analyzeIndexRequest = new AnalyzeIndexRequest();
 
@@ -315,18 +314,16 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 		CreateIndexRequest createIndexRequest = new CreateIndexRequest(
 			"test_index_2");
 
-		StringBundler sb = new StringBundler(14);
+		StringBundler sb = new StringBundler(12);
 
 		sb.append("{\n");
 		sb.append("    \"settings\": {\n");
 		sb.append("        \"number_of_shards\": 1\n");
 		sb.append("    },\n");
 		sb.append("    \"mappings\": {\n");
-		sb.append("        \"type1\": {\n");
-		sb.append("            \"properties\": {\n");
-		sb.append("                \"field1\": {\n");
-		sb.append("                    \"type\": \"text\"\n");
-		sb.append("                }\n");
+		sb.append("        \"properties\": {\n");
+		sb.append("            \"field1\": {\n");
+		sb.append("                \"type\": \"text\"\n");
 		sb.append("            }\n");
 		sb.append("        }\n");
 		sb.append("    }\n");
@@ -375,18 +372,16 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 	@Ignore
 	@Test
 	public void testExecuteGetFieldMappingIndexRequest() {
-		String mappingName = "testGetFieldMapping";
 		String mappingSource =
 			"{\"properties\":{\"testField\":{\"type\":\"keyword\"}, " +
 				"\"otherTestField\":{\"type\":\"keyword\"}}}";
 
-		_putMapping(mappingName, mappingSource);
+		_putMapping(mappingSource);
 
 		String[] fields = {"otherTestField"};
 
 		GetFieldMappingIndexRequest getFieldMappingIndexRequest =
-			new GetFieldMappingIndexRequest(
-				new String[] {_INDEX_NAME}, mappingName, fields);
+			new GetFieldMappingIndexRequest(new String[] {_INDEX_NAME}, fields);
 
 		GetFieldMappingIndexResponse getFieldMappingIndexResponse =
 			_searchEngineAdapter.execute(getFieldMappingIndexRequest);
@@ -399,11 +394,10 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 
 	@Test
 	public void testExecuteGetIndexIndexRequest() {
-		String mappingName = "testGetIndex";
 		String mappingSource =
 			"{\"properties\":{\"testField\":{\"type\":\"keyword\"}}}";
 
-		_putMapping(mappingName, mappingSource);
+		_putMapping(mappingSource);
 
 		GetIndexIndexRequest getIndexIndexRequest = new GetIndexIndexRequest(
 			_INDEX_NAME);
@@ -424,14 +418,13 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 
 	@Test
 	public void testExecuteGetMappingIndexRequest() throws JSONException {
-		String mappingName = "testGetMapping";
 		String mappingSource =
 			"{\"properties\":{\"testField\":{\"type\":\"keyword\"}}}";
 
-		_putMapping(mappingName, mappingSource);
+		_putMapping(mappingSource);
 
 		GetMappingIndexRequest getMappingIndexRequest =
-			new GetMappingIndexRequest(new String[] {_INDEX_NAME}, mappingName);
+			new GetMappingIndexRequest(new String[] {_INDEX_NAME});
 
 		GetMappingIndexResponse getMappingIndexResponse =
 			_searchEngineAdapter.execute(getMappingIndexRequest);
@@ -489,13 +482,12 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 
 	@Test
 	public void testExecutePutMappingIndexRequest() {
-		String mappingName = "testPutMapping";
 		String mappingSource =
 			"{\"properties\":{\"testField\":{\"type\":\"keyword\"}}}";
 
 		PutMappingIndexRequest putMappingIndexRequest =
 			new PutMappingIndexRequest(
-				new String[] {_INDEX_NAME}, mappingName, mappingSource);
+				new String[] {_INDEX_NAME}, mappingSource);
 
 		PutMappingIndexResponse putMappingIndexResponse =
 			_searchEngineAdapter.execute(putMappingIndexRequest);
@@ -503,15 +495,11 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 		Assert.assertTrue(putMappingIndexResponse.isAcknowledged());
 
 		GetMappingsResponse getMappingsResponse = _getGetMappingsResponse(
-			_INDEX_NAME, mappingName);
+			_INDEX_NAME);
 
-		ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>>
-			immutableOpenMap1 = getMappingsResponse.getMappings();
+		Map<String, MappingMetaData> mappings = getMappingsResponse.mappings();
 
-		ImmutableOpenMap<String, MappingMetaData> immutableOpenMap2 =
-			immutableOpenMap1.get(_INDEX_NAME);
-
-		MappingMetaData mappingMetaData = immutableOpenMap2.get(mappingName);
+		MappingMetaData mappingMetaData = mappings.get(_INDEX_NAME);
 
 		String mappingMetaDataSource = String.valueOf(mappingMetaData.source());
 
@@ -693,10 +681,10 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 	}
 
 	private void _createIndex(String indexName) {
-		org.elasticsearch.action.admin.indices.create.CreateIndexRequest
+		org.elasticsearch.client.indices.CreateIndexRequest
 			elasticsearchCreateIndexRequest =
-				new org.elasticsearch.action.admin.indices.create.
-					CreateIndexRequest(indexName);
+				new org.elasticsearch.client.indices.CreateIndexRequest(
+					indexName);
 
 		try {
 			_indicesClient.create(
@@ -708,27 +696,19 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 	}
 
 	private AcknowledgedResponse _deleteIndex(String indexName) {
-		org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
-			elasticsearchDeleteIndexRequest =
-				new org.elasticsearch.action.admin.indices.delete.
-					DeleteIndexRequest(indexName);
-
 		try {
 			return _indicesClient.delete(
-				elasticsearchDeleteIndexRequest, RequestOptions.DEFAULT);
+				Requests.deleteIndexRequest(indexName), RequestOptions.DEFAULT);
 		}
 		catch (IOException ioe) {
 			throw new RuntimeException(ioe);
 		}
 	}
 
-	private GetMappingsResponse _getGetMappingsResponse(
-		String indexName, String mappingName) {
-
+	private GetMappingsResponse _getGetMappingsResponse(String indexName) {
 		GetMappingsRequest getMappingsRequest = new GetMappingsRequest();
 
 		getMappingsRequest.indices(indexName);
-		getMappingsRequest.types(mappingName);
 
 		try {
 			return _indicesClient.getMapping(
@@ -754,9 +734,7 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 	}
 
 	private boolean _indiciesExists(String indexName) {
-		GetIndexRequest getIndexRequest = new GetIndexRequest();
-
-		getIndexRequest.indices(indexName);
+		GetIndexRequest getIndexRequest = new GetIndexRequest(indexName);
 
 		try {
 			return _indicesClient.exists(
@@ -782,12 +760,11 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 		}
 	}
 
-	private void _putMapping(String mappingName, String mappingSource) {
+	private void _putMapping(String mappingSource) {
 		PutMappingRequest putMappingRequest = new PutMappingRequest(
 			_INDEX_NAME);
 
 		putMappingRequest.source(mappingSource, XContentType.JSON);
-		putMappingRequest.type(mappingName);
 
 		try {
 			_indicesClient.putMapping(

@@ -47,7 +47,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
@@ -55,6 +54,7 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.rest.RestStatus;
 
@@ -105,8 +105,6 @@ public class ElasticsearchSearchEngineAdapterDocumentRequestTest {
 		IndexDocumentRequest indexDocumentRequest = new IndexDocumentRequest(
 			_INDEX_NAME, document1);
 
-		indexDocumentRequest.setType(_MAPPING_NAME);
-
 		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
 
 		bulkDocumentRequest.addBulkableDocumentRequest(indexDocumentRequest);
@@ -118,8 +116,6 @@ public class ElasticsearchSearchEngineAdapterDocumentRequestTest {
 
 		IndexDocumentRequest indexDocumentRequest2 = new IndexDocumentRequest(
 			_INDEX_NAME, document2);
-
-		indexDocumentRequest2.setType(_MAPPING_NAME);
 
 		bulkDocumentRequest.addBulkableDocumentRequest(indexDocumentRequest2);
 
@@ -148,8 +144,6 @@ public class ElasticsearchSearchEngineAdapterDocumentRequestTest {
 		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest(
 			_INDEX_NAME, "1");
 
-		deleteDocumentRequest.setType(_MAPPING_NAME);
-
 		BulkDocumentRequest bulkDocumentRequest2 = new BulkDocumentRequest();
 
 		bulkDocumentRequest2.addBulkableDocumentRequest(deleteDocumentRequest);
@@ -161,8 +155,6 @@ public class ElasticsearchSearchEngineAdapterDocumentRequestTest {
 
 		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest(
 			_INDEX_NAME, "2", document2Update);
-
-		updateDocumentRequest.setType(_MAPPING_NAME);
 
 		bulkDocumentRequest2.addBulkableDocumentRequest(updateDocumentRequest);
 
@@ -210,8 +202,6 @@ public class ElasticsearchSearchEngineAdapterDocumentRequestTest {
 		IndexDocumentRequest indexDocumentRequest = new IndexDocumentRequest(
 			_INDEX_NAME, document1);
 
-		indexDocumentRequest.setType(_MAPPING_NAME);
-
 		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
 
 		bulkDocumentRequest.addBulkableDocumentRequest(indexDocumentRequest);
@@ -222,8 +212,6 @@ public class ElasticsearchSearchEngineAdapterDocumentRequestTest {
 
 		IndexDocumentRequest indexDocumentRequest2 = new IndexDocumentRequest(
 			_INDEX_NAME, document2);
-
-		indexDocumentRequest2.setType(_MAPPING_NAME);
 
 		bulkDocumentRequest.addBulkableDocumentRequest(indexDocumentRequest2);
 
@@ -254,8 +242,6 @@ public class ElasticsearchSearchEngineAdapterDocumentRequestTest {
 		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest(
 			_INDEX_NAME, bulkDocumentItemResponse1.getId());
 
-		deleteDocumentRequest.setType(_MAPPING_NAME);
-
 		BulkDocumentRequest bulkDocumentRequest2 = new BulkDocumentRequest();
 
 		bulkDocumentRequest2.addBulkableDocumentRequest(deleteDocumentRequest);
@@ -268,8 +254,6 @@ public class ElasticsearchSearchEngineAdapterDocumentRequestTest {
 
 		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest(
 			_INDEX_NAME, bulkDocumentItemResponse2.getId(), document2Update);
-
-		updateDocumentRequest.setType(_MAPPING_NAME);
 
 		bulkDocumentRequest2.addBulkableDocumentRequest(updateDocumentRequest);
 
@@ -349,8 +333,6 @@ public class ElasticsearchSearchEngineAdapterDocumentRequestTest {
 
 		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest(
 			_INDEX_NAME, id);
-
-		deleteDocumentRequest.setType(_MAPPING_NAME);
 
 		DeleteDocumentResponse deleteDocumentResponse =
 			_searchEngineAdapter.execute(deleteDocumentRequest);
@@ -573,8 +555,7 @@ public class ElasticsearchSearchEngineAdapterDocumentRequestTest {
 		CreateIndexRequest createIndexRequest = new CreateIndexRequest(
 			_INDEX_NAME);
 
-		createIndexRequest.mapping(
-			_MAPPING_NAME, _MAPPING_SOURCE, XContentType.JSON);
+		createIndexRequest.mapping(_MAPPING_SOURCE, XContentType.JSON);
 
 		try {
 			_indicesClient.create(createIndexRequest, RequestOptions.DEFAULT);
@@ -611,8 +592,7 @@ public class ElasticsearchSearchEngineAdapterDocumentRequestTest {
 	}
 
 	private void _indexDocument(String documentSource, String id) {
-		IndexRequest indexRequest = new IndexRequest(
-			_INDEX_NAME, _MAPPING_NAME);
+		IndexRequest indexRequest = new IndexRequest(_INDEX_NAME);
 
 		indexRequest.id(id);
 		indexRequest.source(documentSource, XContentType.JSON);
@@ -631,8 +611,6 @@ public class ElasticsearchSearchEngineAdapterDocumentRequestTest {
 		IndexDocumentRequest indexDocumentRequest = new IndexDocumentRequest(
 			_INDEX_NAME, uid, document);
 
-		indexDocumentRequest.setType(_MAPPING_NAME);
-
 		return _searchEngineAdapter.execute(indexDocumentRequest);
 	}
 
@@ -642,16 +620,12 @@ public class ElasticsearchSearchEngineAdapterDocumentRequestTest {
 		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest(
 			_INDEX_NAME, uid, document);
 
-		updateDocumentRequest.setType(_MAPPING_NAME);
-
 		return _searchEngineAdapter.execute(updateDocumentRequest);
 	}
 
 	private static final String _FIELD_NAME = "matchDocument";
 
 	private static final String _INDEX_NAME = "test_request_index";
-
-	private static final String _MAPPING_NAME = "testDocumentMapping";
 
 	private static final String _MAPPING_SOURCE =
 		"{\"properties\":{\"matchDocument\":{\"type\":\"boolean\"}}}";

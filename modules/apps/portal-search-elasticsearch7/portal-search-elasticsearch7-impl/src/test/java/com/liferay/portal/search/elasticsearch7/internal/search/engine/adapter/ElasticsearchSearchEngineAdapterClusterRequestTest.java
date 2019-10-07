@@ -33,11 +33,11 @@ import com.liferay.portal.search.engine.adapter.cluster.StatsClusterResponse;
 
 import java.io.IOException;
 
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.CreateIndexRequest;
 
 import org.junit.After;
 import org.junit.Assert;

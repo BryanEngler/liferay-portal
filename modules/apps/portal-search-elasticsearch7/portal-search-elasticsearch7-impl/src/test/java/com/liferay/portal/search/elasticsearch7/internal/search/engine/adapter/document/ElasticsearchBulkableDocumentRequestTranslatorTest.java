@@ -178,7 +178,6 @@ public class ElasticsearchBulkableDocumentRequestTranslatorTest {
 			_INDEX_NAME, id);
 
 		deleteDocumentRequest.setRefresh(refreshPolicy);
-		deleteDocumentRequest.setType(_MAPPING_NAME);
 
 		DeleteRequest deleteRequest =
 			_elasticsearchBulkableDocumentRequestTranslator.translate(
@@ -187,7 +186,6 @@ public class ElasticsearchBulkableDocumentRequestTranslatorTest {
 		Assert.assertEquals(
 			expectedRefreshPolicy, deleteRequest.getRefreshPolicy());
 		Assert.assertEquals(_INDEX_NAME, deleteRequest.index());
-		Assert.assertEquals(_MAPPING_NAME, deleteRequest.type());
 		Assert.assertEquals(id, deleteRequest.id());
 
 		BulkRequest bulkRequest = new BulkRequest();
@@ -212,7 +210,6 @@ public class ElasticsearchBulkableDocumentRequestTranslatorTest {
 			_INDEX_NAME, document);
 
 		indexDocumentRequest.setRefresh(refreshPolicy);
-		indexDocumentRequest.setType(_MAPPING_NAME);
 
 		IndexRequest indexRequest =
 			_elasticsearchBulkableDocumentRequestTranslator.translate(
@@ -221,7 +218,6 @@ public class ElasticsearchBulkableDocumentRequestTranslatorTest {
 		Assert.assertEquals(
 			expectedRefreshPolicy, indexRequest.getRefreshPolicy());
 		Assert.assertEquals(_INDEX_NAME, indexRequest.index());
-		Assert.assertEquals(_MAPPING_NAME, indexRequest.type());
 		Assert.assertEquals(id, indexRequest.id());
 
 		String source = XContentHelper.convertToJson(
@@ -253,7 +249,6 @@ public class ElasticsearchBulkableDocumentRequestTranslatorTest {
 			_INDEX_NAME, id, document);
 
 		updateDocumentRequest.setRefresh(refreshPolicy);
-		updateDocumentRequest.setType(_MAPPING_NAME);
 
 		UpdateRequest updateRequest =
 			_elasticsearchBulkableDocumentRequestTranslator.translate(
@@ -289,8 +284,6 @@ public class ElasticsearchBulkableDocumentRequestTranslatorTest {
 	}
 
 	private static final String _INDEX_NAME = "test_request_index";
-
-	private static final String _MAPPING_NAME = "testMapping";
 
 	private final DocumentFixture _documentFixture = new DocumentFixture();
 	private ElasticsearchBulkableDocumentRequestTranslator
