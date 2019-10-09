@@ -15,11 +15,10 @@
 package com.liferay.portal.search.elasticsearch7.internal.connection;
 
 import com.liferay.portal.json.JSONFactoryImpl;
-import com.liferay.portal.search.elasticsearch7.internal.index.LiferayDocumentTypeFactory;
+import com.liferay.portal.search.elasticsearch7.internal.index.LiferayTypeMappingsFactory;
 
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.elasticsearch.client.AdminClient;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.common.settings.Settings;
 
 /**
@@ -34,39 +33,36 @@ public class LiferayIndexCreationHelper implements IndexCreationHelper {
 	}
 
 	@Override
-	public void contribute(
-		CreateIndexRequestBuilder createIndexRequestBuilder) {
+	public void contribute(CreateIndexRequest createIndexRequest) {
+		LiferayTypeMappingsFactory liferayTypeMappingsFactory =
+			getLiferayTypeMappingsFactory();
 
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory =
-			getLiferayDocumentTypeFactory();
-
-		liferayDocumentTypeFactory.createRequiredDefaultTypeMappings(
-			createIndexRequestBuilder);
+		liferayTypeMappingsFactory.createRequiredDefaultTypeMappings(
+			createIndexRequest);
 	}
 
 	@Override
 	public void contributeIndexSettings(Settings.Builder builder) {
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory =
-			getLiferayDocumentTypeFactory();
+		LiferayTypeMappingsFactory liferayTypeMappingsFactory =
+			getLiferayTypeMappingsFactory();
 
-		liferayDocumentTypeFactory.createRequiredDefaultAnalyzers(builder);
+		liferayTypeMappingsFactory.createRequiredDefaultAnalyzers(builder);
 	}
 
 	@Override
 	public void whenIndexCreated(String indexName) {
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory =
-			getLiferayDocumentTypeFactory();
+		LiferayTypeMappingsFactory liferayTypeMappingsFactory =
+			getLiferayTypeMappingsFactory();
 
-		liferayDocumentTypeFactory.createOptionalDefaultTypeMappings(indexName);
+		liferayTypeMappingsFactory.createOptionalDefaultTypeMappings(indexName);
 	}
 
-	protected LiferayDocumentTypeFactory getLiferayDocumentTypeFactory() {
-		Client client = _elasticsearchClientResolver.getClient();
+	protected LiferayTypeMappingsFactory getLiferayTypeMappingsFactory() {
+		RestHighLevelClient restHighLevelClient =
+			_elasticsearchClientResolver.getRestHighLevelClient();
 
-		AdminClient adminClient = client.admin();
-
-		return new LiferayDocumentTypeFactory(
-			adminClient.indices(), new JSONFactoryImpl());
+		return new LiferayTypeMappingsFactory(
+			restHighLevelClient.indices(), new JSONFactoryImpl());
 	}
 
 	private final ElasticsearchClientResolver _elasticsearchClientResolver;

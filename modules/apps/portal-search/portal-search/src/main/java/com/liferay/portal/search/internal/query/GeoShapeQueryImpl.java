@@ -33,6 +33,14 @@ public class GeoShapeQueryImpl extends BaseQueryImpl implements GeoShapeQuery {
 		_indexedShapeType = null;
 	}
 
+	public GeoShapeQueryImpl(String field, String indexedShapeId) {
+		_field = field;
+		_indexedShapeId = indexedShapeId;
+
+		_indexedShapeType = null;
+		_shape = null;
+	}
+
 	public GeoShapeQueryImpl(
 		String field, String indexedShapeId, String indexedShapeType) {
 

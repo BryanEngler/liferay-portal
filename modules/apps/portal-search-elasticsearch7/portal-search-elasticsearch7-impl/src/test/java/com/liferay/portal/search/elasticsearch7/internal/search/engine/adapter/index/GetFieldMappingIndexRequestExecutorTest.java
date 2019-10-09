@@ -17,8 +17,7 @@ package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchFixture;
 import com.liferay.portal.search.engine.adapter.index.GetFieldMappingIndexRequest;
 
-import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsRequest;
-import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsRequestBuilder;
+import org.elasticsearch.client.indices.GetFieldMappingsRequest;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -47,8 +46,7 @@ public class GetFieldMappingIndexRequestExecutorTest {
 	public void testIndexRequestTranslation() {
 		GetFieldMappingIndexRequest getFieldMappingIndexRequest =
 			new GetFieldMappingIndexRequest(
-				new String[] {_INDEX_NAME}, _MAPPING_NAME,
-				new String[] {_FIELD_NAME});
+				new String[] {_INDEX_NAME}, new String[] {_FIELD_NAME});
 
 		GetFieldMappingIndexRequestExecutorImpl
 			getFieldMappingIndexRequestExecutorImpl =
@@ -58,18 +56,12 @@ public class GetFieldMappingIndexRequestExecutorTest {
 					}
 				};
 
-		GetFieldMappingsRequestBuilder getFieldMappingsRequestBuilder =
-			getFieldMappingIndexRequestExecutorImpl.
-				createGetFieldMappingsRequestBuilder(
-					getFieldMappingIndexRequest);
-
 		GetFieldMappingsRequest getFieldMappingsRequest =
-			getFieldMappingsRequestBuilder.request();
+			getFieldMappingIndexRequestExecutorImpl.
+				createGetFieldMappingsRequest(getFieldMappingIndexRequest);
 
 		Assert.assertArrayEquals(
 			new String[] {_INDEX_NAME}, getFieldMappingsRequest.indices());
-		Assert.assertArrayEquals(
-			new String[] {_MAPPING_NAME}, getFieldMappingsRequest.types());
 		Assert.assertArrayEquals(
 			new String[] {_FIELD_NAME}, getFieldMappingsRequest.fields());
 	}
@@ -77,8 +69,6 @@ public class GetFieldMappingIndexRequestExecutorTest {
 	private static final String _FIELD_NAME = "testField";
 
 	private static final String _INDEX_NAME = "test_request_index";
-
-	private static final String _MAPPING_NAME = "testMapping";
 
 	private ElasticsearchFixture _elasticsearchFixture;
 

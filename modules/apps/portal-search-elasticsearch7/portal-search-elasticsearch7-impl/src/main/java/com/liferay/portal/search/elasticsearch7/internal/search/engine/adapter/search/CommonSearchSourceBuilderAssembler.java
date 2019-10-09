@@ -12,13 +12,20 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.util;
+package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.search;
+
+import com.liferay.portal.search.engine.adapter.search.BaseSearchRequest;
+
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 /**
  * @author Michael C. Han
  */
-public class DocumentTypes {
+public interface CommonSearchSourceBuilderAssembler {
 
-	public static final String LIFERAY = "LiferayDocumentType";
+	public void assemble(
+		SearchSourceBuilder searchSourceBuilder,
+		BaseSearchRequest baseSearchRequest, SearchRequest searchRequest);
 
 }

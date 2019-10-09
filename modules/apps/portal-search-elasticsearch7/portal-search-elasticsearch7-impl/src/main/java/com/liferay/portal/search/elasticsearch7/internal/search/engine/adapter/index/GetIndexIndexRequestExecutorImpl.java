@@ -14,21 +14,21 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.index;
 
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
-
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.index.GetIndexIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.GetIndexIndexResponse;
 
+import java.io.IOException;
+
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import org.elasticsearch.action.admin.indices.get.GetIndexAction;
-import org.elasticsearch.action.admin.indices.get.GetIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.GetIndexRequest;
+import org.elasticsearch.client.indices.GetIndexResponse;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
-import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.compress.CompressedXContent;
 import org.elasticsearch.common.settings.Settings;
 
@@ -46,105 +46,79 @@ public class GetIndexIndexRequestExecutorImpl
 	public GetIndexIndexResponse execute(
 		GetIndexIndexRequest getIndexIndexRequest) {
 
-		GetIndexRequestBuilder getIndexRequestBuilder =
-			createGetIndexRequestBuilder(getIndexIndexRequest);
+		GetIndexRequest getIndexRequest = createGetIndexRequest(
+			getIndexIndexRequest);
 
-		GetIndexResponse getIndexResponse = getIndexRequestBuilder.get();
+		GetIndexResponse getIndexResponse = getGetIndexResponse(
+			getIndexRequest);
 
 		GetIndexIndexResponse getIndexIndexResponse =
 			new GetIndexIndexResponse();
 
+		getIndexIndexResponse.setIndexMappings(
+			convertMappings(getIndexResponse.getMappings()));
 		getIndexIndexResponse.setIndexNames(getIndexResponse.getIndices());
-
-		ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>>
-			indicesMappings = getIndexResponse.getMappings();
-
-		getIndexIndexResponse.setMappings(convertMappings(indicesMappings));
-
-		ImmutableOpenMap<String, Settings> indicesSettings =
-			getIndexResponse.getSettings();
-
-		getIndexIndexResponse.setSettings(convertSettings(indicesSettings));
+		getIndexIndexResponse.setSettings(
+			convertSettings(getIndexResponse.getSettings()));
 
 		return getIndexIndexResponse;
 	}
 
-	protected Map<String, Map<String, String>> convertMappings(
-		ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>>
-			indicesMappings) {
+	protected Map<String, String> convertMappings(
+		Map<String, MappingMetaData> indicesMappings) {
 
-		Iterator
-			<ObjectObjectCursor
-				<String, ImmutableOpenMap<String, MappingMetaData>>> iterator =
-					indicesMappings.iterator();
+		Map<String, String> indexMappings = new HashMap<>();
 
-		Map<String, Map<String, String>> indexMappings = new HashMap<>();
+		for (Map.Entry<String, MappingMetaData> entry :
+				indicesMappings.entrySet()) {
 
-		while (iterator.hasNext()) {
-			ObjectObjectCursor
-				<String, ImmutableOpenMap<String, MappingMetaData>>
-					objectObjectCursor = iterator.next();
+			String indexName = entry.getKey();
 
-			ImmutableOpenMap<String, MappingMetaData> typeMappingsData =
-				objectObjectCursor.value;
+			MappingMetaData mappingMetaData = entry.getValue();
 
-			Map<String, String> indiceTypeMappings = new HashMap<>();
+			CompressedXContent mappingContent = mappingMetaData.source();
 
-			indexMappings.put(objectObjectCursor.key, indiceTypeMappings);
-
-			Iterator<ObjectObjectCursor<String, MappingMetaData>>
-				typeMappingsIterator = typeMappingsData.iterator();
-
-			while (typeMappingsIterator.hasNext()) {
-				ObjectObjectCursor<String, MappingMetaData>
-					typeMappingsObjectObjectCursor =
-						typeMappingsIterator.next();
-
-				MappingMetaData mappingMetaData =
-					typeMappingsObjectObjectCursor.value;
-
-				CompressedXContent mappingContent = mappingMetaData.source();
-
-				indiceTypeMappings.put(
-					typeMappingsObjectObjectCursor.key,
-					mappingContent.toString());
-			}
+			indexMappings.put(indexName, mappingContent.toString());
 		}
 
 		return indexMappings;
 	}
 
 	protected Map<String, String> convertSettings(
-		ImmutableOpenMap<String, Settings> indicesSettings) {
+		Map<String, Settings> indicesSettings) {
 
-		Iterator<ObjectObjectCursor<String, Settings>> iterator =
-			indicesSettings.iterator();
+		Map<String, String> indexSettings = new HashMap<>();
 
-		Map<String, String> indicesSettingsMap = new HashMap<>();
+		for (Map.Entry<String, Settings> entry : indicesSettings.entrySet()) {
+			String indexName = entry.getKey();
+			Settings settings = entry.getValue();
 
-		while (iterator.hasNext()) {
-			ObjectObjectCursor<String, Settings> objectObjectCursor =
-				iterator.next();
-
-			Settings settings = objectObjectCursor.value;
-
-			indicesSettingsMap.put(objectObjectCursor.key, settings.toString());
+			indexSettings.put(indexName, settings.toString());
 		}
 
-		return indicesSettingsMap;
+		return indexSettings;
 	}
 
-	protected GetIndexRequestBuilder createGetIndexRequestBuilder(
+	protected GetIndexRequest createGetIndexRequest(
 		GetIndexIndexRequest getIndexIndexRequest) {
 
-		GetIndexRequestBuilder getIndexRequestBuilder =
-			new GetIndexRequestBuilder(
-				_elasticsearchClientResolver.getClient(),
-				GetIndexAction.INSTANCE);
+		return new GetIndexRequest(getIndexIndexRequest.getIndexNames());
+	}
 
-		getIndexRequestBuilder.setIndices(getIndexIndexRequest.getIndexNames());
+	protected GetIndexResponse getGetIndexResponse(
+		GetIndexRequest getIndexRequest) {
 
-		return getIndexRequestBuilder;
+		RestHighLevelClient restHighLevelClient =
+			_elasticsearchClientResolver.getRestHighLevelClient();
+
+		IndicesClient indicesClient = restHighLevelClient.indices();
+
+		try {
+			return indicesClient.get(getIndexRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 	}
 
 	@Reference(unbind = "-")

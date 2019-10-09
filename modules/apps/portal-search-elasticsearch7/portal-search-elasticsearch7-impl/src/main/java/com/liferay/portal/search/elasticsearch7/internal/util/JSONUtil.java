@@ -12,19 +12,27 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.search;
+package com.liferay.portal.search.elasticsearch7.internal.util;
 
-import com.liferay.portal.search.engine.adapter.search.BaseSearchRequest;
-
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
 
 /**
- * @author Michael C. Han
+ * @author Bryan Engler
  */
-public interface CommonSearchRequestBuilderAssembler {
+public class JSONUtil {
 
-	public void assemble(
-		SearchRequestBuilder searchRequestBuilder,
-		BaseSearchRequest baseSearchRequest);
+	public static String getPrettyPrintedJSONString(Object object) {
+		GsonBuilder gsonBuilder = new GsonBuilder();
+
+		gsonBuilder.setPrettyPrinting();
+
+		Gson gson = gsonBuilder.create();
+
+		JsonParser jsonParser = new JsonParser();
+
+		return gson.toJson(jsonParser.parse(object.toString()));
+	}
 
 }

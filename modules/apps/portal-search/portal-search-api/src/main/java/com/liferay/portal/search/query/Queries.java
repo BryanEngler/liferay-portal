@@ -45,6 +45,14 @@ public interface Queries {
 	public DisMaxQuery disMax();
 
 	public MoreLikeThisQuery.DocumentIdentifier documentIdentifier(
+		String index, String id);
+
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
+	 *             #documentIdentifier(String, String)}
+	 */
+	@Deprecated
+	public MoreLikeThisQuery.DocumentIdentifier documentIdentifier(
 		String index, String type, String id);
 
 	public ExistsQuery exists(String field);
@@ -70,6 +78,13 @@ public interface Queries {
 
 	public GeoShapeQuery geoShape(String field, Shape shape);
 
+	public GeoShapeQuery geoShape(String field, String indexedShapeId);
+
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
+	 *             #geoShape(String, String)}
+	 */
+	@Deprecated
 	public GeoShapeQuery geoShape(
 		String field, String indexedShapeId, String indexedShapeType);
 

@@ -38,6 +38,10 @@ public interface GeoShapeQuery extends Query {
 
 	public String getIndexedShapeRouting();
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	public String getIndexedShapeType();
 
 	public Shape getShape();

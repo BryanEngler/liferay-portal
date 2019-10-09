@@ -16,14 +16,16 @@ package com.liferay.portal.search.elasticsearch7.internal.index;
 
 import com.liferay.portal.search.test.util.IdempotentRetryAssert;
 
+import java.io.IOException;
+
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsRequestBuilder;
-import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
-import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsResponse.FieldMappingMetaData;
-import org.elasticsearch.client.IndicesAdminClient;
+import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.indices.GetFieldMappingsRequest;
+import org.elasticsearch.client.indices.GetFieldMappingsResponse;
 
 import org.junit.Assert;
 
@@ -34,18 +36,17 @@ import org.junit.Assert;
 public class FieldMappingAssert {
 
 	public static void assertAnalyzer(
-			String expectedValue, String field, String type, String index,
-			IndicesAdminClient indicesAdminClient)
+			String expectedValue, String field, String index,
+			IndicesClient indicesClient)
 		throws Exception {
 
 		assertFieldMappingMetaData(
-			expectedValue, "analyzer", field, type, index, indicesAdminClient);
+			expectedValue, "analyzer", field, index, indicesClient);
 	}
 
 	public static void assertFieldMappingMetaData(
 			final String expectedValue, final String key, final String field,
-			final String type, final String index,
-			final IndicesAdminClient indicesAdminClient)
+			final String index, final IndicesClient indicesClient)
 		throws Exception {
 
 		IdempotentRetryAssert.retryAssert(
@@ -55,8 +56,7 @@ public class FieldMappingAssert {
 				@Override
 				public Void call() throws Exception {
 					doAssertFieldMappingMetaData(
-						expectedValue, key, field, type, index,
-						indicesAdminClient);
+						expectedValue, key, field, index, indicesClient);
 
 					return null;
 				}
@@ -65,20 +65,20 @@ public class FieldMappingAssert {
 	}
 
 	public static void assertType(
-			String expectedValue, String field, String type, String index,
-			IndicesAdminClient indicesAdminClient)
+			String expectedValue, String field, String index,
+			IndicesClient indicesClient)
 		throws Exception {
 
 		assertFieldMappingMetaData(
-			expectedValue, "type", field, type, index, indicesAdminClient);
+			expectedValue, "type", field, index, indicesClient);
 	}
 
 	protected static void doAssertFieldMappingMetaData(
-		String expectedValue, String key, String field, String type,
-		String index, IndicesAdminClient indicesAdminClient) {
+		String expectedValue, String key, String field, String index,
+		IndicesClient indicesClient) {
 
-		FieldMappingMetaData fieldMappingMetaData = getFieldMapping(
-			field, type, index, indicesAdminClient);
+		GetFieldMappingsResponse.FieldMappingMetaData fieldMappingMetaData =
+			getFieldMapping(field, index, indicesClient);
 
 		String value = getFieldMappingMetaDataValue(
 			fieldMappingMetaData, field, key);
@@ -86,25 +86,32 @@ public class FieldMappingAssert {
 		Assert.assertEquals(expectedValue, value);
 	}
 
-	protected static FieldMappingMetaData getFieldMapping(
-		String field, String type, String index,
-		IndicesAdminClient indicesAdminClient) {
+	protected static GetFieldMappingsResponse.FieldMappingMetaData
+		getFieldMapping(
+			String field, String index, IndicesClient indicesClient) {
 
-		GetFieldMappingsRequestBuilder getFieldMappingsRequestBuilder =
-			indicesAdminClient.prepareGetFieldMappings(index);
+		GetFieldMappingsRequest getFieldMappingsRequest =
+			new GetFieldMappingsRequest();
 
-		getFieldMappingsRequestBuilder.setFields(field);
-		getFieldMappingsRequestBuilder.setTypes(type);
+		getFieldMappingsRequest.fields(field);
+		getFieldMappingsRequest.indices(index);
 
-		GetFieldMappingsResponse getFieldMappingsResponse =
-			getFieldMappingsRequestBuilder.get();
+		try {
+			GetFieldMappingsResponse getFieldMappingsResponse =
+				indicesClient.getFieldMapping(
+					getFieldMappingsRequest, RequestOptions.DEFAULT);
 
-		return getFieldMappingsResponse.fieldMappings(index, type, field);
+			return getFieldMappingsResponse.fieldMappings(index, field);
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	protected static String getFieldMappingMetaDataValue(
-		FieldMappingMetaData fieldMappingMetaData, String field, String key) {
+		GetFieldMappingsResponse.FieldMappingMetaData fieldMappingMetaData,
+		String field, String key) {
 
 		Map<String, Object> mappings = fieldMappingMetaData.sourceAsMap();
 

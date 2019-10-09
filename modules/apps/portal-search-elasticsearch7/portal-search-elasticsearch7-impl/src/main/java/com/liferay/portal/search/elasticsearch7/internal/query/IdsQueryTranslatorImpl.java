@@ -44,10 +44,6 @@ public class IdsQueryTranslatorImpl implements IdsQueryTranslator {
 
 		idsQueryBuilder.queryName(idsQuery.getQueryName());
 
-		Set<String> types = idsQuery.getTypes();
-
-		idsQueryBuilder.types(types.toArray(new String[0]));
-
 		return idsQueryBuilder;
 	}
 

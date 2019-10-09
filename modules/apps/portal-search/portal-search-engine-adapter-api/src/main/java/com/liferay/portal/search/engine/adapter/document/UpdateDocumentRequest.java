@@ -78,6 +78,10 @@ public class UpdateDocumentRequest
 		return _indexName;
 	}
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	public String getType() {
 		return _type;
 	}
@@ -94,6 +98,10 @@ public class UpdateDocumentRequest
 		_refresh = refresh;
 	}
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	public void setType(String type) {
 		_type = type;
 	}

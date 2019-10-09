@@ -163,9 +163,7 @@ public class SearchEngineAdapterTest {
 			else {
 				Assert.assertTrue(
 					message,
-					message.startsWith(
-						"org.elasticsearch.index.IndexNotFoundException: [" +
-							index + "] IndexNotFoundException[no such index"));
+					message.contains("reason=no such index [" + index + "]"));
 			}
 		}
 	}
@@ -218,7 +216,6 @@ public class SearchEngineAdapterTest {
 			getIndexName(), uid);
 
 		deleteDocumentRequest.setRefresh(refresh);
-		deleteDocumentRequest.setType("LiferayDocumentType");
 
 		return deleteDocumentRequest;
 	}
@@ -227,8 +224,8 @@ public class SearchEngineAdapterTest {
 		GetDocumentRequest getDocumentRequest = new GetDocumentRequest(
 			getIndexName(), uid);
 
+		getDocumentRequest.setFetchSource(true);
 		getDocumentRequest.setRefresh(true);
-		getDocumentRequest.setType("LiferayDocumentType");
 
 		GetDocumentResponse getDocumentResponse = _searchEngineAdapter.execute(
 			getDocumentRequest);
@@ -249,7 +246,6 @@ public class SearchEngineAdapterTest {
 		IndexDocumentRequest indexDocumentRequest = new IndexDocumentRequest(
 			getIndexName(), documentBuilder.build());
 
-		indexDocumentRequest.setType("LiferayDocumentType");
 		indexDocumentRequest.setRefresh(refresh);
 
 		return indexDocumentRequest;
@@ -284,7 +280,6 @@ public class SearchEngineAdapterTest {
 			getIndexName(), uid, documentBuilder.build());
 
 		updateDocumentRequest.setRefresh(true);
-		updateDocumentRequest.setType("LiferayDocumentType");
 
 		_searchEngineAdapter.execute(updateDocumentRequest);
 	}
