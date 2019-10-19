@@ -29,6 +29,20 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
 )
 public interface ElasticsearchConfiguration {
 
+	//connection
+	@Meta.AD(
+		deflt = "EMBEDDED", description = "operation-mode-help",
+		name = "operation-mode", required = false
+	)
+	public OperationMode operationMode();
+
+	@Meta.AD(
+		deflt = "http://localhost:9200",
+		description = "network-host-addresses-help",
+		name = "network-host-addresses", required = false
+	)
+	public String[] networkHostAddresses();
+
 	@Meta.AD(
 		deflt = "false", description = "authentication-enabled-help",
 		name = "authentication-enabled", required = false
@@ -77,12 +91,6 @@ public interface ElasticsearchConfiguration {
 		required = false
 	)
 	public String clusterName();
-
-	@Meta.AD(
-		deflt = "EMBEDDED", description = "operation-mode-help",
-		name = "operation-mode", required = false
-	)
-	public OperationMode operationMode();
 
 	@Meta.AD(
 		deflt = "liferay-", description = "index-name-prefix-help",
@@ -156,13 +164,6 @@ public interface ElasticsearchConfiguration {
 		name = "transport-tcp-port", required = false
 	)
 	public String transportTcpPort();
-
-	@Meta.AD(
-		deflt = "http://localhost:9200",
-		description = "network-host-addresses-help",
-		name = "network-host-addresses", required = false
-	)
-	public String[] networkHostAddresses();
 
 	@Meta.AD(
 		deflt = "true", description = "http-cors-enabled-help",
