@@ -63,13 +63,19 @@ public class ElasticsearchConnectionManager
 	}
 
 	@Override
-	public RestHighLevelClient getRestHighLevelClient() {
-		ElasticsearchConnection elasticsearchConnection =
-			getElasticsearchConnection();
+	public RestHighLevelClient getLocalClusterRestHighLevelClient() {
+		ElasticsearchConnection elasticsearchConnection = getConnection();
 
-		if (elasticsearchConnection == null) {
-			throw new ElasticsearchConnectionNotInitializedException();
+		if (_elasticsearchConfiguration.crossClusterReplicationEnabled()) {
+			return elasticsearchConnection.getLocalClusterRestHighLevelClient();
 		}
+
+		return elasticsearchConnection.getRestHighLevelClient();
+	}
+
+	@Override
+	public RestHighLevelClient getRestHighLevelClient() {
+		ElasticsearchConnection elasticsearchConnection = getConnection();
 
 		return elasticsearchConnection.getRestHighLevelClient();
 	}
@@ -123,6 +129,17 @@ public class ElasticsearchConnectionManager
 			ElasticsearchConfiguration.class, properties);
 
 		activate(translate(_elasticsearchConfiguration.operationMode()));
+	}
+
+	protected ElasticsearchConnection getConnection() {
+		ElasticsearchConnection elasticsearchConnection =
+			getElasticsearchConnection();
+
+		if (elasticsearchConnection == null) {
+			throw new ElasticsearchConnectionNotInitializedException();
+		}
+
+		return elasticsearchConnection;
 	}
 
 	@Modified

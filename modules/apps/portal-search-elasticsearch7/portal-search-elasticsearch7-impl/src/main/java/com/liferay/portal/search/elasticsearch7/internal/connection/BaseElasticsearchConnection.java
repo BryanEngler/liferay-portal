@@ -35,18 +35,39 @@ public abstract class BaseElasticsearchConnection
 
 	@Override
 	public void close() {
-		if (_restHighLevelClient == null) {
+		if ((_localClusterRestHighLevelClient == null) &&
+			(_restHighLevelClient == null)) {
+
 			return;
 		}
 
-		try {
-			_restHighLevelClient.close();
-		}
-		catch (IOException ioe) {
-			throw new RuntimeException(ioe);
+		RuntimeException re = null;
+
+		if (_restHighLevelClient != null) {
+			try {
+				_restHighLevelClient.close();
+			}
+			catch (IOException ioe) {
+				re = new RuntimeException(ioe);
+			}
+
+			_restHighLevelClient = null;
 		}
 
-		_restHighLevelClient = null;
+		if (_localClusterRestHighLevelClient != null) {
+			try {
+				_localClusterRestHighLevelClient.close();
+			}
+			catch (IOException ioe) {
+				re = new RuntimeException(ioe);
+			}
+
+			_localClusterRestHighLevelClient = null;
+		}
+
+		if (re != null) {
+			throw re;
+		}
 	}
 
 	@Override
@@ -64,6 +85,16 @@ public abstract class BaseElasticsearchConnection
 		}
 
 		_restHighLevelClient = createRestHighLevelClient();
+
+		if (elasticsearchConfiguration.crossClusterReplicationEnabled()) {
+			_localClusterRestHighLevelClient =
+				createLocalClusterRestHighLevelClient();
+		}
+	}
+
+	@Override
+	public RestHighLevelClient getLocalClusterRestHighLevelClient() {
+		return _localClusterRestHighLevelClient;
 	}
 
 	@Override
@@ -79,10 +110,14 @@ public abstract class BaseElasticsearchConnection
 		return false;
 	}
 
+	protected abstract RestHighLevelClient
+		createLocalClusterRestHighLevelClient();
+
 	protected abstract RestHighLevelClient createRestHighLevelClient();
 
 	protected volatile ElasticsearchConfiguration elasticsearchConfiguration;
 
+	private RestHighLevelClient _localClusterRestHighLevelClient;
 	private RestHighLevelClient _restHighLevelClient;
 
 }

@@ -21,6 +21,8 @@ import org.elasticsearch.client.RestHighLevelClient;
  */
 public interface ElasticsearchClientResolver {
 
+	public RestHighLevelClient getLocalClusterRestHighLevelClient();
+
 	public RestHighLevelClient getRestHighLevelClient();
 
 }

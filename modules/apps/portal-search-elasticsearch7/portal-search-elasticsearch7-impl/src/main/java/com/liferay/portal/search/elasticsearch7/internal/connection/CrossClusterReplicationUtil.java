@@ -14,21 +14,34 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.connection;
 
+import com.liferay.portal.search.engine.adapter.ccr.TargetCluster;
+
 import org.elasticsearch.client.RestHighLevelClient;
 
 /**
- * @author Michael C. Han
+ * @author Bryan Engler
  */
-public interface ElasticsearchConnection {
+public class CrossClusterReplicationUtil {
 
-	public void close();
+	public static RestHighLevelClient getRestHighLevelClient(
+		ElasticsearchClientResolver elasticsearchClientResolver,
+		TargetCluster targetCluster, boolean defaultLocal) {
 
-	public void connect();
+		if (targetCluster == null) {
+			if (defaultLocal) {
+				return elasticsearchClientResolver.
+					getLocalClusterRestHighLevelClient();
+			}
 
-	public RestHighLevelClient getLocalClusterRestHighLevelClient();
+			return elasticsearchClientResolver.getRestHighLevelClient();
+		}
 
-	public OperationMode getOperationMode();
+		if (targetCluster.equals(TargetCluster.LOCAL)) {
+			return elasticsearchClientResolver.
+				getLocalClusterRestHighLevelClient();
+		}
 
-	public RestHighLevelClient getRestHighLevelClient();
+		return elasticsearchClientResolver.getRestHighLevelClient();
+	}
 
 }

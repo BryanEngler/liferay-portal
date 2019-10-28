@@ -91,23 +91,7 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 			});
 	}
 
-	protected CredentialsProvider createCredentialsProvider() {
-		CredentialsProvider credentialsProvider =
-			new BasicCredentialsProvider();
-
-		credentialsProvider.setCredentials(
-			AuthScope.ANY,
-			new UsernamePasswordCredentials(
-				elasticsearchConfiguration.username(),
-				elasticsearchConfiguration.password()));
-
-		return credentialsProvider;
-	}
-
-	protected RestHighLevelClient createRestHighLevelClient() {
-		String[] networkHostAddresses =
-			elasticsearchConfiguration.networkHostAddresses();
-
+	protected RestHighLevelClient createClient(String[] networkHostAddresses) {
 		HttpHost[] httpHosts = new HttpHost[networkHostAddresses.length];
 
 		for (int i = 0; i < networkHostAddresses.length; i++) {
@@ -121,6 +105,35 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 		}
 
 		return new RestHighLevelClient(restClientBuilder);
+	}
+
+	protected CredentialsProvider createCredentialsProvider() {
+		CredentialsProvider credentialsProvider =
+			new BasicCredentialsProvider();
+
+		credentialsProvider.setCredentials(
+			AuthScope.ANY,
+			new UsernamePasswordCredentials(
+				elasticsearchConfiguration.username(),
+				elasticsearchConfiguration.password()));
+
+		return credentialsProvider;
+	}
+
+	protected RestHighLevelClient createLocalClusterRestHighLevelClient() {
+		String[] crossClusterReplicationLocalClusterNetworkHostAddresses =
+			elasticsearchConfiguration.
+				crossClusterReplicationLocalClusterNetworkHostAddresses();
+
+		return createClient(
+			crossClusterReplicationLocalClusterNetworkHostAddresses);
+	}
+
+	protected RestHighLevelClient createRestHighLevelClient() {
+		String[] networkHostAddresses =
+			elasticsearchConfiguration.networkHostAddresses();
+
+		return createClient(networkHostAddresses);
 	}
 
 	protected SSLContext createSSLContext() {

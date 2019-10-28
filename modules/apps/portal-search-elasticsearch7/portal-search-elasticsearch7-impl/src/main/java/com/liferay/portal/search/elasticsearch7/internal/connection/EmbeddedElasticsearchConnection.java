@@ -273,6 +273,11 @@ public class EmbeddedElasticsearchConnection
 			new PluginManagerFactoryImpl(settings), new PluginZipFactoryImpl());
 	}
 
+	@Override
+	protected RestHighLevelClient createLocalClusterRestHighLevelClient() {
+		return null;
+	}
+
 	protected Node createNode(Settings settings) {
 		Thread thread = Thread.currentThread();
 
