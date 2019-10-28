@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.index;
 
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.index.CloseIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.CloseIndexResponse;
@@ -44,7 +45,7 @@ public class CloseIndexRequestExecutorImpl
 				closeIndexRequest);
 
 		AcknowledgedResponse acknowledgedResponse = getAcknowledgedResponse(
-			elasticsearchCloseIndexRequest);
+			elasticsearchCloseIndexRequest, closeIndexRequest);
 
 		return new CloseIndexResponse(acknowledgedResponse.isAcknowledged());
 	}
@@ -77,10 +78,13 @@ public class CloseIndexRequestExecutorImpl
 
 	protected AcknowledgedResponse getAcknowledgedResponse(
 		org.elasticsearch.action.admin.indices.close.CloseIndexRequest
-			elasticsearchCloseIndexRequest) {
+			elasticsearchCloseIndexRequest,
+		CloseIndexRequest closeIndexRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				closeIndexRequest.getTargetCluster(), false);
 
 		IndicesClient indicesClient = restHighLevelClient.indices();
 

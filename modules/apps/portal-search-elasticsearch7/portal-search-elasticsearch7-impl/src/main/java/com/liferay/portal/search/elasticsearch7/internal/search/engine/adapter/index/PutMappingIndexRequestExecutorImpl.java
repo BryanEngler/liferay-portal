@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.index;
 
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.index.PutMappingIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.PutMappingIndexResponse;
@@ -45,7 +46,7 @@ public class PutMappingIndexRequestExecutorImpl
 			putMappingIndexRequest);
 
 		AcknowledgedResponse acknowledgedResponse = getAcknowledgedResponse(
-			putMappingRequest);
+			putMappingRequest, putMappingIndexRequest);
 
 		return new PutMappingIndexResponse(
 			acknowledgedResponse.isAcknowledged());
@@ -65,10 +66,13 @@ public class PutMappingIndexRequestExecutorImpl
 	}
 
 	protected AcknowledgedResponse getAcknowledgedResponse(
-		PutMappingRequest putMappingRequest) {
+		PutMappingRequest putMappingRequest,
+		PutMappingIndexRequest putMappingIndexRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				putMappingIndexRequest.getTargetCluster(), false);
 
 		IndicesClient indicesClient = restHighLevelClient.indices();
 

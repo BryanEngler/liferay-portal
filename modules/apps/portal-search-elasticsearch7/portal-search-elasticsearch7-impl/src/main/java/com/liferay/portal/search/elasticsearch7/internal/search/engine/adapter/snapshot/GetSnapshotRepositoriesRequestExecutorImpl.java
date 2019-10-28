@@ -16,6 +16,7 @@ package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.snapshot.GetSnapshotRepositoriesRequest;
 import com.liferay.portal.search.engine.adapter.snapshot.GetSnapshotRepositoriesResponse;
@@ -56,7 +57,8 @@ public class GetSnapshotRepositoriesRequestExecutorImpl
 
 		try {
 			GetRepositoriesResponse elasticsearchGetRepositoriesResponse =
-				getGetRepositoriesResponse(getRepositoriesRequest);
+				getGetRepositoriesResponse(
+					getRepositoriesRequest, getSnapshotRepositoriesRequest);
 
 			List<RepositoryMetaData> repositoriesMetaDatas =
 				elasticsearchGetRepositoriesResponse.repositories();
@@ -100,10 +102,13 @@ public class GetSnapshotRepositoriesRequestExecutorImpl
 	}
 
 	protected GetRepositoriesResponse getGetRepositoriesResponse(
-		GetRepositoriesRequest getRepositoriesRequest) {
+		GetRepositoriesRequest getRepositoriesRequest,
+		GetSnapshotRepositoriesRequest getSnapshotRepositoriesRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				getSnapshotRepositoriesRequest.getTargetCluster(), false);
 
 		SnapshotClient snapshotClient = restHighLevelClient.snapshot();
 

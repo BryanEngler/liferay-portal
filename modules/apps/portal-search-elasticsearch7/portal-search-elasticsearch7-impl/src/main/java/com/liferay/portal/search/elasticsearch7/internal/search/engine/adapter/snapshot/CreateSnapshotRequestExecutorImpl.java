@@ -15,6 +15,7 @@
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.snapshot;
 
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.snapshot.SnapshotDetails;
 
@@ -47,7 +48,8 @@ public class CreateSnapshotRequestExecutorImpl
 			createCreateSnapshotRequest(createSnapshotRequest);
 
 		CreateSnapshotResponse elasticsearchCreateSnapshotResponse =
-			getCreateSnapshotResponse(elasticsearchCreateSnapshotRequest);
+			getCreateSnapshotResponse(
+				elasticsearchCreateSnapshotRequest, createSnapshotRequest);
 
 		SnapshotDetails snapshotDetails = SnapshotInfoConverter.convert(
 			elasticsearchCreateSnapshotResponse.getSnapshotInfo());
@@ -79,16 +81,20 @@ public class CreateSnapshotRequestExecutorImpl
 	}
 
 	protected CreateSnapshotResponse getCreateSnapshotResponse(
-		CreateSnapshotRequest createSnapshotRequest) {
+		CreateSnapshotRequest elasticsearchCreateSnapshotRequest,
+		com.liferay.portal.search.engine.adapter.snapshot.CreateSnapshotRequest
+			createSnapshotRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				createSnapshotRequest.getTargetCluster(), false);
 
 		SnapshotClient snapshotClient = restHighLevelClient.snapshot();
 
 		try {
 			return snapshotClient.create(
-				createSnapshotRequest, RequestOptions.DEFAULT);
+				elasticsearchCreateSnapshotRequest, RequestOptions.DEFAULT);
 		}
 		catch (IOException ioe) {
 			throw new RuntimeException(ioe);

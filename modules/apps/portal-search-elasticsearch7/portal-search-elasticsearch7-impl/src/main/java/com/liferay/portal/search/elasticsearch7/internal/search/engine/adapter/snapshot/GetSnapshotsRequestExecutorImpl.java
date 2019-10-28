@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.snapshot;
 
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.snapshot.SnapshotDetails;
 
@@ -49,7 +50,8 @@ public class GetSnapshotsRequestExecutorImpl
 			createGetSnapshotsRequest(getSnapshotsRequest);
 
 		GetSnapshotsResponse elasticsearchGetSnapshotsResponse =
-			getGetSnapshotsResponse(elasticsearchGetSnapshotsRequest);
+			getGetSnapshotsResponse(
+				elasticsearchGetSnapshotsRequest, getSnapshotsRequest);
 
 		com.liferay.portal.search.engine.adapter.snapshot.GetSnapshotsResponse
 			getSnapshotsResponse =
@@ -90,10 +92,14 @@ public class GetSnapshotsRequestExecutorImpl
 	}
 
 	protected GetSnapshotsResponse getGetSnapshotsResponse(
-		GetSnapshotsRequest elasticsearchGetSnapshotsRequest) {
+		GetSnapshotsRequest elasticsearchGetSnapshotsRequest,
+		com.liferay.portal.search.engine.adapter.snapshot.GetSnapshotsRequest
+			getSnapshotsRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				getSnapshotsRequest.getTargetCluster(), false);
 
 		SnapshotClient snapshotClient = restHighLevelClient.snapshot();
 

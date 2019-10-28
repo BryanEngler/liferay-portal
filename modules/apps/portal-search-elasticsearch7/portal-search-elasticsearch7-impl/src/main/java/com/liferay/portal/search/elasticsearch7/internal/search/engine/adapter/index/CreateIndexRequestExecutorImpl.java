@@ -16,6 +16,7 @@ package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.elasticsearch7.internal.util.LogUtil;
 import com.liferay.portal.search.engine.adapter.index.CreateIndexRequest;
@@ -46,7 +47,7 @@ public class CreateIndexRequestExecutorImpl
 
 		org.elasticsearch.action.admin.indices.create.CreateIndexResponse
 			elasticsearchCreateIndexResponse = getCreateIndexResponse(
-				elasticsearchCreateIndexRequest);
+				elasticsearchCreateIndexRequest, createIndexRequest);
 
 		LogUtil.logActionResponse(_log, elasticsearchCreateIndexResponse);
 
@@ -74,10 +75,13 @@ public class CreateIndexRequestExecutorImpl
 	protected org.elasticsearch.action.admin.indices.create.CreateIndexResponse
 		getCreateIndexResponse(
 			org.elasticsearch.action.admin.indices.create.CreateIndexRequest
-				elasticsearchCreateIndexRequest) {
+				elasticsearchCreateIndexRequest,
+			CreateIndexRequest createIndexRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				createIndexRequest.getTargetCluster(), false);
 
 		IndicesClient indicesClient = restHighLevelClient.indices();
 

@@ -15,6 +15,7 @@
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.index;
 
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.index.IndexRequestShardFailure;
 import com.liferay.portal.search.engine.adapter.index.RefreshIndexRequest;
@@ -46,7 +47,8 @@ public class RefreshIndexRequestExecutorImpl
 		RefreshRequest refreshRequest = createRefreshRequest(
 			refreshIndexRequest);
 
-		RefreshResponse refreshResponse = getRefreshResponse(refreshRequest);
+		RefreshResponse refreshResponse = getRefreshResponse(
+			refreshRequest, refreshIndexRequest);
 
 		RefreshIndexResponse refreshIndexResponse = new RefreshIndexResponse();
 
@@ -81,10 +83,13 @@ public class RefreshIndexRequestExecutorImpl
 	}
 
 	protected RefreshResponse getRefreshResponse(
-		RefreshRequest refreshRequest) {
+		RefreshRequest refreshRequest,
+		RefreshIndexRequest refreshIndexRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				refreshIndexRequest.getTargetCluster(), false);
 
 		IndicesClient indicesClient = restHighLevelClient.indices();
 

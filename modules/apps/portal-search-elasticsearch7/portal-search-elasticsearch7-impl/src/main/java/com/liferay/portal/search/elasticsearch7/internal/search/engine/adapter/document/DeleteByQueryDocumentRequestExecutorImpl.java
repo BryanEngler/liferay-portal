@@ -15,6 +15,7 @@
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.document;
 
 import com.liferay.portal.kernel.search.query.QueryTranslator;
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.document.DeleteByQueryDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.DeleteByQueryDocumentResponse;
@@ -48,7 +49,7 @@ public class DeleteByQueryDocumentRequestExecutorImpl
 			deleteByQueryDocumentRequest);
 
 		BulkByScrollResponse bulkByScrollResponse = getBulkByScrollResponse(
-			deleteByQueryRequest);
+			deleteByQueryRequest, deleteByQueryDocumentRequest);
 
 		TimeValue timeValue = bulkByScrollResponse.getTook();
 
@@ -76,10 +77,13 @@ public class DeleteByQueryDocumentRequestExecutorImpl
 	}
 
 	protected BulkByScrollResponse getBulkByScrollResponse(
-		DeleteByQueryRequest deleteByQueryRequest) {
+		DeleteByQueryRequest deleteByQueryRequest,
+		DeleteByQueryDocumentRequest deleteByQueryDocumentRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				deleteByQueryDocumentRequest.getTargetCluster(), false);
 
 		try {
 			return restHighLevelClient.deleteByQuery(

@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.document;
 
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.document.BulkableDocumentRequestTranslator;
 import com.liferay.portal.search.engine.adapter.document.DeleteDocumentRequest;
@@ -44,16 +45,22 @@ public class DeleteDocumentRequestExecutorImpl
 		DeleteRequest deleteRequest =
 			_bulkableDocumentRequestTranslator.translate(deleteDocumentRequest);
 
-		DeleteResponse deleteResponse = getDeleteResponse(deleteRequest);
+		DeleteResponse deleteResponse = getDeleteResponse(
+			deleteRequest, deleteDocumentRequest);
 
 		RestStatus restStatus = deleteResponse.status();
 
 		return new DeleteDocumentResponse(restStatus.getStatus());
 	}
 
-	protected DeleteResponse getDeleteResponse(DeleteRequest deleteRequest) {
+	protected DeleteResponse getDeleteResponse(
+		DeleteRequest deleteRequest,
+		DeleteDocumentRequest deleteDocumentRequest) {
+
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				deleteDocumentRequest.getTargetCluster(), false);
 
 		try {
 			return restHighLevelClient.delete(

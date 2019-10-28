@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.document;
 
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.document.BulkableDocumentRequestTranslator;
 import com.liferay.portal.search.engine.adapter.document.UpdateDocumentRequest;
@@ -44,16 +45,22 @@ public class UpdateDocumentRequestExecutorImpl
 		UpdateRequest updateRequest =
 			_bulkableDocumentRequestTranslator.translate(updateDocumentRequest);
 
-		UpdateResponse updateResponse = getUpdateResponse(updateRequest);
+		UpdateResponse updateResponse = getUpdateResponse(
+			updateRequest, updateDocumentRequest);
 
 		RestStatus restStatus = updateResponse.status();
 
 		return new UpdateDocumentResponse(restStatus.getStatus());
 	}
 
-	protected UpdateResponse getUpdateResponse(UpdateRequest updateRequest) {
+	protected UpdateResponse getUpdateResponse(
+		UpdateRequest updateRequest,
+		UpdateDocumentRequest updateDocumentRequest) {
+
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				updateDocumentRequest.getTargetCluster(), false);
 
 		try {
 			return restHighLevelClient.update(

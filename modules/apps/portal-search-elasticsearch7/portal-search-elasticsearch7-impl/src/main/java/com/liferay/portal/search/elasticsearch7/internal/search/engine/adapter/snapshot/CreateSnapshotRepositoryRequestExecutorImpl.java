@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.snapshot;
 
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.snapshot.CreateSnapshotRepositoryRequest;
 import com.liferay.portal.search.engine.adapter.snapshot.CreateSnapshotRepositoryResponse;
@@ -46,7 +47,7 @@ public class CreateSnapshotRepositoryRequestExecutorImpl
 			createSnapshotRepositoryRequest);
 
 		AcknowledgedResponse acknowledgedResponse = getAcknowledgedResponse(
-			putRepositoryRequest);
+			putRepositoryRequest, createSnapshotRepositoryRequest);
 
 		return new CreateSnapshotRepositoryResponse(
 			acknowledgedResponse.isAcknowledged());
@@ -77,10 +78,13 @@ public class CreateSnapshotRepositoryRequestExecutorImpl
 	}
 
 	protected AcknowledgedResponse getAcknowledgedResponse(
-		PutRepositoryRequest putRepositoryRequest) {
+		PutRepositoryRequest putRepositoryRequest,
+		CreateSnapshotRepositoryRequest createSnapshotRepositoryRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				createSnapshotRepositoryRequest.getTargetCluster(), false);
 
 		SnapshotClient snapshotClient = restHighLevelClient.snapshot();
 

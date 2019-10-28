@@ -15,6 +15,7 @@
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.index;
 
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.index.FlushIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.FlushIndexResponse;
@@ -44,7 +45,8 @@ public class FlushIndexRequestExecutorImpl
 	public FlushIndexResponse execute(FlushIndexRequest flushIndexRequest) {
 		FlushRequest flushRequest = createFlushRequest(flushIndexRequest);
 
-		FlushResponse flushResponse = getFlushResponse(flushRequest);
+		FlushResponse flushResponse = getFlushResponse(
+			flushRequest, flushIndexRequest);
 
 		FlushIndexResponse flushIndexResponse = new FlushIndexResponse();
 
@@ -88,9 +90,13 @@ public class FlushIndexRequestExecutorImpl
 		return flushRequest;
 	}
 
-	protected FlushResponse getFlushResponse(FlushRequest flushRequest) {
+	protected FlushResponse getFlushResponse(
+		FlushRequest flushRequest, FlushIndexRequest flushIndexRequest) {
+
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				flushIndexRequest.getTargetCluster(), false);
 
 		IndicesClient indicesClient = restHighLevelClient.indices();
 

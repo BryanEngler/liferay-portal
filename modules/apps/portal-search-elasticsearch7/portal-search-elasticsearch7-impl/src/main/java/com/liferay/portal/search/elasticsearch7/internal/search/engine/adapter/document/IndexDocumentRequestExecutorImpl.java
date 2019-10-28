@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.document;
 
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.document.BulkableDocumentRequestTranslator;
 import com.liferay.portal.search.engine.adapter.document.IndexDocumentRequest;
@@ -44,7 +45,8 @@ public class IndexDocumentRequestExecutorImpl
 		IndexRequest indexRequest =
 			_bulkableDocumentRequestTranslator.translate(indexDocumentRequest);
 
-		IndexResponse indexResponse = getIndexResponse(indexRequest);
+		IndexResponse indexResponse = getIndexResponse(
+			indexRequest, indexDocumentRequest);
 
 		RestStatus restStatus = indexResponse.status();
 
@@ -52,9 +54,13 @@ public class IndexDocumentRequestExecutorImpl
 			restStatus.getStatus(), indexResponse.getId());
 	}
 
-	protected IndexResponse getIndexResponse(IndexRequest indexRequest) {
+	protected IndexResponse getIndexResponse(
+		IndexRequest indexRequest, IndexDocumentRequest indexDocumentRequest) {
+
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				indexDocumentRequest.getTargetCluster(), false);
 
 		try {
 			return restHighLevelClient.index(

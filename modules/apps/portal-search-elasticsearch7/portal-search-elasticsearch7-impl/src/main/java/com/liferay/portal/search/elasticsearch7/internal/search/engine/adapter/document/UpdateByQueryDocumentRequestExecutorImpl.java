@@ -16,6 +16,7 @@ package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.
 
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.query.QueryTranslator;
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.document.UpdateByQueryDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.UpdateByQueryDocumentResponse;
@@ -50,7 +51,7 @@ public class UpdateByQueryDocumentRequestExecutorImpl
 			updateByQueryDocumentRequest);
 
 		BulkByScrollResponse bulkByScrollResponse = getBulkByScrollResponse(
-			updateByQueryRequest);
+			updateByQueryRequest, updateByQueryDocumentRequest);
 
 		TimeValue timeValue = bulkByScrollResponse.getTook();
 
@@ -87,10 +88,13 @@ public class UpdateByQueryDocumentRequestExecutorImpl
 	}
 
 	protected BulkByScrollResponse getBulkByScrollResponse(
-		UpdateByQueryRequest updateByQueryRequest) {
+		UpdateByQueryRequest updateByQueryRequest,
+		UpdateByQueryDocumentRequest updateByQueryDocumentRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				updateByQueryDocumentRequest.getTargetCluster(), false);
 
 		try {
 			return restHighLevelClient.updateByQuery(

@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.index;
 
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.index.IndicesOptions;
 import com.liferay.portal.search.engine.adapter.index.OpenIndexRequest;
@@ -43,7 +44,7 @@ public class OpenIndexRequestExecutorImpl implements OpenIndexRequestExecutor {
 				openIndexRequest);
 
 		AcknowledgedResponse acknowledgedResponse = getAcknowledgedResponse(
-			elasticsearchOpenIndexRequest);
+			elasticsearchOpenIndexRequest, openIndexRequest);
 
 		return new OpenIndexResponse(acknowledgedResponse.isAcknowledged());
 	}
@@ -83,10 +84,13 @@ public class OpenIndexRequestExecutorImpl implements OpenIndexRequestExecutor {
 
 	protected AcknowledgedResponse getAcknowledgedResponse(
 		org.elasticsearch.action.admin.indices.open.OpenIndexRequest
-			elasticsearchOpenIndexRequest) {
+			elasticsearchOpenIndexRequest,
+		OpenIndexRequest openIndexRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				openIndexRequest.getTargetCluster(), false);
 
 		IndicesClient indicesClient = restHighLevelClient.indices();
 

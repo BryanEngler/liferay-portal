@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.index;
 
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.index.DeleteIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.DeleteIndexResponse;
@@ -43,7 +44,7 @@ public class DeleteIndexRequestExecutorImpl
 				deleteIndexRequest);
 
 		AcknowledgedResponse acknowledgedResponse = getAcknowledgedResponse(
-			elasticsearchDeleteIndexRequest);
+			elasticsearchDeleteIndexRequest, deleteIndexRequest);
 
 		return new DeleteIndexResponse(acknowledgedResponse.isAcknowledged());
 	}
@@ -66,10 +67,13 @@ public class DeleteIndexRequestExecutorImpl
 
 	protected AcknowledgedResponse getAcknowledgedResponse(
 		org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
-			elasticsearchDeleteIndexRequest) {
+			elasticsearchDeleteIndexRequest,
+		DeleteIndexRequest deleteIndexRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				deleteIndexRequest.getTargetCluster(), false);
 
 		IndicesClient indicesClient = restHighLevelClient.indices();
 

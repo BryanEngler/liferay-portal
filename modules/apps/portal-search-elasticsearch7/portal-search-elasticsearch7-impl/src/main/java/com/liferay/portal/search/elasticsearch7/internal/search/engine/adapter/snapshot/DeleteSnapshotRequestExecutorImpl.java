@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.snapshot;
 
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.snapshot.DeleteSnapshotResponse;
 
@@ -44,7 +45,7 @@ public class DeleteSnapshotRequestExecutorImpl
 			createDeleteSnapshotRequest(deleteSnapshotRequest);
 
 		AcknowledgedResponse acknowledgedResponse = getAcknowledgedResponse(
-			elasticsearchDeleteSnapshotRequest);
+			elasticsearchDeleteSnapshotRequest, deleteSnapshotRequest);
 
 		return new DeleteSnapshotResponse(
 			acknowledgedResponse.isAcknowledged());
@@ -66,16 +67,20 @@ public class DeleteSnapshotRequestExecutorImpl
 	}
 
 	protected AcknowledgedResponse getAcknowledgedResponse(
-		DeleteSnapshotRequest deleteSnapshotRequest) {
+		DeleteSnapshotRequest elasticsearchDeleteSnapshotRequest,
+		com.liferay.portal.search.engine.adapter.snapshot.DeleteSnapshotRequest
+			deleteSnapshotRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				deleteSnapshotRequest.getTargetCluster(), false);
 
 		SnapshotClient snapshotClient = restHighLevelClient.snapshot();
 
 		try {
 			return snapshotClient.delete(
-				deleteSnapshotRequest, RequestOptions.DEFAULT);
+				elasticsearchDeleteSnapshotRequest, RequestOptions.DEFAULT);
 		}
 		catch (IOException ioe) {
 			throw new RuntimeException(ioe);
