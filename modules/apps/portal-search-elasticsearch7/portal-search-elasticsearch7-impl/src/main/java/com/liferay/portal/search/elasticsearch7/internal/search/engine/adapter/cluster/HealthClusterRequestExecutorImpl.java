@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.cluster;
 
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.cluster.HealthClusterRequest;
 import com.liferay.portal.search.engine.adapter.cluster.HealthClusterResponse;
@@ -44,7 +45,7 @@ public class HealthClusterRequestExecutorImpl
 			healthClusterRequest);
 
 		ClusterHealthResponse clusterHealthResponse = getClusterHealthResponse(
-			clusterHealthRequest);
+			clusterHealthRequest, healthClusterRequest);
 
 		ClusterHealthStatus clusterHealthStatus =
 			clusterHealthResponse.getStatus();
@@ -78,10 +79,13 @@ public class HealthClusterRequestExecutorImpl
 	}
 
 	protected ClusterHealthResponse getClusterHealthResponse(
-		ClusterHealthRequest clusterHealthRequest) {
+		ClusterHealthRequest clusterHealthRequest,
+		HealthClusterRequest healthClusterRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				healthClusterRequest.getTargetCluster(), true);
 
 		ClusterClient clusterClient = restHighLevelClient.cluster();
 

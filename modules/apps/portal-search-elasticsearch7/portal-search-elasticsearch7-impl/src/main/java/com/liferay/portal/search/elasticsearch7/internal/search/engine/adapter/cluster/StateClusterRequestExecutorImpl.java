@@ -15,6 +15,7 @@
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.cluster;
 
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.cluster.StateClusterRequest;
 import com.liferay.portal.search.engine.adapter.cluster.StateClusterResponse;
@@ -43,7 +44,9 @@ public class StateClusterRequestExecutorImpl
 		StateClusterRequest stateClusterRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				stateClusterRequest.getTargetCluster(), true);
 
 		RestClient restClient = restHighLevelClient.getLowLevelClient();
 

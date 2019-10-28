@@ -17,6 +17,7 @@ package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.elasticsearch7.internal.util.JSONUtil;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
@@ -63,7 +64,8 @@ public class SearchSearchRequestExecutorImpl
 			_log.trace("Search query: " + prettyPrintedRequestString);
 		}
 
-		SearchResponse searchResponse = getSearchResponse(searchRequest);
+		SearchResponse searchResponse = getSearchResponse(
+			searchRequest, searchSearchRequest);
 
 		SearchSearchResponse searchSearchResponse = new SearchSearchResponse();
 
@@ -82,9 +84,13 @@ public class SearchSearchRequestExecutorImpl
 		return searchSearchResponse;
 	}
 
-	protected SearchResponse getSearchResponse(SearchRequest searchRequest) {
+	protected SearchResponse getSearchResponse(
+		SearchRequest searchRequest, SearchSearchRequest searchSearchRequest) {
+
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				searchSearchRequest.getTargetCluster(), true);
 
 		try {
 			return restHighLevelClient.search(

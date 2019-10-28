@@ -16,6 +16,7 @@ package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.
 
 import com.liferay.portal.search.document.DocumentBuilder;
 import com.liferay.portal.search.document.DocumentBuilderFactory;
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.elasticsearch7.internal.document.DocumentFieldsTranslator;
 import com.liferay.portal.search.engine.adapter.document.BulkableDocumentRequestTranslator;
@@ -45,7 +46,8 @@ public class GetDocumentRequestExecutorImpl
 		GetRequest getRequest = _bulkableDocumentRequestTranslator.translate(
 			getDocumentRequest);
 
-		GetResponse getResponse = getGetResponse(getRequest);
+		GetResponse getResponse = getGetResponse(
+			getRequest, getDocumentRequest);
 
 		GetDocumentResponse getDocumentResponse = new GetDocumentResponse(
 			getResponse.isExists());
@@ -70,9 +72,13 @@ public class GetDocumentRequestExecutorImpl
 		return getDocumentResponse;
 	}
 
-	protected GetResponse getGetResponse(GetRequest getRequest) {
+	protected GetResponse getGetResponse(
+		GetRequest getRequest, GetDocumentRequest getDocumentRequest) {
+
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				getDocumentRequest.getTargetCluster(), true);
 
 		try {
 			return restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);

@@ -16,6 +16,7 @@ package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.
 
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.index.AnalysisIndexResponseToken;
 import com.liferay.portal.search.engine.adapter.index.AnalyzeIndexRequest;
@@ -50,7 +51,8 @@ public class AnalyzeIndexRequestExecutorImpl
 		AnalyzeRequest analyzeRequest = createAnalyzeRequest(
 			analyzeIndexRequest);
 
-		AnalyzeResponse analyzeResponse = getAnalyzeResponse(analyzeRequest);
+		AnalyzeResponse analyzeResponse = getAnalyzeResponse(
+			analyzeRequest, analyzeIndexRequest);
 
 		AnalyzeIndexResponse analyzeIndexResponse = new AnalyzeIndexResponse();
 
@@ -131,10 +133,13 @@ public class AnalyzeIndexRequestExecutorImpl
 	}
 
 	protected AnalyzeResponse getAnalyzeResponse(
-		AnalyzeRequest analyzeRequest) {
+		AnalyzeRequest analyzeRequest,
+		AnalyzeIndexRequest analyzeIndexRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				analyzeIndexRequest.getTargetCluster(), true);
 
 		IndicesClient indicesClient = restHighLevelClient.indices();
 

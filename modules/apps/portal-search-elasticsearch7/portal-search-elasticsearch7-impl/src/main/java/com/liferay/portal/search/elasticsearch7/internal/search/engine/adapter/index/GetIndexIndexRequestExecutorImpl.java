@@ -16,6 +16,7 @@ package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.
 
 import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.index.GetIndexIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.GetIndexIndexResponse;
@@ -54,7 +55,7 @@ public class GetIndexIndexRequestExecutorImpl
 			getIndexIndexRequest);
 
 		GetIndexResponse getIndexResponse = getGetIndexResponse(
-			getIndexRequest);
+			getIndexRequest, getIndexIndexRequest);
 
 		GetIndexIndexResponse getIndexIndexResponse =
 			new GetIndexIndexResponse();
@@ -150,10 +151,13 @@ public class GetIndexIndexRequestExecutorImpl
 	}
 
 	protected GetIndexResponse getGetIndexResponse(
-		GetIndexRequest getIndexRequest) {
+		GetIndexRequest getIndexRequest,
+		GetIndexIndexRequest getIndexIndexRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				getIndexIndexRequest.getTargetCluster(), true);
 
 		IndicesClient indicesClient = restHighLevelClient.indices();
 

@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.index;
 
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.index.GetMappingIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.GetMappingIndexResponse;
@@ -50,7 +51,7 @@ public class GetMappingIndexRequestExecutorImpl
 			getMappingIndexRequest);
 
 		GetMappingsResponse getMappingsResponse = getGetMappingsResponse(
-			getMappingsRequest);
+			getMappingsRequest, getMappingIndexRequest);
 
 		ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>>
 			mappings = getMappingsResponse.mappings();
@@ -84,10 +85,13 @@ public class GetMappingIndexRequestExecutorImpl
 	}
 
 	protected GetMappingsResponse getGetMappingsResponse(
-		GetMappingsRequest getMappingsRequest) {
+		GetMappingsRequest getMappingsRequest,
+		GetMappingIndexRequest getMappingIndexRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				getMappingIndexRequest.getTargetCluster(), true);
 
 		IndicesClient indicesClient = restHighLevelClient.indices();
 

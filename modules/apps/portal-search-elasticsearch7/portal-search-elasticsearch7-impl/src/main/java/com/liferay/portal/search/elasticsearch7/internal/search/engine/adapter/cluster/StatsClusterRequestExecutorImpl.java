@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.cluster.ClusterHealthStatus;
 import com.liferay.portal.search.engine.adapter.cluster.StatsClusterRequest;
@@ -48,7 +49,9 @@ public class StatsClusterRequestExecutorImpl
 		StatsClusterRequest statsClusterRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				statsClusterRequest.getTargetCluster(), true);
 
 		RestClient restClient = restHighLevelClient.getLowLevelClient();
 

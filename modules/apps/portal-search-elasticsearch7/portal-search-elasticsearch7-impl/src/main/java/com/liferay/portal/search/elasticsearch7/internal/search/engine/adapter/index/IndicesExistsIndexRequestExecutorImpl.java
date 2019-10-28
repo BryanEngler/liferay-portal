@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.index;
 
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.index.IndicesExistsIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.IndicesExistsIndexResponse;
@@ -40,7 +41,9 @@ public class IndicesExistsIndexRequestExecutorImpl
 		IndicesExistsIndexRequest indicesExistsIndexRequest) {
 
 		return new IndicesExistsIndexResponse(
-			indicesExists(createGetIndexRequest(indicesExistsIndexRequest)));
+			indicesExists(
+				createGetIndexRequest(indicesExistsIndexRequest),
+				indicesExistsIndexRequest));
 	}
 
 	protected GetIndexRequest createGetIndexRequest(
@@ -53,9 +56,14 @@ public class IndicesExistsIndexRequestExecutorImpl
 		return getIndexRequest;
 	}
 
-	protected boolean indicesExists(GetIndexRequest getIndexRequest) {
+	protected boolean indicesExists(
+		GetIndexRequest getIndexRequest,
+		IndicesExistsIndexRequest indicesExistsIndexRequest) {
+
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				indicesExistsIndexRequest.getTargetCluster(), true);
 
 		IndicesClient indicesClient = restHighLevelClient.indices();
 

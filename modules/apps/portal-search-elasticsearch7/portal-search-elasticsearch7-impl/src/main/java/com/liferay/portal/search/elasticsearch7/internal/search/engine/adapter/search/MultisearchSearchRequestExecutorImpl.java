@@ -17,6 +17,7 @@ package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.search.elasticsearch7.internal.connection.CrossClusterReplicationUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.search.MultisearchSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.MultisearchSearchResponse;
@@ -80,7 +81,7 @@ public class MultisearchSearchRequestExecutorImpl
 			});
 
 		MultiSearchResponse multiSearchResponse = getMultiSearchResponse(
-			multiSearchRequest);
+			multiSearchRequest, multisearchSearchRequest);
 
 		Iterator<MultiSearchResponse.Item> multiSearchResponseItems =
 			multiSearchResponse.iterator();
@@ -130,10 +131,13 @@ public class MultisearchSearchRequestExecutorImpl
 	}
 
 	protected MultiSearchResponse getMultiSearchResponse(
-		MultiSearchRequest multiSearchRequest) {
+		MultiSearchRequest multiSearchRequest,
+		MultisearchSearchRequest multisearchSearchRequest) {
 
 		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient();
+			CrossClusterReplicationUtil.getRestHighLevelClient(
+				_elasticsearchClientResolver,
+				multisearchSearchRequest.getTargetCluster(), true);
 
 		try {
 			return restHighLevelClient.msearch(
