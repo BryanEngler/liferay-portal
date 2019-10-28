@@ -121,6 +121,20 @@ public interface ElasticsearchConfiguration {
 	public String truststorePassword();
 
 	@Meta.AD(
+		deflt = "false", description = "cross-cluster-replication-enabled-help",
+		name = "cross-cluster-replication-enabled", required = false
+	)
+	public boolean crossClusterReplicationEnabled();
+
+	@Meta.AD(
+		deflt = "http://localhost:9202",
+		description = "cross-cluster-replication-local-cluster-network-host-addresses-help",
+		name = "cross-cluster-replication-local-cluster-network-host-addresses",
+		required = false
+	)
+	public String[] crossClusterReplicationLocalClusterNetworkHostAddresses();
+
+	@Meta.AD(
 		deflt = "true", description = "log-exceptions-only-help",
 		name = "log-exceptions-only", required = false
 	)
