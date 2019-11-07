@@ -17,6 +17,7 @@ package com.liferay.portal.search.elasticsearch7.internal.connection;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration;
+import com.liferay.portal.search.elasticsearch7.internal.util.ClassLoaderUtil;
 
 import java.io.InputStream;
 
@@ -35,7 +36,6 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 
@@ -72,22 +72,15 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 
 	protected void configureSecurity(RestClientBuilder restClientBuilder) {
 		restClientBuilder.setHttpClientConfigCallback(
-			new RestClientBuilder.HttpClientConfigCallback() {
+			httpClientBuilder -> {
+				httpClientBuilder.setDefaultCredentialsProvider(
+					createCredentialsProvider());
 
-				@Override
-				public HttpAsyncClientBuilder customizeHttpClient(
-					HttpAsyncClientBuilder httpClientBuilder) {
-
-					httpClientBuilder.setDefaultCredentialsProvider(
-						createCredentialsProvider());
-
-					if (elasticsearchConfiguration.httpSSLEnabled()) {
-						httpClientBuilder.setSSLContext(createSSLContext());
-					}
-
-					return httpClientBuilder;
+				if (elasticsearchConfiguration.httpSSLEnabled()) {
+					httpClientBuilder.setSSLContext(createSSLContext());
 				}
 
+				return httpClientBuilder;
 			});
 	}
 
@@ -104,6 +97,7 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 		return credentialsProvider;
 	}
 
+	@Override
 	protected RestHighLevelClient createRestHighLevelClient() {
 		String[] networkHostAddresses =
 			elasticsearchConfiguration.networkHostAddresses();
@@ -120,7 +114,10 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 			configureSecurity(restClientBuilder);
 		}
 
-		return new RestHighLevelClient(restClientBuilder);
+		Class<? extends RemoteElasticsearchConnection> clazz = getClass();
+
+		return ClassLoaderUtil.getWithContextClassLoader(
+			() -> new RestHighLevelClient(restClientBuilder), clazz);
 	}
 
 	protected SSLContext createSSLContext() {
