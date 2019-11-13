@@ -59,11 +59,7 @@
 		},
 		"normalizer": {
 			"keyword_lowercase": {
-				"char_filter": [],
-				"filter": [
-					"lowercase"
-				],
-				"type": "custom"
+				"filter": "lowercase"
 			}
 		}
 	}
