@@ -145,6 +145,8 @@ public class ExpandoSearchTest {
 
 		addUser();
 
+		columnValue = StringUtil.toLowerCase(columnValue);
+
 		assertSearch("Software Engineer", columnValue);
 		assertSearch("\"Software Engineer\"", columnValue);
 		assertSearch("software engineer", columnValue);
@@ -186,8 +188,9 @@ public class ExpandoSearchTest {
 			"Software", "SoftWare", "softWare", "software"
 		};
 
-		for (String columnValue : columnValues) {
-			addUser(columnName, columnValue);
+		for (int i = 0; i < columnValues.length; i++) {
+			addUser(columnName, columnValues[i]);
+			columnValues[i] = StringUtil.toLowerCase(columnValues[i]);
 		}
 
 		addUser(columnName, RandomTestUtil.randomString());
