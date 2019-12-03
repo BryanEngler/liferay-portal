@@ -29,7 +29,6 @@ import com.liferay.portal.search.elasticsearch7.internal.connection.Elasticsearc
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.FutureTask;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -47,10 +46,14 @@ public class ElasticsearchEngineConfigurator
 
 	@Override
 	public void destroy() {
-		ElasticsearchConnection elasticsearchConnection =
-			_elasticsearchConnectionManager.getElasticsearchConnection();
+		Map<String, ElasticsearchConnection> elasticsearchConnections =
+			_elasticsearchConnectionManager.getElasticsearchConnections();
 
-		elasticsearchConnection.close();
+		for (ElasticsearchConnection elasticsearchConnection :
+				elasticsearchConnections.values()) {
+
+			elasticsearchConnection.close();
+		}
 
 		super.destroy();
 	}
@@ -85,33 +88,6 @@ public class ElasticsearchEngineConfigurator
 	@Override
 	protected SearchEngineHelper getSearchEngineHelper() {
 		return searchEngineHelper;
-	}
-
-	@Override
-	protected void initialize() {
-		FutureTask<Void> futureTask = new FutureTask<Void>(
-			() -> {
-				_elasticsearchConnectionManager.connect();
-
-				return null;
-			});
-
-		Thread thread = new Thread(
-			futureTask, "Elasticsearch Initialization Thread");
-
-		thread.setDaemon(true);
-
-		thread.start();
-
-		try {
-			futureTask.get();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(
-				"Unable to initialize Elasticsearch engine", e);
-		}
-
-		super.initialize();
 	}
 
 	@Reference(

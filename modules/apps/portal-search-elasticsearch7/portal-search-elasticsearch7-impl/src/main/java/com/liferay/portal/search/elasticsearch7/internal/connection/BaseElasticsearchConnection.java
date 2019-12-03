@@ -14,17 +14,8 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.connection;
 
-import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration;
-
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.impl.Log4JLogger;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
-import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 
 /**
@@ -51,18 +42,6 @@ public abstract class BaseElasticsearchConnection
 
 	@Override
 	public void connect() {
-		Log log = LogFactory.getLog(RestClient.class);
-
-		if (log instanceof Log4JLogger) {
-			Log4JLogger log4JLogger = (Log4JLogger)log;
-
-			Logger logger = log4JLogger.getLogger();
-
-			logger.setLevel(
-				Level.toLevel(
-					elasticsearchConfiguration.restClientLoggerLevel()));
-		}
-
 		_restHighLevelClient = createRestHighLevelClient();
 	}
 
@@ -80,8 +59,6 @@ public abstract class BaseElasticsearchConnection
 	}
 
 	protected abstract RestHighLevelClient createRestHighLevelClient();
-
-	protected volatile ElasticsearchConfiguration elasticsearchConfiguration;
 
 	private RestHighLevelClient _restHighLevelClient;
 
