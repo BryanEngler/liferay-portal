@@ -90,7 +90,21 @@ public class SearchBarPortletSharedSearchContributor
 		SearchScope searchScope = getSearchScope(
 			searchBarPortletPreferences, portletSharedSearchSettings);
 
-		if (searchScope != SearchScope.THIS_SITE) {
+		if (searchScope == SearchScope.EVERYTHING) {
+			boolean showResultsFromStagedSites = true; //get value from checkbox
+
+			ThemeDisplay themeDisplay =
+				portletSharedSearchSettings.getThemeDisplay();
+
+			Group group = groupLocalService.fetchGroup(
+				themeDisplay.getScopeGroupId());
+
+			if (!showResultsFromStagedSites || !group.isStagingGroup()) {
+				searchRequestBuilder.withSearchContext(
+					searchContext -> searchContext.setIncludeStagingGroups(
+						false));
+			}
+
 			return;
 		}
 
