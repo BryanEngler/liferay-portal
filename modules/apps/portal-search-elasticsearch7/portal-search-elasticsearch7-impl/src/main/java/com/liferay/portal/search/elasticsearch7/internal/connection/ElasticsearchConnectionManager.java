@@ -23,6 +23,7 @@ import com.liferay.portal.search.configuration.CrossClusterReplicationConfigurat
 import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConnectionConfigurationWrapper;
 import com.liferay.portal.search.elasticsearch7.internal.index.IndexFactory;
+import com.liferay.portal.search.elasticsearch7.internal.index.IndexSynchronizer;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -229,6 +230,10 @@ public class ElasticsearchConnectionManager
 		setRestClientLoggerLevel();
 
 		createCompanyIndexes();
+
+		if (indexSynchronizer != null) {
+			indexSynchronizer.synchronizeIndexes();
+		}
 	}
 
 	protected void setRestClientLoggerLevel() {
@@ -259,6 +264,9 @@ public class ElasticsearchConnectionManager
 
 	@Reference(unbind = "-")
 	protected IndexFactory indexFactory;
+
+	@Reference(cardinality = ReferenceCardinality.OPTIONAL)
+	protected volatile IndexSynchronizer indexSynchronizer;
 
 	private static final String _EMBEDDED_CONNECTION_ID = "embedded";
 

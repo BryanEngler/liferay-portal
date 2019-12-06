@@ -48,7 +48,7 @@ public class IndexDefinitionsHolderImpl implements IndexDefinitionsHolder {
 	public void drainTo(Collection<IndexDefinitionData> collection) {
 		collection.addAll(_list);
 
-		_list.clear();
+		//_list.clear();
 	}
 
 	public void removeIndexDefinition(IndexDefinition indexDefinition) {
