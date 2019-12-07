@@ -35,8 +35,10 @@ import org.elasticsearch.common.xcontent.XContentHelper;
 import org.elasticsearch.common.xcontent.XContentType;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -44,11 +46,16 @@ import org.junit.Test;
  */
 public class ElasticsearchBulkableDocumentRequestTranslatorTest {
 
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		_elasticsearchFixture = new ElasticsearchFixture(
+			ElasticsearchBulkableDocumentRequestTranslatorTest.class);
+
+		_elasticsearchFixture.setUp();
+	}
+
 	@Before
 	public void setUp() throws Exception {
-		ElasticsearchFixture elasticsearchFixture = new ElasticsearchFixture(
-			getClass());
-
 		ElasticsearchDocumentFactory elasticsearchDocumentFactory =
 			createElasticsearchDocumentFactory();
 
@@ -62,16 +69,16 @@ public class ElasticsearchBulkableDocumentRequestTranslatorTest {
 
 		_elasticsearchDocumentFactory = elasticsearchDocumentFactory;
 
-		_elasticsearchFixture = elasticsearchFixture;
-
 		_documentFixture.setUp();
-		_elasticsearchFixture.setUp();
 	}
 
 	@After
 	public void tearDown() throws Exception {
 		_documentFixture.tearDown();
+	}
 
+	@AfterClass
+	public static void tearDownClass() throws Exception {
 		_elasticsearchFixture.tearDown();
 	}
 
@@ -296,6 +303,6 @@ public class ElasticsearchBulkableDocumentRequestTranslatorTest {
 	private ElasticsearchBulkableDocumentRequestTranslator
 		_elasticsearchBulkableDocumentRequestTranslator;
 	private ElasticsearchDocumentFactory _elasticsearchDocumentFactory;
-	private ElasticsearchFixture _elasticsearchFixture;
+	private static ElasticsearchFixture _elasticsearchFixture;
 
 }

@@ -23,8 +23,10 @@ import com.liferay.portal.search.elasticsearch7.internal.util.ResourceUtil;
 import com.liferay.portal.search.test.util.AssertUtils;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -34,22 +36,25 @@ import org.junit.rules.TestName;
  */
 public class ElasticsearchIndexInformationTest {
 
-	@Before
-	public void setUp() throws Exception {
-		ElasticsearchFixture elasticsearchFixture = new ElasticsearchFixture(
-			getClass());
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		_elasticsearchFixture = new ElasticsearchFixture(
+			ElasticsearchIndexInformationTest.class.getSimpleName());
 
-		elasticsearchFixture.setUp();
-
-		_companyIndexFactoryFixture = createCompanyIndexFactoryFixture(
-			elasticsearchFixture);
-		_elasticsearchFixture = elasticsearchFixture;
-		_elasticsearchIndexInformation = createElasticsearchIndexInformation(
-			elasticsearchFixture);
+		_elasticsearchFixture.setUp();
 	}
 
-	@After
-	public void tearDown() throws Exception {
+	@Before
+	public void setUp() throws Exception {
+		_companyIndexFactoryFixture = createCompanyIndexFactoryFixture(
+			_elasticsearchFixture);
+
+		_elasticsearchIndexInformation = createElasticsearchIndexInformation(
+			_elasticsearchFixture);
+	}
+
+	@AfterClass
+	public static void tearDownClass() throws Exception {
 		_elasticsearchFixture.tearDown();
 	}
 
@@ -126,7 +131,7 @@ public class ElasticsearchIndexInformationTest {
 	}
 
 	private CompanyIndexFactoryFixture _companyIndexFactoryFixture;
-	private ElasticsearchFixture _elasticsearchFixture;
+	private static ElasticsearchFixture _elasticsearchFixture;
 	private ElasticsearchIndexInformation _elasticsearchIndexInformation;
 	private final JSONFactory _jsonFactory = new JSONFactoryImpl();
 

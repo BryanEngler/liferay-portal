@@ -38,9 +38,10 @@ import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.settings.Settings;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -50,13 +51,16 @@ import org.junit.rules.TestName;
  */
 public class CompanyIndexFactoryTest {
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeClass
+	public static void setUpClass() throws Exception {
 		_elasticsearchFixture = new ElasticsearchFixture(
 			CompanyIndexFactoryTest.class.getSimpleName());
 
 		_elasticsearchFixture.setUp();
+	}
 
+	@Before
+	public void setUp() throws Exception {
 		_companyIndexFactoryFixture = new CompanyIndexFactoryFixture(
 			_elasticsearchFixture, testName.getMethodName());
 
@@ -69,8 +73,8 @@ public class CompanyIndexFactoryTest {
 			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE);
 	}
 
-	@After
-	public void tearDown() throws Exception {
+	@AfterClass
+	public static void tearDownClass() throws Exception {
 		_elasticsearchFixture.tearDown();
 	}
 
@@ -428,7 +432,7 @@ public class CompanyIndexFactoryTest {
 
 	private CompanyIndexFactory _companyIndexFactory;
 	private CompanyIndexFactoryFixture _companyIndexFactoryFixture;
-	private ElasticsearchFixture _elasticsearchFixture;
+	private static ElasticsearchFixture _elasticsearchFixture;
 	private SingleFieldFixture _singleFieldFixture;
 
 }

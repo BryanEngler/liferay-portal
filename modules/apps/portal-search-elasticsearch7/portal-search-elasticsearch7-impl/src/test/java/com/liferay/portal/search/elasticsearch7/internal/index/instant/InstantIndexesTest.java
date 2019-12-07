@@ -38,8 +38,10 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -47,16 +49,21 @@ import org.junit.Test;
  */
 public class InstantIndexesTest {
 
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		_elasticsearchFixture = new ElasticsearchFixture(
+			InstantIndexesTest.class.getSimpleName());
+
+		_elasticsearchFixture.setUp();
+	}
+
 	@Before
 	public void setUp() throws Exception {
-		ElasticsearchFixture elasticsearchFixture = new ElasticsearchFixture(
-			getClass());
-
 		IndexDefinitionsHolderImpl indexDefinitionsHolderImpl =
 			new IndexDefinitionsHolderImpl();
 
 		IndexSynchronizerImpl indexSynchronizerImpl = createIndexSynchronizer(
-			elasticsearchFixture, indexDefinitionsHolderImpl);
+			_elasticsearchFixture, indexDefinitionsHolderImpl);
 
 		IndexSynchronizationPortalInitializedListener
 			indexSynchronizationPortalInitializedListener =
@@ -74,7 +81,6 @@ public class InstantIndexesTest {
 			IndexRegistrar.class, indexSynchronizerImpl::addIndexRegistrar,
 			indexSynchronizationPortalInitializedListener::addIndexRegistrar);
 
-		_elasticsearchFixture = elasticsearchFixture;
 		_eventsIndexDefinition = new EventsIndexDefinition();
 		_indexSynchronizationPortalInitializedListener =
 			indexSynchronizationPortalInitializedListener;
@@ -82,12 +88,10 @@ public class InstantIndexesTest {
 			new InstancesAndProcessesIndexRegistrar();
 		_microcontainer = microcontainer;
 		_tasksIndexDefinition = new TasksIndexDefinition();
-
-		_elasticsearchFixture.setUp();
 	}
 
-	@After
-	public void tearDown() throws Exception {
+	@AfterClass
+	public static void tearDownClass() throws Exception {
 		_elasticsearchFixture.tearDown();
 	}
 
@@ -225,7 +229,7 @@ public class InstantIndexesTest {
 		_microcontainer.start();
 	}
 
-	private ElasticsearchFixture _elasticsearchFixture;
+	private static ElasticsearchFixture _elasticsearchFixture;
 	private EventsIndexDefinition _eventsIndexDefinition;
 	private IndexSynchronizationPortalInitializedListener
 		_indexSynchronizationPortalInitializedListener;
