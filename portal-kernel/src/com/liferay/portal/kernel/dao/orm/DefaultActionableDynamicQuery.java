@@ -217,7 +217,7 @@ public class DefaultActionableDynamicQuery implements ActionableDynamicQuery {
 	}
 
 	protected void addDefaultCriteria(DynamicQuery dynamicQuery) {
-		if (_companyId > 0) {
+		if (_companyId >= 0) {
 			Property property = PropertyFactoryUtil.forName("companyId");
 
 			dynamicQuery.add(property.eq(_companyId));
