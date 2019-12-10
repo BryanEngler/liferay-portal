@@ -19,6 +19,8 @@ import com.liferay.expando.kernel.util.ExpandoBridgeIndexerUtil;
 import com.liferay.mail.reader.model.Folder;
 import com.liferay.mail.reader.service.FolderLocalService;
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Property;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -136,7 +138,19 @@ public class FolderIndexer extends BaseIndexer<Folder> {
 		final IndexableActionableDynamicQuery indexableActionableDynamicQuery =
 			folderLocalService.getIndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setCompanyId(companyId);
+		if (companyId == 0) {
+			indexableActionableDynamicQuery.setAddCriteriaMethod(
+				dynamicQuery -> {
+					Property companyIdProperty = PropertyFactoryUtil.forName(
+						"companyId");
+
+					dynamicQuery.add(companyIdProperty.eq(companyId));
+				});
+		}
+		else {
+			indexableActionableDynamicQuery.setCompanyId(companyId);
+		}
+
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			(Folder folder) -> {
 				try {
