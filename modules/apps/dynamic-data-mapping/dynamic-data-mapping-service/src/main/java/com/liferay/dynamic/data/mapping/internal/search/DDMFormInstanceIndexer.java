@@ -18,6 +18,8 @@ import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceLocalService;
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Property;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -105,7 +107,19 @@ public class DDMFormInstanceIndexer extends BaseIndexer<DDMFormInstance> {
 		final IndexableActionableDynamicQuery indexableActionableDynamicQuery =
 			ddmFormInstanceLocalService.getIndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setCompanyId(companyId);
+		if (companyId == 0) {
+			indexableActionableDynamicQuery.setAddCriteriaMethod(
+				dynamicQuery -> {
+					Property companyIdProperty = PropertyFactoryUtil.forName(
+						"companyId");
+
+					dynamicQuery.add(companyIdProperty.eq(companyId));
+				});
+		}
+		else {
+			indexableActionableDynamicQuery.setCompanyId(companyId);
+		}
+
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			(DDMFormInstance ddmFormInstance) -> {
 				try {

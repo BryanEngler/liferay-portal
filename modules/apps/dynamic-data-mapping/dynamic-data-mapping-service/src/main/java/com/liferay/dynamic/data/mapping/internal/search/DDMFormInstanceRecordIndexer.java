@@ -332,6 +332,11 @@ public class DDMFormInstanceRecordIndexer
 
 		indexableActionableDynamicQuery.setAddCriteriaMethod(
 			dynamicQuery -> {
+				Property companyIdProperty = PropertyFactoryUtil.forName(
+					"companyId");
+
+				dynamicQuery.add(companyIdProperty.eq(companyId));
+
 				Property ddmFormInstanceRecordIdProperty =
 					PropertyFactoryUtil.forName("formInstanceRecordId");
 
