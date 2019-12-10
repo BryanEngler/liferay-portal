@@ -333,7 +333,19 @@ public class WikiPageIndexer
 		ActionableDynamicQuery actionableDynamicQuery =
 			_wikiNodeLocalService.getActionableDynamicQuery();
 
-		actionableDynamicQuery.setCompanyId(companyId);
+		if (companyId == 0) {
+			actionableDynamicQuery.setAddCriteriaMethod(
+				dynamicQuery -> {
+					Property companyIdProperty = PropertyFactoryUtil.forName(
+						"companyId");
+
+					dynamicQuery.add(companyIdProperty.eq(companyId));
+				});
+		}
+		else {
+			actionableDynamicQuery.setCompanyId(companyId);
+		}
+
 		actionableDynamicQuery.setPerformActionMethod(
 			(WikiNode node) -> reindexPages(
 				companyId, node.getGroupId(), node.getNodeId()));

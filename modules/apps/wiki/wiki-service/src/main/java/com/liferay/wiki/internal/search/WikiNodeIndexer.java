@@ -141,10 +141,15 @@ public class WikiNodeIndexer extends BaseIndexer<WikiNode> {
 
 		indexableActionableDynamicQuery.setAddCriteriaMethod(
 			dynamicQuery -> {
-				Property property = PropertyFactoryUtil.forName("status");
+				Property companyIdProperty = PropertyFactoryUtil.forName(
+					"companyId");
+
+				dynamicQuery.add(companyIdProperty.eq(companyId));
+
+				Property statusProperty = PropertyFactoryUtil.forName("status");
 
 				dynamicQuery.add(
-					property.eq(WorkflowConstants.STATUS_APPROVED));
+					statusProperty.eq(WorkflowConstants.STATUS_APPROVED));
 			});
 		indexableActionableDynamicQuery.setCompanyId(companyId);
 		indexableActionableDynamicQuery.setPerformActionMethod(
