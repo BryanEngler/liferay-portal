@@ -15,6 +15,8 @@
 package com.liferay.portlet.usersadmin.util;
 
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Property;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -174,7 +176,18 @@ public class ContactIndexer extends BaseIndexer<Contact> {
 		final IndexableActionableDynamicQuery indexableActionableDynamicQuery =
 			ContactLocalServiceUtil.getIndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setCompanyId(companyId);
+		if(companyId == 0) {
+			indexableActionableDynamicQuery.setAddCriteriaMethod(
+				dynamicQuery -> {
+					Property companyIdProperty = PropertyFactoryUtil.forName(
+						"companyId");
+
+					dynamicQuery.add(companyIdProperty.eq(companyId));
+				});
+		} else {
+			indexableActionableDynamicQuery.setCompanyId(companyId);
+		}
+
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			(Contact contact) -> {
 				try {
