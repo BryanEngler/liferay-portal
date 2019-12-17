@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.search.index.IndexInformation;
 
-import java.util.Objects;
-
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
@@ -44,17 +42,14 @@ public class SearchAdminDisplayBuilder {
 		SearchAdminDisplayContext searchAdminDisplayContext =
 			new SearchAdminDisplayContext();
 
-		boolean indexInformationAvailable = isIndexInformationAvailable();
-
-		searchAdminDisplayContext.setIndexInformationAvailable(
-			indexInformationAvailable);
-
 		NavigationItemList navigationItemList = new NavigationItemList();
 		String selectedTab = getSelectedTab();
 
+		addNavigationItemList(navigationItemList, "search-engine", selectedTab);
+
 		addNavigationItemList(navigationItemList, "index-actions", selectedTab);
 
-		if (indexInformationAvailable) {
+		if (isIndexInformationAvailable()) {
 			addNavigationItemList(
 				navigationItemList, "field-mappings", selectedTab);
 		}
@@ -85,19 +80,7 @@ public class SearchAdminDisplayBuilder {
 	}
 
 	protected String getSelectedTab() {
-		String selectedTab = ParamUtil.getString(
-			_renderRequest, "tabs1", "index-actions");
-
-		if (isIndexInformationAvailable() &&
-			Objects.equals(selectedTab, "field-mappings")) {
-
-			selectedTab = "field-mappings";
-		}
-		else {
-			selectedTab = "index-actions";
-		}
-
-		return selectedTab;
+		return ParamUtil.getString(_renderRequest, "tabs1", "search-engine");
 	}
 
 	protected boolean isIndexInformationAvailable() {
