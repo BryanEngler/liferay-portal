@@ -14,19 +14,28 @@
 
 package com.liferay.portal.search.engine;
 
-import java.util.List;
-
 /**
- * @author Adam Brandizzi
+ * @author Bryan Engler
  */
-public interface SearchEngineInformation {
+public class NodeInformation {
 
-	public String getClientVersionString();
+	public String getName() {
+		return _name;
+	}
 
-	public List<ConnectionInformation> getConnectionInformationList();
+	public String getVersion() {
+		return _version;
+	}
 
-	public String getNodesString();
+	public void setName(String name) {
+		_name = name;
+	}
 
-	public String getVendorString();
+	public void setVersion(String version) {
+		_version = version;
+	}
+
+	private String _name;
+	private String _version;
 
 }
