@@ -16,14 +16,19 @@ package com.liferay.portal.search.internal.indexer;
 
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.ResourcedModel;
-import com.liferay.portal.kernel.search.Document;
-import com.liferay.portal.kernel.search.DocumentHelper;
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.util.Tuple;
+import com.liferay.portal.search.document.Document;
+import com.liferay.portal.search.document.DocumentBuilder;
+import com.liferay.portal.search.document.DocumentBuilderFactory;
 import com.liferay.portal.search.indexer.BaseModelDocumentFactory;
+import com.liferay.portal.search.model.uid.UIDStamper;
+
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Michael C. Han
@@ -32,8 +37,10 @@ import org.osgi.service.component.annotations.Component;
 public class BaseModelDocumentFactoryImpl implements BaseModelDocumentFactory {
 
 	@Override
-	public Document createDocument(BaseModel<?> baseModel) {
-		Document document = (Document)_document.clone();
+	public com.liferay.portal.kernel.search.Document createDocument(
+		BaseModel<?> baseModel) {
+
+		DocumentBuilder documentBuilder = documentBuilderFactory.builder();
 
 		String className = baseModel.getModelClassName();
 
@@ -42,21 +49,24 @@ public class BaseModelDocumentFactoryImpl implements BaseModelDocumentFactory {
 
 		long classPK = (Long)classPKResourcePrimKeyTuple.getObject(0);
 
-		String uid = getDocumentUID(className, classPK);
+		documentBuilder.setString(
+			Field.ENTRY_CLASS_NAME, className
+		).setLong(
+			Field.ENTRY_CLASS_PK, classPK
+		).setLong(
+			Field.ROOT_ENTRY_CLASS_PK,
+			getRootEntryClassPK(classPKResourcePrimKeyTuple)
+		).setString(
+			Field.UID, getDocumentUID(className, classPK)
+		).build();
 
-		document.addKeyword(Field.UID, uid);
+		uidStamper.setUIDM(baseModel, documentBuilder);
 
-		DocumentHelper documentHelper = new DocumentHelper(document);
+		Document document = documentBuilder.build();
 
-		long resourcePrimKey = (Long)classPKResourcePrimKeyTuple.getObject(1);
+		uidStamper.getUIDM(document);
 
-		documentHelper.setEntryKey(className, classPK);
-
-		if (resourcePrimKey > 0) {
-			document.addKeyword(Field.ROOT_ENTRY_CLASS_PK, resourcePrimKey);
-		}
-
-		return document;
+		return toLegacyDocument(document);
 	}
 
 	protected Tuple getClassPKResourcePrimKey(BaseModel<?> baseModel) {
@@ -80,6 +90,35 @@ public class BaseModelDocumentFactoryImpl implements BaseModelDocumentFactory {
 		return Field.getUID(className, String.valueOf(classPK));
 	}
 
-	private final Document _document = new DocumentImpl();
+	protected Long getRootEntryClassPK(Tuple classPKResourcePrimKeyTuple) {
+		long resourcePrimKey = (Long)classPKResourcePrimKeyTuple.getObject(1);
+
+		if (resourcePrimKey > 0) {
+			return resourcePrimKey;
+		}
+
+		return null;
+	}
+
+	protected com.liferay.portal.kernel.search.Document toLegacyDocument(
+		Document document) {
+
+		DocumentImpl documentImpl = new DocumentImpl();
+
+		Map<String, com.liferay.portal.search.document.Field> fields =
+			document.getFields();
+
+		fields.forEach(
+			(key, field) -> documentImpl.add(
+				new Field(key, String.valueOf(field.getValue()))));
+
+		return documentImpl;
+	}
+
+	@Reference
+	protected DocumentBuilderFactory documentBuilderFactory;
+
+	@Reference
+	protected UIDStamper uidStamper;
 
 }

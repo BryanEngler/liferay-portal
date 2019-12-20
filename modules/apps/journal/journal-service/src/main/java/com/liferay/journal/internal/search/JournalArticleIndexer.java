@@ -49,6 +49,7 @@ import com.liferay.portal.kernel.search.ParseException;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.QueryFilter;
@@ -64,6 +65,7 @@ import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Html;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Localization;
 import com.liferay.portal.kernel.util.LocalizationUtil;
@@ -79,6 +81,7 @@ import com.liferay.portal.search.filter.DateRangeFilterBuilder;
 import com.liferay.portal.search.filter.FilterBuilders;
 import com.liferay.portal.search.index.IndexStatusManager;
 import com.liferay.portal.search.localization.SearchLocalizationHelper;
+import com.liferay.portal.search.model.uid.UIDStamper;
 import com.liferay.trash.TrashHelper;
 
 import java.io.Serializable;
@@ -96,6 +99,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
@@ -401,6 +406,15 @@ public class JournalArticleIndexer extends BaseIndexer<JournalArticle> {
 
 	@Override
 	protected void doDelete(JournalArticle journalArticle) throws Exception {
+		if (_is_UID_STANDARDIZATION()) {
+			_deleteDocument(journalArticle);
+
+			_reindexEveryVersionOfResourcePrimKey(
+				journalArticle.getResourcePrimKey());
+
+			return;
+		}
+
 		long classPK = journalArticle.getId();
 
 		if (!isIndexAllArticleVersions()) {
@@ -446,11 +460,20 @@ public class JournalArticleIndexer extends BaseIndexer<JournalArticle> {
 
 		long classPK = journalArticle.getId();
 
-		if (!isIndexAllArticleVersions()) {
-			classPK = journalArticle.getResourcePrimKey();
+		if (_is_UID_STANDARDIZATION()) {
+			//skip classPK = journalArticle.getResourcePrimKey() when !isIndexAllArticleVersions()
+		}
+		else {
+			if (!isIndexAllArticleVersions()) {
+				classPK = journalArticle.getResourcePrimKey();
+			}
 		}
 
 		document.addUID(CLASS_NAME, classPK);
+
+		if (_is_UID_STANDARDIZATION()) {
+			uidStamper.setUIDM(journalArticle, document);
+		}
 
 		Localization localization = getLocalization();
 
@@ -604,7 +627,13 @@ public class JournalArticleIndexer extends BaseIndexer<JournalArticle> {
 
 			_indexWriterHelper.deleteDocument(
 				getSearchEngineId(), article.getCompanyId(),
-				document.get(Field.UID), isCommitImmediately());
+				uidStamper.getUIDM(document), isCommitImmediately());
+
+			return;
+		}
+
+		if (_is_UID_STANDARDIZATION()) {
+			_reindexEveryVersionOfResourcePrimKey(article.getResourcePrimKey());
 
 			return;
 		}
@@ -614,11 +643,33 @@ public class JournalArticleIndexer extends BaseIndexer<JournalArticle> {
 
 	@Override
 	protected void doReindex(String className, long classPK) throws Exception {
+		if (_is_UID_STANDARDIZATION()) {
+			JournalArticle journalArticle =
+				_journalArticleLocalService.fetchJournalArticle(classPK);
+
+			if (journalArticle != null) {
+				_reindexEveryVersionOfResourcePrimKey(
+					journalArticle.getResourcePrimKey());
+
+				return;
+			}
+			else {
+				long resourcePrimKey = classPK;
+
+				_reindexEveryVersionOfResourcePrimKey(resourcePrimKey);
+
+				return;
+			}
+		}
+
 		JournalArticle article =
 			_journalArticleLocalService.fetchJournalArticle(classPK);
 
 		if (article == null) {
-			article = _journalArticleLocalService.fetchLatestArticle(classPK);
+			long resourcePrimKey = classPK;
+
+			article = _journalArticleLocalService.fetchLatestArticle(
+				resourcePrimKey);
 		}
 
 		if (article != null) {
@@ -933,6 +984,9 @@ public class JournalArticleIndexer extends BaseIndexer<JournalArticle> {
 		_journalConverter = journalConverter;
 	}
 
+	@Reference
+	protected UIDStamper uidStamper;
+
 	private JournalArticleDisplay _createArticleDisplay(
 		Document document, Locale snippetLocale, PortletRequest portletRequest,
 		PortletResponse portletResponse) {
@@ -951,6 +1005,79 @@ public class JournalArticleIndexer extends BaseIndexer<JournalArticle> {
 			themeDisplay);
 	}
 
+	private void _deleteDocument(JournalArticle article) {
+		try {
+			_indexWriterHelper.deleteDocument(
+				getSearchEngineId(), article.getCompanyId(),
+				uidStamper.getUIDM(article), isCommitImmediately());
+		}
+		catch (SearchException se) {
+			throw new RuntimeException(se);
+		}
+	}
+
+	private Document _getDocument(JournalArticle journalArticle) {
+		try {
+			return getDocument(journalArticle);
+		}
+		catch (SearchException se) {
+			throw new RuntimeException(se);
+		}
+	}
+
+	private final boolean _is_UID_STANDARDIZATION() {
+		return true;
+	}
+
+	private void _reindexEveryVersionOfResourcePrimKey(long resourcePrimKey)
+		throws Exception {
+		List<JournalArticle> journalArticles =
+			_journalArticleLocalService.getArticlesByResourcePrimKey(
+				resourcePrimKey);
+
+		if (ListUtil.isEmpty(journalArticles)) {
+			return;
+		}
+
+		JournalArticle article = journalArticles.get(0);
+
+		if (_portal.getClassNameId(DDMStructure.class) ==
+			article.getClassNameId()) {
+
+			_indexWriterHelper.deleteDocument(
+				getSearchEngineId(), article.getCompanyId(),
+				uidStamper.getUIDM(getDocument(article)),
+				isCommitImmediately());
+
+			return;
+		}
+
+		if (isIndexAllArticleVersions()) {
+			Stream<JournalArticle> stream = journalArticles.stream();
+
+			_updateDocuments(
+				article.getCompanyId(),
+				stream.map(
+					this::_getDocument
+				).collect(
+					Collectors.toList()
+				));
+		}
+		else {
+			JournalArticle latestIndexableArticle =
+				fetchLatestIndexableArticleVersion(resourcePrimKey);
+
+			for (JournalArticle journalArticle : journalArticles) {
+				if (journalArticle.getId() == latestIndexableArticle.getId()) {
+					_updateDocument(journalArticle);
+				}
+				else {
+					_deleteDocument(journalArticle);
+				}
+			}
+		}
+	}
+
 	private String _stripAndHighlight(String text) {
 		text = StringUtil.replace(
 			text, _HIGHLIGHT_TAGS, _ESCAPE_SAFE_HIGHLIGHTS);
@@ -961,6 +1088,28 @@ public class JournalArticleIndexer extends BaseIndexer<JournalArticle> {
 			text, _ESCAPE_SAFE_HIGHLIGHTS, _HIGHLIGHT_TAGS);
 
 		return text;
+	}
+
+	private void _updateDocument(JournalArticle article) {
+		try {
+			_indexWriterHelper.updateDocument(
+				getSearchEngineId(), article.getCompanyId(),
+				_getDocument(article), isCommitImmediately());
+		}
+		catch (SearchException se) {
+			throw new RuntimeException(se);
+		}
+	}
+
+	private void _updateDocuments(long companyId, List<Document> documents) {
+		try {
+			_indexWriterHelper.updateDocuments(
+				getSearchEngineId(), companyId, documents,
+				isCommitImmediately());
+		}
+		catch (SearchException se) {
+			throw new RuntimeException(se);
+		}
 	}
 
 	private static final String[] _ESCAPE_SAFE_HIGHLIGHTS = {

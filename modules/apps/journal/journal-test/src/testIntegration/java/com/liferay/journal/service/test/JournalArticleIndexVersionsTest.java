@@ -40,11 +40,17 @@ import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.search.document.Document;
+import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
+import com.liferay.portal.search.searcher.SearchResponse;
+import com.liferay.portal.search.searcher.Searcher;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -271,14 +277,45 @@ public class JournalArticleIndexVersionsTest {
 
 		searchContext.setGroupIds(new long[] {_group.getGroupId()});
 
+
+		if (true) {
+			SearchResponse searchResponse = _searcher.search(
+				_searchRequestBuilderFactory.builder(
+					searchContext
+				).modelIndexerClasses(JournalArticle.class).build());
+
+			Assert.assertEquals(
+				searchResponse.getRequestString() + "->" +
+					_toString(searchResponse.getDocumentsStream()),
+				expectedCount, searchResponse.getCount());
+
+			return;
+		}
+
 		Hits results = indexer.search(searchContext);
 
 		Assert.assertEquals(
 			results.toString(), expectedCount, results.getLength());
 	}
 
+	protected String _toString(Stream<Document> stream) {
+		return stream.map(
+			Document::getFields
+		).map(
+			String::valueOf
+		).collect(
+			Collectors.joining()
+		);
+	}
+
 	@DeleteAfterTestRun
 	private Group _group;
+
+	@Inject
+	private static Searcher _searcher;
+
+	@Inject
+	private static SearchRequestBuilderFactory _searchRequestBuilderFactory;
 
 	@Inject
 	private JournalHelper _journalHelper;

@@ -41,6 +41,7 @@ import com.liferay.portal.search.configuration.IndexWriterHelperConfiguration;
 import com.liferay.portal.search.index.IndexStatusManager;
 import com.liferay.portal.search.internal.background.task.ReindexPortalBackgroundTaskExecutor;
 import com.liferay.portal.search.internal.background.task.ReindexSingleIndexerBackgroundTaskExecutor;
+import com.liferay.portal.search.model.uid.UIDStamper;
 
 import java.io.Serializable;
 
@@ -69,6 +70,8 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 			String searchEngineId, long companyId, Document document,
 			boolean commitImmediately)
 		throws SearchException {
+
+		guardUIDM(document);
 
 		if (_indexStatusManager.isIndexReadOnly() || (document == null)) {
 			return;
@@ -100,6 +103,8 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 			String searchEngineId, long companyId,
 			Collection<Document> documents, boolean commitImmediately)
 		throws SearchException {
+
+		guardUIDM(documents);
 
 		if (_indexStatusManager.isIndexReadOnly() || (documents == null) ||
 			documents.isEmpty()) {
@@ -420,6 +425,8 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 			boolean commitImmediately)
 		throws SearchException {
 
+		guardUIDM(document);
+
 		if (_indexStatusManager.isIndexReadOnly() || (document == null)) {
 			return;
 		}
@@ -450,6 +457,8 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 			String searchEngineId, long companyId,
 			Collection<Document> documents, boolean commitImmediately)
 		throws SearchException {
+
+		guardUIDM(documents);
 
 		if (_indexStatusManager.isIndexReadOnly() || (documents == null) ||
 			documents.isEmpty()) {
@@ -564,6 +573,8 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 			boolean commitImmediately)
 		throws SearchException {
 
+		guardUIDM(document);
+
 		if (_indexStatusManager.isIndexReadOnly() || (document == null)) {
 			return;
 		}
@@ -596,6 +607,11 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 			String searchEngineId, long companyId,
 			Collection<Document> documents, boolean commitImmediately)
 		throws SearchException {
+
+		if (false) {
+			System.out.println("RESTORE THIS");
+			guardUIDM(documents);
+		}
 
 		if (_indexStatusManager.isIndexReadOnly() || (documents == null) ||
 			documents.isEmpty()) {
@@ -651,6 +667,14 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 			indexWriterHelperConfiguration.indexCommitImmediately();
 	}
 
+	protected void guardUIDM(Collection<Document> documents) {
+		documents.forEach(this::guardUIDM);
+	}
+
+	protected void guardUIDM(Document document) {
+		uidStamper.getUIDM(document);
+	}
+
 	protected void setCommitImmediately(
 		SearchContext searchContext, boolean commitImmediately) {
 
@@ -661,6 +685,9 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 			searchContext.setCommitImmediately(true);
 		}
 	}
+
+	@Reference
+	protected UIDStamper uidStamper;
 
 	private String _getIndexerModelName(String name) {
 		String[] names = StringUtil.split(
