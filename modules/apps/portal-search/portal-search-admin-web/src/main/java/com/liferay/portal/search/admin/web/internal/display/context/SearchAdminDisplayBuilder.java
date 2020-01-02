@@ -15,6 +15,7 @@
 package com.liferay.portal.search.admin.web.internal.display.context;
 
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItemList;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -22,6 +23,7 @@ import com.liferay.portal.search.index.IndexInformation;
 
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import java.util.Objects;
 
 /**
  * @author Adam Brandizzi
@@ -80,7 +82,22 @@ public class SearchAdminDisplayBuilder {
 	}
 
 	protected String getSelectedTab() {
-		return ParamUtil.getString(_renderRequest, "tabs1", "search-engine");
+		String defaultTab = "search-engine";
+
+		String selectedTab =
+			ParamUtil.getString(_renderRequest, "tabs1");
+
+		if (selectedTab.equals(StringPool.BLANK)) {
+			selectedTab = defaultTab;
+		}
+
+		if (!isIndexInformationAvailable() &&
+			Objects.equals(selectedTab, "field-mappings")) {
+
+			selectedTab = defaultTab;
+		}
+
+		return selectedTab;
 	}
 
 	protected boolean isIndexInformationAvailable() {

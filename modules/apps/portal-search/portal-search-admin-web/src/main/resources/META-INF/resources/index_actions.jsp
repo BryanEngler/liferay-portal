@@ -57,6 +57,7 @@ portletURL.setParameter("mvcRenderCommandName", "/search_admin/view");
 
 <aui:form action="<%= portletURL.toString() %>" method="post" name="fm">
 	<aui:input name="redirect" type="hidden" value="<%= redirectURL %>" />
+	<aui:input name="tabs1" type="hidden" value="index-actions" />
 
 	<liferay-ui:panel-container
 		extended="<%= true %>"
