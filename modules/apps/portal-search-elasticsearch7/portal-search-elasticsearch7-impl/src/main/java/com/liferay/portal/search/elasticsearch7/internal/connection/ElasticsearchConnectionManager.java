@@ -139,6 +139,10 @@ public class ElasticsearchConnectionManager
 	public void setEmbeddedElasticsearchConnection(
 		ElasticsearchConnection elasticsearchConnection) {
 
+		if (_operationMode == OperationMode.EMBEDDED) {
+			elasticsearchConnection.connect();
+		}
+
 		_elasticsearchConnections.put(
 			EmbeddedElasticsearchConnection.CONNECTION_ID,
 			elasticsearchConnection);
@@ -157,6 +161,10 @@ public class ElasticsearchConnectionManager
 	)
 	public void setRemoteElasticsearchConnection(
 		ElasticsearchConnection elasticsearchConnection) {
+
+		if (_operationMode == OperationMode.REMOTE) {
+			elasticsearchConnection.connect();
+		}
 
 		ElasticsearchConnection oldElasticsearchConnection =
 			_elasticsearchConnections.put(
@@ -190,6 +198,24 @@ public class ElasticsearchConnectionManager
 			translate(_elasticsearchConfiguration.operationMode()));
 		LogUtil.setRestClientLoggerLevel(
 			_elasticsearchConfiguration.restClientLoggerLevel());
+
+		for (Map.Entry<String, ElasticsearchConnection> entry :
+				_elasticsearchConnections.entrySet()) {
+
+			ElasticsearchConnection elasticsearchConnection = entry.getValue();
+
+			if ((isOperationModeEmbedded() &&
+				 Objects.equals(
+					 EmbeddedElasticsearchConnection.CONNECTION_ID,
+					 entry.getKey())) ||
+				(!isOperationModeEmbedded() &&
+				 !Objects.equals(
+					 EmbeddedElasticsearchConnection.CONNECTION_ID,
+					 entry.getKey()))) {
+
+				elasticsearchConnection.connect();
+			}
+		}
 	}
 
 	protected synchronized void createCompanyIndexes() {

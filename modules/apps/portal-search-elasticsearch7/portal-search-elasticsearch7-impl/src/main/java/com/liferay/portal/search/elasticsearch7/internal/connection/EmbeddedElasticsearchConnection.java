@@ -171,13 +171,6 @@ public class EmbeddedElasticsearchConnection
 		_jnaTmpDirName = tempDir.getAbsolutePath();
 
 		close();
-
-		if (elasticsearchConfiguration.operationMode() ==
-				com.liferay.portal.search.elasticsearch7.configuration.
-					OperationMode.EMBEDDED) {
-
-			connect();
-		}
 	}
 
 	@Reference(
