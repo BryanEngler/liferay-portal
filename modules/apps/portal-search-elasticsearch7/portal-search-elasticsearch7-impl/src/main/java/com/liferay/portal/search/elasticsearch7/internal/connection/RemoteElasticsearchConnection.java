@@ -58,6 +58,13 @@ import org.osgi.service.component.annotations.Modified;
 public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 
 	@Override
+	public void connect() {
+		if (_elasticsearchConnectionConfiguration.active()) {
+			super.connect();
+		}
+	}
+
+	@Override
 	public String getConnectionId() {
 		return _elasticsearchConnectionConfiguration.connectionId();
 	}
@@ -73,10 +80,6 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 		_elasticsearchConnectionConfiguration =
 			ConfigurableUtil.createConfigurable(
 				ElasticsearchConnectionConfiguration.class, properties);
-
-		if (_elasticsearchConnectionConfiguration.active()) {
-			connect();
-		}
 	}
 
 	protected void configureSecurity(RestClientBuilder restClientBuilder) {
