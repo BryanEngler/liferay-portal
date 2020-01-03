@@ -270,6 +270,6 @@ public class ElasticsearchConnectionManager
 	private volatile ElasticsearchConfiguration _elasticsearchConfiguration;
 	private final Map<String, ElasticsearchConnection>
 		_elasticsearchConnections = new ConcurrentHashMap<>();
-	private OperationMode _operationMode;
+	private volatile OperationMode _operationMode;
 
 }
