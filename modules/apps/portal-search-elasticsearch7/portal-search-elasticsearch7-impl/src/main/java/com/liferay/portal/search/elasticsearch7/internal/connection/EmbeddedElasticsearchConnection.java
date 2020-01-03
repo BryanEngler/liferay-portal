@@ -63,7 +63,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
@@ -159,7 +158,6 @@ public class EmbeddedElasticsearchConnection
 	}
 
 	@Activate
-	@Modified
 	protected void activate(
 		BundleContext bundleContext, Map<String, Object> properties) {
 
@@ -169,15 +167,6 @@ public class EmbeddedElasticsearchConnection
 		java.io.File tempDir = bundleContext.getDataFile(JNA_TMP_DIR);
 
 		_jnaTmpDirName = tempDir.getAbsolutePath();
-
-		close();
-
-		if (elasticsearchConfiguration.operationMode() ==
-				com.liferay.portal.search.elasticsearch7.configuration.
-					OperationMode.EMBEDDED) {
-
-			connect();
-		}
 	}
 
 	@Reference(
