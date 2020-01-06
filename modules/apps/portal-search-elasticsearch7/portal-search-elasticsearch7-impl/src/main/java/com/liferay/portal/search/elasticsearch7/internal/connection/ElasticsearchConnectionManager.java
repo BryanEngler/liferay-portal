@@ -145,6 +145,28 @@ public class ElasticsearchConnectionManager
 	}
 
 	public void setOperationMode(OperationMode operationMode) {
+		if (operationMode == _operationMode) {
+			return;
+		}
+
+		for (Map.Entry<String, ElasticsearchConnection> entry :
+				_elasticsearchConnections.entrySet()) {
+
+			ElasticsearchConnection elasticsearchConnection = entry.getValue();
+
+			if (!Objects.equals(
+					EmbeddedElasticsearchConnection.CONNECTION_ID,
+					entry.getKey())) {
+
+				if (operationMode == OperationMode.REMOTE) {
+					elasticsearchConnection.connect();
+				}
+				else {
+					elasticsearchConnection.close();
+				}
+			}
+		}
+
 		_operationMode = operationMode;
 	}
 
@@ -157,6 +179,10 @@ public class ElasticsearchConnectionManager
 	)
 	public void setRemoteElasticsearchConnection(
 		ElasticsearchConnection elasticsearchConnection) {
+
+		if (_operationMode == OperationMode.REMOTE) {
+			elasticsearchConnection.connect();
+		}
 
 		ElasticsearchConnection oldElasticsearchConnection =
 			_elasticsearchConnections.put(
