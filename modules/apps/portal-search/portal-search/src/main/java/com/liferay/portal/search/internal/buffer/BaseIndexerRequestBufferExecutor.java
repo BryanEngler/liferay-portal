@@ -22,6 +22,8 @@ import com.liferay.portal.search.buffer.IndexerRequest;
 import com.liferay.portal.search.buffer.IndexerRequestBuffer;
 import com.liferay.portal.search.buffer.IndexerRequestBufferExecutor;
 
+import java.lang.reflect.InvocationTargetException;
+
 import java.util.Set;
 
 /**
@@ -70,6 +72,27 @@ public abstract class BaseIndexerRequestBufferExecutor
 			if (_log.isWarnEnabled()) {
 				_log.warn(
 					"Unable to execute index request " + indexerRequest, e);
+			}
+
+			boolean logExceptionsOnly = false;
+
+			if (!logExceptionsOnly) {
+				if (e instanceof InvocationTargetException) {
+					InvocationTargetException ite =
+						(InvocationTargetException)e;
+
+					e = (Exception)ite.getTargetException();
+				}
+
+				if (e instanceof SearchException) {
+					e = (Exception)e.getCause();
+				}
+
+				if (e instanceof RuntimeException) {
+					throw (RuntimeException)e;
+				}
+
+				throw new RuntimeException(e);
 			}
 		}
 	}

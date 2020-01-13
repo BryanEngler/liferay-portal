@@ -113,10 +113,12 @@ public class BufferedIndexerInvocationHandler implements InvocationHandler {
 
 			Long classPK = (Long)classedModel.getPrimaryKeyObj();
 
-			if (args[0] instanceof ResourcedModel) {
-				ResourcedModel resourcedModel = (ResourcedModel)args[0];
+			if (!_is_UID_STANDARDIZATION()) {
+				if (args[0] instanceof ResourcedModel) {
+					ResourcedModel resourcedModel = (ResourcedModel)args[0];
 
-				classPK = resourcedModel.getResourcePrimKey();
+					classPK = resourcedModel.getResourcePrimKey();
+				}
 			}
 
 			bufferRequest(
@@ -136,26 +138,28 @@ public class BufferedIndexerInvocationHandler implements InvocationHandler {
 			String className = (String)args[0];
 			Long classPK = (Long)args[1];
 
-			PersistedModelLocalService persistedModelLocalService =
-				_persistedModelLocalServiceRegistry.
-					getPersistedModelLocalService(className);
+			if (!_is_UID_STANDARDIZATION()) {
+				PersistedModelLocalService persistedModelLocalService =
+					_persistedModelLocalServiceRegistry.
+						getPersistedModelLocalService(className);
 
-			try {
-				Object obj = persistedModelLocalService.getPersistedModel(
-					classPK);
+				try {
+					Object obj = persistedModelLocalService.getPersistedModel(
+						classPK);
 
-				if (obj instanceof ResourcedModel) {
-					ResourcedModel resourcedModel = (ResourcedModel)obj;
+					if (obj instanceof ResourcedModel) {
+						ResourcedModel resourcedModel = (ResourcedModel)obj;
 
-					classPK = resourcedModel.getResourcePrimKey();
+						classPK = resourcedModel.getResourcePrimKey();
+					}
 				}
-			}
-			catch (Exception e) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(
-						StringBundler.concat(
-							"Unable to get resource primary key for class ",
-							className, " with primary key ", classPK));
+				catch (Exception e) {
+					if (_log.isDebugEnabled()) {
+						_log.debug(
+							StringBundler.concat(
+								"Unable to get resource primary key for class ",
+								className, " with primary key ", classPK));
+					}
 				}
 			}
 
@@ -248,6 +252,10 @@ public class BufferedIndexerInvocationHandler implements InvocationHandler {
 
 		indexerRequestBufferHandler.bufferRequest(
 			indexerRequest, indexerRequestBuffer);
+	}
+
+	private final boolean _is_UID_STANDARDIZATION() {
+		return true;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
