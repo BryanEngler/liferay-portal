@@ -111,6 +111,7 @@ public class IndexedFieldsFixture {
 		String modelClassName, long id, Map<String, String> map) {
 
 		map.put(Field.UID, modelClassName + "_PORTLET_" + id);
+		map.put("uidm", modelClassName + "_PORTLET_" + id);
 	}
 
 	public void populateViewCount(
