@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.search.generic.TermQueryImpl;
+import com.liferay.portal.kernel.search.query.FieldQueryFactory;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.aggregation.Aggregation;
@@ -38,14 +39,20 @@ import com.liferay.portal.search.aggregation.Aggregations;
 import com.liferay.portal.search.aggregation.HierarchicalAggregationResult;
 import com.liferay.portal.search.aggregation.bucket.Bucket;
 import com.liferay.portal.search.aggregation.pipeline.PipelineAggregation;
+import com.liferay.portal.search.analysis.FieldQueryBuilderFactory;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.geolocation.GeoBuilders;
 import com.liferay.portal.search.highlight.Highlights;
 import com.liferay.portal.search.internal.aggregation.AggregationsImpl;
+import com.liferay.portal.search.internal.analysis.DescriptionFieldQueryBuilder;
+import com.liferay.portal.search.internal.analysis.SimpleKeywordTokenizer;
+import com.liferay.portal.search.internal.analysis.SubstringFieldQueryBuilder;
+import com.liferay.portal.search.internal.expando.ExpandoFieldQueryBuilderFactory;
 import com.liferay.portal.search.internal.geolocation.GeoBuildersImpl;
 import com.liferay.portal.search.internal.highlight.HighlightsImpl;
 import com.liferay.portal.search.internal.legacy.searcher.SearchRequestBuilderImpl;
 import com.liferay.portal.search.internal.legacy.searcher.SearchResponseBuilderImpl;
+import com.liferay.portal.search.internal.query.FieldQueryFactoryImpl;
 import com.liferay.portal.search.internal.query.QueriesImpl;
 import com.liferay.portal.search.internal.rescore.RescoreBuilderFactoryImpl;
 import com.liferay.portal.search.internal.script.ScriptsImpl;
@@ -60,6 +67,9 @@ import com.liferay.portal.search.sort.Sorts;
 import com.liferay.portal.search.test.util.DocumentsAssert;
 import com.liferay.portal.search.test.util.IdempotentRetryAssert;
 import com.liferay.portal.search.test.util.SearchMapUtil;
+import com.liferay.registry.BasicRegistryImpl;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
 
 import java.io.Serializable;
 
@@ -92,6 +102,14 @@ public abstract class BaseIndexingTestCase {
 		_indexingFixture = null;
 
 		_documentFixture.setUp();
+
+		Registry registry = new BasicRegistryImpl();
+
+		registry.registerService(
+			FieldQueryFactory.class,
+			createFieldQueryFactory(createExpandoFieldQueryBuilderFactory()));
+
+		RegistryUtil.setRegistry(registry);
 	}
 
 	@AfterClass
@@ -130,6 +148,43 @@ public abstract class BaseIndexingTestCase {
 
 	@Rule
 	public TestName testName = new TestName();
+
+	protected static DescriptionFieldQueryBuilder
+		createDescriptionFieldQueryBuilder() {
+
+		return new DescriptionFieldQueryBuilder() {
+			{
+				keywordTokenizer = new SimpleKeywordTokenizer();
+			}
+		};
+	}
+
+	protected static ExpandoFieldQueryBuilderFactory
+		createExpandoFieldQueryBuilderFactory() {
+
+		return new ExpandoFieldQueryBuilderFactory() {
+			{
+				substringQueryBuilder = new SubstringFieldQueryBuilder() {
+					{
+						keywordTokenizer = new SimpleKeywordTokenizer();
+					}
+				};
+			}
+		};
+	}
+
+	protected static FieldQueryFactoryImpl createFieldQueryFactory(
+		FieldQueryBuilderFactory fieldQueryBuilderFactory) {
+
+		return new FieldQueryFactoryImpl() {
+			{
+				descriptionFieldQueryBuilder =
+					createDescriptionFieldQueryBuilder();
+
+				addFieldQueryBuilderFactory(fieldQueryBuilderFactory);
+			}
+		};
+	}
 
 	protected static <K, V> Map<K, V> toMap(K key, V value) {
 		return Collections.singletonMap(key, value);
