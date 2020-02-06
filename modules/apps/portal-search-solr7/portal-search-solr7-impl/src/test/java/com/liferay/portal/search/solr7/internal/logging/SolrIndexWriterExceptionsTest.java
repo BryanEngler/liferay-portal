@@ -119,9 +119,7 @@ public class SolrIndexWriterExceptionsTest extends BaseIndexingTestCase {
 
 	@Test
 	public void testDeleteEntityDocuments() {
-		expectedException.expect(HttpSolrClient.RemoteSolrException.class);
-		expectedException.expectMessage(
-			"Problem accessing /solr/liferay/" + _COLLECTION_NAME);
+		expectedException.expect(java.lang.NullPointerException.class);
 
 		IndexWriter indexWriter = getIndexWriter();
 
