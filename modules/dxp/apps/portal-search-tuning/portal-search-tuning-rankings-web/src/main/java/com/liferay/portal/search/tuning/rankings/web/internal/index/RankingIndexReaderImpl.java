@@ -47,7 +47,8 @@ public class RankingIndexReaderImpl implements RankingIndexReader {
 
 		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
 
-		searchSearchRequest.setIndexNames(RankingIndexDefinition.INDEX_NAME);
+		searchSearchRequest.setIndexNames(
+			RankingIndexUtil.getRankingIndexName());
 		searchSearchRequest.setQuery(getQueryStringQuery(queryString));
 		searchSearchRequest.setSize(1);
 
@@ -117,7 +118,7 @@ public class RankingIndexReaderImpl implements RankingIndexReader {
 
 	private Document _getDocument(String id) {
 		GetDocumentRequest getDocumentRequest = new GetDocumentRequest(
-			RankingIndexDefinition.INDEX_NAME, id);
+			RankingIndexUtil.getRankingIndexName(), id);
 
 		getDocumentRequest.setFetchSource(true);
 		getDocumentRequest.setFetchSourceInclude(StringPool.STAR);

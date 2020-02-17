@@ -28,7 +28,7 @@ import com.liferay.portal.search.sort.Sort;
 import com.liferay.portal.search.sort.SortOrder;
 import com.liferay.portal.search.sort.Sorts;
 import com.liferay.portal.search.tuning.rankings.web.internal.index.RankingFields;
-import com.liferay.portal.search.tuning.rankings.web.internal.index.RankingIndexDefinition;
+import com.liferay.portal.search.tuning.rankings.web.internal.index.RankingIndexUtil;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -68,7 +68,8 @@ public class SearchRankingRequest {
 		}
 
 		searchSearchRequest.setFetchSource(true);
-		searchSearchRequest.setIndexNames(RankingIndexDefinition.INDEX_NAME);
+		searchSearchRequest.setIndexNames(
+			RankingIndexUtil.getRankingIndexName());
 		searchSearchRequest.setSize(_searchContainer.getDelta());
 		searchSearchRequest.setSorts(_getSorts());
 		searchSearchRequest.setStart(_searchContainer.getStart());
