@@ -17,10 +17,12 @@ package com.liferay.portal.search.elasticsearch7.internal;
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.search.ccr.CrossClusterReplicationHelper;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnection;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchFixture;
 import com.liferay.portal.search.elasticsearch7.internal.connection.EmbeddedElasticsearchConnection;
+import com.liferay.portal.search.elasticsearch7.internal.connection.OperationMode;
 import com.liferay.portal.search.elasticsearch7.internal.index.CompanyIdIndexNameBuilder;
 import com.liferay.portal.search.elasticsearch7.internal.index.CompanyIndexFactory;
 import com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.ElasticsearchEngineAdapterFixture;
@@ -44,13 +46,11 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @author André de Oliveira
  */
-@Ignore
 public class ElasticsearchSearchEngineTest {
 
 	@BeforeClass
@@ -70,6 +70,9 @@ public class ElasticsearchSearchEngineTest {
 	public void setUp() throws Exception {
 		_elasticsearchConnectionManager = createElasticsearchConnectionManager(
 			_elasticsearchFixture.getEmbeddedElasticsearchConnection());
+
+		_elasticsearchConnectionManager.setOperationMode(
+			OperationMode.EMBEDDED);
 
 		ElasticsearchEngineAdapterFixture elasticsearchEngineAdapterFixture =
 			new ElasticsearchEngineAdapterFixture() {
@@ -141,6 +144,22 @@ public class ElasticsearchSearchEngineTest {
 		deleteSnapshot("liferay_backup", "restore_test");
 	}
 
+	protected static CrossClusterReplicationHelper
+		createCrossClusterReplicationHelper() {
+
+		return new CrossClusterReplicationHelper() {
+			@Override
+			public void follow(String indexName) {
+				return;
+			}
+
+			@Override
+			public void unfollow(String indexName) {
+				return;
+			}
+		};
+	}
+
 	protected static CompanyIndexFactory createCompanyIndexFactory() {
 		return new CompanyIndexFactory() {
 			{
@@ -177,6 +196,8 @@ public class ElasticsearchSearchEngineTest {
 
 		return new ElasticsearchSearchEngine() {
 			{
+				setCrossClusterReplicationHelper(
+					createCrossClusterReplicationHelper());
 				setIndexFactory(createCompanyIndexFactory());
 				setIndexNameBuilder(String::valueOf);
 				setElasticsearchConnectionManager(
@@ -258,6 +279,8 @@ public class ElasticsearchSearchEngineTest {
 			elasticsearchConnectionManager.getElasticsearchConnection();
 
 		elasticsearchConnection.close();
+
+		elasticsearchConnection.connect();
 	}
 
 	private static ElasticsearchFixture _elasticsearchFixture;
