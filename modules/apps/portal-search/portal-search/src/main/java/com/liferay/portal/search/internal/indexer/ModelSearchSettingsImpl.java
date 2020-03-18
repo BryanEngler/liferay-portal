@@ -15,7 +15,11 @@
 package com.liferay.portal.search.internal.indexer;
 
 import com.liferay.portal.kernel.search.SearchEngineHelper;
+import com.liferay.portal.search.internal.engine.SearchEngineIdProvider;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchSettings;
+
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
 /**
  * @author Michael C. Han
@@ -50,7 +54,7 @@ public class ModelSearchSettingsImpl implements ModelSearchSettings {
 
 	@Override
 	public String getSearchEngineId() {
-		return _searchEngineId;
+		return _searchEngineIdProvider.getSearchEngineId();
 	}
 
 	@Override
@@ -118,6 +122,10 @@ public class ModelSearchSettingsImpl implements ModelSearchSettings {
 	private String[] _defaultSelectedLocalizedFieldNames;
 	private String[] _searchClassNames;
 	private String _searchEngineId = SearchEngineHelper.SYSTEM_ENGINE_ID;
+
+	@Reference
+	private SearchEngineIdProvider _searchEngineIdProvider;
+
 	private boolean _searchResultPermissionFilterSuppressed;
 	private boolean _selectAllLocales;
 	private boolean _stagingAware = true;
