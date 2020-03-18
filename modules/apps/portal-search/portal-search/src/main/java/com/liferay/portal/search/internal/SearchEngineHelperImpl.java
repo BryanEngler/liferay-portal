@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.search.queue.QueuingSearchEngine;
 import com.liferay.portal.kernel.util.ClassUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.search.configuration.SearchEngineHelperConfiguration;
+import com.liferay.portal.search.internal.engine.SearchEngineIdProvider;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -46,6 +47,8 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Modified;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
@@ -91,11 +94,7 @@ public class SearchEngineHelperImpl implements SearchEngineHelper {
 
 	@Override
 	public String getDefaultSearchEngineId() {
-		if (_defaultSearchEngineId == null) {
-			return SYSTEM_ENGINE_ID;
-		}
-
-		return _defaultSearchEngineId;
+		return _searchEngineIdProvider.getSearchEngineId();
 	}
 
 	@Override
@@ -345,6 +344,10 @@ public class SearchEngineHelperImpl implements SearchEngineHelper {
 	private int _queueCapacity = 200;
 	private final Map<String, QueuingSearchEngine> _queuingSearchEngines =
 		new HashMap<>();
+
+	@Reference
+	private SearchEngineIdProvider _searchEngineIdProvider;
+
 	private final Map<String, SearchEngine> _searchEngines =
 		new ConcurrentHashMap<>();
 	private ServiceTracker<SearchEngineConfigurator, SearchEngineConfigurator>
