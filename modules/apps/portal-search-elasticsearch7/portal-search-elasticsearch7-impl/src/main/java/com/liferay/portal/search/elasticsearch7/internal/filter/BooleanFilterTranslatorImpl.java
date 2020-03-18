@@ -59,6 +59,8 @@ public class BooleanFilterTranslatorImpl implements BooleanFilterTranslator {
 
 			QueryBuilder queryBuilder = translate(booleanClause, filterVisitor);
 
+			boolQueryBuilder.minimumShouldMatch(1);
+
 			boolQueryBuilder.should(queryBuilder);
 		}
 

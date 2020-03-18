@@ -98,6 +98,8 @@ public class BooleanQueryTranslatorImpl implements BooleanQueryTranslator {
 		}
 
 		if (booleanClauseOccur.equals(BooleanClauseOccur.SHOULD)) {
+			boolQuery.minimumShouldMatch(1);
+
 			boolQuery.should(queryBuilder);
 
 			return;
