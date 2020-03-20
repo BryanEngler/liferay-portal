@@ -25,7 +25,6 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.configuration.CrossClusterReplicationConfigurationWrapper;
 import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConnectionConfiguration;
 import com.liferay.portal.search.elasticsearch7.configuration.OperationMode;
@@ -68,7 +67,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
 
 /**
  * @author Adam Brandizzi
@@ -113,8 +111,7 @@ public class ElasticsearchSearchEngineInformation
 				connectionInformationList);
 
 			String connectionId =
-				crossClusterReplicationConfigurationWrapper.
-					getCCRLocalClusterConnectionId();
+				elasticsearchConnectionManager.getLocalClusterConnectionId();
 
 			if (!Validator.isBlank(connectionId)) {
 				filterString = filterString.concat(
@@ -379,10 +376,6 @@ public class ElasticsearchSearchEngineInformation
 	@Reference
 	protected ConnectionInformationBuilderFactory
 		connectionInformationBuilderFactory;
-
-	@Reference(cardinality = ReferenceCardinality.OPTIONAL)
-	protected volatile CrossClusterReplicationConfigurationWrapper
-		crossClusterReplicationConfigurationWrapper;
 
 	protected volatile ElasticsearchConfiguration elasticsearchConfiguration;
 
