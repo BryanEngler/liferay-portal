@@ -16,6 +16,7 @@ package com.liferay.portal.search.internal.engine;
 
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.search.SearchEngineHelper;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.configuration.SearchEngineIdConfiguration;
 
 import java.util.Map;
@@ -46,7 +47,15 @@ public class SearchEngineIdProviderImpl implements SearchEngineIdProvider {
 			ConfigurableUtil.createConfigurable(
 				SearchEngineIdConfiguration.class, properties);
 
-		_searchEngineId = searchEngineIdConfiguration.indexSearchEngineId();
+		String searchEngineId =
+			searchEngineIdConfiguration.indexSearchEngineId();
+
+		if (Validator.isNotNull(searchEngineId)) {
+			_searchEngineId = searchEngineId;
+		}
+		else {
+			_searchEngineId = SearchEngineHelper.SYSTEM_ENGINE_ID;
+		}
 	}
 
 	private String _searchEngineId = SearchEngineHelper.SYSTEM_ENGINE_ID;

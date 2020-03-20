@@ -94,7 +94,11 @@ public class SearchEngineHelperImpl implements SearchEngineHelper {
 
 	@Override
 	public String getDefaultSearchEngineId() {
-		return _searchEngineIdProvider.getSearchEngineId();
+		if (_searchEngineIdProvider != null) {
+			return _searchEngineIdProvider.getSearchEngineId();
+		}
+
+		return SearchEngineHelper.SYSTEM_ENGINE_ID;
 	}
 
 	@Override

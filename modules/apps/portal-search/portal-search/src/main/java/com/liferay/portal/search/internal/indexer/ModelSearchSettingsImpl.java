@@ -15,6 +15,7 @@
 package com.liferay.portal.search.internal.indexer;
 
 import com.liferay.portal.kernel.search.SearchEngineHelper;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.internal.engine.SearchEngineIdProvider;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchSettings;
 
@@ -54,7 +55,14 @@ public class ModelSearchSettingsImpl implements ModelSearchSettings {
 
 	@Override
 	public String getSearchEngineId() {
-		return _searchEngineIdProvider.getSearchEngineId();
+		if (Validator.isNotNull(_searchEngineId)) {
+			return _searchEngineId;
+		}
+		else if (_searchEngineIdProvider != null) {
+			return _searchEngineIdProvider.getSearchEngineId();
+		}
+
+		return SearchEngineHelper.SYSTEM_ENGINE_ID;
 	}
 
 	@Override
@@ -121,7 +129,7 @@ public class ModelSearchSettingsImpl implements ModelSearchSettings {
 	private String[] _defaultSelectedFieldNames;
 	private String[] _defaultSelectedLocalizedFieldNames;
 	private String[] _searchClassNames;
-	private String _searchEngineId = SearchEngineHelper.SYSTEM_ENGINE_ID;
+	private String _searchEngineId;
 
 	@Reference
 	private SearchEngineIdProvider _searchEngineIdProvider;
