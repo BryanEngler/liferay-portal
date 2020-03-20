@@ -46,18 +46,23 @@ public class CrossClusterReplicationHelperImpl
 			return;
 		}
 
-		try {
-			_putFollow(indexName);
-		}
-		catch (RuntimeException runtimeException) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(
-					StringBundler.concat(
-						"Unable to follow the index ", indexName, " in the ",
-						crossClusterReplicationConfigurationWrapper.
-							getRemoteClusterAlias(),
-						" cluster"),
-					runtimeException);
+		for (String localClusterConnectionId :
+				elasticsearchConnectionManager.getLocalClusterConnectionIds()) {
+
+			try {
+				_putFollow(indexName, localClusterConnectionId);
+			}
+			catch (RuntimeException runtimeException) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						StringBundler.concat(
+							"Unable to follow the index ", indexName,
+							" in the ",
+							crossClusterReplicationConfigurationWrapper.
+								getRemoteClusterAlias(),
+							" cluster"),
+						runtimeException);
+				}
 			}
 		}
 	}
@@ -70,20 +75,24 @@ public class CrossClusterReplicationHelperImpl
 			return;
 		}
 
-		try {
-			_pauseFollow(indexName);
+		for (String localClusterConnectionId :
+				elasticsearchConnectionManager.getLocalClusterConnectionIds()) {
 
-			_closeIndex(indexName);
+			try {
+				_pauseFollow(indexName, localClusterConnectionId);
 
-			_unfollow(indexName);
+				_closeIndex(indexName, localClusterConnectionId);
 
-			_deleteIndex(indexName);
-		}
-		catch (RuntimeException runtimeException) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(
-					"Unable to unfollow the index " + indexName,
-					runtimeException);
+				_unfollow(indexName, localClusterConnectionId);
+
+				_deleteIndex(indexName, localClusterConnectionId);
+			}
+			catch (RuntimeException runtimeException) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						"Unable to unfollow the index " + indexName,
+						runtimeException);
+				}
 			}
 		}
 	}
@@ -98,54 +107,49 @@ public class CrossClusterReplicationHelperImpl
 	@Reference
 	protected SearchEngineAdapter searchEngineAdapter;
 
-	private void _closeIndex(String indexName) {
+	private void _closeIndex(String indexName, String connectionId) {
 		CloseIndexRequest closeIndexRequest = new CloseIndexRequest(indexName);
 
-		closeIndexRequest.setConnectionId(_getConnectionId());
+		closeIndexRequest.setConnectionId(connectionId);
 
 		searchEngineAdapter.execute(closeIndexRequest);
 	}
 
-	private void _deleteIndex(String indexName) {
+	private void _deleteIndex(String indexName, String connectionId) {
 		DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest(
 			indexName);
 
-		deleteIndexRequest.setConnectionId(_getConnectionId());
+		deleteIndexRequest.setConnectionId(connectionId);
 
 		searchEngineAdapter.execute(deleteIndexRequest);
 	}
 
-	private String _getConnectionId() {
-		return crossClusterReplicationConfigurationWrapper.
-			getCCRLocalClusterConnectionId();
-	}
-
-	private void _pauseFollow(String indexName) {
+	private void _pauseFollow(String indexName, String connectionId) {
 		PauseFollowCCRRequest pauseFollowCCRRequest = new PauseFollowCCRRequest(
 			indexName);
 
-		pauseFollowCCRRequest.setConnectionId(_getConnectionId());
+		pauseFollowCCRRequest.setConnectionId(connectionId);
 
 		searchEngineAdapter.execute(pauseFollowCCRRequest);
 	}
 
-	private void _putFollow(String indexName) {
+	private void _putFollow(String indexName, String connectionId) {
 		PutFollowCCRRequest putFollowRequest = new PutFollowCCRRequest(
 			crossClusterReplicationConfigurationWrapper.getRemoteClusterAlias(),
 			indexName, indexName);
 
-		putFollowRequest.setConnectionId(_getConnectionId());
+		putFollowRequest.setConnectionId(connectionId);
 
 		putFollowRequest.setWaitForActiveShards(1);
 
 		searchEngineAdapter.execute(putFollowRequest);
 	}
 
-	private void _unfollow(String indexName) {
+	private void _unfollow(String indexName, String connectionId) {
 		UnfollowCCRRequest unfollowCCRRequest = new UnfollowCCRRequest(
 			indexName);
 
-		unfollowCCRRequest.setConnectionId(_getConnectionId());
+		unfollowCCRRequest.setConnectionId(connectionId);
 
 		searchEngineAdapter.execute(unfollowCCRRequest);
 	}

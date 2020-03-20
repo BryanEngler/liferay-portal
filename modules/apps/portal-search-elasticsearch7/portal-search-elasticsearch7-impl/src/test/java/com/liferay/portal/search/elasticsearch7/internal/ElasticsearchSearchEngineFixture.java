@@ -16,7 +16,6 @@ package com.liferay.portal.search.elasticsearch7.internal;
 
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.search.SearchEngine;
-import com.liferay.portal.search.ccr.CrossClusterReplicationHelper;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchFixture;
 import com.liferay.portal.search.elasticsearch7.internal.connection.OperationMode;
@@ -86,22 +85,6 @@ public class ElasticsearchSearchEngineFixture implements SearchEngineFixture {
 		_elasticsearchFixture.tearDown();
 	}
 
-	protected static CrossClusterReplicationHelper
-		createCrossClusterReplicationHelper() {
-
-		return new CrossClusterReplicationHelper() {
-
-			@Override
-			public void follow(String indexName) {
-			}
-
-			@Override
-			public void unfollow(String indexName) {
-			}
-
-		};
-	}
-
 	protected CompanyIndexFactory createCompanyIndexFactory() {
 		return new CompanyIndexFactory() {
 			{
@@ -130,8 +113,6 @@ public class ElasticsearchSearchEngineFixture implements SearchEngineFixture {
 	protected void setUpElasticsearchSearchEngine() {
 		_elasticsearchSearchEngine = new ElasticsearchSearchEngine() {
 			{
-				setCrossClusterReplicationHelper(
-					createCrossClusterReplicationHelper());
 				setIndexFactory(createCompanyIndexFactory());
 				setIndexNameBuilder(String::valueOf);
 				setElasticsearchConnectionManager(

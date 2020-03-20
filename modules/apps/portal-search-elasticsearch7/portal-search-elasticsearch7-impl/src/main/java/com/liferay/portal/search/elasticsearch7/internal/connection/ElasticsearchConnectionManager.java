@@ -14,18 +14,28 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.connection;
 
+import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
+import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.kernel.cluster.ClusterExecutor;
+import com.liferay.portal.kernel.cluster.ClusterNode;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.configuration.CrossClusterReplicationConfigurationWrapper;
 import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch7.internal.index.IndexFactory;
 import com.liferay.portal.search.elasticsearch7.internal.util.LogUtil;
 
+import java.net.InetAddress;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -74,6 +84,69 @@ public class ElasticsearchConnectionManager
 		return _elasticsearchConnections.get(connectionId);
 	}
 
+	public String getLocalClusterConnectionId() {
+		ClusterNode localClusterNode = _clusterExecutor.getLocalClusterNode();
+
+		if (localClusterNode == null) {
+			List<String> localClusterConnectionIds =
+				getLocalClusterConnectionIds();
+
+			return localClusterConnectionIds.get(0);
+		}
+
+		InetAddress portalInetAddress = localClusterNode.getPortalInetAddress();
+
+		if (portalInetAddress == null) {
+			return null;
+		}
+
+		String localClusterNodeHostName =
+			portalInetAddress.getHostName() + StringPool.COLON +
+				localClusterNode.getPortalPort();
+
+		String[] localClusterConnectionConfigurations =
+			crossClusterReplicationConfigurationWrapper.
+				getCCRLocalClusterConnectionConfigurations();
+
+		for (String localClusterConnectionConfiguration :
+				localClusterConnectionConfigurations) {
+
+			List<String> localClusterConnectionConfigurationParts =
+				StringUtil.split(
+					localClusterConnectionConfiguration, CharPool.EQUAL);
+
+			String hostName = localClusterConnectionConfigurationParts.get(0);
+			String connectionId = localClusterConnectionConfigurationParts.get(
+				1);
+
+			if (hostName.equals(localClusterNodeHostName)) {
+				return connectionId;
+			}
+		}
+
+		return null;
+	}
+
+	public List<String> getLocalClusterConnectionIds() {
+		List<String> connectionIds = new ArrayList<>();
+
+		String[] localClusterConnectionConfigurations =
+			crossClusterReplicationConfigurationWrapper.
+				getCCRLocalClusterConnectionConfigurations();
+
+		for (String localClusterConnectionConfiguration :
+				localClusterConnectionConfigurations) {
+
+			List<String> localClusterConnectionConfigurationParts =
+				StringUtil.split(
+					localClusterConnectionConfiguration, CharPool.EQUAL);
+
+			connectionIds.add(localClusterConnectionConfigurationParts.get(1));
+		}
+
+		return connectionIds;
+	}
+
 	@Override
 	public RestHighLevelClient getRestHighLevelClient() {
 		return getRestHighLevelClient(null);
@@ -117,9 +190,9 @@ public class ElasticsearchConnectionManager
 			return false;
 		}
 
-		if (Validator.isBlank(
+		if (ArrayUtil.isEmpty(
 				crossClusterReplicationConfigurationWrapper.
-					getCCRLocalClusterConnectionId())) {
+					getCCRLocalClusterConnectionConfigurations())) {
 
 			return false;
 		}
@@ -251,17 +324,17 @@ public class ElasticsearchConnectionManager
 		}
 
 		if (preferLocalCluster && isCrossClusterReplicationEnabled()) {
-			String localClusterConnectionId =
-				crossClusterReplicationConfigurationWrapper.
-					getCCRLocalClusterConnectionId();
+			String localClusterConnectionId = getLocalClusterConnectionId();
 
-			if (_log.isInfoEnabled()) {
-				_log.info(
-					"Getting local cluster connection with ID: " +
-						localClusterConnectionId);
+			if (localClusterConnectionId != null) {
+				if (_log.isInfoEnabled()) {
+					_log.info(
+						"Getting local cluster connection with ID: " +
+							localClusterConnectionId);
+				}
+
+				return _elasticsearchConnections.get(localClusterConnectionId);
 			}
-
-			return _elasticsearchConnections.get(localClusterConnectionId);
 		}
 
 		if (_log.isInfoEnabled()) {
@@ -283,6 +356,11 @@ public class ElasticsearchConnectionManager
 		setConfiguration(properties);
 
 		createCompanyIndexes();
+	}
+
+	@Reference(unbind = "-")
+	protected void setClusterExecutor(ClusterExecutor clusterExecutor) {
+		_clusterExecutor = clusterExecutor;
 	}
 
 	protected void setConfiguration(Map<String, Object> properties) {
@@ -323,6 +401,7 @@ public class ElasticsearchConnectionManager
 	private static final Log _log = LogFactoryUtil.getLog(
 		ElasticsearchConnectionManager.class);
 
+	private ClusterExecutor _clusterExecutor;
 	private final Map<Long, Long> _companyIds = new HashMap<>();
 	private volatile ElasticsearchConfiguration _elasticsearchConfiguration;
 	private final Map<String, ElasticsearchConnection>
