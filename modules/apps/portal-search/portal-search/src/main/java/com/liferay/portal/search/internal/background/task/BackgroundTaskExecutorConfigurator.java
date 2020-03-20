@@ -17,6 +17,8 @@ package com.liferay.portal.search.internal.background.task;
 import com.liferay.petra.executor.PortalExecutorManager;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskExecutor;
 import com.liferay.portal.kernel.util.HashMapDictionary;
+import com.liferay.portal.search.ccr.CrossClusterReplicationHelper;
+import com.liferay.portal.search.index.IndexNameBuilder;
 
 import java.util.Dictionary;
 import java.util.HashSet;
@@ -28,6 +30,8 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Michael C. Han
@@ -39,7 +43,8 @@ public class BackgroundTaskExecutorConfigurator {
 	protected void activate(BundleContext bundleContext) {
 		BackgroundTaskExecutor reindexPortalBackgroundTaskExecutor =
 			new ReindexPortalBackgroundTaskExecutor(
-				bundleContext, _portalExecutorManager);
+				bundleContext, _crossClusterReplicationHelper,
+				_indexNameBuilder, _portalExecutorManager);
 
 		registerBackgroundTaskExecutor(
 			bundleContext, reindexPortalBackgroundTaskExecutor);
@@ -74,6 +79,15 @@ public class BackgroundTaskExecutorConfigurator {
 
 		_serviceRegistrations.add(serviceRegistration);
 	}
+
+	@Reference(
+		cardinality = ReferenceCardinality.OPTIONAL,
+		policyOption = ReferencePolicyOption.GREEDY
+	)
+	private CrossClusterReplicationHelper _crossClusterReplicationHelper;
+
+	@Reference
+	private IndexNameBuilder _indexNameBuilder;
 
 	@Reference
 	private PortalExecutorManager _portalExecutorManager;
