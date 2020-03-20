@@ -17,7 +17,6 @@ package com.liferay.portal.search.configuration;
 import aQute.bnd.annotation.metatype.Meta;
 
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
-import com.liferay.portal.kernel.search.SearchEngineHelper;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -33,10 +32,7 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface SearchEngineIdConfiguration {
 
-	@Meta.AD(
-		deflt = SearchEngineHelper.SYSTEM_ENGINE_ID,
-		name = "search-engine-id", required = true
-	)
+	@Meta.AD(name = "search-engine-id", required = false)
 	public String indexSearchEngineId();
 
 }
