@@ -36,11 +36,11 @@ public interface CrossClusterReplicationConfiguration {
 	public boolean ccrEnabled();
 
 	@Meta.AD(
-		description = "cross-cluster-replication-local-cluster-connection-id-help",
-		name = "cross-cluster-replication-local-cluster-connection-id",
+		description = "cross-cluster-replication-local-cluster-connection-configurations-help",
+		name = "cross-cluster-replication-local-cluster-connection-configurations",
 		required = false
 	)
-	public String ccrLocalClusterConnectionId();
+	public String[] ccrLocalClusterConnectionConfigurations();
 
 	@Meta.AD(
 		deflt = "leader", description = "remote-cluster-alias-help",
