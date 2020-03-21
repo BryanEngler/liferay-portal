@@ -84,6 +84,9 @@ public class PreFilterContributorHelperImpl
 	protected ModelPreFilterContributorsHolder modelPreFilterContributorsHolder;
 
 	@Reference
+	protected ModelSearchSettingsFactory modelSearchSettingsFactory;
+
+	@Reference
 	protected QueryPreFilterContributorsHolder queryPreFilterContributorsHolder;
 
 	@Reference
@@ -166,7 +169,8 @@ public class PreFilterContributorHelperImpl
 
 	private ModelSearchSettings _getModelSearchSettings(Indexer indexer) {
 		ModelSearchSettingsImpl modelSearchSettingsImpl =
-			new ModelSearchSettingsImpl(indexer.getClassName());
+			modelSearchSettingsFactory.getModelSearchSettingsImpl(
+				indexer.getClassName());
 
 		modelSearchSettingsImpl.setStagingAware(indexer.isStagingAware());
 
