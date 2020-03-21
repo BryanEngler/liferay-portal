@@ -19,18 +19,19 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.internal.engine.SearchEngineIdProvider;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchSettings;
 
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-
 /**
  * @author Michael C. Han
  */
 public class ModelSearchSettingsImpl implements ModelSearchSettings {
 
-	public ModelSearchSettingsImpl(String className) {
+	public ModelSearchSettingsImpl(
+		String className, SearchEngineIdProvider searchEngineIdProvider) {
+
 		_className = className;
 
 		_searchClassNames = new String[] {className};
+
+		_searchEngineIdProvider = searchEngineIdProvider;
 	}
 
 	@Override
@@ -130,10 +131,7 @@ public class ModelSearchSettingsImpl implements ModelSearchSettings {
 	private String[] _defaultSelectedLocalizedFieldNames;
 	private String[] _searchClassNames;
 	private String _searchEngineId;
-
-	@Reference
-	private SearchEngineIdProvider _searchEngineIdProvider;
-
+	private final SearchEngineIdProvider _searchEngineIdProvider;
 	private boolean _searchResultPermissionFilterSuppressed;
 	private boolean _selectAllLocales;
 	private boolean _stagingAware = true;

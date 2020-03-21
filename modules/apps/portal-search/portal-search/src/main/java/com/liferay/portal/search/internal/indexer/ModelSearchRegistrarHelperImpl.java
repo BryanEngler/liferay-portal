@@ -29,6 +29,7 @@ import java.util.Hashtable;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author André de Oliveira
@@ -45,7 +46,8 @@ public class ModelSearchRegistrarHelperImpl
 		String className = clazz.getName();
 
 		ModelSearchDefinitionImpl modelSearchDefinitionImpl =
-			new ModelSearchDefinitionImpl(className);
+			new ModelSearchDefinitionImpl(
+				className, modelSearchSettingsFactory);
 
 		modelSearchDefinitionContributor.contribute(modelSearchDefinitionImpl);
 
@@ -61,10 +63,18 @@ public class ModelSearchRegistrarHelperImpl
 				Collections.singletonMap("indexer.class.name", className)));
 	}
 
+	@Reference
+	protected ModelSearchSettingsFactory modelSearchSettingsFactory;
+
 	private class ModelSearchDefinitionImpl implements ModelSearchDefinition {
 
-		public ModelSearchDefinitionImpl(String className) {
-			_modelSearchSettingsImpl = new ModelSearchSettingsImpl(className);
+		public ModelSearchDefinitionImpl(
+			String className,
+			ModelSearchSettingsFactory modelSearchSettingsFactory) {
+
+			_modelSearchSettingsImpl =
+				modelSearchSettingsFactory.getModelSearchSettingsImpl(
+					className);
 		}
 
 		@Override
