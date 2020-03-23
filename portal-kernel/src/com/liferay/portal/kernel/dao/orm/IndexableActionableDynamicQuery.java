@@ -112,6 +112,10 @@ public class IndexableActionableDynamicQuery
 	}
 
 	protected String getSearchEngineId() {
+		if (Validator.isNull(_searchEngineId)) {
+			return SearchEngineHelperUtil.getSearchEngineId(_documents);
+		}
+
 		return _searchEngineId;
 	}
 
@@ -120,14 +124,15 @@ public class IndexableActionableDynamicQuery
 			return;
 		}
 
-		if (Validator.isNull(_searchEngineId)) {
-			_searchEngineId = SearchEngineHelperUtil.getSearchEngineId(
+		String searchEngineId = _searchEngineId;
+
+		if (Validator.isNull(searchEngineId)) {
+			searchEngineId = SearchEngineHelperUtil.getSearchEngineId(
 				_documents);
 		}
 
 		_indexWriterHelper.updateDocuments(
-			_searchEngineId, getCompanyId(), new ArrayList<>(_documents),
-			false);
+			searchEngineId, getCompanyId(), new ArrayList<>(_documents), false);
 
 		_count += _documents.size();
 
