@@ -241,29 +241,27 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 	@Override
 	public String getSearchEngineId() {
-		if (_searchEngineId != null) {
-			return _searchEngineId;
-		}
+		String searchEngineId = null;
 
 		Class<?> clazz = getClass();
 
-		String searchEngineId = GetterUtil.getString(
+		String classSearchEngineId = GetterUtil.getString(
 			PropsUtil.get(
 				PropsKeys.INDEX_SEARCH_ENGINE_ID,
 				new com.liferay.portal.kernel.configuration.Filter(
 					clazz.getName())));
 
-		if (Validator.isNotNull(searchEngineId)) {
+		if (Validator.isNotNull(classSearchEngineId)) {
 			SearchEngine searchEngine = SearchEngineHelperUtil.getSearchEngine(
-				searchEngineId);
+				classSearchEngineId);
 
 			if (searchEngine != null) {
-				_searchEngineId = searchEngineId;
+				searchEngineId = classSearchEngineId;
 			}
 		}
 
-		if (_searchEngineId == null) {
-			_searchEngineId = SearchEngineHelperUtil.getDefaultSearchEngineId();
+		if (Validator.isNull(searchEngineId)) {
+			searchEngineId = SearchEngineHelperUtil.getDefaultSearchEngineId();
 		}
 
 		if (_log.isDebugEnabled()) {
@@ -273,7 +271,7 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 					searchEngineId));
 		}
 
-		return _searchEngineId;
+		return searchEngineId;
 	}
 
 	/**
@@ -1579,7 +1577,6 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 	private IndexerPostProcessor[] _indexerPostProcessors =
 		new IndexerPostProcessor[0];
 	private boolean _permissionAware;
-	private String _searchEngineId;
 	private boolean _selectAllLocales;
 	private boolean _stagingAware = true;
 
