@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.internal.engine;
+package com.liferay.portal.search.engine;
 
 /**
  * @author Joshua Cords
