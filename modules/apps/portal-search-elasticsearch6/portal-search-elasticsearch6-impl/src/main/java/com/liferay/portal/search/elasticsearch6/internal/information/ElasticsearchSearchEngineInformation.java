@@ -18,6 +18,7 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.search.SearchEngineHelper;
 import com.liferay.portal.search.elasticsearch6.internal.ElasticsearchSearchEngine;
 import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchConnection;
 import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchConnectionManager;
@@ -102,6 +103,11 @@ public class ElasticsearchSearchEngineInformation
 
 			return sb.toString();
 		}
+	}
+
+	@Override
+	public String getSearchEngineId() {
+		return SearchEngineHelper.SYSTEM_ENGINE_ID;
 	}
 
 	@Override
