@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.search.SearchEngineHelper;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.SetUtil;
@@ -171,6 +172,11 @@ public class ElasticsearchSearchEngineInformation
 		catch (Exception exception) {
 			return exception.toString();
 		}
+	}
+
+	@Override
+	public String getSearchEngineId() {
+		return SearchEngineHelper.SYSTEM_ENGINE_ID;
 	}
 
 	@Override
