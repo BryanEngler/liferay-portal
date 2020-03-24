@@ -19,6 +19,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.search.SearchEngineHelper;
 import com.liferay.portal.search.engine.ConnectionInformation;
 import com.liferay.portal.search.engine.ConnectionInformationBuilder;
 import com.liferay.portal.search.engine.ConnectionInformationBuilderFactory;
@@ -121,6 +122,11 @@ public class SolrSearchEngineInformation implements SearchEngineInformation {
 
 			return sb.toString();
 		}
+	}
+
+	@Override
+	public String getSearchEngineId() {
+		return SearchEngineHelper.SYSTEM_ENGINE_ID;
 	}
 
 	@Override
