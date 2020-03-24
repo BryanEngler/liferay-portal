@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.internal.indexer;
 
-import com.liferay.portal.search.internal.engine.SearchEngineIdProvider;
+import com.liferay.portal.search.engine.SearchEngineIdProvider;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
