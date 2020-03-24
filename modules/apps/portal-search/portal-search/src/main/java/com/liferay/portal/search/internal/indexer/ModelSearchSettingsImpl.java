@@ -15,7 +15,7 @@
 package com.liferay.portal.search.internal.indexer;
 
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.internal.engine.SearchEngineIdProvider;
+import com.liferay.portal.search.engine.SearchEngineIdProvider;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchSettings;
 
 /**

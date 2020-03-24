@@ -30,7 +30,7 @@ import com.liferay.portal.kernel.search.queue.QueuingSearchEngine;
 import com.liferay.portal.kernel.util.ClassUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.search.configuration.SearchEngineHelperConfiguration;
-import com.liferay.portal.search.internal.engine.SearchEngineIdProvider;
+import com.liferay.portal.search.engine.SearchEngineIdProvider;
 
 import java.util.Collection;
 import java.util.Collections;
