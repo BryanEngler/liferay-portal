@@ -30,6 +30,8 @@ public interface SearchEngineInformation {
 
 	public String getNodesString();
 
+	public String getSearchEngineId();
+
 	public String getVendorString();
 
 }
