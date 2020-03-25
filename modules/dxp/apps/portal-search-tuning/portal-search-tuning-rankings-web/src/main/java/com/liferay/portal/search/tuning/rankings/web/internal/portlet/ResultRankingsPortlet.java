@@ -17,7 +17,7 @@ package com.liferay.portal.search.tuning.rankings.web.internal.portlet;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.search.engine.SearchEngineInformation;
+import com.liferay.portal.search.engine.SearchEngineInformationHelper;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.index.IndexNameBuilder;
 import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
@@ -76,7 +76,7 @@ public class ResultRankingsPortlet extends MVCPortlet {
 				portal.getHttpServletRequest(renderRequest), indexNameBuilder,
 				language, portal, queries, rankingIndexNameBuilder, sorts,
 				renderRequest, renderResponse, searchEngineAdapter,
-				_searchEngineInformation
+				searchEngineInformationHelper.getSearchEngineInformation()
 			).build();
 
 		renderRequest.setAttribute(
@@ -108,12 +108,12 @@ public class ResultRankingsPortlet extends MVCPortlet {
 	protected SearchEngineAdapter searchEngineAdapter;
 
 	@Reference
+	protected SearchEngineInformationHelper searchEngineInformationHelper;
+
+	@Reference
 	protected SearchRequestBuilderFactory searchRequestBuilderFactory;
 
 	@Reference
 	protected Sorts sorts;
-
-	@Reference
-	private SearchEngineInformation _searchEngineInformation;
 
 }
