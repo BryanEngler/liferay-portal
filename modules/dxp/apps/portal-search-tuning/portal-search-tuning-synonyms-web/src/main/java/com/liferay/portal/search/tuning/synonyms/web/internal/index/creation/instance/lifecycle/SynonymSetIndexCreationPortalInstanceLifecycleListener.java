@@ -19,6 +19,7 @@ import com.liferay.portal.instance.lifecycle.PortalInstanceLifecycleListener;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.service.CompanyService;
 import com.liferay.portal.search.engine.SearchEngineInformation;
+import com.liferay.portal.search.engine.SearchEngineInformationHelper;
 import com.liferay.portal.search.index.IndexNameBuilder;
 import com.liferay.portal.search.tuning.synonyms.web.internal.index.SynonymSetIndexCreator;
 import com.liferay.portal.search.tuning.synonyms.web.internal.index.SynonymSetIndexReader;
@@ -40,9 +41,10 @@ public class SynonymSetIndexCreationPortalInstanceLifecycleListener
 
 	@Override
 	public void portalInstanceRegistered(Company company) throws Exception {
-		if (Objects.equals(
-				_searchEngineInformation.getVendorString(), "Solr")) {
+		SearchEngineInformation searchEngineInformation =
+			_searchEngineInformationHelper.getSearchEngineInformation();
 
+		if (Objects.equals(searchEngineInformation.getVendorString(), "Solr")) {
 			return;
 		}
 
@@ -69,7 +71,7 @@ public class SynonymSetIndexCreationPortalInstanceLifecycleListener
 	private IndexNameBuilder _indexNameBuilder;
 
 	@Reference
-	private SearchEngineInformation _searchEngineInformation;
+	private SearchEngineInformationHelper _searchEngineInformationHelper;
 
 	@Reference
 	private SynonymSetIndexCreator _synonymSetIndexCreator;
