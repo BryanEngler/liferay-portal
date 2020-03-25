@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.engine.ConnectionInformation;
 import com.liferay.portal.search.engine.SearchEngineInformation;
+import com.liferay.portal.search.engine.SearchEngineInformationHelper;
 import com.liferay.portal.search.web.internal.low.level.search.options.constants.LowLevelSearchOptionsPortletKeys;
 
 import java.util.LinkedList;
@@ -61,6 +62,9 @@ public class LowLevelSearchOptionsConfigurationAction
 
 		LinkedList<String> connectionIds = new LinkedList<>();
 
+		SearchEngineInformation searchEngineInformation =
+			searchEngineInformationHelper.getSearchEngineInformation();
+
 		List<ConnectionInformation> connectionInformationList =
 			searchEngineInformation.getConnectionInformationList();
 
@@ -81,6 +85,6 @@ public class LowLevelSearchOptionsConfigurationAction
 	}
 
 	@Reference
-	protected SearchEngineInformation searchEngineInformation;
+	protected SearchEngineInformationHelper searchEngineInformationHelper;
 
 }
