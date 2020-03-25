@@ -26,7 +26,7 @@ import com.liferay.portal.search.admin.web.internal.display.context.FieldMapping
 import com.liferay.portal.search.admin.web.internal.display.context.SearchAdminDisplayBuilder;
 import com.liferay.portal.search.admin.web.internal.display.context.SearchAdminDisplayContext;
 import com.liferay.portal.search.admin.web.internal.display.context.SearchEngineDisplayBuilder;
-import com.liferay.portal.search.engine.SearchEngineInformation;
+import com.liferay.portal.search.engine.SearchEngineInformationHelper;
 import com.liferay.portal.search.index.IndexInformation;
 
 import java.io.IOException;
@@ -94,7 +94,7 @@ public class SearchAdminPortlet extends MVCPortlet {
 				new SearchEngineDisplayBuilder();
 
 			searchEngineDisplayBuilder.setSearchEngineInformation(
-				searchEngineInformation);
+				searchEngineInformationHelper.getSearchEngineInformation());
 
 			renderRequest.setAttribute(
 				SearchAdminWebKeys.SEARCH_ENGINE_DISPLAY_CONTEXT,
@@ -132,12 +132,8 @@ public class SearchAdminPortlet extends MVCPortlet {
 	)
 	protected volatile IndexInformation indexInformation;
 
-	@Reference(
-		cardinality = ReferenceCardinality.OPTIONAL,
-		policy = ReferencePolicy.DYNAMIC,
-		policyOption = ReferencePolicyOption.GREEDY
-	)
-	protected volatile SearchEngineInformation searchEngineInformation;
+	@Reference
+	protected SearchEngineInformationHelper searchEngineInformationHelper;
 
 	@Reference
 	private Http _http;
