@@ -207,9 +207,10 @@ public class SearchEngineHelperImpl implements SearchEngineHelper {
 
 		_companyIds.put(companyId, companyId);
 
-		for (SearchEngine searchEngine : _searchEngines.values()) {
-			searchEngine.initialize(companyId);
-		}
+		SearchEngine searchEngine = getSearchEngine(
+			_searchEngineIdProvider.getSearchEngineId());
+
+		searchEngine.initialize(companyId);
 	}
 
 	@Override
@@ -218,9 +219,10 @@ public class SearchEngineHelperImpl implements SearchEngineHelper {
 			return;
 		}
 
-		for (SearchEngine searchEngine : _searchEngines.values()) {
-			searchEngine.removeCompany(companyId);
-		}
+		SearchEngine searchEngine = getSearchEngine(
+			_searchEngineIdProvider.getSearchEngineId());
+
+		searchEngine.initialize(companyId);
 
 		_companyIds.remove(companyId);
 	}
