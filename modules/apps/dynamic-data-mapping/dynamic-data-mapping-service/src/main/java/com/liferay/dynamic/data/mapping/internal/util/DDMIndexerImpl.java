@@ -76,7 +76,11 @@ public class DDMIndexerImpl implements DDMIndexer {
 		Document document, DDMStructure ddmStructure,
 		DDMFormValues ddmFormValues) {
 
-		FieldArray fieldArray = new FieldArray("ddmFields");
+		FieldArray fieldArray = (FieldArray)document.getField("ddmFields");
+
+		if (fieldArray == null) {
+			fieldArray = new FieldArray("ddmFields");
+		}
 
 		Set<Locale> locales = ddmFormValues.getAvailableLocales();
 
