@@ -33,6 +33,12 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
 )
 public interface ElasticsearchConnectionConfiguration {
 
+	@Meta.AD(
+		deflt = "false", description = "active-help", name = "active",
+		required = false
+	)
+	public boolean active();
+
 	@Meta.AD(description = "connection-id-help", name = "connection-id")
 	public String connectionId();
 
@@ -42,12 +48,6 @@ public interface ElasticsearchConnectionConfiguration {
 		name = "network-host-addresses"
 	)
 	public String[] networkHostAddresses();
-
-	@Meta.AD(
-		deflt = "false", description = "active-help", name = "active",
-		required = false
-	)
-	public boolean active();
 
 	@Meta.AD(
 		deflt = "false", description = "authentication-enabled-help",
