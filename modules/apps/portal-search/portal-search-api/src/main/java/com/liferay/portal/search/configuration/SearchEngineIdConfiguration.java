@@ -32,7 +32,10 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface SearchEngineIdConfiguration {
 
-	@Meta.AD(name = "search-engine-id", required = false)
+	@Meta.AD(
+		description = "search-engine-id-help", name = "search-engine-id",
+		required = false
+	)
 	public String searchEngineId();
 
 }
