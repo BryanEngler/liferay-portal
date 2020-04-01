@@ -49,7 +49,7 @@ public class SearchEngineIdProviderImpl implements SearchEngineIdProvider {
 				SearchEngineIdConfiguration.class, properties);
 
 		String searchEngineId =
-			searchEngineIdConfiguration.indexSearchEngineId();
+			searchEngineIdConfiguration.searchEngineId();
 
 		if (Validator.isNotNull(searchEngineId)) {
 			_searchEngineId = searchEngineId;
