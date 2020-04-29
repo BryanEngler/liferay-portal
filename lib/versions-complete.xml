@@ -2635,7 +2635,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.portal.search.elasticsearch6.impl.jar!netty-all.jar</file-name>
-				<version>4.1.43.Final</version>
+				<version>4.1.48.Final</version>
 				<project-name>Netty/All-in-One</project-name>
 				<licenses>
 					<license>
