@@ -68,6 +68,7 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
 import com.liferay.portlet.asset.util.AssetSearcher;
 
 import java.io.Serializable;
@@ -554,8 +555,24 @@ public class AssetHelperImpl implements AssetHelper {
 			searchContext.setLike(true);
 		}
 
-		searchContext.setSorts(
-			_getSorts(assetEntryQuery, searchContext.getLocale()));
+		boolean use_new_sorts_from_portal_search_api = true;
+
+		if (use_new_sorts_from_portal_search_api) {
+			com.liferay.portal.search.sort.Sort[]
+				new_getSorts_function_with_FieldSort_setNestedSort_for_DDM =
+					null;
+
+			_searchRequestBuilderFactory.builder(
+				searchContext
+			).sorts(
+				new_getSorts_function_with_FieldSort_setNestedSort_for_DDM
+			);
+		}
+		else {
+			searchContext.setSorts(
+				_getSorts(assetEntryQuery, searchContext.getLocale()));
+		}
+
 		searchContext.setStart(start);
 
 		return assetSearcher;
@@ -723,5 +740,8 @@ public class AssetHelperImpl implements AssetHelper {
 
 	@Reference
 	private PortletLocalService _portletLocalService;
+
+	@Reference
+	private SearchRequestBuilderFactory _searchRequestBuilderFactory;
 
 }
