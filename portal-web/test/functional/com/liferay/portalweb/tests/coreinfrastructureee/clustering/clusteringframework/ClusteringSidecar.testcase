@@ -1,11 +1,11 @@
 @component-name = "portal-clustering"
-@ignore = "true"
 definition {
 
 	property app.server.bundles.size = "1";
 	property cluster.enabled = "true";
 	property portal.release = "true";
-	property portal.upstream = "true";
+	property portal.suite.search.engine = "elasticsearch7";
+	property portal.upstream = "quarantine";
 	property remote.elasticsearch.enabled = "false";
 	property test.assert.warning.exceptions = "true";
 	property testray.main.component.name = "Clustering";
