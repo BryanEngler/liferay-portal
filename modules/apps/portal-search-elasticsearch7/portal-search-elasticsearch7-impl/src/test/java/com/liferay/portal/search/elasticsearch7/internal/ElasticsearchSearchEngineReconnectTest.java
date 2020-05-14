@@ -18,11 +18,13 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnection;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionFixture;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
+import com.liferay.portal.search.elasticsearch7.internal.sidecar.SidecarKnownIssues;
 
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.SnapshotClient;
 
 import org.junit.AfterClass;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -33,6 +35,8 @@ public class ElasticsearchSearchEngineReconnectTest {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
+		Assume.assumeTrue(SidecarKnownIssues.LPS112597_IS_FIXED);
+
 		ElasticsearchConnectionFixture elasticsearchConnectionFixture =
 			ElasticsearchConnectionFixture.builder(
 			).clusterName(
@@ -52,7 +56,9 @@ public class ElasticsearchSearchEngineReconnectTest {
 
 	@AfterClass
 	public static void tearDownClass() throws Exception {
-		_elasticsearchSearchEngineFixture.tearDown();
+		if (_elasticsearchSearchEngineFixture != null) {
+			_elasticsearchSearchEngineFixture.tearDown();
+		}
 	}
 
 	public SnapshotClient getSnapshotClient() {
