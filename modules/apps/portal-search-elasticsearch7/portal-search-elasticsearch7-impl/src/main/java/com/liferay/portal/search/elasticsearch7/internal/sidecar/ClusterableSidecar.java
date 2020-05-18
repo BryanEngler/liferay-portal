@@ -15,7 +15,6 @@
 package com.liferay.portal.search.elasticsearch7.internal.sidecar;
 
 import com.liferay.osgi.util.ServiceTrackerFactory;
-import com.liferay.petra.process.ProcessExecutor;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -37,9 +36,7 @@ import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiServic
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MethodHandler;
 import com.liferay.portal.kernel.util.MethodKey;
-import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch7.internal.settings.SettingsBuilder;
 
 import java.io.IOException;
@@ -80,15 +77,11 @@ import org.osgi.util.tracker.ServiceTracker;
  * @author Tina Tian
  */
 public class ClusterableSidecar
-	extends Sidecar implements IdentifiableOSGiService {
+	implements IdentifiableOSGiService, SidecarStrategy {
 
 	public ClusterableSidecar(
 		ClusterExecutor clusterExecutor,
-		ClusterMasterExecutor clusterMasterExecutor,
-		ElasticsearchConfiguration elasticsearchConfiguration,
-		JSONFactory jsonFactory, ProcessExecutor processExecutor, Props props) {
-
-		super(elasticsearchConfiguration, processExecutor, props);
+		ClusterMasterExecutor clusterMasterExecutor, JSONFactory jsonFactory) {
 
 		_clusterExecutor = clusterExecutor;
 		_clusterMasterExecutor = clusterMasterExecutor;
@@ -97,8 +90,21 @@ public class ClusterableSidecar
 		ClusterNode clusterNode = _clusterExecutor.getLocalClusterNode();
 
 		_nodeName = StringBundler.concat(
-			super.getNodeName(), StringPool.DASH,
-			clusterNode.getClusterNodeId());
+			"liferay", StringPool.DASH, clusterNode.getClusterNodeId());
+	}
+
+	@Override
+	public String getLogProperties() {
+		return StringBundler.concat(
+			"logger.cluster.name=org.elasticsearch.cluster\n",
+			"logger.cluster.level=error\n",
+			"logger.transport.name=org.elasticsearch.transport\n",
+			"logger.transport.level=error\n");
+	}
+
+	@Override
+	public String getNodeName() {
+		return _nodeName;
 	}
 
 	@Override
@@ -107,7 +113,33 @@ public class ClusterableSidecar
 	}
 
 	@Override
-	public void start() {
+	public void setClusterDiscoverySettings(
+		SettingsBuilder settingsBuilder, Runnable runnable) {
+
+		ClusterNode clusterNode = _clusterExecutor.getLocalClusterNode();
+
+		InetAddress inetAddress = clusterNode.getBindInetAddress();
+
+		if (!inetAddress.isLoopbackAddress()) {
+			settingsBuilder.put("network.host", inetAddress.getHostAddress());
+		}
+
+		if (_initialMasterNodeTransportAddress == null) {
+			runnable.run();
+		}
+		else {
+			settingsBuilder.put(
+				"discovery.seed_hosts", _initialMasterNodeTransportAddress);
+		}
+	}
+
+	@Override
+	public void setSidecar(Sidecar sidecar) {
+		_sidecar = sidecar;
+	}
+
+	@Override
+	public void start(Runnable runnable) {
 		_initialMasterNodeTransportAddress = _getMasterNodeTransportAddress();
 
 		if (_initialMasterNodeTransportAddress == null) {
@@ -119,13 +151,13 @@ public class ClusterableSidecar
 			}
 		}
 		else {
-			deleteDir(getDataHomePath());
+			_sidecar.deleteDir(_sidecar.getDataHomePath());
 		}
 
-		super.start();
+		runnable.run();
 
 		RestClientBuilder restClientBuilder = RestClient.builder(
-			HttpHost.create(getNetworkHostAddress()));
+			HttpHost.create(_sidecar.getNetworkHostAddress()));
 
 		_restClient = restClientBuilder.build();
 
@@ -137,7 +169,7 @@ public class ClusterableSidecar
 	}
 
 	@Override
-	public void stop() {
+	public void stop(Runnable runnable) {
 		if (_restClient != null) {
 			try {
 				while (!_isOneNodeCluster()) {
@@ -173,43 +205,9 @@ public class ClusterableSidecar
 
 		_clusterExecutor.removeClusterEventListener(_clusterEventListener);
 
-		super.stop();
+		runnable.run();
 
 		_stopCountDownLatch.countDown();
-	}
-
-	protected String getLogProperties() {
-		return StringBundler.concat(
-			"logger.cluster.name=org.elasticsearch.cluster\n",
-			"logger.cluster.level=error\n",
-			"logger.transport.name=org.elasticsearch.transport\n",
-			"logger.transport.level=error\n");
-	}
-
-	@Override
-	protected String getNodeName() {
-		return _nodeName;
-	}
-
-	@Override
-	protected void setClusterDiscoverySettings(
-		SettingsBuilder settingsBuilder) {
-
-		ClusterNode clusterNode = _clusterExecutor.getLocalClusterNode();
-
-		InetAddress inetAddress = clusterNode.getBindInetAddress();
-
-		if (!inetAddress.isLoopbackAddress()) {
-			settingsBuilder.put("network.host", inetAddress.getHostAddress());
-		}
-
-		if (_initialMasterNodeTransportAddress == null) {
-			super.setClusterDiscoverySettings(settingsBuilder);
-		}
-		else {
-			settingsBuilder.put(
-				"discovery.seed_hosts", _initialMasterNodeTransportAddress);
-		}
 	}
 
 	private static String _getMasterNodeTransportAddress(
@@ -279,7 +277,8 @@ public class ClusterableSidecar
 	}
 
 	private void _cleanUpClusterMetaData() throws Exception {
-		Path nodePath = NodeEnvironment.resolveNodePath(getPathData(), 0);
+		Path nodePath = NodeEnvironment.resolveNodePath(
+			_sidecar.getPathData(), 0);
 
 		Path statePath = nodePath.resolve(MetaDataStateFormat.STATE_DIR_NAME);
 
@@ -434,6 +433,7 @@ public class ClusterableSidecar
 	private final JSONFactory _jsonFactory;
 	private final String _nodeName;
 	private RestClient _restClient;
+	private Sidecar _sidecar;
 	private final CountDownLatch _startCountDownLatch = new CountDownLatch(1);
 	private final CountDownLatch _stopCountDownLatch = new CountDownLatch(1);
 
@@ -448,7 +448,7 @@ public class ClusterableSidecar
 				return;
 			}
 
-			String address = getNetworkHostAddress();
+			String address = _sidecar.getNetworkHostAddress();
 
 			if (!_isAddressReachable(address)) {
 				if (_log.isWarnEnabled()) {
@@ -502,7 +502,7 @@ public class ClusterableSidecar
 					futureClusterResponses.get();
 				}
 
-				deleteDir(getDataHomePath());
+				_sidecar.deleteDir(_sidecar.getDataHomePath());
 
 				_syncStart();
 

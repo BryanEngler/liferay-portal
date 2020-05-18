@@ -1,0 +1,56 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+package com.liferay.portal.search.elasticsearch7.internal.sidecar;
+
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.search.elasticsearch7.internal.settings.SettingsBuilder;
+
+/**
+ * @author Bryan Engler
+ */
+public class StandaloneSidecar implements SidecarStrategy {
+
+	@Override
+	public String getLogProperties() {
+		return StringPool.BLANK;
+	}
+
+	@Override
+	public String getNodeName() {
+		return "liferay";
+	}
+
+	@Override
+	public void setClusterDiscoverySettings(
+		SettingsBuilder settingsBuilder, Runnable runnable) {
+
+		runnable.run();
+	}
+
+	@Override
+	public void setSidecar(Sidecar sidecar) {
+	}
+
+	@Override
+	public void start(Runnable runnable) {
+		runnable.run();
+	}
+
+	@Override
+	public void stop(Runnable runnable) {
+		runnable.run();
+	}
+
+}

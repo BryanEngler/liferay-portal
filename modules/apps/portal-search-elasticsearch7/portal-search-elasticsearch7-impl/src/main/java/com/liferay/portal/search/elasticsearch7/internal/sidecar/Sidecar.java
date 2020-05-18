@@ -78,11 +78,13 @@ public class Sidecar {
 
 	public Sidecar(
 		ElasticsearchConfiguration elasticsearchConfiguration,
-		ProcessExecutor processExecutor, Props props) {
+		ProcessExecutor processExecutor, Props props,
+		SidecarStrategy sidecarStrategy) {
 
 		_elasticsearchConfiguration = elasticsearchConfiguration;
 		_processExecutor = processExecutor;
 		_props = props;
+		_sidecarStrategy = sidecarStrategy;
 
 		Path liferayHomePath = Paths.get(props.get(PropsKeys.LIFERAY_HOME));
 
@@ -109,6 +111,7 @@ public class Sidecar {
 		}
 
 		_sidecarHomePath = sidecarHomePath.toAbsolutePath();
+		_sidecarStrategy.setSidecar(this);
 	}
 
 	public String getNetworkHostAddress() {
@@ -134,72 +137,79 @@ public class Sidecar {
 	}
 
 	public void start() {
-		if (_log.isInfoEnabled()) {
-			_log.info("Starting sidecar");
-		}
+		_sidecarStrategy.start(
+			() -> {
+				if (_log.isInfoEnabled()) {
+					_log.info("Starting sidecar");
+				}
 
-		String sidecarLibClassPath = _createClasspath(
-			_sidecarHomePath.resolve("lib"), path -> true);
+				String sidecarLibClassPath = _createClasspath(
+					_sidecarHomePath.resolve("lib"), path -> true);
 
-		try {
-			_processChannel = _processExecutor.execute(
-				_createProcessConfig(sidecarLibClassPath),
-				new SidecarMainProcessCallable(
-					_elasticsearchConfiguration.sidecarHeartbeatInterval(),
-					_getModifiedClasses(sidecarLibClassPath)));
-		}
-		catch (ProcessException processException) {
-			throw new RuntimeException(
-				"Unable to start sidecar process", processException);
-		}
+				try {
+					_processChannel = _processExecutor.execute(
+						_createProcessConfig(sidecarLibClassPath),
+						new SidecarMainProcessCallable(
+							_elasticsearchConfiguration.
+								sidecarHeartbeatInterval(),
+							_getModifiedClasses(sidecarLibClassPath)));
+				}
+				catch (ProcessException processException) {
+					throw new RuntimeException(
+						"Unable to start sidecar process", processException);
+				}
 
-		NoticeableFuture<Serializable> noticeableFuture =
-			_processChannel.getProcessNoticeableFuture();
+				NoticeableFuture<Serializable> noticeableFuture =
+					_processChannel.getProcessNoticeableFuture();
 
-		_restartFutureListener = new RestartFutureListener();
+				_restartFutureListener = new RestartFutureListener();
 
-		noticeableFuture.addFutureListener(_restartFutureListener);
+				noticeableFuture.addFutureListener(_restartFutureListener);
 
-		_addressNoticeableFuture = _processChannel.write(
-			new StartSidecarProcessCallable(_getSidecarArguments()));
+				_addressNoticeableFuture = _processChannel.write(
+					new StartSidecarProcessCallable(_getSidecarArguments()));
+			});
 	}
 
 	public void stop() {
-		deleteDir(_sidecarTempDirPath);
+		_sidecarStrategy.stop(
+			() -> {
+				deleteDir(_sidecarTempDirPath);
 
-		if (_processChannel == null) {
-			return;
-		}
-
-		NoticeableFuture<Serializable> noticeableFuture =
-			_processChannel.getProcessNoticeableFuture();
-
-		noticeableFuture.removeFutureListener(_restartFutureListener);
-
-		_processChannel.write(new StopSidecarProcessCallable());
-
-		try {
-			noticeableFuture.get(
-				_elasticsearchConfiguration.sidecarShutdownTimeout(),
-				TimeUnit.MILLISECONDS);
-		}
-		catch (Exception exception) {
-			if (!noticeableFuture.isDone()) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(
-						StringBundler.concat(
-							"Forcibly shutdown sidecar process because it did ",
-							"not shut down in ",
-							_elasticsearchConfiguration.
-								sidecarShutdownTimeout(),
-							" ms"));
+				if (_processChannel == null) {
+					return;
 				}
 
-				noticeableFuture.cancel(true);
-			}
-		}
+				NoticeableFuture<Serializable> noticeableFuture =
+					_processChannel.getProcessNoticeableFuture();
 
-		_processChannel = null;
+				noticeableFuture.removeFutureListener(_restartFutureListener);
+
+				_processChannel.write(new StopSidecarProcessCallable());
+
+				try {
+					noticeableFuture.get(
+						_elasticsearchConfiguration.sidecarShutdownTimeout(),
+						TimeUnit.MILLISECONDS);
+				}
+				catch (Exception exception) {
+					if (!noticeableFuture.isDone()) {
+						if (_log.isWarnEnabled()) {
+							_log.warn(
+								StringBundler.concat(
+									"Forcibly shutdown sidecar process ",
+									"because it did not shut down in ",
+									_elasticsearchConfiguration.
+										sidecarShutdownTimeout(),
+									" ms"));
+						}
+
+						noticeableFuture.cancel(true);
+					}
+				}
+
+				_processChannel = null;
+			});
 	}
 
 	protected void deleteDir(Path dirPath) {
@@ -262,11 +272,11 @@ public class Sidecar {
 	}
 
 	protected String getLogProperties() {
-		return StringPool.BLANK;
+		return _sidecarStrategy.getLogProperties();
 	}
 
 	protected String getNodeName() {
-		return "liferay";
+		return _sidecarStrategy.getNodeName();
 	}
 
 	protected Path getPathData() {
@@ -276,7 +286,10 @@ public class Sidecar {
 	protected void setClusterDiscoverySettings(
 		SettingsBuilder settingsBuilder) {
 
-		settingsBuilder.put("cluster.initial_master_nodes", getNodeName());
+		_sidecarStrategy.setClusterDiscoverySettings(
+			settingsBuilder,
+			() -> settingsBuilder.put(
+				"cluster.initial_master_nodes", getNodeName()));
 	}
 
 	private String _createClasspath(
@@ -619,6 +632,7 @@ public class Sidecar {
 	private final Path _repoPath;
 	private FutureListener<Serializable> _restartFutureListener;
 	private final Path _sidecarHomePath;
+	private final SidecarStrategy _sidecarStrategy;
 	private Path _sidecarTempDirPath;
 
 	private class RestartFutureListener
