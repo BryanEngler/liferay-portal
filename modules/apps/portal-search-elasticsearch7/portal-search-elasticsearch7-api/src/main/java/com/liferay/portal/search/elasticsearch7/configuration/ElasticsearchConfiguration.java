@@ -51,14 +51,16 @@ public interface ElasticsearchConfiguration {
 	public String indexNamePrefix();
 
 	@Meta.AD(
-		deflt = "", description = "number-of-index-replicas-help",
-		name = "number-of-index-replicas", required = false
+		deflt = "",
+		description = "number-of-company-and-system-index-replicas-help",
+		name = "number-of-company-and-system-index-replicas", required = false
 	)
 	public String indexNumberOfReplicas();
 
 	@Meta.AD(
-		deflt = "", description = "number-of-index-shards-help",
-		name = "number-of-index-shards", required = false
+		deflt = "",
+		description = "number-of-company-and-system-index-shards-help",
+		name = "number-of-company-and-system-index-shards", required = false
 	)
 	public String indexNumberOfShards();
 
