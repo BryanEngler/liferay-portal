@@ -45,6 +45,12 @@ public class SidecarElasticsearchConnection
 	public void connect() {
 		_sidecar.start();
 
+//		try {
+//			TimeUnit.SECONDS.sleep(10);
+//		} catch (InterruptedException e) {
+//
+//		}
+
 		super.connect();
 	}
 
@@ -80,6 +86,7 @@ public class SidecarElasticsearchConnection
 	}
 
 	protected String getHttpPort(String address) {
+		System.out.println("address = " + address);
 		return address.substring(address.indexOf(CharPool.COLON) + 1);
 	}
 

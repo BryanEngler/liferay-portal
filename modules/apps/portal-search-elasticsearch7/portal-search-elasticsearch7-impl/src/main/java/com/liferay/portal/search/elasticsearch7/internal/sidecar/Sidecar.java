@@ -35,6 +35,7 @@ import com.liferay.portal.search.elasticsearch7.internal.cluster.ClusterSettings
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchInstancePaths;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchInstanceSettingsBuilder;
 import com.liferay.portal.search.elasticsearch7.internal.connection.HttpPortRange;
+import com.liferay.portal.search.elasticsearch7.internal.settings.SettingsBuilder;
 import com.liferay.portal.search.elasticsearch7.internal.util.ResourceUtil;
 import com.liferay.portal.search.elasticsearch7.settings.SettingsContributor;
 
@@ -283,6 +284,9 @@ public class Sidecar {
 	}
 
 	protected Settings getSettings() {
+
+		if (false) {
+
 		return ElasticsearchInstanceSettingsBuilder.builder(
 		).clusterName(
 			getClusterName()
@@ -301,6 +305,95 @@ public class Sidecar {
 		).settingsContributors(
 			_settingsContributors
 		).build();
+
+		} else {
+
+		if (true) {
+//			return ElasticsearchInstanceSettingsBuilder.builder(
+//			).clusterName(
+//				getClusterName()
+//			).elasticsearchConfiguration(
+//				_elasticsearchConfiguration
+//			).elasticsearchInstancePaths(
+//				_elasticsearchInstancePaths
+//			).httpPort(
+//				getHttpPort()
+//			).clusterInitialMasterNodes(
+//				getNodeName()
+//			).localBindInetAddressSupplier(
+//				_clusterSettingsContext::getLocalBindInetAddress
+//			).nodeName(
+//				getNodeName()
+//			).settingsContributors(
+//				_settingsContributors
+//			).build();
+
+			Settings settings = ElasticsearchInstanceSettingsBuilder.builder(
+					).clusterName(
+						"myCluster"
+					).elasticsearchConfiguration(
+						_elasticsearchConfiguration
+					).elasticsearchInstancePaths(
+						_elasticsearchInstancePaths
+					).httpPortRange(
+						new HttpPortRange(_elasticsearchConfiguration)
+					).clusterInitialMasterNodes(
+						getNodeName()
+					).localBindInetAddressSupplier(
+						_clusterSettingsContext::getLocalBindInetAddress
+					).nodeName(
+						getNodeName()
+					).settingsContributors(
+						_settingsContributors
+					).build();
+
+			Settings.Builder builder = settings.builder();
+
+////////////			builder.put("path.logs", _logsPath.toString());
+
+			return settings;
+		}
+
+		SettingsBuilder settingsBuilder = new SettingsBuilder(
+			Settings.builder());
+
+		settingsBuilder.put(
+			"bootstrap.memory_lock",
+			_elasticsearchConfiguration.bootstrapMlockAll());
+		settingsBuilder.put("bootstrap.system_call_filter", false);
+		settingsBuilder.put(
+			"cluster.routing.allocation.disk.threshold_enabled", false);
+		settingsBuilder.put("cluster.name", getClusterName());
+		settingsBuilder.put(
+			"http.cors.enabled", _elasticsearchConfiguration.httpCORSEnabled());
+		settingsBuilder.put("http.port", new HttpPortRange(_elasticsearchConfiguration).toSettingsString());
+		settingsBuilder.put("path.data", _indicesPath.toString());
+////////////		settingsBuilder.put("path.logs", _logsPath.toString());
+////////////		settingsBuilder.put("path.repo", _repoPath.toString());
+
+		if (_elasticsearchConfiguration.httpCORSEnabled()) {
+			settingsBuilder.put(
+				"http.cors.allow-origin",
+				_elasticsearchConfiguration.httpCORSAllowOrigin());
+
+			settingsBuilder.loadFromSource(
+				_elasticsearchConfiguration.httpCORSConfigurations());
+		}
+
+		settingsBuilder.put("node.name", getNodeName());
+		settingsBuilder.put("node.data", true);
+		settingsBuilder.put("node.ingest", true);
+		settingsBuilder.put("node.master", true);
+		settingsBuilder.put("node.store.allow_mmap", false);
+
+		settingsBuilder.loadFromSource(
+			_elasticsearchConfiguration.additionalConfigurations());
+
+		//		setClusterDiscoverySettings(settingsBuilder);
+
+		return settingsBuilder.build();
+
+		}
 	}
 
 	protected String startElasticsearch(ProcessChannel processChannel) {
@@ -337,6 +430,8 @@ public class Sidecar {
 	}
 
 	private ProcessConfig _createProcessConfig(String sidecarLibClassPath) {
+		if (false) {
+
 		ProcessConfig.Builder builder = new ProcessConfig.Builder();
 
 		URL bundleURL = getBundleURL();
@@ -356,6 +451,68 @@ public class Sidecar {
 				sidecarLibClassPath, File.pathSeparator, bundleURL.getPath(),
 				File.pathSeparator, getBootstrapClassPath())
 		).build();
+
+		} else {
+
+		ProcessConfig.Builder processConfigBuilder =
+			new ProcessConfig.Builder();
+
+		ProtectionDomain protectionDomain = Sidecar.class.getProtectionDomain();
+
+		CodeSource codeSource = protectionDomain.getCodeSource();
+
+		URL bundleURL = codeSource.getLocation();
+
+		processConfigBuilder.setArguments(_getJVMArguments(bundleURL));
+
+		String bootstrapClasspath = getBootstrapClassPath();
+
+		processConfigBuilder.setBootstrapClassPath(bootstrapClasspath);
+
+		processConfigBuilder.setEnvironment(
+			HashMapBuilder.putAll(
+				System.getenv()
+			).put(
+				"HOSTNAME", "localhost"
+			).build());
+
+		processConfigBuilder.setProcessLogConsumer(
+			processLog -> {
+
+				if (ProcessLog.Level.DEBUG == processLog.getLevel()) {
+					if (_log.isDebugEnabled()) {
+						_log.debug(
+							processLog.getMessage(), processLog.getThrowable());
+					}
+				}
+				else if (ProcessLog.Level.INFO == processLog.getLevel()) {
+					if (_log.isInfoEnabled()) {
+						_log.info(
+							processLog.getMessage(), processLog.getThrowable());
+					}
+				}
+				else if (ProcessLog.Level.WARN == processLog.getLevel()) {
+					if (_log.isWarnEnabled()) {
+						_log.warn(
+							processLog.getMessage(), processLog.getThrowable());
+					}
+				}
+				else {
+					_log.error(
+						processLog.getMessage(), processLog.getThrowable());
+				}
+			});
+		processConfigBuilder.setReactClassLoader(
+			Sidecar.class.getClassLoader());
+		processConfigBuilder.setRuntimeClassPath(
+			StringBundler.concat(
+				sidecarLibClassPath, File.pathSeparator, bundleURL.getPath(),
+				File.pathSeparator, getBootstrapClassPath())
+			);
+
+		return processConfigBuilder.build();
+
+		}
 	}
 
 	private List<String> _getJVMArguments(URL bundleURL) {
@@ -393,7 +550,9 @@ public class Sidecar {
 					"logger.deprecation.name=org.elasticsearch.deprecation",
 					"logger.deprecation.level=error", getLogProperties(),
 					ResourceUtil.getResourceAsString(
-						Sidecar.class, "/log4j2.properties")));
+							Sidecar.class, "/log4j2.properties"),
+					ResourceUtil.getResourceAsString(
+						Sidecar.class, "/log4j2-es.properties")));
 		}
 		catch (IOException ioException) {
 			_log.error(

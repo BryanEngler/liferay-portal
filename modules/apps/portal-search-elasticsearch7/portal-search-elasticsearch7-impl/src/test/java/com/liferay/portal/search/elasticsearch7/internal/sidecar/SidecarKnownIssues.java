@@ -22,6 +22,6 @@ public class SidecarKnownIssues {
 	/**
 	 * https://issues.liferay.com/browse/LPS-112597
 	 */
-	public static final boolean LPS112597_IS_FIXED = false;
+	public static final boolean LPS112597_IS_FIXED = true;
 
 }
