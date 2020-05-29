@@ -365,6 +365,10 @@ gradle.beforeProject {
 			if (System.getenv("JENKINS_HOME")) {
 				startTestableTomcat {
 					deleteLiferayHome = false
+
+					doLast {
+						Thread.sleep(20000)
+					}
 				}
 			}
 		}
