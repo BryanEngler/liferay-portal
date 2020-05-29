@@ -202,6 +202,12 @@ public class DDMTemplateLocalServiceImpl
 			templateKey = StringUtil.toUpperCase(templateKey.trim());
 		}
 
+		if (templateKey.equals("BASIC-WEB-CONTENT")) {
+			if (_log.isInfoEnabled()) {
+				_log.info("##flaky##YES! Adding Template: " + templateKey);
+			}
+		}
+
 		script = formatScript(type, language, script);
 
 		byte[] smallImageBytes = null;
@@ -280,6 +286,12 @@ public class DDMTemplateLocalServiceImpl
 		addTemplateVersion(
 			user, template, DDMTemplateConstants.VERSION_DEFAULT,
 			serviceContext);
+
+		if (templateKey.equals("BASIC-WEB-CONTENT")) {
+			if (_log.isInfoEnabled()) {
+				_log.info("##flaky##YES! Added Template: " + templateKey);
+			}
+		}
 
 		return template;
 	}

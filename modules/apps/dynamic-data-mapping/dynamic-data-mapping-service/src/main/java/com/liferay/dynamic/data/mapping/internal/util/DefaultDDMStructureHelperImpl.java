@@ -34,6 +34,8 @@ import com.liferay.dynamic.data.mapping.util.DDMXML;
 import com.liferay.dynamic.data.mapping.util.DefaultDDMStructureHelper;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.upgrade.util.UpgradeProcessUtil;
@@ -73,6 +75,10 @@ public class DefaultDDMStructureHelperImpl
 		List<Element> structureElements = getDDMStructures(
 			classLoader, fileName, locale);
 
+		if (_log.isInfoEnabled()) {
+			_log.info("##flaky##Default DDM Structures will be created");
+		}
+
 		for (Element structureElement : structureElements) {
 			boolean dynamicStructure = GetterUtil.getBoolean(
 				structureElement.elementText("dynamic-structure"));
@@ -85,11 +91,24 @@ public class DefaultDDMStructureHelperImpl
 
 			String ddmStructureKey = name;
 
+			if (ddmStructureKey.equals("basic-web-content")) {
+				if (_log.isInfoEnabled()) {
+					_log.info("##flaky##ddmStructureKey=" + ddmStructureKey);
+				}
+			}
+
 			DDMStructure ddmStructure =
 				_ddmStructureLocalService.fetchStructure(
 					groupId, classNameId, ddmStructureKey);
 
 			if (ddmStructure != null) {
+				if (ddmStructureKey.equals("basic-web-content")) {
+					if (_log.isInfoEnabled()) {
+						_log.info("##flaky##Skipping DDM Structure " +
+								  ddmStructureKey);
+					}
+				}
+
 				continue;
 			}
 
@@ -118,6 +137,12 @@ public class DefaultDDMStructureHelperImpl
 			serviceContext.setAttribute(
 				"status", WorkflowConstants.STATUS_APPROVED);
 
+			if (ddmStructureKey.equals("basic-web-content")) {
+				if (_log.isInfoEnabled()) {
+					_log.info("##flaky##adding structure " + ddmStructureKey);
+				}
+			}
+
 			ddmStructure = _ddmStructureLocalService.addStructure(
 				userId, groupId,
 				DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID, classNameId,
@@ -125,9 +150,22 @@ public class DefaultDDMStructureHelperImpl
 				ddmFormLayout, StorageType.JSON.toString(),
 				DDMStructureConstants.TYPE_DEFAULT, serviceContext);
 
+			if (ddmStructureKey.equals("basic-web-content")) {
+				if (_log.isInfoEnabled()) {
+					_log.info("##flaky##added structure " + ddmStructureKey);
+				}
+			}
+
 			Element templateElement = structureElement.element("template");
 
 			if (templateElement == null) {
+				if (ddmStructureKey.equals("basic-web-content")) {
+					if (_log.isInfoEnabled()) {
+						_log.info(
+							"##flaky##skipping template " + ddmStructureKey);
+					}
+				}
+
 				continue;
 			}
 
@@ -141,6 +179,12 @@ public class DefaultDDMStructureHelperImpl
 			boolean cacheable = GetterUtil.getBoolean(
 				templateElement.elementText("cacheable"));
 
+			if (ddmStructureKey.equals("basic-web-content")) {
+				if (_log.isInfoEnabled()) {
+					_log.info("##flaky##adding template " + ddmStructureKey);
+				}
+			}
+
 			_ddmTemplateLocalService.addTemplate(
 				userId, groupId, _portal.getClassNameId(DDMStructure.class),
 				ddmStructure.getStructureId(), ddmStructure.getClassNameId(),
@@ -148,6 +192,12 @@ public class DefaultDDMStructureHelperImpl
 				DDMTemplateConstants.TEMPLATE_MODE_CREATE,
 				TemplateConstants.LANG_TYPE_FTL, script, cacheable, false,
 				StringPool.BLANK, null, serviceContext);
+
+			if (ddmStructureKey.equals("basic-web-content")) {
+				if (_log.isInfoEnabled()) {
+					_log.info("##flaky##added template " + ddmStructureKey);
+				}
+			}
 		}
 	}
 
@@ -275,6 +325,9 @@ public class DefaultDDMStructureHelperImpl
 	protected void setDDMXML(DDMXML ddmXML) {
 		_ddmXML = ddmXML;
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		DefaultDDMStructureHelperImpl.class);
 
 	private DDM _ddm;
 	private DDMStructureLocalService _ddmStructureLocalService;

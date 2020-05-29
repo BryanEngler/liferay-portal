@@ -80,6 +80,10 @@ public class PortalInstanceLifecycleListenerManagerImpl
 	protected void addPortalInstanceLifecycleListener(
 		PortalInstanceLifecycleListener portalInstanceLifecycleListener) {
 
+		if (_log.isInfoEnabled()) {
+			_log.info("##flaky##Adding " + portalInstanceLifecycleListener);
+		}
+
 		_portalInstanceLifecycleListeners.add(portalInstanceLifecycleListener);
 
 		if (_companies.isEmpty()) {

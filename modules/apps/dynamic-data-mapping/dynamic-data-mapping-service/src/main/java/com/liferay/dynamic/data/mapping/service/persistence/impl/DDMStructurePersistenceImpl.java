@@ -11179,6 +11179,11 @@ public class DDMStructurePersistenceImpl
 
 		ddmStructure.setCompanyId(CompanyThreadLocal.getCompanyId());
 
+		if (_log.isInfoEnabled()) {
+			_log.info("##flaky##DDMStructurePersistenceImpl creating " +
+					structureId);
+		}
+
 		return ddmStructure;
 	}
 
@@ -11239,6 +11244,13 @@ public class DDMStructurePersistenceImpl
 
 	@Override
 	protected DDMStructure removeImpl(DDMStructure ddmStructure) {
+		if (_log.isInfoEnabled()) {
+			_log.info("##flaky##DDMStructurePersistenceImpl deleting " +
+					  ddmStructure.getStructureKey() + " in " +
+					  ddmStructure.getGroupId() + " id=" +
+					  ddmStructure.getStructureId());
+		}
+
 		if (!ctPersistenceHelper.isRemove(ddmStructure)) {
 			return ddmStructure;
 		}

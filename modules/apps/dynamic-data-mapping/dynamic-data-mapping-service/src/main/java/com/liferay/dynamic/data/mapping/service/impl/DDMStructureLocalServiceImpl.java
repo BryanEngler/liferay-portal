@@ -66,6 +66,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
@@ -167,6 +169,13 @@ public class DDMStructureLocalServiceImpl
 
 		long structureId = counterLocalService.increment();
 
+		if (structureKey.equals("BASIC-WEB-CONTENT")) {
+			if (_log.isInfoEnabled()) {
+				_log.info("##flaky##YES! Adding Structure: " + structureKey +
+						  " structureId=" + structureId);
+			}
+		}
+
 		DDMStructure structure = ddmStructurePersistence.create(structureId);
 
 		structure.setUuid(serviceContext.getUuid());
@@ -217,6 +226,12 @@ public class DDMStructureLocalServiceImpl
 		// Data provider instance links
 
 		addDataProviderInstanceLinks(groupId, structureId, ddmForm);
+
+		if (structureKey.equals("BASIC-WEB-CONTENT")) {
+			if (_log.isInfoEnabled()) {
+				_log.info("##flaky##YES! Added Structure: " + structureKey);
+			}
+		}
 
 		return structure;
 	}
@@ -2041,6 +2056,9 @@ public class DDMStructureLocalServiceImpl
 	private static final Pattern _callFunctionPattern = Pattern.compile(
 		"call\\(\\s*\'([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-" +
 			"[0-9a-f]{12})\'\\s*,\\s*\'(.*)\'\\s*,\\s*\'(.*)\'\\s*\\)");
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		DDMStructureLocalServiceImpl.class);
 
 	@Reference
 	private BackgroundTaskManager _backgroundTaskManager;
