@@ -205,7 +205,7 @@ public class ElasticsearchConnectionManager
 	}
 
 	@Reference(
-		cardinality = ReferenceCardinality.MANDATORY,
+		cardinality = ReferenceCardinality.OPTIONAL,
 		target = "(operation.mode=EMBEDDED)",
 		unbind = "unsetElasticsearchConnection"
 	)
@@ -240,6 +240,20 @@ public class ElasticsearchConnectionManager
 			_elasticsearchConnections.put(
 				connectionId, elasticsearchConnection);
 		}
+	}
+
+	@Reference(
+		cardinality = ReferenceCardinality.MANDATORY,
+		target = "(operation.mode=SIDECAR)",
+		unbind = "unsetElasticsearchConnection"
+	)
+	public void setSidecarElasticsearchConnection(
+		ElasticsearchConnection elasticsearchConnection) {
+
+		elasticsearchConnection.connect();
+
+		_elasticsearchConnections.put(
+			elasticsearchConnection.getConnectionId(), elasticsearchConnection);
 	}
 
 	public synchronized void unregisterCompanyId(long companyId) {
@@ -330,6 +344,15 @@ public class ElasticsearchConnectionManager
 				String.valueOf(OperationMode.EMBEDDED));
 		}
 
+		if (isOperationModeSidecar()) {
+			if (_log.isInfoEnabled()) {
+				_log.info("Getting SIDECAR connection");
+			}
+
+			return _elasticsearchConnections.get(
+				String.valueOf(OperationMode.SIDECAR));
+		}
+
 		if (preferLocalCluster && isCrossClusterReplicationEnabled()) {
 			String localClusterConnectionId = getLocalClusterConnectionId();
 
@@ -356,6 +379,10 @@ public class ElasticsearchConnectionManager
 
 	protected boolean isOperationModeEmbedded() {
 		return Objects.equals(_operationMode, OperationMode.EMBEDDED);
+	}
+
+	protected boolean isOperationModeSidecar() {
+		return Objects.equals(_operationMode, OperationMode.SIDECAR);
 	}
 
 	@Modified

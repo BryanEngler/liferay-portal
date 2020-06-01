@@ -76,7 +76,7 @@ public class SidecarElasticsearchConnectionManager {
 		OperationMode operationMode = OperationMode.valueOf(
 			elasticsearchConfiguration.operationMode());
 
-		if (operationMode == OperationMode.EMBEDDED) {
+		if (operationMode == OperationMode.SIDECAR) {
 			if (_log.isWarnEnabled()) {
 				StringBundler sb = new StringBundler(8);
 
@@ -132,14 +132,14 @@ public class SidecarElasticsearchConnectionManager {
 		_serviceRegistration = bundleContext.registerService(
 			ElasticsearchConnection.class, elasticsearchConnection,
 			MapUtil.singletonDictionary(
-				"operation.mode", String.valueOf(OperationMode.EMBEDDED)));
+				"operation.mode", String.valueOf(OperationMode.SIDECAR)));
 	}
 
 	@Reference(
 		cardinality = ReferenceCardinality.MULTIPLE,
 		policy = ReferencePolicy.DYNAMIC,
 		policyOption = ReferencePolicyOption.GREEDY,
-		target = "(operation.mode=EMBEDDED)"
+		target = "(operation.mode=SIDECAR)"
 	)
 	protected void addSettingsContributor(
 		SettingsContributor settingsContributor) {
