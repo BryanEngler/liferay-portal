@@ -33,10 +33,11 @@ import org.osgi.annotation.versioning.ProviderType;
 public interface ElasticsearchConfiguration {
 
 	@Meta.AD(
-		deflt = "EMBEDDED", description = "operation-mode-help",
-		name = "operation-mode", required = false
+		deflt = "SIDECAR", description = "operation-mode-help",
+		name = "operation-mode", optionLabels = {"remote", "sidecar"},
+		optionValues = {"REMOTE", "SIDECAR"}, required = false
 	)
-	public OperationMode operationMode();
+	public String operationMode();
 
 	@Meta.AD(
 		description = "remote-cluster-connection-id-help",
