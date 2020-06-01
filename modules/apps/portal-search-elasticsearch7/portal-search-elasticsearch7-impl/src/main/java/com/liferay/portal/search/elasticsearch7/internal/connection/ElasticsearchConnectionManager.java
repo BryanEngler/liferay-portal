@@ -205,7 +205,7 @@ public class ElasticsearchConnectionManager
 	}
 
 	@Reference(
-		cardinality = ReferenceCardinality.MANDATORY,
+		cardinality = ReferenceCardinality.OPTIONAL,
 		target = "(operation.mode=EMBEDDED)",
 		unbind = "unsetElasticsearchConnection"
 	)
@@ -214,10 +214,6 @@ public class ElasticsearchConnectionManager
 
 		_elasticsearchConnections.put(
 			elasticsearchConnection.getConnectionId(), elasticsearchConnection);
-	}
-
-	public void setOperationMode(OperationMode operationMode) {
-		_operationMode = operationMode;
 	}
 
 	@Reference(
@@ -242,6 +238,24 @@ public class ElasticsearchConnectionManager
 		}
 	}
 
+	public void setRemoteOperation(boolean remoteOperation) {
+		_remoteOperation = remoteOperation;
+	}
+
+	@Reference(
+		cardinality = ReferenceCardinality.MANDATORY,
+		target = "(operation.mode=SIDECAR)",
+		unbind = "unsetElasticsearchConnection"
+	)
+	public void setSidecarElasticsearchConnection(
+		ElasticsearchConnection elasticsearchConnection) {
+
+		elasticsearchConnection.connect();
+
+		_elasticsearchConnections.put(
+			elasticsearchConnection.getConnectionId(), elasticsearchConnection);
+	}
+
 	public synchronized void unregisterCompanyId(long companyId) {
 		_companyIds.remove(companyId);
 	}
@@ -262,10 +276,10 @@ public class ElasticsearchConnectionManager
 	protected void activate(Map<String, Object> properties) {
 		setConfiguration(properties);
 
-		if (_operationMode == OperationMode.EMBEDDED) {
+		if (!_remoteOperation) {
 			ElasticsearchConnection elasticsearchConnection =
 				_elasticsearchConnections.get(
-					String.valueOf(OperationMode.EMBEDDED));
+					String.valueOf(SidecarConstants.SIDECAR_CONNECTION_ID));
 
 			elasticsearchConnection.connect();
 		}
@@ -305,14 +319,6 @@ public class ElasticsearchConnectionManager
 	protected ElasticsearchConnection getElasticsearchConnection(
 		String connectionId, boolean preferLocalCluster) {
 
-		if (_operationMode == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn("Operation mode is not set");
-			}
-
-			return null;
-		}
-
 		if (!Validator.isBlank(connectionId)) {
 			if (_log.isInfoEnabled()) {
 				_log.info("Getting connection with ID: " + connectionId);
@@ -321,13 +327,13 @@ public class ElasticsearchConnectionManager
 			return _elasticsearchConnections.get(connectionId);
 		}
 
-		if (isOperationModeEmbedded()) {
+		if (!isRemoteOperation()) {
 			if (_log.isInfoEnabled()) {
-				_log.info("Getting EMBEDDED connection");
+				_log.info("Getting SIDECAR connection");
 			}
 
 			return _elasticsearchConnections.get(
-				String.valueOf(OperationMode.EMBEDDED));
+				SidecarConstants.SIDECAR_CONNECTION_ID);
 		}
 
 		if (preferLocalCluster && isCrossClusterReplicationEnabled()) {
@@ -354,8 +360,8 @@ public class ElasticsearchConnectionManager
 			_elasticsearchConfiguration.remoteClusterConnectionId());
 	}
 
-	protected boolean isOperationModeEmbedded() {
-		return Objects.equals(_operationMode, OperationMode.EMBEDDED);
+	protected boolean isRemoteOperation() {
+		return _remoteOperation;
 	}
 
 	@Modified
@@ -374,8 +380,12 @@ public class ElasticsearchConnectionManager
 		_elasticsearchConfiguration = ConfigurableUtil.createConfigurable(
 			ElasticsearchConfiguration.class, properties);
 
-		setOperationMode(
-			OperationMode.valueOf(_elasticsearchConfiguration.operationMode()));
+		if (Objects.equals(
+				OperationMode.REMOTE.name(),
+				_elasticsearchConfiguration.operationMode())) {
+
+			setRemoteOperation(true);
+		}
 
 		SearchLogHelperUtil.setRESTClientLoggerLevel(
 			_elasticsearchConfiguration.restClientLoggerLevel());
@@ -392,7 +402,7 @@ public class ElasticsearchConnectionManager
 		String message, String connectionId, boolean preferLocalCluster) {
 
 		return StringBundler.concat(
-			message, " Operation Mode: ", _operationMode, ", Connection ID: ",
+			message, " Remote Mode: ", _remoteOperation, ", Connection ID: ",
 			connectionId, ", Prefer Local Cluster: ", preferLocalCluster,
 			", Cross-Cluster Replication Enabled: ",
 			isCrossClusterReplicationEnabled(), ". Enable INFO logs on ",
@@ -407,6 +417,6 @@ public class ElasticsearchConnectionManager
 	private volatile ElasticsearchConfiguration _elasticsearchConfiguration;
 	private final Map<String, ElasticsearchConnection>
 		_elasticsearchConnections = new ConcurrentHashMap<>();
-	private volatile OperationMode _operationMode;
+	private boolean _remoteOperation;
 
 }

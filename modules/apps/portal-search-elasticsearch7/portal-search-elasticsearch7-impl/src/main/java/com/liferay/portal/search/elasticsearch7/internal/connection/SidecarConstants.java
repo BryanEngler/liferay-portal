@@ -15,12 +15,10 @@
 package com.liferay.portal.search.elasticsearch7.internal.connection;
 
 /**
- * @author Michael C. Han
- * @deprecated As of Athanasius (7.3.x)
+ * @author André de Oliveira
  */
-@Deprecated
-public enum OperationMode {
+public class SidecarConstants {
 
-	EMBEDDED, REMOTE
+	public static final String SIDECAR_CONNECTION_ID = "__SIDECAR__";
 
 }

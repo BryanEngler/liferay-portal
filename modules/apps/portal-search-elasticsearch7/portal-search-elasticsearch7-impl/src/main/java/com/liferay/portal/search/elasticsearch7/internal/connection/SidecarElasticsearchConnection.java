@@ -50,7 +50,7 @@ public class SidecarElasticsearchConnection
 
 	@Override
 	public String getConnectionId() {
-		return String.valueOf(OperationMode.EMBEDDED);
+		return SidecarConstants.SIDECAR_CONNECTION_ID;
 	}
 
 	@Override

@@ -39,6 +39,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -96,10 +97,7 @@ public class SidecarElasticsearchConnectionManager {
 
 		ElasticsearchConnection elasticsearchConnection;
 
-		OperationMode operationMode = OperationMode.valueOf(
-			elasticsearchConfiguration.operationMode());
-
-		if (operationMode == OperationMode.EMBEDDED) {
+		if (isSidecarShouldBeStarted(elasticsearchConfiguration)) {
 			if (_log.isWarnEnabled()) {
 				StringBundler sb = new StringBundler(8);
 
@@ -163,7 +161,7 @@ public class SidecarElasticsearchConnectionManager {
 		cardinality = ReferenceCardinality.MULTIPLE,
 		policy = ReferencePolicy.DYNAMIC,
 		policyOption = ReferencePolicyOption.GREEDY,
-		target = "(operation.mode=EMBEDDED)"
+		target = "(operation.mode=SIDECAR)"
 	)
 	protected void addSettingsContributor(
 		SettingsContributor settingsContributor) {
@@ -199,6 +197,19 @@ public class SidecarElasticsearchConnectionManager {
 		).workPath(
 			workPath
 		).build();
+	}
+
+	protected boolean isSidecarShouldBeStarted(
+		ElasticsearchConfiguration elasticsearchConfiguration) {
+
+		if (Objects.equals(
+				elasticsearchConfiguration.operationMode(),
+				OperationMode.EMBEDDED.name())) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	protected void removeSettingsContributor(
