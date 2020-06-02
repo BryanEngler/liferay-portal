@@ -27,10 +27,10 @@ import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConnectionConfiguration;
-import com.liferay.portal.search.elasticsearch7.configuration.OperationMode;
 import com.liferay.portal.search.elasticsearch7.internal.ElasticsearchSearchEngine;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnection;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
+import com.liferay.portal.search.elasticsearch7.internal.connection.OperationMode;
 import com.liferay.portal.search.engine.ConnectionInformation;
 import com.liferay.portal.search.engine.ConnectionInformationBuilder;
 import com.liferay.portal.search.engine.ConnectionInformationBuilderFactory;
@@ -364,8 +364,8 @@ public class ElasticsearchSearchEngineInformation
 	}
 
 	protected boolean isOperationModeEmbedded() {
-		OperationMode operationMode =
-			elasticsearchConfiguration.operationMode();
+		OperationMode operationMode = OperationMode.valueOf(
+			elasticsearchConfiguration.operationMode());
 
 		return Objects.equals(operationMode, OperationMode.EMBEDDED);
 	}
