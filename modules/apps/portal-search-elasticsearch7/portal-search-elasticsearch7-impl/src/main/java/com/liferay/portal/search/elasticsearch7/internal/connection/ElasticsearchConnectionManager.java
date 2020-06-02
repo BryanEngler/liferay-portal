@@ -375,16 +375,10 @@ public class ElasticsearchConnectionManager
 			ElasticsearchConfiguration.class, properties);
 
 		setOperationMode(
-			translate(_elasticsearchConfiguration.operationMode()));
+			OperationMode.valueOf(_elasticsearchConfiguration.operationMode()));
+
 		SearchLogHelperUtil.setRESTClientLoggerLevel(
 			_elasticsearchConfiguration.restClientLoggerLevel());
-	}
-
-	protected OperationMode translate(
-		com.liferay.portal.search.elasticsearch7.configuration.OperationMode
-			operationMode) {
-
-		return OperationMode.valueOf(operationMode.name());
 	}
 
 	@Reference(cardinality = ReferenceCardinality.OPTIONAL)

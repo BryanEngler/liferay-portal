@@ -96,10 +96,10 @@ public class SidecarElasticsearchConnectionManager {
 
 		ElasticsearchConnection elasticsearchConnection;
 
-		if (elasticsearchConfiguration.operationMode() ==
-				com.liferay.portal.search.elasticsearch7.configuration.
-					OperationMode.EMBEDDED) {
+		OperationMode operationMode = OperationMode.valueOf(
+			elasticsearchConfiguration.operationMode());
 
+		if (operationMode == OperationMode.EMBEDDED) {
 			if (_log.isWarnEnabled()) {
 				StringBundler sb = new StringBundler(8);
 
