@@ -20,7 +20,6 @@ import com.liferay.portal.search.elasticsearch7.internal.connection.Elasticsearc
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnection;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionFixture;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
-import com.liferay.portal.search.elasticsearch7.internal.connection.OperationMode;
 import com.liferay.portal.search.elasticsearch7.internal.index.CompanyIdIndexNameBuilder;
 import com.liferay.portal.search.elasticsearch7.internal.index.CompanyIndexFactory;
 import com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.ElasticsearchEngineAdapterFixture;
@@ -103,7 +102,7 @@ public class ElasticsearchSearchEngineFixture implements SearchEngineFixture {
 			{
 				setEmbeddedElasticsearchConnection(elasticsearchConnection);
 
-				setOperationMode(OperationMode.EMBEDDED);
+				setRemoteOperation(false);
 			}
 		};
 	}

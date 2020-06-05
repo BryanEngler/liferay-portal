@@ -83,8 +83,7 @@ public class ElasticsearchConnectionManagerTest {
 
 	@Test
 	public void testGetEmbeddedElasticsearchConnection() {
-		_elasticsearchConnectionManager.setOperationMode(
-			OperationMode.EMBEDDED);
+		_elasticsearchConnectionManager.setRemoteOperation(false);
 
 		Assert.assertEquals(
 			_embeddedElasticsearchConnection,
@@ -93,8 +92,7 @@ public class ElasticsearchConnectionManagerTest {
 
 	@Test
 	public void testGetEmbeddedModeRestHighLevelClient() {
-		_elasticsearchConnectionManager.setOperationMode(
-			OperationMode.EMBEDDED);
+		_elasticsearchConnectionManager.setRemoteOperation(false);
 
 		Assert.assertEquals(
 			_embeddedElasticsearchConnection.getRestHighLevelClient(),
@@ -171,7 +169,7 @@ public class ElasticsearchConnectionManagerTest {
 
 	@Test
 	public void testGetRestHighLevelClientWhenConnectionNull() {
-		_elasticsearchConnectionManager.setOperationMode(OperationMode.REMOTE);
+		_elasticsearchConnectionManager.setRemoteOperation(true);
 
 		try {
 			_elasticsearchConnectionManager.getRestHighLevelClient("none");
@@ -209,7 +207,7 @@ public class ElasticsearchConnectionManagerTest {
 
 	@Test
 	public void testGetRestHighLevelClientWhenRestClientNull() {
-		_elasticsearchConnectionManager.setOperationMode(OperationMode.REMOTE);
+		_elasticsearchConnectionManager.setRemoteOperation(true);
 
 		try {
 			_elasticsearchConnectionManager.getRestHighLevelClient(
@@ -302,7 +300,7 @@ public class ElasticsearchConnectionManagerTest {
 		Mockito.when(
 			_embeddedElasticsearchConnection.getConnectionId()
 		).thenReturn(
-			String.valueOf(OperationMode.EMBEDDED)
+			SidecarConstants.SIDECAR_CONNECTION_ID
 		);
 		Mockito.when(
 			_embeddedElasticsearchConnection.getOperationMode()
