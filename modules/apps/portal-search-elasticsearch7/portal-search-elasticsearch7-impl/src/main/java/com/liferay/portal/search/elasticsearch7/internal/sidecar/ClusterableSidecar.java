@@ -153,45 +153,44 @@ public class ClusterableSidecar
 
 	@Override
 	public void stop() {
+		if (_restClient != null) {
+			try {
+				while (!_isOneNodeCluster()) {
+					if (!_nodeName.equals(_getMasterNodeId())) {
+						break;
+					}
+
+					_restClient.performRequest(
+						new Request(
+							"POST",
+							"_cluster/voting_config_exclusions/" + _nodeName));
+				}
+			}
+			catch (IOException ioException) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						"Unable to add master node to voting exclusions",
+						ioException);
+				}
+			}
+
+			try {
+				_restClient.close();
+			}
+			catch (IOException ioException) {
+				if (_log.isWarnEnabled()) {
+					_log.warn("Unable to close rest client", ioException);
+				}
+			}
+
+			_restClient = null;
+		}
+
+		_clusterExecutor.removeClusterEventListener(_clusterEventListener);
+
 		super.stop();
-//		if (_restClient != null) {
-//			try {
-//				while (!_isOneNodeCluster()) {
-//					if (!_nodeName.equals(_getMasterNodeId())) {
-//						break;
-//					}
-//
-//					_restClient.performRequest(
-//						new Request(
-//							"POST",
-//							"_cluster/voting_config_exclusions/" + _nodeName));
-//				}
-//			}
-//			catch (IOException ioException) {
-//				if (_log.isWarnEnabled()) {
-//					_log.warn(
-//						"Unable to add master node to voting exclusions",
-//						ioException);
-//				}
-//			}
-//
-//			try {
-//				_restClient.close();
-//			}
-//			catch (IOException ioException) {
-//				if (_log.isWarnEnabled()) {
-//					_log.warn("Unable to close rest client", ioException);
-//				}
-//			}
-//
-//			_restClient = null;
-//		}
-//
-//		_clusterExecutor.removeClusterEventListener(_clusterEventListener);
-//
-//		super.stop();
-//
-//		_stopCountDownLatch.countDown();
+
+		_stopCountDownLatch.countDown();
 	}
 
 	protected String getClusterInitialMasterNodes() {
