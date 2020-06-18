@@ -18,7 +18,6 @@ import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.petra.string.StringUtil;
-import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.cluster.ClusterExecutor;
 import com.liferay.portal.kernel.cluster.ClusterNode;
 import com.liferay.portal.kernel.log.Log;
@@ -26,18 +25,17 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.configuration.CrossClusterReplicationConfigurationWrapper;
-import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration;
-import com.liferay.portal.search.elasticsearch7.internal.index.IndexFactory;
+import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationObserver;
+import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationObserverComparator;
+import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
 import com.liferay.portal.search.elasticsearch7.internal.util.SearchLogHelperUtil;
 
 import java.net.InetAddress;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.elasticsearch.client.RestHighLevelClient;
@@ -45,24 +43,48 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Michael C. Han
  */
 @Component(
-	configurationPid = "com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration",
 	immediate = true,
 	service = {
 		ElasticsearchClientResolver.class, ElasticsearchConnectionManager.class
 	}
 )
 public class ElasticsearchConnectionManager
-	implements ElasticsearchClientResolver {
+	implements ElasticsearchClientResolver, ElasticsearchConfigurationObserver {
+
+	public void addElasticsearchConnection(
+		ElasticsearchConnection elasticsearchConnection) {
+
+		String connectionId = elasticsearchConnection.getConnectionId();
+
+		if (connectionId == null) {
+			if (_log.isWarnEnabled()) {
+				_log.warn("Not adding connection. Connection ID is null.");
+			}
+
+			return;
+		}
+
+		if (elasticsearchConnection.isActive()) {
+			elasticsearchConnection.connect();
+		}
+
+		_elasticsearchConnections.put(connectionId, elasticsearchConnection);
+	}
+
+	@Override
+	public int compareTo(
+		ElasticsearchConfigurationObserver elasticsearchConfigurationObserver) {
+
+		return elasticsearchConfigurationObserverComparator.compare(
+			this, elasticsearchConfigurationObserver);
+	}
 
 	public ElasticsearchConnection getElasticsearchConnection() {
 		return getElasticsearchConnection(null, false);
@@ -148,6 +170,11 @@ public class ElasticsearchConnectionManager
 	}
 
 	@Override
+	public int getPriority() {
+		return 2;
+	}
+
+	@Override
 	public RestHighLevelClient getRestHighLevelClient() {
 		return getRestHighLevelClient(null);
 	}
@@ -200,112 +227,58 @@ public class ElasticsearchConnectionManager
 		return crossClusterReplicationConfigurationWrapper.isCCREnabled();
 	}
 
-	public synchronized void registerCompanyId(long companyId) {
-		_companyIds.put(companyId, companyId);
+	@Override
+	public void onElasticsearchConfigurationUpdate() {
+		applyConfigurations();
 	}
 
-	@Reference(
-		cardinality = ReferenceCardinality.OPTIONAL,
-		target = "(operation.mode=EMBEDDED)",
-		unbind = "unsetElasticsearchConnection"
-	)
-	public void setEmbeddedElasticsearchConnection(
-		ElasticsearchConnection elasticsearchConnection) {
-
-		_elasticsearchConnections.put(
-			elasticsearchConnection.getConnectionId(), elasticsearchConnection);
-	}
-
-	@Reference(
-		cardinality = ReferenceCardinality.MULTIPLE,
-		policy = ReferencePolicy.DYNAMIC,
-		policyOption = ReferencePolicyOption.GREEDY,
-		target = "(operation.mode=REMOTE)",
-		unbind = "unsetElasticsearchConnection"
-	)
-	public void setRemoteElasticsearchConnection(
-		ElasticsearchConnection elasticsearchConnection) {
-
-		if (elasticsearchConnection.isActive()) {
-			elasticsearchConnection.connect();
+	public void removeElasticsearchConnection(String connectionId) {
+		if (connectionId == null) {
+			return;
 		}
 
-		String connectionId = elasticsearchConnection.getConnectionId();
+		ElasticsearchConnection elasticsearchConnection =
+			_elasticsearchConnections.get(connectionId);
 
-		if (connectionId != null) {
-			_elasticsearchConnections.put(
-				connectionId, elasticsearchConnection);
+		if (elasticsearchConnection == null) {
+			return;
 		}
-	}
-
-	public void setRemoteOperation(boolean remoteOperation) {
-		_remoteOperation = remoteOperation;
-	}
-
-	@Reference(
-		cardinality = ReferenceCardinality.MANDATORY,
-		target = "(operation.mode=SIDECAR)",
-		unbind = "unsetElasticsearchConnection"
-	)
-	public void setSidecarElasticsearchConnection(
-		ElasticsearchConnection elasticsearchConnection) {
-
-		elasticsearchConnection.connect();
-
-		_elasticsearchConnections.put(
-			elasticsearchConnection.getConnectionId(), elasticsearchConnection);
-	}
-
-	public synchronized void unregisterCompanyId(long companyId) {
-		_companyIds.remove(companyId);
-	}
-
-	public void unsetElasticsearchConnection(
-		ElasticsearchConnection elasticsearchConnection) {
 
 		elasticsearchConnection.close();
 
-		String connectionId = elasticsearchConnection.getConnectionId();
-
-		if (connectionId != null) {
-			_elasticsearchConnections.remove(connectionId);
-		}
+		_elasticsearchConnections.remove(connectionId);
 	}
 
 	@Activate
-	protected void activate(Map<String, Object> properties) {
-		setConfiguration(properties);
+	protected void activate() {
+		elasticsearchConfigurationWrapper.register(this);
 
-		if (!_remoteOperation) {
-			ElasticsearchConnection elasticsearchConnection =
-				_elasticsearchConnections.get(
-					String.valueOf(SidecarConstants.SIDECAR_CONNECTION_ID));
-
-			elasticsearchConnection.connect();
-		}
+		applyConfigurations();
 	}
 
-	protected synchronized void createCompanyIndexes() {
-		for (Long companyId : _companyIds.values()) {
-			try {
-				RestHighLevelClient restHighLevelClient =
-					getRestHighLevelClient();
+	protected void applyConfigurations() {
+		SearchLogHelperUtil.setRESTClientLoggerLevel(
+			elasticsearchConfigurationWrapper.restClientLoggerLevel());
 
-				indexFactory.createIndices(
-					restHighLevelClient.indices(), companyId);
+		if (elasticsearchConfigurationWrapper.remoteModeEnabled()) {
+			if (Validator.isBlank(
+					elasticsearchConfigurationWrapper.
+						remoteClusterConnectionId())) {
+
+				addElasticsearchConnection(
+					_createRemoteElasticsearchConnection());
 			}
-			catch (Exception exception) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(
-						"Unable to reinitialize index for company " + companyId,
-						exception);
-				}
-			}
+		}
+		else {
+			removeElasticsearchConnection(
+				ConnectionConstants.REMOTE_CONNECTION_ID);
 		}
 	}
 
 	@Deactivate
 	protected void deactivate() {
+		elasticsearchConfigurationWrapper.unregister(this);
+
 		Collection<ElasticsearchConnection> elasticsearchConnections =
 			_elasticsearchConnections.values();
 
@@ -327,13 +300,15 @@ public class ElasticsearchConnectionManager
 			return _elasticsearchConnections.get(connectionId);
 		}
 
-		if (!isRemoteOperation()) {
+		if (!elasticsearchConfigurationWrapper.remoteModeEnabled()) {
 			if (_log.isInfoEnabled()) {
-				_log.info("Getting SIDECAR connection");
+				_log.info(
+					"Getting " + ConnectionConstants.SIDECAR_CONNECTION_ID +
+						" connection");
 			}
 
 			return _elasticsearchConnections.get(
-				SidecarConstants.SIDECAR_CONNECTION_ID);
+				ConnectionConstants.SIDECAR_CONNECTION_ID);
 		}
 
 		if (preferLocalCluster && isCrossClusterReplicationEnabled()) {
@@ -350,25 +325,21 @@ public class ElasticsearchConnectionManager
 			}
 		}
 
+		String remoteClusterConnectionId =
+			elasticsearchConfigurationWrapper.remoteClusterConnectionId();
+
+		if (Validator.isBlank(remoteClusterConnectionId)) {
+			remoteClusterConnectionId =
+				ConnectionConstants.REMOTE_CONNECTION_ID;
+		}
+
 		if (_log.isInfoEnabled()) {
 			_log.info(
 				"Getting remote cluster connection with ID: " +
-					_elasticsearchConfiguration.remoteClusterConnectionId());
+					remoteClusterConnectionId);
 		}
 
-		return _elasticsearchConnections.get(
-			_elasticsearchConfiguration.remoteClusterConnectionId());
-	}
-
-	protected boolean isRemoteOperation() {
-		return _remoteOperation;
-	}
-
-	@Modified
-	protected synchronized void modified(Map<String, Object> properties) {
-		setConfiguration(properties);
-
-		createCompanyIndexes();
+		return _elasticsearchConnections.get(remoteClusterConnectionId);
 	}
 
 	@Reference(unbind = "-")
@@ -376,35 +347,55 @@ public class ElasticsearchConnectionManager
 		_clusterExecutor = clusterExecutor;
 	}
 
-	protected void setConfiguration(Map<String, Object> properties) {
-		_elasticsearchConfiguration = ConfigurableUtil.createConfigurable(
-			ElasticsearchConfiguration.class, properties);
-
-		if (Objects.equals(
-				OperationMode.REMOTE.name(),
-				_elasticsearchConfiguration.operationMode())) {
-
-			setRemoteOperation(true);
-		}
-
-		SearchLogHelperUtil.setRESTClientLoggerLevel(
-			_elasticsearchConfiguration.restClientLoggerLevel());
-	}
-
 	@Reference(cardinality = ReferenceCardinality.OPTIONAL)
 	protected volatile CrossClusterReplicationConfigurationWrapper
 		crossClusterReplicationConfigurationWrapper;
 
-	@Reference(unbind = "-")
-	protected IndexFactory indexFactory;
+	@Reference
+	protected ElasticsearchConfigurationObserverComparator
+		elasticsearchConfigurationObserverComparator;
+
+	@Reference
+	protected volatile ElasticsearchConfigurationWrapper
+		elasticsearchConfigurationWrapper;
+
+	private ElasticsearchConnection _createRemoteElasticsearchConnection() {
+		ElasticsearchConnectionBuilder elasticsearchConnectionBuilder =
+			new ElasticsearchConnectionBuilder();
+
+		elasticsearchConnectionBuilder.active(
+			true
+		).authenticationEnabled(
+			elasticsearchConfigurationWrapper.authenticationEnabled()
+		).connectionId(
+			ConnectionConstants.REMOTE_CONNECTION_ID
+		).httpSSLEnabled(
+			elasticsearchConfigurationWrapper.httpSSLEnabled()
+		).networkHostAddresses(
+			elasticsearchConfigurationWrapper.networkHostAddresses()
+		).password(
+			elasticsearchConfigurationWrapper.password()
+		).truststorePassword(
+			elasticsearchConfigurationWrapper.truststorePassword()
+		).truststorePath(
+			elasticsearchConfigurationWrapper.truststorePath()
+		).truststoreType(
+			elasticsearchConfigurationWrapper.truststoreType()
+		).userName(
+			elasticsearchConfigurationWrapper.userName()
+		);
+
+		return elasticsearchConnectionBuilder.build();
+	}
 
 	private String _getExceptionMessage(
 		String message, String connectionId, boolean preferLocalCluster) {
 
 		return StringBundler.concat(
-			message, " Remote Mode: ", _remoteOperation, ", Connection ID: ",
-			connectionId, ", Prefer Local Cluster: ", preferLocalCluster,
-			", Cross-Cluster Replication Enabled: ",
+			message, " Remote Mode Enabled: ",
+			elasticsearchConfigurationWrapper.remoteModeEnabled(),
+			", Connection ID: ", connectionId, ", Prefer Local Cluster: ",
+			preferLocalCluster, ", Cross-Cluster Replication Enabled: ",
 			isCrossClusterReplicationEnabled(), ". Enable INFO logs on ",
 			ElasticsearchConnectionManager.class, " for more information");
 	}
@@ -413,10 +404,7 @@ public class ElasticsearchConnectionManager
 		ElasticsearchConnectionManager.class);
 
 	private ClusterExecutor _clusterExecutor;
-	private final Map<Long, Long> _companyIds = new HashMap<>();
-	private volatile ElasticsearchConfiguration _elasticsearchConfiguration;
 	private final Map<String, ElasticsearchConnection>
 		_elasticsearchConnections = new ConcurrentHashMap<>();
-	private boolean _remoteOperation;
 
 }

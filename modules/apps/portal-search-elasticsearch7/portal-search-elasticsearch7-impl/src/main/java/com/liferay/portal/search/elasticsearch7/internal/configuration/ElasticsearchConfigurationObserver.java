@@ -12,15 +12,16 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.connection;
+package com.liferay.portal.search.elasticsearch7.internal.configuration;
 
 /**
- * @author André de Oliveira
+ * @author Bryan Engler
  */
-public interface PluginManagerFactory {
+public interface ElasticsearchConfigurationObserver
+	extends Comparable<ElasticsearchConfigurationObserver> {
 
-	public PluginManager createPluginManager();
+	public int getPriority();
 
-	public PluginManager createPluginManager(PluginZip pluginZip);
+	public void onElasticsearchConfigurationUpdate();
 
 }

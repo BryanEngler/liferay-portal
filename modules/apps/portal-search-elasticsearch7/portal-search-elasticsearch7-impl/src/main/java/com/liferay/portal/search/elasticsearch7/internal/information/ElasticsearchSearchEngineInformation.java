@@ -30,7 +30,6 @@ import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConne
 import com.liferay.portal.search.elasticsearch7.internal.ElasticsearchSearchEngine;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnection;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
-import com.liferay.portal.search.elasticsearch7.internal.connection.OperationMode;
 import com.liferay.portal.search.engine.ConnectionInformation;
 import com.liferay.portal.search.engine.ConnectionInformationBuilder;
 import com.liferay.portal.search.engine.ConnectionInformationBuilderFactory;
@@ -48,7 +47,6 @@ import java.util.Dictionary;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -96,14 +94,17 @@ public class ElasticsearchSearchEngineInformation
 			"(&(service.factoryPid=%s)(active=%s)",
 			ElasticsearchConnectionConfiguration.class.getName(), true);
 
-		if (!isOperationModeEmbedded()) {
+		if (elasticsearchConfiguration.remoteModeEnabled() &&
+			!Validator.isBlank(
+				elasticsearchConfiguration.remoteClusterConnectionId())) {
+
 			filterString = filterString.concat(
 				String.format(
 					"(!(connectionId=%s))",
 					elasticsearchConfiguration.remoteClusterConnectionId()));
 		}
 
-		if (!isOperationModeEmbedded() &&
+		if (isOperationModeRemote() &&
 			elasticsearchConnectionManager.isCrossClusterReplicationEnabled()) {
 
 			addCCRConnection(
@@ -139,7 +140,7 @@ public class ElasticsearchSearchEngineInformation
 			String clusterNodesString = getClusterNodesString(
 				elasticsearchConnectionManager.getRestHighLevelClient());
 
-			if (!isOperationModeEmbedded() &&
+			if (isOperationModeRemote() &&
 				elasticsearchConnectionManager.
 					isCrossClusterReplicationEnabled()) {
 
@@ -177,13 +178,13 @@ public class ElasticsearchSearchEngineInformation
 	public String getVendorString() {
 		String vendor = elasticsearchSearchEngine.getVendor();
 
-		if (isOperationModeEmbedded()) {
+		if (isOperationModeSidecar()) {
 			StringBundler sb = new StringBundler(5);
 
 			sb.append(vendor);
 			sb.append(StringPool.SPACE);
 			sb.append(StringPool.OPEN_PARENTHESIS);
-			sb.append("Embedded");
+			sb.append("Sidecar");
 			sb.append(StringPool.CLOSE_PARENTHESIS);
 
 			return sb.toString();
@@ -206,6 +207,10 @@ public class ElasticsearchSearchEngineInformation
 
 		Configuration[] configurations = configurationAdmin.listConfigurations(
 			filterString);
+
+		if (ArrayUtil.isEmpty(configurations)) {
+			return;
+		}
 
 		for (Configuration configuration : configurations) {
 			Dictionary<String, Object> properties =
@@ -283,7 +288,7 @@ public class ElasticsearchSearchEngineInformation
 
 		String[] labels = {"read", "write"};
 
-		if (!isOperationModeEmbedded() &&
+		if (isOperationModeRemote() &&
 			elasticsearchConnectionManager.isCrossClusterReplicationEnabled()) {
 
 			labels = new String[] {"write"};
@@ -363,11 +368,12 @@ public class ElasticsearchSearchEngineInformation
 		}
 	}
 
-	protected boolean isOperationModeEmbedded() {
-		OperationMode operationMode = OperationMode.valueOf(
-			elasticsearchConfiguration.operationMode());
+	protected boolean isOperationModeRemote() {
+		return elasticsearchConfiguration.remoteModeEnabled();
+	}
 
-		return Objects.equals(operationMode, OperationMode.EMBEDDED);
+	protected boolean isOperationModeSidecar() {
+		return !elasticsearchConfiguration.remoteModeEnabled();
 	}
 
 	@Reference

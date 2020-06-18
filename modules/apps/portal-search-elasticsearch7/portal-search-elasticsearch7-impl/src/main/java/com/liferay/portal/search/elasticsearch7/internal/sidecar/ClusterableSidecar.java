@@ -38,8 +38,8 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MethodHandler;
 import com.liferay.portal.kernel.util.MethodKey;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch7.internal.cluster.ClusterSettingsContext;
+import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchInstancePaths;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchInstanceSettingsBuilder;
 import com.liferay.portal.search.elasticsearch7.internal.connection.HttpPortRange;
@@ -91,20 +91,20 @@ public class ClusterableSidecar
 		ClusterExecutor clusterExecutor,
 		ClusterMasterExecutor clusterMasterExecutor,
 		ClusterSettingsContext clusterSettingsContext,
-		ElasticsearchConfiguration elasticsearchConfiguration,
+		ElasticsearchConfigurationWrapper elasticsearchConfigurationWrapper,
 		ElasticsearchInstancePaths elasticsearchInstancePaths,
 		JSONFactory jsonFactory, ProcessExecutor processExecutor,
 		ProcessExecutorPaths processExecutorPaths,
 		Collection<SettingsContributor> settingsContributors) {
 
 		super(
-			clusterSettingsContext, elasticsearchConfiguration,
+			clusterSettingsContext, elasticsearchConfigurationWrapper,
 			elasticsearchInstancePaths, processExecutor, processExecutorPaths,
 			settingsContributors);
 
 		_clusterExecutor = clusterExecutor;
 		_clusterMasterExecutor = clusterMasterExecutor;
-		_elasticsearchConfiguration = elasticsearchConfiguration;
+		_elasticsearchConfigurationWrapper = elasticsearchConfigurationWrapper;
 		_elasticsearchInstancePaths = elasticsearchInstancePaths;
 		_jsonFactory = jsonFactory;
 		_settingsContributors = settingsContributors;
@@ -236,12 +236,12 @@ public class ClusterableSidecar
 			getClusterName()
 		).discoverySeedHosts(
 			_initialMasterNodeTransportAddress
-		).elasticsearchConfiguration(
-			_elasticsearchConfiguration
+		).elasticsearchConfigurationWrapper(
+			_elasticsearchConfigurationWrapper
 		).elasticsearchInstancePaths(
 			_elasticsearchInstancePaths
 		).httpPortRange(
-			new HttpPortRange(_elasticsearchConfiguration)
+			new HttpPortRange(_elasticsearchConfigurationWrapper)
 		).networkHost(
 			getLocalClusterNodeNetworkHost()
 		).nodeName(
@@ -287,7 +287,7 @@ public class ClusterableSidecar
 				bundle.getBundleContext(), ClusterableSidecar.class, null);
 
 		try {
-			SidecarComponentUtil.enableSidecarElasticsearchConnectionManager();
+			SidecarComponentUtil.enableSidecarManager();
 
 			ClusterableSidecar clusterableSidecar =
 				serviceTracker.waitForService(0);
@@ -305,7 +305,7 @@ public class ClusterableSidecar
 	private static void _syncStop(String osgiServiceIdentifier)
 		throws Exception {
 
-		SidecarComponentUtil.disableSidecarElasticsearchConnectionManager();
+		SidecarComponentUtil.disableSidecarManager();
 
 		ClusterableSidecar clusterableSidecar =
 			(ClusterableSidecar)
@@ -469,7 +469,8 @@ public class ClusterableSidecar
 	private ClusterEventListener _clusterEventListener;
 	private final ClusterExecutor _clusterExecutor;
 	private final ClusterMasterExecutor _clusterMasterExecutor;
-	private final ElasticsearchConfiguration _elasticsearchConfiguration;
+	private final ElasticsearchConfigurationWrapper
+		_elasticsearchConfigurationWrapper;
 	private final ElasticsearchInstancePaths _elasticsearchInstancePaths;
 	private String _initialMasterNodeTransportAddress;
 	private final JSONFactory _jsonFactory;
