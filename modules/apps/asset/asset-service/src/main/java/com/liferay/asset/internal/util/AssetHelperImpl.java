@@ -69,6 +69,11 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
+import com.liferay.portal.search.query.Queries;
+import com.liferay.portal.search.sort.FieldSort;
+import com.liferay.portal.search.sort.NestedSort;
+import com.liferay.portal.search.sort.SortOrder;
+import com.liferay.portal.search.sort.Sorts;
 import com.liferay.portlet.asset.util.AssetSearcher;
 
 import java.io.Serializable;
@@ -555,23 +560,13 @@ public class AssetHelperImpl implements AssetHelper {
 			searchContext.setLike(true);
 		}
 
-		boolean use_new_sorts_from_portal_search_api = true;
-
-		if (use_new_sorts_from_portal_search_api) {
-			com.liferay.portal.search.sort.Sort[]
-				new_getSorts_function_with_FieldSort_setNestedSort_for_DDM =
-					null;
-
-			_searchRequestBuilderFactory.builder(
-				searchContext
-			).sorts(
-				new_getSorts_function_with_FieldSort_setNestedSort_for_DDM
-			);
-		}
-		else {
-			searchContext.setSorts(
-				_getSorts(assetEntryQuery, searchContext.getLocale()));
-		}
+		_searchRequestBuilderFactory.builder(
+			searchContext
+		).fetchSource(
+			true
+		).sorts(
+			_getSearchSorts(assetEntryQuery, searchContext.getLocale())
+		);
 
 		searchContext.setStart(start);
 
@@ -648,6 +643,63 @@ public class AssetHelperImpl implements AssetHelper {
 		}
 
 		return sortField;
+	}
+
+	private com.liferay.portal.search.sort.Sort _getSearchSort(
+			String orderByType, String sortField, Locale locale)
+		throws Exception {
+
+		boolean ddmFormFieldLocalizable = true;
+		String ddmFormFieldType = sortField;
+
+		if (ddmFormFieldType.startsWith(
+				DDMStructureManager.STRUCTURE_INDEXER_FIELD_PREFIX)) {
+
+			ddmFormFieldLocalizable = _getDDMFormFieldLocalizable(sortField);
+
+			ddmFormFieldType = _getDDMFormFieldType(ddmFormFieldType);
+		}
+
+		int sortType = _getSortType(ddmFormFieldType);
+
+		Sort sort = SortFactoryUtil.getSort(
+			AssetEntry.class, sortType,
+			_getOrderByCol(
+				sortField, ddmFormFieldType, ddmFormFieldLocalizable, sortType,
+				locale),
+			!sortField.startsWith(
+				DDMStructureManager.STRUCTURE_INDEXER_FIELD_PREFIX),
+			orderByType);
+
+		String fieldName = null; //use sort?
+
+		String valueFieldName = "fieldValueKeyword"; //implement getValueFieldName()?
+
+		FieldSort fieldSort = _sorts.field("ddmFields." + valueFieldName);
+
+		fieldSort.setSortOrder(SortOrder.valueOf(orderByType));
+
+		NestedSort nestedSort = _sorts.nested("ddmFields");
+
+		nestedSort.setFilterQuery(_queries.term("fieldName", fieldName));
+
+		fieldSort.setNestedSort(nestedSort);
+
+		return fieldSort;
+	}
+
+	private com.liferay.portal.search.sort.Sort[] _getSearchSorts(
+			AssetEntryQuery assetEntryQuery, Locale locale)
+		throws Exception {
+
+		com.liferay.portal.search.sort.Sort sort1 = _getSearchSort(
+			assetEntryQuery.getOrderByType1(), assetEntryQuery.getOrderByCol1(),
+			locale);
+		com.liferay.portal.search.sort.Sort sort2 = _getSearchSort(
+			assetEntryQuery.getOrderByType2(), assetEntryQuery.getOrderByCol2(),
+			locale);
+
+		return new com.liferay.portal.search.sort.Sort[] {sort1, sort2};
 	}
 
 	private Sort _getSort(String orderByType, String sortField, Locale locale)
@@ -742,6 +794,12 @@ public class AssetHelperImpl implements AssetHelper {
 	private PortletLocalService _portletLocalService;
 
 	@Reference
+	private Queries _queries;
+
+	@Reference
 	private SearchRequestBuilderFactory _searchRequestBuilderFactory;
+
+	@Reference
+	private Sorts _sorts;
 
 }
