@@ -32,6 +32,11 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface ElasticsearchConfiguration {
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
+	 *			 #remoteModeEnabled()}
+	 */
+	@Deprecated
 	@Meta.AD(
 		deflt = "EMBEDDED", description = "operation-mode-help",
 		name = "operation-mode", required = false
@@ -39,10 +44,65 @@ public interface ElasticsearchConfiguration {
 	public OperationMode operationMode();
 
 	@Meta.AD(
+		deflt = "false", description = "remote-mode-enabled-help",
+		name = "remote-mode-enabled", required = false
+	)
+	public boolean remoteModeEnabled();
+
+	@Meta.AD(
 		description = "remote-cluster-connection-id-help",
 		name = "remote-cluster-connection-id", required = false
 	)
 	public String remoteClusterConnectionId();
+
+	@Meta.AD(
+		deflt = "http://localhost:9200",
+		description = "network-host-addresses-help",
+		name = "network-host-addresses", required = false
+	)
+	public String[] networkHostAddresses();
+
+	@Meta.AD(
+		deflt = "false", description = "authentication-enabled-help",
+		name = "authentication-enabled", required = false
+	)
+	public boolean authenticationEnabled();
+
+	@Meta.AD(
+		deflt = "elastic", description = "username-help", name = "username",
+		required = false
+	)
+	public String username();
+
+	@Meta.AD(
+		description = "password-help", name = "password", required = false,
+		type = Meta.Type.Password
+	)
+	public String password();
+
+	@Meta.AD(
+		deflt = "false", description = "http-ssl-enabled-help",
+		name = "http-ssl-enabled", required = false
+	)
+	public boolean httpSSLEnabled();
+
+	@Meta.AD(
+		deflt = "pkcs12", description = "truststore-type-help",
+		name = "truststore-type", required = false
+	)
+	public String truststoreType();
+
+	@Meta.AD(
+		deflt = "/path/to/localhost.p12", description = "truststore-path-help",
+		name = "truststore-path", required = false
+	)
+	public String truststorePath();
+
+	@Meta.AD(
+		description = "truststore-password-help", name = "truststore-password",
+		required = false, type = Meta.Type.Password
+	)
+	public String truststorePassword();
 
 	@Meta.AD(
 		deflt = "liferay-", description = "index-name-prefix-help",
