@@ -223,7 +223,7 @@ public interface ElasticsearchConfiguration {
 	public boolean trackTotalHits();
 
 	@Meta.AD(
-		deflt = "", description = "transport-tcp-port-help",
+		deflt = "9301", description = "transport-tcp-port-help",
 		name = "transport-tcp-port", required = false
 	)
 	public String transportTcpPort();
