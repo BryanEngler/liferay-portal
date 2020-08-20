@@ -115,8 +115,32 @@ public class LiferayDocumentTypeFactory implements TypeMappingsHelper {
 			LiferayTypeMappingsConstants.
 				LIFERAY_DOCUMENT_TYPE_MAPPING_FILE_NAME);
 
+		JSONObject defaultJSONObject = createJSONObject(
+			requiredDefaultMappings);
+
+		String name = StringUtil.replace(
+			LiferayTypeMappingsConstants.
+				LIFERAY_DOCUMENT_TYPE_MAPPING_FILE_NAME,
+			".json", "-optional-defaults.json");
+
+		String optionalDefaultTypeMappings = ResourceUtil.getResourceAsString(
+			getClass(), name);
+
+		JSONObject optionalJSONObject = createJSONObject(
+			optionalDefaultTypeMappings);
+
+		JSONObject liferayDocumentTypeJSONObject =
+			defaultJSONObject.getJSONObject(
+				LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE);
+
+		liferayDocumentTypeJSONObject.put(
+			"dynamic_templates",
+			merge(
+				liferayDocumentTypeJSONObject.getJSONArray("dynamic_templates"),
+				optionalJSONObject.getJSONArray("dynamic_templates")));
+
 		createLiferayDocumentTypeMappings(
-			createIndexRequest, requiredDefaultMappings);
+			createIndexRequest, defaultJSONObject.toString());
 	}
 
 	protected JSONObject createJSONObject(String mappings) {

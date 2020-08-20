@@ -359,8 +359,6 @@ public class CompanyIndexFactory
 		loadAdditionalTypeMappings(indexName, liferayDocumentTypeFactory);
 
 		loadTypeMappingsContributors(indexName, liferayDocumentTypeFactory);
-
-		liferayDocumentTypeFactory.createOptionalDefaultTypeMappings(indexName);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
