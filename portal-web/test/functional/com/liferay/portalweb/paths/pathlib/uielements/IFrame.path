@@ -234,8 +234,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>XPACK_MONITORING</td>
-	<td>//iframe[contains(@id,'XPackMonitoringPortlet')]</td>
+	<td>ELASTICSEARCH_MONITORING</td>
+	<td>//iframe[contains(@id,'MonitoringPortlet')]</td>
 	<td></td>
 </tr>
 </tbody>
