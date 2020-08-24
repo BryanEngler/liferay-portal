@@ -14,6 +14,9 @@
 
 package com.liferay.portal.search.ccr;
 
+import java.util.List;
+import java.util.Map;
+
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -34,6 +37,12 @@ public interface CrossClusterReplicationHelper {
 	public void follow(
 		String remoteClusterAlias, String indexName,
 		String localClusterConnectionId);
+
+	public List<String> getLocalClusterConnectionIds();
+
+	public Map<String, String> getLocalClusterConnectionIdsMap();
+
+	public boolean isCrossClusterReplicationEnabled();
 
 	public void unfollow(String indexName);
 

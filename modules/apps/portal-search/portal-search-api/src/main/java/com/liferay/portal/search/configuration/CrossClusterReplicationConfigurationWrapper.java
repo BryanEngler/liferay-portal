@@ -18,7 +18,10 @@ import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * @author Bryan Engler
+ * @deprecated As of Athanasius (7.3.x), replaced by {@link
+ *             com.liferay.portal.search.elasticsearch.cross.cluster.replication.internal.configuration.CrossClusterReplicationConfigurationWrapper}
  */
+@Deprecated
 @ProviderType
 public interface CrossClusterReplicationConfigurationWrapper {
 
