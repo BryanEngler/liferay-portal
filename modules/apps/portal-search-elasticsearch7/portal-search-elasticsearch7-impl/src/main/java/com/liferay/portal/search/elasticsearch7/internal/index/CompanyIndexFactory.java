@@ -20,7 +20,10 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.PortalRunMode;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationObserver;
+import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationObserverComparator;
 import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
+import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch7.internal.index.contributor.IndexContributorReceiver;
 import com.liferay.portal.search.elasticsearch7.internal.settings.SettingsBuilder;
 import com.liferay.portal.search.elasticsearch7.internal.util.ResourceUtil;
@@ -32,6 +35,7 @@ import com.liferay.portal.search.spi.model.index.contributor.IndexContributor;
 
 import java.io.IOException;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -42,11 +46,14 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentType;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
@@ -60,11 +67,20 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 	service = {IndexContributorReceiver.class, IndexFactory.class}
 )
 public class CompanyIndexFactory
-	implements IndexContributorReceiver, IndexFactory {
+	implements ElasticsearchConfigurationObserver, IndexContributorReceiver,
+			   IndexFactory {
 
 	@Override
 	public void addIndexContributor(IndexContributor indexContributor) {
 		_indexContributors.add(indexContributor);
+	}
+
+	@Override
+	public int compareTo(
+		ElasticsearchConfigurationObserver elasticsearchConfigurationObserver) {
+
+		return elasticsearchConfigurationObserverComparator.compare(
+			this, elasticsearchConfigurationObserver);
 	}
 
 	@Override
@@ -103,8 +119,33 @@ public class CompanyIndexFactory
 	}
 
 	@Override
+	public int getPriority() {
+		return 3;
+	}
+
+	@Override
+	public void onElasticsearchConfigurationUpdate() {
+		createCompanyIndexes();
+	}
+
+	public synchronized void registerCompanyId(long companyId) {
+		_companyIds.add(companyId);
+	}
+
+	@Override
 	public void removeIndexContributor(IndexContributor indexContributor) {
 		_indexContributors.remove(indexContributor);
+	}
+
+	public synchronized void unregisterCompanyId(long companyId) {
+		_companyIds.remove(companyId);
+	}
+
+	@Activate
+	protected void activate() {
+		elasticsearchConfigurationWrapper.register(this);
+
+		createCompanyIndexes();
 	}
 
 	@Reference(
@@ -135,6 +176,24 @@ public class CompanyIndexFactory
 		}
 	}
 
+	protected synchronized void createCompanyIndexes() {
+		for (Long companyId : _companyIds) {
+			try {
+				RestHighLevelClient restHighLevelClient =
+					elasticsearchConnectionManager.getRestHighLevelClient();
+
+				createIndices(restHighLevelClient.indices(), companyId);
+			}
+			catch (Exception exception) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						"Unable to reinitialize index for company " + companyId,
+						exception);
+				}
+			}
+		}
+	}
+
 	protected void createIndex(String indexName, IndicesClient indicesClient) {
 		CreateIndexRequest createIndexRequest = new CreateIndexRequest(
 			indexName);
@@ -160,6 +219,11 @@ public class CompanyIndexFactory
 		updateLiferayDocumentType(indexName, liferayDocumentTypeFactory);
 
 		executeIndexContributorsAfterCreate(indexName);
+	}
+
+	@Deactivate
+	protected void deactivate() {
+		elasticsearchConfigurationWrapper.unregister(this);
 	}
 
 	protected void executeIndexContributorAfterCreate(
@@ -363,9 +427,21 @@ public class CompanyIndexFactory
 		liferayDocumentTypeFactory.createOptionalDefaultTypeMappings(indexName);
 	}
 
+	@Reference
+	protected ElasticsearchConfigurationObserverComparator
+		elasticsearchConfigurationObserverComparator;
+
+	@Reference
+	protected volatile ElasticsearchConfigurationWrapper
+		elasticsearchConfigurationWrapper;
+
+	@Reference
+	protected ElasticsearchConnectionManager elasticsearchConnectionManager;
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		CompanyIndexFactory.class);
 
+	private final Set<Long> _companyIds = new HashSet<>();
 	private volatile ElasticsearchConfigurationWrapper
 		_elasticsearchConfigurationWrapper;
 	private final List<IndexContributor> _indexContributors =
