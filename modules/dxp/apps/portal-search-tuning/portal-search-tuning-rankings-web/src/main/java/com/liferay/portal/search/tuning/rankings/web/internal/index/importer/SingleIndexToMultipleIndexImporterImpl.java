@@ -15,8 +15,6 @@
 package com.liferay.portal.search.tuning.rankings.web.internal.index.importer;
 
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.service.CompanyService;
 import com.liferay.portal.search.document.Document;
@@ -110,20 +108,6 @@ public class SingleIndexToMultipleIndexImporterImpl
 	protected void createRankingIndices() {
 		List<Company> companies = _companyService.getCompanies();
 
-		try {
-			createRankingIndices(companies);
-		}
-		catch (Exception exception) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(
-					"Unable to create result ranking indices for existing " +
-						"companies",
-					exception);
-			}
-		}
-	}
-
-	protected void createRankingIndices(List<Company> companies) {
 		Stream<Company> stream = companies.stream();
 
 		stream.map(
@@ -198,9 +182,6 @@ public class SingleIndexToMultipleIndexImporterImpl
 
 	protected static final RankingIndexName SINGLE_INDEX_NAME =
 		() -> "liferay-search-tuning-rankings";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SingleIndexToMultipleIndexImporterImpl.class);
 
 	@Reference
 	private CompanyService _companyService;
