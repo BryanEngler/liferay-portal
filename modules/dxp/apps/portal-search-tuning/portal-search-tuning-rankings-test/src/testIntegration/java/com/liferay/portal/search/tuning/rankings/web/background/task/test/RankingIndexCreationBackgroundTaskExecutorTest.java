@@ -15,10 +15,15 @@
 package com.liferay.portal.search.tuning.rankings.web.background.task.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.portal.kernel.backgroundtask.BackgroundTaskExecutor;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManager;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.CompanyConstants;
+import com.liferay.portal.kernel.model.UserConstants;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.CompanyTestUtil;
+import com.liferay.portal.kernel.uuid.PortalUUID;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.index.DeleteIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.IndicesExistsIndexRequest;
@@ -28,6 +33,7 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -53,7 +59,7 @@ public class RankingIndexCreationBackgroundTaskExecutorTest {
 
 	@Before
 	public void setUp() {
-		Assume.assumeNotNull(_rankingIndexCreationBackgroundTaskExecutor);
+		Assume.assumeNotNull(_backgroundTaskManager);
 	}
 
 	@Test
@@ -62,11 +68,10 @@ public class RankingIndexCreationBackgroundTaskExecutorTest {
 
 		Company company = createCompanyWithoutRankingsIndex();
 
-		_rankingIndexCreationBackgroundTaskExecutor.execute(null);
+		addBackgroundTask();
 
-		String rankingsIndexName = getRankingsIndexName(company.getCompanyId());
-
-		Assert.assertTrue(isIndexExists(rankingsIndexName));
+		Assert.assertTrue(
+			isIndexExists(getRankingsIndexName(company.getCompanyId())));
 	}
 
 	@Test
@@ -75,13 +80,25 @@ public class RankingIndexCreationBackgroundTaskExecutorTest {
 
 		List<Company> companies = createCompaniesWithoutRankingsIndices(5);
 
-		_rankingIndexCreationBackgroundTaskExecutor.execute(null);
+		addBackgroundTask();
 
 		for (Company company : companies) {
-			String rankingsIndexName = getRankingsIndexName(
-				company.getCompanyId());
+			Assert.assertTrue(
+				isIndexExists(getRankingsIndexName(company.getCompanyId())));
+		}
+	}
 
-			Assert.assertTrue(isIndexExists(rankingsIndexName));
+	protected void addBackgroundTask() {
+		try {
+			_backgroundTaskManager.addBackgroundTask(
+				UserConstants.USER_ID_DEFAULT, CompanyConstants.SYSTEM,
+				"createRankingIndex-" + _portalUUID.generate(),
+				_BACKGROUND_TASK_EXECUTOR_CLASS_NAME, new HashMap<>(),
+				new ServiceContext());
+		}
+		catch (PortalException portalException) {
+			System.out.println(
+				"Unable to schedule the job for RankingIndexRename");
 		}
 	}
 
@@ -99,17 +116,16 @@ public class RankingIndexCreationBackgroundTaskExecutorTest {
 
 		Stream<Company> stream = companies.stream();
 
-		String[] rankingsIndexNames = stream.map(
-			Company::getCompanyId
-		).map(
-			this::getRankingsIndexName
-		).collect(
-			Collectors.toList()
-		).toArray(
-			new String[companies.size()]
-		);
-
-		deleteIndex(rankingsIndexNames);
+		deleteIndex(
+			stream.map(
+				Company::getCompanyId
+			).map(
+				this::getRankingsIndexName
+			).collect(
+				Collectors.toList()
+			).toArray(
+				new String[companies.size()]
+			));
 
 		return companies;
 	}
@@ -117,9 +133,7 @@ public class RankingIndexCreationBackgroundTaskExecutorTest {
 	protected Company createCompanyWithoutRankingsIndex() throws Exception {
 		Company company = CompanyTestUtil.addCompany();
 
-		String rankingsIndexName = getRankingsIndexName(company.getCompanyId());
-
-		deleteIndex(rankingsIndexName);
+		deleteIndex(getRankingsIndexName(company.getCompanyId()));
 
 		return company;
 	}
@@ -133,7 +147,7 @@ public class RankingIndexCreationBackgroundTaskExecutorTest {
 
 	protected String getRankingsIndexName(long companyId) {
 		return _indexNameBuilder.getIndexName(companyId) +
-			"-liferay-search-tuning-rankings";
+			"-search-tuning-rankings";
 	}
 
 	protected boolean isIndexExists(String rankingsIndexName) {
@@ -146,13 +160,18 @@ public class RankingIndexCreationBackgroundTaskExecutorTest {
 		return indicesExistsIndexResponse.isExists();
 	}
 
+	private static final String _BACKGROUND_TASK_EXECUTOR_CLASS_NAME =
+		"com.liferay.portal.search.tuning.rankings.web.internal.background." +
+			"task.RankingIndexCreationBackgroundTaskExecutor";
+
+	@Inject
+	private BackgroundTaskManager _backgroundTaskManager;
+
 	@Inject
 	private IndexNameBuilder _indexNameBuilder;
 
-	@Inject(
-		filter = "background.task.executor.class.name=com.liferay.portal.search.tuning.rankings.web.internal.background.task.RankingIndexCreationBackgroundTaskExecutor"
-	)
-	private BackgroundTaskExecutor _rankingIndexCreationBackgroundTaskExecutor;
+	@Inject
+	private PortalUUID _portalUUID;
 
 	@Inject
 	private SearchEngineAdapter _searchEngineAdapter;
