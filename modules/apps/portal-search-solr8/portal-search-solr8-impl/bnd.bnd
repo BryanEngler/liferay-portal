@@ -11,6 +11,11 @@ Import-Package:\
 	!org.apache.lucene.sandbox.*,\
 	!org.apache.yetus.*,\
 	\
+	!org.eclipse.jetty.client.*,\
+	!org.eclipse.jetty.http.*,\
+	!org.eclipse.jetty.http2.client.*,\
+	!org.eclipse.jetty.util.*,\
+	\
 	!org.jboss.netty.*,\
 	\
 	!org.relaxng.datatype.*,\

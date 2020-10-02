@@ -74,13 +74,13 @@
 			<analyzer type="index">
 				<tokenizer class="solr.StandardTokenizerFactory" />
 				<filter class="solr.LowerCaseFilterFactory" />
-				<filter class="solr.StandardFilterFactory" />
+				<filter class="solr.ClassicFilterFactory" />
 				<filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
 			</analyzer>
 			<analyzer type="query">
 				<tokenizer class="solr.StandardTokenizerFactory" />
 				<filter class="solr.LowerCaseFilterFactory" />
-				<filter class="solr.StandardFilterFactory" />
+				<filter class="solr.ClassicFilterFactory" />
 				<filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
 				<filter class="solr.SynonymGraphFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt" />
 			</analyzer>
