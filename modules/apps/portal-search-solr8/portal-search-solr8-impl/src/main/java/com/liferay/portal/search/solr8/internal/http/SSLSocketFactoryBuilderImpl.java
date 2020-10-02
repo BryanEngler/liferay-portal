@@ -12,12 +12,12 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.http;
+package com.liferay.portal.search.solr8.internal.http;
 
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.search.solr7.configuration.SolrSSLSocketFactoryConfiguration;
+import com.liferay.portal.search.solr8.configuration.SolrSSLSocketFactoryConfiguration;
 
 import java.security.KeyStore;
 
@@ -42,7 +42,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author André de Oliveira
  */
 @Component(
-	configurationPid = "com.liferay.portal.search.solr7.configuration.SolrSSLSocketFactoryConfiguration",
+	configurationPid = "com.liferay.portal.search.solr8.configuration.SolrSSLSocketFactoryConfiguration",
 	immediate = true, service = SSLSocketFactoryBuilder.class
 )
 public class SSLSocketFactoryBuilderImpl implements SSLSocketFactoryBuilder {

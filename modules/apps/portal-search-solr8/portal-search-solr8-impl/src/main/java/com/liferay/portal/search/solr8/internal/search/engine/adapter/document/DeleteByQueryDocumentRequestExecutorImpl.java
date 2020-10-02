@@ -12,14 +12,14 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.search.engine.adapter.document;
+package com.liferay.portal.search.solr8.internal.search.engine.adapter.document;
 
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.search.query.QueryTranslator;
 import com.liferay.portal.search.engine.adapter.document.DeleteByQueryDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.DeleteByQueryDocumentResponse;
-import com.liferay.portal.search.solr7.configuration.SolrConfiguration;
-import com.liferay.portal.search.solr7.internal.connection.SolrClientManager;
+import com.liferay.portal.search.solr8.configuration.SolrConfiguration;
+import com.liferay.portal.search.solr8.internal.connection.SolrClientManager;
 
 import java.util.Map;
 
@@ -36,7 +36,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Bryan Engler
  */
 @Component(
-	configurationPid = "com.liferay.portal.search.solr7.configuration.SolrConfiguration",
+	configurationPid = "com.liferay.portal.search.solr8.configuration.SolrConfiguration",
 	immediate = true, service = DeleteByQueryDocumentRequestExecutor.class
 )
 public class DeleteByQueryDocumentRequestExecutorImpl

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal;
+package com.liferay.portal.search.solr8.internal;
 
 /**
  * @author André de Oliveira
@@ -22,7 +22,7 @@ public class SolrUnitTestRequirements {
 	public static boolean isSolrExternallyStartedByDeveloper() {
 		return Boolean.valueOf(
 			System.getProperty(
-				"com.liferay.portal.search.solr7.test.unit.started"));
+				"com.liferay.portal.search.solr8.test.unit.started"));
 	}
 
 }

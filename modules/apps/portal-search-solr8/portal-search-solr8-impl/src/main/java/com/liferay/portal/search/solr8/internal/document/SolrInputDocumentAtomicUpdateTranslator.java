@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.document;
+package com.liferay.portal.search.solr8.internal.document;
 
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.util.HashMapBuilder;

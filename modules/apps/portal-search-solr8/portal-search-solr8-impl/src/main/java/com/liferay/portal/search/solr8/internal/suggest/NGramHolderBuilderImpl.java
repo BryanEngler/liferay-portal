@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.suggest;
+package com.liferay.portal.search.solr8.internal.suggest;
 
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.suggest.NGramHolder;

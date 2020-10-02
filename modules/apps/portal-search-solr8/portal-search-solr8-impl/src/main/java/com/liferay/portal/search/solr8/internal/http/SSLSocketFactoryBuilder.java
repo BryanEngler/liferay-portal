@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.http;
+package com.liferay.portal.search.solr8.internal.http;
 
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 

@@ -12,16 +12,16 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.search.engine.adapter;
+package com.liferay.portal.search.solr8.internal.search.engine.adapter;
 
 import com.liferay.portal.kernel.search.query.QueryTranslator;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
-import com.liferay.portal.search.solr7.internal.connection.SolrClientManager;
-import com.liferay.portal.search.solr7.internal.document.SolrDocumentFactory;
-import com.liferay.portal.search.solr7.internal.facet.FacetProcessor;
-import com.liferay.portal.search.solr7.internal.search.engine.adapter.document.DocumentRequestExecutorFixture;
-import com.liferay.portal.search.solr7.internal.search.engine.adapter.index.IndexRequestExecutorFixture;
-import com.liferay.portal.search.solr7.internal.search.engine.adapter.search.SearchRequestExecutorFixture;
+import com.liferay.portal.search.solr8.internal.connection.SolrClientManager;
+import com.liferay.portal.search.solr8.internal.document.SolrDocumentFactory;
+import com.liferay.portal.search.solr8.internal.facet.FacetProcessor;
+import com.liferay.portal.search.solr8.internal.search.engine.adapter.document.DocumentRequestExecutorFixture;
+import com.liferay.portal.search.solr8.internal.search.engine.adapter.index.IndexRequestExecutorFixture;
+import com.liferay.portal.search.solr8.internal.search.engine.adapter.search.SearchRequestExecutorFixture;
 
 import java.util.Map;
 

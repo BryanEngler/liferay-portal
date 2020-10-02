@@ -12,12 +12,12 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.highlight;
+package com.liferay.portal.search.solr8.internal.highlight;
 
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.generic.StringQuery;
-import com.liferay.portal.search.solr7.internal.SolrIndexingFixture;
+import com.liferay.portal.search.solr8.internal.SolrIndexingFixture;
 import com.liferay.portal.search.test.util.highlight.BaseHighlightTestCase;
 import com.liferay.portal.search.test.util.indexing.DocumentCreationHelpers;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;

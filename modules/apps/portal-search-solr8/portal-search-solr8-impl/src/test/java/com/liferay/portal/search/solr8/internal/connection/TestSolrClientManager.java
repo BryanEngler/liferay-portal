@@ -12,11 +12,11 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.connection;
+package com.liferay.portal.search.solr8.internal.connection;
 
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
-import com.liferay.portal.search.solr7.configuration.SolrConfiguration;
-import com.liferay.portal.search.solr7.internal.http.BasicAuthPoolingHttpClientFactory;
+import com.liferay.portal.search.solr8.configuration.SolrConfiguration;
+import com.liferay.portal.search.solr8.internal.http.BasicAuthPoolingHttpClientFactory;
 
 import java.util.Collections;
 import java.util.Map;

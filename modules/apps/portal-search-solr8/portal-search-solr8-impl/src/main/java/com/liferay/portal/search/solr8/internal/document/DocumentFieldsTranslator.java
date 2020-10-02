@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.document;
+package com.liferay.portal.search.solr8.internal.document;
 
 import com.liferay.portal.search.document.DocumentBuilder;
 

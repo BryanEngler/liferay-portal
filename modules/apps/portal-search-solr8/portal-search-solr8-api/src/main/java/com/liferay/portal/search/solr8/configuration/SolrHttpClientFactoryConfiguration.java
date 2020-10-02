@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.configuration;
+package com.liferay.portal.search.solr8.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
@@ -23,9 +23,9 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
  */
 @ExtendedObjectClassDefinition(category = "search")
 @Meta.OCD(
-	id = "com.liferay.portal.search.solr7.configuration.SolrHttpClientFactoryConfiguration",
+	id = "com.liferay.portal.search.solr8.configuration.SolrHttpClientFactoryConfiguration",
 	localization = "content/Language",
-	name = "solr7-http-client-factory-configuration-name"
+	name = "solr8-http-client-factory-configuration-name"
 )
 public interface SolrHttpClientFactoryConfiguration {
 

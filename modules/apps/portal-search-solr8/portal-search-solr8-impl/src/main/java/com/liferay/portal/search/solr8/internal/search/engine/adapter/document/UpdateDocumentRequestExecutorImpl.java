@@ -12,12 +12,12 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.search.engine.adapter.document;
+package com.liferay.portal.search.solr8.internal.search.engine.adapter.document;
 
 import com.liferay.portal.search.engine.adapter.document.BulkableDocumentRequestTranslator;
 import com.liferay.portal.search.engine.adapter.document.UpdateDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.UpdateDocumentResponse;
-import com.liferay.portal.search.solr7.internal.connection.SolrClientManager;
+import com.liferay.portal.search.solr8.internal.connection.SolrClientManager;
 
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.UpdateResponse;

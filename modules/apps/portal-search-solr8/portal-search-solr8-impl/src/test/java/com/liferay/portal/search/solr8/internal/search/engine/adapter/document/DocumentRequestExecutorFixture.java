@@ -12,14 +12,14 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.search.engine.adapter.document;
+package com.liferay.portal.search.solr8.internal.search.engine.adapter.document;
 
 import com.liferay.portal.kernel.search.query.QueryTranslator;
 import com.liferay.portal.search.engine.adapter.document.BulkableDocumentRequestTranslator;
 import com.liferay.portal.search.engine.adapter.document.DocumentRequestExecutor;
 import com.liferay.portal.search.internal.document.DocumentBuilderFactoryImpl;
-import com.liferay.portal.search.solr7.internal.connection.SolrClientManager;
-import com.liferay.portal.search.solr7.internal.document.SolrDocumentFactory;
+import com.liferay.portal.search.solr8.internal.connection.SolrClientManager;
+import com.liferay.portal.search.solr8.internal.document.SolrDocumentFactory;
 
 import java.util.Map;
 

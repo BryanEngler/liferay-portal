@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal;
+package com.liferay.portal.search.solr8.internal;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
@@ -47,8 +47,8 @@ import com.liferay.portal.search.legacy.searcher.SearchResponseBuilderFactory;
 import com.liferay.portal.search.searcher.SearchRequest;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.searcher.SearchResponseBuilder;
-import com.liferay.portal.search.solr7.configuration.SolrConfiguration;
-import com.liferay.portal.search.solr7.internal.search.response.HitsImpl;
+import com.liferay.portal.search.solr8.configuration.SolrConfiguration;
+import com.liferay.portal.search.solr8.internal.search.response.HitsImpl;
 
 import java.util.Map;
 
@@ -65,7 +65,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Raymond Augé
  */
 @Component(
-	configurationPid = "com.liferay.portal.search.solr7.configuration.SolrConfiguration",
+	configurationPid = "com.liferay.portal.search.solr8.configuration.SolrConfiguration",
 	immediate = true, property = "search.engine.impl=Solr",
 	service = IndexSearcher.class
 )

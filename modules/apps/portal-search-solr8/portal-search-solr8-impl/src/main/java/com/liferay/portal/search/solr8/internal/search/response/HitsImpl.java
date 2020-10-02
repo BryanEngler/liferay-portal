@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.search.response;
+package com.liferay.portal.search.solr8.internal.search.response;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;

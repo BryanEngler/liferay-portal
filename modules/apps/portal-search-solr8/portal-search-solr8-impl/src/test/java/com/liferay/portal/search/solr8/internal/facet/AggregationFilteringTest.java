@@ -12,11 +12,11 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.facet;
+package com.liferay.portal.search.solr8.internal.facet;
 
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.json.JSONFactory;
-import com.liferay.portal.search.solr7.internal.SolrIndexingFixture;
+import com.liferay.portal.search.solr8.internal.SolrIndexingFixture;
 import com.liferay.portal.search.test.util.facet.BaseAggregationFilteringTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 

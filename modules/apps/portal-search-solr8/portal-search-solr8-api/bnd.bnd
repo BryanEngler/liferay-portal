@@ -1,5 +1,5 @@
 Bundle-Name: Liferay Portal Search Solr 7 API
-Bundle-SymbolicName: com.liferay.portal.search.solr7.api
+Bundle-SymbolicName: com.liferay.portal.search.solr8.api
 Bundle-Version: 4.0.0
-Export-Package: com.liferay.portal.search.solr7.configuration
+Export-Package: com.liferay.portal.search.solr8.configuration
 -dsannotations-options: inherit

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.filter;
+package com.liferay.portal.search.solr8.internal.filter;
 
 import com.liferay.portal.kernel.search.filter.TermFilter;
 

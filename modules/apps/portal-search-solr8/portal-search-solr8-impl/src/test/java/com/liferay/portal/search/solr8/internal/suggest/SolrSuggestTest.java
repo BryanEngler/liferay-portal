@@ -12,9 +12,9 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.suggest;
+package com.liferay.portal.search.solr8.internal.suggest;
 
-import com.liferay.portal.search.solr7.internal.SolrIndexingFixture;
+import com.liferay.portal.search.solr8.internal.SolrIndexingFixture;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 import com.liferay.portal.search.test.util.suggest.BaseSuggestTestCase;
 

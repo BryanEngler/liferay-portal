@@ -12,9 +12,9 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.legacy.query;
+package com.liferay.portal.search.solr8.internal.legacy.query;
 
-import com.liferay.portal.search.solr7.internal.SolrIndexingFixture;
+import com.liferay.portal.search.solr8.internal.SolrIndexingFixture;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 import com.liferay.portal.search.test.util.legacy.query.BaseStringQueryTestCase;
 

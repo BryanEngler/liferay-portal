@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.configuration;
+package com.liferay.portal.search.solr8.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
@@ -23,9 +23,9 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
  */
 @ExtendedObjectClassDefinition(category = "search")
 @Meta.OCD(
-	id = "com.liferay.portal.search.solr7.configuration.SolrSSLSocketFactoryConfiguration",
+	id = "com.liferay.portal.search.solr8.configuration.SolrSSLSocketFactoryConfiguration",
 	localization = "content/Language",
-	name = "solr7-ssl-socket-factory-configuration-name"
+	name = "solr8-ssl-socket-factory-configuration-name"
 )
 public interface SolrSSLSocketFactoryConfiguration {
 

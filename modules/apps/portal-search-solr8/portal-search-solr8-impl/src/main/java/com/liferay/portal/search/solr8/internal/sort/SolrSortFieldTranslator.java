@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.sort;
+package com.liferay.portal.search.solr8.internal.sort;
 
 import com.liferay.portal.search.sort.FieldSort;
 import com.liferay.portal.search.sort.GeoDistanceSort;

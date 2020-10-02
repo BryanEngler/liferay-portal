@@ -12,9 +12,9 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.count;
+package com.liferay.portal.search.solr8.internal.count;
 
-import com.liferay.portal.search.solr7.internal.SolrIndexingFixture;
+import com.liferay.portal.search.solr8.internal.SolrIndexingFixture;
 import com.liferay.portal.search.test.util.count.BaseDocumentCountTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 

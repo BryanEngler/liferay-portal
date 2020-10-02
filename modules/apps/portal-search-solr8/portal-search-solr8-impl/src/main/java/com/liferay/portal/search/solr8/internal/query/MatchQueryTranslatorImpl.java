@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.query;
+package com.liferay.portal.search.solr8.internal.query;
 
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;

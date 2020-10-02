@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal;
+package com.liferay.portal.search.solr8.internal;
 
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -28,27 +28,27 @@ import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.internal.legacy.searcher.SearchRequestBuilderFactoryImpl;
 import com.liferay.portal.search.internal.legacy.searcher.SearchResponseBuilderFactoryImpl;
-import com.liferay.portal.search.solr7.internal.connection.SolrClientManager;
-import com.liferay.portal.search.solr7.internal.connection.TestSolrClientManager;
-import com.liferay.portal.search.solr7.internal.document.DefaultSolrDocumentFactory;
-import com.liferay.portal.search.solr7.internal.facet.DefaultFacetProcessor;
-import com.liferay.portal.search.solr7.internal.facet.FacetProcessor;
-import com.liferay.portal.search.solr7.internal.query.BooleanQueryTranslatorImpl;
-import com.liferay.portal.search.solr7.internal.query.DisMaxQueryTranslatorImpl;
-import com.liferay.portal.search.solr7.internal.query.FuzzyQueryTranslatorImpl;
-import com.liferay.portal.search.solr7.internal.query.MatchAllQueryTranslatorImpl;
-import com.liferay.portal.search.solr7.internal.query.MatchQueryTranslatorImpl;
-import com.liferay.portal.search.solr7.internal.query.MoreLikeThisQueryTranslatorImpl;
-import com.liferay.portal.search.solr7.internal.query.MultiMatchQueryTranslatorImpl;
-import com.liferay.portal.search.solr7.internal.query.NestedQueryTranslatorImpl;
-import com.liferay.portal.search.solr7.internal.query.SolrQueryTranslator;
-import com.liferay.portal.search.solr7.internal.query.StringQueryTranslatorImpl;
-import com.liferay.portal.search.solr7.internal.query.TermQueryTranslatorImpl;
-import com.liferay.portal.search.solr7.internal.query.TermRangeQueryTranslatorImpl;
-import com.liferay.portal.search.solr7.internal.query.WildcardQueryTranslatorImpl;
-import com.liferay.portal.search.solr7.internal.search.engine.adapter.SolrSearchEngineAdapterFixture;
-import com.liferay.portal.search.solr7.internal.suggest.NGramHolderBuilderImpl;
-import com.liferay.portal.search.solr7.internal.suggest.NGramQueryBuilderImpl;
+import com.liferay.portal.search.solr8.internal.connection.SolrClientManager;
+import com.liferay.portal.search.solr8.internal.connection.TestSolrClientManager;
+import com.liferay.portal.search.solr8.internal.document.DefaultSolrDocumentFactory;
+import com.liferay.portal.search.solr8.internal.facet.DefaultFacetProcessor;
+import com.liferay.portal.search.solr8.internal.facet.FacetProcessor;
+import com.liferay.portal.search.solr8.internal.query.BooleanQueryTranslatorImpl;
+import com.liferay.portal.search.solr8.internal.query.DisMaxQueryTranslatorImpl;
+import com.liferay.portal.search.solr8.internal.query.FuzzyQueryTranslatorImpl;
+import com.liferay.portal.search.solr8.internal.query.MatchAllQueryTranslatorImpl;
+import com.liferay.portal.search.solr8.internal.query.MatchQueryTranslatorImpl;
+import com.liferay.portal.search.solr8.internal.query.MoreLikeThisQueryTranslatorImpl;
+import com.liferay.portal.search.solr8.internal.query.MultiMatchQueryTranslatorImpl;
+import com.liferay.portal.search.solr8.internal.query.NestedQueryTranslatorImpl;
+import com.liferay.portal.search.solr8.internal.query.SolrQueryTranslator;
+import com.liferay.portal.search.solr8.internal.query.StringQueryTranslatorImpl;
+import com.liferay.portal.search.solr8.internal.query.TermQueryTranslatorImpl;
+import com.liferay.portal.search.solr8.internal.query.TermRangeQueryTranslatorImpl;
+import com.liferay.portal.search.solr8.internal.query.WildcardQueryTranslatorImpl;
+import com.liferay.portal.search.solr8.internal.search.engine.adapter.SolrSearchEngineAdapterFixture;
+import com.liferay.portal.search.solr8.internal.suggest.NGramHolderBuilderImpl;
+import com.liferay.portal.search.solr8.internal.suggest.NGramQueryBuilderImpl;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 import com.liferay.portal.util.LocalizationImpl;
 

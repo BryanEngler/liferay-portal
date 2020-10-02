@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal;
+package com.liferay.portal.search.solr8.internal;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -35,9 +35,9 @@ import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.solr7.configuration.SolrConfiguration;
-import com.liferay.portal.search.solr7.internal.connection.SolrClientManager;
-import com.liferay.portal.search.solr7.internal.suggest.NGramQueryBuilder;
+import com.liferay.portal.search.solr8.configuration.SolrConfiguration;
+import com.liferay.portal.search.solr8.internal.connection.SolrClientManager;
+import com.liferay.portal.search.solr8.internal.suggest.NGramQueryBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,7 +72,7 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
  * @author Michael C. Han
  */
 @Component(
-	configurationPid = "com.liferay.portal.search.solr7.configuration.SolrConfiguration",
+	configurationPid = "com.liferay.portal.search.solr8.configuration.SolrConfiguration",
 	immediate = true,
 	property = {"distance.threshold=0.6f", "search.engine.impl=Solr"},
 	service = QuerySuggester.class

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.connection;
+package com.liferay.portal.search.solr8.internal.connection;
 
 import java.io.IOException;
 

@@ -12,13 +12,13 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.search.engine.adapter.search;
+package com.liferay.portal.search.solr8.internal.search.engine.adapter.search;
 
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.search.engine.adapter.search.BaseSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.BaseSearchResponse;
-import com.liferay.portal.search.solr7.internal.stats.StatsTranslator;
+import com.liferay.portal.search.solr8.internal.stats.StatsTranslator;
 import com.liferay.portal.search.stats.StatsResponse;
 
 import java.util.LinkedHashMap;

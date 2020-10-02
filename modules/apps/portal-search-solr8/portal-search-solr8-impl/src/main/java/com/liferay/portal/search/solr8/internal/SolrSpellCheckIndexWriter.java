@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal;
+package com.liferay.portal.search.solr8.internal;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -34,7 +34,7 @@ import com.liferay.portal.search.engine.adapter.document.BulkDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.BulkDocumentResponse;
 import com.liferay.portal.search.engine.adapter.document.DeleteByQueryDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.IndexDocumentRequest;
-import com.liferay.portal.search.solr7.configuration.SolrConfiguration;
+import com.liferay.portal.search.solr8.configuration.SolrConfiguration;
 import com.liferay.portal.search.suggest.BaseGenericSpellCheckIndexWriter;
 
 import java.util.Collection;
@@ -51,7 +51,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Michael C. Han
  */
 @Component(
-	configurationPid = "com.liferay.portal.search.solr7.configuration.SolrConfiguration",
+	configurationPid = "com.liferay.portal.search.solr8.configuration.SolrConfiguration",
 	immediate = true, property = "search.engine.impl=Solr",
 	service = SpellCheckIndexWriter.class
 )

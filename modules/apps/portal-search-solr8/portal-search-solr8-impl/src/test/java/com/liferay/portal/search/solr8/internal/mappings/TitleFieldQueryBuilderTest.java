@@ -12,9 +12,9 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.mappings;
+package com.liferay.portal.search.solr8.internal.mappings;
 
-import com.liferay.portal.search.solr7.internal.SolrIndexingFixture;
+import com.liferay.portal.search.solr8.internal.SolrIndexingFixture;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 import com.liferay.portal.search.test.util.mappings.BaseTitleFieldQueryBuilderTestCase;
 

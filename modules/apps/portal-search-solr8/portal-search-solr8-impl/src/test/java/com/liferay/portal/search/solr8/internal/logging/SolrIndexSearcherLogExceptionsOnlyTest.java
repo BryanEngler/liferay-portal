@@ -12,15 +12,15 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.logging;
+package com.liferay.portal.search.solr8.internal.logging;
 
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.search.solr7.internal.SolrIndexSearcher;
-import com.liferay.portal.search.solr7.internal.SolrIndexingFixture;
+import com.liferay.portal.search.solr8.internal.SolrIndexSearcher;
+import com.liferay.portal.search.solr8.internal.SolrIndexingFixture;
 import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 import com.liferay.portal.search.test.util.logging.ExpectedLogTestRule;

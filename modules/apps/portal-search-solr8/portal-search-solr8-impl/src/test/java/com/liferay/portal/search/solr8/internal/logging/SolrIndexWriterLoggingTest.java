@@ -12,15 +12,15 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.logging;
+package com.liferay.portal.search.solr8.internal.logging;
 
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.IndexWriter;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.search.solr7.internal.SolrIndexingFixture;
-import com.liferay.portal.search.solr7.internal.search.engine.adapter.document.BulkDocumentRequestExecutorImpl;
+import com.liferay.portal.search.solr8.internal.SolrIndexingFixture;
+import com.liferay.portal.search.solr8.internal.search.engine.adapter.document.BulkDocumentRequestExecutorImpl;
 import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 import com.liferay.portal.search.test.util.logging.ExpectedLogTestRule;

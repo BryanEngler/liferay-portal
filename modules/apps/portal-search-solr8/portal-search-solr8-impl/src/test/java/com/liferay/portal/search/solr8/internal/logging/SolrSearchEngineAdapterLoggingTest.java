@@ -12,16 +12,16 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.logging;
+package com.liferay.portal.search.solr8.internal.logging;
 
 import com.liferay.portal.kernel.search.generic.MatchAllQuery;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.search.CountSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.MultisearchSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
-import com.liferay.portal.search.solr7.internal.SolrIndexingFixture;
-import com.liferay.portal.search.solr7.internal.search.engine.adapter.search.CountSearchRequestExecutorImpl;
-import com.liferay.portal.search.solr7.internal.search.engine.adapter.search.SearchSearchRequestExecutorImpl;
+import com.liferay.portal.search.solr8.internal.SolrIndexingFixture;
+import com.liferay.portal.search.solr8.internal.search.engine.adapter.search.CountSearchRequestExecutorImpl;
+import com.liferay.portal.search.solr8.internal.search.engine.adapter.search.SearchSearchRequestExecutorImpl;
 import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 import com.liferay.portal.search.test.util.logging.ExpectedLogTestRule;

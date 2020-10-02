@@ -12,15 +12,15 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.search.engine.adapter.document;
+package com.liferay.portal.search.solr8.internal.search.engine.adapter.document;
 
 import com.liferay.portal.search.engine.adapter.document.BulkableDocumentRequestTranslator;
 import com.liferay.portal.search.engine.adapter.document.DeleteDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.GetDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.IndexDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.UpdateDocumentRequest;
-import com.liferay.portal.search.solr7.internal.document.SolrDocumentFactory;
-import com.liferay.portal.search.solr7.internal.document.SolrInputDocumentAtomicUpdateTranslator;
+import com.liferay.portal.search.solr8.internal.document.SolrDocumentFactory;
+import com.liferay.portal.search.solr8.internal.document.SolrInputDocumentAtomicUpdateTranslator;
 
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.request.QueryRequest;

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.configuration;
+package com.liferay.portal.search.solr8.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
@@ -23,8 +23,8 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
  */
 @ExtendedObjectClassDefinition(category = "search")
 @Meta.OCD(
-	id = "com.liferay.portal.search.solr7.configuration.SolrConfiguration",
-	localization = "content/Language", name = "solr7-configuration-name"
+	id = "com.liferay.portal.search.solr8.configuration.SolrConfiguration",
+	localization = "content/Language", name = "solr8-configuration-name"
 )
 public interface SolrConfiguration {
 

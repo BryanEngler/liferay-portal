@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.query.translator;
+package com.liferay.portal.search.solr8.internal.query.translator;
 
 import com.liferay.portal.search.query.TermQuery;
 

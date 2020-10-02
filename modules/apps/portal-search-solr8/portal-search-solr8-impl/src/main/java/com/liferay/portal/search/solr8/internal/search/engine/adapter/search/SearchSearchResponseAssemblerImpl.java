@@ -12,11 +12,11 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.search.engine.adapter.search;
+package com.liferay.portal.search.solr8.internal.search.engine.adapter.search;
 
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
-import com.liferay.portal.search.solr7.internal.search.response.SearchSearchResponseAssemblerHelper;
+import com.liferay.portal.search.solr8.internal.search.response.SearchSearchResponseAssemblerHelper;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;

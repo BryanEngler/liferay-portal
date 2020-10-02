@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.groupby;
+package com.liferay.portal.search.solr8.internal.groupby;
 
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.GroupBy;
@@ -20,7 +20,7 @@ import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.search.groupby.GroupByRequest;
 import com.liferay.portal.search.groupby.GroupByResponse;
-import com.liferay.portal.search.solr7.internal.SolrIndexingFixture;
+import com.liferay.portal.search.solr8.internal.SolrIndexingFixture;
 import com.liferay.portal.search.test.util.groupby.BaseGroupByTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.search.response;
+package com.liferay.portal.search.solr8.internal.search.response;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -45,9 +45,9 @@ import com.liferay.portal.search.hits.SearchHitsBuilder;
 import com.liferay.portal.search.hits.SearchHitsBuilderFactory;
 import com.liferay.portal.search.legacy.document.DocumentBuilderFactory;
 import com.liferay.portal.search.legacy.stats.StatsResultsTranslator;
-import com.liferay.portal.search.solr7.internal.facet.SolrFacetFieldCollector;
-import com.liferay.portal.search.solr7.internal.facet.SolrFacetQueryCollector;
-import com.liferay.portal.search.solr7.internal.stats.StatsTranslator;
+import com.liferay.portal.search.solr8.internal.facet.SolrFacetFieldCollector;
+import com.liferay.portal.search.solr8.internal.facet.SolrFacetQueryCollector;
+import com.liferay.portal.search.solr8.internal.stats.StatsTranslator;
 import com.liferay.portal.search.stats.StatsResponse;
 
 import java.util.ArrayList;

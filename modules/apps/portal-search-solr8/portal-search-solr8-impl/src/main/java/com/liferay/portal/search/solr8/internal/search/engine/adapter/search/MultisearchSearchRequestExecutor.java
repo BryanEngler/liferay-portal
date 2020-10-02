@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.search.engine.adapter.search;
+package com.liferay.portal.search.solr8.internal.search.engine.adapter.search;
 
 import com.liferay.portal.search.engine.adapter.search.MultisearchSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.MultisearchSearchResponse;

@@ -1,5 +1,5 @@
 Bundle-Name: Liferay Portal Search Solr 7 Implementation
-Bundle-SymbolicName: com.liferay.portal.search.solr7.impl
+Bundle-SymbolicName: com.liferay.portal.search.solr8.impl
 Bundle-Version: 4.0.0
 Import-Package:\
 	!com.sun.management.*,\

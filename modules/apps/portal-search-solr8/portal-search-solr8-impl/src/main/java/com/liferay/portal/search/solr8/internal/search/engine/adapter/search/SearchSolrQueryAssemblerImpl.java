@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.search.engine.adapter.search;
+package com.liferay.portal.search.solr8.internal.search.engine.adapter.search;
 
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.GroupBy;
@@ -26,8 +26,8 @@ import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.groupby.GroupByRequest;
 import com.liferay.portal.search.legacy.groupby.GroupByRequestFactory;
 import com.liferay.portal.search.legacy.stats.StatsRequestBuilderFactory;
-import com.liferay.portal.search.solr7.internal.groupby.GroupByTranslator;
-import com.liferay.portal.search.solr7.internal.stats.StatsTranslator;
+import com.liferay.portal.search.solr8.internal.groupby.GroupByTranslator;
+import com.liferay.portal.search.solr8.internal.stats.StatsTranslator;
 import com.liferay.portal.search.sort.Sort;
 import com.liferay.portal.search.sort.SortFieldTranslator;
 import com.liferay.portal.search.stats.StatsRequestBuilder;

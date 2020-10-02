@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.interceptor;
+package com.liferay.portal.search.solr8.internal.interceptor;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;

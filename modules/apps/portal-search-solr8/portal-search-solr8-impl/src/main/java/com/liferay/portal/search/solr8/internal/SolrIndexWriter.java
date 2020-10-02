@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal;
+package com.liferay.portal.search.solr8.internal;
 
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -37,7 +37,7 @@ import com.liferay.portal.search.engine.adapter.document.DeleteDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.IndexDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.UpdateDocumentRequest;
 import com.liferay.portal.search.engine.adapter.index.RefreshIndexRequest;
-import com.liferay.portal.search.solr7.configuration.SolrConfiguration;
+import com.liferay.portal.search.solr8.configuration.SolrConfiguration;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -53,7 +53,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Michael C. Han
  */
 @Component(
-	configurationPid = "com.liferay.portal.search.solr7.configuration.SolrConfiguration",
+	configurationPid = "com.liferay.portal.search.solr8.configuration.SolrConfiguration",
 	immediate = true, property = "search.engine.impl=Solr",
 	service = IndexWriter.class
 )

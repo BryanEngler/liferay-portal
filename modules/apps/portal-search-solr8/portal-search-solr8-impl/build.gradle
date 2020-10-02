@@ -26,7 +26,7 @@ dependencies {
 	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations", version: "1.3.0"
 	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
 	compileOnly group: "org.slf4j", name: "slf4j-api", version: "1.7.26"
-	compileOnly project(":apps:portal-search-solr7:portal-search-solr7-api")
+	compileOnly project(":apps:portal-search-solr8:portal-search-solr8-api")
 	compileOnly project(":apps:portal-search:portal-search-api")
 	compileOnly project(":apps:portal-search:portal-search-engine-adapter-api")
 	compileOnly project(":apps:portal-search:portal-search-spi")
@@ -54,5 +54,5 @@ dependencies {
 }
 
 test {
-	systemProperty "com.liferay.portal.search.solr7.test.unit.started", System.getProperty("com.liferay.portal.search.solr7.test.unit.started")
+	systemProperty "com.liferay.portal.search.solr8.test.unit.started", System.getProperty("com.liferay.portal.search.solr8.test.unit.started")
 }

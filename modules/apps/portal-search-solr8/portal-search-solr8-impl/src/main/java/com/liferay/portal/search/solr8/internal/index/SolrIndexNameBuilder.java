@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.index;
+package com.liferay.portal.search.solr8.internal.index;
 
 import com.liferay.portal.search.index.IndexNameBuilder;
 

@@ -12,9 +12,9 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.facet;
+package com.liferay.portal.search.solr8.internal.facet;
 
-import com.liferay.portal.search.solr7.internal.SolrIndexingFixture;
+import com.liferay.portal.search.solr8.internal.SolrIndexingFixture;
 import com.liferay.portal.search.test.util.facet.BaseAssetTagNamesFacetTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 

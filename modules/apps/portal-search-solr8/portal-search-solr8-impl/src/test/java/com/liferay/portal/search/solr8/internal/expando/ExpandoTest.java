@@ -12,9 +12,9 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.expando;
+package com.liferay.portal.search.solr8.internal.expando;
 
-import com.liferay.portal.search.solr7.internal.SolrIndexingFixture;
+import com.liferay.portal.search.solr8.internal.SolrIndexingFixture;
 import com.liferay.portal.search.test.util.expando.BaseExpandoTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 

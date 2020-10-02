@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.search.engine.adapter.document;
+package com.liferay.portal.search.solr8.internal.search.engine.adapter.document;
 
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -25,11 +25,11 @@ import com.liferay.portal.search.engine.adapter.document.DeleteDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.GetDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.IndexDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.UpdateDocumentRequest;
-import com.liferay.portal.search.solr7.configuration.SolrConfiguration;
-import com.liferay.portal.search.solr7.internal.connection.SolrClientManager;
-import com.liferay.portal.search.solr7.internal.document.SolrDocumentFactory;
-import com.liferay.portal.search.solr7.internal.document.SolrInputDocumentAtomicUpdateTranslator;
-import com.liferay.portal.search.solr7.internal.util.LogUtil;
+import com.liferay.portal.search.solr8.configuration.SolrConfiguration;
+import com.liferay.portal.search.solr8.internal.connection.SolrClientManager;
+import com.liferay.portal.search.solr8.internal.document.SolrDocumentFactory;
+import com.liferay.portal.search.solr8.internal.document.SolrInputDocumentAtomicUpdateTranslator;
+import com.liferay.portal.search.solr8.internal.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +58,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Bryan Engler
  */
 @Component(
-	configurationPid = "com.liferay.portal.search.solr7.configuration.SolrConfiguration",
+	configurationPid = "com.liferay.portal.search.solr8.configuration.SolrConfiguration",
 	immediate = true, service = BulkDocumentRequestExecutor.class
 )
 public class BulkDocumentRequestExecutorImpl

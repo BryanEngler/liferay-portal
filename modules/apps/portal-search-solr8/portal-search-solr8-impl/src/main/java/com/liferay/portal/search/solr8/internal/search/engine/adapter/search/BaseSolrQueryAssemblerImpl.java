@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.search.engine.adapter.search;
+package com.liferay.portal.search.solr8.internal.search.engine.adapter.search;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -26,14 +26,14 @@ import com.liferay.portal.kernel.search.query.QueryTranslator;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.engine.adapter.search.BaseSearchRequest;
-import com.liferay.portal.search.solr7.internal.AggregationFilteringFacetProcessorContext;
-import com.liferay.portal.search.solr7.internal.FacetProcessorContext;
-import com.liferay.portal.search.solr7.internal.facet.CompositeFacetProcessor;
-import com.liferay.portal.search.solr7.internal.facet.FacetProcessor;
-import com.liferay.portal.search.solr7.internal.facet.FacetUtil;
-import com.liferay.portal.search.solr7.internal.filter.FilterTranslator;
-import com.liferay.portal.search.solr7.internal.query.translator.SolrQueryTranslator;
-import com.liferay.portal.search.solr7.internal.stats.StatsTranslator;
+import com.liferay.portal.search.solr8.internal.AggregationFilteringFacetProcessorContext;
+import com.liferay.portal.search.solr8.internal.FacetProcessorContext;
+import com.liferay.portal.search.solr8.internal.facet.CompositeFacetProcessor;
+import com.liferay.portal.search.solr8.internal.facet.FacetProcessor;
+import com.liferay.portal.search.solr8.internal.facet.FacetUtil;
+import com.liferay.portal.search.solr8.internal.filter.FilterTranslator;
+import com.liferay.portal.search.solr8.internal.query.translator.SolrQueryTranslator;
+import com.liferay.portal.search.solr8.internal.stats.StatsTranslator;
 import com.liferay.portal.search.stats.StatsRequest;
 
 import java.util.ArrayList;

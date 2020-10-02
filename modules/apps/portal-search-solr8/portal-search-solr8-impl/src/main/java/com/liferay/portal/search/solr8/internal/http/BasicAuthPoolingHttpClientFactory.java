@@ -12,12 +12,12 @@
  * details.
  */
 
-package com.liferay.portal.search.solr7.internal.http;
+package com.liferay.portal.search.solr8.internal.http;
 
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.solr7.configuration.SolrHttpClientFactoryConfiguration;
+import com.liferay.portal.search.solr8.configuration.SolrHttpClientFactoryConfiguration;
 
 import java.util.Map;
 
@@ -44,7 +44,7 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
  * @author André de Oliveira
  */
 @Component(
-	configurationPid = "com.liferay.portal.search.solr7.configuration.SolrHttpClientFactoryConfiguration",
+	configurationPid = "com.liferay.portal.search.solr8.configuration.SolrHttpClientFactoryConfiguration",
 	immediate = true, property = "type=BASIC", service = HttpClientFactory.class
 )
 public class BasicAuthPoolingHttpClientFactory
