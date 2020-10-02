@@ -1,5 +1,5 @@
 Liferay-Releng-App-Description: %liferay-releng-app-description
-Liferay-Releng-App-Title: ${liferay.releng.app.title.prefix} Connector to Solr 7
+Liferay-Releng-App-Title: ${liferay.releng.app.title.prefix} Connector to Solr 8
 Liferay-Releng-Bundle: false
 Liferay-Releng-Category: Utility
 Liferay-Releng-Demo-Url:
