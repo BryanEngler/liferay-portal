@@ -48,8 +48,8 @@ public class SolrIndexWriterExceptionsTest extends BaseIndexingTestCase {
 	@Test
 	public void testAddDocument() {
 		expectedException.expect(HttpSolrClient.RemoteSolrException.class);
-		expectedException.expectMessage(
-			"Problem accessing /solr/liferay/" + _COLLECTION_NAME);
+		expectedException.expectMessage("/solr/liferay/" + _COLLECTION_NAME);
+		expectedException.expectMessage("404 Not Found");
 
 		addDocument(
 			DocumentCreationHelpers.singleKeyword(
@@ -75,8 +75,8 @@ public class SolrIndexWriterExceptionsTest extends BaseIndexingTestCase {
 	@Test
 	public void testCommit() {
 		expectedException.expect(HttpSolrClient.RemoteSolrException.class);
-		expectedException.expectMessage(
-			"Problem accessing /solr/liferay/" + _COLLECTION_NAME);
+		expectedException.expectMessage("/solr/liferay/" + _COLLECTION_NAME);
+		expectedException.expectMessage("404 Not Found");
 
 		IndexWriter indexWriter = getIndexWriter();
 
@@ -90,8 +90,8 @@ public class SolrIndexWriterExceptionsTest extends BaseIndexingTestCase {
 	@Test
 	public void testDeleteDocument() {
 		expectedException.expect(HttpSolrClient.RemoteSolrException.class);
-		expectedException.expectMessage(
-			"Problem accessing /solr/liferay/" + _COLLECTION_NAME);
+		expectedException.expectMessage("/solr/liferay/" + _COLLECTION_NAME);
+		expectedException.expectMessage("404 Not Found");
 
 		IndexWriter indexWriter = getIndexWriter();
 
@@ -120,8 +120,8 @@ public class SolrIndexWriterExceptionsTest extends BaseIndexingTestCase {
 	@Test
 	public void testDeleteEntityDocuments() {
 		expectedException.expect(HttpSolrClient.RemoteSolrException.class);
-		expectedException.expectMessage(
-			"Problem accessing /solr/liferay/" + _COLLECTION_NAME);
+		expectedException.expectMessage("/solr/liferay/" + _COLLECTION_NAME);
+		expectedException.expectMessage("404 Not Found");
 
 		IndexWriter indexWriter = getIndexWriter();
 
@@ -136,8 +136,8 @@ public class SolrIndexWriterExceptionsTest extends BaseIndexingTestCase {
 	@Test
 	public void testPartiallyUpdateDocument() {
 		expectedException.expect(HttpSolrClient.RemoteSolrException.class);
-		expectedException.expectMessage(
-			"Problem accessing /solr/liferay/" + _COLLECTION_NAME);
+		expectedException.expectMessage("/solr/liferay/" + _COLLECTION_NAME);
+		expectedException.expectMessage("404 Not Found");
 
 		IndexWriter indexWriter = getIndexWriter();
 

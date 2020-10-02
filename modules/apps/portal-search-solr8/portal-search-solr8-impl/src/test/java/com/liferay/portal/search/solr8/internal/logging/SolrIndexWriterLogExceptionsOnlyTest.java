@@ -48,8 +48,8 @@ public class SolrIndexWriterLogExceptionsOnlyTest extends BaseIndexingTestCase {
 
 	@Test
 	public void testAddDocument() throws Exception {
-		expectedLogTestRule.expectMessage(
-			"Problem accessing /solr/liferay/" + _COLLECTION_NAME);
+		expectedLogTestRule.expectMessage("/solr/liferay/" + _COLLECTION_NAME);
+		expectedLogTestRule.expectMessage("404 Not Found");
 
 		addDocument(
 			DocumentCreationHelpers.singleKeyword(
@@ -75,8 +75,8 @@ public class SolrIndexWriterLogExceptionsOnlyTest extends BaseIndexingTestCase {
 	public void testAddDocumentsBulkExecutor() {
 		expectedLogTestRule.configure(
 			BulkDocumentRequestExecutorImpl.class, Level.WARNING);
-		expectedLogTestRule.expectMessage(
-			"Problem accessing /solr/liferay/" + _COLLECTION_NAME);
+		expectedLogTestRule.expectMessage("/solr/liferay/" + _COLLECTION_NAME);
+		expectedLogTestRule.expectMessage("404 Not Found");
 
 		IndexWriter indexWriter = getIndexWriter();
 
@@ -91,8 +91,8 @@ public class SolrIndexWriterLogExceptionsOnlyTest extends BaseIndexingTestCase {
 
 	@Test
 	public void testCommit() {
-		expectedLogTestRule.expectMessage(
-			"Problem accessing /solr/liferay/" + _COLLECTION_NAME);
+		expectedLogTestRule.expectMessage("/solr/liferay/" + _COLLECTION_NAME);
+		expectedLogTestRule.expectMessage("404 Not Found");
 
 		IndexWriter indexWriter = getIndexWriter();
 
@@ -105,8 +105,8 @@ public class SolrIndexWriterLogExceptionsOnlyTest extends BaseIndexingTestCase {
 
 	@Test
 	public void testDeleteDocument() {
-		expectedLogTestRule.expectMessage(
-			"Problem accessing /solr/liferay/" + _COLLECTION_NAME);
+		expectedLogTestRule.expectMessage("/solr/liferay/" + _COLLECTION_NAME);
+		expectedLogTestRule.expectMessage("404 Not Found");
 
 		IndexWriter indexWriter = getIndexWriter();
 
@@ -135,8 +135,8 @@ public class SolrIndexWriterLogExceptionsOnlyTest extends BaseIndexingTestCase {
 	public void testDeleteDocumentsBulkExecutor() {
 		expectedLogTestRule.configure(
 			BulkDocumentRequestExecutorImpl.class, Level.WARNING);
-		expectedLogTestRule.expectMessage(
-			"Problem accessing /solr/liferay/" + _COLLECTION_NAME);
+		expectedLogTestRule.expectMessage("/solr/liferay/" + _COLLECTION_NAME);
+		expectedLogTestRule.expectMessage("404 Not Found");
 
 		IndexWriter indexWriter = getIndexWriter();
 
@@ -163,8 +163,8 @@ public class SolrIndexWriterLogExceptionsOnlyTest extends BaseIndexingTestCase {
 
 	@Test
 	public void testPartiallyUpdateDocument() {
-		expectedLogTestRule.expectMessage(
-			"Problem accessing /solr/liferay/" + _COLLECTION_NAME);
+		expectedLogTestRule.expectMessage("/solr/liferay/" + _COLLECTION_NAME);
+		expectedLogTestRule.expectMessage("404 Not Found");
 
 		IndexWriter indexWriter = getIndexWriter();
 
@@ -195,8 +195,8 @@ public class SolrIndexWriterLogExceptionsOnlyTest extends BaseIndexingTestCase {
 	public void testPartiallyUpdateDocumentsBulkExecutor() {
 		expectedLogTestRule.configure(
 			BulkDocumentRequestExecutorImpl.class, Level.WARNING);
-		expectedLogTestRule.expectMessage(
-			"Problem accessing /solr/liferay/" + _COLLECTION_NAME);
+		expectedLogTestRule.expectMessage("/solr/liferay/" + _COLLECTION_NAME);
+		expectedLogTestRule.expectMessage("404 Not Found");
 
 		IndexWriter indexWriter = getIndexWriter();
 
@@ -227,8 +227,8 @@ public class SolrIndexWriterLogExceptionsOnlyTest extends BaseIndexingTestCase {
 	public void testUpdateDocumentBulkExecutor() {
 		expectedLogTestRule.configure(
 			BulkDocumentRequestExecutorImpl.class, Level.WARNING);
-		expectedLogTestRule.expectMessage(
-			"Problem accessing /solr/liferay/" + _COLLECTION_NAME);
+		expectedLogTestRule.expectMessage("/solr/liferay/" + _COLLECTION_NAME);
+		expectedLogTestRule.expectMessage("404 Not Found");
 
 		IndexWriter indexWriter = getIndexWriter();
 
@@ -259,8 +259,8 @@ public class SolrIndexWriterLogExceptionsOnlyTest extends BaseIndexingTestCase {
 	public void testUpdateDocumentsBulkExecutor() {
 		expectedLogTestRule.configure(
 			BulkDocumentRequestExecutorImpl.class, Level.WARNING);
-		expectedLogTestRule.expectMessage(
-			"Problem accessing /solr/liferay/" + _COLLECTION_NAME);
+		expectedLogTestRule.expectMessage("/solr/liferay/" + _COLLECTION_NAME);
+		expectedLogTestRule.expectMessage("404 Not Found");
 
 		IndexWriter indexWriter = getIndexWriter();
 
