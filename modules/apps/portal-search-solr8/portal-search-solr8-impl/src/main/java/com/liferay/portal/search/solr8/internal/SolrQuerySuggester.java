@@ -49,7 +49,7 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.search.spell.LevensteinDistance;
+import org.apache.lucene.search.spell.LevenshteinDistance;
 import org.apache.lucene.search.spell.StringDistance;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -431,7 +431,7 @@ public class SolrQuerySuggester implements QuerySuggester {
 
 	private String _defaultCollection;
 	private final StringDistance _defaultStringDistance =
-		new LevensteinDistance();
+		new LevenshteinDistance();
 	private double _distanceThreshold;
 	private Localization _localization;
 	private NGramQueryBuilder _nGramQueryBuilder;
