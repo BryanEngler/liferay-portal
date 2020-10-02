@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <config>
-	<luceneMatchVersion>7.2.1</luceneMatchVersion>
+	<luceneMatchVersion>8.6.2</luceneMatchVersion>
 	<dataDir>${solr.data.dir:}</dataDir>
 	<directoryFactory class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}" name="DirectoryFactory" />
 	<codecFactory class="solr.SchemaCodecFactory" />
