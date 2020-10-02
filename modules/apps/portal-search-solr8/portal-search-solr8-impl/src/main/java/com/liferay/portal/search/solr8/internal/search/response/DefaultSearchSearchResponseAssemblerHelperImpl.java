@@ -232,7 +232,7 @@ public class DefaultSearchSearchResponseAssemblerHelperImpl
 		Collection<String> fieldNames = solrDocument.getFieldNames();
 
 		for (String fieldName : fieldNames) {
-			if (fieldName.equals(_VERSION_FIELD)) {
+			if (ArrayUtil.contains(_EXCLUDED_FIELDS, fieldName)) {
 				continue;
 			}
 
@@ -433,7 +433,7 @@ public class DefaultSearchSearchResponseAssemblerHelperImpl
 		}
 	}
 
-	private static final String _VERSION_FIELD = "_version_";
+	private static final String[] _EXCLUDED_FIELDS = {"_root_", "_version_"};
 
 	private DocumentBuilderFactory _documentBuilderFactory;
 	private GroupByResponseFactory _groupByResponseFactory;
