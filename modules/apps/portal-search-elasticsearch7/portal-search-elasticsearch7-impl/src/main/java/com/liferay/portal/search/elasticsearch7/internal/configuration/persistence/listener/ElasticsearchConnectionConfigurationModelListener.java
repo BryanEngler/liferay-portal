@@ -15,6 +15,7 @@
 package com.liferay.portal.search.elasticsearch7.internal.configuration.persistence.listener;
 
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.configuration.persistence.listener.ConfigurationModelListener;
 import com.liferay.portal.configuration.persistence.listener.ConfigurationModelListenerException;
 import com.liferay.portal.kernel.log.Log;
@@ -25,6 +26,8 @@ import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConnectionConfiguration;
+import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionBuilder;
+import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch7.internal.connection.constants.ConnectionConstants;
 
 import java.util.Dictionary;
@@ -47,6 +50,30 @@ public class ElasticsearchConnectionConfigurationModelListener
 	implements ConfigurationModelListener {
 
 	@Override
+	public void onBeforeDelete(String pid)
+		throws ConfigurationModelListenerException {
+
+		try {
+			Configuration configuration = configurationAdmin.getConfiguration(
+				pid, StringPool.QUESTION);
+
+			Dictionary<String, Object> properties =
+				configuration.getProperties();
+
+			String previousConnectionId = StringUtil.unquote(
+				(String)properties.get("connectionId"));
+
+			elasticsearchConnectionManager.removeElasticsearchConnection(
+				previousConnectionId);
+		}
+		catch (Exception exception) {
+			throw new ConfigurationModelListenerException(
+				exception.getMessage(),
+				ElasticsearchConnectionConfiguration.class, getClass(), null);
+		}
+	}
+
+	@Override
 	public void onBeforeSave(String pid, Dictionary<String, Object> properties)
 		throws ConfigurationModelListenerException {
 
@@ -57,6 +84,8 @@ public class ElasticsearchConnectionConfigurationModelListener
 			_validateUniqueConnectionId(pid, connectionId);
 
 			_validateNetworkHostAddresses(properties);
+
+			addElasticsearchConnection(properties);
 		}
 		catch (Exception exception) {
 			throw new ConfigurationModelListenerException(
@@ -66,8 +95,49 @@ public class ElasticsearchConnectionConfigurationModelListener
 		}
 	}
 
+	protected void addElasticsearchConnection(
+			Dictionary<String, Object> properties)
+		throws ConfigurationModelListenerException {
+
+		ElasticsearchConnectionConfiguration
+			elasticsearchConnectionConfiguration =
+				ConfigurableUtil.createConfigurable(
+					ElasticsearchConnectionConfiguration.class, properties);
+
+		ElasticsearchConnectionBuilder elasticsearchConnectionBuilder =
+			new ElasticsearchConnectionBuilder();
+
+		elasticsearchConnectionBuilder.active(
+			elasticsearchConnectionConfiguration.active()
+		).authenticationEnabled(
+			elasticsearchConnectionConfiguration.authenticationEnabled()
+		).connectionId(
+			elasticsearchConnectionConfiguration.connectionId()
+		).httpSSLEnabled(
+			elasticsearchConnectionConfiguration.httpSSLEnabled()
+		).networkHostAddresses(
+			elasticsearchConnectionConfiguration.networkHostAddresses()
+		).password(
+			elasticsearchConnectionConfiguration.password()
+		).truststorePassword(
+			elasticsearchConnectionConfiguration.truststorePassword()
+		).truststorePath(
+			elasticsearchConnectionConfiguration.truststorePath()
+		).truststoreType(
+			elasticsearchConnectionConfiguration.truststoreType()
+		).userName(
+			elasticsearchConnectionConfiguration.username()
+		);
+
+		elasticsearchConnectionManager.addElasticsearchConnection(
+			elasticsearchConnectionBuilder.build());
+	}
+
 	@Reference
 	protected ConfigurationAdmin configurationAdmin;
+
+	@Reference
+	protected ElasticsearchConnectionManager elasticsearchConnectionManager;
 
 	private String _getMessage(String key, Object... arguments) {
 		try {
@@ -123,23 +193,6 @@ public class ElasticsearchConnectionConfigurationModelListener
 				_getMessage("the-id-you-entered-is-reserved-x", connectionId));
 		}
 
-		Configuration configuration = configurationAdmin.getConfiguration(
-			pid, StringPool.QUESTION);
-
-		Dictionary<String, Object> properties = configuration.getProperties();
-
-		if (properties != null) {
-			String previousConnectionId = StringUtil.unquote(
-				(String)properties.get("connectionId"));
-
-			if (!previousConnectionId.equals(connectionId)) {
-				_log.error("The connection ID cannot be changed");
-
-				throw new Exception(
-					_getMessage("the-connection-id-cannot-be-changed"));
-			}
-		}
-
 		String filterString = String.format(
 			"(&(service.factoryPid=%s)(connectionId=%s))",
 			ElasticsearchConnectionConfiguration.class.getName(), connectionId);
@@ -148,10 +201,26 @@ public class ElasticsearchConnectionConfigurationModelListener
 			filterString);
 
 		if (configurations == null) {
+			Configuration configuration = configurationAdmin.getConfiguration(
+				pid, StringPool.QUESTION);
+
+			Dictionary<String, Object> properties =
+				configuration.getProperties();
+
+			if (properties != null) {
+				String previousConnectionId = StringUtil.unquote(
+					(String)properties.get("connectionId"));
+
+				if (!previousConnectionId.equals(connectionId)) {
+					elasticsearchConnectionManager.
+						removeElasticsearchConnection(previousConnectionId);
+				}
+			}
+
 			return;
 		}
 
-		configuration = configurations[0];
+		Configuration configuration = configurations[0];
 
 		if (pid.equals(configuration.getPid())) {
 			return;
