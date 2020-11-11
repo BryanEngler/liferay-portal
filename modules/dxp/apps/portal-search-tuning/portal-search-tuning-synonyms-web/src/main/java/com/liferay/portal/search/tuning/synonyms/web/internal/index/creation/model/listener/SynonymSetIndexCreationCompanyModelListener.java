@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.tuning.synonyms.web.internal.index.creation.model.listener;
 
+import com.liferay.portal.events.StartupHelperUtil;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.ModelListener;
@@ -34,6 +35,10 @@ public class SynonymSetIndexCreationCompanyModelListener
 
 	@Override
 	public void onAfterCreate(Company company) {
+		if (StartupHelperUtil.isUpgrading()) {
+			return;
+		}
+
 		SynonymSetIndexName synonymSetIndexName =
 			_synonymSetIndexNameBuilder.getSynonymSetIndexName(
 				company.getCompanyId());

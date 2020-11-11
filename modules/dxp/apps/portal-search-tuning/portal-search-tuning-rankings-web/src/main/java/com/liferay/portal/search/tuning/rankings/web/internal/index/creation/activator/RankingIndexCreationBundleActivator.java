@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.tuning.rankings.web.internal.index.creation.activator;
 
+import com.liferay.portal.events.StartupHelperUtil;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManager;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -42,6 +43,10 @@ public class RankingIndexCreationBundleActivator {
 
 	@Activate
 	protected void activate() {
+		if (StartupHelperUtil.isUpgrading()) {
+			return;
+		}
+
 		if (_singleIndexToMultipleIndexImporter.needImport()) {
 			_addBackgroundTask();
 		}

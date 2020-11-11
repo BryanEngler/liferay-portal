@@ -301,7 +301,9 @@ public class SearchEngineHelperImpl implements SearchEngineHelper {
 					SearchEngineConfigurator searchEngineConfigurator =
 						bundleContext.getService(serviceReference);
 
-					searchEngineConfigurator.afterPropertiesSet();
+					if (searchEngineConfigurator != null) {
+						searchEngineConfigurator.afterPropertiesSet();
+					}
 
 					return searchEngineConfigurator;
 				}

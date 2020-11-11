@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal;
 
+import com.liferay.portal.events.StartupHelperUtil;
 import com.liferay.portal.kernel.messaging.DestinationFactory;
 import com.liferay.portal.kernel.messaging.MessageBus;
 import com.liferay.portal.kernel.search.IndexSearcher;
@@ -45,6 +46,10 @@ public class ElasticsearchEngineConfigurator
 
 	@Activate
 	protected void activate(ComponentContext componentContext) {
+		if (StartupHelperUtil.isUpgrading()) {
+			return;
+		}
+
 		_bundleContext = componentContext.getBundleContext();
 
 		setSearchEngines(_searchEngines);

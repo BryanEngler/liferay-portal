@@ -20,6 +20,7 @@ import com.liferay.petra.executor.PortalExecutorConfig;
 import com.liferay.petra.executor.PortalExecutorManager;
 import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.lang.CentralizedThreadLocal;
+import com.liferay.portal.events.StartupHelperUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.NamedThreadFactory;
@@ -44,6 +45,10 @@ public class WorkflowMetricsPortalExecutor {
 
 	public <T extends Throwable> void execute(
 		UnsafeRunnable<T> unsafeRunnable) {
+
+		if (StartupHelperUtil.isUpgrading()) {
+			return;
+		}
 
 		if (PortalRunMode.isTestMode()) {
 			try {

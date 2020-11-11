@@ -15,6 +15,7 @@
 package com.liferay.commerce.machine.learning.internal.search.instance.lifecycle;
 
 import com.liferay.commerce.machine.learning.internal.search.api.CommerceMLIndexer;
+import com.liferay.portal.events.StartupHelperUtil;
 import com.liferay.portal.instance.lifecycle.BasePortalInstanceLifecycleListener;
 import com.liferay.portal.instance.lifecycle.PortalInstanceLifecycleListener;
 import com.liferay.portal.kernel.log.Log;
@@ -47,6 +48,10 @@ public class CommerceMLIndexerPortalInstanceLifecycleListener
 
 	@Override
 	public void portalInstanceRegistered(Company company) throws Exception {
+		if (StartupHelperUtil.isUpgrading()) {
+			return;
+		}
+
 		try {
 			for (CommerceMLIndexer commerceMLIndexer : _commerceMLIndexers) {
 				commerceMLIndexer.createIndex(company.getCompanyId());
@@ -97,6 +102,10 @@ public class CommerceMLIndexerPortalInstanceLifecycleListener
 	@Reference(unbind = "-")
 	protected void setCompanyLocalService(
 		CompanyLocalService companyLocalService) {
+
+		if (StartupHelperUtil.isUpgrading()) {
+			return;
+		}
 
 		_companyLocalService = companyLocalService;
 

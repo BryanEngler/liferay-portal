@@ -15,6 +15,7 @@
 package com.liferay.portal.search.elasticsearch7.internal;
 
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.events.StartupHelperUtil;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -106,6 +107,10 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 
 	@Override
 	public void initialize(long companyId) {
+		if (StartupHelperUtil.isUpgrading()) {
+			return;
+		}
+
 		super.initialize(companyId);
 
 		waitForYellowStatus();
