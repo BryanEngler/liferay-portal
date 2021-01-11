@@ -44,6 +44,7 @@ import com.liferay.portal.search.query.QueryVisitor;
 import com.liferay.portal.search.query.RangeTermQuery;
 import com.liferay.portal.search.query.RegexQuery;
 import com.liferay.portal.search.query.ScriptQuery;
+import com.liferay.portal.search.query.ScriptScoreQuery;
 import com.liferay.portal.search.query.SimpleStringQuery;
 import com.liferay.portal.search.query.StringQuery;
 import com.liferay.portal.search.query.TermQuery;
@@ -221,6 +222,11 @@ public class ElasticsearchQueryTranslator
 	@Override
 	public QueryBuilder visit(ScriptQuery scriptQuery) {
 		return _scriptQueryTranslator.translate(scriptQuery);
+	}
+
+	@Override
+	public QueryBuilder visit(ScriptScoreQuery scriptScoreQuery) {
+		return _scriptScoreQueryTranslator.translate(scriptScoreQuery, this);
 	}
 
 	@Override
@@ -448,6 +454,13 @@ public class ElasticsearchQueryTranslator
 	}
 
 	@Reference(unbind = "-")
+	protected void setScriptScoreQueryTranslator(
+		ScriptScoreQueryTranslator scriptScoreQueryTranslator) {
+
+		_scriptScoreQueryTranslator = scriptScoreQueryTranslator;
+	}
+
+	@Reference(unbind = "-")
 	protected void setSimpleQueryStringQueryTranslator(
 		SimpleStringQueryTranslator simpleQueryStringQueryTranslator) {
 
@@ -523,6 +536,7 @@ public class ElasticsearchQueryTranslator
 	private RangeTermQueryTranslator _rangeTermQueryTranslator;
 	private RegexQueryTranslator _regexQueryTranslator;
 	private ScriptQueryTranslator _scriptQueryTranslator;
+	private ScriptScoreQueryTranslator _scriptScoreQueryTranslator;
 	private SimpleStringQueryTranslator _simpleQueryStringQueryTranslator;
 	private StringQueryTranslator _stringQueryTranslator;
 	private TermQueryTranslator _termQueryTranslator;

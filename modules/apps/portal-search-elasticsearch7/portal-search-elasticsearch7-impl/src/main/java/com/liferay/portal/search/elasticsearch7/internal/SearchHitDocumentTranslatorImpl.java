@@ -46,6 +46,13 @@ public class SearchHitDocumentTranslatorImpl
 			addField(document, documentFieldName, documentFields);
 		}
 
+		Map<String, Object> sourceAsMap = searchHit.getSourceAsMap();
+
+		for (Map.Entry<String, Object> entry : sourceAsMap.entrySet()) {
+			document.add(
+				new Field(entry.getKey(), String.valueOf(entry.getValue())));
+		}
+
 		return document;
 	}
 
