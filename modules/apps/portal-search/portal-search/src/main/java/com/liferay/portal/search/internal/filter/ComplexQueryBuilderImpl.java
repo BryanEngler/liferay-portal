@@ -15,6 +15,7 @@
 package com.liferay.portal.search.internal.filter;
 
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.filter.ComplexQueryBuilder;
 import com.liferay.portal.search.filter.ComplexQueryPart;
@@ -27,10 +28,14 @@ import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.search.query.Query;
 import com.liferay.portal.search.query.SimpleStringQuery;
 import com.liferay.portal.search.query.StringQuery;
+import com.liferay.portal.search.script.ScriptBuilder;
+import com.liferay.portal.search.script.ScriptType;
 import com.liferay.portal.search.script.Scripts;
+import com.liferay.portal.search.semantic.search.TextEmbedder;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +50,16 @@ import java.util.stream.Stream;
 public class ComplexQueryBuilderImpl implements ComplexQueryBuilder {
 
 	public ComplexQueryBuilderImpl(Queries queries, Scripts scripts) {
+		_queries = queries;
+		_scripts = scripts;
+
+		_textEmbedder = null;
+	}
+
+	public ComplexQueryBuilderImpl(
+		TextEmbedder textEmbedder, Queries queries, Scripts scripts) {
+
+		_textEmbedder = textEmbedder;
 		_queries = queries;
 		_scripts = scripts;
 	}
@@ -93,6 +108,7 @@ public class ComplexQueryBuilderImpl implements ComplexQueryBuilder {
 	private final List<ComplexQueryPart> _complexQueryParts = new ArrayList<>();
 	private final Queries _queries;
 	private final Scripts _scripts;
+	private final TextEmbedder _textEmbedder;
 
 	private class Build {
 
@@ -261,6 +277,35 @@ public class ComplexQueryBuilderImpl implements ComplexQueryBuilder {
 				}
 
 				return _queries.script(_scripts.script(value));
+			}
+
+			if (Objects.equals(type, "script_score")) {
+				if (Validator.isBlank(value)) {
+					return null;
+				}
+
+				try {
+					ScriptBuilder scriptBuilder = _scripts.builder();
+
+					scriptBuilder.idOrCode(
+						"cosineSimilarity(params.query_vector, " +
+							"doc['title_vector']) + 1");
+					scriptBuilder.language("painless");
+					scriptBuilder.options(Collections.emptyMap());
+
+					scriptBuilder.parameters(
+						HashMapBuilder.<String, Object>put(
+							"query_vector", _textEmbedder.embed(value)
+						).build());
+
+					scriptBuilder.scriptType(ScriptType.INLINE);
+
+					return _queries.scriptScore(
+						_queries.matchAll(), scriptBuilder.build());
+				}
+				catch (Exception exception) {
+					return null;
+				}
 			}
 
 			if (Objects.equals(type, "simple_query_string")) {

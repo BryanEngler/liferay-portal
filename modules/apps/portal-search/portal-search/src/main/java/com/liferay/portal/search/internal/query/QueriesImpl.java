@@ -46,6 +46,7 @@ import com.liferay.portal.search.query.Query;
 import com.liferay.portal.search.query.RangeTermQuery;
 import com.liferay.portal.search.query.RegexQuery;
 import com.liferay.portal.search.query.ScriptQuery;
+import com.liferay.portal.search.query.ScriptScoreQuery;
 import com.liferay.portal.search.query.SimpleStringQuery;
 import com.liferay.portal.search.query.StringQuery;
 import com.liferay.portal.search.query.TermQuery;
@@ -296,6 +297,11 @@ public class QueriesImpl implements Queries {
 	@Override
 	public ScriptQuery script(Script script) {
 		return new ScriptQueryImpl(script);
+	}
+
+	@Override
+	public ScriptScoreQuery scriptScore(Query query, Script script) {
+		return new ScriptScoreQueryImpl(query, script);
 	}
 
 	@Override

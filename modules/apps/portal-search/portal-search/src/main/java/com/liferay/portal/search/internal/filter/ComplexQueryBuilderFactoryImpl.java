@@ -18,6 +18,7 @@ import com.liferay.portal.search.filter.ComplexQueryBuilder;
 import com.liferay.portal.search.filter.ComplexQueryBuilderFactory;
 import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.search.script.Scripts;
+import com.liferay.portal.search.semantic.search.TextEmbedder;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -31,7 +32,7 @@ public class ComplexQueryBuilderFactoryImpl
 
 	@Override
 	public ComplexQueryBuilder builder() {
-		return new ComplexQueryBuilderImpl(_queries, _scripts);
+		return new ComplexQueryBuilderImpl(_textEmbedder, _queries, _scripts);
 	}
 
 	@Reference(unbind = "-")
@@ -44,7 +45,13 @@ public class ComplexQueryBuilderFactoryImpl
 		_scripts = scripts;
 	}
 
+	@Reference(unbind = "-")
+	protected void setTextEmbedder(TextEmbedder textEmbedder) {
+		_textEmbedder = textEmbedder;
+	}
+
 	private Queries _queries;
 	private Scripts _scripts;
+	private TextEmbedder _textEmbedder;
 
 }
