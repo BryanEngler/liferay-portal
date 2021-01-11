@@ -77,6 +77,8 @@ public interface QueryVisitor<T> {
 
 	public T visit(ScriptQuery scriptQuery);
 
+	public T visit(ScriptScoreQuery scriptScoreQuery);
+
 	public T visit(SimpleStringQuery simpleStringQuery);
 
 	public T visit(StringQuery stringQuery);

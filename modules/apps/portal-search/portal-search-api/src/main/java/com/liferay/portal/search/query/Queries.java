@@ -130,6 +130,8 @@ public interface Queries {
 
 	public ScriptQuery script(Script script);
 
+	public ScriptScoreQuery scriptScore(Query query, Script script);
+
 	public SimpleStringQuery simpleString(String query);
 
 	public StringQuery string(String query);
