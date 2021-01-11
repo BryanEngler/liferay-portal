@@ -61,7 +61,7 @@ public class LowLevelSearchOptionsPortletSharedSearchContributor
 			SearchStringUtil.splitAndUnquote(
 				lowLevelSearchOptionsPortletPreferences.
 					getContributorsToExcludeOptional())
-		).fields(
+		).fetchSourceIncludes(
 			SearchStringUtil.splitAndUnquote(
 				lowLevelSearchOptionsPortletPreferences.
 					getFieldsToReturnOptional())

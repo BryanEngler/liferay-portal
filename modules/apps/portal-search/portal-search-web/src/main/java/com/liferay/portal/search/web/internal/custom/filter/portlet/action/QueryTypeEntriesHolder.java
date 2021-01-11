@@ -37,6 +37,7 @@ public class QueryTypeEntriesHolder {
 		add("range", "Range");
 		add("regexp", "Regexp");
 		add("script", "Script");
+		add("script_score", "Script Score");
 		add("simple_query_string", "Simple Query String");
 		add("term", "Term");
 		add("wildcard", "Wildcard");
