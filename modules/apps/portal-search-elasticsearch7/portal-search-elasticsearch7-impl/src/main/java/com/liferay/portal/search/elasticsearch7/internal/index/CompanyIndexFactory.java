@@ -18,6 +18,7 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.util.PortalRunMode;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationObserver;
@@ -86,22 +87,20 @@ public class CompanyIndexFactory
 
 	@Override
 	public void createIndices(IndicesClient indicesClient, long companyId) {
-		String indexName = getIndexName(companyId);
-
-		if (hasIndex(indicesClient, indexName)) {
+		if (hasIndex(indicesClient, companyId)) {
 			return;
 		}
 
-		createIndex(indexName, indicesClient);
+		createIndex(indicesClient, companyId);
 	}
 
 	@Override
 	public void deleteIndices(IndicesClient indicesClient, long companyId) {
-		String indexName = getIndexName(companyId);
-
-		if (!hasIndex(indicesClient, indexName)) {
+		if (!hasIndex(indicesClient, companyId)) {
 			return;
 		}
+
+		String indexName = getIndexName(companyId);
 
 		executeIndexContributorsBeforeRemove(indexName);
 
@@ -152,12 +151,13 @@ public class CompanyIndexFactory
 	}
 
 	protected void addCommerceTypeMappings(
-		String indexName,
+		long companyId, String indexName,
 		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
 
 		if (Validator.isNotNull(
 				_elasticsearchConfigurationWrapper.overrideTypeMappings()) ||
-			!_elasticsearchConfigurationWrapper.includeCommerceMappings()) {
+			!_elasticsearchConfigurationWrapper.includeCommerceMappings() ||
+			(companyId == CompanyConstants.SYSTEM)) {
 
 			return;
 		}
@@ -227,7 +227,9 @@ public class CompanyIndexFactory
 		}
 	}
 
-	protected void createIndex(String indexName, IndicesClient indicesClient) {
+	protected void createIndex(IndicesClient indicesClient, long companyId) {
+		String indexName = getIndexName(companyId);
+
 		CreateIndexRequest createIndexRequest = new CreateIndexRequest(
 			indexName);
 
@@ -250,7 +252,7 @@ public class CompanyIndexFactory
 		}
 
 		addCommerceTypeMappings(
-			indexName, liferayDocumentTypeFactory);
+			companyId, indexName, liferayDocumentTypeFactory);
 
 		updateLiferayDocumentType(indexName, liferayDocumentTypeFactory);
 
@@ -308,8 +310,9 @@ public class CompanyIndexFactory
 		return _indexNameBuilder.getIndexName(companyId);
 	}
 
-	protected boolean hasIndex(IndicesClient indicesClient, String indexName) {
-		GetIndexRequest getIndexRequest = new GetIndexRequest(indexName);
+	protected boolean hasIndex(IndicesClient indicesClient, long companyId) {
+		GetIndexRequest getIndexRequest = new GetIndexRequest(
+			getIndexName(companyId));
 
 		try {
 			return indicesClient.exists(
