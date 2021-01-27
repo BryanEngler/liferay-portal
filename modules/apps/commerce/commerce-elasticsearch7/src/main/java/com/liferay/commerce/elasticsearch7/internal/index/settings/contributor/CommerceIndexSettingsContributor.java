@@ -14,11 +14,14 @@
 
 package com.liferay.commerce.elasticsearch7.internal.index.settings.contributor;
 
-import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.search.spi.settings.IndexSettingsContributor;
 import com.liferay.portal.search.spi.settings.IndexSettingsHelper;
 import com.liferay.portal.search.spi.settings.TypeMappingsHelper;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
 /**
@@ -34,14 +37,32 @@ public class CommerceIndexSettingsContributor
 	public void contribute(
 		String indexName, TypeMappingsHelper typeMappingsHelper) {
 
-		String typeMappings = StringUtil.read(
-			getClass(), "dependencies/AdditionalTypeMappings.json");
-
-		typeMappingsHelper.addTypeMappings(indexName, typeMappings);
+		if (_log.isWarnEnabled()) {
+			_log.warn(
+				StringBundler.concat(
+					"Please verify that includeCommerceMappings is set to ",
+					"\"true\" in com.liferay.portal.search.elasticsearch7.",
+					"configuration.ElasticsearchConfiguration"));
+		}
 	}
 
 	@Override
 	public void populate(IndexSettingsHelper indexSettingsHelper) {
 	}
+
+	@Activate
+	protected void activate() {
+		if (_log.isWarnEnabled()) {
+			_log.warn(
+				StringBundler.concat(
+					"If includeCommerceMappings was not set to \"true\" in ",
+					"com.liferay.portal.search.elasticsearch7.configuration.",
+					"ElasticsearchConfiguration when the company indexes were ",
+					"created, then set it to \"true\" and run a full reindex"));
+		}
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		CommerceIndexSettingsContributor.class);
 
 }
