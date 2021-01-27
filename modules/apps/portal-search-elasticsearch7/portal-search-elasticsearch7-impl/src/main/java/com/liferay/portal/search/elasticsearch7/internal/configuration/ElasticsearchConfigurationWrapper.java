@@ -114,6 +114,10 @@ public class ElasticsearchConfigurationWrapper
 		return _elasticsearchConfiguration.httpSSLEnabled();
 	}
 
+	public boolean includeCommerceMappings() {
+		return _elasticsearchConfiguration.includeCommerceMappings();
+	}
+
 	public String indexNamePrefix() {
 		return _elasticsearchConfiguration.indexNamePrefix();
 	}

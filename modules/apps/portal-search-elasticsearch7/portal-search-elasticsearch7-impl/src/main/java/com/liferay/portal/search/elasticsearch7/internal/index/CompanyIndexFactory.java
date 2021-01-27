@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationObserver;
 import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
+import com.liferay.portal.search.elasticsearch7.internal.index.constants.LiferayTypeMappingsConstants;
 import com.liferay.portal.search.elasticsearch7.internal.index.contributor.IndexContributorReceiver;
 import com.liferay.portal.search.elasticsearch7.internal.settings.SettingsBuilder;
 import com.liferay.portal.search.elasticsearch7.internal.util.ResourceUtil;
@@ -150,6 +151,24 @@ public class CompanyIndexFactory
 		createCompanyIndexes();
 	}
 
+	protected void addCommerceTypeMappings(
+		String indexName,
+		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
+
+		if (Validator.isNotNull(
+				_elasticsearchConfigurationWrapper.overrideTypeMappings()) ||
+			!_elasticsearchConfigurationWrapper.includeCommerceMappings()) {
+
+			return;
+		}
+
+		String commerceMappings = ResourceUtil.getResourceAsString(
+			getClass(),
+			LiferayTypeMappingsConstants.COMMERCE_TYPE_MAPPING_FILE_NAME);
+
+		liferayDocumentTypeFactory.addTypeMappings(indexName, commerceMappings);
+	}
+
 	@Reference(
 		cardinality = ReferenceCardinality.MULTIPLE,
 		policy = ReferencePolicy.DYNAMIC,
@@ -229,6 +248,9 @@ public class CompanyIndexFactory
 		catch (IOException ioException) {
 			throw new RuntimeException(ioException);
 		}
+
+		addCommerceTypeMappings(
+			indexName, liferayDocumentTypeFactory);
 
 		updateLiferayDocumentType(indexName, liferayDocumentTypeFactory);
 
