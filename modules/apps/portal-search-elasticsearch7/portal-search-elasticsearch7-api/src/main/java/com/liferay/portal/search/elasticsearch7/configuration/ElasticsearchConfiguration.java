@@ -141,6 +141,12 @@ public interface ElasticsearchConfiguration {
 	public String overrideTypeMappings();
 
 	@Meta.AD(
+		deflt = "false", description = "include-commerce-mappings-help",
+		name = "include-commerce-mappings", required = false
+	)
+	public boolean includeCommerceMappings();
+
+	@Meta.AD(
 		deflt = "true", description = "log-exceptions-only-help",
 		name = "log-exceptions-only", required = false
 	)
