@@ -40,6 +40,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.BiConsumer;
 
 import org.elasticsearch.action.ActionResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
@@ -160,6 +161,11 @@ public class CompanyIndexFactory
 			IndexSettingsContributor indexSettingsContributor) {
 
 		_elasticsearchIndexSettingsContributors.add(indexSettingsContributor);
+
+		processContributions(
+			(indexName, liferayDocumentTypeFactory) ->
+				indexSettingsContributor.contribute(
+					indexName, liferayDocumentTypeFactory));
 	}
 
 	@Reference(
@@ -171,6 +177,11 @@ public class CompanyIndexFactory
 		IndexSettingsContributor indexSettingsContributor) {
 
 		_indexSettingsContributors.add(indexSettingsContributor);
+
+		processContributions(
+			(indexName, liferayDocumentTypeFactory) ->
+				indexSettingsContributor.contribute(
+					indexName, liferayDocumentTypeFactory));
 	}
 
 	protected void addLiferayDocumentTypeMappings(
@@ -390,6 +401,28 @@ public class CompanyIndexFactory
 
 			indexSettingsContributor.contribute(
 				indexName, liferayDocumentTypeFactory);
+		}
+	}
+
+	protected void processContributions(
+		BiConsumer<String, LiferayDocumentTypeFactory> biConsumer) {
+
+		if (Validator.isNotNull(
+				_elasticsearchConfigurationWrapper.overrideTypeMappings())) {
+
+			return;
+		}
+
+		RestHighLevelClient restHighLevelClient =
+			_elasticsearchConnectionManager.getRestHighLevelClient();
+
+		LiferayDocumentTypeFactory liferayDocumentTypeFactory =
+			new LiferayDocumentTypeFactory(
+				restHighLevelClient.indices(), _jsonFactory);
+
+		for (Long companyId : _companyIds) {
+			biConsumer.accept(
+				getIndexName(companyId), liferayDocumentTypeFactory);
 		}
 	}
 
