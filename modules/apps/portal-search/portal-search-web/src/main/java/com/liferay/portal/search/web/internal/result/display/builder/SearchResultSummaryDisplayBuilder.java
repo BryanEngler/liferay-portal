@@ -338,15 +338,16 @@ public class SearchResultSummaryDisplayBuilder {
 			return null;
 		}
 
-		return build(
-			summary, className, classPK, assetRendererFactory, assetRenderer);
+		return build(summary, assetRendererFactory, assetRenderer);
 	}
 
 	protected SearchResultSummaryDisplayContext build(
-			Summary summary, String className, long classPK,
-			AssetRendererFactory<?> assetRendererFactory,
+			Summary summary, AssetRendererFactory<?> assetRendererFactory,
 			AssetRenderer<?> assetRenderer)
 		throws PortalException, PortletException {
+
+		String className = assetRenderer.getClassName();
+		long classPK = assetRenderer.getClassPK();
 
 		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext =
 			new SearchResultSummaryDisplayContext();
@@ -363,8 +364,11 @@ public class SearchResultSummaryDisplayBuilder {
 			summary.getTitle());
 		searchResultSummaryDisplayContext.setPortletURL(
 			_portletURLFactory.getPortletURL());
-		searchResultSummaryDisplayContext.setTitle(
-			assetRenderer.getTitle(summary.getLocale()));
+
+		if (assetRenderer != null) {
+			searchResultSummaryDisplayContext.setTitle(
+				assetRenderer.getTitle(summary.getLocale()));
+		}
 
 		if (_abridged) {
 			return searchResultSummaryDisplayContext;
