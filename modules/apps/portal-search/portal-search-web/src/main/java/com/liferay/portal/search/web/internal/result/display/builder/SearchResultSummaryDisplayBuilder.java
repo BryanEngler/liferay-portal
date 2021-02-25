@@ -35,6 +35,7 @@ import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.security.permission.ResourceActions;
 import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FastDateFormatConstants;
@@ -287,6 +288,14 @@ public class SearchResultSummaryDisplayBuilder {
 		ThemeDisplay themeDisplay) {
 
 		_themeDisplay = themeDisplay;
+
+		return this;
+	}
+
+	public SearchResultSummaryDisplayBuilder setUserLocalService(
+		UserLocalService userLocalService) {
+
+		_userLocalService = userLocalService;
 
 		return this;
 	}
@@ -706,9 +715,16 @@ public class SearchResultSummaryDisplayBuilder {
 		}
 
 		if (assetEntry != null) {
-			searchResultSummaryDisplayContext.setAssetEntryUserId(
+			String portraitURLString = getPortraitURLString(
 				getAssetEntryUserId(assetEntry));
-			searchResultSummaryDisplayContext.setUserPortraitVisible(true);
+
+			if (portraitURLString != null) {
+				searchResultSummaryDisplayContext.setAssetEntryUserId(
+					getAssetEntryUserId(assetEntry));
+				searchResultSummaryDisplayContext.setUserPortraitURLString(
+					portraitURLString);
+				searchResultSummaryDisplayContext.setUserPortraitVisible(true);
+			}
 		}
 	}
 
@@ -843,6 +859,23 @@ public class SearchResultSummaryDisplayBuilder {
 		}
 
 		return IndexerRegistryUtil.getIndexer(className);
+	}
+
+	protected String getPortraitURLString(long userId) {
+		User user = _userLocalService.fetchUser(userId);
+
+		try {
+			if ((user == null) || (user.getPortraitId() == 0)) {
+				return null;
+			}
+
+			return user.getPortraitURL(_themeDisplay);
+		}
+		catch (PortalException portalException) {
+			_log.error(portalException, portalException);
+
+			return null;
+		}
 	}
 
 	protected String getSearchResultViewURL(String className, long classPK) {
@@ -998,5 +1031,6 @@ public class SearchResultSummaryDisplayBuilder {
 	private SearchResultViewURLSupplier _searchResultViewURLSupplier;
 	private SummaryBuilderFactory _summaryBuilderFactory;
 	private ThemeDisplay _themeDisplay;
+	private UserLocalService _userLocalService;
 
 }
