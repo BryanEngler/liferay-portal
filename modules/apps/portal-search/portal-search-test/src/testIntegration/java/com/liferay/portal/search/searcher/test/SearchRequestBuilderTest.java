@@ -15,6 +15,8 @@
 package com.liferay.portal.search.searcher.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.blogs.model.BlogsEntry;
+import com.liferay.blogs.service.BlogsEntryLocalService;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.test.util.search.JournalArticleBlueprint;
@@ -22,6 +24,7 @@ import com.liferay.journal.test.util.search.JournalArticleContent;
 import com.liferay.journal.test.util.search.JournalArticleDescription;
 import com.liferay.journal.test.util.search.JournalArticleSearchFixture;
 import com.liferay.journal.test.util.search.JournalArticleTitle;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
@@ -34,6 +37,7 @@ import com.liferay.portal.kernel.test.rule.DataGuard;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.filter.ComplexQueryPartBuilderFactory;
 import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.search.query.Query;
@@ -48,6 +52,7 @@ import com.liferay.portal.search.sort.FieldSort;
 import com.liferay.portal.search.sort.Sort;
 import com.liferay.portal.search.sort.SortOrder;
 import com.liferay.portal.search.sort.Sorts;
+import com.liferay.portal.search.test.blogs.util.BlogsEntrySearchFixture;
 import com.liferay.portal.search.test.util.DocumentsAssert;
 import com.liferay.portal.search.test.util.SearchTestRule;
 import com.liferay.portal.test.rule.Inject;
@@ -85,6 +90,8 @@ public class SearchRequestBuilderTest {
 
 	@Before
 	public void setUp() throws Exception {
+		setUpBlogsEntrySearchFixture();
+
 		_journalArticleSearchFixture = new JournalArticleSearchFixture(
 			_journalArticleLocalService);
 
@@ -101,6 +108,7 @@ public class SearchRequestBuilderTest {
 
 	@After
 	public void tearDown() throws Exception {
+		_blogsEntrySearchFixture.tearDown();
 		_userSearchFixture.tearDown();
 	}
 
@@ -312,11 +320,112 @@ public class SearchRequestBuilderTest {
 			"[lambda1, lambda2, lambda3]", "title_en_US", searchRequestBuilder);
 	}
 
+	@Test
+	public void testTwoModelIndexerClassNamesMultiFirst() throws Exception {
+		_addJournalArticle("epsilon", "epsilon", "lambda1");
+
+		String userName = StringUtil.toLowerCase(_user.getFullName());
+
+		_addBlogEntry(userName);
+
+		SearchRequestBuilder searchRequestBuilder =
+			_searchRequestBuilderFactory.builder(
+			).companyId(
+				_group.getCompanyId()
+			).fields(
+				StringPool.STAR
+			).groupIds(
+				_group.getGroupId()
+			).queryString(
+				userName
+			);
+
+		searchRequestBuilder.modelIndexerClassNames(
+			User.class.getCanonicalName(),
+			JournalArticle.class.getCanonicalName());
+
+		_assertSearch(
+			StringBundler.concat("[", userName, ", ", userName, "]"),
+			"userName", searchRequestBuilder);
+
+		searchRequestBuilder.modelIndexerClassNames(
+			JournalArticle.class.getCanonicalName());
+
+		_assertSearch("[" + userName + "]", "userName", searchRequestBuilder);
+
+		searchRequestBuilder.modelIndexerClassNames(
+			BlogsEntry.class.getCanonicalName());
+
+		_assertSearch("[" + userName + "]", "userName", searchRequestBuilder);
+
+		searchRequestBuilder.modelIndexerClassNames(
+			User.class.getCanonicalName());
+
+		_assertSearch("[" + userName + "]", "userName", searchRequestBuilder);
+	}
+
+	@Test
+	public void testTwoModelIndexerClassNamesSingleFirst() throws Exception {
+		_addJournalArticle("epsilon", "epsilon", "lambda1");
+
+		String userName = StringUtil.toLowerCase(_user.getFullName());
+
+		_addBlogEntry(userName);
+
+		SearchRequestBuilder searchRequestBuilder =
+			_searchRequestBuilderFactory.builder(
+			).companyId(
+				_group.getCompanyId()
+			).fields(
+				StringPool.STAR
+			).groupIds(
+				_group.getGroupId()
+			).queryString(
+				userName
+			);
+
+		searchRequestBuilder.modelIndexerClassNames(
+			JournalArticle.class.getCanonicalName());
+
+		_assertSearch("[" + userName + "]", "userName", searchRequestBuilder);
+
+		searchRequestBuilder.modelIndexerClassNames(
+			BlogsEntry.class.getCanonicalName());
+
+		_assertSearch("[" + userName + "]", "userName", searchRequestBuilder);
+
+		searchRequestBuilder.modelIndexerClassNames(
+			User.class.getCanonicalName());
+
+		_assertSearch("[" + userName + "]", "userName", searchRequestBuilder);
+
+		searchRequestBuilder.modelIndexerClassNames(
+			User.class.getCanonicalName(),
+			JournalArticle.class.getCanonicalName());
+
+		_assertSearch(
+			StringBundler.concat("[", userName, ", ", userName, "]"),
+			"userName", searchRequestBuilder);
+	}
+
 	@Rule
 	public SearchTestRule searchTestRule = new SearchTestRule();
 
 	@Rule
 	public TestName testName = new TestName();
+
+	protected void setUpBlogsEntrySearchFixture() {
+		_blogsEntrySearchFixture = new BlogsEntrySearchFixture(
+			_blogsEntryLocalService);
+
+		_blogsEntrySearchFixture.setUp();
+
+		_blogsEntries = _blogsEntrySearchFixture.getBlogsEntries();
+	}
+
+	private void _addBlogEntry(String title) throws Exception {
+		_blogsEntrySearchFixture.addBlogsEntry(_group, _user, title);
+	}
 
 	private void _addGroupAndUser() throws Exception {
 		GroupSearchFixture groupSearchFixture = new GroupSearchFixture();
@@ -457,6 +566,14 @@ public class SearchRequestBuilderTest {
 	private boolean _isElasticsearch() {
 		return Objects.equals(_searchEngine.getVendor(), "Elasticsearch");
 	}
+
+	@DeleteAfterTestRun
+	private List<BlogsEntry> _blogsEntries;
+
+	@Inject
+	private BlogsEntryLocalService _blogsEntryLocalService;
+
+	private BlogsEntrySearchFixture _blogsEntrySearchFixture;
 
 	@Inject
 	private ComplexQueryPartBuilderFactory _complexQueryPartBuilderFactory;
