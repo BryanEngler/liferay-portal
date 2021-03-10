@@ -400,6 +400,10 @@ public class SearchRequestBuilderImpl implements SearchRequestBuilder {
 			searchRequestImpl -> searchRequestImpl.setModelIndexerClassNames(
 				classNames));
 
+		withSearchRequestImpl(
+			searchRequestImpl -> searchRequestImpl.addEntryClassNames(
+				classNames));
+
 		return this;
 	}
 
