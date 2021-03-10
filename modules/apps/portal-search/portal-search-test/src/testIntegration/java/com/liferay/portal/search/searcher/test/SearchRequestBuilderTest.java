@@ -15,6 +15,8 @@
 package com.liferay.portal.search.searcher.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.blogs.model.BlogsEntry;
+import com.liferay.blogs.test.util.BlogsTestUtil;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.test.util.search.JournalArticleBlueprint;
@@ -22,6 +24,7 @@ import com.liferay.journal.test.util.search.JournalArticleContent;
 import com.liferay.journal.test.util.search.JournalArticleDescription;
 import com.liferay.journal.test.util.search.JournalArticleSearchFixture;
 import com.liferay.journal.test.util.search.JournalArticleTitle;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
@@ -32,8 +35,10 @@ import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DataGuard;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
+import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.filter.ComplexQueryPartBuilderFactory;
 import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.search.query.Query;
@@ -312,11 +317,105 @@ public class SearchRequestBuilderTest {
 			"[lambda1, lambda2, lambda3]", "title_en_US", searchRequestBuilder);
 	}
 
+	@Test
+	public void testTwoModelIndexerClassNamesMultiFirst() throws Exception {
+		_addJournalArticle("epsilon", "epsilon", "lambda1");
+
+		String userName = StringUtil.toLowerCase(_user.getFullName());
+
+		_addBlogEntry(userName);
+
+		SearchRequestBuilder searchRequestBuilder =
+			_searchRequestBuilderFactory.builder(
+			).companyId(
+				_group.getCompanyId()
+			).fields(
+				StringPool.STAR
+			).groupIds(
+				_group.getGroupId()
+			).queryString(
+				userName
+			);
+
+		searchRequestBuilder.modelIndexerClassNames(
+			User.class.getCanonicalName(),
+			JournalArticle.class.getCanonicalName());
+
+		_assertSearch(
+			StringBundler.concat("[", userName, ", ", userName, "]"),
+			"userName", searchRequestBuilder);
+
+		searchRequestBuilder.modelIndexerClassNames(
+			JournalArticle.class.getCanonicalName());
+
+		_assertSearch("[" + userName + "]", "userName", searchRequestBuilder);
+
+		searchRequestBuilder.modelIndexerClassNames(
+			BlogsEntry.class.getCanonicalName());
+
+		_assertSearch("[" + userName + "]", "userName", searchRequestBuilder);
+
+		searchRequestBuilder.modelIndexerClassNames(
+			User.class.getCanonicalName());
+
+		_assertSearch("[" + userName + "]", "userName", searchRequestBuilder);
+	}
+
+	@Test
+	public void testTwoModelIndexerClassNamesSingleFirst() throws Exception {
+		_addJournalArticle("epsilon", "epsilon", "lambda1");
+
+		String userName = StringUtil.toLowerCase(_user.getFullName());
+
+		_addBlogEntry(userName);
+
+		SearchRequestBuilder searchRequestBuilder =
+			_searchRequestBuilderFactory.builder(
+			).companyId(
+				_group.getCompanyId()
+			).fields(
+				StringPool.STAR
+			).groupIds(
+				_group.getGroupId()
+			).queryString(
+				userName
+			);
+
+		searchRequestBuilder.modelIndexerClassNames(
+			JournalArticle.class.getCanonicalName());
+
+		_assertSearch("[" + userName + "]", "userName", searchRequestBuilder);
+
+		searchRequestBuilder.modelIndexerClassNames(
+			BlogsEntry.class.getCanonicalName());
+
+		_assertSearch("[" + userName + "]", "userName", searchRequestBuilder);
+
+		searchRequestBuilder.modelIndexerClassNames(
+			User.class.getCanonicalName());
+
+		_assertSearch("[" + userName + "]", "userName", searchRequestBuilder);
+
+		searchRequestBuilder.modelIndexerClassNames(
+			User.class.getCanonicalName(),
+			JournalArticle.class.getCanonicalName());
+
+		_assertSearch(
+			StringBundler.concat("[", userName, ", ", userName, "]"),
+			"userName", searchRequestBuilder);
+	}
+
 	@Rule
 	public SearchTestRule searchTestRule = new SearchTestRule();
 
 	@Rule
 	public TestName testName = new TestName();
+
+	private void _addBlogEntry(String userName) throws Exception {
+		BlogsTestUtil.addEntryWithWorkflow(
+			TestPropsValues.getUserId(), userName, true,
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
+	}
 
 	private void _addGroupAndUser() throws Exception {
 		GroupSearchFixture groupSearchFixture = new GroupSearchFixture();
