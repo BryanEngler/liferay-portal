@@ -396,6 +396,10 @@ public class SearchRequestBuilderImpl implements SearchRequestBuilder {
 			searchRequestImpl -> searchRequestImpl.setModelIndexerClassNames(
 				classNames));
 
+		withSearchRequestImpl(
+			searchRequestImpl -> searchRequestImpl.addEntryClassNames(
+				classNames));
+
 		return this;
 	}
 
@@ -408,6 +412,10 @@ public class SearchRequestBuilderImpl implements SearchRequestBuilder {
 	public SearchRequestBuilder modelIndexerClassNames(String... classNames) {
 		withSearchRequestImpl(
 			searchRequestImpl -> searchRequestImpl.setModelIndexerClassNames(
+				classNames));
+
+		withSearchRequestImpl(
+			searchRequestImpl -> searchRequestImpl.addEntryClassNames(
 				classNames));
 
 		return this;
