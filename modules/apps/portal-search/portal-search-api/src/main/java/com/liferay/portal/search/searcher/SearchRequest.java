@@ -79,6 +79,11 @@ public interface SearchRequest {
 	@Deprecated
 	public List<Class<?>> getModelIndexerClasses();
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #getEntryClassNames()}
+	 */
+	@Deprecated
 	public List<String> getModelIndexerClassNames();
 
 	public String getPaginationStartParameterName();
