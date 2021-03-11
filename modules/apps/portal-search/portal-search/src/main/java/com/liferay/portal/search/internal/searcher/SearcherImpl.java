@@ -206,11 +206,10 @@ public class SearcherImpl implements Searcher {
 	protected String getSingleIndexerClassName(
 		SearchRequestImpl searchRequestImpl) {
 
-		List<String> modelIndexerClassNames =
-			searchRequestImpl.getModelIndexerClassNames();
+		List<String> entryClassNames = searchRequestImpl.getEntryClassNames();
 
-		if (modelIndexerClassNames.size() == 1) {
-			return modelIndexerClassNames.get(0);
+		if (entryClassNames.size() == 1) {
+			return entryClassNames.get(0);
 		}
 
 		return null;

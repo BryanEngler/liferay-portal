@@ -226,6 +226,11 @@ public class SearchRequestImpl implements SearchRequest, Serializable {
 		return Collections.emptyList();
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #getEntryClassNames()}
+	 */
+	@Deprecated
 	@Override
 	public List<String> getModelIndexerClassNames() {
 		return _modelIndexerClassNames;

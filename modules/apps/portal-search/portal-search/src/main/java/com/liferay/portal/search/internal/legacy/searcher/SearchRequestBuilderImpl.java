@@ -377,6 +377,11 @@ public class SearchRequestBuilderImpl implements SearchRequestBuilder {
 		return this;
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #entryClassNames(String...)}
+	 */
+	@Deprecated
 	@Override
 	public SearchRequestBuilder modelIndexerClasses(Class<?>... classes) {
 		String[] classNames = Stream.of(
@@ -394,6 +399,11 @@ public class SearchRequestBuilderImpl implements SearchRequestBuilder {
 		return this;
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #entryClassNames(String...)}
+	 */
+	@Deprecated
 	@Override
 	public SearchRequestBuilder modelIndexerClassNames(String... classNames) {
 		withSearchRequestImpl(
