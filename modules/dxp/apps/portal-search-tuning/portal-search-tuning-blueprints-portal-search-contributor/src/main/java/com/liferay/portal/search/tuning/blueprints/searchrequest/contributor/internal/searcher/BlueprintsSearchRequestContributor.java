@@ -17,6 +17,7 @@ package com.liferay.portal.search.tuning.blueprints.searchrequest.contributor.in
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.search.filter.ComplexQueryPartBuilderFactory;
@@ -157,14 +158,19 @@ public class BlueprintsSearchRequestContributor
 			ReservedParameterNames.IP_ADDRESS.getKey(),
 			getIpAddress(searchRequest)
 		).addAttribute(
-			ReservedParameterNames.PLID.getKey(), getPlid(searchRequest)
-		).addAttribute(
 			ReservedParameterNames.SCOPE_GROUP_ID.getKey(),
 			getScopeGroupId(searchRequest)
 		).addAttribute(
 			ReservedParameterNames.TIMEZONE_ID.getKey(),
 			getTimezoneId(searchRequest)
 		);
+
+		Layout layout = getLayout(searchRequest);
+
+		if (layout != null) {
+			blueprintsAttributesBuilder.addAttribute(
+				ReservedParameterNames.PLID.getKey(), layout.getPlid());
+		}
 
 		addCommerceAttributes(searchRequest, blueprintsAttributesBuilder);
 
@@ -219,6 +225,14 @@ public class BlueprintsSearchRequestContributor
 		);
 	}
 
+	protected Layout getLayout(SearchRequest searchRequest) {
+		return _searchRequestBuilderFactory.builder(
+			searchRequest
+		).withSearchContextGet(
+			searchContext -> searchContext.getLayout()
+		);
+	}
+
 	protected Locale getLocale(SearchRequest searchRequest) {
 		return _searchRequestBuilderFactory.builder(
 			searchRequest
@@ -227,21 +241,19 @@ public class BlueprintsSearchRequestContributor
 		);
 	}
 
-	protected long getPlid(SearchRequest searchRequest) {
-		return _searchRequestBuilderFactory.builder(
-			searchRequest
-		).withSearchContextGet(
-			searchContext -> searchContext.getLayout(
-			).getPlid()
-		);
-	}
-
 	protected long getScopeGroupId(SearchRequest searchRequest) {
 		return _searchRequestBuilderFactory.builder(
 			searchRequest
 		).withSearchContextGet(
-			searchContext -> searchContext.getLayout(
-			).getGroupId()
+			searchContext -> {
+				Layout layout = searchContext.getLayout();
+
+				if (layout != null) {
+					return layout.getGroupId();
+				}
+
+				return 0L;
+			}
 		);
 	}
 
