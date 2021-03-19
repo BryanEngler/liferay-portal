@@ -213,6 +213,10 @@ public class FacetedSearcherImpl
 		_addSearchKeywordsQueryContributorHelper.contribute(
 			booleanQuery, searchContext);
 
+		if (_shouldSuppressIndexerProvidedClauses(searchContext)) {
+			return;
+		}
+
 		_addSearchExpando(booleanQuery, searchClassNames, searchContext);
 	}
 
@@ -287,6 +291,14 @@ public class FacetedSearcherImpl
 
 		_postProcessSearchQueryContributorHelper.contribute(
 			booleanQuery, booleanFilter, indexers, searchContext);
+	}
+
+	private boolean _shouldSuppressIndexerProvidedClauses(
+		SearchContext searchContext) {
+
+		return GetterUtil.getBoolean(
+			searchContext.getAttribute(
+				"search.full.query.suppress.indexer.provided.clauses"));
 	}
 
 	private final AddSearchKeywordsQueryContributorHelper
