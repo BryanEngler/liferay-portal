@@ -15,6 +15,7 @@
 package com.liferay.journal.search.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
 import com.liferay.expando.kernel.model.ExpandoTable;
@@ -52,6 +53,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -121,6 +123,26 @@ public class JournalArticleExpandoSearchTest {
 			"[Software Engineer]");
 	}
 
+	@Test
+	public void testSuppressedMultipleIndexersQueryString() throws Exception {
+		addJournalArticle("Software Engineer");
+
+		assertSuppressedMultipleIndexerSearch(
+			searchRequestBuilder -> searchRequestBuilder.queryString(
+				"Engineer"),
+			"[Software Engineer]", true);
+	}
+
+	@Test
+	public void testSuppressedQueryString() throws Exception {
+		addJournalArticle("Software Engineer");
+
+		assertSuppressedSearch(
+			searchRequestBuilder -> searchRequestBuilder.queryString(
+				"Engineer"),
+			"[Software Engineer]", true);
+	}
+
 	@Rule
 	public SearchTestRule searchTestRule = new SearchTestRule();
 
@@ -153,22 +175,51 @@ public class JournalArticleExpandoSearchTest {
 			).build());
 	}
 
+	protected void assertNoExpandoClauseInSearchQuery(
+		SearchResponse searchResponse) {
+
+		String requestString = searchResponse.getRequestString();
+
+		Assert.assertFalse(
+			requestString.contains("expando__keyword__custom_fields__"));
+
+		Assert.assertFalse(requestString.contains("expando__custom_fields__"));
+	}
+
 	protected void assertSearch(
 		Consumer<SearchRequestBuilder> consumer, String expected) {
 
-		SearchResponse searchResponse = searcher.search(
-			searchRequestBuilderFactory.builder(
-			).companyId(
-				_group.getCompanyId()
-			).fields(
-				StringPool.STAR
-			).groupIds(
-				_group.getGroupId()
-			).modelIndexerClasses(
-				JournalArticle.class
-			).withSearchRequestBuilder(
-				consumer
-			).build());
+		SearchResponse searchResponse = search(consumer, false);
+
+		DocumentsAssert.assertValuesIgnoreRelevance(
+			searchResponse.getRequestString(),
+			searchResponse.getDocumentsStream(),
+			"expando__keyword__custom_fields__" + _EXPANDO_COLUMN, expected);
+	}
+
+	protected void assertSuppressedMultipleIndexerSearch(
+		Consumer<SearchRequestBuilder> consumer, String expected,
+		boolean suppressedClauses) {
+
+		SearchResponse searchResponse = search(
+			consumer, new Class<?>[] {DLFileEntry.class, JournalArticle.class},
+			suppressedClauses);
+
+		assertNoExpandoClauseInSearchQuery(searchResponse);
+
+		DocumentsAssert.assertValuesIgnoreRelevance(
+			searchResponse.getRequestString(),
+			searchResponse.getDocumentsStream(),
+			"expando__keyword__custom_fields__" + _EXPANDO_COLUMN, expected);
+	}
+
+	protected void assertSuppressedSearch(
+		Consumer<SearchRequestBuilder> consumer, String expected,
+		boolean suppressedClauses) {
+
+		SearchResponse searchResponse = search(consumer, suppressedClauses);
+
+		assertNoExpandoClauseInSearchQuery(searchResponse);
 
 		DocumentsAssert.assertValuesIgnoreRelevance(
 			searchResponse.getRequestString(),
@@ -189,6 +240,40 @@ public class JournalArticleExpandoSearchTest {
 		}
 
 		params.put("expandoAttributes", string);
+	}
+
+	protected SearchResponse search(
+		Consumer<SearchRequestBuilder> consumer, boolean suppressedClauses) {
+
+		return search(
+			consumer, new Class<?>[] {JournalArticle.class}, suppressedClauses);
+	}
+
+	protected SearchResponse search(
+		Consumer<SearchRequestBuilder> consumer, Class<?>[] classes,
+		boolean suppressedClauses) {
+
+		return searcher.search(
+			searchRequestBuilderFactory.builder(
+			).companyId(
+				_group.getCompanyId()
+			).fields(
+				StringPool.STAR
+			).groupIds(
+				_group.getGroupId()
+			).modelIndexerClasses(
+				classes
+			).withSearchContext(
+				searchContext -> {
+					searchContext.setAttribute(
+						"search.full.query.suppress.indexer.provided.clauses",
+						suppressedClauses);
+					searchContext.setEntryClassNames(
+						new String[] {JournalArticle.class.getName()});
+				}
+			).withSearchRequestBuilder(
+				consumer
+			).build());
 	}
 
 	@Inject
