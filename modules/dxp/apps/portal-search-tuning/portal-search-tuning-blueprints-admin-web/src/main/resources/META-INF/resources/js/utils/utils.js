@@ -404,6 +404,10 @@ export const getElementOutput = ({
 			else if (config.type === INPUT_TYPES.JSON) {
 				configValue = JSON.stringify(uiConfigurationValues[config.key]);
 			}
+			else if (config.type === INPUT_TYPES.KEYWORDS) {
+				configValue =
+					uiConfigurationValues[config.key] || '${keywords}';
+			}
 			else if (config.type === INPUT_TYPES.MULTISELECT) {
 				configValue = JSON.stringify(
 					uiConfigurationValues[config.key].map((item) =>

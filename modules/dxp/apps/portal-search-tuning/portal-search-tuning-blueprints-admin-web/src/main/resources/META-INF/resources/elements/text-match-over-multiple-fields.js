@@ -23,7 +23,7 @@ export default {
 							fields: '${config.fields}',
 							fuzziness: '${config.fuzziness}',
 							operator: '${config.operator}',
-							query: '${keywords}',
+							query: '${config.keywords}',
 							type: '${config.type}',
 						},
 					},
@@ -154,6 +154,12 @@ export default {
 			key: 'boost',
 			label: 'Boost',
 			type: 'slider',
+		},
+		{
+			key: 'keywords',
+			label: 'Override Keywords',
+			type: 'keywords',
+			helpText: 'If this is set, the search terms entered in the search bar will be replaced by this value'
 		},
 	],
 };
