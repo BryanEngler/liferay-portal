@@ -23,7 +23,7 @@ export default {
 							fields: '${config.fields}',
 							fuzziness: '${config.fuzziness}',
 							operator: '${config.operator}',
-							query: '${keywords}',
+							query: '${config.keywords}',
 							type: '${config.type}',
 						},
 					},
@@ -154,6 +154,11 @@ export default {
 			key: 'boost',
 			label: 'Boost',
 			type: 'slider',
+		},
+		{
+			key: 'keywords',
+			label: 'Keywords',
+			type: 'keywords',
 		},
 	],
 };

@@ -15,6 +15,7 @@ export const INPUT_TYPES = {
 	FIELD: 'field',
 	FIELD_LIST: 'field-list',
 	JSON: 'json',
+	KEYWORDS: 'keywords',
 	MULTISELECT: 'multiselect',
 	NUMBER: 'number',
 	SELECT: 'select',
