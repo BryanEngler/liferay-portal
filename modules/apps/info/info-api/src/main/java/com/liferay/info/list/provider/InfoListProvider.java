@@ -43,4 +43,10 @@ public interface InfoListProvider<T> extends Keyed {
 		return true;
 	}
 
+	public default boolean isWithinScope(
+		InfoListProviderContext infoListProviderContext) {
+
+		return true;
+	}
+
 }
