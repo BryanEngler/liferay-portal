@@ -15,6 +15,7 @@
 package com.liferay.asset.list.web.internal.display.context;
 
 import com.liferay.info.item.InfoItemServiceTracker;
+import com.liferay.info.list.provider.DefaultInfoListProviderContext;
 import com.liferay.info.list.provider.InfoListProvider;
 import com.liferay.info.list.provider.InfoListProviderTracker;
 import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
@@ -35,6 +36,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.portlet.PortletException;
 import javax.portlet.PortletURL;
@@ -74,11 +76,24 @@ public class InfoListProviderDisplayContext {
 		List<InfoListProvider<?>> infoListProviders =
 			_infoListProviderTracker.getInfoListProviders();
 
+		DefaultInfoListProviderContext defaultInfoListProviderContext =
+			new DefaultInfoListProviderContext(
+				_themeDisplay.getScopeGroup(), _themeDisplay.getUser());
+
+		List<InfoListProvider<?>> availableInfoListProviders =
+			infoListProviders.stream(
+				).filter(
+					infoListProvider -> infoListProvider.isWithinScope(
+						defaultInfoListProviderContext)
+				).collect(
+					Collectors.toList()
+				);
+
 		searchContainer.setResults(
 			ListUtil.subList(
-				infoListProviders, searchContainer.getStart(),
+				availableInfoListProviders, searchContainer.getStart(),
 				searchContainer.getEnd()));
-		searchContainer.setTotal(infoListProviders.size());
+		searchContainer.setTotal(availableInfoListProviders.size());
 
 		return searchContainer;
 	}
