@@ -1,0 +1,461 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+package com.liferay.object.service.persistence.test;
+
+import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.object.exception.NoSuchLayoutTabException;
+import com.liferay.object.model.ObjectLayoutTab;
+import com.liferay.object.service.ObjectLayoutTabLocalServiceUtil;
+import com.liferay.object.service.persistence.ObjectLayoutTabPersistence;
+import com.liferay.object.service.persistence.ObjectLayoutTabUtil;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.util.IntegerWrapper;
+import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
+import com.liferay.portal.kernel.util.Time;
+import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.PersistenceTestRule;
+import com.liferay.portal.test.rule.TransactionalTestRule;
+
+import java.io.Serializable;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+/**
+ * @generated
+ */
+@RunWith(Arquillian.class)
+public class ObjectLayoutTabPersistenceTest {
+
+	@ClassRule
+	@Rule
+	public static final AggregateTestRule aggregateTestRule =
+		new AggregateTestRule(
+			new LiferayIntegrationTestRule(), PersistenceTestRule.INSTANCE,
+			new TransactionalTestRule(
+				Propagation.REQUIRED, "com.liferay.object.service"));
+
+	@Before
+	public void setUp() {
+		_persistence = ObjectLayoutTabUtil.getPersistence();
+
+		Class<?> clazz = _persistence.getClass();
+
+		_dynamicQueryClassLoader = clazz.getClassLoader();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		Iterator<ObjectLayoutTab> iterator = _objectLayoutTabs.iterator();
+
+		while (iterator.hasNext()) {
+			_persistence.remove(iterator.next());
+
+			iterator.remove();
+		}
+	}
+
+	@Test
+	public void testCreate() throws Exception {
+		long pk = RandomTestUtil.nextLong();
+
+		ObjectLayoutTab objectLayoutTab = _persistence.create(pk);
+
+		Assert.assertNotNull(objectLayoutTab);
+
+		Assert.assertEquals(objectLayoutTab.getPrimaryKey(), pk);
+	}
+
+	@Test
+	public void testRemove() throws Exception {
+		ObjectLayoutTab newObjectLayoutTab = addObjectLayoutTab();
+
+		_persistence.remove(newObjectLayoutTab);
+
+		ObjectLayoutTab existingObjectLayoutTab =
+			_persistence.fetchByPrimaryKey(newObjectLayoutTab.getPrimaryKey());
+
+		Assert.assertNull(existingObjectLayoutTab);
+	}
+
+	@Test
+	public void testUpdateNew() throws Exception {
+		addObjectLayoutTab();
+	}
+
+	@Test
+	public void testUpdateExisting() throws Exception {
+		long pk = RandomTestUtil.nextLong();
+
+		ObjectLayoutTab newObjectLayoutTab = _persistence.create(pk);
+
+		newObjectLayoutTab.setMvccVersion(RandomTestUtil.nextLong());
+
+		newObjectLayoutTab.setUuid(RandomTestUtil.randomString());
+
+		newObjectLayoutTab.setCompanyId(RandomTestUtil.nextLong());
+
+		newObjectLayoutTab.setUserId(RandomTestUtil.nextLong());
+
+		newObjectLayoutTab.setUserName(RandomTestUtil.randomString());
+
+		newObjectLayoutTab.setCreateDate(RandomTestUtil.nextDate());
+
+		newObjectLayoutTab.setModifiedDate(RandomTestUtil.nextDate());
+
+		_objectLayoutTabs.add(_persistence.update(newObjectLayoutTab));
+
+		ObjectLayoutTab existingObjectLayoutTab = _persistence.findByPrimaryKey(
+			newObjectLayoutTab.getPrimaryKey());
+
+		Assert.assertEquals(
+			existingObjectLayoutTab.getMvccVersion(),
+			newObjectLayoutTab.getMvccVersion());
+		Assert.assertEquals(
+			existingObjectLayoutTab.getUuid(), newObjectLayoutTab.getUuid());
+		Assert.assertEquals(
+			existingObjectLayoutTab.getObjectLayoutTabId(),
+			newObjectLayoutTab.getObjectLayoutTabId());
+		Assert.assertEquals(
+			existingObjectLayoutTab.getCompanyId(),
+			newObjectLayoutTab.getCompanyId());
+		Assert.assertEquals(
+			existingObjectLayoutTab.getUserId(),
+			newObjectLayoutTab.getUserId());
+		Assert.assertEquals(
+			existingObjectLayoutTab.getUserName(),
+			newObjectLayoutTab.getUserName());
+		Assert.assertEquals(
+			Time.getShortTimestamp(existingObjectLayoutTab.getCreateDate()),
+			Time.getShortTimestamp(newObjectLayoutTab.getCreateDate()));
+		Assert.assertEquals(
+			Time.getShortTimestamp(existingObjectLayoutTab.getModifiedDate()),
+			Time.getShortTimestamp(newObjectLayoutTab.getModifiedDate()));
+	}
+
+	@Test
+	public void testCountByUuid() throws Exception {
+		_persistence.countByUuid("");
+
+		_persistence.countByUuid("null");
+
+		_persistence.countByUuid((String)null);
+	}
+
+	@Test
+	public void testCountByUuid_C() throws Exception {
+		_persistence.countByUuid_C("", RandomTestUtil.nextLong());
+
+		_persistence.countByUuid_C("null", 0L);
+
+		_persistence.countByUuid_C((String)null, 0L);
+	}
+
+	@Test
+	public void testFindByPrimaryKeyExisting() throws Exception {
+		ObjectLayoutTab newObjectLayoutTab = addObjectLayoutTab();
+
+		ObjectLayoutTab existingObjectLayoutTab = _persistence.findByPrimaryKey(
+			newObjectLayoutTab.getPrimaryKey());
+
+		Assert.assertEquals(existingObjectLayoutTab, newObjectLayoutTab);
+	}
+
+	@Test(expected = NoSuchLayoutTabException.class)
+	public void testFindByPrimaryKeyMissing() throws Exception {
+		long pk = RandomTestUtil.nextLong();
+
+		_persistence.findByPrimaryKey(pk);
+	}
+
+	@Test
+	public void testFindAll() throws Exception {
+		_persistence.findAll(
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS, getOrderByComparator());
+	}
+
+	protected OrderByComparator<ObjectLayoutTab> getOrderByComparator() {
+		return OrderByComparatorFactoryUtil.create(
+			"ObjectLayoutTab", "mvccVersion", true, "uuid", true,
+			"objectLayoutTabId", true, "companyId", true, "userId", true,
+			"userName", true, "createDate", true, "modifiedDate", true);
+	}
+
+	@Test
+	public void testFetchByPrimaryKeyExisting() throws Exception {
+		ObjectLayoutTab newObjectLayoutTab = addObjectLayoutTab();
+
+		ObjectLayoutTab existingObjectLayoutTab =
+			_persistence.fetchByPrimaryKey(newObjectLayoutTab.getPrimaryKey());
+
+		Assert.assertEquals(existingObjectLayoutTab, newObjectLayoutTab);
+	}
+
+	@Test
+	public void testFetchByPrimaryKeyMissing() throws Exception {
+		long pk = RandomTestUtil.nextLong();
+
+		ObjectLayoutTab missingObjectLayoutTab = _persistence.fetchByPrimaryKey(
+			pk);
+
+		Assert.assertNull(missingObjectLayoutTab);
+	}
+
+	@Test
+	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereAllPrimaryKeysExist()
+		throws Exception {
+
+		ObjectLayoutTab newObjectLayoutTab1 = addObjectLayoutTab();
+		ObjectLayoutTab newObjectLayoutTab2 = addObjectLayoutTab();
+
+		Set<Serializable> primaryKeys = new HashSet<Serializable>();
+
+		primaryKeys.add(newObjectLayoutTab1.getPrimaryKey());
+		primaryKeys.add(newObjectLayoutTab2.getPrimaryKey());
+
+		Map<Serializable, ObjectLayoutTab> objectLayoutTabs =
+			_persistence.fetchByPrimaryKeys(primaryKeys);
+
+		Assert.assertEquals(2, objectLayoutTabs.size());
+		Assert.assertEquals(
+			newObjectLayoutTab1,
+			objectLayoutTabs.get(newObjectLayoutTab1.getPrimaryKey()));
+		Assert.assertEquals(
+			newObjectLayoutTab2,
+			objectLayoutTabs.get(newObjectLayoutTab2.getPrimaryKey()));
+	}
+
+	@Test
+	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereNoPrimaryKeysExist()
+		throws Exception {
+
+		long pk1 = RandomTestUtil.nextLong();
+
+		long pk2 = RandomTestUtil.nextLong();
+
+		Set<Serializable> primaryKeys = new HashSet<Serializable>();
+
+		primaryKeys.add(pk1);
+		primaryKeys.add(pk2);
+
+		Map<Serializable, ObjectLayoutTab> objectLayoutTabs =
+			_persistence.fetchByPrimaryKeys(primaryKeys);
+
+		Assert.assertTrue(objectLayoutTabs.isEmpty());
+	}
+
+	@Test
+	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereSomePrimaryKeysExist()
+		throws Exception {
+
+		ObjectLayoutTab newObjectLayoutTab = addObjectLayoutTab();
+
+		long pk = RandomTestUtil.nextLong();
+
+		Set<Serializable> primaryKeys = new HashSet<Serializable>();
+
+		primaryKeys.add(newObjectLayoutTab.getPrimaryKey());
+		primaryKeys.add(pk);
+
+		Map<Serializable, ObjectLayoutTab> objectLayoutTabs =
+			_persistence.fetchByPrimaryKeys(primaryKeys);
+
+		Assert.assertEquals(1, objectLayoutTabs.size());
+		Assert.assertEquals(
+			newObjectLayoutTab,
+			objectLayoutTabs.get(newObjectLayoutTab.getPrimaryKey()));
+	}
+
+	@Test
+	public void testFetchByPrimaryKeysWithNoPrimaryKeys() throws Exception {
+		Set<Serializable> primaryKeys = new HashSet<Serializable>();
+
+		Map<Serializable, ObjectLayoutTab> objectLayoutTabs =
+			_persistence.fetchByPrimaryKeys(primaryKeys);
+
+		Assert.assertTrue(objectLayoutTabs.isEmpty());
+	}
+
+	@Test
+	public void testFetchByPrimaryKeysWithOnePrimaryKey() throws Exception {
+		ObjectLayoutTab newObjectLayoutTab = addObjectLayoutTab();
+
+		Set<Serializable> primaryKeys = new HashSet<Serializable>();
+
+		primaryKeys.add(newObjectLayoutTab.getPrimaryKey());
+
+		Map<Serializable, ObjectLayoutTab> objectLayoutTabs =
+			_persistence.fetchByPrimaryKeys(primaryKeys);
+
+		Assert.assertEquals(1, objectLayoutTabs.size());
+		Assert.assertEquals(
+			newObjectLayoutTab,
+			objectLayoutTabs.get(newObjectLayoutTab.getPrimaryKey()));
+	}
+
+	@Test
+	public void testActionableDynamicQuery() throws Exception {
+		final IntegerWrapper count = new IntegerWrapper();
+
+		ActionableDynamicQuery actionableDynamicQuery =
+			ObjectLayoutTabLocalServiceUtil.getActionableDynamicQuery();
+
+		actionableDynamicQuery.setPerformActionMethod(
+			new ActionableDynamicQuery.PerformActionMethod<ObjectLayoutTab>() {
+
+				@Override
+				public void performAction(ObjectLayoutTab objectLayoutTab) {
+					Assert.assertNotNull(objectLayoutTab);
+
+					count.increment();
+				}
+
+			});
+
+		actionableDynamicQuery.performActions();
+
+		Assert.assertEquals(count.getValue(), _persistence.countAll());
+	}
+
+	@Test
+	public void testDynamicQueryByPrimaryKeyExisting() throws Exception {
+		ObjectLayoutTab newObjectLayoutTab = addObjectLayoutTab();
+
+		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(
+			ObjectLayoutTab.class, _dynamicQueryClassLoader);
+
+		dynamicQuery.add(
+			RestrictionsFactoryUtil.eq(
+				"objectLayoutTabId",
+				newObjectLayoutTab.getObjectLayoutTabId()));
+
+		List<ObjectLayoutTab> result = _persistence.findWithDynamicQuery(
+			dynamicQuery);
+
+		Assert.assertEquals(1, result.size());
+
+		ObjectLayoutTab existingObjectLayoutTab = result.get(0);
+
+		Assert.assertEquals(existingObjectLayoutTab, newObjectLayoutTab);
+	}
+
+	@Test
+	public void testDynamicQueryByPrimaryKeyMissing() throws Exception {
+		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(
+			ObjectLayoutTab.class, _dynamicQueryClassLoader);
+
+		dynamicQuery.add(
+			RestrictionsFactoryUtil.eq(
+				"objectLayoutTabId", RandomTestUtil.nextLong()));
+
+		List<ObjectLayoutTab> result = _persistence.findWithDynamicQuery(
+			dynamicQuery);
+
+		Assert.assertEquals(0, result.size());
+	}
+
+	@Test
+	public void testDynamicQueryByProjectionExisting() throws Exception {
+		ObjectLayoutTab newObjectLayoutTab = addObjectLayoutTab();
+
+		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(
+			ObjectLayoutTab.class, _dynamicQueryClassLoader);
+
+		dynamicQuery.setProjection(
+			ProjectionFactoryUtil.property("objectLayoutTabId"));
+
+		Object newObjectLayoutTabId = newObjectLayoutTab.getObjectLayoutTabId();
+
+		dynamicQuery.add(
+			RestrictionsFactoryUtil.in(
+				"objectLayoutTabId", new Object[] {newObjectLayoutTabId}));
+
+		List<Object> result = _persistence.findWithDynamicQuery(dynamicQuery);
+
+		Assert.assertEquals(1, result.size());
+
+		Object existingObjectLayoutTabId = result.get(0);
+
+		Assert.assertEquals(existingObjectLayoutTabId, newObjectLayoutTabId);
+	}
+
+	@Test
+	public void testDynamicQueryByProjectionMissing() throws Exception {
+		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(
+			ObjectLayoutTab.class, _dynamicQueryClassLoader);
+
+		dynamicQuery.setProjection(
+			ProjectionFactoryUtil.property("objectLayoutTabId"));
+
+		dynamicQuery.add(
+			RestrictionsFactoryUtil.in(
+				"objectLayoutTabId", new Object[] {RandomTestUtil.nextLong()}));
+
+		List<Object> result = _persistence.findWithDynamicQuery(dynamicQuery);
+
+		Assert.assertEquals(0, result.size());
+	}
+
+	protected ObjectLayoutTab addObjectLayoutTab() throws Exception {
+		long pk = RandomTestUtil.nextLong();
+
+		ObjectLayoutTab objectLayoutTab = _persistence.create(pk);
+
+		objectLayoutTab.setMvccVersion(RandomTestUtil.nextLong());
+
+		objectLayoutTab.setUuid(RandomTestUtil.randomString());
+
+		objectLayoutTab.setCompanyId(RandomTestUtil.nextLong());
+
+		objectLayoutTab.setUserId(RandomTestUtil.nextLong());
+
+		objectLayoutTab.setUserName(RandomTestUtil.randomString());
+
+		objectLayoutTab.setCreateDate(RandomTestUtil.nextDate());
+
+		objectLayoutTab.setModifiedDate(RandomTestUtil.nextDate());
+
+		_objectLayoutTabs.add(_persistence.update(objectLayoutTab));
+
+		return objectLayoutTab;
+	}
+
+	private List<ObjectLayoutTab> _objectLayoutTabs =
+		new ArrayList<ObjectLayoutTab>();
+	private ObjectLayoutTabPersistence _persistence;
+	private ClassLoader _dynamicQueryClassLoader;
+
+}
