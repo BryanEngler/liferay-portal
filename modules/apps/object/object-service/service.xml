@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.4.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_4_0.dtd">
+
+<service-builder auto-import-default-references="false" auto-namespace-tables="false" dependency-injector="ds" mvcc-enabled="true" package-path="com.liferay.object">
+	<author>Marco Leo</author>
+	<namespace>Object</namespace>
+	<entity local-service="true" name="ObjectDefinition" remote-service="true" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="objectDefinitionId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="name" type="String" />
+
+		<!-- Finder methods -->
+
+		<finder name="C_N" return-type="ObjectDefinition">
+			<finder-column name="companyId" />
+			<finder-column name="name" />
+		</finder>
+
+		<!-- Order -->
+
+		<order by="asc">
+			<order-column name="name" />
+		</order>
+	</entity>
+	<entity local-service="true" name="ObjectEntry" remote-service="true" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="objectEntryId" primary="true" type="long" />
+
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="objectDefinitionId" type="long" />
+		<column name="lastPublishDate" type="Date" />
+		<column name="status" type="int" />
+		<column name="statusByUserId" type="long" />
+		<column name="statusByUserName" type="String" />
+		<column name="statusDate" type="Date" />
+
+		<!-- Finder methods -->
+
+		<finder name="ObjectDefinitionId" return-type="Collection">
+			<finder-column name="objectDefinitionId" />
+		</finder>
+
+		<!-- Order -->
+
+		<order by="asc">
+			<order-column name="objectEntryId" />
+		</order>
+	</entity>
+	<entity local-service="true" name="ObjectField" remote-service="false" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="objectFieldId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="objectDefinitionId" type="long" />
+		<column name="name" type="String" />
+		<column name="type" type="String" />
+
+		<!-- Finder methods -->
+
+		<finder name="ObjectDefinitionId" return-type="Collection">
+			<finder-column name="objectDefinitionId" />
+		</finder>
+		<finder name="ODI_N" return-type="ObjectDefinition">
+			<finder-column name="objectDefinitionId" />
+			<finder-column name="name" />
+		</finder>
+
+		<!-- Order -->
+
+		<order by="asc">
+			<order-column name="name" />
+		</order>
+	</entity>
+	<entity local-service="true" name="ObjectLayout" remote-service="true" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="objectLayoutId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+	</entity>
+	<entity local-service="true" name="ObjectLayoutBox" remote-service="true" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="objectLayoutBoxId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+	</entity>
+	<entity local-service="true" name="ObjectLayoutTab" remote-service="true" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="objectLayoutTabId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+	</entity>
+	<entity local-service="true" name="ObjectRelationship" remote-service="true" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="objectRelationshipId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+	</entity>
+	<exceptions>
+		<exception>DuplicateObjectDefinition</exception>
+		<exception>DuplicateObjectField</exception>
+		<exception>ObjectDefinitionName</exception>
+		<exception>ObjectEntryValues</exception>
+		<exception>ObjectFieldName</exception>
+		<exception>ObjectFieldType</exception>
+	</exceptions>
+</service-builder>
