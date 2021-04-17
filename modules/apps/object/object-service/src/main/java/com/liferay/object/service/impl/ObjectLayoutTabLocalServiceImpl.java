@@ -20,17 +20,8 @@ import com.liferay.portal.aop.AopService;
 import org.osgi.service.component.annotations.Component;
 
 /**
- * The implementation of the object layout tab local service.
- *
- * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.liferay.object.service.ObjectLayoutTabLocalService</code> interface.
- *
- * <p>
- * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
- * </p>
- *
  * @author Marco Leo
- * @see ObjectLayoutTabLocalServiceBaseImpl
+ * @author Brian Wing Shun Chan
  */
 @Component(
 	property = "model.class.name=com.liferay.object.model.ObjectLayoutTab",
@@ -38,10 +29,4 @@ import org.osgi.service.component.annotations.Component;
 )
 public class ObjectLayoutTabLocalServiceImpl
 	extends ObjectLayoutTabLocalServiceBaseImpl {
-
-	/*
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this class directly. Use <code>com.liferay.object.service.ObjectLayoutTabLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.liferay.object.service.ObjectLayoutTabLocalServiceUtil</code>.
-	 */
 }

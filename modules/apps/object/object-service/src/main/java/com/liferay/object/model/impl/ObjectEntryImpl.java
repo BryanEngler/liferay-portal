@@ -15,21 +15,11 @@
 package com.liferay.object.model.impl;
 
 /**
- * The extended model implementation for the ObjectEntry service. Represents a row in the &quot;ObjectEntry&quot; database table, with each column mapped to a property of this class.
- *
- * <p>
- * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.liferay.object.model.ObjectEntry</code> interface.
- * </p>
- *
  * @author Marco Leo
+ * @author Brian Wing Shun Chan
  */
 public class ObjectEntryImpl extends ObjectEntryBaseImpl {
 
-	/*
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this class directly. All methods that expect a object entry model instance should use the {@link com.liferay.object.model.ObjectEntry} interface instead.
-	 */
 	public ObjectEntryImpl() {
 	}
 

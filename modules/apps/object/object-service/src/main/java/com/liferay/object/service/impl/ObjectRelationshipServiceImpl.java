@@ -20,17 +20,8 @@ import com.liferay.portal.aop.AopService;
 import org.osgi.service.component.annotations.Component;
 
 /**
- * The implementation of the object relationship remote service.
- *
- * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.liferay.object.service.ObjectRelationshipService</code> interface.
- *
- * <p>
- * This is a remote service. Methods of this service are expected to have security checks based on the propagated JAAS credentials because this service can be accessed remotely.
- * </p>
- *
  * @author Marco Leo
- * @see ObjectRelationshipServiceBaseImpl
+ * @author Brian Wing Shun Chan
  */
 @Component(
 	property = {
@@ -41,10 +32,4 @@ import org.osgi.service.component.annotations.Component;
 )
 public class ObjectRelationshipServiceImpl
 	extends ObjectRelationshipServiceBaseImpl {
-
-	/*
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this class directly. Always use <code>com.liferay.object.service.ObjectRelationshipServiceUtil</code> to access the object relationship remote service.
-	 */
 }
