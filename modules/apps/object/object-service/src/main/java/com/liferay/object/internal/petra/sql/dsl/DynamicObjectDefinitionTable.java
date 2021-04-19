@@ -1,0 +1,196 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+package com.liferay.object.internal.petra.sql.dsl;
+
+import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectField;
+import com.liferay.petra.sql.dsl.Column;
+import com.liferay.petra.sql.dsl.base.BaseTable;
+import com.liferay.petra.sql.dsl.expression.Expression;
+import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
+
+import java.math.BigDecimal;
+
+import java.sql.Blob;
+import java.sql.Types;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author Marco Leo
+ * @author Brian Wing Shun Chan
+ */
+public class DynamicObjectDefinitionTable
+	extends BaseTable<DynamicObjectDefinitionTable> {
+
+	public DynamicObjectDefinitionTable(
+		ObjectDefinition objectDefinition, List<ObjectField> objectFields) {
+
+		super(objectDefinition.getDBTableName(), () -> null);
+
+		_objectFields = objectFields;
+
+		_primaryKeyColumnName = objectDefinition.getDBPrimaryKeyColumnName();
+		_tableName = objectDefinition.getDBTableName();
+
+		createColumn(
+			"mvccVersion", Long.class, Types.BIGINT, Column.FLAG_NULLITY);
+		createColumn(
+			_primaryKeyColumnName, Long.class, Types.BIGINT,
+			Column.FLAG_PRIMARY);
+
+		for (ObjectField objectField : objectFields) {
+			createColumn(
+				objectField.getDBColumnName(),
+				_javaClasses.get(objectField.getType()),
+				_sqlTypes.get(objectField.getType()), Column.FLAG_DEFAULT);
+		}
+
+		List<Expression<?>> selectExpressions = new ArrayList<>();
+
+		for (Column<DynamicObjectDefinitionTable, ?> column : getColumns()) {
+			selectExpressions.add(column);
+		}
+
+		_selectExpressions = selectExpressions.toArray(new Expression<?>[0]);
+	}
+
+	/**
+	 * @see com.liferay.portal.tools.service.builder.ServiceBuilder#_getCreateTableSQL(
+	 *      com.liferay.portal.tools.service.builder.Entity)
+	 */
+	public String getCreateTableSQL() {
+		StringBundler sb = new StringBundler();
+
+		sb.append("create table ");
+		sb.append(_tableName);
+		sb.append(" (mvccVersion LONG default 0 not null, ");
+		sb.append(_primaryKeyColumnName);
+		sb.append(" LONG not null primary key");
+
+		for (ObjectField objectField : _objectFields) {
+			sb.append(", ");
+			sb.append(objectField.getDBColumnName());
+			sb.append(" ");
+
+			String type = objectField.getType();
+
+			String dataType = _dataTypes.get(type);
+
+			if (dataType == null) {
+				throw new IllegalArgumentException("Invalid type " + type);
+			}
+
+			sb.append(dataType);
+
+			if (type.equals("BigDecimal") || type.equals("Date") ||
+				type.equals("Map") || type.equals("String")) {
+
+				sb.append(" null");
+			}
+		}
+
+		sb.append(");");
+
+		String sql = sb.toString();
+
+		if (_log.isDebugEnabled()) {
+			_log.debug("SQL: " + sql);
+		}
+
+		return sql;
+	}
+
+	public List<ObjectField> getObjectFields() {
+		return _objectFields;
+	}
+
+	public Column<DynamicObjectDefinitionTable, Long> getPrimaryKeyColumn() {
+		return (Column<DynamicObjectDefinitionTable, Long>)getColumn(
+			_primaryKeyColumnName);
+	}
+
+	public Expression<?>[] getSelectExpressions() {
+		return _selectExpressions;
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		DynamicObjectDefinitionTable.class);
+
+	private static final Map<String, String> _dataTypes = HashMapBuilder.put(
+		"BigDecimal", "DECIMAL(30, 16)"
+	).put(
+		"Blob", "BLOB"
+	).put(
+		"Boolean", "BOOLEAN"
+	).put(
+		"Date", "DATE"
+	).put(
+		"Double", "DOUBLE"
+	).put(
+		"Integer", "INTEGER"
+	).put(
+		"Long", "LONG"
+	).put(
+		"String", "VARCHAR(75)"
+	).build();
+	private static final Map<String, Class<?>> _javaClasses =
+		HashMapBuilder.<String, Class<?>>put(
+			"BigDecimal", BigDecimal.class
+		).put(
+			"Blob", Blob.class
+		).put(
+			"Boolean", Boolean.class
+		).put(
+			"Date", Date.class
+		).put(
+			"Double", Double.class
+		).put(
+			"Integer", Integer.class
+		).put(
+			"Long", Long.class
+		).put(
+			"String", String.class
+		).build();
+	private static final Map<String, Integer> _sqlTypes = HashMapBuilder.put(
+		"BigDecimal", Types.DECIMAL
+	).put(
+		"Blob", Types.BLOB
+	).put(
+		"Boolean", Types.BOOLEAN
+	).put(
+		"Date", Types.DATE
+	).put(
+		"Double", Types.DOUBLE
+	).put(
+		"Integer", Types.INTEGER
+	).put(
+		"Long", Types.BIGINT
+	).put(
+		"String", Types.VARCHAR
+	).build();
+
+	private final List<ObjectField> _objectFields;
+	private final String _primaryKeyColumnName;
+	private final Expression<?>[] _selectExpressions;
+	private final String _tableName;
+
+}

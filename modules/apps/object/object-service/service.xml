@@ -173,5 +173,6 @@
 		<exception>ObjectEntryValues</exception>
 		<exception>ObjectFieldName</exception>
 		<exception>ObjectFieldType</exception>
+		<exception>ReservedObjectField</exception>
 	</exceptions>
 </service-builder>

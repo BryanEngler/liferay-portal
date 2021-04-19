@@ -14,6 +14,8 @@
 
 package com.liferay.object.model.impl;
 
+import java.util.Map;
+
 /**
  * @author Marco Leo
  * @author Brian Wing Shun Chan
@@ -22,5 +24,17 @@ public class ObjectEntryImpl extends ObjectEntryBaseImpl {
 
 	public ObjectEntryImpl() {
 	}
+
+	@Override
+	public Map<String, Object> getValues() {
+		return _values;
+	}
+
+	@Override
+	public void setValues(Map<String, Object> values) {
+		_values = values;
+	}
+
+	private Map<String, Object> _values;
 
 }

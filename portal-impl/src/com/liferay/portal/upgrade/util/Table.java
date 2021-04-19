@@ -553,28 +553,34 @@ public class Table {
 		ps.close();
 	}
 
+	/**
+	 * @see com.liferay.object.service.impl.ObjectEntryLocalServiceImpl#_setColumn
+	 */
 	public void setColumn(
-			PreparedStatement ps, int index, Integer type, String value)
+			PreparedStatement preparedStatement, int index, Integer type,
+			String value)
 		throws Exception {
+
+		index++;
 
 		int t = type.intValue();
 
-		int paramIndex = index + 1;
-
 		if (t == Types.BIGINT) {
-			ps.setLong(paramIndex, GetterUtil.getLong(value));
+			preparedStatement.setLong(index, GetterUtil.getLong(value));
 		}
 		else if ((t == Types.BLOB) || (t == Types.LONGVARBINARY)) {
-			if (PostgreSQLJDBCUtil.isPGStatement(ps)) {
+			byte[] valueBytes = Base64.decode(value);
+
+			if (PostgreSQLJDBCUtil.isPGStatement(preparedStatement)) {
 				PostgreSQLJDBCUtil.setLargeObject(
-					ps, paramIndex, Base64.decode(value));
+					preparedStatement, index, valueBytes);
 			}
 			else {
-				ps.setBytes(paramIndex, Base64.decode(value));
+				preparedStatement.setBytes(index, valueBytes);
 			}
 		}
 		else if (t == Types.BOOLEAN) {
-			ps.setBoolean(paramIndex, GetterUtil.getBoolean(value));
+			preparedStatement.setBoolean(index, GetterUtil.getBoolean(value));
 		}
 		else if ((t == Types.CLOB) || (t == Types.LONGVARCHAR) ||
 				 (t == Types.VARCHAR)) {
@@ -582,38 +588,39 @@ public class Table {
 			value = StringUtil.replace(
 				value, _SAFE_TABLE_CHARS[1], _SAFE_TABLE_CHARS[0]);
 
-			ps.setString(paramIndex, value);
+			preparedStatement.setString(index, value);
 		}
 		else if (t == Types.DECIMAL) {
-			ps.setBigDecimal(
-				paramIndex, (BigDecimal)GetterUtil.get(value, BigDecimal.ZERO));
+			preparedStatement.setBigDecimal(
+				index, (BigDecimal)GetterUtil.get(value, BigDecimal.ZERO));
 		}
 		else if (t == Types.DOUBLE) {
-			ps.setDouble(paramIndex, GetterUtil.getDouble(value));
+			preparedStatement.setDouble(index, GetterUtil.getDouble(value));
 		}
 		else if (t == Types.FLOAT) {
-			ps.setFloat(paramIndex, GetterUtil.getFloat(value));
+			preparedStatement.setFloat(index, GetterUtil.getFloat(value));
 		}
 		else if (t == Types.INTEGER) {
-			ps.setInt(paramIndex, GetterUtil.getInteger(value));
+			preparedStatement.setInt(index, GetterUtil.getInteger(value));
 		}
 		else if (t == Types.SMALLINT) {
-			ps.setShort(paramIndex, GetterUtil.getShort(value));
+			preparedStatement.setShort(index, GetterUtil.getShort(value));
 		}
 		else if (t == Types.TIMESTAMP) {
 			if (StringPool.NULL.equals(value)) {
-				ps.setTimestamp(paramIndex, null);
+				preparedStatement.setTimestamp(index, null);
 			}
 			else {
-				DateFormat df = DateUtil.getISOFormat();
+				DateFormat dateFormat = DateUtil.getISOFormat();
 
-				Date date = df.parse(value);
+				Date date = dateFormat.parse(value);
 
-				ps.setTimestamp(paramIndex, new Timestamp(date.getTime()));
+				preparedStatement.setTimestamp(
+					index, new Timestamp(date.getTime()));
 			}
 		}
 		else if (t == Types.TINYINT) {
-			ps.setShort(paramIndex, GetterUtil.getShort(value));
+			preparedStatement.setShort(index, GetterUtil.getShort(value));
 		}
 		else {
 			throw new UpgradeException(

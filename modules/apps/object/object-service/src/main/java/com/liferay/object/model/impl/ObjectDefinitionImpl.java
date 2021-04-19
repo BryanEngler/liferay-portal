@@ -14,6 +14,10 @@
 
 package com.liferay.object.model.impl;
 
+import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.util.TextFormatter;
+
 /**
  * @author Marco Leo
  * @author Brian Wing Shun Chan
@@ -21,6 +25,22 @@ package com.liferay.object.model.impl;
 public class ObjectDefinitionImpl extends ObjectDefinitionBaseImpl {
 
 	public ObjectDefinitionImpl() {
+	}
+
+	@Override
+	public String getDBPrimaryKeyColumnName() {
+		return getPrimaryKeyColumnName() + StringPool.UNDERLINE;
+	}
+
+	@Override
+	public String getDBTableName() {
+		return StringBundler.concat(
+			"O_", getCompanyId(), StringPool.UNDERLINE, getName());
+	}
+
+	@Override
+	public String getPrimaryKeyColumnName() {
+		return TextFormatter.format(getName() + "Id", TextFormatter.I);
 	}
 
 }

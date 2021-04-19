@@ -14,10 +14,30 @@
 
 package com.liferay.object.service.impl;
 
+import com.liferay.object.exception.DuplicateObjectDefinitionException;
+import com.liferay.object.exception.ObjectDefinitionNameException;
+import com.liferay.object.internal.petra.sql.dsl.DynamicObjectDefinitionTable;
+import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectField;
+import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.base.ObjectDefinitionLocalServiceBaseImpl;
+import com.liferay.object.service.persistence.ObjectEntryPersistence;
+import com.liferay.object.service.persistence.ObjectFieldPersistence;
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.cluster.Clusterable;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
+
+import java.util.Date;
+import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marco Leo
@@ -29,4 +49,151 @@ import org.osgi.service.component.annotations.Component;
 )
 public class ObjectDefinitionLocalServiceImpl
 	extends ObjectDefinitionLocalServiceBaseImpl {
+
+	@Override
+	public ObjectDefinition addObjectDefinition(
+			long userId, String name, List<ObjectField> objectFields)
+		throws PortalException {
+
+		User user = _userLocalService.getUser(userId);
+		name = StringUtil.trim(name);
+
+		_validateName(user.getCompanyId(), name);
+
+		long objectDefinitionId = counterLocalService.increment();
+
+		ObjectDefinition objectDefinition = objectDefinitionPersistence.create(
+			objectDefinitionId);
+
+		objectDefinition.setCompanyId(user.getCompanyId());
+		objectDefinition.setUserId(user.getUserId());
+		objectDefinition.setUserName(user.getFullName());
+		objectDefinition.setCreateDate(new Date());
+		objectDefinition.setModifiedDate(new Date());
+		objectDefinition.setName(name);
+
+		objectDefinition = objectDefinitionPersistence.update(objectDefinition);
+
+		for (ObjectField objectField : objectFields) {
+			_objectFieldLocalService.addObjectField(
+				userId, objectDefinitionId, objectField.getName(),
+				objectField.getType());
+		}
+
+		objectFields = _objectFieldPersistence.findByObjectDefinitionId(
+			objectDefinitionId);
+
+		_createTable(objectDefinition, objectFields);
+
+		return objectDefinition;
+	}
+
+	@Override
+	public ObjectDefinition deleteObjectDefinition(long objectDefinitionId)
+		throws PortalException {
+
+		ObjectDefinition objectDefinition =
+			objectDefinitionPersistence.findByPrimaryKey(objectDefinitionId);
+
+		return deleteObjectDefinition(objectDefinition);
+	}
+
+	@Override
+	public ObjectDefinition deleteObjectDefinition(
+		ObjectDefinition objectDefinition) {
+
+		objectDefinition = objectDefinitionPersistence.remove(objectDefinition);
+
+		_objectEntryPersistence.removeByObjectDefinitionId(
+			objectDefinition.getObjectDefinitionId());
+
+		_objectFieldPersistence.removeByObjectDefinitionId(
+			objectDefinition.getObjectDefinitionId());
+
+		_dropTable(objectDefinition);
+
+		return objectDefinition;
+	}
+
+	@Override
+	public ObjectDefinition getObjectDefinition(long objectDefinitionId)
+		throws PortalException {
+
+		return objectDefinitionPersistence.findByPrimaryKey(objectDefinitionId);
+	}
+
+	@Clusterable
+	public void registerObjectDefinition(long objectDefinitionId) {
+	}
+
+	@Clusterable
+	public void unregisterObjectDefinition(long objectDefinitionId) {
+	}
+
+	private void _createTable(
+		ObjectDefinition objectDefinition, List<ObjectField> objectFields) {
+
+		DynamicObjectDefinitionTable dynamicObjectDefinitionTable =
+			new DynamicObjectDefinitionTable(objectDefinition, objectFields);
+
+		runSQL(dynamicObjectDefinitionTable.getCreateTableSQL());
+	}
+
+	private void _dropTable(ObjectDefinition objectDefinition) {
+		String sql = "drop table " + objectDefinition.getDBTableName();
+
+		if (_log.isDebugEnabled()) {
+			_log.debug("SQL: " + sql);
+		}
+
+		runSQL(sql);
+	}
+
+	private void _validateName(long companyId, String name)
+		throws PortalException {
+
+		if (Validator.isNull(name)) {
+			throw new ObjectDefinitionNameException("Name is null");
+		}
+
+		char[] nameCharArray = name.toCharArray();
+
+		for (char c : nameCharArray) {
+			if (!Validator.isChar(c) && !Validator.isDigit(c)) {
+				throw new ObjectDefinitionNameException(
+					"Name must only contain letters and digits");
+			}
+		}
+
+		if (!Character.isUpperCase(nameCharArray[0])) {
+			throw new ObjectDefinitionNameException(
+				"The first character of a name must be an upper case letter");
+		}
+
+		if (nameCharArray.length > 41) {
+			throw new ObjectDefinitionNameException(
+				"Names must be less than 41 characters");
+		}
+
+		if (objectDefinitionPersistence.fetchByC_N(companyId, name) != null) {
+			throw new DuplicateObjectDefinitionException(
+				"Duplicate name " + name);
+		}
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		ObjectDefinitionLocalServiceImpl.class);
+
+	@Reference
+	private ObjectEntryPersistence _objectEntryPersistence;
+
+	@Reference
+	private ObjectFieldLocalService _objectFieldLocalService;
+
+	@Reference
+	private ObjectFieldPersistence _objectFieldPersistence;
+
+	@Reference
+	private UserLocalService _userLocalService;
+
 }

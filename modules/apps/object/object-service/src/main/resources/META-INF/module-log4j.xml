@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<Configuration strict="true">
+	<Loggers>
+		<Logger level="INFO" name="com.liferay.object.internal.petra.sql.dsl.DynamicObjectDefinitionTable" />
+		<Logger level="INFO" name="com.liferay.object.service.impl.ObjectDefinitionLocalServiceImpl" />
+		<Logger level="INFO" name="com.liferay.object.service.impl.ObjectEntryLocalServiceImpl" />
+	</Loggers>
+</Configuration>
