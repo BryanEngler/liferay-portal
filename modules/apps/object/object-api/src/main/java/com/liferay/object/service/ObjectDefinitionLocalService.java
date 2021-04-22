@@ -122,10 +122,12 @@ public interface ObjectDefinitionLocalService
 	 *
 	 * @param objectDefinition the object definition
 	 * @return the object definition that was removed
+	 * @throws PortalException
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	public ObjectDefinition deleteObjectDefinition(
-		ObjectDefinition objectDefinition);
+			ObjectDefinition objectDefinition)
+		throws PortalException;
 
 	/**
 	 * @throws PortalException

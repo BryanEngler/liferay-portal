@@ -19,6 +19,8 @@ import com.liferay.object.exception.ObjectDefinitionNameException;
 import com.liferay.object.internal.petra.sql.dsl.DynamicObjectDefinitionTable;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
+import com.liferay.object.model.ObjectEntry;
+import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.base.ObjectDefinitionLocalServiceBaseImpl;
 import com.liferay.object.service.persistence.ObjectEntryPersistence;
@@ -100,15 +102,21 @@ public class ObjectDefinitionLocalServiceImpl
 
 	@Override
 	public ObjectDefinition deleteObjectDefinition(
-		ObjectDefinition objectDefinition) {
+			ObjectDefinition objectDefinition)
+		throws PortalException {
 
-		objectDefinition = objectDefinitionPersistence.remove(objectDefinition);
+		List<ObjectEntry> objectEntries =
+			_objectEntryPersistence.findByObjectDefinitionId(
+				objectDefinition.getObjectDefinitionId());
 
-		_objectEntryPersistence.removeByObjectDefinitionId(
-			objectDefinition.getObjectDefinitionId());
+		for (ObjectEntry objectEntry : objectEntries) {
+			_objectEntryLocalService.deleteObjectEntry(objectEntry);
+		}
 
 		_objectFieldPersistence.removeByObjectDefinitionId(
 			objectDefinition.getObjectDefinitionId());
+
+		objectDefinition = objectDefinitionPersistence.remove(objectDefinition);
 
 		_dropTable(objectDefinition);
 
@@ -186,6 +194,9 @@ public class ObjectDefinitionLocalServiceImpl
 
 	@Reference
 	private ObjectEntryPersistence _objectEntryPersistence;
+
+	@Reference
+	private ObjectEntryLocalService _objectEntryLocalService;
 
 	@Reference
 	private ObjectFieldLocalService _objectFieldLocalService;

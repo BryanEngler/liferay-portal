@@ -116,10 +116,12 @@ public class ObjectDefinitionLocalServiceWrapper
 	 *
 	 * @param objectDefinition the object definition
 	 * @return the object definition that was removed
+	 * @throws PortalException
 	 */
 	@Override
 	public com.liferay.object.model.ObjectDefinition deleteObjectDefinition(
-		com.liferay.object.model.ObjectDefinition objectDefinition) {
+			com.liferay.object.model.ObjectDefinition objectDefinition)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _objectDefinitionLocalService.deleteObjectDefinition(
 			objectDefinition);

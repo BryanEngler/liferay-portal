@@ -142,11 +142,13 @@ public abstract class ObjectDefinitionLocalServiceBaseImpl
 	 *
 	 * @param objectDefinition the object definition
 	 * @return the object definition that was removed
+	 * @throws PortalException
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public ObjectDefinition deleteObjectDefinition(
-		ObjectDefinition objectDefinition) {
+			ObjectDefinition objectDefinition)
+		throws PortalException {
 
 		return objectDefinitionPersistence.remove(objectDefinition);
 	}

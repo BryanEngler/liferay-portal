@@ -25,8 +25,10 @@ import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.object.service.persistence.ObjectDefinitionPersistence;
 import com.liferay.object.service.persistence.ObjectFieldPersistence;
 import com.liferay.petra.sql.dsl.Column;
+import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.sql.dsl.expression.Expression;
+import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.petra.sql.dsl.expression.Predicate;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -56,6 +58,11 @@ import com.liferay.portal.search.searcher.SearchResponse;
 import com.liferay.portal.search.searcher.Searcher;
 import com.liferay.portal.search.sort.SortFieldBuilder;
 import com.liferay.portal.search.sort.SortOrder;
+import com.liferay.portal.kernel.search.Indexable;
+import com.liferay.portal.kernel.search.IndexableType;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+
 import com.liferay.portal.search.sort.Sorts;
 import com.liferay.petra.sql.dsl.DSLFunctionFactoryUtil;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
@@ -144,6 +151,7 @@ import org.osgi.service.component.annotations.Reference;
 public class ObjectEntryLocalServiceImpl
 	extends ObjectEntryLocalServiceBaseImpl {
 
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public ObjectEntry addObjectEntry(
 			long userId, long groupId, long objectDefinitionId,
@@ -186,10 +194,12 @@ public class ObjectEntryLocalServiceImpl
 		ObjectEntry objectEntry = objectEntryPersistence.findByPrimaryKey(
 			objectEntryId);
 
-		return deleteObjectEntry(objectEntry);
+		return objectEntryLocalService.deleteObjectEntry(objectEntry);
 	}
 
+	@Indexable(type = IndexableType.DELETE)
 	@Override
+	@SystemEvent(type = SystemEventConstants.TYPE_DELETE)
 	public ObjectEntry deleteObjectEntry(ObjectEntry objectEntry)
 		throws PortalException {
 
@@ -360,11 +370,11 @@ System.out.println("## Document " + document);
 
 		searchRequestBuilder/*.entryClassNames(
 			AccountEntry.class.getName()
-		).emptySearchEnabled(
+		)*/.emptySearchEnabled(
 			true
-		).highlightEnabled(
+		/*).highlightEnabled(
 			false
-		)*/.withSearchContext(
+		*/).withSearchContext(
 			searchContext -> _populateSearchContext(
 				searchContext, objectDefinition, keywords, params)
 		);
@@ -452,6 +462,7 @@ System.out.println("## Document " + document);
 		}*/
 	}
 
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public ObjectEntry updateObjectEntry(
 			long objectEntryId, Map<String, Object> values)

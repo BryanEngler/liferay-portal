@@ -30,7 +30,7 @@ import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-
+import com.liferay.portal.kernel.service.ServiceContext;
 import java.math.BigDecimal;
 
 import java.sql.Connection;
@@ -408,7 +408,12 @@ public class ObjectEntryLocalServiceTest {
 				"firstName", "Peter"
 			).build());
 
-		//Assert.assertEquals(0, baseModelSearchResult.getLength());
+		baseModelSearchResult =
+			ObjectEntryLocalServiceUtil.searchObjectEntries(
+				_objectDefinition.getObjectDefinitionId(), null, null,
+				1, 20, null, false);
+
+		Assert.assertEquals(1, baseModelSearchResult.getLength());
 
 		_assertCount(1);
 	}
