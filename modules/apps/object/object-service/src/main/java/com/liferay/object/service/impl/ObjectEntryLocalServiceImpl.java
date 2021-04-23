@@ -172,7 +172,7 @@ public class ObjectEntryLocalServiceImpl
 		objectEntry.setCreateDate(new Date());
 		objectEntry.setModifiedDate(new Date());
 		objectEntry.setObjectDefinitionId(objectDefinitionId);
-		objectEntry.setStatus(WorkflowConstants.STATUS_DRAFT);
+		objectEntry.setStatus(WorkflowConstants.STATUS_APPROVED);
 		objectEntry.setStatusByUserId(user.getUserId());
 		objectEntry.setStatusDate(new Date());
 
@@ -354,7 +354,8 @@ System.out.println("## Document " + document);
 						document.getString(Field.UID));
 				}*/
 
-				return objectEntryPersistence.create(0);
+				return objectEntryPersistence.fetchByPrimaryKey(
+					document.getLong("entryClassPK"));
 			});
 
 		return new BaseModelSearchResult<>(
@@ -368,9 +369,9 @@ System.out.println("## Document " + document);
 		SearchRequestBuilder searchRequestBuilder =
 			_searchRequestBuilderFactory.builder();
 
-		searchRequestBuilder/*.entryClassNames(
-			User.class.getName()
-		)*/.emptySearchEnabled(
+		searchRequestBuilder.entryClassNames(
+			ObjectEntry.class.getName()
+		).emptySearchEnabled(
 			true
 		/*).highlightEnabled(
 			false

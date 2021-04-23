@@ -415,7 +415,7 @@ public class ObjectEntryLocalServiceTest {
 		baseModelSearchResult =
 			ObjectEntryLocalServiceUtil.searchObjectEntries(
 				_objectDefinition.getObjectDefinitionId(), null, null,
-				1, 20, null, false);
+				0, 20, null, false);
 
 		//Assert.assertEquals(1, baseModelSearchResult.getLength());
 		System.out.println("## testSearchObjectEntries b " + baseModelSearchResult.getLength());
