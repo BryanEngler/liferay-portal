@@ -47,6 +47,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -390,6 +391,8 @@ public class ObjectEntryLocalServiceTest {
 
 	@Test
 	public void testSearchObjectEntries() throws Exception {
+		System.out.println("\n\n\n");
+
 		BaseModelSearchResult<ObjectEntry> baseModelSearchResult =
 			ObjectEntryLocalServiceUtil.searchObjectEntries(
 				_objectDefinition.getObjectDefinitionId(), null, null,

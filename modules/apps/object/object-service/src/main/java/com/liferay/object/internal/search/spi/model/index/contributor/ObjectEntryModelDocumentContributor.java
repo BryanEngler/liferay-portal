@@ -22,7 +22,40 @@ import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.search.spi.model.index.contributor.ModelDocumentContributor;
 
 import java.math.BigDecimal;
+import com.liferay.portal.kernel.exception.NoSuchCountryException;
+import com.liferay.portal.kernel.exception.NoSuchRegionException;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Address;
+import com.liferay.portal.kernel.model.Country;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Organization;
+import com.liferay.portal.kernel.model.Region;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserGroupRole;
+import com.liferay.portal.kernel.search.Document;
+import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.IndexWriterHelper;
+import com.liferay.portal.kernel.service.CountryService;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.OrganizationLocalService;
+import com.liferay.portal.kernel.service.RegionService;
+import com.liferay.portal.kernel.service.UserGroupRoleLocalService;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.search.spi.model.index.contributor.ModelDocumentContributor;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -59,6 +92,10 @@ public class ObjectEntryModelDocumentContributor
 
 	private void _contribute(Document document, ObjectEntry objectEntry)
 		throws Exception {
+
+		System.out.println("## Add object entry to to document " + objectEntry);
+
+		document.addKeyword(Field.COMPANY_ID, objectEntry.getCompanyId());
 
 		Map<String, Object> values =
 			_objectEntryLocalService.getObjectEntryValues(
