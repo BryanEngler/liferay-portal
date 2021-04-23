@@ -369,7 +369,7 @@ System.out.println("## Document " + document);
 			_searchRequestBuilderFactory.builder();
 
 		searchRequestBuilder/*.entryClassNames(
-			AccountEntry.class.getName()
+			ObjectEntry.class.getName()
 		)*/.emptySearchEnabled(
 			true
 		/*).highlightEnabled(
@@ -406,7 +406,7 @@ System.out.println("## Document " + document);
 		SearchContext searchContext, ObjectDefinition objectDefinition, String keywords,
 		LinkedHashMap<String, Object> params) {
 
-		searchContext.setAttribute("objectDefinitionId", objectDefinition.getObjectDefinitionId());
+		//searchContext.setAttribute("objectDefinitionId", objectDefinition.getObjectDefinitionId());
 		searchContext.setCompanyId(objectDefinition.getCompanyId());
 
 		if (Validator.isNotNull(keywords)) {
