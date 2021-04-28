@@ -25,6 +25,9 @@ public class SearchContextAttributes {
 	public static final String ATTRIBUTE_KEY_EMPTY_SEARCH =
 		"search.empty.search";
 
+	public static final String ATTRIBUTE_KEY_EXCEPTION_MESSAGE =
+		"search.exception.message";
+
 	public static final String ATTRIBUTE_KEY_LUCENE_SYNTAX =
 		"search.lucene.syntax";
 
