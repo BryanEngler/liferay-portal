@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.search.constants.SearchContextAttributes;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.SearchResponse;
@@ -266,7 +267,8 @@ public class JournalArticleExpandoSearchTest {
 			).withSearchContext(
 				searchContext -> {
 					searchContext.setAttribute(
-						"search.full.query.suppress.indexer.provided.clauses",
+						SearchContextAttributes.
+							ATTRIBUTE_KEY_SUPPRESS_INDEXER_CLAUSES,
 						suppressedClauses);
 					searchContext.setEntryClassNames(
 						new String[] {JournalArticle.class.getName()});
