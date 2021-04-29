@@ -110,7 +110,8 @@ public class AddSearchKeywordsQueryContributorHelperImpl
 
 		return GetterUtil.getBoolean(
 			searchContext.getAttribute(
-				"search.full.query.suppress.indexer.provided.clauses"));
+				SearchContextAttributes.
+					ATTRIBUTE_KEY_SUPPRESS_INDEXER_CLAUSES));
 	}
 
 	@Reference
