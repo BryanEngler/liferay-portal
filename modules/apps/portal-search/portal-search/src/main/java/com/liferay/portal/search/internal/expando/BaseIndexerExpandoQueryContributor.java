@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.ExpandoQueryContributor;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.search.constants.SearchContextAttributes;
 
 import java.util.Arrays;
 
@@ -49,7 +50,8 @@ public class BaseIndexerExpandoQueryContributor
 
 		return GetterUtil.getBoolean(
 			searchContext.getAttribute(
-				"search.full.query.suppress.indexer.provided.clauses"));
+				SearchContextAttributes.
+					ATTRIBUTE_KEY_SUPPRESS_INDEXER_CLAUSES));
 	}
 
 	@Reference

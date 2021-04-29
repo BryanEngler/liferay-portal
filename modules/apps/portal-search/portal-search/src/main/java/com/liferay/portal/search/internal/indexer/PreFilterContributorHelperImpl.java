@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.search.SearchPermissionChecker;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.search.constants.SearchContextAttributes;
 import com.liferay.portal.search.permission.SearchPermissionFilterContributor;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchSettings;
 
@@ -84,7 +85,8 @@ public class PreFilterContributorHelperImpl
 
 		return GetterUtil.getBoolean(
 			searchContext.getAttribute(
-				"search.full.query.suppress.indexer.provided.clauses"));
+				SearchContextAttributes.
+					ATTRIBUTE_KEY_SUPPRESS_INDEXER_CLAUSES));
 	}
 
 	@Reference
