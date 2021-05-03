@@ -116,7 +116,7 @@ public class ExpandoQueryContributorHelperImpl
 		String fieldName = getExpandoFieldName(
 			attributeName, expandoBridge, searchContext.getLocale());
 
-		if (fieldName.endsWith("geolocation")) {
+		if (fieldName.endsWith("_geolocation")) {
 			return;
 		}
 
