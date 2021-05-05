@@ -17,21 +17,34 @@ package com.liferay.portal.search.searcher.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.test.rule.CompanyProviderClassTestRule;
+import com.liferay.portal.kernel.test.rule.DataGuardTestRule;
+import com.liferay.portal.kernel.test.rule.DeleteAfterTestRunMethodTestRule;
+import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
+import com.liferay.portal.kernel.test.rule.TimeoutTestRule;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.search.constants.SearchContextAttributes;
 import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.SearchResponse;
 import com.liferay.portal.search.searcher.Searcher;
+import com.liferay.portal.test.rule.ClearThreadLocalClassTestRule;
+import com.liferay.portal.test.rule.DestinationAwaitClassTestRule;
 import com.liferay.portal.test.rule.Inject;
-import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.InjectTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
+import com.liferay.portal.test.rule.SybaseDumpTransactionLogTestRule;
+import com.liferay.portal.test.rule.UniqueStringRandomizerBumperClassTestRule;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 
 /**
@@ -43,9 +56,7 @@ public class SearchResponseGetResponseStringTest {
 	@ClassRule
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
-		new AggregateTestRule(
-			new LiferayIntegrationTestRule(),
-			PermissionCheckerMethodTestRule.INSTANCE);
+		new AggregateTestRule(false, _getTestRules());
 
 	@Before
 	public void setUp() throws Exception {
@@ -90,6 +101,27 @@ public class SearchResponseGetResponseStringTest {
 
 		Assert.assertNotEquals(
 			StringPool.BLANK, searchResponse.getResponseString());
+	}
+
+	private static TestRule[] _getTestRules() {
+		List<TestRule> testRules = new ArrayList<>();
+
+		if (System.getenv("JENKINS_HOME") != null) {
+			testRules.add(TimeoutTestRule.INSTANCE);
+		}
+
+		testRules.add(DestinationAwaitClassTestRule.INSTANCE);
+		testRules.add(SynchronousDestinationTestRule.INSTANCE);
+		testRules.add(DataGuardTestRule.INSTANCE);
+		testRules.add(SybaseDumpTransactionLogTestRule.INSTANCE);
+		testRules.add(ClearThreadLocalClassTestRule.INSTANCE);
+		testRules.add(UniqueStringRandomizerBumperClassTestRule.INSTANCE);
+		testRules.add(CompanyProviderClassTestRule.INSTANCE);
+		testRules.add(DeleteAfterTestRunMethodTestRule.INSTANCE);
+		testRules.add(InjectTestRule.INSTANCE);
+		testRules.add(PermissionCheckerMethodTestRule.INSTANCE);
+
+		return testRules.toArray(new TestRule[0]);
 	}
 
 	private long _companyId;
