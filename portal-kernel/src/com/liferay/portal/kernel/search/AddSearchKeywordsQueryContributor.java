@@ -12,20 +12,14 @@
  * details.
  */
 
-package com.liferay.portal.search.internal.expando;
-
-import com.liferay.portal.kernel.search.BooleanQuery;
-import com.liferay.portal.kernel.search.SearchContext;
-
-import java.util.Collection;
+package com.liferay.portal.kernel.search;
 
 /**
  * @author André de Oliveira
  */
-public interface ExpandoQueryContributorHelper {
+public interface AddSearchKeywordsQueryContributor {
 
 	public void contribute(
-		String keywords, BooleanQuery booleanQuery,
-		Collection<String> classNames, SearchContext searchContext);
+		BooleanQuery booleanQuery, SearchContext searchContext);
 
 }

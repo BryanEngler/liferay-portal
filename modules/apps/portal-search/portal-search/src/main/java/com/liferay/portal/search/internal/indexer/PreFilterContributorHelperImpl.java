@@ -23,6 +23,8 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchPermissionChecker;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.search.constants.SearchContextAttributes;
 import com.liferay.portal.search.permission.SearchPermissionFilterContributor;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchSettings;
 
@@ -74,10 +76,17 @@ public class PreFilterContributorHelperImpl
 		BooleanFilter booleanFilter, ModelSearchSettings modelSearchSettings,
 		SearchContext searchContext) {
 
-		modelPreFilterContributorsHolder.forEach(
-			modelSearchSettings.getClassName(),
-			modelPreFilterContributor -> modelPreFilterContributor.contribute(
-				booleanFilter, modelSearchSettings, searchContext));
+		_addModelProvidedPreFilters(
+			booleanFilter, modelSearchSettings, searchContext);
+	}
+
+	protected boolean shouldSuppressIndexerProvidedClauses(
+		SearchContext searchContext) {
+
+		return GetterUtil.getBoolean(
+			searchContext.getAttribute(
+				SearchContextAttributes.
+					ATTRIBUTE_KEY_SUPPRESS_INDEXER_CLAUSES));
 	}
 
 	@Reference
@@ -97,6 +106,10 @@ public class PreFilterContributorHelperImpl
 		BooleanFilter booleanFilter, Indexer<?> indexer,
 		SearchContext searchContext) {
 
+		if (shouldSuppressIndexerProvidedClauses(searchContext)) {
+			return;
+		}
+
 		try {
 			indexer.postProcessContextBooleanFilter(
 				booleanFilter, searchContext);
@@ -114,6 +127,20 @@ public class PreFilterContributorHelperImpl
 		catch (Exception exception) {
 			throw new SystemException(exception);
 		}
+	}
+
+	private void _addModelProvidedPreFilters(
+		BooleanFilter booleanFilter, ModelSearchSettings modelSearchSettings,
+		SearchContext searchContext) {
+
+		if (shouldSuppressIndexerProvidedClauses(searchContext)) {
+			return;
+		}
+
+		modelPreFilterContributorsHolder.forEach(
+			modelSearchSettings.getClassName(),
+			modelPreFilterContributor -> modelPreFilterContributor.contribute(
+				booleanFilter, modelSearchSettings, searchContext));
 	}
 
 	private void _addPermissionFilter(
@@ -156,10 +183,8 @@ public class PreFilterContributorHelperImpl
 
 		_addIndexerProvidedPreFilters(booleanFilter, indexer, searchContext);
 
-		ModelSearchSettings modelSearchSettings = _getModelSearchSettings(
-			indexer);
-
-		contribute(booleanFilter, modelSearchSettings, searchContext);
+		_addModelProvidedPreFilters(
+			booleanFilter, _getModelSearchSettings(indexer), searchContext);
 
 		return booleanFilter;
 	}

@@ -12,11 +12,14 @@
  * details.
  */
 
-package com.liferay.portal.search.internal.expando;
+package com.liferay.portal.search.internal.indexer;
 
-import com.liferay.portal.search.analysis.FieldQueryBuilder;
-import com.liferay.portal.search.analysis.FieldQueryBuilderFactory;
-import com.liferay.portal.search.internal.analysis.SubstringFieldQueryBuilder;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.PreFilterContributor;
+import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.filter.BooleanFilter;
+
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -24,22 +27,20 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author André de Oliveira
  */
-@Component(immediate = true, service = FieldQueryBuilderFactory.class)
-public class ExpandoFieldQueryBuilderFactory
-	implements FieldQueryBuilderFactory {
+@Component(immediate = true, service = PreFilterContributor.class)
+public class BaseIndexerPreFilterContributor implements PreFilterContributor {
 
 	@Override
-	public FieldQueryBuilder getQueryBuilder(String field) {
-		if (field.startsWith("expando__keyword__") &&
-			!field.endsWith("_geolocation")) {
+	public void contribute(
+		BooleanFilter booleanFilter,
+		Map<String, Indexer<?>> entryClassNameIndexerMap,
+		SearchContext searchContext) {
 
-			return substringQueryBuilder;
-		}
-
-		return null;
+		preFilterContributorHelper.contribute(
+			booleanFilter, entryClassNameIndexerMap, searchContext);
 	}
 
 	@Reference
-	protected SubstringFieldQueryBuilder substringQueryBuilder;
+	protected PreFilterContributorHelper preFilterContributorHelper;
 
 }

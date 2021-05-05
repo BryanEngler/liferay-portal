@@ -17,11 +17,10 @@ package com.liferay.portal.search.internal.expando;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.ExpandoQueryContributor;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.search.internal.indexer.KeywordQueryContributorsHolder;
-import com.liferay.portal.search.spi.model.query.contributor.KeywordQueryContributor;
-import com.liferay.portal.search.spi.model.query.contributor.helper.KeywordQueryContributorHelper;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.search.constants.SearchContextAttributes;
 
-import java.util.stream.Stream;
+import java.util.Arrays;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -38,33 +37,24 @@ public class BaseIndexerExpandoQueryContributor
 		String keywords, BooleanQuery booleanQuery, String[] classNames,
 		SearchContext searchContext) {
 
-		Stream<KeywordQueryContributor> stream =
-			keywordQueryContributorsHolder.getAll();
+		if (shouldSuppressIndexerProvidedClauses(searchContext)) {
+			return;
+		}
 
-		stream.forEach(
-			keywordQueryContributor -> keywordQueryContributor.contribute(
-				searchContext.getKeywords(), booleanQuery,
-				new KeywordQueryContributorHelper() {
+		expandoQueryContributorHelper.contribute(
+			keywords, booleanQuery, Arrays.asList(classNames), searchContext);
+	}
 
-					@Override
-					public String getClassName() {
-						return null;
-					}
+	protected boolean shouldSuppressIndexerProvidedClauses(
+		SearchContext searchContext) {
 
-					@Override
-					public Stream<String> getSearchClassNamesStream() {
-						return Stream.of(classNames);
-					}
-
-					@Override
-					public SearchContext getSearchContext() {
-						return searchContext;
-					}
-
-				}));
+		return GetterUtil.getBoolean(
+			searchContext.getAttribute(
+				SearchContextAttributes.
+					ATTRIBUTE_KEY_SUPPRESS_INDEXER_CLAUSES));
 	}
 
 	@Reference
-	protected KeywordQueryContributorsHolder keywordQueryContributorsHolder;
+	protected ExpandoQueryContributorHelper expandoQueryContributorHelper;
 
 }
