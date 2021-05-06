@@ -22,6 +22,8 @@ import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.SearchResponse;
 import com.liferay.portal.search.searcher.Searcher;
+import com.liferay.portal.test.log.LogCapture;
+import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
@@ -50,20 +52,26 @@ public class SearchResponseGetResponseStringTest {
 
 	@Test
 	public void testGetResponseStringContainsException() {
-		SearchResponse searchResponse = _searcher.search(
-			_searchRequestBuilderFactory.builder(
-			).companyId(
-				_companyId
-			).emptySearchEnabled(
-				true
-			).query(
-				_queries.string("t/est")
-			).build());
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				"com.liferay.portal.search.elasticsearch7.internal." +
+					"ElasticsearchIndexSearcher",
+				LoggerTestUtil.ERROR)) {
 
-		Assert.assertNotNull(searchResponse.getResponseString());
+			SearchResponse searchResponse = _searcher.search(
+				_searchRequestBuilderFactory.builder(
+				).companyId(
+					_companyId
+				).emptySearchEnabled(
+					true
+				).query(
+					_queries.string("t/est")
+				).build());
 
-		Assert.assertNotEquals(
-			StringPool.BLANK, searchResponse.getResponseString());
+			Assert.assertNotNull(searchResponse.getResponseString());
+
+			Assert.assertNotEquals(
+				StringPool.BLANK, searchResponse.getResponseString());
+		}
 	}
 
 	@Test
