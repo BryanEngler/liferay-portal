@@ -23,9 +23,12 @@ import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.SearchResponse;
 import com.liferay.portal.search.searcher.Searcher;
 import com.liferay.portal.test.log.LogCapture;
+import com.liferay.portal.test.log.LogEntry;
 import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -67,10 +70,19 @@ public class SearchResponseGetResponseStringTest {
 					_queries.string("t/est")
 				).build());
 
-			Assert.assertNotNull(searchResponse.getResponseString());
+			String responseString = searchResponse.getResponseString();
 
-			Assert.assertNotEquals(
-				StringPool.BLANK, searchResponse.getResponseString());
+			Assert.assertNotNull(responseString);
+
+			List<LogEntry> logEntries = logCapture.getLogEntries();
+
+			LogEntry logEntry = logEntries.get(0);
+
+			String logEntryMessage = logEntry.getMessage();
+
+			Assert.assertTrue(
+				responseString + " -> " + logEntryMessage,
+				responseString.startsWith(logEntryMessage));
 		}
 	}
 
