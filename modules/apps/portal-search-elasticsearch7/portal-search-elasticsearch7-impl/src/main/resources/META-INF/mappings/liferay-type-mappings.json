@@ -756,6 +756,12 @@
 						"type": "long"
 					},
 					"value_text": {
+						"fields": {
+							"sortable": {
+								"ignore_above": 256,
+								"type": "keyword"
+							}
+						},
 						"type": "text"
 					}
 				},
