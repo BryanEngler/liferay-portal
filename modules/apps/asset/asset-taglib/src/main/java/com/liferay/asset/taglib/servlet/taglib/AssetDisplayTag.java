@@ -22,7 +22,6 @@ import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.asset.taglib.internal.servlet.ServletContextUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.taglib.util.IncludeTag;
@@ -267,9 +266,6 @@ public class AssetDisplayTag extends IncludeTag {
 		}
 
 		httpServletRequest.setAttribute(WebKeys.ASSET_ENTRY_VIEW_URL, _viewURL);
-
-		_showExtraInfo = ParamUtil.getBoolean(
-			httpServletRequest, "showExtraInfo");
 
 		addParam("showComments", String.valueOf(_showComments));
 		addParam("showExtraInfo", String.valueOf(_showExtraInfo));
