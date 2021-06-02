@@ -184,6 +184,8 @@ public class SidecarManager implements ElasticsearchConfigurationObserver {
 		String sidecarHome = elasticsearchConfigurationWrapper.sidecarHome();
 
 		if (sidecarHome.equals("elasticsearch-sidecar")) {
+			PathUtil.deleteDir(path.resolve("elasticsearch7"));
+
 			String versionNumber = ResourceUtil.getResourceAsString(
 				getClass(), SidecarVersionConstants.SIDECAR_VERSION_FILE_NAME);
 
