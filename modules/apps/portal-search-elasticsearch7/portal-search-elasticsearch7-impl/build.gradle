@@ -149,10 +149,6 @@ deploySidecar {
 			fileMode = 0777
 			includeEmptyDirs = false
 
-			exclude "elasticsearch-${sidecarElasticsearchServerVersion}/modules/ingest-geoip/**"
-			include "elasticsearch-${sidecarElasticsearchServerVersion}/lib/**"
-			include "elasticsearch-${sidecarElasticsearchServerVersion}/modules/**"
-
 			into buildDir
 			from tarTree(elasticsearchDistributionFile)
 		}
