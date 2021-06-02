@@ -233,7 +233,7 @@ public class ElasticsearchInstaller {
 	protected Path getFilePath(Distributable distributable) throws IOException {
 		Path filePath = locateOrDownload(distributable);
 
-		guardChecksum(filePath, distributable.getChecksum());
+		//guardChecksum(filePath, distributable.getChecksum());
 
 		return filePath;
 	}
