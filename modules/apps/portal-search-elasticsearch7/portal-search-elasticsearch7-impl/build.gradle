@@ -8,7 +8,7 @@ String elasticsearchClientVersion = "7.13.1"
 String luceneVersion = "8.8.2"
 String sidecarElasticsearchServerVersion = file('src/main/resources/META-INF/sidecar.version').text
 
-String elasticsearchDownloadURL = "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-${sidecarElasticsearchServerVersion}-no-jdk-linux-x86_64.tar.gz"
+String elasticsearchDownloadURL = "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${sidecarElasticsearchServerVersion}-no-jdk-linux-x86_64.tar.gz"
 
 File elasticsearchDistributionFile = file("${buildDir}/${elasticsearchDownloadURL.drop(elasticsearchDownloadURL.lastIndexOf('/') + 1)}")
 
@@ -148,10 +148,6 @@ deploySidecar {
 		project.copy {
 			fileMode = 0777
 			includeEmptyDirs = false
-
-			exclude "elasticsearch-${sidecarElasticsearchServerVersion}/modules/ingest-geoip/**"
-			include "elasticsearch-${sidecarElasticsearchServerVersion}/lib/**"
-			include "elasticsearch-${sidecarElasticsearchServerVersion}/modules/**"
 
 			into buildDir
 			from tarTree(elasticsearchDistributionFile)
