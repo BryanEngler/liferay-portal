@@ -177,8 +177,7 @@ public class ElasticsearchInstaller {
 
 		PathUtil.copyDirectory(
 			extractedModulesDirectoryPath,
-			_installationDirectoryPath.resolve("modules"),
-			extractedModulesDirectoryPath.resolve("ingest-geoip"));
+			_installationDirectoryPath.resolve("modules"));
 	}
 
 	protected void downloadAndInstallPlugin(Distributable distributable)
