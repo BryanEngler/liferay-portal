@@ -153,6 +153,20 @@ public class SidecarManager implements ElasticsearchConfigurationObserver {
 		elasticsearchConfigurationWrapper.unregister(this);
 	}
 
+	protected Path getAbsolutePath(Path path, String home) {
+		Path relativeSidecarHomePath = path.resolve(home);
+
+		if (!Files.isDirectory(relativeSidecarHomePath)) {
+			Path absoluteSidecarHomePath = Paths.get(home);
+
+			if (Files.isDirectory(absoluteSidecarHomePath)) {
+				return absoluteSidecarHomePath;
+			}
+		}
+
+		return relativeSidecarHomePath;
+	}
+
 	protected ElasticsearchInstancePaths getElasticsearchInstancePaths() {
 		ElasticsearchInstancePathsBuilder elasticsearchInstancePathsBuilder =
 			new ElasticsearchInstancePathsBuilder();
@@ -165,9 +179,24 @@ public class SidecarManager implements ElasticsearchConfigurationObserver {
 			dataPath
 		).homePath(
 			resolveHomePath(workPath)
+		).libraryPath(
+			resolveLibraryPath(workPath)
 		).workPath(
 			workPath
 		).build();
+	}
+
+	protected String getSidecarHome() {
+		String sidecarHome = elasticsearchConfigurationWrapper.sidecarHome();
+
+		if (sidecarHome.equals("elasticsearch-sidecar")) {
+			String versionNumber = ResourceUtil.getResourceAsString(
+				getClass(), SidecarVersionConstants.SIDECAR_VERSION_FILE_NAME);
+
+			sidecarHome = sidecarHome + "/" + versionNumber;
+		}
+
+		return sidecarHome;
 	}
 
 	protected boolean isStartupSuccessful() {
@@ -181,26 +210,15 @@ public class SidecarManager implements ElasticsearchConfigurationObserver {
 	}
 
 	protected Path resolveHomePath(Path path) {
-		String sidecarHome = elasticsearchConfigurationWrapper.sidecarHome();
+		return getAbsolutePath(path, getSidecarHome());
+	}
 
-		if (sidecarHome.equals("elasticsearch-sidecar")) {
-			String versionNumber = ResourceUtil.getResourceAsString(
-				getClass(), SidecarVersionConstants.SIDECAR_VERSION_FILE_NAME);
+	protected Path resolveLibraryPath(Path path) {
+		String sidecarHome = getSidecarHome();
 
-			sidecarHome = sidecarHome + "/" + versionNumber;
-		}
+		String sidecarLibraryHome = sidecarHome + "/lib";
 
-		Path relativeSidecarHomePath = path.resolve(sidecarHome);
-
-		if (!Files.isDirectory(relativeSidecarHomePath)) {
-			Path absoluteSidecarHomePath = Paths.get(sidecarHome);
-
-			if (Files.isDirectory(absoluteSidecarHomePath)) {
-				return absoluteSidecarHomePath;
-			}
-		}
-
-		return relativeSidecarHomePath;
+		return getAbsolutePath(path, sidecarLibraryHome);
 	}
 
 	@Reference
