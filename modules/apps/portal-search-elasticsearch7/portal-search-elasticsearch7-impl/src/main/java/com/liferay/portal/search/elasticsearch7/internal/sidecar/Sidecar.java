@@ -92,6 +92,7 @@ public class Sidecar {
 
 		_dataHomePath = elasticsearchInstancePaths.getDataPath();
 		_sidecarHomePath = elasticsearchInstancePaths.getHomePath();
+		_sidecarLibraryPath = elasticsearchInstancePaths.getLibraryPath();
 	}
 
 	public String getNetworkHostAddress() {
@@ -233,16 +234,15 @@ public class Sidecar {
 					_sidecarHomePath);
 		}
 
-		String sidecarLibClassPath = _createClasspath(
-			_sidecarHomePath.resolve("lib"), path -> true);
-
 		try {
 			return _processExecutor.execute(
-				_createProcessConfig(sidecarLibClassPath),
+				_createProcessConfig(),
 				new SidecarMainProcessCallable(
 					_elasticsearchConfigurationWrapper.
 						sidecarHeartbeatInterval(),
-					_getModifiedClasses(sidecarLibClassPath)));
+					_getModifiedClasses(
+						_createClasspath(
+							_sidecarHomePath.resolve("lib"), path -> true))));
 		}
 		catch (ProcessException processException) {
 			throw new RuntimeException(
@@ -252,9 +252,15 @@ public class Sidecar {
 	}
 
 	protected String getBootstrapClassPath() {
-		return _createClasspath(
+		String bootstrapClassPath = _createClasspath(
 			_processExecutorPaths.getLibPath(),
 			path -> fileNameContains(path, "petra"));
+
+		String sidecarLibraryClassPath = _createClasspath(
+			_sidecarLibraryPath, path -> true);
+
+		return bootstrapClassPath + File.pathSeparator +
+			sidecarLibraryClassPath;
 	}
 
 	protected URL getBundleURL() {
@@ -388,7 +394,7 @@ public class Sidecar {
 		}
 	}
 
-	private ProcessConfig _createProcessConfig(String sidecarLibClassPath) {
+	private ProcessConfig _createProcessConfig() {
 		ProcessConfig.Builder builder = new ProcessConfig.Builder();
 
 		URL bundleURL = getBundleURL();
@@ -405,8 +411,8 @@ public class Sidecar {
 			Sidecar.class.getClassLoader()
 		).setRuntimeClassPath(
 			StringBundler.concat(
-				sidecarLibClassPath, File.pathSeparator, bundleURL.getPath(),
-				File.pathSeparator, getBootstrapClassPath())
+				bundleURL.getPath(), File.pathSeparator,
+				getBootstrapClassPath())
 		).build();
 	}
 
@@ -608,6 +614,7 @@ public class Sidecar {
 	private FutureListener<Serializable> _restartFutureListener;
 	private final Collection<SettingsContributor> _settingsContributors;
 	private final Path _sidecarHomePath;
+	private final Path _sidecarLibraryPath;
 	private SidecarManager _sidecarManager;
 	private Path _sidecarTempDirPath;
 

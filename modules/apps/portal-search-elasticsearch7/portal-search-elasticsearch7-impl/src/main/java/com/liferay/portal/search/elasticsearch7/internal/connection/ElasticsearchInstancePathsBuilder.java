@@ -26,7 +26,7 @@ public class ElasticsearchInstancePathsBuilder {
 	public ElasticsearchInstancePaths build() {
 		return new ElasticsearchInstancePathsImpl(
 			toAbsolutePath(_dataPath), toAbsolutePath(_homePath),
-			toAbsolutePath(_workPath));
+			toAbsolutePath(_libraryPath), toAbsolutePath(_workPath));
 	}
 
 	public ElasticsearchInstancePathsBuilder dataPath(Path dataHomePath) {
@@ -37,6 +37,12 @@ public class ElasticsearchInstancePathsBuilder {
 
 	public ElasticsearchInstancePathsBuilder homePath(Path homePath) {
 		_homePath = homePath;
+
+		return this;
+	}
+
+	public ElasticsearchInstancePathsBuilder libraryPath(Path libraryPath) {
+		_libraryPath = libraryPath;
 
 		return this;
 	}
@@ -59,16 +65,18 @@ public class ElasticsearchInstancePathsBuilder {
 
 	private Path _dataPath;
 	private Path _homePath;
+	private Path _libraryPath;
 	private Path _workPath;
 
 	private static class ElasticsearchInstancePathsImpl
 		implements ElasticsearchInstancePaths {
 
 		public ElasticsearchInstancePathsImpl(
-			Path dataPath, Path homePath, Path workPath) {
+			Path dataPath, Path homePath, Path libraryPath, Path workPath) {
 
 			_dataPath = dataPath;
 			_homePath = homePath;
+			_libraryPath = libraryPath;
 			_workPath = workPath;
 		}
 
@@ -83,12 +91,18 @@ public class ElasticsearchInstancePathsBuilder {
 		}
 
 		@Override
+		public Path getLibraryPath() {
+			return _libraryPath;
+		}
+
+		@Override
 		public Path getWorkPath() {
 			return _workPath;
 		}
 
 		private final Path _dataPath;
 		private final Path _homePath;
+		private final Path _libraryPath;
 		private final Path _workPath;
 
 	}
