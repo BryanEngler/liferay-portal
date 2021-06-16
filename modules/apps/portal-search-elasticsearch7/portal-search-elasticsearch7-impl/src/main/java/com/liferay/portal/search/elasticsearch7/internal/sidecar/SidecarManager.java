@@ -151,6 +151,20 @@ public class SidecarManager implements ElasticsearchConfigurationObserver {
 		elasticsearchConfigurationWrapper.unregister(this);
 	}
 
+	protected Path getAbsolutePath(Path path, String home) {
+		Path relativeSidecarHomePath = path.resolve(home);
+
+		if (!Files.isDirectory(relativeSidecarHomePath)) {
+			Path absoluteSidecarHomePath = Paths.get(home);
+
+			if (Files.isDirectory(absoluteSidecarHomePath)) {
+				return absoluteSidecarHomePath;
+			}
+		}
+
+		return relativeSidecarHomePath;
+	}
+
 	protected ElasticsearchInstancePaths getElasticsearchInstancePaths() {
 		ElasticsearchInstancePathsBuilder elasticsearchInstancePathsBuilder =
 			new ElasticsearchInstancePathsBuilder();
@@ -163,9 +177,15 @@ public class SidecarManager implements ElasticsearchConfigurationObserver {
 			dataPath
 		).homePath(
 			resolveHomePath(workPath)
+		).libraryPath(
+			resolveLibraryPath(workPath)
 		).workPath(
 			workPath
 		).build();
+	}
+
+	protected String getSidecarHome() {
+		return elasticsearchConfigurationWrapper.sidecarHome();
 	}
 
 	protected boolean isStartupSuccessful() {
@@ -179,19 +199,15 @@ public class SidecarManager implements ElasticsearchConfigurationObserver {
 	}
 
 	protected Path resolveHomePath(Path path) {
-		String sidecarHome = elasticsearchConfigurationWrapper.sidecarHome();
+		return getAbsolutePath(path, getSidecarHome());
+	}
 
-		Path relativeSidecarHomePath = path.resolve(sidecarHome);
+	protected Path resolveLibraryPath(Path path) {
+		String sidecarHome = getSidecarHome();
 
-		if (!Files.isDirectory(relativeSidecarHomePath)) {
-			Path absoluteSidecarHomePath = Paths.get(sidecarHome);
+		String sidecarLibraryHome = sidecarHome + "/lib";
 
-			if (Files.isDirectory(absoluteSidecarHomePath)) {
-				return absoluteSidecarHomePath;
-			}
-		}
-
-		return relativeSidecarHomePath;
+		return getAbsolutePath(path, sidecarLibraryHome);
 	}
 
 	@Reference
