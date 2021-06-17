@@ -56,8 +56,8 @@ public class SidecarMainProcessCallable
 	}
 
 	private void _loadModifiedClasses() throws ProcessException {
-		ClassLoader classLoader =
-			SidecarMainProcessCallable.class.getClassLoader();
+		ClassLoader bootstrapLoader =
+			ClassLoader.getSystemClassLoader().getParent();
 
 		try {
 			Method defineClassMethod = ReflectionUtil.getDeclaredMethod(
@@ -70,7 +70,7 @@ public class SidecarMainProcessCallable
 				byte[] modifiedClassBytes = entry.getValue();
 
 				defineClassMethod.invoke(
-					classLoader, entry.getKey(), modifiedClassBytes, 0,
+					bootstrapLoader, entry.getKey(), modifiedClassBytes, 0,
 					modifiedClassBytes.length);
 			}
 		}
