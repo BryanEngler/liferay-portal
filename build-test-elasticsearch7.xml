@@ -587,7 +587,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 		<sequential>
 			<lstopwatch action="start" name="prepare.elasticsearch.ltr" />
 
-			<property name="elasticsearch.ltr.zip.name" value="ltr-plugin-v1.5.0-es${elasticsearch.version}.zip" />
+			<property name="elasticsearch.ltr.zip.name" value="ltr-plugin-v1.5.3-es7.9.3.zip" />
 
 			<if>
 				<not>
