@@ -28,8 +28,6 @@ import com.liferay.portal.search.query.Query;
 import com.liferay.portal.search.rescore.RescoreBuilder;
 import com.liferay.portal.search.rescore.RescoreBuilderFactory;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
-import com.liferay.search.experiences.blueprints.constants.json.keys.query.ClauseConfigurationKeys;
-import com.liferay.search.experiences.blueprints.constants.json.keys.query.QueryConfigurationKeys;
 import com.liferay.search.experiences.blueprints.constants.json.values.ClauseContext;
 import com.liferay.search.experiences.blueprints.constants.json.values.Occur;
 import com.liferay.search.experiences.blueprints.engine.internal.clause.util.ClauseHelper;
@@ -121,29 +119,20 @@ public class QuerySearchRequestBodyContributor
 
 		RescoreBuilder rescoreBuilder = _rescoreBuilderFactory.builder(query);
 
-		if (jsonObject.has(ClauseConfigurationKeys.WINDOW_SIZE.getJsonKey())) {
-			rescoreBuilder.windowSize(
-				jsonObject.getInt(
-					ClauseConfigurationKeys.WINDOW_SIZE.getJsonKey(), 100));
+		if (jsonObject.has("window_size")) {
+			rescoreBuilder.windowSize(jsonObject.getInt("window_size", 100));
 		}
 
-		if (jsonObject.has(ClauseConfigurationKeys.QUERY_WEIGHT.getJsonKey())) {
+		if (jsonObject.has("query_weight")) {
 			rescoreBuilder.queryWeight(
 				GetterUtil.getFloat(
-					jsonObject.getString(
-						ClauseConfigurationKeys.WINDOW_SIZE.getJsonKey(),
-						"1.0")));
+					jsonObject.getString("window_size", "1.0")));
 		}
 
-		if (jsonObject.has(
-				ClauseConfigurationKeys.RESCORE_QUERY_WEIGHT.getJsonKey())) {
-
+		if (jsonObject.has("rescore_query_weight")) {
 			rescoreBuilder.queryWeight(
 				GetterUtil.getFloat(
-					jsonObject.getString(
-						ClauseConfigurationKeys.RESCORE_QUERY_WEIGHT.
-							getJsonKey(),
-						"1.0")));
+					jsonObject.getString("rescore_query_weight", "1.0")));
 		}
 
 		searchRequestBuilder.addRescore(rescoreBuilder.build());
@@ -158,34 +147,20 @@ public class QuerySearchRequestBodyContributor
 		if (queryContributor.getAttributes() != null) {
 			Map<String, Object> attributes = queryContributor.getAttributes();
 
-			if (attributes.containsKey(
-					ClauseConfigurationKeys.WINDOW_SIZE.getJsonKey())) {
-
+			if (attributes.containsKey("window_size")) {
 				rescoreBuilder.windowSize(
-					GetterUtil.getInteger(
-						attributes.get(
-							ClauseConfigurationKeys.WINDOW_SIZE.getJsonKey())));
+					GetterUtil.getInteger(attributes.get("window_size")));
 			}
 
-			if (attributes.containsKey(
-					ClauseConfigurationKeys.QUERY_WEIGHT.getJsonKey())) {
-
+			if (attributes.containsKey("query_weight")) {
 				rescoreBuilder.queryWeight(
-					GetterUtil.getFloat(
-						attributes.get(
-							ClauseConfigurationKeys.QUERY_WEIGHT.
-								getJsonKey())));
+					GetterUtil.getFloat(attributes.get("query_weight")));
 			}
 
-			if (attributes.containsKey(
-					ClauseConfigurationKeys.RESCORE_QUERY_WEIGHT.
-						getJsonKey())) {
-
+			if (attributes.containsKey("rescore_query_weight")) {
 				rescoreBuilder.rescoreQueryWeight(
 					GetterUtil.getFloat(
-						attributes.get(
-							ClauseConfigurationKeys.RESCORE_QUERY_WEIGHT.
-								getJsonKey())));
+						attributes.get("rescore_query_weight")));
 			}
 		}
 
@@ -203,8 +178,7 @@ public class QuerySearchRequestBodyContributor
 
 			messages.setElementId("queryElement-" + i);
 
-			if (!configurationJSONObject.getBoolean(
-					QueryConfigurationKeys.ENABLED.getJsonKey(), true) ||
+			if (!configurationJSONObject.getBoolean("enabled", true) ||
 				!_isConditionsTrue(
 					configurationJSONObject, parameterData, messages)) {
 
@@ -215,9 +189,8 @@ public class QuerySearchRequestBodyContributor
 
 			_processClauses(
 				searchRequestBuilder,
-				configurationJSONObject.getJSONArray(
-					QueryConfigurationKeys.CLAUSES.getJsonKey()),
-				parameterData, messages);
+				configurationJSONObject.getJSONArray("clauses"), parameterData,
+				messages);
 
 			messages.unsetElementId();
 		}
@@ -285,9 +258,7 @@ public class QuerySearchRequestBodyContributor
 	}
 
 	private Occur _getOccur(JSONObject jsonObject) {
-		String occur = jsonObject.getString(
-			ClauseConfigurationKeys.OCCUR.getJsonKey(),
-			Occur.MUST.getjsonValue());
+		String occur = jsonObject.getString("occur", "must");
 
 		return Occur.valueOf(StringUtil.toUpperCase(occur));
 	}
@@ -296,7 +267,7 @@ public class QuerySearchRequestBodyContributor
 		JSONObject jsonObject, ParameterData parameterData, Messages messages) {
 
 		JSONObject conditionsJSONObject = jsonObject.getJSONObject(
-			QueryConfigurationKeys.CONDITIONS.getJsonKey());
+			"conditions");
 
 		if (conditionsJSONObject == null) {
 			return true;
@@ -314,9 +285,8 @@ public class QuerySearchRequestBodyContributor
 			JSONObject clauseJSONObject = clausesJSONArray.getJSONObject(j);
 
 			Optional<Query> clauseOptional = _clauseHelper.getClause(
-				clauseJSONObject.getJSONObject(
-					ClauseConfigurationKeys.QUERY.getJsonKey()),
-				parameterData, messages);
+				clauseJSONObject.getJSONObject("query"), parameterData,
+				messages);
 
 			if (!clauseOptional.isPresent()) {
 				continue;
