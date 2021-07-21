@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 /**
  * @author Petteri Karttunen
  */
-public enum ClauseContext {
+public enum ClauseContext { //TODO
 
 	POST_FILTER("post_filter"), QUERY("query"), RESCORE("rescore");
 

@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 /**
  * @author Petteri Karttunen
  */
-public enum Occur {
+public enum Occur { //TODO
 
 	FILTER("filter"), MUST("must"), MUST_NOT("must_not"), SHOULD("should");
 
