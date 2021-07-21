@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 /**
  * @author Petteri Karttunen
  */
-public enum FilterMode {
+public enum FilterMode { //TODO
 
 	POST("post"), PRE("pre"), RESCORE("rescore");
 

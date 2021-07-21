@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 /**
  * @author Petteri Karttunen
  */
-public enum Operator {
+public enum Operator { //TODO
 
 	AND("and"), NOT("not"), OR("or");
 
