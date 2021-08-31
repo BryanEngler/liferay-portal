@@ -16,8 +16,10 @@ package com.liferay.object.internal.search.spi.model.query.contributor;
 
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectFieldLocalService;
+import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -40,8 +42,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.spi.model.query.contributor.KeywordQueryContributor;
 import com.liferay.portal.search.spi.model.query.contributor.helper.KeywordQueryContributorHelper;
 
-import java.io.Serializable;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -65,6 +66,10 @@ public class ObjectEntryKeywordQueryContributor
 		String keywords, BooleanQuery booleanQuery,
 		KeywordQueryContributorHelper keywordQueryContributorHelper) {
 
+		if (Validator.isBlank(keywords)) {
+			return;
+		}
+
 		SearchContext searchContext =
 			keywordQueryContributorHelper.getSearchContext();
 
@@ -76,45 +81,58 @@ public class ObjectEntryKeywordQueryContributor
 		}
 
 		if (objectDefinitionId == 0) {
-			return;
+			String className = keywordQueryContributorHelper.getClassName();
+
+			if (className.startsWith(
+					"com.liferay.object.model.ObjectDefinition#")) {
+
+				String[] parts = StringUtil.split(className, "#");
+
+				objectDefinitionId = Long.valueOf(parts[1]);
+			}
+			else {
+				return;
+			}
 		}
 
-		if (Validator.isNotNull(keywords)) {
-			try {
-				booleanQuery.add(
-					new TermQueryImpl(Field.ENTRY_CLASS_PK, keywords),
-					BooleanClauseOccur.SHOULD);
+		for (String token : _tokenizeKeywords(keywords)) {
+			if (!Validator.isBlank(token)) {
+				try {
+					booleanQuery.add(
+						new TermQueryImpl(Field.ENTRY_CLASS_PK, token),
+						BooleanClauseOccur.SHOULD);
+				}
+				catch (ParseException parseException) {
+					throw new SystemException(parseException);
+				}
 			}
-			catch (ParseException parseException) {
-				throw new SystemException(parseException);
-			}
-		}
 
-		List<ObjectField> objectFields =
-			_objectFieldLocalService.getObjectFields(objectDefinitionId);
+			List<ObjectField> objectFields =
+				_objectFieldLocalService.getObjectFields(objectDefinitionId);
 
-		for (ObjectField objectField : objectFields) {
-			try {
-				_contribute(
-					keywords, booleanQuery, keywordQueryContributorHelper,
-					objectField);
-			}
-			catch (ParseException parseException) {
-				throw new SystemException(parseException);
+			for (ObjectField objectField : objectFields) {
+				try {
+					_contribute(
+						token, booleanQuery, keywordQueryContributorHelper,
+						objectField);
+				}
+				catch (ParseException parseException) {
+					throw new SystemException(parseException);
+				}
 			}
 		}
 	}
 
 	private void _addRangeQuery(
-			String keywords, BooleanQuery booleanQuery, String fieldName,
+			String token, BooleanQuery booleanQuery, String fieldName,
 			String type)
 		throws ParseException {
 
-		if (Validator.isBlank(keywords)) {
+		if (Validator.isBlank(token)) {
 			return;
 		}
 
-		String[] range = RangeParserUtil.parserRange(keywords);
+		String[] range = RangeParserUtil.parserRange(token);
 
 		String lowerTerm = range[0];
 		String upperTerm = range[1];
@@ -129,36 +147,29 @@ public class ObjectEntryKeywordQueryContributor
 	}
 
 	private void _contribute(
-			String keywords, BooleanQuery booleanQuery,
+			String token, BooleanQuery booleanQuery,
 			KeywordQueryContributorHelper keywordQueryContributorHelper,
 			ObjectField objectField)
 		throws ParseException {
 
-		if (!objectField.isIndexed()) {
-			return;
-		}
-
-		SearchContext searchContext =
-			keywordQueryContributorHelper.getSearchContext();
-
-		String fieldKeywords = _getKeywords(
-			objectField.getName(), keywords, searchContext);
-
-		if (Validator.isNull(fieldKeywords)) {
+		if (!objectField.isIndexed() || Validator.isBlank(token)) {
 			return;
 		}
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
 				StringBundler.concat(
-					"Add search term ", fieldKeywords, " for object field ",
+					"Add search term ", token, " for object field ",
 					objectField.getName()));
 		}
+
+		SearchContext searchContext =
+			keywordQueryContributorHelper.getSearchContext();
 
 		BooleanQuery nestedBooleanQuery = new BooleanQueryImpl();
 
 		if (objectField.isIndexedAsKeyword()) {
-			String lowerCaseKeywords = StringUtil.toLowerCase(fieldKeywords);
+			String lowerCaseKeywords = StringUtil.toLowerCase(token);
 
 			nestedBooleanQuery.add(
 				new WildcardQueryImpl(
@@ -172,57 +183,56 @@ public class ObjectEntryKeywordQueryContributor
 		}
 		else if (Objects.equals(objectField.getType(), "BigDecimal")) {
 			_addRangeQuery(
-				fieldKeywords, nestedBooleanQuery,
-				"nestedFieldArray.value_double", objectField.getType());
+				token, nestedBooleanQuery, "nestedFieldArray.value_double",
+				objectField.getType());
 		}
 		else if (Objects.equals(objectField.getType(), "Blob")) {
 			_log.error("Blob type is not indexable");
 		}
 		else if (Objects.equals(objectField.getType(), "Boolean")) {
-			if (StringUtil.equalsIgnoreCase(fieldKeywords, "false") ||
-				StringUtil.equalsIgnoreCase(fieldKeywords, "true")) {
+			if (StringUtil.equalsIgnoreCase(token, "false") ||
+				StringUtil.equalsIgnoreCase(token, "true")) {
 
 				nestedBooleanQuery.add(
 					new TermQueryImpl(
 						"nestedFieldArray.value_boolean",
-						StringUtil.toLowerCase(fieldKeywords)),
+						StringUtil.toLowerCase(token)),
 					BooleanClauseOccur.MUST);
 			}
-			else if (StringUtil.equalsIgnoreCase(fieldKeywords, "no") ||
-					 StringUtil.equalsIgnoreCase(fieldKeywords, "yes")) {
+			else if (StringUtil.equalsIgnoreCase(token, "no") ||
+					 StringUtil.equalsIgnoreCase(token, "yes")) {
 
 				nestedBooleanQuery.add(
 					new TermQueryImpl(
 						"nestedFieldArray.value_keyword",
-						StringUtil.toLowerCase(fieldKeywords)),
+						StringUtil.toLowerCase(token)),
 					BooleanClauseOccur.MUST);
 			}
 		}
 		else if (Objects.equals(objectField.getType(), "Date")) {
 			_addRangeQuery(
-				fieldKeywords, nestedBooleanQuery,
-				"nestedFieldArray.value_date", objectField.getType());
+				token, nestedBooleanQuery, "nestedFieldArray.value_date",
+				objectField.getType());
 		}
 		else if (Objects.equals(objectField.getType(), "Double")) {
 			_addRangeQuery(
-				fieldKeywords, nestedBooleanQuery,
-				"nestedFieldArray.value_double", objectField.getType());
+				token, nestedBooleanQuery, "nestedFieldArray.value_double",
+				objectField.getType());
 		}
 		else if (Objects.equals(objectField.getType(), "Integer")) {
 			_addRangeQuery(
-				fieldKeywords, nestedBooleanQuery,
-				"nestedFieldArray.value_integer", objectField.getType());
+				token, nestedBooleanQuery, "nestedFieldArray.value_integer",
+				objectField.getType());
 		}
 		else if (Objects.equals(objectField.getType(), "Long")) {
 			_addRangeQuery(
-				fieldKeywords, nestedBooleanQuery,
-				"nestedFieldArray.value_long", objectField.getType());
+				token, nestedBooleanQuery, "nestedFieldArray.value_long",
+				objectField.getType());
 		}
 		else if (Objects.equals(objectField.getType(), "String")) {
 			if (Validator.isBlank(objectField.getIndexedLanguageId())) {
 				nestedBooleanQuery.add(
-					new MatchQuery(
-						"nestedFieldArray.value_text", fieldKeywords),
+					new MatchQuery("nestedFieldArray.value_text", token),
 					BooleanClauseOccur.MUST);
 			}
 			else if (Objects.equals(
@@ -233,7 +243,7 @@ public class ObjectEntryKeywordQueryContributor
 					new MatchQuery(
 						"nestedFieldArray.value_" +
 							objectField.getIndexedLanguageId(),
-						fieldKeywords),
+						token),
 					BooleanClauseOccur.MUST);
 			}
 		}
@@ -254,45 +264,6 @@ public class ObjectEntryKeywordQueryContributor
 					"nestedFieldArray.fieldName", objectField.getName()),
 				BooleanClauseOccur.MUST);
 		}
-	}
-
-	private String _getKeywords(
-		String fieldName, String keywords, SearchContext searchContext) {
-
-		if (Validator.isNotNull(keywords)) {
-			return keywords;
-		}
-
-		String value = StringPool.BLANK;
-
-		Serializable serializable = searchContext.getAttribute(fieldName);
-
-		if (serializable != null) {
-			Class<?> clazz = serializable.getClass();
-
-			if (clazz.isArray()) {
-				value = StringUtil.merge((Object[])serializable);
-			}
-			else {
-				value = GetterUtil.getString(serializable);
-			}
-		}
-
-		if (!Validator.isBlank(value) &&
-			(searchContext.getFacet(fieldName) != null)) {
-
-			return null;
-		}
-
-		if (Validator.isBlank(value)) {
-			value = searchContext.getKeywords();
-		}
-
-		if (Validator.isBlank(value)) {
-			return null;
-		}
-
-		return value;
 	}
 
 	private boolean _isValidRange(
@@ -338,11 +309,138 @@ public class ObjectEntryKeywordQueryContributor
 		return true;
 	}
 
+	private List<String> _tokenizeKeywords(String keywords) {
+		KeywordTokenizer keywordTokenizer = new KeywordTokenizer();
+
+		return keywordTokenizer.tokenize(keywords);
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		ObjectEntryKeywordQueryContributor.class);
 
 	private static final Pattern _pattern = Pattern.compile("\\d{14}");
 
 	private final ObjectFieldLocalService _objectFieldLocalService;
+
+	private class KeywordTokenizer {
+
+		public List<String> tokenize(String keywords) {
+			keywords = _normalizeWhitespace(keywords);
+
+			List<String> tokens = new ArrayList<>();
+
+			int[] startAndEnd = getStartAndEnd(keywords);
+
+			tokenize(keywords, tokens, startAndEnd[0], startAndEnd[1]);
+
+			return tokens;
+		}
+
+		protected int[] getStartAndEnd(String keywords) {
+			int quoteStart = keywords.indexOf(CharPool.QUOTE);
+			int rangeStart = keywords.indexOf(CharPool.OPEN_BRACKET);
+
+			if (quoteStart == QueryUtil.ALL_POS) {
+				return new int[] {
+					rangeStart,
+					keywords.indexOf(CharPool.CLOSE_BRACKET, rangeStart + 1)
+				};
+			}
+			else if (rangeStart == QueryUtil.ALL_POS) {
+				return new int[] {
+					quoteStart, keywords.indexOf(CharPool.QUOTE, quoteStart + 1)
+				};
+			}
+			else if (quoteStart < rangeStart) {
+				return new int[] {
+					quoteStart, keywords.indexOf(CharPool.QUOTE, quoteStart + 1)
+				};
+			}
+			else {
+				return new int[] {
+					rangeStart,
+					keywords.indexOf(CharPool.CLOSE_BRACKET, rangeStart + 1)
+				};
+			}
+		}
+
+		protected String[] split(String keywords) {
+			if (Objects.equals(keywords, StringPool.NULL)) {
+				return new String[] {keywords};
+			}
+
+			return StringUtil.split(keywords, CharPool.SPACE);
+		}
+
+		protected void tokenize(
+			String keywords, List<String> tokens, int start, int end) {
+
+			if ((start == QueryUtil.ALL_POS) || (end == QueryUtil.ALL_POS)) {
+				keywords = keywords.trim();
+
+				if (!keywords.isEmpty()) {
+					tokenizeBySpace(keywords, tokens);
+				}
+
+				return;
+			}
+
+			String token = keywords.substring(0, start);
+
+			token = token.trim();
+
+			if (!token.isEmpty()) {
+				tokenizeBySpace(token, tokens);
+			}
+
+			token = keywords.substring(start, end + 1);
+
+			token = token.trim();
+
+			if (!token.isEmpty()) {
+				if (StringUtil.startsWith(token, CharPool.QUOTE)) {
+					token = StringUtil.unquote(token);
+				}
+
+				tokens.add(token);
+			}
+
+			if ((end + 1) > keywords.length()) {
+				return;
+			}
+
+			keywords = keywords.substring(end + 1);
+
+			keywords = keywords.trim();
+
+			if (keywords.isEmpty()) {
+				return;
+			}
+
+			int[] startAndEnd = getStartAndEnd(keywords);
+
+			tokenize(keywords, tokens, startAndEnd[0], startAndEnd[1]);
+		}
+
+		protected void tokenizeBySpace(String keywords, List<String> tokens) {
+			String[] keywordTokens = split(keywords);
+
+			for (String keywordToken : keywordTokens) {
+				String token = keywordToken.trim();
+
+				if (!token.isEmpty()) {
+					tokens.add(token);
+				}
+			}
+		}
+
+		private String _normalizeWhitespace(String keywords) {
+			return StringUtil.replace(
+				keywords, _IDEOGRAPHIC_SPACE, CharPool.SPACE);
+		}
+
+		private static final char _IDEOGRAPHIC_SPACE = '\u3000';
+
+	}
 
 }

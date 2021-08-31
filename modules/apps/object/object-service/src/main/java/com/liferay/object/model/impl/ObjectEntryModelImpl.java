@@ -268,7 +268,8 @@ public class ObjectEntryModelImpl
 
 	@Override
 	public String getModelClassName() {
-		return ObjectEntry.class.getName();
+		return "com.liferay.object.model.ObjectDefinition#" +
+			getObjectDefinitionId();
 	}
 
 	@Override
