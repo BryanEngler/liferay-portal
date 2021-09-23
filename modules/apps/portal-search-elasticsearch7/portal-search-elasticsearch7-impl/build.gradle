@@ -8,17 +8,17 @@ String elasticsearchClientVersion = "7.14.1"
 String luceneVersion = "8.9.0"
 String sidecarElasticsearchServerVersion = file('src/main/resources/META-INF/sidecar.version').text
 
-String elasticsearchDownloadURL = "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-${sidecarElasticsearchServerVersion}-no-jdk-linux-x86_64.tar.gz"
+String sidecarElasticsearchDownloadURL = "https://repository.liferay.com/nexus/service/local/repositories/third-party/content/com/liferay/org.elasticsearch.server/${sidecarElasticsearchServerVersion}/org.elasticsearch.server-${sidecarElasticsearchServerVersion}.tar.gz"
 
-File elasticsearchDistributionFile = file("${buildDir}/${elasticsearchDownloadURL.drop(elasticsearchDownloadURL.lastIndexOf('/') + 1)}")
+File sidecarElasticsearchDistributionFile = file("${buildDir}/${sidecarElasticsearchDownloadURL.drop(sidecarElasticsearchDownloadURL.lastIndexOf('/') + 1)}")
 
 File sidecarDeployDir = file("${project.'liferay.home'}/elasticsearch-sidecar/" + sidecarElasticsearchServerVersion)
 
 List<String> sidecarPluginURLs = [
-	"https://artifacts.elastic.co/downloads/elasticsearch-plugins/analysis-icu/analysis-icu-${sidecarElasticsearchServerVersion}.zip",
-	"https://artifacts.elastic.co/downloads/elasticsearch-plugins/analysis-kuromoji/analysis-kuromoji-${sidecarElasticsearchServerVersion}.zip",
-	"https://artifacts.elastic.co/downloads/elasticsearch-plugins/analysis-smartcn/analysis-smartcn-${sidecarElasticsearchServerVersion}.zip",
-	"https://artifacts.elastic.co/downloads/elasticsearch-plugins/analysis-stempel/analysis-stempel-${sidecarElasticsearchServerVersion}.zip"
+	"https://repository.liferay.com/nexus/service/local/repositories/third-party/content/com/liferay/org.elasticsearch.plugin.analysis.icu/${sidecarElasticsearchServerVersion}/org.elasticsearch.plugin.analysis.icu-${sidecarElasticsearchServerVersion}.zip",
+	"https://repository.liferay.com/nexus/service/local/repositories/third-party/content/com/liferay/org.elasticsearch.plugin.analysis.kuromoji/${sidecarElasticsearchServerVersion}/org.elasticsearch.plugin.analysis.kuromoji-${sidecarElasticsearchServerVersion}.zip",
+	"https://repository.liferay.com/nexus/service/local/repositories/third-party/content/com/liferay/org.elasticsearch.plugin.analysis.smartcn/${sidecarElasticsearchServerVersion}/org.elasticsearch.plugin.analysis.smartcn-${sidecarElasticsearchServerVersion}.zip",
+	"https://repository.liferay.com/nexus/service/local/repositories/third-party/content/com/liferay/org.elasticsearch.plugin.analysis.stempel/${sidecarElasticsearchServerVersion}/org.elasticsearch.plugin.analysis.stempel-${sidecarElasticsearchServerVersion}.zip"
 ]
 
 cleanSidecar {
@@ -142,7 +142,7 @@ deploySidecar {
 	}
 
 	doFirst {
-		FileUtil.get(project, elasticsearchDownloadURL, elasticsearchDistributionFile, false, true)
+		FileUtil.get(project, sidecarElasticsearchDownloadURL, sidecarElasticsearchDistributionFile, false, true)
 
 		project.copy {
 			fileMode = 0777
@@ -154,7 +154,7 @@ deploySidecar {
 			include "elasticsearch-${sidecarElasticsearchServerVersion}/modules/**"
 
 			into buildDir
-			from tarTree(elasticsearchDistributionFile)
+			from tarTree(sidecarElasticsearchDistributionFile)
 		}
 	}
 
