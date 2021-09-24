@@ -201,7 +201,7 @@ public class ElasticsearchConnectionFixture
 			).put(
 				"sidecarHttpPort", HttpPortRange.AUTO
 			).put(
-				"sidecarJVMOptions", "-Xmx256m"
+				"sidecarJVMOptions", "-Xmx275m"
 			).putAll(
 				elasticsearchConfigurationProperties
 			).build();
