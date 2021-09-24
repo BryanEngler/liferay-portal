@@ -148,8 +148,18 @@ public interface SearchRequestBuilder {
 
 	public SearchRequestBuilder locale(Locale locale);
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #entryClassNames(String...)}
+	 */
+	@Deprecated
 	public SearchRequestBuilder modelIndexerClasses(Class<?>... classes);
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #entryClassNames(String...)}
+	 */
+	@Deprecated
 	public SearchRequestBuilder modelIndexerClassNames(String... classNames);
 
 	public SearchRequestBuilder ownerUserId(Long userId);
