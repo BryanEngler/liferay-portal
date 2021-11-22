@@ -31,6 +31,7 @@ import com.liferay.portal.search.document.Document;
 import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.SearchResponse;
 import com.liferay.portal.search.searcher.Searcher;
+import com.liferay.portal.search.test.util.DocumentsAssert;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -138,6 +139,11 @@ public class SXPResourceTest {
 				WikiPage.class.getName(), DLFileEntry.class.getName()
 			},
 			"entryClassName", "alpha");
+		_assertSearch(
+			sxpBlueprintModel.getSXPBlueprintId(),
+			"[com.liferay.wiki.model.WikiPage, " +
+				"com.liferay.document.library.kernel.model.DLFileEntry]",
+			"entryClassName", "alpha");
 
 		//update blueprint config. classname -> com.liferay.document.library.kernel.model.DLFileEntry
 		//sxpBlueprintModel.setConfigurationJSON(sxpElement.toString());
@@ -153,6 +159,11 @@ public class SXPResourceTest {
 			new String[] {
 				DLFileEntry.class.getName(), WikiPage.class.getName()
 			},
+			"entryClassName", "alpha");
+		_assertSearch(
+			sxpBlueprintModel.getSXPBlueprintId(),
+			"[com.liferay.document.library.kernel.model.DLFileEntry, " +
+				"com.liferay.wiki.model.WikiPage]",
 			"entryClassName", "alpha");
 	}
 
@@ -215,6 +226,27 @@ public class SXPResourceTest {
 			).build());
 
 		_assertValues(
+			searchResponse.getRequestString(),
+			searchResponse.getDocumentsStream(), fieldName, expected);
+	}
+
+	private void _assertSearch(
+			long blueprintId, String expected, String fieldName,
+			String keywords)
+		throws Exception {
+
+		SearchResponse searchResponse = _searcher.search(
+			_searchRequestBuilderFactory.builder(
+			).companyId(
+				TestPropsValues.getCompanyId()
+			).queryString(
+				keywords
+			).withSearchContext(
+				searchContext -> searchContext.setAttribute(
+					"search.experiences.blueprint.id", blueprintId)
+			).build());
+
+		DocumentsAssert.assertValues(
 			searchResponse.getRequestString(),
 			searchResponse.getDocumentsStream(), fieldName, expected);
 	}
