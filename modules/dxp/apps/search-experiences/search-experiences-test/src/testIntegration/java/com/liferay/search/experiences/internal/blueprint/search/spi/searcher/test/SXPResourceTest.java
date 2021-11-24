@@ -42,6 +42,7 @@ import com.liferay.search.experiences.rest.dto.v1_0.SXPBlueprint;
 import com.liferay.search.experiences.rest.dto.v1_0.SXPElement;
 import com.liferay.search.experiences.rest.resource.v1_0.SXPBlueprintResource;
 import com.liferay.search.experiences.rest.resource.v1_0.SXPElementResource;
+import com.liferay.search.experiences.rest.resource.v1_0.SearchResponseResource;
 import com.liferay.search.experiences.service.SXPBlueprintLocalService;
 import com.liferay.search.experiences.service.SXPElementLocalService;
 import com.liferay.wiki.model.WikiNode;
@@ -165,6 +166,10 @@ public class SXPResourceTest {
 			"[com.liferay.document.library.kernel.model.DLFileEntry, " +
 				"com.liferay.wiki.model.WikiPage]",
 			"entryClassName", "alpha");
+
+		com.liferay.search.experiences.rest.dto.v1_0.SearchResponse
+			searchResponse = _searchResponseResource.postSearch(
+				"alpha", null, sxpBlueprint);
 	}
 
 	public class TestAcceptLanguage implements AcceptLanguage {
@@ -307,6 +312,9 @@ public class SXPResourceTest {
 
 	@Inject
 	private SXPElementResource _sxpElementResource;
+
+	@Inject
+	private SearchResponseResource _searchResponseResource;
 
 	@Inject
 	private WikiNodeLocalService _wikiNodeLocalService;
