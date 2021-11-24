@@ -293,6 +293,11 @@ public abstract class BaseSXPBlueprintResourceTestCase {
 	}
 
 	@Test
+	public void testGetSXPBlueprintExport() throws Exception {
+		Assert.assertTrue(false);
+	}
+
+	@Test
 	public void testPostSXPBlueprintValidate() throws Exception {
 		SXPBlueprint randomSXPBlueprint = randomSXPBlueprint();
 
