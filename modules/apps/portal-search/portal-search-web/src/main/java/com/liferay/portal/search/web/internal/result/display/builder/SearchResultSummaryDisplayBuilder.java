@@ -592,7 +592,7 @@ public class SearchResultSummaryDisplayBuilder {
 			summary.getTitle());
 		searchResultSummaryDisplayContext.setPortletURL(
 			_portletURLFactory.getPortletURL());
-		searchResultSummaryDisplayContext.setViewURL(StringPool.BLANK);
+		searchResultSummaryDisplayContext.setViewURL(getURLFieldValue());
 
 		buildDocumentForm(searchResultSummaryDisplayContext);
 
@@ -951,6 +951,33 @@ public class SearchResultSummaryDisplayBuilder {
 		}
 
 		return null;
+	}
+
+	protected String getURLFieldValue() {
+		String value = StringPool.BLANK;
+
+		if (_document != null) {
+			Map<String, com.liferay.portal.search.document.Field> map =
+				_document.getFields();
+
+			com.liferay.portal.search.document.Field field = map.get("url");
+
+			if (field != null) {
+				value = String.valueOf(field.getValue());
+			}
+
+			return value;
+		}
+
+		Map<String, Field> map = _legacyDocument.getFields();
+
+		Field field = map.get("url");
+
+		if (field != null) {
+			value = String.valueOf(field.getValue());
+		}
+
+		return value;
 	}
 
 	protected String getValuesToString(String fieldName) {
