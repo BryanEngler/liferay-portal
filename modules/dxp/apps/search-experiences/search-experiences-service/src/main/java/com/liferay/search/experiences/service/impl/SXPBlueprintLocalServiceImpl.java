@@ -59,7 +59,8 @@ public class SXPBlueprintLocalServiceImpl
 	public SXPBlueprint addSXPBlueprint(
 			long userId, String configurationJSON,
 			Map<Locale, String> descriptionMap, String elementInstancesJSON,
-			Map<Locale, String> titleMap, ServiceContext serviceContext)
+			String schemaVersion, Map<Locale, String> titleMap,
+			ServiceContext serviceContext)
 		throws PortalException {
 
 		_validate(configurationJSON, titleMap, serviceContext);

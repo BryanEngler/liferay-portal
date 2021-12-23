@@ -55,7 +55,7 @@ public class SXPElementLocalServiceImpl extends SXPElementLocalServiceBaseImpl {
 	public SXPElement addSXPElement(
 			long userId, Map<Locale, String> descriptionMap,
 			String elementDefinitionJSON, boolean readOnly,
-			Map<Locale, String> titleMap, int type,
+			String schemaVersion, Map<Locale, String> titleMap, int type,
 			ServiceContext serviceContext)
 		throws PortalException {
 
