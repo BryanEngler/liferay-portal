@@ -60,7 +60,7 @@ public class SXPElementServiceImpl extends SXPElementServiceBaseImpl {
 
 		return sxpElementLocalService.addSXPElement(
 			getUserId(), descriptionMap, elementDefinitionJSON, readOnly,
-			titleMap, type, serviceContext);
+			schemaVersion, titleMap, type, serviceContext);
 	}
 
 	@Override
