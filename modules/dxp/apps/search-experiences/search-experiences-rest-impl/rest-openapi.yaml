@@ -372,6 +372,8 @@ components:
                 modifiedDate:
                     format: date
                     type: string
+                schemaVersion:
+                    type: string
                 title:
                     type: string
                 title_i18n:
@@ -404,6 +406,8 @@ components:
                     type: string
                 readOnly:
                     type: boolean
+                schemaVersion:
+                    type: string
                 title:
                     type: string
                 title_i18n:
