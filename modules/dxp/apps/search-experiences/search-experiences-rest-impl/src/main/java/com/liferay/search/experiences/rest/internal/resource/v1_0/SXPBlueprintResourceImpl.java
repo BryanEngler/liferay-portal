@@ -23,10 +23,12 @@ import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
+import com.liferay.portal.vulcan.graphql.servlet.ServletData;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
@@ -209,7 +211,7 @@ public class SXPBlueprintResourceImpl
 					contextAcceptLanguage.getPreferredLocale(),
 					sxpBlueprint.getDescription(),
 					sxpBlueprint.getDescription_i18n()),
-				_getElementInstancesJSON(sxpBlueprint),
+				_getElementInstancesJSON(sxpBlueprint), _getSchemaVersion(),
 				LocalizedMapUtil.getLocalizedMap(
 					contextAcceptLanguage.getPreferredLocale(),
 					sxpBlueprint.getTitle(), sxpBlueprint.getTitle_i18n()),
@@ -234,6 +236,7 @@ public class SXPBlueprintResourceImpl
 				sxpBlueprint.getConfigurationJSON(),
 				sxpBlueprint.getDescriptionMap(),
 				sxpBlueprint.getElementInstancesJSON(),
+				sxpBlueprint.getSchemaVersion(),
 				TitleMapUtil.copy(sxpBlueprint.getTitleMap()),
 				ServiceContextFactory.getInstance(contextHttpServletRequest)));
 	}
@@ -260,6 +263,10 @@ public class SXPBlueprintResourceImpl
 			ElementInstanceUtil.unpack(sxpBlueprint.getElementInstances()));
 	}
 
+	private String _getSchemaVersion() {
+		return StringUtil.extractLast(_servletData.getPath(), "/");
+	}
+
 	@Reference
 	private DTOConverterRegistry _dtoConverterRegistry;
 
@@ -268,6 +275,9 @@ public class SXPBlueprintResourceImpl
 
 	@Reference
 	private JSONFactory _jsonFactory;
+
+	@Reference
+	private ServletData _servletData;
 
 	@Reference
 	private SXPBlueprintDTOConverter _sxpBlueprintDTOConverter;

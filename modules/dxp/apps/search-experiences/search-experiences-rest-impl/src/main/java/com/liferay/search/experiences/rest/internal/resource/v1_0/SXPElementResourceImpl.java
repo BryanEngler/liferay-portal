@@ -22,10 +22,12 @@ import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
+import com.liferay.portal.vulcan.graphql.servlet.ServletData;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
@@ -194,6 +196,7 @@ public class SXPElementResourceImpl
 					sxpElement.getDescription(),
 					sxpElement.getDescription_i18n()),
 				_getElementDefinitionJSON(sxpElement), false,
+				_getSchemaVersion(),
 				LocalizedMapUtil.getLocalizedMap(
 					contextAcceptLanguage.getPreferredLocale(),
 					sxpElement.getTitle(), sxpElement.getTitle_i18n()),
@@ -216,6 +219,7 @@ public class SXPElementResourceImpl
 			_sxpElementService.addSXPElement(
 				sxpElement.getDescriptionMap(),
 				sxpElement.getElementDefinitionJSON(), false,
+				_getSchemaVersion(),
 				TitleMapUtil.copy(sxpElement.getTitleMap()),
 				sxpElement.getType(),
 				ServiceContextFactory.getInstance(contextHttpServletRequest)));
@@ -235,6 +239,10 @@ public class SXPElementResourceImpl
 			ElementDefinitionUtil.unpack(sxpElement.getElementDefinition()));
 	}
 
+	private String _getSchemaVersion() {
+		return StringUtil.extractLast(_servletData.getPath(), "/");
+	}
+
 	@Reference
 	private DTOConverterRegistry _dtoConverterRegistry;
 
@@ -243,6 +251,9 @@ public class SXPElementResourceImpl
 
 	@Reference
 	private JSONFactory _jsonFactory;
+
+	@Reference
+	private ServletData _servletData;
 
 	@Reference
 	private SXPElementDTOConverter _sxpElementDTOConverter;
