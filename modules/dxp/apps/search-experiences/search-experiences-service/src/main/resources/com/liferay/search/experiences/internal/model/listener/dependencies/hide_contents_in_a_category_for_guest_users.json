@@ -52,6 +52,7 @@
 			]
 		}
 	},
+	"schemaVersion": "v1_0",
 	"title_i18n": {
 		"en_US": "Hide Contents in a Category for Guest Users"
 	}

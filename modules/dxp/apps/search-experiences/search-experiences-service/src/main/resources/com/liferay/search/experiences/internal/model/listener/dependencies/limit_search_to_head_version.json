@@ -61,6 +61,7 @@
 		"uiConfiguration": {
 		}
 	},
+	"schemaVersion": "v1_0",
 	"title_i18n": {
 		"en_US": "Limit Search to HEAD Version"
 	}
