@@ -125,7 +125,7 @@ public class SXPBlueprintSearchResultTest {
 
 		_sxpBlueprint = SXPBlueprintLocalServiceUtil.addSXPBlueprint(
 			_user.getUserId(), "{}",
-			Collections.singletonMap(LocaleUtil.US, ""), null,
+			Collections.singletonMap(LocaleUtil.US, ""), null, "",
 			Collections.singletonMap(
 				LocaleUtil.US, RandomTestUtil.randomString()),
 			_serviceContext);
