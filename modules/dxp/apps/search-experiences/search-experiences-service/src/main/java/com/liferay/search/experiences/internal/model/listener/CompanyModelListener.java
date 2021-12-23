@@ -88,6 +88,7 @@ public class CompanyModelListener extends BaseModelListener<Company> {
 				LocalizedMapUtil.getLocalizedMap(
 					sxpElement.getDescription_i18n()),
 				String.valueOf(sxpElement.getElementDefinition()), true,
+				sxpElement.getSchemaVersion(),
 				LocalizedMapUtil.getLocalizedMap(sxpElement.getTitle_i18n()), 0,
 				new ServiceContext() {
 					{
