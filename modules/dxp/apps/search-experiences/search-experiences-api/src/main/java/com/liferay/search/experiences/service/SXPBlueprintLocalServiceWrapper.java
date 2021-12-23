@@ -41,14 +41,14 @@ public class SXPBlueprintLocalServiceWrapper
 	public com.liferay.search.experiences.model.SXPBlueprint addSXPBlueprint(
 			long userId, String configurationJSON,
 			java.util.Map<java.util.Locale, String> descriptionMap,
-			String elementInstancesJSON,
+			String elementInstancesJSON, String schemaVersion,
 			java.util.Map<java.util.Locale, String> titleMap,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _sxpBlueprintLocalService.addSXPBlueprint(
 			userId, configurationJSON, descriptionMap, elementInstancesJSON,
-			titleMap, serviceContext);
+			schemaVersion, titleMap, serviceContext);
 	}
 
 	/**

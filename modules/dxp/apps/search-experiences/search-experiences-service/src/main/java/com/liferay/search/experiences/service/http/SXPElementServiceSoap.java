@@ -71,8 +71,8 @@ public class SXPElementServiceSoap {
 			addSXPElement(
 				String[] descriptionMapLanguageIds,
 				String[] descriptionMapValues, String elementDefinitionJSON,
-				boolean readOnly, String[] titleMapLanguageIds,
-				String[] titleMapValues, int type,
+				boolean readOnly, String schemaVersion,
+				String[] titleMapLanguageIds, String[] titleMapValues, int type,
 				com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 
@@ -85,8 +85,8 @@ public class SXPElementServiceSoap {
 
 			com.liferay.search.experiences.model.SXPElement returnValue =
 				SXPElementServiceUtil.addSXPElement(
-					descriptionMap, elementDefinitionJSON, readOnly, titleMap,
-					type, serviceContext);
+					descriptionMap, elementDefinitionJSON, readOnly,
+					schemaVersion, titleMap, type, serviceContext);
 
 			return com.liferay.search.experiences.model.SXPElementSoap.
 				toSoapModel(returnValue);
