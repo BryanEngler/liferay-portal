@@ -102,6 +102,10 @@ public class SXPElementResourceImpl
 				_jsonFactory.createJSONObject(
 					sxpElement.getElementDefinitionJSON())
 			).put(
+				"schemaVersion",
+				_jsonFactory.createJSONObject(
+					_jsonFactory.looseSerialize(sxpElement.getSchemaVersion()))
+			).put(
 				"title_i18n",
 				_jsonFactory.createJSONObject(
 					_jsonFactory.looseSerialize(sxpElement.getTitleMap()))
