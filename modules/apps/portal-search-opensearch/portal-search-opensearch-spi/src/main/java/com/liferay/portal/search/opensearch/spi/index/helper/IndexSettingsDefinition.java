@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.spi.index.helper;
+package com.liferay.portal.search.opensearch.spi.index.helper;
 
 import org.osgi.annotation.versioning.ProviderType;
 

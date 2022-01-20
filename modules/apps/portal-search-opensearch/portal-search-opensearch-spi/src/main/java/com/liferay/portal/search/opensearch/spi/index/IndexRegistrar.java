@@ -12,9 +12,9 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.spi.index;
+package com.liferay.portal.search.opensearch.spi.index;
 
-import com.liferay.portal.search.elasticsearch7.spi.index.helper.IndexRegistrarHelper;
+import com.liferay.portal.search.opensearch.spi.index.helper.IndexRegistrarHelper;
 
 /**
  * @author André de Oliveira
