@@ -20,12 +20,12 @@ import com.liferay.portal.search.engine.adapter.ccr.PutFollowCCRResponse;
 
 import java.io.IOException;
 
-import org.opensearch.action.support.ActiveShardCount;
-import org.opensearch.client.CcrClient;
-import org.opensearch.client.RequestOptions;
-import org.opensearch.client.RestHighLevelClient;
-import org.opensearch.client.ccr.PutFollowRequest;
-import org.opensearch.client.ccr.PutFollowResponse;
+//import org.opensearch.action.support.ActiveShardCount;
+//import org.opensearch.client.CcrClient;
+//import org.opensearch.client.RequestOptions;
+//import org.opensearch.client.RestHighLevelClient;
+//import org.opensearch.client.ccr.PutFollowRequest;
+//import org.opensearch.client.ccr.PutFollowResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -41,54 +41,55 @@ public class PutFollowCCRRequestExecutorImpl
 	public PutFollowCCRResponse execute(
 		PutFollowCCRRequest putFollowCCRRequest) {
 
-		PutFollowRequest putFollowRequest = createPutFollowRequest(
-			putFollowCCRRequest);
-
-		PutFollowResponse putFollowResponse = getPutFollowResponse(
-			putFollowRequest, putFollowCCRRequest);
-
-		return new PutFollowCCRResponse(
-			putFollowResponse.isFollowIndexCreated(),
-			putFollowResponse.isIndexFollowingStarted());
+//		PutFollowRequest putFollowRequest = createPutFollowRequest(
+//			putFollowCCRRequest);
+//
+//		PutFollowResponse putFollowResponse = getPutFollowResponse(
+//			putFollowRequest, putFollowCCRRequest);
+//
+//		return new PutFollowCCRResponse(
+//			putFollowResponse.isFollowIndexCreated(),
+//			putFollowResponse.isIndexFollowingStarted());
+		throw new UnsupportedOperationException();
 	}
 
-	protected PutFollowRequest createPutFollowRequest(
-		PutFollowCCRRequest putFollowCCRRequest) {
-
-		if (putFollowCCRRequest.getWaitForActiveShards() != 0) {
-			return new PutFollowRequest(
-				putFollowCCRRequest.getRemoteClusterAlias(),
-				putFollowCCRRequest.getLeaderIndexName(),
-				putFollowCCRRequest.getFollowerIndexName(),
-				ActiveShardCount.from(
-					putFollowCCRRequest.getWaitForActiveShards()));
-		}
-
-		return new PutFollowRequest(
-			putFollowCCRRequest.getRemoteClusterAlias(),
-			putFollowCCRRequest.getLeaderIndexName(),
-			putFollowCCRRequest.getFollowerIndexName());
-	}
-
-	protected PutFollowResponse getPutFollowResponse(
-		PutFollowRequest putFollowRequest,
-		PutFollowCCRRequest putFollowCCRRequest) {
-
-		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient(
-				putFollowCCRRequest.getConnectionId(),
-				putFollowCCRRequest.isPreferLocalCluster());
-
-		CcrClient ccrClient = restHighLevelClient.ccr();
-
-		try {
-			return ccrClient.putFollow(
-				putFollowRequest, RequestOptions.DEFAULT);
-		}
-		catch (IOException ioException) {
-			throw new RuntimeException(ioException);
-		}
-	}
+//	protected PutFollowRequest createPutFollowRequest(
+//		PutFollowCCRRequest putFollowCCRRequest) {
+//
+//		if (putFollowCCRRequest.getWaitForActiveShards() != 0) {
+//			return new PutFollowRequest(
+//				putFollowCCRRequest.getRemoteClusterAlias(),
+//				putFollowCCRRequest.getLeaderIndexName(),
+//				putFollowCCRRequest.getFollowerIndexName(),
+//				ActiveShardCount.from(
+//					putFollowCCRRequest.getWaitForActiveShards()));
+//		}
+//
+//		return new PutFollowRequest(
+//			putFollowCCRRequest.getRemoteClusterAlias(),
+//			putFollowCCRRequest.getLeaderIndexName(),
+//			putFollowCCRRequest.getFollowerIndexName());
+//	}
+//
+//	protected PutFollowResponse getPutFollowResponse(
+//		PutFollowRequest putFollowRequest,
+//		PutFollowCCRRequest putFollowCCRRequest) {
+//
+//		RestHighLevelClient restHighLevelClient =
+//			_elasticsearchClientResolver.getRestHighLevelClient(
+//				putFollowCCRRequest.getConnectionId(),
+//				putFollowCCRRequest.isPreferLocalCluster());
+//
+//		CcrClient ccrClient = restHighLevelClient.ccr();
+//
+//		try {
+//			return ccrClient.putFollow(
+//				putFollowRequest, RequestOptions.DEFAULT);
+//		}
+//		catch (IOException ioException) {
+//			throw new RuntimeException(ioException);
+//		}
+//	}
 
 	@Reference(unbind = "-")
 	protected void setElasticsearchClientResolver(

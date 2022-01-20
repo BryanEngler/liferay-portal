@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.opensearch.ElasticsearchStatusException;
+import org.opensearch.OpenSearchStatusException;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -131,8 +131,8 @@ public class IndexSynchronizerImpl implements IndexSynchronizer {
 					"Index created: " + createIndexResponse.getIndexName());
 			}
 		}
-		catch (ElasticsearchStatusException elasticsearchStatusException) {
-			String message = elasticsearchStatusException.getMessage();
+		catch (OpenSearchStatusException openSearchStatusException) {
+			String message = openSearchStatusException.getMessage();
 
 			if ((message != null) &&
 				message.contains("resource_already_exists_exception")) {
@@ -141,11 +141,11 @@ public class IndexSynchronizerImpl implements IndexSynchronizer {
 					_log.debug(
 						"Skipping index creation because it already exists: " +
 							createIndexRequest.getIndexName(),
-						elasticsearchStatusException);
+						openSearchStatusException);
 				}
 			}
 			else {
-				throw elasticsearchStatusException;
+				throw openSearchStatusException;
 			}
 		}
 	}

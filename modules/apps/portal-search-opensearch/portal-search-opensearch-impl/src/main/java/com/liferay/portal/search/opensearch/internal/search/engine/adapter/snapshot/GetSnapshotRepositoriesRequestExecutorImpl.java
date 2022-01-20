@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.opensearch.ElasticsearchStatusException;
+import org.opensearch.OpenSearchStatusException;
 import org.opensearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
 import org.opensearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
 import org.opensearch.client.RequestOptions;
@@ -118,8 +118,8 @@ public class GetSnapshotRepositoriesRequestExecutorImpl
 			return snapshotClient.getRepository(
 				getRepositoriesRequest, RequestOptions.DEFAULT);
 		}
-		catch (ElasticsearchStatusException elasticsearchStatusException) {
-			String message = elasticsearchStatusException.getMessage();
+		catch (OpenSearchStatusException openSearchStatusException) {
+			String message = openSearchStatusException.getMessage();
 
 			if (message.contains("type=repository_missing_exception")) {
 				throw new RepositoryMissingException(
@@ -127,7 +127,7 @@ public class GetSnapshotRepositoriesRequestExecutorImpl
 						message, "reason=[", "] missing"));
 			}
 
-			throw elasticsearchStatusException;
+			throw openSearchStatusException;
 		}
 		catch (IOException ioException) {
 			throw new RuntimeException(ioException);

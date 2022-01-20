@@ -23,7 +23,7 @@ import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.BucketOrder;
 import org.opensearch.search.aggregations.bucket.histogram.DateHistogramAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.histogram.DateHistogramInterval;
-import org.opensearch.search.aggregations.bucket.histogram.ExtendedBounds;
+import org.opensearch.search.aggregations.bucket.histogram.LongBounds;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -52,11 +52,11 @@ public class DateHistogramAggregationTranslatorImpl
 		if ((dateHistogramAggregation.getMaxBound() != null) &&
 			(dateHistogramAggregation.getMinBound() != null)) {
 
-			ExtendedBounds extendedBounds = new ExtendedBounds(
+			LongBounds longBounds = new LongBounds(
 				dateHistogramAggregation.getMinBound(),
 				dateHistogramAggregation.getMaxBound());
 
-			dateHistogramAggregationBuilder.extendedBounds(extendedBounds);
+			dateHistogramAggregationBuilder.extendedBounds(longBounds);
 		}
 
 		if (dateHistogramAggregation.getMinDocCount() != null) {

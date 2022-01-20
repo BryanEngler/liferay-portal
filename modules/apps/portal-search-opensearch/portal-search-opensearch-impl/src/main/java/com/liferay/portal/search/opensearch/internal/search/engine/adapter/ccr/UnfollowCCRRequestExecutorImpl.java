@@ -20,11 +20,11 @@ import com.liferay.portal.search.engine.adapter.ccr.UnfollowCCRResponse;
 
 import java.io.IOException;
 
-import org.opensearch.client.CcrClient;
-import org.opensearch.client.RequestOptions;
-import org.opensearch.client.RestHighLevelClient;
-import org.opensearch.client.ccr.UnfollowRequest;
-import org.opensearch.client.core.AcknowledgedResponse;
+//import org.opensearch.client.CcrClient;
+//import org.opensearch.client.RequestOptions;
+//import org.opensearch.client.RestHighLevelClient;
+//import org.opensearch.client.ccr.UnfollowRequest;
+//import org.opensearch.client.core.AcknowledgedResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -38,39 +38,40 @@ public class UnfollowCCRRequestExecutorImpl
 
 	@Override
 	public UnfollowCCRResponse execute(UnfollowCCRRequest unfollowCCRRequest) {
-		UnfollowRequest unfollowRequest = createUnfollowRequest(
-			unfollowCCRRequest);
-
-		AcknowledgedResponse acknowledgedResponse = getAcknowledgedResponse(
-			unfollowRequest, unfollowCCRRequest);
-
-		return new UnfollowCCRResponse(acknowledgedResponse.isAcknowledged());
+//		UnfollowRequest unfollowRequest = createUnfollowRequest(
+//			unfollowCCRRequest);
+//
+//		AcknowledgedResponse acknowledgedResponse = getAcknowledgedResponse(
+//			unfollowRequest, unfollowCCRRequest);
+//
+//		return new UnfollowCCRResponse(acknowledgedResponse.isAcknowledged());
+		throw new UnsupportedOperationException();
 	}
 
-	protected UnfollowRequest createUnfollowRequest(
-		UnfollowCCRRequest unfollowCCRRequest) {
-
-		return new UnfollowRequest(unfollowCCRRequest.getIndexName());
-	}
-
-	protected AcknowledgedResponse getAcknowledgedResponse(
-		UnfollowRequest unfollowRequest,
-		UnfollowCCRRequest unfollowCCRRequest) {
-
-		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient(
-				unfollowCCRRequest.getConnectionId(),
-				unfollowCCRRequest.isPreferLocalCluster());
-
-		CcrClient ccrClient = restHighLevelClient.ccr();
-
-		try {
-			return ccrClient.unfollow(unfollowRequest, RequestOptions.DEFAULT);
-		}
-		catch (IOException ioException) {
-			throw new RuntimeException(ioException);
-		}
-	}
+//	protected UnfollowRequest createUnfollowRequest(
+//		UnfollowCCRRequest unfollowCCRRequest) {
+//
+//		return new UnfollowRequest(unfollowCCRRequest.getIndexName());
+//	}
+//
+//	protected AcknowledgedResponse getAcknowledgedResponse(
+//		UnfollowRequest unfollowRequest,
+//		UnfollowCCRRequest unfollowCCRRequest) {
+//
+//		RestHighLevelClient restHighLevelClient =
+//			_elasticsearchClientResolver.getRestHighLevelClient(
+//				unfollowCCRRequest.getConnectionId(),
+//				unfollowCCRRequest.isPreferLocalCluster());
+//
+//		CcrClient ccrClient = restHighLevelClient.ccr();
+//
+//		try {
+//			return ccrClient.unfollow(unfollowRequest, RequestOptions.DEFAULT);
+//		}
+//		catch (IOException ioException) {
+//			throw new RuntimeException(ioException);
+//		}
+//	}
 
 	@Reference(unbind = "-")
 	protected void setElasticsearchClientResolver(

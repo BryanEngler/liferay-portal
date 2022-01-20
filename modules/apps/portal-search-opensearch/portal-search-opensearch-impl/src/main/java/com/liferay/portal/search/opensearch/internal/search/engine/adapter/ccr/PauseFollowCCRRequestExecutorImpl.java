@@ -20,11 +20,11 @@ import com.liferay.portal.search.engine.adapter.ccr.PauseFollowCCRResponse;
 
 import java.io.IOException;
 
-import org.opensearch.client.CcrClient;
-import org.opensearch.client.RequestOptions;
-import org.opensearch.client.RestHighLevelClient;
-import org.opensearch.client.ccr.PauseFollowRequest;
-import org.opensearch.client.core.AcknowledgedResponse;
+//import org.opensearch.client.CcrClient;
+//import org.opensearch.client.RequestOptions;
+//import org.opensearch.client.RestHighLevelClient;
+//import org.opensearch.client.ccr.PauseFollowRequest;
+//import org.opensearch.client.core.AcknowledgedResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -40,41 +40,42 @@ public class PauseFollowCCRRequestExecutorImpl
 	public PauseFollowCCRResponse execute(
 		PauseFollowCCRRequest pauseFollowCCRRequest) {
 
-		PauseFollowRequest pauseFollowRequest = createPauseFollowRequest(
-			pauseFollowCCRRequest);
-
-		AcknowledgedResponse acknowledgedResponse = getAcknowledgedResponse(
-			pauseFollowRequest, pauseFollowCCRRequest);
-
-		return new PauseFollowCCRResponse(
-			acknowledgedResponse.isAcknowledged());
+//		PauseFollowRequest pauseFollowRequest = createPauseFollowRequest(
+//			pauseFollowCCRRequest);
+//
+//		AcknowledgedResponse acknowledgedResponse = getAcknowledgedResponse(
+//			pauseFollowRequest, pauseFollowCCRRequest);
+//
+//		return new PauseFollowCCRResponse(
+//			acknowledgedResponse.isAcknowledged());
+		throw new UnsupportedOperationException();
 	}
 
-	protected PauseFollowRequest createPauseFollowRequest(
-		PauseFollowCCRRequest pauseFollowCCRRequest) {
-
-		return new PauseFollowRequest(pauseFollowCCRRequest.getIndexName());
-	}
-
-	protected AcknowledgedResponse getAcknowledgedResponse(
-		PauseFollowRequest pauseFollowRequest,
-		PauseFollowCCRRequest pauseFollowCCRRequest) {
-
-		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient(
-				pauseFollowCCRRequest.getConnectionId(),
-				pauseFollowCCRRequest.isPreferLocalCluster());
-
-		CcrClient ccrClient = restHighLevelClient.ccr();
-
-		try {
-			return ccrClient.pauseFollow(
-				pauseFollowRequest, RequestOptions.DEFAULT);
-		}
-		catch (IOException ioException) {
-			throw new RuntimeException(ioException);
-		}
-	}
+//	protected PauseFollowRequest createPauseFollowRequest(
+//		PauseFollowCCRRequest pauseFollowCCRRequest) {
+//
+//		return new PauseFollowRequest(pauseFollowCCRRequest.getIndexName());
+//	}
+//
+//	protected AcknowledgedResponse getAcknowledgedResponse(
+//		PauseFollowRequest pauseFollowRequest,
+//		PauseFollowCCRRequest pauseFollowCCRRequest) {
+//
+//		RestHighLevelClient restHighLevelClient =
+//			_elasticsearchClientResolver.getRestHighLevelClient(
+//				pauseFollowCCRRequest.getConnectionId(),
+//				pauseFollowCCRRequest.isPreferLocalCluster());
+//
+//		CcrClient ccrClient = restHighLevelClient.ccr();
+//
+//		try {
+//			return ccrClient.pauseFollow(
+//				pauseFollowRequest, RequestOptions.DEFAULT);
+//		}
+//		catch (IOException ioException) {
+//			throw new RuntimeException(ioException);
+//		}
+//	}
 
 	@Reference(unbind = "-")
 	protected void setElasticsearchClientResolver(

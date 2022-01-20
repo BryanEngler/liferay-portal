@@ -33,7 +33,7 @@ import java.util.Map;
 
 import org.apache.lucene.search.FuzzyQuery;
 
-import org.opensearch.ElasticsearchException;
+import org.opensearch.OpenSearchException;
 import org.opensearch.action.search.SearchResponse;
 import org.opensearch.common.Strings;
 import org.opensearch.common.unit.TimeValue;
@@ -191,7 +191,7 @@ public class CommonSearchResponseAssemblerImpl
 		try {
 			return searchSourceBuilder.toString();
 		}
-		catch (ElasticsearchException elasticsearchException) {
+		catch (OpenSearchException elasticsearchException) {
 			if (_log.isDebugEnabled()) {
 				_log.debug(elasticsearchException, elasticsearchException);
 			}

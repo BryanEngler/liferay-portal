@@ -23,11 +23,11 @@ import java.io.IOException;
 
 import java.util.List;
 
-import org.opensearch.client.CcrClient;
-import org.opensearch.client.RequestOptions;
-import org.opensearch.client.RestHighLevelClient;
-import org.opensearch.client.ccr.FollowInfoRequest;
-import org.opensearch.client.ccr.FollowInfoResponse;
+//import org.opensearch.client.CcrClient;
+//import org.opensearch.client.RequestOptions;
+//import org.opensearch.client.RestHighLevelClient;
+//import org.opensearch.client.ccr.FollowInfoRequest;
+//import org.opensearch.client.ccr.FollowInfoResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -43,51 +43,52 @@ public class FollowInfoCCRRequestExecutorImpl
 	public FollowInfoCCRResponse execute(
 		FollowInfoCCRRequest followInfoCCRRequest) {
 
-		FollowInfoRequest followInfoRequest = createFollowInfoRequest(
-			followInfoCCRRequest);
-
-		FollowInfoResponse followInfoResponse = getFollowInfoResponse(
-			followInfoRequest, followInfoCCRRequest);
-
-		List<FollowInfoResponse.FollowerInfo> followerInfos =
-			followInfoResponse.getInfos();
-
-		FollowInfoResponse.FollowerInfo followerInfo = followerInfos.get(0);
-
-		FollowInfoResponse.Status status = followerInfo.getStatus();
-
-		if (status == FollowInfoResponse.Status.ACTIVE) {
-			return new FollowInfoCCRResponse(FollowInfoStatus.ACTIVE);
-		}
-
-		return new FollowInfoCCRResponse(FollowInfoStatus.PAUSED);
+//		FollowInfoRequest followInfoRequest = createFollowInfoRequest(
+//			followInfoCCRRequest);
+//
+//		FollowInfoResponse followInfoResponse = getFollowInfoResponse(
+//			followInfoRequest, followInfoCCRRequest);
+//
+//		List<FollowInfoResponse.FollowerInfo> followerInfos =
+//			followInfoResponse.getInfos();
+//
+//		FollowInfoResponse.FollowerInfo followerInfo = followerInfos.get(0);
+//
+//		FollowInfoResponse.Status status = followerInfo.getStatus();
+//
+//		if (status == FollowInfoResponse.Status.ACTIVE) {
+//			return new FollowInfoCCRResponse(FollowInfoStatus.ACTIVE);
+//		}
+//
+//		return new FollowInfoCCRResponse(FollowInfoStatus.PAUSED);
+		throw new UnsupportedOperationException();
 	}
 
-	protected FollowInfoRequest createFollowInfoRequest(
-		FollowInfoCCRRequest followInfoCCRRequest) {
-
-		return new FollowInfoRequest(followInfoCCRRequest.getIndexName());
-	}
-
-	protected FollowInfoResponse getFollowInfoResponse(
-		FollowInfoRequest followInfoRequest,
-		FollowInfoCCRRequest followInfoCCRRequest) {
-
-		RestHighLevelClient restHighLevelClient =
-			_elasticsearchClientResolver.getRestHighLevelClient(
-				followInfoCCRRequest.getConnectionId(),
-				followInfoCCRRequest.isPreferLocalCluster());
-
-		CcrClient ccrClient = restHighLevelClient.ccr();
-
-		try {
-			return ccrClient.getFollowInfo(
-				followInfoRequest, RequestOptions.DEFAULT);
-		}
-		catch (IOException ioException) {
-			throw new RuntimeException(ioException);
-		}
-	}
+//	protected FollowInfoRequest createFollowInfoRequest(
+//		FollowInfoCCRRequest followInfoCCRRequest) {
+//
+//		return new FollowInfoRequest(followInfoCCRRequest.getIndexName());
+//	}
+//
+//	protected FollowInfoResponse getFollowInfoResponse(
+//		FollowInfoRequest followInfoRequest,
+//		FollowInfoCCRRequest followInfoCCRRequest) {
+//
+//		RestHighLevelClient restHighLevelClient =
+//			_elasticsearchClientResolver.getRestHighLevelClient(
+//				followInfoCCRRequest.getConnectionId(),
+//				followInfoCCRRequest.isPreferLocalCluster());
+//
+//		CcrClient ccrClient = restHighLevelClient.ccr();
+//
+//		try {
+//			return ccrClient.getFollowInfo(
+//				followInfoRequest, RequestOptions.DEFAULT);
+//		}
+//		catch (IOException ioException) {
+//			throw new RuntimeException(ioException);
+//		}
+//	}
 
 	@Reference(unbind = "-")
 	protected void setElasticsearchClientResolver(
