@@ -100,7 +100,7 @@ public class Sidecar {
 
 	public void start() {
 		if (_log.isDebugEnabled()) {
-			_log.debug("Sidecar Elasticsearch starting");
+			_log.debug("Sidecar OpenSearch starting");
 		}
 
 		_installElasticsearchIfNeeded();
@@ -118,7 +118,7 @@ public class Sidecar {
 		if (_log.isInfoEnabled()) {
 			_log.info(
 				StringBundler.concat(
-					"Sidecar Elasticsearch ", getNodeName(), " started at ",
+					"Sidecar OpenSearch ", getNodeName(), " started at ",
 					address));
 		}
 
@@ -129,7 +129,7 @@ public class Sidecar {
 
 	public void stop() {
 		if (_log.isInfoEnabled()) {
-			_log.info("Stopping sidecar Elasticsearch");
+			_log.info("Stopping sidecar OpenSearch");
 		}
 
 		if (_processChannel != null) {
@@ -150,7 +150,7 @@ public class Sidecar {
 					if (_log.isWarnEnabled()) {
 						_log.warn(
 							StringBundler.concat(
-								"Forcibly shutdown sidecar Elasticsearch ",
+								"Forcibly shutdown sidecar OpenSearch ",
 								"process because it did not shut down in ",
 								_elasticsearchConfigurationWrapper.
 									sidecarShutdownTimeout(),
@@ -227,7 +227,7 @@ public class Sidecar {
 	protected ProcessChannel<Serializable> executeSidecarMainProcess() {
 		if (!Files.isDirectory(_sidecarHomePath)) {
 			throw new IllegalArgumentException(
-				"Sidecar Elasticsearch home does not exist: " +
+				"Sidecar OpenSearch home does not exist: " +
 					_sidecarHomePath);
 		}
 
@@ -244,7 +244,7 @@ public class Sidecar {
 		}
 		catch (ProcessException processException) {
 			throw new RuntimeException(
-				"Unable to start sidecar Elasticsearch process",
+				"Unable to start sidecar OpenSearch process",
 				processException);
 		}
 	}
@@ -425,6 +425,10 @@ public class Sidecar {
 		}
 
 		if (versionNumber.equals("7.10.2")) {
+			return new Elasticsearch_7_10_2_Distribution();
+		}
+
+		if (versionNumber.equals("1.2.4")) {
 			return new Elasticsearch_7_10_2_Distribution();
 		}
 

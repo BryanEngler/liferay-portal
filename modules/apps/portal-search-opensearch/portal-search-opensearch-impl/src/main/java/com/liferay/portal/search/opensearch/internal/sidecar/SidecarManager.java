@@ -157,7 +157,7 @@ public class SidecarManager implements ElasticsearchConfigurationObserver {
 
 		Path workPath = Paths.get(props.get(PropsKeys.LIFERAY_HOME));
 
-		Path dataPath = workPath.resolve("data/elasticsearch7");
+		Path dataPath = workPath.resolve("data/opensearch");
 
 		return elasticsearchInstancePathsBuilder.dataPath(
 			dataPath
@@ -181,7 +181,7 @@ public class SidecarManager implements ElasticsearchConfigurationObserver {
 	protected Path resolveHomePath(Path path) {
 		String sidecarHome = elasticsearchConfigurationWrapper.sidecarHome();
 
-		if (sidecarHome.equals("elasticsearch-sidecar")) {
+		if (sidecarHome.equals("opensearch-sidecar")) {
 			String versionNumber = ResourceUtil.getResourceAsString(
 				getClass(), SidecarVersionConstants.SIDECAR_VERSION_FILE_NAME);
 
