@@ -17,7 +17,6 @@ package com.liferay.portal.search.opensearch.internal.legacy.query;
 import com.liferay.portal.kernel.search.generic.MatchQuery;
 
 import org.opensearch.index.query.Operator;
-import org.opensearch.index.query.ZeroTermsQueryOption;
 
 /**
  * @author Michael C. Han
@@ -74,14 +73,15 @@ public abstract class BaseMatchQueryTranslatorImpl {
 			"Invalid rewrite method: " + matchQueryRewriteMethod);
 	}
 
-	protected ZeroTermsQueryOption translate(
-		MatchQuery.ZeroTermsQuery matchQueryZeroTermsQuery) {
+	protected org.opensearch.index.search.MatchQuery.ZeroTermsQuery
+		translate(MatchQuery.ZeroTermsQuery matchQueryZeroTermsQuery) {
 
 		if (matchQueryZeroTermsQuery == MatchQuery.ZeroTermsQuery.ALL) {
-			return ZeroTermsQueryOption.ALL;
+			return org.opensearch.index.search.MatchQuery.ZeroTermsQuery.ALL;
 		}
 		else if (matchQueryZeroTermsQuery == MatchQuery.ZeroTermsQuery.NONE) {
-			return ZeroTermsQueryOption.NONE;
+			return org.opensearch.index.search.MatchQuery.ZeroTermsQuery.
+				NONE;
 		}
 
 		throw new IllegalArgumentException(

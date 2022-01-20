@@ -23,7 +23,7 @@ import org.opensearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.opensearch.client.ClusterClient;
 import org.opensearch.client.RequestOptions;
 import org.opensearch.client.RestHighLevelClient;
-import org.opensearch.core.TimeValue;
+import org.opensearch.common.unit.TimeValue;
 
 /**
  * @author André de Oliveira

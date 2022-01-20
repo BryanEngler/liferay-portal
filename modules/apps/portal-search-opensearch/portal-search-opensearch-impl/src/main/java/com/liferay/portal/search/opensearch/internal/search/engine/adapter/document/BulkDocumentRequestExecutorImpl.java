@@ -37,7 +37,7 @@ import org.opensearch.action.support.WriteRequest;
 import org.opensearch.action.update.UpdateRequest;
 import org.opensearch.client.RequestOptions;
 import org.opensearch.client.RestHighLevelClient;
-import org.opensearch.core.TimeValue;
+import org.opensearch.common.unit.TimeValue;
 import org.opensearch.rest.RestStatus;
 
 import org.osgi.service.component.annotations.Component;

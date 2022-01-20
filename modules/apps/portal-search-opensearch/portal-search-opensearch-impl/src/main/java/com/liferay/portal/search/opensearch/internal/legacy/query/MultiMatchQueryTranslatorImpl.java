@@ -25,7 +25,7 @@ import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.index.query.ZeroTermsQueryOption;
+import org.opensearch.index.search.MatchQuery;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -115,10 +115,11 @@ public class MultiMatchQueryTranslatorImpl
 		}
 
 		if (multiMatchQuery.getZeroTermsQuery() != null) {
-			ZeroTermsQueryOption zeroTermsQueryOption = translate(
-				multiMatchQuery.getZeroTermsQuery());
+			MatchQuery.ZeroTermsQuery multiMatchQueryBuilderZeroTermsQuery =
+				translate(multiMatchQuery.getZeroTermsQuery());
 
-			multiMatchQueryBuilder.zeroTermsQuery(zeroTermsQueryOption);
+			multiMatchQueryBuilder.zeroTermsQuery(
+				multiMatchQueryBuilderZeroTermsQuery);
 		}
 
 		if (!multiMatchQuery.isDefaultBoost()) {

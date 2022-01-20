@@ -52,7 +52,7 @@ import java.util.Map;
 import org.apache.lucene.search.TotalHits;
 
 import org.opensearch.action.search.SearchResponse;
-import org.opensearch.core.TimeValue;
+import org.opensearch.common.unit.TimeValue;
 import org.opensearch.search.SearchHit;
 import org.opensearch.search.SearchHits;
 import org.opensearch.search.aggregations.Aggregation;

@@ -42,7 +42,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.opensearch.action.search.SearchRequest;
-import org.opensearch.core.TimeValue;
+import org.opensearch.common.unit.TimeValue;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;

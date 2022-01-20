@@ -20,7 +20,7 @@ import com.liferay.portal.search.engine.adapter.cluster.HealthClusterRequest;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import org.opensearch.action.admin.cluster.health.ClusterHealthRequest;
-import org.opensearch.core.TimeValue;
+import org.opensearch.common.unit.TimeValue;
 
 import org.junit.After;
 import org.junit.Assert;

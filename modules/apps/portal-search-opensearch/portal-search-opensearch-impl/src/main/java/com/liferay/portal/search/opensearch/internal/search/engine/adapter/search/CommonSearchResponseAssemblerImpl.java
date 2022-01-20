@@ -36,12 +36,12 @@ import org.apache.lucene.search.FuzzyQuery;
 import org.opensearch.ElasticsearchException;
 import org.opensearch.action.search.SearchResponse;
 import org.opensearch.common.Strings;
+import org.opensearch.common.unit.TimeValue;
 import org.opensearch.common.xcontent.ToXContent;
 import org.opensearch.common.xcontent.XContentBuilder;
 import org.opensearch.common.xcontent.XContentFactory;
 import org.opensearch.common.xcontent.XContentType;
-import org.opensearch.core.TimeValue;
-import org.opensearch.index.search.MatchQueryParser;
+import org.opensearch.index.search.MatchQuery;
 import org.opensearch.search.aggregations.Aggregation;
 import org.opensearch.search.aggregations.Aggregations;
 import org.opensearch.search.builder.SearchSourceBuilder;
@@ -243,7 +243,7 @@ public class CommonSearchResponseAssemblerImpl
 		",\"fuzzy_transpositions\":" + FuzzyQuery.defaultTranspositions;
 
 	protected static final String LENIENT_STRING =
-		",\"lenient\":" + MatchQueryParser.DEFAULT_LENIENCY;
+		",\"lenient\":" + MatchQuery.DEFAULT_LENIENCY;
 
 	protected static final String MAX_EXPANSIONS_STRING =
 		",\"max_expansions\":" + FuzzyQuery.defaultMaxExpansions;
@@ -254,11 +254,10 @@ public class CommonSearchResponseAssemblerImpl
 		",\"prefix_length\":" + FuzzyQuery.defaultPrefixLength;
 
 	protected static final String SLOP_STRING =
-		",\"slop\":" + MatchQueryParser.DEFAULT_PHRASE_SLOP;
+		",\"slop\":" + MatchQuery.DEFAULT_PHRASE_SLOP;
 
 	protected static final String ZERO_TERMS_QUERY_STRING =
-		",\"zero_terms_query\":\"" + MatchQueryParser.DEFAULT_ZERO_TERMS_QUERY +
-			"\"";
+		",\"zero_terms_query\":\"" + MatchQuery.DEFAULT_ZERO_TERMS_QUERY + "\"";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		CommonSearchResponseAssemblerImpl.class);
