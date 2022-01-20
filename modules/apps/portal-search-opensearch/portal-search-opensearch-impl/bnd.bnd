@@ -1,6 +1,6 @@
-Bundle-Name: Liferay Portal Search Elasticsearch 7 Implementation
-Bundle-SymbolicName: com.liferay.portal.search.elasticsearch7.impl
-Bundle-Version: 6.0.28
+Bundle-Name: Liferay Portal Search OpenSearch Implementation
+Bundle-SymbolicName: com.liferay.portal.search.opensearch.impl
+Bundle-Version: 1.0.0
 Import-Package:\
 	!com.barchart.udt.*,\
 	\
@@ -93,9 +93,9 @@ Import-Package:\
 	!org.eclipse.jetty.alpn.*,\
 	!org.eclipse.jetty.npn.*,\
 	\
-	!org.elasticsearch.index.shard.service.*,\
-	!org.elasticsearch.plugins.loader.*,\
-	!org.elasticsearch.secure_sm.*,\
+	!org.opensearch.index.shard.service.*,\
+	!org.opensearch.plugins.loader.*,\
+	!org.opensearch.secure_sm.*,\
 	\
 	!org.fusesource.*,\
 	\

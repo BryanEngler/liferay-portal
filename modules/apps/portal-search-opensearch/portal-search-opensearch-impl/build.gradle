@@ -4,26 +4,26 @@ import com.liferay.gradle.util.StringUtil
 task cleanSidecar
 task deploySidecar(type: Copy)
 
-String elasticsearchClientVersion = "7.14.1"
+String opensearchClientVersion = "1.2.4"
 String luceneVersion = "8.9.0"
-String sidecarElasticsearchServerVersion = file('src/main/resources/META-INF/sidecar.version').text
+String sidecarOpensearchServerVersion = file('src/main/resources/META-INF/sidecar.version').text
 
-String elasticsearchDownloadURL = "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-${sidecarElasticsearchServerVersion}-no-jdk-linux-x86_64.tar.gz"
+String opensearchDownloadURL = "https://artifacts.opensearch.org/releases/core/opensearch/${sidecarOpensearchServerVersion}/opensearch-min-${sidecarOpensearchServerVersion}-linux-x64.tar.gz"
 
-File elasticsearchDistributionFile = file("${buildDir}/${elasticsearchDownloadURL.drop(elasticsearchDownloadURL.lastIndexOf('/') + 1)}")
+File opensearchDistributionFile = file("${buildDir}/${opensearchDownloadURL.drop(opensearchDownloadURL.lastIndexOf('/') + 1)}")
 
-File sidecarDeployDir = file("${project.'liferay.home'}/elasticsearch-sidecar/" + sidecarElasticsearchServerVersion)
+File sidecarDeployDir = file("${project.'liferay.home'}/opensearch-sidecar/" + sidecarOpensearchServerVersion)
 
 List<String> sidecarPluginURLs = [
-	"https://artifacts.elastic.co/downloads/elasticsearch-plugins/analysis-icu/analysis-icu-${sidecarElasticsearchServerVersion}.zip",
-	"https://artifacts.elastic.co/downloads/elasticsearch-plugins/analysis-kuromoji/analysis-kuromoji-${sidecarElasticsearchServerVersion}.zip",
-	"https://artifacts.elastic.co/downloads/elasticsearch-plugins/analysis-smartcn/analysis-smartcn-${sidecarElasticsearchServerVersion}.zip",
-	"https://artifacts.elastic.co/downloads/elasticsearch-plugins/analysis-stempel/analysis-stempel-${sidecarElasticsearchServerVersion}.zip"
+	"https://artifacts.opensearch.org/releases/plugins/analysis-icu/${sidecarOpensearchServerVersion}/analysis-icu-${sidecarOpensearchServerVersion}.zip"
+	"https://artifacts.opensearch.org/releases/plugins/analysis-kuromoji/${sidecarOpensearchServerVersion}/analysis-kuromoji-${sidecarOpensearchServerVersion}.zip"
+	"https://artifacts.opensearch.org/releases/plugins/analysis-smartcn/${sidecarOpensearchServerVersion}/analysis-smartcn-${sidecarOpensearchServerVersion}.zip"
+	"https://artifacts.opensearch.org/releases/plugins/analysis-stempel/${sidecarOpensearchServerVersion}/analysis-stempel-${sidecarOpensearchServerVersion}.zip"
 ]
 
 cleanSidecar {
 	doLast {
-		delete file("${buildDir}/elasticsearch-" + sidecarElasticsearchServerVersion)
+		delete file("${buildDir}/opensearch-" + sidecarOpensearchServerVersion)
 	}
 }
 
@@ -52,17 +52,17 @@ dependencies {
 	compileInclude group: "org.apache.lucene", name: "lucene-queryparser", version: luceneVersion
 	compileInclude group: "org.apache.lucene", name: "lucene-sandbox", version: luceneVersion
 	compileInclude group: "org.apache.lucene", name: "lucene-suggest", version: luceneVersion
-	compileInclude group: "org.elasticsearch", name: "elasticsearch", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch", name: "elasticsearch-cli", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch", name: "elasticsearch-core", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch", name: "elasticsearch-geo", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch", name: "elasticsearch-x-content", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch.client", name: "elasticsearch-rest-client", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch.client", name: "elasticsearch-rest-high-level-client", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch.plugin", name: "lang-mustache-client", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch.plugin", name: "parent-join-client", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch.plugin", name: "percolator-client", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch.plugin", name: "rank-eval-client", version: elasticsearchClientVersion
+	compileInclude group: "org.opensearch", name: "opensearch", version: opensearchClientVersion
+	compileInclude group: "org.opensearch", name: "opensearch-cli", version: opensearchClientVersion
+	compileInclude group: "org.opensearch", name: "opensearch-core", version: opensearchClientVersion
+	compileInclude group: "org.opensearch", name: "opensearch-geo", version: opensearchClientVersion
+	compileInclude group: "org.opensearch", name: "opensearch-x-content", version: opensearchClientVersion
+	compileInclude group: "org.opensearch.client", name: "opensearch-rest-client", version: opensearchClientVersion
+	compileInclude group: "org.opensearch.client", name: "opensearch-rest-high-level-client", version: opensearchClientVersion
+	compileInclude group: "org.opensearch.plugin", name: "lang-mustache-client", version: opensearchClientVersion
+	compileInclude group: "org.opensearch.plugin", name: "parent-join-client", version: opensearchClientVersion
+	compileInclude group: "org.opensearch.plugin", name: "percolator-client", version: opensearchClientVersion
+	compileInclude group: "org.opensearch.plugin", name: "rank-eval-client", version: opensearchClientVersion
 	compileInclude group: "org.locationtech.jts", name: "jts-core", version: "1.15.0"
 	compileInclude group: "org.locationtech.spatial4j", name: "spatial4j", version: "0.7"
 	compileInclude group: "org.ow2.asm", name: "asm-debug-all", version: "5.1"
@@ -81,8 +81,8 @@ dependencies {
 	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations", version: "1.4.0"
 	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
 	compileOnly project(":apps:configuration-admin:configuration-admin-api")
-	compileOnly project(":apps:portal-search-elasticsearch7:portal-search-elasticsearch7-api")
-	compileOnly project(":apps:portal-search-elasticsearch7:portal-search-elasticsearch7-spi")
+	compileOnly project(":apps:portal-search-opensearch:portal-search-opensearch-api")
+	compileOnly project(":apps:portal-search-opensearch:portal-search-opensearch-spi")
 	compileOnly project(":apps:portal-search:portal-search-api")
 	compileOnly project(":apps:portal-search:portal-search-engine-adapter-api")
 	compileOnly project(":apps:portal-search:portal-search-spi")
@@ -125,7 +125,7 @@ deployDependencies {
 deploySidecar {
 	dependsOn cleanSidecar
 
-	description = "Assembles the Elasticsearch sidecar and deploys it to Liferay."
+	description = "Assembles the OpenSearch sidecar and deploys it to Liferay."
 	group = "build"
 
 	destinationDir = sidecarDeployDir
@@ -137,28 +137,28 @@ deploySidecar {
 	}
 
 	from {
-		file("${buildDir}/elasticsearch-" + sidecarElasticsearchServerVersion)
+		file("${buildDir}/opensearch-" + sidecarOpensearchServerVersion)
 	}
 
 	doFirst {
-		FileUtil.get(project, elasticsearchDownloadURL, elasticsearchDistributionFile, false, true)
+		FileUtil.get(project, opensearchDownloadURL, opensearchDistributionFile, false, true)
 
 		project.copy {
 			fileMode = 0777
 			includeEmptyDirs = false
 
-			exclude "elasticsearch-${sidecarElasticsearchServerVersion}/modules/ingest-geoip/**"
-			exclude "elasticsearch-${sidecarElasticsearchServerVersion}/modules/x-pack-ml/platform/linux-x86_64/bin/controller"
-			include "elasticsearch-${sidecarElasticsearchServerVersion}/lib/**"
-			include "elasticsearch-${sidecarElasticsearchServerVersion}/modules/**"
+			exclude "opensearch-${sidecarOpensearchServerVersion}/modules/ingest-geoip/**"
+			exclude "opensearch-${sidecarOpensearchServerVersion}/modules/x-pack-ml/platform/linux-x86_64/bin/controller"
+			include "opensearch-${sidecarOpensearchServerVersion}/lib/**"
+			include "opensearch-${sidecarOpensearchServerVersion}/modules/**"
 
 			into buildDir
-			from tarTree(elasticsearchDistributionFile)
+			from tarTree(opensearchDistributionFile)
 		}
 	}
 
 	doLast {
-		logger.lifecycle "Deployed Elasticsearch Sidecar: {}", destinationDir
+		logger.lifecycle "Deployed OpenSearch Sidecar: {}", destinationDir
 	}
 }
 
@@ -167,7 +167,7 @@ test {
 		configurations.compileOnly
 
 		deploySidecar {
-			destinationDir = file("tmp/sidecar-elasticsearch")
+			destinationDir = file("tmp/sidecar-opensearch")
 			enabled = true
 		}
 	}
@@ -194,9 +194,9 @@ test {
 	}
 }
 
-_createPluginTasks(sidecarElasticsearchServerVersion, sidecarPluginURLs)
+_createPluginTasks(sidecarOpensearchServerVersion, sidecarPluginURLs)
 
-private void _createPluginTasks(String sidecarElasticsearchServerVersion, List<String> sidecarPluginURLs) {
+private void _createPluginTasks(String sidecarOpensearchServerVersion, List<String> sidecarPluginURLs) {
 	sidecarPluginURLs.each {
 		String url ->
 
@@ -210,13 +210,13 @@ private void _createPluginTasks(String sidecarElasticsearchServerVersion, List<S
 			doLast {
 				FileUtil.get(project, url, new File(project.buildDir, fileName), false, true)
 
-				String dirName = fileName.take(fileName.lastIndexOf("-" + sidecarElasticsearchServerVersion))
+				String dirName = fileName.take(fileName.lastIndexOf("-" + sidecarOpensearchServerVersion))
 
 				project.copy {
 					fileMode = 0777
 					includeEmptyDirs = false
 
-					into new File(buildDir, "elasticsearch-${sidecarElasticsearchServerVersion}/plugins/${dirName}")
+					into new File(buildDir, "opensearch-${sidecarOpensearchServerVersion}/plugins/${dirName}")
 					from zipTree(new File(project.buildDir, fileName))
 				}
 			}
