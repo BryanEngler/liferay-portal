@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.query.geolocation;
+package com.liferay.portal.search.opensearch.internal.query.geolocation;
 
 import com.liferay.portal.search.query.geolocation.GeoExecType;
 

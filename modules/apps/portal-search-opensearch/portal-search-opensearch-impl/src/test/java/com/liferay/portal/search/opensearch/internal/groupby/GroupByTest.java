@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.groupby;
+package com.liferay.portal.search.opensearch.internal.groupby;
 
 import com.liferay.portal.kernel.search.GroupBy;
 import com.liferay.portal.kernel.search.Sort;

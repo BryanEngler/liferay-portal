@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.aggregation.pipeline;
+package com.liferay.portal.search.opensearch.internal.aggregation.pipeline;
 
 import com.liferay.portal.search.elasticsearch7.internal.LiferayElasticsearchIndexingFixtureFactory;
 import com.liferay.portal.search.test.util.aggregation.pipeline.BaseCumulativeSumPipelineAggregationTestCase;

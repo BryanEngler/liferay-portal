@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.logging;
+package com.liferay.portal.search.opensearch.internal.logging;
 
 import com.liferay.portal.kernel.search.generic.MatchAllQuery;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ClusterHealthResponseUtil;

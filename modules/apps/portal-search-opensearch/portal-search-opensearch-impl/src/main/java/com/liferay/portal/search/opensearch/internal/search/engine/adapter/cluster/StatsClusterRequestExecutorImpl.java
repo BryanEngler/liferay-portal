@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.cluster;
+package com.liferay.portal.search.opensearch.internal.search.engine.adapter.cluster;
 
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.SystemException;

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.sidecar;
+package com.liferay.portal.search.opensearch.internal.sidecar;
 
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.SystemProperties;

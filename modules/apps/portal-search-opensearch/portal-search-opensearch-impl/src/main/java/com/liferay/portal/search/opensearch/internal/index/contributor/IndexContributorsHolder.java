@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.index.contributor;
+package com.liferay.portal.search.opensearch.internal.index.contributor;
 
 import com.liferay.portal.search.spi.model.index.contributor.IndexContributor;
 

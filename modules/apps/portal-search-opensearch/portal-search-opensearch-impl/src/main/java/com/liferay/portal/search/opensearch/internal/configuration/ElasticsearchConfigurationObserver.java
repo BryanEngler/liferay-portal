@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.configuration;
+package com.liferay.portal.search.opensearch.internal.configuration;
 
 /**
  * @author Bryan Engler

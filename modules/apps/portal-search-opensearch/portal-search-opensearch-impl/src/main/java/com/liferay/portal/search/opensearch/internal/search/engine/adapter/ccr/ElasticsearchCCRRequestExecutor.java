@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.ccr;
+package com.liferay.portal.search.opensearch.internal.search.engine.adapter.ccr;
 
 import com.liferay.portal.search.engine.adapter.ccr.CCRRequestExecutor;
 import com.liferay.portal.search.engine.adapter.ccr.FollowInfoCCRRequest;

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.aggregation.bucket;
+package com.liferay.portal.search.opensearch.internal.aggregation.bucket;
 
 import com.liferay.portal.search.elasticsearch7.internal.LiferayElasticsearchIndexingFixtureFactory;
 import com.liferay.portal.search.test.util.aggregation.bucket.BaseDateHistogramAggregationTestCase;

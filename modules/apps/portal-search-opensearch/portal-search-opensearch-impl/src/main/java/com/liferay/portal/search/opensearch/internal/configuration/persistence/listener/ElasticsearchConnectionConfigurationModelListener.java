@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.configuration.persistence.listener;
+package com.liferay.portal.search.opensearch.internal.configuration.persistence.listener;
 
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.persistence.listener.ConfigurationModelListener;

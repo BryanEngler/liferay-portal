@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.query;
+package com.liferay.portal.search.opensearch.internal.query;
 
 import org.elasticsearch.index.query.QueryBuilder;
 

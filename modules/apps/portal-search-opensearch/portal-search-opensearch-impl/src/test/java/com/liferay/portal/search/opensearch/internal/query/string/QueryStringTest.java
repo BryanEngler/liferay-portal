@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.query.string;
+package com.liferay.portal.search.opensearch.internal.query.string;
 
 import com.liferay.portal.search.elasticsearch7.internal.ElasticsearchIndexingFixtureFactory;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;

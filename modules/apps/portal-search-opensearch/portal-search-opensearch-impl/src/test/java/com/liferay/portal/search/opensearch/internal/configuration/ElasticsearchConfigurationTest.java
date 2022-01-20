@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.configuration;
+package com.liferay.portal.search.opensearch.internal.configuration;
 
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionFixture;

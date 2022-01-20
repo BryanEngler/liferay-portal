@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.connection.constants;
+package com.liferay.portal.search.opensearch.internal.connection.constants;
 
 /**
  * @author André de Oliveira

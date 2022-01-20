@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.index.constants;
+package com.liferay.portal.search.opensearch.internal.index.constants;
 
 /**
  * @author Joshua Cords

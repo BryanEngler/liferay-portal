@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.facet.user;
+package com.liferay.portal.search.opensearch.internal.facet.user;
 
 import com.liferay.portal.search.elasticsearch7.internal.LiferayElasticsearchIndexingFixtureFactory;
 import com.liferay.portal.search.test.util.facet.user.BaseUserFacetSearchContributorTestCase;

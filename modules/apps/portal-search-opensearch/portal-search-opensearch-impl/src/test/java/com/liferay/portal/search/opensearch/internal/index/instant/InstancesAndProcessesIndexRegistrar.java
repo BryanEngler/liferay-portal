@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.index.instant;
+package com.liferay.portal.search.opensearch.internal.index.instant;
 
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.elasticsearch7.spi.index.IndexRegistrar;

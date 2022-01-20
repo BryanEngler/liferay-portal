@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.query;
+package com.liferay.portal.search.opensearch.internal.query;
 
 import com.liferay.portal.search.internal.query.MultiMatchQueryImpl;
 import com.liferay.portal.search.query.MultiMatchQuery;

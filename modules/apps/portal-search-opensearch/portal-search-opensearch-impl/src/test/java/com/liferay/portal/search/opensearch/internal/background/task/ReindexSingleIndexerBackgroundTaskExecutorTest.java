@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.background.task;
+package com.liferay.portal.search.opensearch.internal.background.task;
 
 import com.liferay.portal.search.elasticsearch7.internal.ElasticsearchSearchEngineFixture;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionFixture;

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.highlight;
+package com.liferay.portal.search.opensearch.internal.highlight;
 
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 

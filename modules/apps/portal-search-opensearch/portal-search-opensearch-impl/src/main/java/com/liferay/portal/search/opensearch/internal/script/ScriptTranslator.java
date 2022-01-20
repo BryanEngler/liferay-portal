@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.script;
+package com.liferay.portal.search.opensearch.internal.script;
 
 import com.liferay.portal.search.script.Script;
 import com.liferay.portal.search.script.ScriptType;

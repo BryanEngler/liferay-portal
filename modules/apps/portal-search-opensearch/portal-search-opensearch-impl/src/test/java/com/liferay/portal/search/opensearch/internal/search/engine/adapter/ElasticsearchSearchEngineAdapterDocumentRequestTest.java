@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter;
+package com.liferay.portal.search.opensearch.internal.search.engine.adapter;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.search.BooleanQuery;

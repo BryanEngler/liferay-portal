@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.stats;
+package com.liferay.portal.search.opensearch.internal.stats;
 
 import com.liferay.portal.search.stats.StatsRequest;
 import com.liferay.portal.search.stats.StatsResponse;

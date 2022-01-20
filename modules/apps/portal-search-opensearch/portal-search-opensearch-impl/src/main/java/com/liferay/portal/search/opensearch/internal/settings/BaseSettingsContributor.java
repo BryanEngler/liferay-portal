@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.settings;
+package com.liferay.portal.search.opensearch.internal.settings;
 
 import com.liferay.portal.search.elasticsearch7.settings.SettingsContributor;
 

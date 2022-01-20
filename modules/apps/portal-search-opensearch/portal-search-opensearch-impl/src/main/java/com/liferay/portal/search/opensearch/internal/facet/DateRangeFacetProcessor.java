@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.facet;
+package com.liferay.portal.search.opensearch.internal.facet;
 
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;

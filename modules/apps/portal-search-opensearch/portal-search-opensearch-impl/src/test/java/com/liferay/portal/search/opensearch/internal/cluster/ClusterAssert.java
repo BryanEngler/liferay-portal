@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.cluster;
+package com.liferay.portal.search.opensearch.internal.cluster;
 
 import com.liferay.portal.search.elasticsearch7.internal.connection.ClusterHealthResponseUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.snapshot;
+package com.liferay.portal.search.opensearch.internal.search.engine.adapter.snapshot;
 
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;

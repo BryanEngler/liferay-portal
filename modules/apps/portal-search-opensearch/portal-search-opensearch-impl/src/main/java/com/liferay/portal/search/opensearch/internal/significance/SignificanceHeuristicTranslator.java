@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.significance;
+package com.liferay.portal.search.opensearch.internal.significance;
 
 import com.liferay.portal.search.elasticsearch7.internal.script.ScriptTranslator;
 import com.liferay.portal.search.significance.ChiSquareSignificanceHeuristic;

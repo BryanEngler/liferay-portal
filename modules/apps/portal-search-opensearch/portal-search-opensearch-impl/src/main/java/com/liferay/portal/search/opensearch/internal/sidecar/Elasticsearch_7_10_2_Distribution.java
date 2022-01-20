@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.sidecar;
+package com.liferay.portal.search.opensearch.internal.sidecar;
 
 import java.util.Arrays;
 import java.util.List;

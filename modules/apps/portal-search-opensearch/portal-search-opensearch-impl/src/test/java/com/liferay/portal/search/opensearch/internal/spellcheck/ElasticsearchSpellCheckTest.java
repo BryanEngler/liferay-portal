@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.spellcheck;
+package com.liferay.portal.search.opensearch.internal.spellcheck;
 
 import com.liferay.portal.search.elasticsearch7.internal.ElasticsearchIndexingFixtureFactory;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;

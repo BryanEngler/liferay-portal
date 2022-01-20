@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.search.response;
+package com.liferay.portal.search.opensearch.internal.search.response;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;

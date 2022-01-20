@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.internal.configuration.admin.definition;
+package com.liferay.portal.search.opensearch.internal.configuration.admin.definition;
 
 import com.liferay.configuration.admin.definition.ConfigurationFieldOptionsProvider;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnection;
