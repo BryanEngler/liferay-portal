@@ -1,0 +1,8 @@
+Bundle-Name: Liferay Portal Search Elasticsearch 7 API
+Bundle-SymbolicName: com.liferay.portal.search.elasticsearch7.api
+Bundle-Version: 6.0.12
+Export-Package:\
+	com.liferay.portal.search.elasticsearch7.configuration,\
+	com.liferay.portal.search.elasticsearch7.constants,\
+	com.liferay.portal.search.elasticsearch7.settings
+-dsannotations-options: inherit

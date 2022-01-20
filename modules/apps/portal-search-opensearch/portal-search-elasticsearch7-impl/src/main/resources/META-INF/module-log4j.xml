@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<Configuration strict="true">
+	<Loggers>
+		<Logger level="ERROR" name="com.liferay.portal.search.elasticsearch7" />
+		<Logger level="INFO" name="com.liferay.portal.search.elasticsearch7.internal.sidecar" />
+	</Loggers>
+</Configuration>
