@@ -158,7 +158,7 @@ public class CompanyIndexFactory
 		policyOption = ReferencePolicyOption.GREEDY
 	)
 	protected void addElasticsearchIndexSettingsContributor(
-		com.liferay.portal.search.elasticsearch7.settings.
+		com.liferay.portal.search.opensearch.settings.
 			IndexSettingsContributor indexSettingsContributor) {
 
 		_elasticsearchIndexSettingsContributors.add(indexSettingsContributor);
@@ -351,11 +351,11 @@ public class CompanyIndexFactory
 	}
 
 	protected void loadIndexSettingsContributors(Settings.Builder builder) {
-		com.liferay.portal.search.elasticsearch7.settings.IndexSettingsHelper
+		com.liferay.portal.search.opensearch.settings.IndexSettingsHelper
 			elasticsearchIndexSettingsHelper = (setting, value) -> builder.put(
 				setting, value);
 
-		for (com.liferay.portal.search.elasticsearch7.settings.
+		for (com.liferay.portal.search.opensearch.settings.
 				IndexSettingsContributor indexSettingsContributor :
 					_elasticsearchIndexSettingsContributors) {
 
@@ -387,7 +387,7 @@ public class CompanyIndexFactory
 		String indexName,
 		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
 
-		for (com.liferay.portal.search.elasticsearch7.settings.
+		for (com.liferay.portal.search.opensearch.settings.
 				IndexSettingsContributor elasticsearchIndexSettingsContributor :
 					_elasticsearchIndexSettingsContributors) {
 
@@ -439,7 +439,7 @@ public class CompanyIndexFactory
 	}
 
 	protected void removeElasticsearchIndexSettingsContributor(
-		com.liferay.portal.search.elasticsearch7.settings.
+		com.liferay.portal.search.opensearch.settings.
 			IndexSettingsContributor indexSettingsContributor) {
 
 		_elasticsearchIndexSettingsContributors.remove(
@@ -528,7 +528,7 @@ public class CompanyIndexFactory
 		_elasticsearchConfigurationWrapper;
 	private ElasticsearchConnectionManager _elasticsearchConnectionManager;
 	private final Set
-		<com.liferay.portal.search.elasticsearch7.settings.
+		<com.liferay.portal.search.opensearch.settings.
 			IndexSettingsContributor> _elasticsearchIndexSettingsContributors =
 				new ConcurrentSkipListSet<>();
 	private final List<IndexContributor> _indexContributors =

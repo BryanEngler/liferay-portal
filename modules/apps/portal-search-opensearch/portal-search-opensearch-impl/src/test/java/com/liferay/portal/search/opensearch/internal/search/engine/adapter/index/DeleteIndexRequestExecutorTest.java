@@ -73,7 +73,7 @@ public class DeleteIndexRequestExecutorTest {
 				}
 			};
 
-		org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
+		org.opensearch.action.admin.indices.delete.DeleteIndexRequest
 			elasticsearchDeleteIndexRequest =
 				deleteIndexRequestExecutorImpl.createDeleteIndexRequest(
 					deleteIndexRequest);
@@ -84,7 +84,7 @@ public class DeleteIndexRequestExecutorTest {
 		Assert.assertEquals(_INDEX_NAME_1, indices[0]);
 		Assert.assertEquals(_INDEX_NAME_2, indices[1]);
 
-		org.elasticsearch.action.support.IndicesOptions
+		org.opensearch.action.support.IndicesOptions
 			elasticsearchIndicesOptions =
 				elasticsearchDeleteIndexRequest.indicesOptions();
 

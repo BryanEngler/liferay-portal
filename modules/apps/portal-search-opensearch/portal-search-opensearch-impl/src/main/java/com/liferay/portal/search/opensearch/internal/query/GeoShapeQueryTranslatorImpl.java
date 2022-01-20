@@ -58,38 +58,38 @@ public class GeoShapeQueryTranslatorImpl implements GeoShapeQueryTranslator {
 		return geoShapeQueryBuilder;
 	}
 
-	protected org.elasticsearch.common.geo.ShapeRelation translate(
+	protected org.opensearch.common.geo.ShapeRelation translate(
 		ShapeRelation shapeRelation) {
 
 		if (shapeRelation == ShapeRelation.CONTAINS) {
-			return org.elasticsearch.common.geo.ShapeRelation.CONTAINS;
+			return org.opensearch.common.geo.ShapeRelation.CONTAINS;
 		}
 
 		if (shapeRelation == ShapeRelation.DISJOINT) {
-			return org.elasticsearch.common.geo.ShapeRelation.DISJOINT;
+			return org.opensearch.common.geo.ShapeRelation.DISJOINT;
 		}
 
 		if (shapeRelation == ShapeRelation.INTERSECTS) {
-			return org.elasticsearch.common.geo.ShapeRelation.INTERSECTS;
+			return org.opensearch.common.geo.ShapeRelation.INTERSECTS;
 		}
 
 		if (shapeRelation == ShapeRelation.WITHIN) {
-			return org.elasticsearch.common.geo.ShapeRelation.WITHIN;
+			return org.opensearch.common.geo.ShapeRelation.WITHIN;
 		}
 
 		throw new IllegalArgumentException(
 			"Invalid ShapeRelation: " + shapeRelation);
 	}
 
-	protected org.elasticsearch.common.geo.SpatialStrategy translate(
+	protected org.opensearch.common.geo.SpatialStrategy translate(
 		SpatialStrategy spatialStrategy) {
 
 		if (spatialStrategy == SpatialStrategy.RECURSIVE) {
-			return org.elasticsearch.common.geo.SpatialStrategy.RECURSIVE;
+			return org.opensearch.common.geo.SpatialStrategy.RECURSIVE;
 		}
 
 		if (spatialStrategy == SpatialStrategy.TERM) {
-			return org.elasticsearch.common.geo.SpatialStrategy.TERM;
+			return org.opensearch.common.geo.SpatialStrategy.TERM;
 		}
 
 		throw new IllegalArgumentException(

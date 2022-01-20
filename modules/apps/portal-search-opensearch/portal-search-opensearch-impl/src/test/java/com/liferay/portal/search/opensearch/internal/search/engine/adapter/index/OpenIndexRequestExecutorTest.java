@@ -72,7 +72,7 @@ public class OpenIndexRequestExecutorTest {
 				}
 			};
 
-		org.elasticsearch.action.admin.indices.open.OpenIndexRequest
+		org.opensearch.action.admin.indices.open.OpenIndexRequest
 			elastichsearchOpenIndexRequest =
 				openIndexRequestExecutorImpl.createOpenIndexRequest(
 					openIndexRequest);

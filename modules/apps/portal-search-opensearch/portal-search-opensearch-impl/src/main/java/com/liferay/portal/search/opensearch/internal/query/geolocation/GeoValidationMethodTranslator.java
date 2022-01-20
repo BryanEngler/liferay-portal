@@ -21,18 +21,18 @@ import com.liferay.portal.search.query.geolocation.GeoValidationMethod;
  */
 public class GeoValidationMethodTranslator {
 
-	public org.elasticsearch.index.query.GeoValidationMethod translate(
+	public org.opensearch.index.query.GeoValidationMethod translate(
 		GeoValidationMethod geoValidationMethod) {
 
 		if (geoValidationMethod == GeoValidationMethod.COERCE) {
-			return org.elasticsearch.index.query.GeoValidationMethod.COERCE;
+			return org.opensearch.index.query.GeoValidationMethod.COERCE;
 		}
 		else if (geoValidationMethod == GeoValidationMethod.IGNORE_MALFORMED) {
-			return org.elasticsearch.index.query.GeoValidationMethod.
+			return org.opensearch.index.query.GeoValidationMethod.
 				IGNORE_MALFORMED;
 		}
 		else if (geoValidationMethod == GeoValidationMethod.STRICT) {
-			return org.elasticsearch.index.query.GeoValidationMethod.STRICT;
+			return org.opensearch.index.query.GeoValidationMethod.STRICT;
 		}
 
 		throw new IllegalArgumentException(

@@ -62,7 +62,7 @@ public class CreateSnapshotRequestExecutorImplTest {
 				}
 			};
 
-		org.elasticsearch.action.admin.cluster.snapshots.create.
+		org.opensearch.action.admin.cluster.snapshots.create.
 			CreateSnapshotRequest elasticsearchCreateSnapshotRequest =
 				createSnapshotRequestExecutorImpl.createCreateSnapshotRequest(
 					createSnapshotRequest);

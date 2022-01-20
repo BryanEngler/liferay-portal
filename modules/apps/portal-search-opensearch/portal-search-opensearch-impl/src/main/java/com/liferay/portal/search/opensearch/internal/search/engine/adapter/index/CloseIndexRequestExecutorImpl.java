@@ -39,7 +39,7 @@ public class CloseIndexRequestExecutorImpl
 
 	@Override
 	public CloseIndexResponse execute(CloseIndexRequest closeIndexRequest) {
-		org.elasticsearch.client.indices.CloseIndexRequest
+		org.opensearch.client.indices.CloseIndexRequest
 			elasticsearchCloseIndexRequest = createCloseIndexRequest(
 				closeIndexRequest);
 
@@ -49,12 +49,12 @@ public class CloseIndexRequestExecutorImpl
 		return new CloseIndexResponse(acknowledgedResponse.isAcknowledged());
 	}
 
-	protected org.elasticsearch.client.indices.CloseIndexRequest
+	protected org.opensearch.client.indices.CloseIndexRequest
 		createCloseIndexRequest(CloseIndexRequest closeIndexRequest) {
 
-		org.elasticsearch.client.indices.CloseIndexRequest
+		org.opensearch.client.indices.CloseIndexRequest
 			elasticsearchCloseIndexRequest =
-				new org.elasticsearch.client.indices.CloseIndexRequest(
+				new org.opensearch.client.indices.CloseIndexRequest(
 					closeIndexRequest.getIndexNames());
 
 		IndicesOptions indicesOptions = closeIndexRequest.getIndicesOptions();
@@ -76,7 +76,7 @@ public class CloseIndexRequestExecutorImpl
 	}
 
 	protected AcknowledgedResponse getAcknowledgedResponse(
-		org.elasticsearch.client.indices.CloseIndexRequest
+		org.opensearch.client.indices.CloseIndexRequest
 			elasticsearchCloseIndexRequest,
 		CloseIndexRequest closeIndexRequest) {
 

@@ -68,14 +68,14 @@ public class CommonTermsQueryTranslatorImpl
 		return commonTermsQueryBuilder;
 	}
 
-	protected org.elasticsearch.index.query.Operator translate(
+	protected org.opensearch.index.query.Operator translate(
 		Operator matchQueryOperator) {
 
 		if (matchQueryOperator == Operator.AND) {
-			return org.elasticsearch.index.query.Operator.AND;
+			return org.opensearch.index.query.Operator.AND;
 		}
 		else if (matchQueryOperator == Operator.OR) {
-			return org.elasticsearch.index.query.Operator.AND;
+			return org.opensearch.index.query.Operator.AND;
 		}
 
 		throw new IllegalArgumentException(

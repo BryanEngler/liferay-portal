@@ -126,13 +126,13 @@ public class CommonSearchSourceBuilderAssemblerImplTest {
 	protected static CommonSearchSourceBuilderAssembler
 		createCommonSearchSourceBuilderAssembler(Queries queries) {
 
-		com.liferay.portal.search.elasticsearch7.internal.legacy.query.
+		com.liferay.portal.search.opensearch.internal.legacy.query.
 			ElasticsearchQueryTranslatorFixture
 				legacyElasticsearchQueryTranslatorFixture =
-					new com.liferay.portal.search.elasticsearch7.internal.
+					new com.liferay.portal.search.opensearch.internal.
 						legacy.query.ElasticsearchQueryTranslatorFixture();
 
-		com.liferay.portal.search.elasticsearch7.internal.legacy.query.
+		com.liferay.portal.search.opensearch.internal.legacy.query.
 			ElasticsearchQueryTranslator legacyElasticsearchQueryTranslator =
 				legacyElasticsearchQueryTranslatorFixture.
 					getElasticsearchQueryTranslator();

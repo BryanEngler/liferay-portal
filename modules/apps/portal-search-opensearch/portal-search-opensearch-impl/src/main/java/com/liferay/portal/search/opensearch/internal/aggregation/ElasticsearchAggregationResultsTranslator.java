@@ -46,7 +46,7 @@ public class ElasticsearchAggregationResultsTranslator {
 	public Stream<AggregationResult> translate(
 		Aggregations elasticsearchAggregations) {
 
-		Stream<org.elasticsearch.search.aggregations.Aggregation> stream =
+		Stream<org.opensearch.search.aggregations.Aggregation> stream =
 			getElasticsearchAggregations(elasticsearchAggregations);
 
 		return stream.map(
@@ -68,17 +68,17 @@ public class ElasticsearchAggregationResultsTranslator {
 
 	}
 
-	protected Stream<org.elasticsearch.search.aggregations.Aggregation>
+	protected Stream<org.opensearch.search.aggregations.Aggregation>
 		getElasticsearchAggregations(Aggregations aggregations) {
 
-		List<org.elasticsearch.search.aggregations.Aggregation> list =
+		List<org.opensearch.search.aggregations.Aggregation> list =
 			aggregations.asList();
 
 		return list.stream();
 	}
 
 	protected AggregationResult translate(
-		org.elasticsearch.search.aggregations.Aggregation
+		org.opensearch.search.aggregations.Aggregation
 			elasticsearchAggregation) {
 
 		String name = elasticsearchAggregation.getName();

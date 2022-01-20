@@ -63,7 +63,7 @@ public class GetSnapshotsRequestExecutorImplTest {
 				}
 			};
 
-		org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest
+		org.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest
 			elasticsearchGetSnapshotsRequest =
 				getSnapshotsRequestExecutorImpl.createGetSnapshotsRequest(
 					getSnapshotsRequest);

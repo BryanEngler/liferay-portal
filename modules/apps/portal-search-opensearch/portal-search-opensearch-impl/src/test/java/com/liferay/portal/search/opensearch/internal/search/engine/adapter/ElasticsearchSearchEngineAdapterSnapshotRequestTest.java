@@ -352,9 +352,9 @@ public class ElasticsearchSearchEngineAdapterSnapshotRequestTest {
 		String repositoryName, String snapshotName, boolean waitForCompletion,
 		String... indexNames) {
 
-		org.elasticsearch.action.admin.cluster.snapshots.create.
+		org.opensearch.action.admin.cluster.snapshots.create.
 			CreateSnapshotRequest createSnapshotRequest =
-				new org.elasticsearch.action.admin.cluster.snapshots.create.
+				new org.opensearch.action.admin.cluster.snapshots.create.
 					CreateSnapshotRequest(repositoryName, snapshotName);
 
 		createSnapshotRequest.indices(indexNames);
@@ -395,9 +395,9 @@ public class ElasticsearchSearchEngineAdapterSnapshotRequestTest {
 	}
 
 	private void _deleteSnapshot(String repository, String snapshot) {
-		org.elasticsearch.action.admin.cluster.snapshots.delete.
+		org.opensearch.action.admin.cluster.snapshots.delete.
 			DeleteSnapshotRequest deleteSnapshotRequest =
-				new org.elasticsearch.action.admin.cluster.snapshots.delete.
+				new org.opensearch.action.admin.cluster.snapshots.delete.
 					DeleteSnapshotRequest(repository, snapshot);
 
 		try {
@@ -425,9 +425,9 @@ public class ElasticsearchSearchEngineAdapterSnapshotRequestTest {
 	}
 
 	private List<SnapshotInfo> _getSnapshotInfo(String snapshotName) {
-		org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest
+		org.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest
 			getSnapshotsRequest =
-				new org.elasticsearch.action.admin.cluster.snapshots.get.
+				new org.opensearch.action.admin.cluster.snapshots.get.
 					GetSnapshotsRequest(_TEST_REPOSITORY_NAME);
 
 		getSnapshotsRequest.ignoreUnavailable(true);

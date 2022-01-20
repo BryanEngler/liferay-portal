@@ -139,11 +139,11 @@ public class ElasticsearchServerUtil {
 
 			_mainMethod = ReflectionUtil.getDeclaredMethod(
 				classLoader.loadClass(
-					"org.elasticsearch.bootstrap.Elasticsearch"),
+					"org.opensearch.bootstrap.Elasticsearch"),
 				"main", String[].class);
 
 			Class<?> bootstrapClass = classLoader.loadClass(
-				"org.elasticsearch.bootstrap.Bootstrap");
+				"org.opensearch.bootstrap.Bootstrap");
 
 			_instanceField = ReflectionUtil.getDeclaredField(
 				bootstrapClass, "INSTANCE");

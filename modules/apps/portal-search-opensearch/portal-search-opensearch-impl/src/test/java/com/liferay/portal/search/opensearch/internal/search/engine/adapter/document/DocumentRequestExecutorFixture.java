@@ -71,10 +71,10 @@ public class DocumentRequestExecutorFixture {
 			{
 				setElasticsearchClientResolver(elasticsearchClientResolver);
 
-				com.liferay.portal.search.elasticsearch7.internal.legacy.query.
+				com.liferay.portal.search.opensearch.internal.legacy.query.
 					ElasticsearchQueryTranslatorFixture
 						legacyElasticsearchQueryTranslatorFixture =
-							new com.liferay.portal.search.elasticsearch7.
+							new com.liferay.portal.search.opensearch.
 								internal.legacy.query.ElasticsearchQueryTranslatorFixture();
 
 				setLegacyQueryTranslator(
@@ -188,10 +188,10 @@ public class DocumentRequestExecutorFixture {
 			{
 				setElasticsearchClientResolver(elasticsearchClientResolver);
 
-				com.liferay.portal.search.elasticsearch7.internal.legacy.query.
+				com.liferay.portal.search.opensearch.internal.legacy.query.
 					ElasticsearchQueryTranslatorFixture
 						lecacyElasticsearchQueryTranslatorFixture =
-							new com.liferay.portal.search.elasticsearch7.
+							new com.liferay.portal.search.opensearch.
 								internal.legacy.query.ElasticsearchQueryTranslatorFixture();
 
 				setLegacyQueryTranslator(

@@ -66,11 +66,11 @@ public class StringQueryTranslatorImpl implements StringQueryTranslator {
 
 			if (operator == Operator.OR) {
 				queryStringQueryBuilder.defaultOperator(
-					org.elasticsearch.index.query.Operator.OR);
+					org.opensearch.index.query.Operator.OR);
 			}
 			else if (operator == Operator.AND) {
 				queryStringQueryBuilder.defaultOperator(
-					org.elasticsearch.index.query.Operator.AND);
+					org.opensearch.index.query.Operator.AND);
 			}
 			else {
 				throw new IllegalArgumentException(

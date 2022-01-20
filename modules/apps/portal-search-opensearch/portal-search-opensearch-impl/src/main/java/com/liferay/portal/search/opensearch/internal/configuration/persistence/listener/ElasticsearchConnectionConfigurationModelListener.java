@@ -41,7 +41,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = "model.class.name=com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConnectionConfiguration",
+	property = "model.class.name=com.liferay.portal.search.opensearch.configuration.ElasticsearchConnectionConfiguration",
 	service = ConfigurationModelListener.class
 )
 public class ElasticsearchConnectionConfigurationModelListener

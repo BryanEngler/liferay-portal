@@ -659,9 +659,9 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 	}
 
 	private void _closeIndex(String indexName) {
-		org.elasticsearch.client.indices.CloseIndexRequest
+		org.opensearch.client.indices.CloseIndexRequest
 			elasticsearchCloseIndexRequest =
-				new org.elasticsearch.client.indices.CloseIndexRequest(
+				new org.opensearch.client.indices.CloseIndexRequest(
 					indexName);
 
 		try {
@@ -674,9 +674,9 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 	}
 
 	private void _createIndex(String indexName) {
-		org.elasticsearch.client.indices.CreateIndexRequest
+		org.opensearch.client.indices.CreateIndexRequest
 			elasticsearchCreateIndexRequest =
-				new org.elasticsearch.client.indices.CreateIndexRequest(
+				new org.opensearch.client.indices.CreateIndexRequest(
 					indexName);
 
 		try {
@@ -689,9 +689,9 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 	}
 
 	private AcknowledgedResponse _deleteIndex(String indexName) {
-		org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
+		org.opensearch.action.admin.indices.delete.DeleteIndexRequest
 			elasticsearchDeleteIndexRequest =
-				new org.elasticsearch.action.admin.indices.delete.
+				new org.opensearch.action.admin.indices.delete.
 					DeleteIndexRequest(indexName);
 
 		try {
@@ -747,9 +747,9 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 	}
 
 	private void _openIndex(String indexName) {
-		org.elasticsearch.action.admin.indices.open.OpenIndexRequest
+		org.opensearch.action.admin.indices.open.OpenIndexRequest
 			elasticsearchOpenIndexRequest =
-				new org.elasticsearch.action.admin.indices.open.
+				new org.opensearch.action.admin.indices.open.
 					OpenIndexRequest(indexName);
 
 		try {

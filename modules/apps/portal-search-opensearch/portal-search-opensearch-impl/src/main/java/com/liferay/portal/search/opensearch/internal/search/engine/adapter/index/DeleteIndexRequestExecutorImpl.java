@@ -38,7 +38,7 @@ public class DeleteIndexRequestExecutorImpl
 
 	@Override
 	public DeleteIndexResponse execute(DeleteIndexRequest deleteIndexRequest) {
-		org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
+		org.opensearch.action.admin.indices.delete.DeleteIndexRequest
 			elasticsearchDeleteIndexRequest = createDeleteIndexRequest(
 				deleteIndexRequest);
 
@@ -48,12 +48,12 @@ public class DeleteIndexRequestExecutorImpl
 		return new DeleteIndexResponse(acknowledgedResponse.isAcknowledged());
 	}
 
-	protected org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
+	protected org.opensearch.action.admin.indices.delete.DeleteIndexRequest
 		createDeleteIndexRequest(DeleteIndexRequest deleteIndexRequest) {
 
-		org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
+		org.opensearch.action.admin.indices.delete.DeleteIndexRequest
 			elasticsearchDeleteIndexRequest =
-				new org.elasticsearch.action.admin.indices.delete.
+				new org.opensearch.action.admin.indices.delete.
 					DeleteIndexRequest(deleteIndexRequest.getIndexNames());
 
 		IndicesOptions indicesOptions = _indicesOptionsTranslator.translate(
@@ -65,7 +65,7 @@ public class DeleteIndexRequestExecutorImpl
 	}
 
 	protected AcknowledgedResponse getAcknowledgedResponse(
-		org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
+		org.opensearch.action.admin.indices.delete.DeleteIndexRequest
 			elasticsearchDeleteIndexRequest,
 		DeleteIndexRequest deleteIndexRequest) {
 

@@ -49,7 +49,7 @@ public class SnapshotInfoConverter {
 	}
 
 	public static SnapshotState convert(
-		org.elasticsearch.snapshots.SnapshotState snapshotState) {
+		org.opensearch.snapshots.SnapshotState snapshotState) {
 
 		if (snapshotState.value() == 0) {
 			return SnapshotState.IN_PROGRESS;

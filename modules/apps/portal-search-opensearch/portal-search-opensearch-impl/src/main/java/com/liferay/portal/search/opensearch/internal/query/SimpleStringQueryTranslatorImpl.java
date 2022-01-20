@@ -78,11 +78,11 @@ public class SimpleStringQueryTranslatorImpl
 
 			if (operator == Operator.OR) {
 				simpleQueryStringBuilder.defaultOperator(
-					org.elasticsearch.index.query.Operator.OR);
+					org.opensearch.index.query.Operator.OR);
 			}
 			else if (operator == Operator.AND) {
 				simpleQueryStringBuilder.defaultOperator(
-					org.elasticsearch.index.query.Operator.AND);
+					org.opensearch.index.query.Operator.AND);
 			}
 			else {
 				throw new IllegalArgumentException(

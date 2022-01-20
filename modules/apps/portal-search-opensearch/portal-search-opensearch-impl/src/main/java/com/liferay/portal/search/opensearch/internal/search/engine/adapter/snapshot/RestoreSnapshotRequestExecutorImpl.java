@@ -42,11 +42,11 @@ public class RestoreSnapshotRequestExecutorImpl
 	public RestoreSnapshotResponse execute(
 		RestoreSnapshotRequest restoreSnapshotRequest) {
 
-		org.elasticsearch.action.admin.cluster.snapshots.restore.
+		org.opensearch.action.admin.cluster.snapshots.restore.
 			RestoreSnapshotRequest elasticsearchRestoreSnapshotRequest =
 				createRestoreSnapshotRequest(restoreSnapshotRequest);
 
-		org.elasticsearch.action.admin.cluster.snapshots.restore.
+		org.opensearch.action.admin.cluster.snapshots.restore.
 			RestoreSnapshotResponse elasticsearchRestoreSnapshotResponse =
 				getRestoreSnapshotResponse(
 					elasticsearchRestoreSnapshotRequest,
@@ -62,13 +62,13 @@ public class RestoreSnapshotRequestExecutorImpl
 			restoreInfo.totalShards(), restoreInfo.failedShards());
 	}
 
-	protected org.elasticsearch.action.admin.cluster.snapshots.restore.
+	protected org.opensearch.action.admin.cluster.snapshots.restore.
 		RestoreSnapshotRequest createRestoreSnapshotRequest(
 			RestoreSnapshotRequest restoreSnapshotRequest) {
 
-		org.elasticsearch.action.admin.cluster.snapshots.restore.
+		org.opensearch.action.admin.cluster.snapshots.restore.
 			RestoreSnapshotRequest elasticsearchRestoreSnapshotRequest =
-				new org.elasticsearch.action.admin.cluster.snapshots.restore.
+				new org.opensearch.action.admin.cluster.snapshots.restore.
 					RestoreSnapshotRequest();
 
 		elasticsearchRestoreSnapshotRequest.includeAliases(
@@ -102,9 +102,9 @@ public class RestoreSnapshotRequestExecutorImpl
 		return elasticsearchRestoreSnapshotRequest;
 	}
 
-	protected org.elasticsearch.action.admin.cluster.snapshots.restore.
+	protected org.opensearch.action.admin.cluster.snapshots.restore.
 		RestoreSnapshotResponse getRestoreSnapshotResponse(
-			org.elasticsearch.action.admin.cluster.snapshots.restore.
+			org.opensearch.action.admin.cluster.snapshots.restore.
 				RestoreSnapshotRequest elasticsearchRestoreSnapshotRequest,
 			RestoreSnapshotRequest restoreSnapshotRequest) {
 

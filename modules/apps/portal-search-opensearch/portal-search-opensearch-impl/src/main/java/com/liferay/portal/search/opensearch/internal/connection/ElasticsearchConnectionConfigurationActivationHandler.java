@@ -28,7 +28,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Bryan Engler
  */
 @Component(
-	configurationPid = "com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConnectionConfiguration",
+	configurationPid = "com.liferay.portal.search.opensearch.configuration.ElasticsearchConnectionConfiguration",
 	service = {}
 )
 public class ElasticsearchConnectionConfigurationActivationHandler {

@@ -40,7 +40,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Bryan Engler
  */
 @Component(
-	configurationPid = "com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration",
+	configurationPid = "com.liferay.portal.search.opensearch.configuration.ElasticsearchConfiguration",
 	immediate = true, service = ElasticsearchConfigurationWrapper.class
 )
 public class ElasticsearchConfigurationWrapper

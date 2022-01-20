@@ -21,14 +21,14 @@ import com.liferay.portal.search.query.geolocation.GeoExecType;
  */
 public class GeoExecTypeTranslator {
 
-	public org.elasticsearch.index.query.GeoExecType translate(
+	public org.opensearch.index.query.GeoExecType translate(
 		GeoExecType geoExecType) {
 
 		if (geoExecType == GeoExecType.INDEXED) {
-			return org.elasticsearch.index.query.GeoExecType.INDEXED;
+			return org.opensearch.index.query.GeoExecType.INDEXED;
 		}
 		else if (geoExecType == GeoExecType.MEMORY) {
-			return org.elasticsearch.index.query.GeoExecType.MEMORY;
+			return org.opensearch.index.query.GeoExecType.MEMORY;
 		}
 
 		throw new IllegalArgumentException(

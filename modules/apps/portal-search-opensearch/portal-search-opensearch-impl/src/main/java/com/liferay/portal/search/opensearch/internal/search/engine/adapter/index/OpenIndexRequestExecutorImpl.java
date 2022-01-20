@@ -38,7 +38,7 @@ public class OpenIndexRequestExecutorImpl implements OpenIndexRequestExecutor {
 
 	@Override
 	public OpenIndexResponse execute(OpenIndexRequest openIndexRequest) {
-		org.elasticsearch.action.admin.indices.open.OpenIndexRequest
+		org.opensearch.action.admin.indices.open.OpenIndexRequest
 			elasticsearchOpenIndexRequest = createOpenIndexRequest(
 				openIndexRequest);
 
@@ -48,12 +48,12 @@ public class OpenIndexRequestExecutorImpl implements OpenIndexRequestExecutor {
 		return new OpenIndexResponse(acknowledgedResponse.isAcknowledged());
 	}
 
-	protected org.elasticsearch.action.admin.indices.open.OpenIndexRequest
+	protected org.opensearch.action.admin.indices.open.OpenIndexRequest
 		createOpenIndexRequest(OpenIndexRequest openIndexRequest) {
 
-		org.elasticsearch.action.admin.indices.open.OpenIndexRequest
+		org.opensearch.action.admin.indices.open.OpenIndexRequest
 			elasticsearchOpenIndexRequest =
-				new org.elasticsearch.action.admin.indices.open.
+				new org.opensearch.action.admin.indices.open.
 					OpenIndexRequest();
 
 		elasticsearchOpenIndexRequest.indices(openIndexRequest.getIndexNames());
@@ -82,7 +82,7 @@ public class OpenIndexRequestExecutorImpl implements OpenIndexRequestExecutor {
 	}
 
 	protected AcknowledgedResponse getAcknowledgedResponse(
-		org.elasticsearch.action.admin.indices.open.OpenIndexRequest
+		org.opensearch.action.admin.indices.open.OpenIndexRequest
 			elasticsearchOpenIndexRequest,
 		OpenIndexRequest openIndexRequest) {
 

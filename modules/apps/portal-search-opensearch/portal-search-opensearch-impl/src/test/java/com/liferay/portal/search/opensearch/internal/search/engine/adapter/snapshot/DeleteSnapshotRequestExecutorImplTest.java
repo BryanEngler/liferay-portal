@@ -59,7 +59,7 @@ public class DeleteSnapshotRequestExecutorImplTest {
 				}
 			};
 
-		org.elasticsearch.action.admin.cluster.snapshots.delete.
+		org.opensearch.action.admin.cluster.snapshots.delete.
 			DeleteSnapshotRequest elasticDeleteSnapshotRequest =
 				deleteSnapshotRequestExecutorImpl.createDeleteSnapshotRequest(
 					deleteSnapshotRequest);

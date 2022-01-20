@@ -345,7 +345,7 @@ public class ElasticsearchAggregationVisitor
 				percentileRanksAggregation.getPercentilesMethod();
 
 			percentileRanksAggregationBuilder.method(
-				org.elasticsearch.search.aggregations.metrics.PercentilesMethod.
+				org.opensearch.search.aggregations.metrics.PercentilesMethod.
 					valueOf(percentilesMethod.name()));
 		}
 
@@ -388,7 +388,7 @@ public class ElasticsearchAggregationVisitor
 				percentilesAggregation.getPercentilesMethod();
 
 			percentilesAggregationBuilder.method(
-				org.elasticsearch.search.aggregations.metrics.PercentilesMethod.
+				org.opensearch.search.aggregations.metrics.PercentilesMethod.
 					valueOf(percentilesMethod.name()));
 		}
 

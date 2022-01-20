@@ -21,11 +21,11 @@ import com.liferay.portal.search.engine.adapter.cluster.ClusterHealthStatus;
  */
 public interface ClusterHealthStatusTranslator {
 
-	public org.elasticsearch.cluster.health.ClusterHealthStatus translate(
+	public org.opensearch.cluster.health.ClusterHealthStatus translate(
 		ClusterHealthStatus clusterHealthStatus);
 
 	public ClusterHealthStatus translate(
-		org.elasticsearch.cluster.health.ClusterHealthStatus
+		org.opensearch.cluster.health.ClusterHealthStatus
 			clusterHealthStatus);
 
 	public ClusterHealthStatus translate(String status);

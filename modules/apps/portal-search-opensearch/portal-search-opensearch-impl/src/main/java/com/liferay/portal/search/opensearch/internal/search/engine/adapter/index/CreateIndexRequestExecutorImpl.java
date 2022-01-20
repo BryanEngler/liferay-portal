@@ -41,11 +41,11 @@ public class CreateIndexRequestExecutorImpl
 
 	@Override
 	public CreateIndexResponse execute(CreateIndexRequest createIndexRequest) {
-		org.elasticsearch.action.admin.indices.create.CreateIndexRequest
+		org.opensearch.action.admin.indices.create.CreateIndexRequest
 			elasticsearchCreateIndexRequest = createCreateIndexRequest(
 				createIndexRequest);
 
-		org.elasticsearch.action.admin.indices.create.CreateIndexResponse
+		org.opensearch.action.admin.indices.create.CreateIndexResponse
 			elasticsearchCreateIndexResponse = getCreateIndexResponse(
 				elasticsearchCreateIndexRequest, createIndexRequest);
 
@@ -57,12 +57,12 @@ public class CreateIndexRequestExecutorImpl
 			elasticsearchCreateIndexResponse.index());
 	}
 
-	protected org.elasticsearch.action.admin.indices.create.CreateIndexRequest
+	protected org.opensearch.action.admin.indices.create.CreateIndexRequest
 		createCreateIndexRequest(CreateIndexRequest createIndexRequest) {
 
-		org.elasticsearch.action.admin.indices.create.CreateIndexRequest
+		org.opensearch.action.admin.indices.create.CreateIndexRequest
 			elasticsearchCreateIndexRequest =
-				new org.elasticsearch.action.admin.indices.create.
+				new org.opensearch.action.admin.indices.create.
 					CreateIndexRequest(createIndexRequest.getIndexName());
 
 		if (createIndexRequest.getSource() != null) {
@@ -75,9 +75,9 @@ public class CreateIndexRequestExecutorImpl
 		return elasticsearchCreateIndexRequest;
 	}
 
-	protected org.elasticsearch.action.admin.indices.create.CreateIndexResponse
+	protected org.opensearch.action.admin.indices.create.CreateIndexResponse
 		getCreateIndexResponse(
-			org.elasticsearch.action.admin.indices.create.CreateIndexRequest
+			org.opensearch.action.admin.indices.create.CreateIndexRequest
 				elasticsearchCreateIndexRequest,
 			CreateIndexRequest createIndexRequest) {
 

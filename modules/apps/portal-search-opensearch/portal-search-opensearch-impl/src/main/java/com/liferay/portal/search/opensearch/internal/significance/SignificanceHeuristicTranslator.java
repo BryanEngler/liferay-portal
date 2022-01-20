@@ -36,7 +36,7 @@ import org.opensearch.search.aggregations.bucket.terms.heuristic.ScriptHeuristic
  */
 public class SignificanceHeuristicTranslator {
 
-	public org.elasticsearch.search.aggregations.bucket.terms.heuristic.
+	public org.opensearch.search.aggregations.bucket.terms.heuristic.
 		SignificanceHeuristic translate(
 			SignificanceHeuristic significanceHeuristic) {
 

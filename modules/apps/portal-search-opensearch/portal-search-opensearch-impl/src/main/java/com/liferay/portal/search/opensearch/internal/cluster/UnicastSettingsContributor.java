@@ -32,7 +32,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author André de Oliveira
  */
 @Component(
-	configurationPid = "com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration",
+	configurationPid = "com.liferay.portal.search.opensearch.configuration.ElasticsearchConfiguration",
 	enabled = false, immediate = true, property = "operation.mode=EMBEDDED",
 	service = SettingsContributor.class
 )

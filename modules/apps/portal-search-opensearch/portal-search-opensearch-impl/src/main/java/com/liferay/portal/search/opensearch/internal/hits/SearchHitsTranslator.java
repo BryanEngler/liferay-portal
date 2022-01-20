@@ -61,14 +61,14 @@ public class SearchHitsTranslator {
 	}
 
 	public SearchHits translate(
-		org.elasticsearch.search.SearchHits elasticsearchSearchHits) {
+		org.opensearch.search.SearchHits elasticsearchSearchHits) {
 
 		return translate(null, elasticsearchSearchHits, null);
 	}
 
 	public SearchHits translate(
 		SearchSearchRequest searchSearchRequest,
-		org.elasticsearch.search.SearchHits elasticsearchSearchHits,
+		org.opensearch.search.SearchHits elasticsearchSearchHits,
 		String alternateUidFieldName) {
 
 		SearchHitsBuilder searchHitsBuilder =
@@ -76,13 +76,13 @@ public class SearchHitsTranslator {
 
 		TotalHits totalHits = elasticsearchSearchHits.getTotalHits();
 
-		org.elasticsearch.search.SearchHit[] elasticsearchSearchHitArray =
+		org.opensearch.search.SearchHit[] elasticsearchSearchHitArray =
 			elasticsearchSearchHits.getHits();
 
 		List<SearchHit> searchHits = new ArrayList<>(
 			elasticsearchSearchHitArray.length);
 
-		for (org.elasticsearch.search.SearchHit elasticsearchSearchHit :
+		for (org.opensearch.search.SearchHit elasticsearchSearchHit :
 				elasticsearchSearchHitArray) {
 
 			searchHits.add(
@@ -101,7 +101,7 @@ public class SearchHitsTranslator {
 	}
 
 	protected String getExplanationString(
-		org.elasticsearch.search.SearchHit elasticsearchSearchHit) {
+		org.opensearch.search.SearchHit elasticsearchSearchHit) {
 
 		Explanation explanation = elasticsearchSearchHit.getExplanation();
 
@@ -114,7 +114,7 @@ public class SearchHitsTranslator {
 
 	protected SearchHit translate(
 		SearchSearchRequest searchSearchRequest,
-		org.elasticsearch.search.SearchHit elasticsearchSearchHit,
+		org.opensearch.search.SearchHit elasticsearchSearchHit,
 		String alternateUidFieldName) {
 
 		SearchHitBuilder searchHitBuilder =
@@ -143,7 +143,7 @@ public class SearchHitsTranslator {
 
 	protected Document translateDocument(
 		SearchSearchRequest searchSearchRequest,
-		org.elasticsearch.search.SearchHit elasticsearchSearchHit,
+		org.opensearch.search.SearchHit elasticsearchSearchHit,
 		String alternateUidFieldName) {
 
 		DocumentFieldsTranslator documentFieldsTranslator =
@@ -195,7 +195,7 @@ public class SearchHitsTranslator {
 	}
 
 	protected HighlightField translateHighlightField(
-		org.elasticsearch.search.fetch.subphase.highlight.HighlightField
+		org.opensearch.search.fetch.subphase.highlight.HighlightField
 			elasticsearchHighlightField) {
 
 		return _highlightFieldBuilderFactory.builder(
@@ -211,16 +211,16 @@ public class SearchHitsTranslator {
 	}
 
 	protected List<HighlightField> translateHighlightFields(
-		org.elasticsearch.search.SearchHit elasticsearchSearchHit) {
+		org.opensearch.search.SearchHit elasticsearchSearchHit) {
 
 		Map
 			<String,
-			 org.elasticsearch.search.fetch.subphase.highlight.HighlightField>
+			 org.opensearch.search.fetch.subphase.highlight.HighlightField>
 				map = elasticsearchSearchHit.getHighlightFields();
 
 		List<HighlightField> highlightFields = new ArrayList<>();
 
-		for (org.elasticsearch.search.fetch.subphase.highlight.HighlightField
+		for (org.opensearch.search.fetch.subphase.highlight.HighlightField
 				highlightField : map.values()) {
 
 			highlightFields.add(translateHighlightField(highlightField));

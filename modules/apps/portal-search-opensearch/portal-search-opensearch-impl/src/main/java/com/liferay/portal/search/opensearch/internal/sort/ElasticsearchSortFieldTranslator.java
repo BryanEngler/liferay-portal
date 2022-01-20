@@ -198,23 +198,23 @@ public class ElasticsearchSortFieldTranslator
 		return nestedSortBuilder;
 	}
 
-	protected org.elasticsearch.search.sort.SortMode translate(
+	protected org.opensearch.search.sort.SortMode translate(
 		SortMode sortMode) {
 
 		if (sortMode == SortMode.AVG) {
-			return org.elasticsearch.search.sort.SortMode.AVG;
+			return org.opensearch.search.sort.SortMode.AVG;
 		}
 		else if (sortMode == SortMode.MAX) {
-			return org.elasticsearch.search.sort.SortMode.MAX;
+			return org.opensearch.search.sort.SortMode.MAX;
 		}
 		else if (sortMode == SortMode.MEDIAN) {
-			return org.elasticsearch.search.sort.SortMode.MEDIAN;
+			return org.opensearch.search.sort.SortMode.MEDIAN;
 		}
 		else if (sortMode == SortMode.MIN) {
-			return org.elasticsearch.search.sort.SortMode.MIN;
+			return org.opensearch.search.sort.SortMode.MIN;
 		}
 		else if (sortMode == SortMode.SUM) {
-			return org.elasticsearch.search.sort.SortMode.SUM;
+			return org.opensearch.search.sort.SortMode.SUM;
 		}
 		else {
 			throw new IllegalArgumentException(
@@ -222,14 +222,14 @@ public class ElasticsearchSortFieldTranslator
 		}
 	}
 
-	protected org.elasticsearch.search.sort.SortOrder translate(
+	protected org.opensearch.search.sort.SortOrder translate(
 		SortOrder sortOrder) {
 
 		if ((sortOrder == SortOrder.ASC) || (sortOrder == null)) {
-			return org.elasticsearch.search.sort.SortOrder.ASC;
+			return org.opensearch.search.sort.SortOrder.ASC;
 		}
 		else if (sortOrder == SortOrder.DESC) {
-			return org.elasticsearch.search.sort.SortOrder.DESC;
+			return org.opensearch.search.sort.SortOrder.DESC;
 		}
 		else {
 			throw new IllegalArgumentException(

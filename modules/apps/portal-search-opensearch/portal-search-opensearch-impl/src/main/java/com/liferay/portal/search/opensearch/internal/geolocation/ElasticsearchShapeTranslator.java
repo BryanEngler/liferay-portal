@@ -211,15 +211,15 @@ public class ElasticsearchShapeTranslator
 		);
 	}
 
-	protected org.elasticsearch.common.geo.Orientation translate(
+	protected org.opensearch.common.geo.Orientation translate(
 		Orientation orientation) {
 
 		if (orientation == Orientation.LEFT) {
-			return org.elasticsearch.common.geo.Orientation.LEFT;
+			return org.opensearch.common.geo.Orientation.LEFT;
 		}
 
 		if (orientation == Orientation.RIGHT) {
-			return org.elasticsearch.common.geo.Orientation.RIGHT;
+			return org.opensearch.common.geo.Orientation.RIGHT;
 		}
 
 		throw new IllegalArgumentException(

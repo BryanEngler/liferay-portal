@@ -65,7 +65,7 @@ public class RestoreSnapshotRequestExecutorImplTest {
 				}
 			};
 
-		org.elasticsearch.action.admin.cluster.snapshots.restore.
+		org.opensearch.action.admin.cluster.snapshots.restore.
 			RestoreSnapshotRequest elasticsearchRestoreSnapshotsRequest =
 				restoreSnapshotRequestExecutorImpl.createRestoreSnapshotRequest(
 					restoreSnapshotRequest);

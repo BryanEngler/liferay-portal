@@ -90,31 +90,31 @@ public class FunctionScoreQueryTranslatorImpl
 	}
 
 	protected
-		org.elasticsearch.common.lucene.search.function.FunctionScoreQuery.
+		org.opensearch.common.lucene.search.function.FunctionScoreQuery.
 			ScoreMode translate(FunctionScoreQuery.ScoreMode scoreMode) {
 
 		if (scoreMode == FunctionScoreQuery.ScoreMode.AVG) {
-			return org.elasticsearch.common.lucene.search.function.
+			return org.opensearch.common.lucene.search.function.
 				FunctionScoreQuery.ScoreMode.AVG;
 		}
 		else if (scoreMode == FunctionScoreQuery.ScoreMode.FIRST) {
-			return org.elasticsearch.common.lucene.search.function.
+			return org.opensearch.common.lucene.search.function.
 				FunctionScoreQuery.ScoreMode.FIRST;
 		}
 		else if (scoreMode == FunctionScoreQuery.ScoreMode.MAX) {
-			return org.elasticsearch.common.lucene.search.function.
+			return org.opensearch.common.lucene.search.function.
 				FunctionScoreQuery.ScoreMode.MAX;
 		}
 		else if (scoreMode == FunctionScoreQuery.ScoreMode.MIN) {
-			return org.elasticsearch.common.lucene.search.function.
+			return org.opensearch.common.lucene.search.function.
 				FunctionScoreQuery.ScoreMode.MIN;
 		}
 		else if (scoreMode == FunctionScoreQuery.ScoreMode.MULTIPLY) {
-			return org.elasticsearch.common.lucene.search.function.
+			return org.opensearch.common.lucene.search.function.
 				FunctionScoreQuery.ScoreMode.MULTIPLY;
 		}
 		else if (scoreMode == FunctionScoreQuery.ScoreMode.SUM) {
-			return org.elasticsearch.common.lucene.search.function.
+			return org.opensearch.common.lucene.search.function.
 				FunctionScoreQuery.ScoreMode.SUM;
 		}
 		else {

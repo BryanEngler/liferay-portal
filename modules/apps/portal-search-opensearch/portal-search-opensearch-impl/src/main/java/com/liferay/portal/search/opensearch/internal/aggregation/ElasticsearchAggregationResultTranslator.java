@@ -135,7 +135,7 @@ public class ElasticsearchAggregationResultTranslator
 			   PipelineAggregationResultTranslatorFactory {
 
 	public ElasticsearchAggregationResultTranslator(
-		org.elasticsearch.search.aggregations.Aggregation
+		org.opensearch.search.aggregations.Aggregation
 			elasticsearchAggregation,
 		AggregationResults aggregationResults,
 		SearchHitsTranslator searchHitsTranslator, GeoBuilders geoBuilders) {
@@ -148,7 +148,7 @@ public class ElasticsearchAggregationResultTranslator
 
 	@Override
 	public AggregationResultTranslator createAggregationResultTranslator(
-		org.elasticsearch.search.aggregations.Aggregation
+		org.opensearch.search.aggregations.Aggregation
 			elasticsearchAggregation) {
 
 		return new ElasticsearchAggregationResultTranslator(
@@ -159,7 +159,7 @@ public class ElasticsearchAggregationResultTranslator
 	@Override
 	public PipelineAggregationResultTranslator
 		createPipelineAggregationResultTranslator(
-			org.elasticsearch.search.aggregations.Aggregation
+			org.opensearch.search.aggregations.Aggregation
 				elasticsearchAggregation) {
 
 		return new ElasticsearchPipelineAggregationResultTranslator(
@@ -630,7 +630,7 @@ public class ElasticsearchAggregationResultTranslator
 	}
 
 	private final AggregationResults _aggregationResults;
-	private final org.elasticsearch.search.aggregations.Aggregation
+	private final org.opensearch.search.aggregations.Aggregation
 		_elasticsearchAggregation;
 	private final GeoBuilders _geoBuilders;
 	private final SearchHitsTranslator _searchHitsTranslator;

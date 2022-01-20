@@ -195,7 +195,7 @@ public class ElasticsearchSearchEngineAdapterImpl
 
 		String name = clazz.getName();
 
-		if (name.startsWith("org.elasticsearch")) {
+		if (name.startsWith("org.opensearch")) {
 			RuntimeException runtimeException2 = new RuntimeException(
 				name + ": " + runtimeException1.toString());
 

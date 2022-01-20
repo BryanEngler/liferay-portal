@@ -26,19 +26,19 @@ public class ClusterHealthStatusTranslatorImpl
 	implements ClusterHealthStatusTranslator {
 
 	@Override
-	public org.elasticsearch.cluster.health.ClusterHealthStatus translate(
+	public org.opensearch.cluster.health.ClusterHealthStatus translate(
 		ClusterHealthStatus clusterHealthStatus) {
 
 		if (clusterHealthStatus == ClusterHealthStatus.GREEN) {
-			return org.elasticsearch.cluster.health.ClusterHealthStatus.GREEN;
+			return org.opensearch.cluster.health.ClusterHealthStatus.GREEN;
 		}
 
 		if (clusterHealthStatus == ClusterHealthStatus.RED) {
-			return org.elasticsearch.cluster.health.ClusterHealthStatus.RED;
+			return org.opensearch.cluster.health.ClusterHealthStatus.RED;
 		}
 
 		if (clusterHealthStatus == ClusterHealthStatus.YELLOW) {
-			return org.elasticsearch.cluster.health.ClusterHealthStatus.YELLOW;
+			return org.opensearch.cluster.health.ClusterHealthStatus.YELLOW;
 		}
 
 		throw new IllegalArgumentException(
@@ -47,23 +47,23 @@ public class ClusterHealthStatusTranslatorImpl
 
 	@Override
 	public ClusterHealthStatus translate(
-		org.elasticsearch.cluster.health.ClusterHealthStatus
+		org.opensearch.cluster.health.ClusterHealthStatus
 			clusterHealthStatus) {
 
 		if (clusterHealthStatus ==
-				org.elasticsearch.cluster.health.ClusterHealthStatus.GREEN) {
+				org.opensearch.cluster.health.ClusterHealthStatus.GREEN) {
 
 			return ClusterHealthStatus.GREEN;
 		}
 
 		if (clusterHealthStatus ==
-				org.elasticsearch.cluster.health.ClusterHealthStatus.RED) {
+				org.opensearch.cluster.health.ClusterHealthStatus.RED) {
 
 			return ClusterHealthStatus.RED;
 		}
 
 		if (clusterHealthStatus ==
-				org.elasticsearch.cluster.health.ClusterHealthStatus.YELLOW) {
+				org.opensearch.cluster.health.ClusterHealthStatus.YELLOW) {
 
 			return ClusterHealthStatus.YELLOW;
 		}

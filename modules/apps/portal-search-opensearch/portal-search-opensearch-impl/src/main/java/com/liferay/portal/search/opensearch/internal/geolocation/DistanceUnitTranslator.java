@@ -21,32 +21,32 @@ import com.liferay.portal.search.geolocation.DistanceUnit;
  */
 public class DistanceUnitTranslator {
 
-	public org.elasticsearch.common.unit.DistanceUnit translate(
+	public org.opensearch.common.unit.DistanceUnit translate(
 		DistanceUnit distanceUnit) {
 
 		if (distanceUnit == DistanceUnit.CENTIMETERS) {
-			return org.elasticsearch.common.unit.DistanceUnit.CENTIMETERS;
+			return org.opensearch.common.unit.DistanceUnit.CENTIMETERS;
 		}
 		else if (distanceUnit == DistanceUnit.FEET) {
-			return org.elasticsearch.common.unit.DistanceUnit.FEET;
+			return org.opensearch.common.unit.DistanceUnit.FEET;
 		}
 		else if (distanceUnit == DistanceUnit.INCHES) {
-			return org.elasticsearch.common.unit.DistanceUnit.INCH;
+			return org.opensearch.common.unit.DistanceUnit.INCH;
 		}
 		else if (distanceUnit == DistanceUnit.KILOMETERS) {
-			return org.elasticsearch.common.unit.DistanceUnit.KILOMETERS;
+			return org.opensearch.common.unit.DistanceUnit.KILOMETERS;
 		}
 		else if (distanceUnit == DistanceUnit.METERS) {
-			return org.elasticsearch.common.unit.DistanceUnit.METERS;
+			return org.opensearch.common.unit.DistanceUnit.METERS;
 		}
 		else if (distanceUnit == DistanceUnit.MILES) {
-			return org.elasticsearch.common.unit.DistanceUnit.MILES;
+			return org.opensearch.common.unit.DistanceUnit.MILES;
 		}
 		else if (distanceUnit == DistanceUnit.MILLIMETERS) {
-			return org.elasticsearch.common.unit.DistanceUnit.MILLIMETERS;
+			return org.opensearch.common.unit.DistanceUnit.MILLIMETERS;
 		}
 		else if (distanceUnit == DistanceUnit.YARDS) {
-			return org.elasticsearch.common.unit.DistanceUnit.YARD;
+			return org.opensearch.common.unit.DistanceUnit.YARD;
 		}
 
 		throw new IllegalArgumentException(

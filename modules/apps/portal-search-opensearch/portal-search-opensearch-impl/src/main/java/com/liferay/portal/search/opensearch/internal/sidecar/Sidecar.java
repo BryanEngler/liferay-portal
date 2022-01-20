@@ -471,10 +471,10 @@ public class Sidecar {
 			Files.write(
 				configFolder.resolve("log4j2.properties"),
 				Arrays.asList(
-					"logger.bootstrapchecks.name=org.elasticsearch.bootstrap." +
+					"logger.bootstrapchecks.name=org.opensearch.bootstrap." +
 						"BootstrapChecks",
 					"logger.bootstrapchecks.level=error",
-					"logger.deprecation.name=org.elasticsearch.deprecation",
+					"logger.deprecation.name=org.opensearch.deprecation",
 					"logger.deprecation.level=error", getLogProperties(),
 					ResourceUtil.getResourceAsString(
 						Sidecar.class, "/log4j2-sidecar.properties")));
@@ -517,9 +517,9 @@ public class Sidecar {
 				ClassPathUtil.getClassPathURLs(sidecarLibClassPath), null);
 
 			modifiedClasses.put(
-				"org.elasticsearch.bootstrap.Natives",
+				"org.opensearch.bootstrap.Natives",
 				ClassModificationUtil.getModifiedClassBytes(
-					"org.elasticsearch.bootstrap.Natives",
+					"org.opensearch.bootstrap.Natives",
 					"definitelyRunningAsRoot",
 					methodVisitor -> {
 						methodVisitor.visitCode();
@@ -529,9 +529,9 @@ public class Sidecar {
 					classLoader));
 
 			modifiedClasses.put(
-				"org.elasticsearch.common.settings.KeyStoreWrapper",
+				"org.opensearch.common.settings.KeyStoreWrapper",
 				ClassModificationUtil.getModifiedClassBytes(
-					"org.elasticsearch.common.settings.KeyStoreWrapper", "save",
+					"org.opensearch.common.settings.KeyStoreWrapper", "save",
 					methodVisitor -> {
 						methodVisitor.visitCode();
 						methodVisitor.visitInsn(Opcodes.RETURN);
@@ -539,9 +539,9 @@ public class Sidecar {
 					classLoader));
 
 			modifiedClasses.put(
-				"org.elasticsearch.bootstrap.Security",
+				"org.opensearch.bootstrap.Security",
 				ClassModificationUtil.getModifiedClassBytes(
-					"org.elasticsearch.bootstrap.Security", "configure",
+					"org.opensearch.bootstrap.Security", "configure",
 					methodVisitor -> {
 						methodVisitor.visitCode();
 						methodVisitor.visitInsn(Opcodes.RETURN);

@@ -21,40 +21,40 @@ import com.liferay.portal.search.aggregation.ValueType;
  */
 public class ValueTypeTranslator {
 
-	public org.elasticsearch.search.aggregations.support.ValueType translate(
+	public org.opensearch.search.aggregations.support.ValueType translate(
 		ValueType valueType) {
 
 		if (valueType == ValueType.BOOLEAN) {
-			return org.elasticsearch.search.aggregations.support.ValueType.
+			return org.opensearch.search.aggregations.support.ValueType.
 				BOOLEAN;
 		}
 		else if (valueType == ValueType.DATE) {
-			return org.elasticsearch.search.aggregations.support.ValueType.DATE;
+			return org.opensearch.search.aggregations.support.ValueType.DATE;
 		}
 		else if (valueType == ValueType.DOUBLE) {
-			return org.elasticsearch.search.aggregations.support.ValueType.
+			return org.opensearch.search.aggregations.support.ValueType.
 				DOUBLE;
 		}
 		else if (valueType == ValueType.GEOPOINT) {
-			return org.elasticsearch.search.aggregations.support.ValueType.
+			return org.opensearch.search.aggregations.support.ValueType.
 				GEOPOINT;
 		}
 		else if (valueType == ValueType.IP) {
-			return org.elasticsearch.search.aggregations.support.ValueType.IP;
+			return org.opensearch.search.aggregations.support.ValueType.IP;
 		}
 		else if (valueType == ValueType.LONG) {
-			return org.elasticsearch.search.aggregations.support.ValueType.LONG;
+			return org.opensearch.search.aggregations.support.ValueType.LONG;
 		}
 		else if (valueType == ValueType.NUMBER) {
-			return org.elasticsearch.search.aggregations.support.ValueType.
+			return org.opensearch.search.aggregations.support.ValueType.
 				NUMBER;
 		}
 		else if (valueType == ValueType.NUMERIC) {
-			return org.elasticsearch.search.aggregations.support.ValueType.
+			return org.opensearch.search.aggregations.support.ValueType.
 				NUMERIC;
 		}
 		else if (valueType == ValueType.STRING) {
-			return org.elasticsearch.search.aggregations.support.ValueType.
+			return org.opensearch.search.aggregations.support.ValueType.
 				STRING;
 		}
 

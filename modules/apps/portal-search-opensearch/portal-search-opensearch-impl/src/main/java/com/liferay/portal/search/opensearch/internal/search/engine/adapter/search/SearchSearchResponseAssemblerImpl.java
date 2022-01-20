@@ -84,7 +84,7 @@ public class SearchSearchResponseAssemblerImpl
 
 	@Override
 	public AggregationResultTranslator createAggregationResultTranslator(
-		org.elasticsearch.search.aggregations.Aggregation
+		org.opensearch.search.aggregations.Aggregation
 			elasticsearchAggregation) {
 
 		return new ElasticsearchAggregationResultTranslator(
@@ -99,7 +99,7 @@ public class SearchSearchResponseAssemblerImpl
 	@Override
 	public PipelineAggregationResultTranslator
 		createPipelineAggregationResultTranslator(
-			org.elasticsearch.search.aggregations.Aggregation
+			org.opensearch.search.aggregations.Aggregation
 				elasticsearchAggregation) {
 
 		return new ElasticsearchPipelineAggregationResultTranslator(
@@ -155,7 +155,7 @@ public class SearchSearchResponseAssemblerImpl
 		SearchResponse searchResponse,
 		SearchSearchResponse searchSearchResponse) {
 
-		org.elasticsearch.search.SearchHits searchHits =
+		org.opensearch.search.SearchHits searchHits =
 			searchResponse.getHits();
 
 		TotalHits totalHits = searchHits.getTotalHits();
@@ -208,7 +208,7 @@ public class SearchSearchResponseAssemblerImpl
 			_documentBuilderFactory, _highlightFieldBuilderFactory,
 			_geoBuilders);
 
-		org.elasticsearch.search.SearchHits elasticsearchSearchHits =
+		org.opensearch.search.SearchHits elasticsearchSearchHits =
 			searchResponse.getHits();
 
 		SearchHits searchHits = searchHitsTranslator.translate(

@@ -22,23 +22,23 @@ import com.liferay.portal.search.script.ScriptType;
  */
 public class ScriptTranslator {
 
-	public org.elasticsearch.script.Script translate(Script script) {
+	public org.opensearch.script.Script translate(Script script) {
 		ScriptType scriptType = script.getScriptType();
 
 		if (scriptType == null) {
-			return new org.elasticsearch.script.Script(script.getIdOrCode());
+			return new org.opensearch.script.Script(script.getIdOrCode());
 		}
 
 		if (scriptType == ScriptType.INLINE) {
-			return new org.elasticsearch.script.Script(
-				org.elasticsearch.script.ScriptType.INLINE,
+			return new org.opensearch.script.Script(
+				org.opensearch.script.ScriptType.INLINE,
 				script.getLanguage(), script.getIdOrCode(), script.getOptions(),
 				script.getParameters());
 		}
 
 		if (scriptType == ScriptType.STORED) {
-			return new org.elasticsearch.script.Script(
-				org.elasticsearch.script.ScriptType.STORED, null,
+			return new org.opensearch.script.Script(
+				org.opensearch.script.ScriptType.STORED, null,
 				script.getIdOrCode(), null, script.getParameters());
 		}
 

@@ -287,7 +287,7 @@ public class CommonSearchSourceBuilderAssemblerImpl
 
 	@Reference(unbind = "-")
 	protected void setLegacyQueryToQueryBuilderTranslator(
-		com.liferay.portal.search.elasticsearch7.internal.legacy.query.
+		com.liferay.portal.search.opensearch.internal.legacy.query.
 			QueryToQueryBuilderTranslator queryToQueryBuilderTranslator) {
 
 		_legacyQueryToQueryBuilderTranslator = queryToQueryBuilderTranslator;
@@ -565,7 +565,7 @@ public class CommonSearchSourceBuilderAssemblerImpl
 	private ComplexQueryBuilderFactory _complexQueryBuilderFactory;
 	private FacetTranslator _facetTranslator;
 	private FilterTranslator<QueryBuilder> _filterToQueryBuilderTranslator;
-	private com.liferay.portal.search.elasticsearch7.internal.legacy.query.
+	private com.liferay.portal.search.opensearch.internal.legacy.query.
 		QueryToQueryBuilderTranslator _legacyQueryToQueryBuilderTranslator;
 	private PipelineAggregationTranslator<PipelineAggregationBuilder>
 		_pipelineAggregationTranslator;
