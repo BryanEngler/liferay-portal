@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.configuration;
+package com.liferay.portal.search.opensearch.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 

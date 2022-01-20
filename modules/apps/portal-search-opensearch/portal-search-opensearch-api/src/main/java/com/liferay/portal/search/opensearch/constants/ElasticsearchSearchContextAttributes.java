@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.constants;
+package com.liferay.portal.search.opensearch.constants;
 
 /**
  * @author Wade Cao

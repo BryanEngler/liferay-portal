@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.settings;
+package com.liferay.portal.search.opensearch.settings;
 
 import org.osgi.annotation.versioning.ProviderType;
 

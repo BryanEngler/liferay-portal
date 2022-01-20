@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch7.configuration;
+package com.liferay.portal.search.opensearch.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
@@ -25,7 +25,7 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @ExtendedObjectClassDefinition(category = "search")
 @Meta.OCD(
-	id = "com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration",
+	id = "com.liferay.portal.search.opensearch.configuration.ElasticsearchConfiguration",
 	localization = "content/Language",
 	name = "elasticsearch7-configuration-name"
 )
