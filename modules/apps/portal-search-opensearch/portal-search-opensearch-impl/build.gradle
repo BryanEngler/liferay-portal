@@ -15,9 +15,9 @@ File opensearchDistributionFile = file("${buildDir}/${opensearchDownloadURL.drop
 File sidecarDeployDir = file("${project.'liferay.home'}/opensearch-sidecar/" + sidecarOpensearchServerVersion)
 
 List<String> sidecarPluginURLs = [
-	"https://artifacts.opensearch.org/releases/plugins/analysis-icu/${sidecarOpensearchServerVersion}/analysis-icu-${sidecarOpensearchServerVersion}.zip"
-	"https://artifacts.opensearch.org/releases/plugins/analysis-kuromoji/${sidecarOpensearchServerVersion}/analysis-kuromoji-${sidecarOpensearchServerVersion}.zip"
-	"https://artifacts.opensearch.org/releases/plugins/analysis-smartcn/${sidecarOpensearchServerVersion}/analysis-smartcn-${sidecarOpensearchServerVersion}.zip"
+	"https://artifacts.opensearch.org/releases/plugins/analysis-icu/${sidecarOpensearchServerVersion}/analysis-icu-${sidecarOpensearchServerVersion}.zip",
+	"https://artifacts.opensearch.org/releases/plugins/analysis-kuromoji/${sidecarOpensearchServerVersion}/analysis-kuromoji-${sidecarOpensearchServerVersion}.zip",
+	"https://artifacts.opensearch.org/releases/plugins/analysis-smartcn/${sidecarOpensearchServerVersion}/analysis-smartcn-${sidecarOpensearchServerVersion}.zip",
 	"https://artifacts.opensearch.org/releases/plugins/analysis-stempel/${sidecarOpensearchServerVersion}/analysis-stempel-${sidecarOpensearchServerVersion}.zip"
 ]
 
