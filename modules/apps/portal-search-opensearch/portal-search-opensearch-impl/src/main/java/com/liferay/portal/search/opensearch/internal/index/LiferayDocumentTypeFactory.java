@@ -21,29 +21,29 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.search.elasticsearch7.internal.helper.SearchLogHelperUtil;
-import com.liferay.portal.search.elasticsearch7.internal.index.constants.IndexSettingsConstants;
-import com.liferay.portal.search.elasticsearch7.internal.index.constants.LiferayTypeMappingsConstants;
-import com.liferay.portal.search.elasticsearch7.internal.settings.SettingsBuilder;
-import com.liferay.portal.search.elasticsearch7.internal.util.ResourceUtil;
-import com.liferay.portal.search.elasticsearch7.settings.TypeMappingsHelper;
+import com.liferay.portal.search.opensearch.internal.helper.SearchLogHelperUtil;
+import com.liferay.portal.search.opensearch.internal.index.constants.IndexSettingsConstants;
+import com.liferay.portal.search.opensearch.internal.index.constants.LiferayTypeMappingsConstants;
+import com.liferay.portal.search.opensearch.internal.settings.SettingsBuilder;
+import com.liferay.portal.search.opensearch.internal.util.ResourceUtil;
+import com.liferay.portal.search.opensearch.settings.TypeMappingsHelper;
 
 import java.io.IOException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.elasticsearch.action.ActionResponse;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
-import org.elasticsearch.client.IndicesClient;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.indices.GetMappingsRequest;
-import org.elasticsearch.client.indices.GetMappingsResponse;
-import org.elasticsearch.client.indices.PutMappingRequest;
-import org.elasticsearch.cluster.metadata.MappingMetadata;
-import org.elasticsearch.common.compress.CompressedXContent;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.xcontent.XContentType;
+import org.opensearch.action.ActionResponse;
+import org.opensearch.action.admin.indices.create.CreateIndexRequest;
+import org.opensearch.client.IndicesClient;
+import org.opensearch.client.RequestOptions;
+import org.opensearch.client.indices.GetMappingsRequest;
+import org.opensearch.client.indices.GetMappingsResponse;
+import org.opensearch.client.indices.PutMappingRequest;
+import org.opensearch.cluster.metadata.MappingMetadata;
+import org.opensearch.common.compress.CompressedXContent;
+import org.opensearch.common.settings.Settings;
+import org.opensearch.common.xcontent.XContentType;
 
 /**
  * @author André de Oliveira

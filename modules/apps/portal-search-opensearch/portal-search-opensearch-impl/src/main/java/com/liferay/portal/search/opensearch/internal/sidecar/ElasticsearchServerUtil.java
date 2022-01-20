@@ -28,8 +28,8 @@ import java.util.concurrent.CountDownLatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import org.elasticsearch.cli.ExitCodes;
-import org.elasticsearch.node.Node;
+import org.opensearch.cli.ExitCodes;
+import org.opensearch.node.Node;
 
 /**
  * @author Tina Tian

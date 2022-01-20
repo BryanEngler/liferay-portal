@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.opensearch.internal.connection;
 
-import org.elasticsearch.client.RestHighLevelClient;
+import org.opensearch.client.RestHighLevelClient;
 
 /**
  * @author André de Oliveira

@@ -16,9 +16,9 @@ package com.liferay.portal.search.opensearch.internal.query;
 
 import com.liferay.portal.search.query.WildcardQuery;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.WildcardQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.WildcardQueryBuilder;
 
 import org.osgi.service.component.annotations.Component;
 

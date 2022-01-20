@@ -18,10 +18,10 @@ import com.liferay.portal.kernel.search.filter.GeoDistanceRangeFilter;
 import com.liferay.portal.kernel.search.geolocation.GeoDistance;
 import com.liferay.portal.kernel.search.geolocation.GeoLocationPoint;
 
-import org.elasticsearch.common.geo.GeoPoint;
-import org.elasticsearch.common.unit.DistanceUnit;
-import org.elasticsearch.index.query.GeoDistanceQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
+import org.opensearch.common.geo.GeoPoint;
+import org.opensearch.common.unit.DistanceUnit;
+import org.opensearch.index.query.GeoDistanceQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
 
 import org.osgi.service.component.annotations.Component;
 

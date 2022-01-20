@@ -14,14 +14,14 @@
 
 package com.liferay.portal.search.opensearch.internal.search.engine.adapter.snapshot;
 
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchFixture;
-import com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.index.AnalyzeIndexRequestExecutorTest;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchFixture;
+import com.liferay.portal.search.opensearch.internal.search.engine.adapter.index.AnalyzeIndexRequestExecutorTest;
 import com.liferay.portal.search.engine.adapter.snapshot.CreateSnapshotRepositoryRequest;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
-import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryRequest;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.repositories.fs.FsRepository;
+import org.opensearch.action.admin.cluster.repositories.put.PutRepositoryRequest;
+import org.opensearch.common.settings.Settings;
+import org.opensearch.repositories.fs.FsRepository;
 
 import org.junit.After;
 import org.junit.Assert;

@@ -18,7 +18,7 @@ import com.liferay.portal.kernel.search.facet.Facet;
 
 import java.util.Optional;
 
-import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
 
 /**
  * @author Michael C. Han

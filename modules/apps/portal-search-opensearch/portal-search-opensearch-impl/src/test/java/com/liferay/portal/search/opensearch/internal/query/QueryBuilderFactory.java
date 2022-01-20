@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.opensearch.internal.query;
 
-import org.elasticsearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
 
 /**
  * @author André de Oliveira

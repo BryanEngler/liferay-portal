@@ -14,14 +14,14 @@
 
 package com.liferay.portal.search.opensearch.internal.cluster;
 
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionFixture;
-import com.liferay.portal.search.elasticsearch7.internal.connection.HealthExpectations;
-import com.liferay.portal.search.elasticsearch7.internal.connection.Index;
-import com.liferay.portal.search.elasticsearch7.internal.connection.IndexCreator;
-import com.liferay.portal.search.elasticsearch7.internal.connection.IndexName;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchConnectionFixture;
+import com.liferay.portal.search.opensearch.internal.connection.HealthExpectations;
+import com.liferay.portal.search.opensearch.internal.connection.Index;
+import com.liferay.portal.search.opensearch.internal.connection.IndexCreator;
+import com.liferay.portal.search.opensearch.internal.connection.IndexName;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
-import org.elasticsearch.cluster.health.ClusterHealthStatus;
+import org.opensearch.cluster.health.ClusterHealthStatus;
 
 import org.junit.After;
 import org.junit.Before;

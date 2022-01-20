@@ -15,7 +15,7 @@
 package com.liferay.portal.search.opensearch.internal.connection;
 
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
+import com.liferay.portal.search.opensearch.internal.configuration.ElasticsearchConfigurationWrapper;
 
 import java.util.Objects;
 

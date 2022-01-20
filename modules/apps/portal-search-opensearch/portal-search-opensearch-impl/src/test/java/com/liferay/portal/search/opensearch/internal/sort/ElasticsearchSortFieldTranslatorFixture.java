@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal.sort;
 
 import com.liferay.portal.search.query.QueryTranslator;
 
-import org.elasticsearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
 
 /**
  * @author Michael C. Han

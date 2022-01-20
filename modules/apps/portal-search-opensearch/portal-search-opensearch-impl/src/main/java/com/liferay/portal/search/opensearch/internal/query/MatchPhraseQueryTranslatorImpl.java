@@ -16,9 +16,9 @@ package com.liferay.portal.search.opensearch.internal.query;
 
 import com.liferay.portal.search.query.MatchPhraseQuery;
 
-import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.opensearch.index.query.MatchPhraseQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
 
 import org.osgi.service.component.annotations.Component;
 

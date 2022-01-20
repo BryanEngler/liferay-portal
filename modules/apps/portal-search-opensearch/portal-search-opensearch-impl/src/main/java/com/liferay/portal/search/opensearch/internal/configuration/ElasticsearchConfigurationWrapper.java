@@ -19,9 +19,9 @@ import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration;
-import com.liferay.portal.search.elasticsearch7.configuration.OperationMode;
-import com.liferay.portal.search.elasticsearch7.configuration.RESTClientLoggerLevel;
+import com.liferay.portal.search.opensearch.configuration.ElasticsearchConfiguration;
+import com.liferay.portal.search.opensearch.configuration.OperationMode;
+import com.liferay.portal.search.opensearch.configuration.RESTClientLoggerLevel;
 
 import java.util.Collections;
 import java.util.Comparator;

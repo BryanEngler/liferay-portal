@@ -18,8 +18,8 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.filter.TermsSetFilter;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.TermsSetQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.TermsSetQueryBuilder;
 
 import org.osgi.service.component.annotations.Component;
 

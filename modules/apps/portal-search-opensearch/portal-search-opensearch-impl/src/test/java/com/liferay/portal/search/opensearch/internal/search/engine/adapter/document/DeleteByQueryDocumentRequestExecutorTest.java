@@ -16,12 +16,12 @@ package com.liferay.portal.search.opensearch.internal.search.engine.adapter.docu
 
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchFixture;
-import com.liferay.portal.search.elasticsearch7.internal.query.ElasticsearchQueryTranslatorFixture;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchFixture;
+import com.liferay.portal.search.opensearch.internal.query.ElasticsearchQueryTranslatorFixture;
 import com.liferay.portal.search.engine.adapter.document.DeleteByQueryDocumentRequest;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
-import org.elasticsearch.index.reindex.DeleteByQueryRequest;
+import org.opensearch.index.reindex.DeleteByQueryRequest;
 
 import org.junit.After;
 import org.junit.Assert;

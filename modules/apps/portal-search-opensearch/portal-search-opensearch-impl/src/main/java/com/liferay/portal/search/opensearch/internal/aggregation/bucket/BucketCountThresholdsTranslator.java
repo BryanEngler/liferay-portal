@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal.aggregation.bucket;
 
 import com.liferay.portal.search.aggregation.bucket.BucketCountThresholds;
 
-import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregator;
+import org.opensearch.search.aggregations.bucket.terms.TermsAggregator;
 
 /**
  * @author Michael C. Han

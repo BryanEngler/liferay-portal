@@ -14,8 +14,8 @@
 
 package com.liferay.portal.search.opensearch.internal.query;
 
-import com.liferay.portal.search.elasticsearch7.internal.geolocation.GeoLocationPointTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.query.geolocation.GeoValidationMethodTranslator;
+import com.liferay.portal.search.opensearch.internal.geolocation.GeoLocationPointTranslator;
+import com.liferay.portal.search.opensearch.internal.query.geolocation.GeoValidationMethodTranslator;
 import com.liferay.portal.search.geolocation.GeoLocationPoint;
 import com.liferay.portal.search.query.GeoPolygonQuery;
 
@@ -23,9 +23,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.elasticsearch.index.query.GeoPolygonQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.opensearch.index.query.GeoPolygonQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
 
 import org.osgi.service.component.annotations.Component;
 

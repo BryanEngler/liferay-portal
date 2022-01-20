@@ -17,11 +17,11 @@ package com.liferay.portal.search.opensearch.internal.connection;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.PortalRunMode;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
-import com.liferay.portal.search.elasticsearch7.internal.settings.SettingsBuilder;
-import com.liferay.portal.search.elasticsearch7.internal.util.ResourceUtil;
-import com.liferay.portal.search.elasticsearch7.settings.ClientSettingsHelper;
-import com.liferay.portal.search.elasticsearch7.settings.SettingsContributor;
+import com.liferay.portal.search.opensearch.internal.configuration.ElasticsearchConfigurationWrapper;
+import com.liferay.portal.search.opensearch.internal.settings.SettingsBuilder;
+import com.liferay.portal.search.opensearch.internal.util.ResourceUtil;
+import com.liferay.portal.search.opensearch.settings.ClientSettingsHelper;
+import com.liferay.portal.search.opensearch.settings.SettingsContributor;
 
 import java.net.InetAddress;
 
@@ -30,7 +30,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.function.Supplier;
 
-import org.elasticsearch.common.settings.Settings;
+import org.opensearch.common.settings.Settings;
 
 /**
  * @author André de Oliveira

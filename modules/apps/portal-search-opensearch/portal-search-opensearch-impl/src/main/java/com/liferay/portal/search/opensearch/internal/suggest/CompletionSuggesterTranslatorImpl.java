@@ -17,9 +17,9 @@ package com.liferay.portal.search.opensearch.internal.suggest;
 import com.liferay.portal.kernel.search.suggest.CompletionSuggester;
 import com.liferay.portal.kernel.util.Validator;
 
-import org.elasticsearch.search.suggest.SuggestBuilders;
-import org.elasticsearch.search.suggest.SuggestionBuilder;
-import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
+import org.opensearch.search.suggest.SuggestBuilders;
+import org.opensearch.search.suggest.SuggestionBuilder;
+import org.opensearch.search.suggest.completion.CompletionSuggestionBuilder;
 
 import org.osgi.service.component.annotations.Component;
 

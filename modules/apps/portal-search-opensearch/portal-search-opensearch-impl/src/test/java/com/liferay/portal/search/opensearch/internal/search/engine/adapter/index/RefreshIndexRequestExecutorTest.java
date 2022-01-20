@@ -14,11 +14,11 @@
 
 package com.liferay.portal.search.opensearch.internal.search.engine.adapter.index;
 
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchFixture;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchFixture;
 import com.liferay.portal.search.engine.adapter.index.RefreshIndexRequest;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
+import org.opensearch.action.admin.indices.refresh.RefreshRequest;
 
 import org.junit.After;
 import org.junit.Assert;

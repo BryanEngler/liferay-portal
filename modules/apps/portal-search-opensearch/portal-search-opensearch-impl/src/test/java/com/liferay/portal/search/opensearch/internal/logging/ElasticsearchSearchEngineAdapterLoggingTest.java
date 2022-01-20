@@ -15,14 +15,14 @@
 package com.liferay.portal.search.opensearch.internal.logging;
 
 import com.liferay.portal.kernel.search.generic.MatchAllQuery;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ClusterHealthResponseUtil;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionFixture;
-import com.liferay.portal.search.elasticsearch7.internal.connection.HealthExpectations;
-import com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.ElasticsearchEngineAdapterFixture;
-import com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.search.CountSearchRequestExecutorImpl;
-import com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.search.MultisearchSearchRequestExecutorImpl;
-import com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.search.SearchSearchRequestExecutorImpl;
+import com.liferay.portal.search.opensearch.internal.connection.ClusterHealthResponseUtil;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchClientResolver;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchConnectionFixture;
+import com.liferay.portal.search.opensearch.internal.connection.HealthExpectations;
+import com.liferay.portal.search.opensearch.internal.search.engine.adapter.ElasticsearchEngineAdapterFixture;
+import com.liferay.portal.search.opensearch.internal.search.engine.adapter.search.CountSearchRequestExecutorImpl;
+import com.liferay.portal.search.opensearch.internal.search.engine.adapter.search.MultisearchSearchRequestExecutorImpl;
+import com.liferay.portal.search.opensearch.internal.search.engine.adapter.search.SearchSearchRequestExecutorImpl;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.search.CountSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.MultisearchSearchRequest;
@@ -30,7 +30,7 @@ import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.test.util.logging.ExpectedLog;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
-import org.elasticsearch.cluster.health.ClusterHealthStatus;
+import org.opensearch.cluster.health.ClusterHealthStatus;
 
 import org.junit.AfterClass;
 import org.junit.Before;

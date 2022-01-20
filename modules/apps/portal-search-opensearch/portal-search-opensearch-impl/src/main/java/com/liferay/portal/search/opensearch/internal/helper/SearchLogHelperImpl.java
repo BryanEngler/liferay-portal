@@ -16,13 +16,13 @@ package com.liferay.portal.search.opensearch.internal.helper;
 
 import com.liferay.petra.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.search.elasticsearch7.configuration.RESTClientLoggerLevel;
+import com.liferay.portal.search.opensearch.configuration.RESTClientLoggerLevel;
 
 import java.io.IOException;
 
-import org.elasticsearch.action.ActionResponse;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.common.io.stream.OutputStreamStreamOutput;
+import org.opensearch.action.ActionResponse;
+import org.opensearch.action.bulk.BulkResponse;
+import org.opensearch.common.io.stream.OutputStreamStreamOutput;
 
 /**
  * @author Adam Brandizzi

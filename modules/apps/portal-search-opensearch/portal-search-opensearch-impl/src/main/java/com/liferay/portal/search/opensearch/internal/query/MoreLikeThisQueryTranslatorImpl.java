@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal.query;
 
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.elasticsearch7.internal.util.DocumentTypes;
+import com.liferay.portal.search.opensearch.internal.util.DocumentTypes;
 import com.liferay.portal.search.query.MoreLikeThisQuery;
 
 import java.util.ArrayList;
@@ -24,9 +24,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.elasticsearch.index.query.MoreLikeThisQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.opensearch.index.query.MoreLikeThisQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
 
 import org.osgi.service.component.annotations.Component;
 

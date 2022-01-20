@@ -18,15 +18,15 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.search.aggregation.AggregationTranslator;
 import com.liferay.portal.search.aggregation.bucket.SignificantTextAggregation;
 import com.liferay.portal.search.aggregation.pipeline.PipelineAggregationTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.aggregation.BaseAggregationTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.significance.SignificanceHeuristicTranslator;
+import com.liferay.portal.search.opensearch.internal.aggregation.BaseAggregationTranslator;
+import com.liferay.portal.search.opensearch.internal.significance.SignificanceHeuristicTranslator;
 import com.liferay.portal.search.query.QueryTranslator;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.PipelineAggregationBuilder;
-import org.elasticsearch.search.aggregations.bucket.terms.SignificantTextAggregationBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.PipelineAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.terms.SignificantTextAggregationBuilder;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

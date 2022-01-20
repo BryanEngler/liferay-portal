@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.opensearch.internal.sort;
 
-import com.liferay.portal.search.elasticsearch7.internal.LiferayElasticsearchIndexingFixtureFactory;
+import com.liferay.portal.search.opensearch.internal.LiferayElasticsearchIndexingFixtureFactory;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 import com.liferay.portal.search.test.util.sort.BaseDocumentSortTestCase;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;

@@ -23,11 +23,11 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.ccr.CrossClusterReplicationConfigurationHelper;
-import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationObserver;
-import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
-import com.liferay.portal.search.elasticsearch7.internal.configuration.OperationModeResolver;
-import com.liferay.portal.search.elasticsearch7.internal.connection.constants.ConnectionConstants;
-import com.liferay.portal.search.elasticsearch7.internal.helper.SearchLogHelperUtil;
+import com.liferay.portal.search.opensearch.internal.configuration.ElasticsearchConfigurationObserver;
+import com.liferay.portal.search.opensearch.internal.configuration.ElasticsearchConfigurationWrapper;
+import com.liferay.portal.search.opensearch.internal.configuration.OperationModeResolver;
+import com.liferay.portal.search.opensearch.internal.connection.constants.ConnectionConstants;
+import com.liferay.portal.search.opensearch.internal.helper.SearchLogHelperUtil;
 
 import java.net.InetAddress;
 
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.elasticsearch.client.RestHighLevelClient;
+import org.opensearch.client.RestHighLevelClient;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;

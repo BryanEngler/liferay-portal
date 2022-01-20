@@ -17,7 +17,7 @@ package com.liferay.portal.search.opensearch.internal.index;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
-import com.liferay.portal.search.elasticsearch7.spi.index.IndexRegistrar;
+import com.liferay.portal.search.opensearch.spi.index.IndexRegistrar;
 import com.liferay.portal.search.spi.index.IndexDefinition;
 
 import java.util.Map;

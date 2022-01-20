@@ -16,8 +16,8 @@ package com.liferay.portal.search.opensearch.internal.suggest;
 
 import com.liferay.portal.kernel.search.suggest.Suggester;
 
-import org.elasticsearch.search.suggest.SortBy;
-import org.elasticsearch.search.suggest.term.TermSuggestionBuilder;
+import org.opensearch.search.suggest.SortBy;
+import org.opensearch.search.suggest.term.TermSuggestionBuilder;
 
 /**
  * @author Michael C. Han

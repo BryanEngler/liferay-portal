@@ -14,13 +14,13 @@
 
 package com.liferay.portal.search.opensearch.internal.search.engine.adapter.cluster;
 
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchFixture;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchFixture;
 import com.liferay.portal.search.engine.adapter.cluster.ClusterHealthStatus;
 import com.liferay.portal.search.engine.adapter.cluster.HealthClusterRequest;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
-import org.elasticsearch.core.TimeValue;
+import org.opensearch.action.admin.cluster.health.ClusterHealthRequest;
+import org.opensearch.core.TimeValue;
 
 import org.junit.After;
 import org.junit.Assert;

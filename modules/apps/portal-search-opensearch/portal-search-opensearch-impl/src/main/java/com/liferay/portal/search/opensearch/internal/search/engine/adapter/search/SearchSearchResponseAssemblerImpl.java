@@ -22,13 +22,13 @@ import com.liferay.portal.search.aggregation.AggregationResults;
 import com.liferay.portal.search.aggregation.pipeline.PipelineAggregation;
 import com.liferay.portal.search.aggregation.pipeline.PipelineAggregationResultTranslator;
 import com.liferay.portal.search.document.DocumentBuilderFactory;
-import com.liferay.portal.search.elasticsearch7.internal.aggregation.AggregationResultTranslatorFactory;
-import com.liferay.portal.search.elasticsearch7.internal.aggregation.ElasticsearchAggregationResultTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.aggregation.ElasticsearchAggregationResultsTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.aggregation.PipelineAggregationResultTranslatorFactory;
-import com.liferay.portal.search.elasticsearch7.internal.aggregation.pipeline.ElasticsearchPipelineAggregationResultTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.hits.SearchHitsTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.search.response.SearchResponseTranslator;
+import com.liferay.portal.search.opensearch.internal.aggregation.AggregationResultTranslatorFactory;
+import com.liferay.portal.search.opensearch.internal.aggregation.ElasticsearchAggregationResultTranslator;
+import com.liferay.portal.search.opensearch.internal.aggregation.ElasticsearchAggregationResultsTranslator;
+import com.liferay.portal.search.opensearch.internal.aggregation.PipelineAggregationResultTranslatorFactory;
+import com.liferay.portal.search.opensearch.internal.aggregation.pipeline.ElasticsearchPipelineAggregationResultTranslator;
+import com.liferay.portal.search.opensearch.internal.hits.SearchHitsTranslator;
+import com.liferay.portal.search.opensearch.internal.search.response.SearchResponseTranslator;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
 import com.liferay.portal.search.geolocation.GeoBuilders;
@@ -43,10 +43,10 @@ import java.util.stream.Stream;
 
 import org.apache.lucene.search.TotalHits;
 
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.core.TimeValue;
-import org.elasticsearch.search.aggregations.Aggregations;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.opensearch.action.search.SearchResponse;
+import org.opensearch.core.TimeValue;
+import org.opensearch.search.aggregations.Aggregations;
+import org.opensearch.search.builder.SearchSourceBuilder;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

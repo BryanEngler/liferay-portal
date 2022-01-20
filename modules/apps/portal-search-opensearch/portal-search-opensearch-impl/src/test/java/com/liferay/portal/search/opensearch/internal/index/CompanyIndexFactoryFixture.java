@@ -16,16 +16,16 @@ package com.liferay.portal.search.opensearch.internal.index;
 
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionNotInitializedException;
-import com.liferay.portal.search.elasticsearch7.internal.connection.IndexName;
+import com.liferay.portal.search.opensearch.internal.configuration.ElasticsearchConfigurationWrapper;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchClientResolver;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchConnectionManager;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchConnectionNotInitializedException;
+import com.liferay.portal.search.opensearch.internal.connection.IndexName;
 import com.liferay.portal.search.index.IndexNameBuilder;
 
 import java.util.HashMap;
 
-import org.elasticsearch.client.RestHighLevelClient;
+import org.opensearch.client.RestHighLevelClient;
 
 import org.mockito.Mockito;
 

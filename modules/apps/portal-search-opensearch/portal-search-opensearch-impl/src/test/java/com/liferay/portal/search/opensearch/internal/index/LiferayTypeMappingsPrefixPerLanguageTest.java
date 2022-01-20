@@ -14,10 +14,10 @@
 
 package com.liferay.portal.search.opensearch.internal.index;
 
-import com.liferay.portal.search.elasticsearch7.internal.connection.IndexName;
-import com.liferay.portal.search.elasticsearch7.internal.document.SingleFieldFixture;
-import com.liferay.portal.search.elasticsearch7.internal.index.constants.LiferayTypeMappingsConstants;
-import com.liferay.portal.search.elasticsearch7.internal.query.QueryBuilderFactories;
+import com.liferay.portal.search.opensearch.internal.connection.IndexName;
+import com.liferay.portal.search.opensearch.internal.document.SingleFieldFixture;
+import com.liferay.portal.search.opensearch.internal.index.constants.LiferayTypeMappingsConstants;
+import com.liferay.portal.search.opensearch.internal.query.QueryBuilderFactories;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import org.junit.After;

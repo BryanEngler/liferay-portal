@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.opensearch.internal.facet;
 
-import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
 
 /**
  * @author André de Oliveira

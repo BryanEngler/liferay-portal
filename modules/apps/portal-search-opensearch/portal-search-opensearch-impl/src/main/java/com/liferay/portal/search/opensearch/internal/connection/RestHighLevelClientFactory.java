@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.opensearch.internal.connection;
 
-import com.liferay.portal.search.elasticsearch7.internal.util.ClassLoaderUtil;
+import com.liferay.portal.search.opensearch.internal.util.ClassLoaderUtil;
 
 import java.io.InputStream;
 
@@ -38,9 +38,9 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestClientBuilder;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.opensearch.client.RestClient;
+import org.opensearch.client.RestClientBuilder;
+import org.opensearch.client.RestHighLevelClient;
 
 /**
  * @author André de Oliveira

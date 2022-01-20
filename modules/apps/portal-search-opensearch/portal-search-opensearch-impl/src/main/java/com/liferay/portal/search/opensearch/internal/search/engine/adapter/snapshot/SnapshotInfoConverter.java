@@ -20,8 +20,8 @@ import com.liferay.portal.search.engine.adapter.snapshot.SnapshotState;
 
 import java.util.List;
 
-import org.elasticsearch.snapshots.SnapshotId;
-import org.elasticsearch.snapshots.SnapshotInfo;
+import org.opensearch.snapshots.SnapshotId;
+import org.opensearch.snapshots.SnapshotInfo;
 
 /**
  * @author Michael C. Han

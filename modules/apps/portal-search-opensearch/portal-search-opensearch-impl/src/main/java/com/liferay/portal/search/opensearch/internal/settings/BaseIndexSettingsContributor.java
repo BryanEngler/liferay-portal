@@ -14,9 +14,9 @@
 
 package com.liferay.portal.search.opensearch.internal.settings;
 
-import com.liferay.portal.search.elasticsearch7.settings.IndexSettingsContributor;
-import com.liferay.portal.search.elasticsearch7.settings.IndexSettingsHelper;
-import com.liferay.portal.search.elasticsearch7.settings.TypeMappingsHelper;
+import com.liferay.portal.search.opensearch.settings.IndexSettingsContributor;
+import com.liferay.portal.search.opensearch.settings.IndexSettingsHelper;
+import com.liferay.portal.search.opensearch.settings.TypeMappingsHelper;
 
 /**
  * @author André de Oliveira

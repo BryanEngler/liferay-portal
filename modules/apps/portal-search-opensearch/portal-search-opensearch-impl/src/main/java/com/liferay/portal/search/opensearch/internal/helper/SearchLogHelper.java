@@ -15,10 +15,10 @@
 package com.liferay.portal.search.opensearch.internal.helper;
 
 import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.search.elasticsearch7.configuration.RESTClientLoggerLevel;
+import com.liferay.portal.search.opensearch.configuration.RESTClientLoggerLevel;
 
-import org.elasticsearch.action.ActionResponse;
-import org.elasticsearch.action.bulk.BulkResponse;
+import org.opensearch.action.ActionResponse;
+import org.opensearch.action.bulk.BulkResponse;
 
 /**
  * @author Adam Brandizzi

@@ -19,7 +19,7 @@ import com.liferay.portal.kernel.search.facet.Facet;
 
 import java.util.Map;
 
-import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.builder.SearchSourceBuilder;
 
 /**
  * @author Michael C. Han

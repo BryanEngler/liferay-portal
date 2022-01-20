@@ -17,8 +17,8 @@ package com.liferay.portal.search.opensearch.internal.search.engine.adapter.sear
 import com.liferay.portal.search.engine.adapter.search.BaseSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.BaseSearchResponse;
 
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.opensearch.action.search.SearchResponse;
+import org.opensearch.search.builder.SearchSourceBuilder;
 
 /**
  * @author Michael C. Han

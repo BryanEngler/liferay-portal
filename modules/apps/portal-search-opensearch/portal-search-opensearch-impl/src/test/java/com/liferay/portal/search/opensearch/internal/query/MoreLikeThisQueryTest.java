@@ -15,7 +15,7 @@
 package com.liferay.portal.search.opensearch.internal.query;
 
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.search.elasticsearch7.internal.LiferayElasticsearchIndexingFixtureFactory;
+import com.liferay.portal.search.opensearch.internal.LiferayElasticsearchIndexingFixtureFactory;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
@@ -24,8 +24,8 @@ import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import java.util.Collections;
 
-import org.elasticsearch.ElasticsearchStatusException;
-import org.elasticsearch.client.ResponseException;
+import org.opensearch.ElasticsearchStatusException;
+import org.opensearch.client.ResponseException;
 
 import org.hamcrest.CoreMatchers;
 

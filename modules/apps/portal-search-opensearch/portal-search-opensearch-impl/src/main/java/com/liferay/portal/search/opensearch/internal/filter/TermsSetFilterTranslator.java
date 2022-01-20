@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal.filter;
 
 import com.liferay.portal.search.filter.TermsSetFilter;
 
-import org.elasticsearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
 
 /**
  * @author Marco Leo

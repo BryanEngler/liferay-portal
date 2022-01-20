@@ -15,10 +15,10 @@
 package com.liferay.portal.search.opensearch.internal;
 
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchFixture;
-import com.liferay.portal.search.elasticsearch7.internal.facet.FacetProcessor;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchFixture;
+import com.liferay.portal.search.opensearch.internal.facet.FacetProcessor;
 
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.opensearch.action.search.SearchRequestBuilder;
 
 /**
  * @author André de Oliveira

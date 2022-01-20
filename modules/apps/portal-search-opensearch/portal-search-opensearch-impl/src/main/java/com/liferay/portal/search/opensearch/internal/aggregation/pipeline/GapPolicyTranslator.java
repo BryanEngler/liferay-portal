@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal.aggregation.pipeline;
 
 import com.liferay.portal.search.aggregation.pipeline.GapPolicy;
 
-import org.elasticsearch.search.aggregations.pipeline.BucketHelpers;
+import org.opensearch.search.aggregations.pipeline.BucketHelpers;
 
 /**
  * @author Michael C. Han

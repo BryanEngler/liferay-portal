@@ -17,16 +17,16 @@ package com.liferay.portal.search.opensearch.internal.aggregation.metrics;
 import com.liferay.portal.search.aggregation.AggregationTranslator;
 import com.liferay.portal.search.aggregation.metrics.WeightedAvgAggregation;
 import com.liferay.portal.search.aggregation.pipeline.PipelineAggregationTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.aggregation.BaseAggregationTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.aggregation.ValueTypeTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.script.ScriptTranslator;
+import com.liferay.portal.search.opensearch.internal.aggregation.BaseAggregationTranslator;
+import com.liferay.portal.search.opensearch.internal.aggregation.ValueTypeTranslator;
+import com.liferay.portal.search.opensearch.internal.script.ScriptTranslator;
 import com.liferay.portal.search.script.Script;
 
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.PipelineAggregationBuilder;
-import org.elasticsearch.search.aggregations.metrics.WeightedAvgAggregationBuilder;
-import org.elasticsearch.search.aggregations.support.MultiValuesSourceFieldConfig;
+import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.PipelineAggregationBuilder;
+import org.opensearch.search.aggregations.metrics.WeightedAvgAggregationBuilder;
+import org.opensearch.search.aggregations.support.MultiValuesSourceFieldConfig;
 
 import org.osgi.service.component.annotations.Component;
 

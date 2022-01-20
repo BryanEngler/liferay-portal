@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.opensearch.internal.index;
 
-import org.elasticsearch.client.IndicesClient;
+import org.opensearch.client.IndicesClient;
 
 /**
  * @author Michael C. Han

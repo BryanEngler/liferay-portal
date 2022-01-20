@@ -17,9 +17,9 @@ package com.liferay.portal.search.opensearch.internal.query;
 import com.liferay.portal.search.query.CommonTermsQuery;
 import com.liferay.portal.search.query.Operator;
 
-import org.elasticsearch.index.query.CommonTermsQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.opensearch.index.query.CommonTermsQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
 
 import org.osgi.service.component.annotations.Component;
 

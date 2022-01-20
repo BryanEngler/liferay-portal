@@ -16,8 +16,8 @@ package com.liferay.portal.search.opensearch.internal.legacy.query;
 
 import com.liferay.portal.kernel.search.generic.MatchQuery;
 
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.ZeroTermsQueryOption;
+import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.ZeroTermsQueryOption;
 
 /**
  * @author Michael C. Han

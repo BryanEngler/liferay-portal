@@ -20,15 +20,15 @@ import com.liferay.portal.kernel.cluster.ClusterExecutor;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.PropsUtil;
-import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration;
-import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
-import com.liferay.portal.search.elasticsearch7.internal.connection.constants.ConnectionConstants;
-import com.liferay.portal.search.elasticsearch7.internal.settings.BaseSettingsContributor;
-import com.liferay.portal.search.elasticsearch7.internal.sidecar.PathUtil;
-import com.liferay.portal.search.elasticsearch7.internal.sidecar.Sidecar;
-import com.liferay.portal.search.elasticsearch7.internal.sidecar.SidecarManager;
-import com.liferay.portal.search.elasticsearch7.settings.ClientSettingsHelper;
-import com.liferay.portal.search.elasticsearch7.settings.SettingsContributor;
+import com.liferay.portal.search.opensearch.configuration.ElasticsearchConfiguration;
+import com.liferay.portal.search.opensearch.internal.configuration.ElasticsearchConfigurationWrapper;
+import com.liferay.portal.search.opensearch.internal.connection.constants.ConnectionConstants;
+import com.liferay.portal.search.opensearch.internal.settings.BaseSettingsContributor;
+import com.liferay.portal.search.opensearch.internal.sidecar.PathUtil;
+import com.liferay.portal.search.opensearch.internal.sidecar.Sidecar;
+import com.liferay.portal.search.opensearch.internal.sidecar.SidecarManager;
+import com.liferay.portal.search.opensearch.settings.ClientSettingsHelper;
+import com.liferay.portal.search.opensearch.settings.SettingsContributor;
 import com.liferay.portal.util.PropsImpl;
 
 import java.nio.file.Path;
@@ -41,7 +41,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.elasticsearch.client.RestHighLevelClient;
+import org.opensearch.client.RestHighLevelClient;
 
 import org.mockito.Mockito;
 

@@ -25,8 +25,8 @@ import com.liferay.portal.kernel.util.StringUtil;
 import java.util.Collection;
 import java.util.Map;
 
-import org.elasticsearch.common.document.DocumentField;
-import org.elasticsearch.search.SearchHit;
+import org.opensearch.common.document.DocumentField;
+import org.opensearch.search.SearchHit;
 
 import org.osgi.service.component.annotations.Component;
 

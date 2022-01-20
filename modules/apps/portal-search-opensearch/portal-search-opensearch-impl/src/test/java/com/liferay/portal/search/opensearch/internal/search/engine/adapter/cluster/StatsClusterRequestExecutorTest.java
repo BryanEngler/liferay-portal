@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.opensearch.internal.search.engine.adapter.cluster;
 
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionFixture;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchConnectionFixture;
 import com.liferay.portal.search.engine.adapter.cluster.StatsClusterRequest;
 import com.liferay.portal.search.engine.adapter.cluster.StatsClusterResponse;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;

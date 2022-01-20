@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal.sort;
 
 import com.liferay.portal.kernel.search.Sort;
 
-import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.builder.SearchSourceBuilder;
 
 /**
  * @author Michael C. Han

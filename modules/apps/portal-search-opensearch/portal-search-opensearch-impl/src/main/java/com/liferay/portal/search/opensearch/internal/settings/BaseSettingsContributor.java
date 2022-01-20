@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.opensearch.internal.settings;
 
-import com.liferay.portal.search.elasticsearch7.settings.SettingsContributor;
+import com.liferay.portal.search.opensearch.settings.SettingsContributor;
 
 /**
  * @author Michael C. Han

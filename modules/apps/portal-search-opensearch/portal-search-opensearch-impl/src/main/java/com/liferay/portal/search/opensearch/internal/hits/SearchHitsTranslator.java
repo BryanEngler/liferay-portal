@@ -18,7 +18,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.search.document.Document;
 import com.liferay.portal.search.document.DocumentBuilder;
 import com.liferay.portal.search.document.DocumentBuilderFactory;
-import com.liferay.portal.search.elasticsearch7.internal.document.DocumentFieldsTranslator;
+import com.liferay.portal.search.opensearch.internal.document.DocumentFieldsTranslator;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.geolocation.GeoBuilders;
 import com.liferay.portal.search.highlight.HighlightField;
@@ -38,8 +38,8 @@ import java.util.stream.Stream;
 import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.TotalHits;
 
-import org.elasticsearch.common.document.DocumentField;
-import org.elasticsearch.common.text.Text;
+import org.opensearch.common.document.DocumentField;
+import org.opensearch.common.text.Text;
 
 /**
  * @author Michael C. Han

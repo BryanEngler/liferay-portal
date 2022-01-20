@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.opensearch.internal.highlight;
 
-import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.builder.SearchSourceBuilder;
 
 /**
  * @author Michael C. Han

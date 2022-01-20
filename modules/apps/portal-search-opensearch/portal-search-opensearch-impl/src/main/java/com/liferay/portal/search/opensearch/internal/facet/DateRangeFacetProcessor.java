@@ -24,10 +24,10 @@ import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.Optional;
 
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.bucket.range.DateRangeAggregationBuilder;
+import org.opensearch.action.search.SearchRequestBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.bucket.range.DateRangeAggregationBuilder;
 
 import org.osgi.service.component.annotations.Component;
 

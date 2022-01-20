@@ -18,10 +18,10 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
-import com.liferay.portal.search.elasticsearch7.internal.ElasticsearchIndexingFixture;
-import com.liferay.portal.search.elasticsearch7.internal.LiferayElasticsearchIndexingFixtureFactory;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
-import com.liferay.portal.search.elasticsearch7.internal.connection.helper.IndexCreationHelper;
+import com.liferay.portal.search.opensearch.internal.ElasticsearchIndexingFixture;
+import com.liferay.portal.search.opensearch.internal.LiferayElasticsearchIndexingFixtureFactory;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchClientResolver;
+import com.liferay.portal.search.opensearch.internal.connection.helper.IndexCreationHelper;
 import com.liferay.portal.search.test.util.DocumentsAssert;
 import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
 import com.liferay.portal.search.test.util.indexing.DocumentCreationHelpers;
@@ -32,13 +32,13 @@ import java.io.IOException;
 
 import java.util.Arrays;
 
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
-import org.elasticsearch.client.IndicesClient;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.indices.PutMappingRequest;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.xcontent.XContentType;
+import org.opensearch.action.admin.indices.create.CreateIndexRequest;
+import org.opensearch.client.IndicesClient;
+import org.opensearch.client.RequestOptions;
+import org.opensearch.client.RestHighLevelClient;
+import org.opensearch.client.indices.PutMappingRequest;
+import org.opensearch.common.settings.Settings;
+import org.opensearch.common.xcontent.XContentType;
 
 import org.junit.Assert;
 import org.junit.ClassRule;

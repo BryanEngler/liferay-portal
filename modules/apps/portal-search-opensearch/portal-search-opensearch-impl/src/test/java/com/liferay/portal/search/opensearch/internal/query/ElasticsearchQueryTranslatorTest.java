@@ -25,7 +25,7 @@ import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import java.util.Collections;
 
-import org.elasticsearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
 
 import org.junit.Assert;
 import org.junit.Before;

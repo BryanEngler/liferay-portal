@@ -23,7 +23,7 @@ import com.liferay.portal.kernel.search.suggest.SuggesterTranslator;
 import com.liferay.portal.kernel.search.suggest.SuggesterVisitor;
 import com.liferay.portal.kernel.search.suggest.TermSuggester;
 
-import org.elasticsearch.search.suggest.SuggestionBuilder;
+import org.opensearch.search.suggest.SuggestionBuilder;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

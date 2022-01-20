@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal.index;
 
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.search.elasticsearch7.internal.connection.IndexName;
+import com.liferay.portal.search.opensearch.internal.connection.IndexName;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import org.junit.After;

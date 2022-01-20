@@ -15,7 +15,7 @@
 package com.liferay.portal.search.opensearch.internal.filter;
 
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.search.elasticsearch7.internal.LiferayElasticsearchIndexingFixtureFactory;
+import com.liferay.portal.search.opensearch.internal.LiferayElasticsearchIndexingFixtureFactory;
 import com.liferay.portal.search.filter.FilterBuilders;
 import com.liferay.portal.search.filter.TermsSetFilter;
 import com.liferay.portal.search.filter.TermsSetFilterBuilder;

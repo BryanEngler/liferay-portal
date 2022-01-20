@@ -14,9 +14,9 @@
 
 package com.liferay.portal.search.opensearch.internal.mappings;
 
-import com.liferay.portal.search.elasticsearch7.internal.ElasticsearchIndexingFixture;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchFixture;
-import com.liferay.portal.search.elasticsearch7.internal.index.constants.LiferayTypeMappingsConstants;
+import com.liferay.portal.search.opensearch.internal.ElasticsearchIndexingFixture;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchFixture;
+import com.liferay.portal.search.opensearch.internal.index.constants.LiferayTypeMappingsConstants;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 import com.liferay.portal.search.test.util.mappings.BaseNestedFieldsTestCase;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;

@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal.aggregation.bucket;
 
 import com.liferay.portal.search.aggregation.bucket.TermsAggregation;
 
-import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 /**
  * @author Michael C. Han

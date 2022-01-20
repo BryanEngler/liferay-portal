@@ -21,7 +21,7 @@ import java.io.IOException;
 
 import java.util.function.Consumer;
 
-import org.elasticsearch.client.RestHighLevelClient;
+import org.opensearch.client.RestHighLevelClient;
 
 /**
  * @author Michael C. Han

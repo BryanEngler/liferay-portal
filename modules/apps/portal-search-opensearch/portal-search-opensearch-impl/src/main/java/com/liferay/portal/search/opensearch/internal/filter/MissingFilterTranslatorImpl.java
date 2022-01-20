@@ -16,9 +16,9 @@ package com.liferay.portal.search.opensearch.internal.filter;
 
 import com.liferay.portal.kernel.search.filter.MissingFilter;
 
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.ExistsQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.ExistsQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
 
 import org.osgi.service.component.annotations.Component;
 

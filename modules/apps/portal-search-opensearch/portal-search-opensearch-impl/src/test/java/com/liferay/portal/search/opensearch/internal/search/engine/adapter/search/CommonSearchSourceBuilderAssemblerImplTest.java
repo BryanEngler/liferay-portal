@@ -16,13 +16,13 @@ package com.liferay.portal.search.opensearch.internal.search.engine.adapter.sear
 
 import com.liferay.portal.kernel.search.generic.MatchQuery;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.search.elasticsearch7.internal.connection.IndexName;
-import com.liferay.portal.search.elasticsearch7.internal.facet.DefaultFacetTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.filter.ElasticsearchFilterTranslatorFixture;
-import com.liferay.portal.search.elasticsearch7.internal.index.LiferayIndexFixture;
-import com.liferay.portal.search.elasticsearch7.internal.query.ElasticsearchQueryTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.query.ElasticsearchQueryTranslatorFixture;
-import com.liferay.portal.search.elasticsearch7.internal.query.SearchAssert;
+import com.liferay.portal.search.opensearch.internal.connection.IndexName;
+import com.liferay.portal.search.opensearch.internal.facet.DefaultFacetTranslator;
+import com.liferay.portal.search.opensearch.internal.filter.ElasticsearchFilterTranslatorFixture;
+import com.liferay.portal.search.opensearch.internal.index.LiferayIndexFixture;
+import com.liferay.portal.search.opensearch.internal.query.ElasticsearchQueryTranslator;
+import com.liferay.portal.search.opensearch.internal.query.ElasticsearchQueryTranslatorFixture;
+import com.liferay.portal.search.opensearch.internal.query.SearchAssert;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.filter.ComplexQueryBuilderFactory;
 import com.liferay.portal.search.filter.ComplexQueryPartBuilderFactory;
@@ -35,8 +35,8 @@ import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import java.util.Arrays;
 
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.opensearch.action.search.SearchRequest;
+import org.opensearch.search.builder.SearchSourceBuilder;
 
 import org.junit.After;
 import org.junit.Before;

@@ -15,12 +15,12 @@
 package com.liferay.portal.search.opensearch.internal.aggregation.bucket;
 
 import com.liferay.portal.search.aggregation.bucket.SignificantTermsAggregation;
-import com.liferay.portal.search.elasticsearch7.internal.significance.SignificanceHeuristicTranslator;
+import com.liferay.portal.search.opensearch.internal.significance.SignificanceHeuristicTranslator;
 import com.liferay.portal.search.query.QueryTranslator;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.bucket.terms.SignificantTermsAggregationBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.bucket.terms.SignificantTermsAggregationBuilder;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

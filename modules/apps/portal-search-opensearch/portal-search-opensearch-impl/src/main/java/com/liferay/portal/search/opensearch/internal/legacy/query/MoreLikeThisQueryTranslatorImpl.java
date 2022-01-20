@@ -16,16 +16,16 @@ package com.liferay.portal.search.opensearch.internal.legacy.query;
 
 import com.liferay.portal.kernel.search.generic.MoreLikeThisQuery;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.elasticsearch7.internal.util.DocumentTypes;
+import com.liferay.portal.search.opensearch.internal.util.DocumentTypes;
 import com.liferay.portal.search.index.IndexNameBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.elasticsearch.index.query.MoreLikeThisQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.opensearch.index.query.MoreLikeThisQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

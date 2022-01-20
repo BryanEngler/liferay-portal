@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.opensearch.internal.query.function.score;
 
-import com.liferay.portal.search.elasticsearch7.internal.script.ScriptTranslator;
+import com.liferay.portal.search.opensearch.internal.script.ScriptTranslator;
 import com.liferay.portal.search.query.function.score.ExponentialDecayScoreFunction;
 import com.liferay.portal.search.query.function.score.FieldValueFactorScoreFunction;
 import com.liferay.portal.search.query.function.score.GaussianDecayScoreFunction;
@@ -24,15 +24,15 @@ import com.liferay.portal.search.query.function.score.ScoreFunctionTranslator;
 import com.liferay.portal.search.query.function.score.ScriptScoreFunction;
 import com.liferay.portal.search.query.function.score.WeightScoreFunction;
 
-import org.elasticsearch.common.lucene.search.function.FieldValueFactorFunction;
-import org.elasticsearch.index.query.functionscore.ExponentialDecayFunctionBuilder;
-import org.elasticsearch.index.query.functionscore.FieldValueFactorFunctionBuilder;
-import org.elasticsearch.index.query.functionscore.GaussDecayFunctionBuilder;
-import org.elasticsearch.index.query.functionscore.LinearDecayFunctionBuilder;
-import org.elasticsearch.index.query.functionscore.RandomScoreFunctionBuilder;
-import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilder;
-import org.elasticsearch.index.query.functionscore.ScriptScoreFunctionBuilder;
-import org.elasticsearch.index.query.functionscore.WeightBuilder;
+import org.opensearch.common.lucene.search.function.FieldValueFactorFunction;
+import org.opensearch.index.query.functionscore.ExponentialDecayFunctionBuilder;
+import org.opensearch.index.query.functionscore.FieldValueFactorFunctionBuilder;
+import org.opensearch.index.query.functionscore.GaussDecayFunctionBuilder;
+import org.opensearch.index.query.functionscore.LinearDecayFunctionBuilder;
+import org.opensearch.index.query.functionscore.RandomScoreFunctionBuilder;
+import org.opensearch.index.query.functionscore.ScoreFunctionBuilder;
+import org.opensearch.index.query.functionscore.ScriptScoreFunctionBuilder;
+import org.opensearch.index.query.functionscore.WeightBuilder;
 
 /**
  * @author Michael C. Han

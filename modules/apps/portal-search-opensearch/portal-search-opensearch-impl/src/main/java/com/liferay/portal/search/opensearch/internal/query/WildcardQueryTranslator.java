@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal.query;
 
 import com.liferay.portal.search.query.WildcardQuery;
 
-import org.elasticsearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
 
 /**
  * @author Miguel Angelo Caldas Gallindo

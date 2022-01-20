@@ -17,7 +17,7 @@ package com.liferay.portal.search.opensearch.internal.search.response;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
 
-import org.elasticsearch.action.search.SearchResponse;
+import org.opensearch.action.search.SearchResponse;
 
 /**
  * @author Dylan Rebelak

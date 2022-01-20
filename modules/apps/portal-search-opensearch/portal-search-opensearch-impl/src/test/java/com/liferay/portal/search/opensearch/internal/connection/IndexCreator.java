@@ -14,18 +14,18 @@
 
 package com.liferay.portal.search.opensearch.internal.connection;
 
-import com.liferay.portal.search.elasticsearch7.internal.connection.helper.IndexCreationHelper;
-import com.liferay.portal.search.elasticsearch7.internal.connection.helper.LiferayIndexCreationHelper;
+import com.liferay.portal.search.opensearch.internal.connection.helper.IndexCreationHelper;
+import com.liferay.portal.search.opensearch.internal.connection.helper.LiferayIndexCreationHelper;
 
 import java.io.IOException;
 
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.support.IndicesOptions;
-import org.elasticsearch.client.IndicesClient;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.settings.Settings;
+import org.opensearch.action.admin.indices.create.CreateIndexRequest;
+import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.opensearch.action.support.IndicesOptions;
+import org.opensearch.client.IndicesClient;
+import org.opensearch.client.RequestOptions;
+import org.opensearch.client.RestHighLevelClient;
+import org.opensearch.common.settings.Settings;
 
 import org.mockito.Mockito;
 

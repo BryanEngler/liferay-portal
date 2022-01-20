@@ -16,11 +16,11 @@ package com.liferay.portal.search.opensearch.internal.facet;
 
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 
-import org.elasticsearch.search.aggregations.Aggregation;
-import org.elasticsearch.search.aggregations.Aggregations;
-import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
-import org.elasticsearch.search.aggregations.bucket.SingleBucketAggregation;
-import org.elasticsearch.search.aggregations.bucket.range.Range;
+import org.opensearch.search.aggregations.Aggregation;
+import org.opensearch.search.aggregations.Aggregations;
+import org.opensearch.search.aggregations.bucket.MultiBucketsAggregation;
+import org.opensearch.search.aggregations.bucket.SingleBucketAggregation;
+import org.opensearch.search.aggregations.bucket.range.Range;
 
 /**
  * @author André de Oliveira

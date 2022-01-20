@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.opensearch.internal.index;
 
-import com.liferay.portal.search.elasticsearch7.internal.util.ResourceUtil;
+import com.liferay.portal.search.opensearch.internal.util.ResourceUtil;
 import com.liferay.portal.search.spi.index.IndexDefinition;
 
 import java.util.Map;

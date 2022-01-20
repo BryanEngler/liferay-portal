@@ -17,11 +17,11 @@ package com.liferay.portal.search.opensearch.internal.sidecar;
 import com.liferay.petra.process.ProcessCallable;
 import com.liferay.petra.process.ProcessException;
 
-import org.elasticsearch.common.inject.Injector;
-import org.elasticsearch.common.transport.BoundTransportAddress;
-import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.http.HttpServerTransport;
-import org.elasticsearch.node.Node;
+import org.opensearch.common.inject.Injector;
+import org.opensearch.common.transport.BoundTransportAddress;
+import org.opensearch.common.transport.TransportAddress;
+import org.opensearch.http.HttpServerTransport;
+import org.opensearch.node.Node;
 
 /**
  * @author Tina Tian

@@ -16,9 +16,9 @@ package com.liferay.portal.search.opensearch.internal.legacy.query;
 
 import com.liferay.portal.kernel.search.generic.StringQuery;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.QueryStringQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.QueryStringQueryBuilder;
 
 import org.osgi.service.component.annotations.Component;
 

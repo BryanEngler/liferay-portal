@@ -21,11 +21,11 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.elasticsearch.client.IndicesClient;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.indices.GetFieldMappingsRequest;
-import org.elasticsearch.client.indices.GetFieldMappingsResponse;
-import org.elasticsearch.client.indices.GetFieldMappingsResponse.FieldMappingMetadata;
+import org.opensearch.client.IndicesClient;
+import org.opensearch.client.RequestOptions;
+import org.opensearch.client.indices.GetFieldMappingsRequest;
+import org.opensearch.client.indices.GetFieldMappingsResponse;
+import org.opensearch.client.indices.GetFieldMappingsResponse.FieldMappingMetadata;
 
 import org.junit.Assert;
 

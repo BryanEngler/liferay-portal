@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal.aggregation;
 
 import com.liferay.portal.search.aggregation.AggregationTranslator;
 
-import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
 
 /**
  * @author André de Oliveira

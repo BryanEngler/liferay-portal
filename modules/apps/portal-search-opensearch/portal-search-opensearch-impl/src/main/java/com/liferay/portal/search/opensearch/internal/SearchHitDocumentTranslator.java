@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal;
 
 import com.liferay.portal.kernel.search.Document;
 
-import org.elasticsearch.search.SearchHit;
+import org.opensearch.search.SearchHit;
 
 /**
  * @author Michael C. Han

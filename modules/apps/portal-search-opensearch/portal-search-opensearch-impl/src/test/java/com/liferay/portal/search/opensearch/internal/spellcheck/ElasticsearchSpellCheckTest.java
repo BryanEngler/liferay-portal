@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.opensearch.internal.spellcheck;
 
-import com.liferay.portal.search.elasticsearch7.internal.ElasticsearchIndexingFixtureFactory;
+import com.liferay.portal.search.opensearch.internal.ElasticsearchIndexingFixtureFactory;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
 import com.liferay.portal.search.test.util.spellcheck.BaseSpellCheckTestCase;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;

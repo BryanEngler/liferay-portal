@@ -15,13 +15,13 @@
 package com.liferay.portal.search.opensearch.internal;
 
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnection;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionFixture;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchConnection;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchConnectionFixture;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.SnapshotClient;
+import org.opensearch.client.RestHighLevelClient;
+import org.opensearch.client.SnapshotClient;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

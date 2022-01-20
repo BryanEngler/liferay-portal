@@ -19,7 +19,7 @@ import com.liferay.portal.search.aggregation.bucket.Order;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.elasticsearch.search.aggregations.BucketOrder;
+import org.opensearch.search.aggregations.BucketOrder;
 
 /**
  * @author Michael C. Han

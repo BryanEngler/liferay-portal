@@ -14,13 +14,13 @@
 
 package com.liferay.portal.search.opensearch.internal.query;
 
-import com.liferay.portal.search.elasticsearch7.internal.query.function.score.ElasticsearchScoreFunctionTranslator;
+import com.liferay.portal.search.opensearch.internal.query.function.score.ElasticsearchScoreFunctionTranslator;
 import com.liferay.portal.search.query.function.score.FieldValueFactorScoreFunction;
 import com.liferay.portal.search.test.util.query.BaseScoreFunctionTranslatorTestCase;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
-import org.elasticsearch.common.Strings;
-import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilder;
+import org.opensearch.common.Strings;
+import org.opensearch.index.query.functionscore.ScoreFunctionBuilder;
 
 import org.junit.ClassRule;
 import org.junit.Rule;

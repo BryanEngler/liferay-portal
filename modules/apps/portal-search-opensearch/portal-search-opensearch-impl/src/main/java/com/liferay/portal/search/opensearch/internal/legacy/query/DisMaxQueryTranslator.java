@@ -17,7 +17,7 @@ package com.liferay.portal.search.opensearch.internal.legacy.query;
 import com.liferay.portal.kernel.search.generic.DisMaxQuery;
 import com.liferay.portal.kernel.search.query.QueryVisitor;
 
-import org.elasticsearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
 
 /**
  * @author Michael C. Han

@@ -22,8 +22,8 @@ import com.liferay.portal.search.geolocation.GeoBuilders;
 import java.util.Collection;
 import java.util.Map;
 
-import org.elasticsearch.common.document.DocumentField;
-import org.elasticsearch.common.geo.GeoPoint;
+import org.opensearch.common.document.DocumentField;
+import org.opensearch.common.geo.GeoPoint;
 
 /**
  * @author Bryan Engler

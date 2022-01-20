@@ -17,9 +17,9 @@ package com.liferay.portal.search.opensearch.internal.index;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.index.CreateIndexRequestExecutor;
-import com.liferay.portal.search.elasticsearch7.spi.index.IndexRegistrar;
-import com.liferay.portal.search.elasticsearch7.spi.index.helper.IndexSettingsDefinition;
+import com.liferay.portal.search.opensearch.internal.search.engine.adapter.index.CreateIndexRequestExecutor;
+import com.liferay.portal.search.opensearch.spi.index.IndexRegistrar;
+import com.liferay.portal.search.opensearch.spi.index.helper.IndexSettingsDefinition;
 import com.liferay.portal.search.engine.adapter.index.CreateIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.CreateIndexResponse;
 
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.elasticsearch.ElasticsearchStatusException;
+import org.opensearch.ElasticsearchStatusException;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

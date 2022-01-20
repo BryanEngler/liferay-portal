@@ -17,10 +17,10 @@ package com.liferay.portal.search.opensearch.internal.filter;
 import com.liferay.portal.kernel.search.filter.GeoBoundingBoxFilter;
 import com.liferay.portal.kernel.search.geolocation.GeoLocationPoint;
 
-import org.elasticsearch.common.geo.GeoPoint;
-import org.elasticsearch.index.query.GeoBoundingBoxQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.opensearch.common.geo.GeoPoint;
+import org.opensearch.index.query.GeoBoundingBoxQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
 
 import org.osgi.service.component.annotations.Component;
 

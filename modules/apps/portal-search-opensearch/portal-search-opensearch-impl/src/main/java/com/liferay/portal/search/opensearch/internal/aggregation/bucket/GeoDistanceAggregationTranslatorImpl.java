@@ -18,19 +18,19 @@ import com.liferay.portal.search.aggregation.AggregationTranslator;
 import com.liferay.portal.search.aggregation.bucket.GeoDistanceAggregation;
 import com.liferay.portal.search.aggregation.bucket.Range;
 import com.liferay.portal.search.aggregation.pipeline.PipelineAggregationTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.aggregation.BaseFieldAggregationTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.geolocation.DistanceUnitTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.geolocation.GeoDistanceTypeTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.geolocation.GeoLocationPointTranslator;
+import com.liferay.portal.search.opensearch.internal.aggregation.BaseFieldAggregationTranslator;
+import com.liferay.portal.search.opensearch.internal.geolocation.DistanceUnitTranslator;
+import com.liferay.portal.search.opensearch.internal.geolocation.GeoDistanceTypeTranslator;
+import com.liferay.portal.search.opensearch.internal.geolocation.GeoLocationPointTranslator;
 
 import java.util.List;
 
-import org.elasticsearch.common.geo.GeoDistance;
-import org.elasticsearch.common.geo.GeoPoint;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.PipelineAggregationBuilder;
-import org.elasticsearch.search.aggregations.bucket.range.GeoDistanceAggregationBuilder;
+import org.opensearch.common.geo.GeoDistance;
+import org.opensearch.common.geo.GeoPoint;
+import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.PipelineAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.range.GeoDistanceAggregationBuilder;
 
 import org.osgi.service.component.annotations.Component;
 

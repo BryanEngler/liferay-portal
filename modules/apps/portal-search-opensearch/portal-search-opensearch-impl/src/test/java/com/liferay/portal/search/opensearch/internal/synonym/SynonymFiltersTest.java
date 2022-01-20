@@ -14,17 +14,17 @@
 
 package com.liferay.portal.search.opensearch.internal.synonym;
 
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchFixture;
-import com.liferay.portal.search.elasticsearch7.internal.connection.IndexName;
-import com.liferay.portal.search.elasticsearch7.internal.document.SingleFieldFixture;
-import com.liferay.portal.search.elasticsearch7.internal.index.constants.LiferayTypeMappingsConstants;
-import com.liferay.portal.search.elasticsearch7.internal.query.QueryBuilderFactories;
-import com.liferay.portal.search.elasticsearch7.internal.query.SearchAssert;
-import com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.ElasticsearchSearchEngineAdapterImpl;
-import com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.ElasticsearchSearchEngineAdapterIndexRequestTest;
-import com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.index.IndexRequestExecutorFixture;
-import com.liferay.portal.search.elasticsearch7.internal.util.ResourceUtil;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchClientResolver;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchFixture;
+import com.liferay.portal.search.opensearch.internal.connection.IndexName;
+import com.liferay.portal.search.opensearch.internal.document.SingleFieldFixture;
+import com.liferay.portal.search.opensearch.internal.index.constants.LiferayTypeMappingsConstants;
+import com.liferay.portal.search.opensearch.internal.query.QueryBuilderFactories;
+import com.liferay.portal.search.opensearch.internal.query.SearchAssert;
+import com.liferay.portal.search.opensearch.internal.search.engine.adapter.ElasticsearchSearchEngineAdapterImpl;
+import com.liferay.portal.search.opensearch.internal.search.engine.adapter.ElasticsearchSearchEngineAdapterIndexRequestTest;
+import com.liferay.portal.search.opensearch.internal.search.engine.adapter.index.IndexRequestExecutorFixture;
+import com.liferay.portal.search.opensearch.internal.util.ResourceUtil;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.index.CreateIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.CreateIndexResponse;
@@ -33,7 +33,7 @@ import com.liferay.portal.search.engine.adapter.index.DeleteIndexResponse;
 import com.liferay.portal.search.engine.adapter.index.IndexRequestExecutor;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
-import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
+import org.opensearch.index.query.MatchPhraseQueryBuilder;
 
 import org.junit.After;
 import org.junit.AfterClass;

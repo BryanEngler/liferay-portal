@@ -21,7 +21,7 @@ import com.liferay.portal.kernel.search.facet.collector.TermCollector;
 import java.util.Collections;
 import java.util.List;
 
-import org.elasticsearch.search.aggregations.Aggregation;
+import org.opensearch.search.aggregations.Aggregation;
 
 /**
  * @author Michael C. Han

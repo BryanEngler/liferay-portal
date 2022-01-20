@@ -15,8 +15,8 @@
 package com.liferay.portal.search.opensearch.internal.index.instant;
 
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.search.elasticsearch7.spi.index.IndexRegistrar;
-import com.liferay.portal.search.elasticsearch7.spi.index.helper.IndexRegistrarHelper;
+import com.liferay.portal.search.opensearch.spi.index.IndexRegistrar;
+import com.liferay.portal.search.opensearch.spi.index.helper.IndexRegistrarHelper;
 
 import org.osgi.service.component.annotations.Component;
 

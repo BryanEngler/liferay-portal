@@ -16,8 +16,8 @@ package com.liferay.portal.search.opensearch.internal.highlight;
 
 import com.liferay.portal.kernel.search.highlight.HighlightUtil;
 
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.fetch.subphase.highlight.HighlightBuilder;
 
 import org.osgi.service.component.annotations.Component;
 

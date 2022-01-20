@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.opensearch.internal.configuration;
 
-import com.liferay.portal.search.elasticsearch7.configuration.OperationMode;
+import com.liferay.portal.search.opensearch.configuration.OperationMode;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

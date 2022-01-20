@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.opensearch.internal.query;
 
-import com.liferay.portal.search.elasticsearch7.internal.query.function.score.ElasticsearchScoreFunctionTranslator;
+import com.liferay.portal.search.opensearch.internal.query.function.score.ElasticsearchScoreFunctionTranslator;
 import com.liferay.portal.search.query.FunctionScoreQuery;
 import com.liferay.portal.search.query.FunctionScoreQuery.FilterQueryScoreFunctionHolder;
 import com.liferay.portal.search.query.QueryTranslator;
@@ -24,11 +24,11 @@ import com.liferay.portal.search.query.function.score.ScoreFunctionTranslator;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
-import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder.FilterFunctionBuilder;
-import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.functionscore.FunctionScoreQueryBuilder;
+import org.opensearch.index.query.functionscore.FunctionScoreQueryBuilder.FilterFunctionBuilder;
+import org.opensearch.index.query.functionscore.ScoreFunctionBuilder;
 
 import org.osgi.service.component.annotations.Component;
 

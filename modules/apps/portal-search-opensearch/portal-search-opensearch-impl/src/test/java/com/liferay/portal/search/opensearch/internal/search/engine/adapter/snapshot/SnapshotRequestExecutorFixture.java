@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.opensearch.internal.search.engine.adapter.snapshot;
 
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.snapshot.SnapshotRequestExecutor;
 
 /**

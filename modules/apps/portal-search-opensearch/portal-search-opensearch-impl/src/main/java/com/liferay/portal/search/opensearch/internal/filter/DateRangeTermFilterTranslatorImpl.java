@@ -20,9 +20,9 @@ import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import java.text.Format;
 import java.text.ParseException;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.RangeQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.RangeQueryBuilder;
 
 import org.osgi.service.component.annotations.Component;
 

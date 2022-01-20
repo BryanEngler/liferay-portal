@@ -16,13 +16,13 @@ package com.liferay.portal.search.opensearch.internal.cluster;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.search.elasticsearch7.internal.helper.SearchLogHelperUtil;
+import com.liferay.portal.search.opensearch.internal.helper.SearchLogHelperUtil;
 
-import org.elasticsearch.action.ActionResponse;
-import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
-import org.elasticsearch.client.IndicesClient;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.common.settings.Settings;
+import org.opensearch.action.ActionResponse;
+import org.opensearch.action.admin.indices.settings.put.UpdateSettingsRequest;
+import org.opensearch.client.IndicesClient;
+import org.opensearch.client.RequestOptions;
+import org.opensearch.common.settings.Settings;
 
 /**
  * @author André de Oliveira

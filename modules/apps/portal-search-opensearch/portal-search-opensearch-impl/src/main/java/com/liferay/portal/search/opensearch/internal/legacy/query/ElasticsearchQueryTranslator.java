@@ -31,11 +31,11 @@ import com.liferay.portal.kernel.search.generic.StringQuery;
 import com.liferay.portal.kernel.search.query.QueryTranslator;
 import com.liferay.portal.kernel.search.query.QueryVisitor;
 import com.liferay.portal.kernel.util.HashMapDictionary;
-import com.liferay.portal.search.elasticsearch7.internal.filter.QueryFilterTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.filter.QueryFilterTranslatorImpl;
+import com.liferay.portal.search.opensearch.internal.filter.QueryFilterTranslator;
+import com.liferay.portal.search.opensearch.internal.filter.QueryFilterTranslatorImpl;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;

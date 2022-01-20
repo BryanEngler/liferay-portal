@@ -16,8 +16,8 @@ package com.liferay.portal.search.opensearch.internal.search.engine.adapter.inde
 
 import com.liferay.portal.search.engine.adapter.index.IndexRequestShardFailure;
 
-import org.elasticsearch.action.ShardOperationFailedException;
-import org.elasticsearch.rest.RestStatus;
+import org.opensearch.action.ShardOperationFailedException;
+import org.opensearch.rest.RestStatus;
 
 import org.osgi.service.component.annotations.Component;
 

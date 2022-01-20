@@ -15,7 +15,7 @@
 package com.liferay.portal.search.opensearch.internal.configuration;
 
 import com.liferay.portal.kernel.util.PropertiesUtil;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionFixture;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchConnectionFixture;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import java.util.Map;

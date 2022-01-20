@@ -15,7 +15,7 @@
 package com.liferay.portal.search.opensearch.internal.query;
 
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.search.elasticsearch7.internal.geolocation.ElasticsearchShapeTranslator;
+import com.liferay.portal.search.opensearch.internal.geolocation.ElasticsearchShapeTranslator;
 import com.liferay.portal.search.geolocation.Shape;
 import com.liferay.portal.search.query.GeoShapeQuery;
 import com.liferay.portal.search.query.geolocation.ShapeRelation;
@@ -23,9 +23,9 @@ import com.liferay.portal.search.query.geolocation.SpatialStrategy;
 
 import java.io.IOException;
 
-import org.elasticsearch.index.query.GeoShapeQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.opensearch.index.query.GeoShapeQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
 
 import org.osgi.service.component.annotations.Component;
 

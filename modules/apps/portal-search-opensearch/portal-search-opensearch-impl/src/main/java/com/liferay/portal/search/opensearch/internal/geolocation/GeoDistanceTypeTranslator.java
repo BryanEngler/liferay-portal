@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal.geolocation;
 
 import com.liferay.portal.search.geolocation.GeoDistanceType;
 
-import org.elasticsearch.common.geo.GeoDistance;
+import org.opensearch.common.geo.GeoDistance;
 
 /**
  * @author Michael C. Han

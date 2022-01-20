@@ -15,9 +15,9 @@
 package com.liferay.portal.search.opensearch.internal.configuration.admin.definition;
 
 import com.liferay.configuration.admin.definition.ConfigurationFieldOptionsProvider;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnection;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
-import com.liferay.portal.search.elasticsearch7.internal.connection.constants.ConnectionConstants;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchConnection;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchConnectionManager;
+import com.liferay.portal.search.opensearch.internal.connection.constants.ConnectionConstants;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -16,8 +16,8 @@ package com.liferay.portal.search.opensearch.internal.filter;
 
 import com.liferay.portal.kernel.search.filter.TermsFilter;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
 
 import org.osgi.service.component.annotations.Component;
 

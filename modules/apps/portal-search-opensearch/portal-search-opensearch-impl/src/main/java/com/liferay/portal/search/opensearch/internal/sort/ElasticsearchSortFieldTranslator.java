@@ -14,10 +14,10 @@
 
 package com.liferay.portal.search.opensearch.internal.sort;
 
-import com.liferay.portal.search.elasticsearch7.internal.geolocation.DistanceUnitTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.geolocation.GeoDistanceTypeTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.geolocation.GeoLocationPointTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.script.ScriptTranslator;
+import com.liferay.portal.search.opensearch.internal.geolocation.DistanceUnitTranslator;
+import com.liferay.portal.search.opensearch.internal.geolocation.GeoDistanceTypeTranslator;
+import com.liferay.portal.search.opensearch.internal.geolocation.GeoLocationPointTranslator;
+import com.liferay.portal.search.opensearch.internal.script.ScriptTranslator;
 import com.liferay.portal.search.geolocation.GeoLocationPoint;
 import com.liferay.portal.search.query.QueryTranslator;
 import com.liferay.portal.search.sort.FieldSort;
@@ -34,16 +34,16 @@ import com.liferay.portal.search.sort.SortVisitor;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.elasticsearch.common.geo.GeoDistance;
-import org.elasticsearch.common.geo.GeoPoint;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.script.Script;
-import org.elasticsearch.search.sort.FieldSortBuilder;
-import org.elasticsearch.search.sort.GeoDistanceSortBuilder;
-import org.elasticsearch.search.sort.NestedSortBuilder;
-import org.elasticsearch.search.sort.ScriptSortBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortBuilders;
+import org.opensearch.common.geo.GeoDistance;
+import org.opensearch.common.geo.GeoPoint;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.script.Script;
+import org.opensearch.search.sort.FieldSortBuilder;
+import org.opensearch.search.sort.GeoDistanceSortBuilder;
+import org.opensearch.search.sort.NestedSortBuilder;
+import org.opensearch.search.sort.ScriptSortBuilder;
+import org.opensearch.search.sort.SortBuilder;
+import org.opensearch.search.sort.SortBuilders;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

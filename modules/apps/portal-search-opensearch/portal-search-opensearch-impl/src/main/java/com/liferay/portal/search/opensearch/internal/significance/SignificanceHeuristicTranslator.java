@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.opensearch.internal.significance;
 
-import com.liferay.portal.search.elasticsearch7.internal.script.ScriptTranslator;
+import com.liferay.portal.search.opensearch.internal.script.ScriptTranslator;
 import com.liferay.portal.search.significance.ChiSquareSignificanceHeuristic;
 import com.liferay.portal.search.significance.GNDSignificanceHeuristic;
 import com.liferay.portal.search.significance.JLHScoreSignificanceHeuristic;
@@ -23,13 +23,13 @@ import com.liferay.portal.search.significance.PercentageScoreSignificanceHeurist
 import com.liferay.portal.search.significance.ScriptSignificanceHeuristic;
 import com.liferay.portal.search.significance.SignificanceHeuristic;
 
-import org.elasticsearch.script.Script;
-import org.elasticsearch.search.aggregations.bucket.terms.heuristic.ChiSquare;
-import org.elasticsearch.search.aggregations.bucket.terms.heuristic.GND;
-import org.elasticsearch.search.aggregations.bucket.terms.heuristic.JLHScore;
-import org.elasticsearch.search.aggregations.bucket.terms.heuristic.MutualInformation;
-import org.elasticsearch.search.aggregations.bucket.terms.heuristic.PercentageScore;
-import org.elasticsearch.search.aggregations.bucket.terms.heuristic.ScriptHeuristic;
+import org.opensearch.script.Script;
+import org.opensearch.search.aggregations.bucket.terms.heuristic.ChiSquare;
+import org.opensearch.search.aggregations.bucket.terms.heuristic.GND;
+import org.opensearch.search.aggregations.bucket.terms.heuristic.JLHScore;
+import org.opensearch.search.aggregations.bucket.terms.heuristic.MutualInformation;
+import org.opensearch.search.aggregations.bucket.terms.heuristic.PercentageScore;
+import org.opensearch.search.aggregations.bucket.terms.heuristic.ScriptHeuristic;
 
 /**
  * @author Michael C. Han

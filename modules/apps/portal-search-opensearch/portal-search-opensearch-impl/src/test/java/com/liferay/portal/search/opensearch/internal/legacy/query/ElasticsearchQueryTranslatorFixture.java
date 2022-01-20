@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.opensearch.internal.legacy.query;
 
-import com.liferay.portal.search.elasticsearch7.internal.filter.ElasticsearchFilterTranslatorFixture;
+import com.liferay.portal.search.opensearch.internal.filter.ElasticsearchFilterTranslatorFixture;
 
 /**
  * @author Michael C. Han

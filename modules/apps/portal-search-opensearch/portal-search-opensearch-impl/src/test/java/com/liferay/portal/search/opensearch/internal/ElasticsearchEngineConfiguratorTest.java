@@ -20,8 +20,8 @@ import com.liferay.portal.kernel.search.SearchEngine;
 import com.liferay.portal.kernel.search.SearchEngineHelper;
 import com.liferay.portal.kernel.test.util.PropsTestUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.search.elasticsearch7.internal.BaseSearchEngineConfigurator.DestinationServiceRegistrarHelper;
-import com.liferay.portal.search.elasticsearch7.internal.BaseSearchEngineConfigurator.SearchDestinationHelper;
+import com.liferay.portal.search.opensearch.internal.BaseSearchEngineConfigurator.DestinationServiceRegistrarHelper;
+import com.liferay.portal.search.opensearch.internal.BaseSearchEngineConfigurator.SearchDestinationHelper;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import java.util.Collections;

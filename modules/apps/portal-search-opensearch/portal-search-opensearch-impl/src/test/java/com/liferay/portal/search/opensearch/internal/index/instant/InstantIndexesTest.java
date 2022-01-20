@@ -14,17 +14,17 @@
 
 package com.liferay.portal.search.opensearch.internal.index.instant;
 
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchFixture;
-import com.liferay.portal.search.elasticsearch7.internal.index.IndexDefinitionsHolderImpl;
-import com.liferay.portal.search.elasticsearch7.internal.index.IndexSynchronizationPortalInitializedListener;
-import com.liferay.portal.search.elasticsearch7.internal.index.IndexSynchronizer;
-import com.liferay.portal.search.elasticsearch7.internal.index.IndexSynchronizerImpl;
-import com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.index.CreateIndexRequestExecutor;
-import com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.index.CreateIndexRequestExecutorImpl;
-import com.liferay.portal.search.elasticsearch7.internal.test.util.microcontainer.Microcontainer;
-import com.liferay.portal.search.elasticsearch7.internal.test.util.microcontainer.MicrocontainerImpl;
-import com.liferay.portal.search.elasticsearch7.spi.index.IndexRegistrar;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchClientResolver;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchFixture;
+import com.liferay.portal.search.opensearch.internal.index.IndexDefinitionsHolderImpl;
+import com.liferay.portal.search.opensearch.internal.index.IndexSynchronizationPortalInitializedListener;
+import com.liferay.portal.search.opensearch.internal.index.IndexSynchronizer;
+import com.liferay.portal.search.opensearch.internal.index.IndexSynchronizerImpl;
+import com.liferay.portal.search.opensearch.internal.search.engine.adapter.index.CreateIndexRequestExecutor;
+import com.liferay.portal.search.opensearch.internal.search.engine.adapter.index.CreateIndexRequestExecutorImpl;
+import com.liferay.portal.search.opensearch.internal.test.util.microcontainer.Microcontainer;
+import com.liferay.portal.search.opensearch.internal.test.util.microcontainer.MicrocontainerImpl;
+import com.liferay.portal.search.opensearch.spi.index.IndexRegistrar;
 import com.liferay.portal.search.spi.index.IndexDefinition;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
@@ -32,11 +32,11 @@ import java.io.IOException;
 
 import java.util.Arrays;
 
-import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
-import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
-import org.elasticsearch.client.IndicesClient;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.opensearch.action.admin.indices.get.GetIndexRequest;
+import org.opensearch.action.admin.indices.get.GetIndexResponse;
+import org.opensearch.client.IndicesClient;
+import org.opensearch.client.RequestOptions;
+import org.opensearch.client.RestHighLevelClient;
 
 import org.junit.AfterClass;
 import org.junit.Assert;

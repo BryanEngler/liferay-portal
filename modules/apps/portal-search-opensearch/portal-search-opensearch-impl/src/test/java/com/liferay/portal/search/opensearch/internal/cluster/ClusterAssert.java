@@ -14,9 +14,9 @@
 
 package com.liferay.portal.search.opensearch.internal.cluster;
 
-import com.liferay.portal.search.elasticsearch7.internal.connection.ClusterHealthResponseUtil;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
-import com.liferay.portal.search.elasticsearch7.internal.connection.HealthExpectations;
+import com.liferay.portal.search.opensearch.internal.connection.ClusterHealthResponseUtil;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchClientResolver;
+import com.liferay.portal.search.opensearch.internal.connection.HealthExpectations;
 
 import org.junit.Assert;
 

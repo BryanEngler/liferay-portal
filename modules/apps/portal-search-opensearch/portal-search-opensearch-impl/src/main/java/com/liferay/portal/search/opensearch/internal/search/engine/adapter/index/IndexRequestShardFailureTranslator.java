@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal.search.engine.adapter.inde
 
 import com.liferay.portal.search.engine.adapter.index.IndexRequestShardFailure;
 
-import org.elasticsearch.action.ShardOperationFailedException;
+import org.opensearch.action.ShardOperationFailedException;
 
 /**
  * @author Michael C. Han

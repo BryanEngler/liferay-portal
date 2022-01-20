@@ -24,12 +24,12 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConnectionConfiguration;
-import com.liferay.portal.search.elasticsearch7.internal.ElasticsearchSearchEngine;
-import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
-import com.liferay.portal.search.elasticsearch7.internal.configuration.OperationModeResolver;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnection;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
+import com.liferay.portal.search.opensearch.configuration.ElasticsearchConnectionConfiguration;
+import com.liferay.portal.search.opensearch.internal.ElasticsearchSearchEngine;
+import com.liferay.portal.search.opensearch.internal.configuration.ElasticsearchConfigurationWrapper;
+import com.liferay.portal.search.opensearch.internal.configuration.OperationModeResolver;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchConnection;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.engine.ConnectionInformation;
 import com.liferay.portal.search.engine.ConnectionInformationBuilder;
 import com.liferay.portal.search.engine.ConnectionInformationBuilderFactory;
@@ -51,11 +51,11 @@ import java.util.stream.Stream;
 
 import org.apache.http.util.EntityUtils;
 
-import org.elasticsearch.Version;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.opensearch.Version;
+import org.opensearch.client.Request;
+import org.opensearch.client.Response;
+import org.opensearch.client.RestClient;
+import org.opensearch.client.RestHighLevelClient;
 
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;

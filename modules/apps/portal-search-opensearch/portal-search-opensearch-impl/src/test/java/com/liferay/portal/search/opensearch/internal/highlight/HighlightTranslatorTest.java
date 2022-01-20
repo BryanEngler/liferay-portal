@@ -14,8 +14,8 @@
 
 package com.liferay.portal.search.opensearch.internal.highlight;
 
-import com.liferay.portal.search.elasticsearch7.internal.query.ElasticsearchQueryTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.query.ElasticsearchQueryTranslatorFixture;
+import com.liferay.portal.search.opensearch.internal.query.ElasticsearchQueryTranslator;
+import com.liferay.portal.search.opensearch.internal.query.ElasticsearchQueryTranslatorFixture;
 import com.liferay.portal.search.highlight.FieldConfig;
 import com.liferay.portal.search.highlight.Highlight;
 import com.liferay.portal.search.internal.highlight.FieldConfigImpl;
@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.search.fetch.subphase.highlight.HighlightBuilder;
 
 import org.junit.Assert;
 import org.junit.Before;

@@ -14,8 +14,8 @@
 
 package com.liferay.portal.search.opensearch.internal.aggregation.pipeline;
 
-import com.liferay.portal.search.elasticsearch7.internal.query.ElasticsearchQueryTranslatorFixture;
-import com.liferay.portal.search.elasticsearch7.internal.sort.ElasticsearchSortFieldTranslatorFixture;
+import com.liferay.portal.search.opensearch.internal.query.ElasticsearchQueryTranslatorFixture;
+import com.liferay.portal.search.opensearch.internal.sort.ElasticsearchSortFieldTranslatorFixture;
 
 /**
  * @author Michael C. Han

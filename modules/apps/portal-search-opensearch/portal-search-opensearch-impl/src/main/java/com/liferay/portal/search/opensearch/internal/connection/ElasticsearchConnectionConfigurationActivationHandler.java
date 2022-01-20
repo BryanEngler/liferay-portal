@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal.connection;
 
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.util.Http;
-import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConnectionConfiguration;
+import com.liferay.portal.search.opensearch.configuration.ElasticsearchConnectionConfiguration;
 
 import java.util.Map;
 

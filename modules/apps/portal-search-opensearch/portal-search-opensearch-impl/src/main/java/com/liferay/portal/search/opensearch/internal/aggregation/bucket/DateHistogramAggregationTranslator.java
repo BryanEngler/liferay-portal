@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal.aggregation.bucket;
 
 import com.liferay.portal.search.aggregation.bucket.DateHistogramAggregation;
 
-import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.histogram.DateHistogramAggregationBuilder;
 
 /**
  * @author Michael C. Han

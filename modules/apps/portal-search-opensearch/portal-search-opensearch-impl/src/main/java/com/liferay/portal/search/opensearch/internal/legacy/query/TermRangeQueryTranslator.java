@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal.legacy.query;
 
 import com.liferay.portal.kernel.search.TermRangeQuery;
 
-import org.elasticsearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
 
 /**
  * @author Miguel Angelo Caldas Gallindo

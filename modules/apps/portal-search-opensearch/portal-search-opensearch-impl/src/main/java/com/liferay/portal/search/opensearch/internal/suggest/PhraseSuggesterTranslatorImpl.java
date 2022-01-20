@@ -20,11 +20,11 @@ import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Set;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.suggest.SuggestBuilders;
-import org.elasticsearch.search.suggest.SuggestionBuilder;
-import org.elasticsearch.search.suggest.phrase.DirectCandidateGeneratorBuilder;
-import org.elasticsearch.search.suggest.phrase.PhraseSuggestionBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.search.suggest.SuggestBuilders;
+import org.opensearch.search.suggest.SuggestionBuilder;
+import org.opensearch.search.suggest.phrase.DirectCandidateGeneratorBuilder;
+import org.opensearch.search.suggest.phrase.PhraseSuggestionBuilder;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

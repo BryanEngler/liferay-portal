@@ -21,7 +21,7 @@ import com.liferay.portal.search.aggregation.pipeline.PipelineAggregation;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.elasticsearch.search.aggregations.Aggregations;
+import org.opensearch.search.aggregations.Aggregations;
 
 /**
  * @author André de Oliveira

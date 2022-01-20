@@ -17,7 +17,7 @@ package com.liferay.portal.search.opensearch.internal.query;
 import com.liferay.portal.search.query.MatchQuery;
 import com.liferay.portal.search.query.Operator;
 
-import org.elasticsearch.index.query.ZeroTermsQueryOption;
+import org.opensearch.index.query.ZeroTermsQueryOption;
 
 /**
  * @author Michael C. Han

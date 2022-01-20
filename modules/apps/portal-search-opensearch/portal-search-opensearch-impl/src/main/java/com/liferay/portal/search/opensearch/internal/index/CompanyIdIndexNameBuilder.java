@@ -16,8 +16,8 @@ package com.liferay.portal.search.opensearch.internal.index;
 
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationObserver;
-import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
+import com.liferay.portal.search.opensearch.internal.configuration.ElasticsearchConfigurationObserver;
+import com.liferay.portal.search.opensearch.internal.configuration.ElasticsearchConfigurationWrapper;
 import com.liferay.portal.search.index.IndexNameBuilder;
 
 import org.osgi.service.component.annotations.Activate;

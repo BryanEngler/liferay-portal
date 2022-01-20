@@ -31,13 +31,13 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchInstancePaths;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchInstanceSettingsBuilder;
-import com.liferay.portal.search.elasticsearch7.internal.connection.HttpPortRange;
-import com.liferay.portal.search.elasticsearch7.internal.index.constants.SidecarVersionConstants;
-import com.liferay.portal.search.elasticsearch7.internal.util.ResourceUtil;
-import com.liferay.portal.search.elasticsearch7.settings.SettingsContributor;
+import com.liferay.portal.search.opensearch.internal.configuration.ElasticsearchConfigurationWrapper;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchInstancePaths;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchInstanceSettingsBuilder;
+import com.liferay.portal.search.opensearch.internal.connection.HttpPortRange;
+import com.liferay.portal.search.opensearch.internal.index.constants.SidecarVersionConstants;
+import com.liferay.portal.search.opensearch.internal.util.ResourceUtil;
+import com.liferay.portal.search.opensearch.settings.SettingsContributor;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,7 +64,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.elasticsearch.common.settings.Settings;
+import org.opensearch.common.settings.Settings;
 
 import org.objectweb.asm.Opcodes;
 

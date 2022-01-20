@@ -29,9 +29,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.Consumer;
 
-import org.elasticsearch.common.Strings;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
+import org.opensearch.common.Strings;
+import org.opensearch.common.xcontent.XContentBuilder;
+import org.opensearch.common.xcontent.XContentFactory;
 
 import org.junit.After;
 import org.junit.Assert;

@@ -16,9 +16,9 @@ package com.liferay.portal.search.opensearch.internal.settings;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.settings.SettingsException;
-import org.elasticsearch.common.xcontent.XContentType;
+import org.opensearch.common.settings.Settings;
+import org.opensearch.common.settings.SettingsException;
+import org.opensearch.common.xcontent.XContentType;
 
 /**
  * @author André de Oliveira

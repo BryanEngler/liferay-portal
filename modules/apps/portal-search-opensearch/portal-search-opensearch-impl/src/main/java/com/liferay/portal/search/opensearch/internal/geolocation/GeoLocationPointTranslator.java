@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal.geolocation;
 
 import com.liferay.portal.search.geolocation.GeoLocationPoint;
 
-import org.elasticsearch.common.geo.GeoPoint;
+import org.opensearch.common.geo.GeoPoint;
 
 /**
  * @author André de Oliveira

@@ -19,10 +19,10 @@ import com.liferay.portal.search.query.StringQuery;
 
 import java.util.Map;
 
-import org.elasticsearch.common.unit.Fuzziness;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.QueryStringQueryBuilder;
+import org.opensearch.common.unit.Fuzziness;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.QueryStringQueryBuilder;
 
 import org.osgi.service.component.annotations.Component;
 

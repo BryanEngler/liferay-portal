@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal.query;
 
 import com.liferay.portal.search.query.GeoDistanceRangeQuery;
 
-import org.elasticsearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
 
 /**
  * @author Michael C. Han

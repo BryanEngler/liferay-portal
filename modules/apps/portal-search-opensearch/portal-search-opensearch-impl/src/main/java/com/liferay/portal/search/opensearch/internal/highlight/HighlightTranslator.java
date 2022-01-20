@@ -22,8 +22,8 @@ import com.liferay.portal.search.query.QueryTranslator;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.search.fetch.subphase.highlight.HighlightBuilder;
 
 /**
  * @author Michael C. Han

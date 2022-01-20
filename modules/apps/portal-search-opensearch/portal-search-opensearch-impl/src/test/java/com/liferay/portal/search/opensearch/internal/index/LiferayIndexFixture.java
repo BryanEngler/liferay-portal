@@ -14,19 +14,19 @@
 
 package com.liferay.portal.search.opensearch.internal.index;
 
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchFixture;
-import com.liferay.portal.search.elasticsearch7.internal.connection.IndexCreator;
-import com.liferay.portal.search.elasticsearch7.internal.connection.IndexName;
-import com.liferay.portal.search.elasticsearch7.internal.index.constants.LiferayTypeMappingsConstants;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchFixture;
+import com.liferay.portal.search.opensearch.internal.connection.IndexCreator;
+import com.liferay.portal.search.opensearch.internal.connection.IndexName;
+import com.liferay.portal.search.opensearch.internal.index.constants.LiferayTypeMappingsConstants;
 
 import java.io.IOException;
 
 import java.util.Map;
 
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.Requests;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.opensearch.action.index.IndexRequest;
+import org.opensearch.client.RequestOptions;
+import org.opensearch.client.Requests;
+import org.opensearch.client.RestHighLevelClient;
 
 /**
  * @author André de Oliveira

@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.opensearch.internal.index;
 
-import com.liferay.portal.search.elasticsearch7.spi.index.IndexRegistrar;
+import com.liferay.portal.search.opensearch.spi.index.IndexRegistrar;
 
 /**
  * @author André de Oliveira

@@ -19,7 +19,7 @@ import com.liferay.portal.kernel.search.facet.collector.TermCollector;
 
 import java.util.List;
 
-import org.elasticsearch.search.aggregations.bucket.range.Range;
+import org.opensearch.search.aggregations.bucket.range.Range;
 
 /**
  * @author André de Oliveira

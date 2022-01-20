@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.opensearch.action.search.SearchRequestBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

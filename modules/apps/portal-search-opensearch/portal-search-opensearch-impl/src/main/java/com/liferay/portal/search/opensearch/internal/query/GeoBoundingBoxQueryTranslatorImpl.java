@@ -14,14 +14,14 @@
 
 package com.liferay.portal.search.opensearch.internal.query;
 
-import com.liferay.portal.search.elasticsearch7.internal.geolocation.GeoLocationPointTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.query.geolocation.GeoExecTypeTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.query.geolocation.GeoValidationMethodTranslator;
+import com.liferay.portal.search.opensearch.internal.geolocation.GeoLocationPointTranslator;
+import com.liferay.portal.search.opensearch.internal.query.geolocation.GeoExecTypeTranslator;
+import com.liferay.portal.search.opensearch.internal.query.geolocation.GeoValidationMethodTranslator;
 import com.liferay.portal.search.query.GeoBoundingBoxQuery;
 
-import org.elasticsearch.index.query.GeoBoundingBoxQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.opensearch.index.query.GeoBoundingBoxQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
 
 import org.osgi.service.component.annotations.Component;
 

@@ -14,17 +14,17 @@
 
 package com.liferay.portal.search.opensearch.internal.document;
 
-import com.liferay.portal.search.elasticsearch7.internal.connection.IndexName;
-import com.liferay.portal.search.elasticsearch7.internal.query.QueryBuilderFactory;
-import com.liferay.portal.search.elasticsearch7.internal.query.SearchAssert;
+import com.liferay.portal.search.opensearch.internal.connection.IndexName;
+import com.liferay.portal.search.opensearch.internal.query.QueryBuilderFactory;
+import com.liferay.portal.search.opensearch.internal.query.SearchAssert;
 
 import java.io.IOException;
 
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.Requests;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.index.query.QueryBuilder;
+import org.opensearch.action.index.IndexRequest;
+import org.opensearch.client.RequestOptions;
+import org.opensearch.client.Requests;
+import org.opensearch.client.RestHighLevelClient;
+import org.opensearch.index.query.QueryBuilder;
 
 /**
  * @author André de Oliveira

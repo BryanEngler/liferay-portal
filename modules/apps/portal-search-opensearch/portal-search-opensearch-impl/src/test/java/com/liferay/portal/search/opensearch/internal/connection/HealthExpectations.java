@@ -16,8 +16,8 @@ package com.liferay.portal.search.opensearch.internal.connection;
 
 import com.liferay.petra.string.StringBundler;
 
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.cluster.health.ClusterHealthStatus;
+import org.opensearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.opensearch.cluster.health.ClusterHealthStatus;
 
 /**
  * @author André de Oliveira

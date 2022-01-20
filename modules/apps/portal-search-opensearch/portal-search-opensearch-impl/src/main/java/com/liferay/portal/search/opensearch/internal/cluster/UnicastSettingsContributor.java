@@ -16,10 +16,10 @@ package com.liferay.portal.search.opensearch.internal.cluster;
 
 import com.liferay.petra.string.CharPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
-import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration;
-import com.liferay.portal.search.elasticsearch7.internal.settings.BaseSettingsContributor;
-import com.liferay.portal.search.elasticsearch7.settings.ClientSettingsHelper;
-import com.liferay.portal.search.elasticsearch7.settings.SettingsContributor;
+import com.liferay.portal.search.opensearch.configuration.ElasticsearchConfiguration;
+import com.liferay.portal.search.opensearch.internal.settings.BaseSettingsContributor;
+import com.liferay.portal.search.opensearch.settings.ClientSettingsHelper;
+import com.liferay.portal.search.opensearch.settings.SettingsContributor;
 
 import java.util.Map;
 

@@ -14,8 +14,8 @@
 
 package com.liferay.portal.search.opensearch.internal.connection.helper;
 
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
-import org.elasticsearch.common.settings.Settings;
+import org.opensearch.action.admin.indices.create.CreateIndexRequest;
+import org.opensearch.common.settings.Settings;
 
 /**
  * @author André de Oliveira

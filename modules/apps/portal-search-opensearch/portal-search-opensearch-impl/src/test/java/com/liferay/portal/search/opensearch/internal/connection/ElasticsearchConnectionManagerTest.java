@@ -15,13 +15,13 @@
 package com.liferay.portal.search.opensearch.internal.connection;
 
 import com.liferay.portal.kernel.util.Http;
-import com.liferay.portal.search.elasticsearch7.configuration.RESTClientLoggerLevel;
-import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
-import com.liferay.portal.search.elasticsearch7.internal.configuration.OperationModeResolver;
-import com.liferay.portal.search.elasticsearch7.internal.connection.constants.ConnectionConstants;
+import com.liferay.portal.search.opensearch.configuration.RESTClientLoggerLevel;
+import com.liferay.portal.search.opensearch.internal.configuration.ElasticsearchConfigurationWrapper;
+import com.liferay.portal.search.opensearch.internal.configuration.OperationModeResolver;
+import com.liferay.portal.search.opensearch.internal.connection.constants.ConnectionConstants;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
-import org.elasticsearch.client.RestHighLevelClient;
+import org.opensearch.client.RestHighLevelClient;
 
 import org.junit.Assert;
 import org.junit.Before;

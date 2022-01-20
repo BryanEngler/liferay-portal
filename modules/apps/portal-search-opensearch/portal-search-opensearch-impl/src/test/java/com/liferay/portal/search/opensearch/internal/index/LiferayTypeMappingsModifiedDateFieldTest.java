@@ -15,14 +15,14 @@
 package com.liferay.portal.search.opensearch.internal.index;
 
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.search.elasticsearch7.internal.connection.IndexName;
+import com.liferay.portal.search.opensearch.internal.connection.IndexName;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import java.util.Collections;
 import java.util.Date;
 
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.ElasticsearchStatusException;
+import org.opensearch.ElasticsearchException;
+import org.opensearch.ElasticsearchStatusException;
 
 import org.junit.After;
 import org.junit.Before;

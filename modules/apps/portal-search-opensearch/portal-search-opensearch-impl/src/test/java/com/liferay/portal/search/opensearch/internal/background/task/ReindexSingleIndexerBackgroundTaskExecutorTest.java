@@ -14,14 +14,14 @@
 
 package com.liferay.portal.search.opensearch.internal.background.task;
 
-import com.liferay.portal.search.elasticsearch7.internal.ElasticsearchSearchEngineFixture;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionFixture;
-import com.liferay.portal.search.elasticsearch7.internal.index.FieldMappingAssert;
-import com.liferay.portal.search.elasticsearch7.internal.index.constants.LiferayTypeMappingsConstants;
+import com.liferay.portal.search.opensearch.internal.ElasticsearchSearchEngineFixture;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchConnectionFixture;
+import com.liferay.portal.search.opensearch.internal.index.FieldMappingAssert;
+import com.liferay.portal.search.opensearch.internal.index.constants.LiferayTypeMappingsConstants;
 import com.liferay.portal.search.test.util.background.task.BaseReindexSingleIndexerBackgroundTaskExecutorTestCase;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
-import org.elasticsearch.client.RestHighLevelClient;
+import org.opensearch.client.RestHighLevelClient;
 
 import org.junit.ClassRule;
 import org.junit.Rule;

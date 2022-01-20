@@ -24,9 +24,9 @@ import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConnectionConfiguration;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
-import com.liferay.portal.search.elasticsearch7.internal.connection.constants.ConnectionConstants;
+import com.liferay.portal.search.opensearch.configuration.ElasticsearchConnectionConfiguration;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchConnectionManager;
+import com.liferay.portal.search.opensearch.internal.connection.constants.ConnectionConstants;
 
 import java.util.Dictionary;
 import java.util.ResourceBundle;

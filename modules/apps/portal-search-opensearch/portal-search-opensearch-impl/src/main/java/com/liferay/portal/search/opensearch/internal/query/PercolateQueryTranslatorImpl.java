@@ -19,11 +19,11 @@ import com.liferay.portal.search.query.PercolateQuery;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.elasticsearch.common.bytes.BytesArray;
-import org.elasticsearch.common.bytes.BytesReference;
-import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.percolator.PercolateQueryBuilder;
+import org.opensearch.common.bytes.BytesArray;
+import org.opensearch.common.bytes.BytesReference;
+import org.opensearch.common.xcontent.XContentType;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.percolator.PercolateQueryBuilder;
 
 import org.osgi.service.component.annotations.Component;
 

@@ -16,7 +16,7 @@ package com.liferay.portal.search.opensearch.internal.search.engine.adapter.snap
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.snapshot.GetSnapshotRepositoriesRequest;
 import com.liferay.portal.search.engine.adapter.snapshot.GetSnapshotRepositoriesResponse;
 import com.liferay.portal.search.engine.adapter.snapshot.SnapshotRepositoryDetails;
@@ -27,15 +27,15 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.elasticsearch.ElasticsearchStatusException;
-import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
-import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.SnapshotClient;
-import org.elasticsearch.cluster.metadata.RepositoryMetadata;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.repositories.RepositoryMissingException;
+import org.opensearch.ElasticsearchStatusException;
+import org.opensearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
+import org.opensearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
+import org.opensearch.client.RequestOptions;
+import org.opensearch.client.RestHighLevelClient;
+import org.opensearch.client.SnapshotClient;
+import org.opensearch.cluster.metadata.RepositoryMetadata;
+import org.opensearch.common.settings.Settings;
+import org.opensearch.repositories.RepositoryMissingException;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

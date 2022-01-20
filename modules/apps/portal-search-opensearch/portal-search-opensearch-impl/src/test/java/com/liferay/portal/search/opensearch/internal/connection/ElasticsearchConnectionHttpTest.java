@@ -27,9 +27,9 @@ import java.util.List;
 
 import org.apache.http.HttpHost;
 
-import org.elasticsearch.client.Node;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.opensearch.client.Node;
+import org.opensearch.client.RestClient;
+import org.opensearch.client.RestHighLevelClient;
 
 import org.hamcrest.CoreMatchers;
 

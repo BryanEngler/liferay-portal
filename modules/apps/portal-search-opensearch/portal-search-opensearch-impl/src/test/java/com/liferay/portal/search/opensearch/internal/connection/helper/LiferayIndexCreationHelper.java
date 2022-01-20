@@ -15,12 +15,12 @@
 package com.liferay.portal.search.opensearch.internal.connection.helper;
 
 import com.liferay.portal.json.JSONFactoryImpl;
-import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
-import com.liferay.portal.search.elasticsearch7.internal.index.LiferayDocumentTypeFactory;
+import com.liferay.portal.search.opensearch.internal.connection.ElasticsearchClientResolver;
+import com.liferay.portal.search.opensearch.internal.index.LiferayDocumentTypeFactory;
 
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.settings.Settings;
+import org.opensearch.action.admin.indices.create.CreateIndexRequest;
+import org.opensearch.client.RestHighLevelClient;
+import org.opensearch.common.settings.Settings;
 
 /**
  * @author André de Oliveira

@@ -19,8 +19,8 @@ import com.liferay.portal.search.stats.StatsResponse;
 
 import java.util.Map;
 
-import org.elasticsearch.search.aggregations.Aggregation;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.aggregations.Aggregation;
+import org.opensearch.search.builder.SearchSourceBuilder;
 
 /**
  * @author Michael C. Han
