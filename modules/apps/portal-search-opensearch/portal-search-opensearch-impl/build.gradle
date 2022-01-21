@@ -5,7 +5,7 @@ task cleanSidecar
 task deploySidecar(type: Copy)
 
 String opensearchClientVersion = "1.2.4"
-String luceneVersion = "8.9.0"
+String luceneVersion = "8.10.1"
 String sidecarOpensearchServerVersion = file('src/main/resources/META-INF/sidecar.version').text
 
 String opensearchDownloadURL = "https://artifacts.opensearch.org/releases/core/opensearch/${sidecarOpensearchServerVersion}/opensearch-min-${sidecarOpensearchServerVersion}-linux-x64.tar.gz"

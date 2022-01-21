@@ -139,7 +139,7 @@ public class ElasticsearchServerUtil {
 
 			_mainMethod = ReflectionUtil.getDeclaredMethod(
 				classLoader.loadClass(
-					"org.opensearch.bootstrap.Elasticsearch"),
+					"org.opensearch.bootstrap.OpenSearch"),
 				"main", String[].class);
 
 			Class<?> bootstrapClass = classLoader.loadClass(

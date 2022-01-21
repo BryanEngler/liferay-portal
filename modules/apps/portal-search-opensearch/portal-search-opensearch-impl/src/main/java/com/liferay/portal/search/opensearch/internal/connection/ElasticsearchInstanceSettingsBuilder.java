@@ -223,7 +223,7 @@ public class ElasticsearchInstanceSettingsBuilder {
 	protected void configurePaths() {
 		Path workPath = _elasticsearchInstancePaths.getWorkPath();
 
-		Path dataParentPath = workPath.resolve("data/elasticsearch7");
+		Path dataParentPath = workPath.resolve("data/opensearch");
 
 		Path homePath = getHomePath();
 

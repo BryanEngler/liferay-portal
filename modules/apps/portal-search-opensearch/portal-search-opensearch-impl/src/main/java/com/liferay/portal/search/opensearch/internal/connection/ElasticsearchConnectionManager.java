@@ -80,9 +80,9 @@ public class ElasticsearchConnectionManager
 
 					_log.error(
 						StringBundler.concat(
-							"Elasticsearch sidecar could not be started. ",
+							"OpenSearch sidecar could not be started. ",
 							"Search will be unavailable. Manual installation ",
-							"of Elasticsearch and activation of remote mode ",
+							"of OpenSearch and activation of remote mode ",
 							"is recommended."),
 						runtimeException);
 				}
@@ -190,7 +190,7 @@ public class ElasticsearchConnectionManager
 		if (elasticsearchConnection == null) {
 			throw new ElasticsearchConnectionNotInitializedException(
 				_getExceptionMessage(
-					"Elasticsearch connection not found.", connectionId,
+					"OpenSearch connection not found.", connectionId,
 					preferLocalCluster));
 		}
 
