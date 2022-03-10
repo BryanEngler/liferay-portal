@@ -201,7 +201,8 @@ public class UserExpandoColumnModelListener
 					 ExpandoColumnConstants.FLOAT_ARRAY)) {
 
 			entityField = new DoubleEntityField(
-				encodedName, locale -> encodedIndexedFieldName);
+				encodedName,
+				locale -> encodedIndexedFieldName + "_Number_sortable");
 		}
 		else if ((expandoColumn.getType() == ExpandoColumnConstants.INTEGER) ||
 				 (expandoColumn.getType() ==
@@ -214,7 +215,8 @@ public class UserExpandoColumnModelListener
 					 ExpandoColumnConstants.SHORT_ARRAY)) {
 
 			entityField = new IntegerEntityField(
-				encodedName, locale -> encodedIndexedFieldName);
+				encodedName,
+				locale -> encodedIndexedFieldName + "_Number_sortable");
 		}
 		else if (expandoColumn.getType() ==
 					ExpandoColumnConstants.STRING_LOCALIZED) {
