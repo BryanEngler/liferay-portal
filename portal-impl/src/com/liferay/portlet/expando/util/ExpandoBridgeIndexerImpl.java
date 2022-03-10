@@ -126,25 +126,41 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 			document.addDate(fieldName, expandoValue.getDate());
 		}
 		else if (type == ExpandoColumnConstants.DOUBLE) {
-			document.addKeyword(fieldName, expandoValue.getDouble());
+			document.addNumberSortable(fieldName, expandoValue.getDouble());
 		}
 		else if (type == ExpandoColumnConstants.DOUBLE_ARRAY) {
 			if (!defaultValue) {
-				document.addKeyword(fieldName, expandoValue.getDoubleArray());
+				double[] doubleValues = expandoValue.getDoubleArray();
+
+				Double[] doubleArray = new Double[doubleValues.length];
+
+				for (int i = 0; i < doubleArray.length; i++) {
+					doubleArray[i] = new Double(doubleValues[i]);
+				}
+
+				document.addNumberSortable(fieldName, doubleArray);
 			}
 			else {
-				document.addKeyword(fieldName, new double[0]);
+				document.addNumberSortable(fieldName, new Double[0]);
 			}
 		}
 		else if (type == ExpandoColumnConstants.FLOAT) {
-			document.addKeyword(fieldName, expandoValue.getFloat());
+			document.addNumberSortable(fieldName, expandoValue.getFloat());
 		}
 		else if (type == ExpandoColumnConstants.FLOAT_ARRAY) {
 			if (!defaultValue) {
-				document.addKeyword(fieldName, expandoValue.getFloatArray());
+				float[] floatValues = expandoValue.getFloatArray();
+
+				Float[] floatArray = new Float[floatValues.length];
+
+				for (int i = 0; i < floatArray.length; i++) {
+					floatArray[i] = new Float(floatValues[i]);
+				}
+
+				document.addNumberSortable(fieldName, floatArray);
 			}
 			else {
-				document.addKeyword(fieldName, new float[0]);
+				document.addNumberSortable(fieldName, new Float[0]);
 			}
 		}
 		else if (type == ExpandoColumnConstants.GEOLOCATION) {
@@ -157,50 +173,68 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 				fieldName.concat("_geolocation"), latitude, longitude);
 		}
 		else if (type == ExpandoColumnConstants.INTEGER) {
-			document.addKeyword(fieldName, expandoValue.getInteger());
+			document.addNumberSortable(fieldName, expandoValue.getInteger());
 		}
 		else if (type == ExpandoColumnConstants.INTEGER_ARRAY) {
 			if (!defaultValue) {
-				document.addKeyword(fieldName, expandoValue.getIntegerArray());
+				int[] intergerValues = expandoValue.getIntegerArray();
+
+				Integer[] integerArray = new Integer[intergerValues.length];
+
+				for (int i = 0; i < integerArray.length; i++) {
+					integerArray[i] = new Integer(intergerValues[i]);
+				}
+
+				document.addNumberSortable(fieldName, integerArray);
 			}
 			else {
-				document.addKeyword(fieldName, new int[0]);
+				document.addNumberSortable(fieldName, new Float[0]);
 			}
 		}
 		else if (type == ExpandoColumnConstants.LONG) {
-			document.addKeyword(fieldName, expandoValue.getLong());
+			document.addNumberSortable(fieldName, expandoValue.getLong());
 		}
 		else if (type == ExpandoColumnConstants.LONG_ARRAY) {
 			if (!defaultValue) {
-				document.addKeyword(fieldName, expandoValue.getLongArray());
+				document.addNumberSortable(fieldName,
+					ArrayUtil.toLongArray(expandoValue.getLongArray()));
 			}
 			else {
-				document.addKeyword(fieldName, new long[0]);
+				document.addNumberSortable(fieldName, new Long[0]);
 			}
 		}
 		else if (type == ExpandoColumnConstants.NUMBER) {
-			document.addKeyword(
-				fieldName, String.valueOf(expandoValue.getNumber()));
+			document.addNumberSortable(
+				fieldName, expandoValue.getNumber().longValue());
 		}
 		else if (type == ExpandoColumnConstants.NUMBER_ARRAY) {
 			if (!defaultValue) {
-				document.addKeyword(
+				document.addNumberSortable(
 					fieldName,
-					ArrayUtil.toStringArray(expandoValue.getNumberArray()));
+					ArrayUtil.toLongArray(expandoValue.getNumberArray()));
 			}
 			else {
-				document.addKeyword(fieldName, new long[0]);
+				document.addNumberSortable(fieldName, new Long[0]);
 			}
 		}
 		else if (type == ExpandoColumnConstants.SHORT) {
-			document.addKeyword(fieldName, expandoValue.getShort());
+			document.addNumberSortable(fieldName,
+				new Long(expandoValue.getShort()));
 		}
 		else if (type == ExpandoColumnConstants.SHORT_ARRAY) {
 			if (!defaultValue) {
-				document.addKeyword(fieldName, expandoValue.getShortArray());
+				short[] shortValues = expandoValue.getShortArray();
+
+				Long[] longArray = new Long[shortValues.length];
+
+				for (int i = 0; i < longArray.length; i++) {
+					longArray[i] = new Long(shortValues[i]);
+				}
+
+				document.addNumberSortable(fieldName, longArray);
 			}
 			else {
-				document.addKeyword(fieldName, new short[0]);
+				document.addNumberSortable(fieldName, new Long[0]);
 			}
 		}
 		else if (type == ExpandoColumnConstants.STRING) {
