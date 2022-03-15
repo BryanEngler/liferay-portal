@@ -252,7 +252,7 @@ public abstract class BaseSXPBlueprintResourceTestCase {
 				Pagination.of(1, 2), null);
 
 			assertEquals(
-				Collections.singletonList(sxpBlueprint1),
+				entityField.getName(), Collections.singletonList(sxpBlueprint1),
 				(List<SXPBlueprint>)page.getItems());
 		}
 	}
@@ -281,7 +281,7 @@ public abstract class BaseSXPBlueprintResourceTestCase {
 				Pagination.of(1, 2), null);
 
 			assertEquals(
-				Collections.singletonList(sxpBlueprint1),
+				entityField.getName(), Collections.singletonList(sxpBlueprint1),
 				(List<SXPBlueprint>)page.getItems());
 		}
 	}
@@ -310,7 +310,7 @@ public abstract class BaseSXPBlueprintResourceTestCase {
 				Pagination.of(1, 2), null);
 
 			assertEquals(
-				Collections.singletonList(sxpBlueprint1),
+				entityField.getName(), Collections.singletonList(sxpBlueprint1),
 				(List<SXPBlueprint>)page.getItems());
 		}
 	}
@@ -474,6 +474,7 @@ public abstract class BaseSXPBlueprintResourceTestCase {
 					entityField.getName() + ":asc");
 
 			assertEquals(
+				entityField.getName(),
 				Arrays.asList(sxpBlueprint1, sxpBlueprint2),
 				(List<SXPBlueprint>)ascPage.getItems());
 
@@ -483,6 +484,7 @@ public abstract class BaseSXPBlueprintResourceTestCase {
 					entityField.getName() + ":desc");
 
 			assertEquals(
+				entityField.getName(),
 				Arrays.asList(sxpBlueprint2, sxpBlueprint1),
 				(List<SXPBlueprint>)descPage.getItems());
 		}
@@ -749,9 +751,11 @@ public abstract class BaseSXPBlueprintResourceTestCase {
 	}
 
 	protected void assertEquals(
-		List<SXPBlueprint> sxpBlueprints1, List<SXPBlueprint> sxpBlueprints2) {
+		String message, List<SXPBlueprint> sxpBlueprints1,
+		List<SXPBlueprint> sxpBlueprints2) {
 
-		Assert.assertEquals(sxpBlueprints1.size(), sxpBlueprints2.size());
+		Assert.assertEquals(
+			message, sxpBlueprints1.size(), sxpBlueprints2.size());
 
 		for (int i = 0; i < sxpBlueprints1.size(); i++) {
 			SXPBlueprint sxpBlueprint1 = sxpBlueprints1.get(i);
