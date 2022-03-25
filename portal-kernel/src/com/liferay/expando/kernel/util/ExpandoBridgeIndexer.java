@@ -15,6 +15,7 @@
 package com.liferay.expando.kernel.util;
 
 import com.liferay.expando.kernel.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.portal.kernel.search.Document;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -29,7 +30,6 @@ public interface ExpandoBridgeIndexer {
 
 	public String encodeFieldName(String columnName, int indexType);
 
-	public String encodeIndexedFieldName(
-		String columnName, int columnType, int indexType);
+	public String encodeIndexedFieldName(ExpandoColumn expandoColumn);
 
 }

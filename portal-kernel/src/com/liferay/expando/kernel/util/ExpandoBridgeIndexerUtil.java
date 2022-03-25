@@ -15,6 +15,7 @@
 package com.liferay.expando.kernel.util;
 
 import com.liferay.expando.kernel.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.portal.kernel.search.Document;
 
 /**
@@ -32,11 +33,8 @@ public class ExpandoBridgeIndexerUtil {
 		return _expandoBridgeIndexer.encodeFieldName(columnName, indexType);
 	}
 
-	public static String encodeIndexedFieldName(
-		String columnName, int columnType, int indexType) {
-
-		return _expandoBridgeIndexer.encodeIndexedFieldName(
-			columnName, columnType, indexType);
+	public static String encodeIndexedFieldName(ExpandoColumn expandoColumn) {
+		return _expandoBridgeIndexer.encodeIndexedFieldName(expandoColumn);
 	}
 
 	public static ExpandoBridgeIndexer getExpandoBridgeIndexer() {

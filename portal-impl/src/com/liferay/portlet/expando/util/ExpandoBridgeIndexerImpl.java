@@ -64,42 +64,23 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 
 	@Override
 	public String encodeFieldName(String columnName, int indexType) {
-		return encodeIndexedFieldName(columnName, 0, indexType);
+		return _encodeIndexedFieldName(columnName, 0, indexType);
 	}
 
 	@Override
-	public String encodeIndexedFieldName(
-		String columnName, int columnType, int indexType) {
+	public String encodeIndexedFieldName(ExpandoColumn expandoColumn) {
+		UnicodeProperties unicodeProperties =
+			expandoColumn.getTypeSettingsProperties();
 
-		StringBundler sb = new StringBundler(7);
+		int indexType = GetterUtil.getInteger(
+			unicodeProperties.get(ExpandoColumnConstants.INDEX_TYPE));
 
-		sb.append(FIELD_NAMESPACE);
-		sb.append(StringPool.DOUBLE_UNDERLINE);
-
-		if (indexType == ExpandoColumnConstants.INDEX_TYPE_KEYWORD) {
-			sb.append("keyword__");
+		if (indexType == ExpandoColumnConstants.INDEX_TYPE_NONE) {
+			return StringPool.BLANK;
 		}
 
-		sb.append(
-			StringUtil.toLowerCase(ExpandoTableConstants.DEFAULT_TABLE_NAME));
-		sb.append(StringPool.DOUBLE_UNDERLINE);
-		sb.append(columnName);
-
-		if ((columnType == ExpandoColumnConstants.DOUBLE) ||
-			(columnType == ExpandoColumnConstants.DOUBLE_ARRAY) ||
-			(columnType == ExpandoColumnConstants.FLOAT) ||
-			(columnType == ExpandoColumnConstants.FLOAT_ARRAY) ||
-			(columnType == ExpandoColumnConstants.INTEGER) ||
-			(columnType == ExpandoColumnConstants.INTEGER_ARRAY) ||
-			(columnType == ExpandoColumnConstants.LONG) ||
-			(columnType == ExpandoColumnConstants.LONG_ARRAY) ||
-			(columnType == ExpandoColumnConstants.SHORT) ||
-			(columnType == ExpandoColumnConstants.SHORT_ARRAY)) {
-
-			sb.append("_Number_sortable");
-		}
-
-		return sb.toString();
+		return _encodeIndexedFieldName(
+			expandoColumn.getName(), expandoColumn.getType(), indexType);
 	}
 
 	protected void addAttribute(
@@ -336,6 +317,40 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 	}
 
 	protected static final String FIELD_NAMESPACE = "expando";
+
+	private String _encodeIndexedFieldName(
+		String columnName, int columnType, int indexType) {
+
+		StringBundler sb = new StringBundler(7);
+
+		sb.append(FIELD_NAMESPACE);
+		sb.append(StringPool.DOUBLE_UNDERLINE);
+
+		if (indexType == ExpandoColumnConstants.INDEX_TYPE_KEYWORD) {
+			sb.append("keyword__");
+		}
+
+		sb.append(
+			StringUtil.toLowerCase(ExpandoTableConstants.DEFAULT_TABLE_NAME));
+		sb.append(StringPool.DOUBLE_UNDERLINE);
+		sb.append(columnName);
+
+		if ((columnType == ExpandoColumnConstants.DOUBLE) ||
+			(columnType == ExpandoColumnConstants.DOUBLE_ARRAY) ||
+			(columnType == ExpandoColumnConstants.FLOAT) ||
+			(columnType == ExpandoColumnConstants.FLOAT_ARRAY) ||
+			(columnType == ExpandoColumnConstants.INTEGER) ||
+			(columnType == ExpandoColumnConstants.INTEGER_ARRAY) ||
+			(columnType == ExpandoColumnConstants.LONG) ||
+			(columnType == ExpandoColumnConstants.LONG_ARRAY) ||
+			(columnType == ExpandoColumnConstants.SHORT) ||
+			(columnType == ExpandoColumnConstants.SHORT_ARRAY)) {
+
+			sb.append("_Number_sortable");
+		}
+
+		return sb.toString();
+	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ExpandoBridgeIndexerImpl.class);
