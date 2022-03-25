@@ -336,17 +336,29 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 		sb.append(columnName);
 
 		if ((columnType == ExpandoColumnConstants.DOUBLE) ||
-			(columnType == ExpandoColumnConstants.DOUBLE_ARRAY) ||
-			(columnType == ExpandoColumnConstants.FLOAT) ||
-			(columnType == ExpandoColumnConstants.FLOAT_ARRAY) ||
-			(columnType == ExpandoColumnConstants.INTEGER) ||
-			(columnType == ExpandoColumnConstants.INTEGER_ARRAY) ||
-			(columnType == ExpandoColumnConstants.LONG) ||
-			(columnType == ExpandoColumnConstants.LONG_ARRAY) ||
-			(columnType == ExpandoColumnConstants.SHORT) ||
-			(columnType == ExpandoColumnConstants.SHORT_ARRAY)) {
+			(columnType == ExpandoColumnConstants.DOUBLE_ARRAY)) {
 
-			sb.append("_Number_sortable");
+			sb.append("_Double_sortable");
+		}
+		else if ((columnType == ExpandoColumnConstants.FLOAT) ||
+				 (columnType == ExpandoColumnConstants.FLOAT_ARRAY)) {
+
+			sb.append("_Float_sortable");
+		}
+		else if ((columnType == ExpandoColumnConstants.INTEGER) ||
+				 (columnType == ExpandoColumnConstants.INTEGER_ARRAY)) {
+
+			sb.append("_Integer_sortable");
+		}
+		else if ((columnType == ExpandoColumnConstants.LONG) ||
+				 (columnType == ExpandoColumnConstants.LONG_ARRAY)) {
+
+			sb.append("_Long_sortable");
+		}
+		else if ((columnType == ExpandoColumnConstants.SHORT) ||
+				 (columnType == ExpandoColumnConstants.SHORT_ARRAY)) {
+
+			sb.append("_Short_sortable");
 		}
 
 		return sb.toString();
