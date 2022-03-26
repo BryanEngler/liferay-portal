@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Document;
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -126,7 +127,13 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 			document.addDate(fieldName, expandoValue.getDate());
 		}
 		else if (type == ExpandoColumnConstants.DOUBLE) {
-			document.addKeyword(fieldName, expandoValue.getDouble());
+			Field field =
+				new Field(fieldName, String.valueOf(expandoValue.getDouble()));
+
+			field.setNumeric(true);
+			field.setNumericClass(Double.class);
+
+			document.add(field);
 		}
 		else if (type == ExpandoColumnConstants.DOUBLE_ARRAY) {
 			if (!defaultValue) {
