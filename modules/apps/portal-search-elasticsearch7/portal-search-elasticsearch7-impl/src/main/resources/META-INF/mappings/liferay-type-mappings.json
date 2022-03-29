@@ -555,6 +555,56 @@
 					"match": "expando__*",
 					"match_mapping_type": "string"
 				}
+			},
+			{
+				"template_expando_double_sortable": {
+					"mapping": {
+						"store": true,
+						"type": "double"
+					},
+					"match": "expando__*Double_sortable",
+					"match_mapping_type": "double"
+				}
+			},
+			{
+				"template_expando_float_sortable": {
+					"mapping": {
+						"store": true,
+						"type": "float"
+					},
+					"match": "expando__*_Float_sortable",
+					"match_mapping_type": "double"
+				}
+			},
+			{
+				"template_expando_integer_sortable": {
+					"mapping": {
+						"store": true,
+						"type": "integer"
+					},
+					"match": "expando__*_Integer_sortable",
+					"match_mapping_type": "long"
+				}
+			},
+			{
+				"template_expando_long_sortable": {
+					"mapping": {
+						"store": true,
+						"type": "long"
+					},
+					"match": "expando__*_Long_sortable",
+					"match_mapping_type": "long"
+				}
+			},
+			{
+				"template_expando_short_sortable": {
+					"mapping": {
+						"store": true,
+						"type": "short"
+					},
+					"match": "expando__*_Short_sortable",
+					"match_mapping_type": "long"
+				}
 			}
 		],
 		"properties": {
