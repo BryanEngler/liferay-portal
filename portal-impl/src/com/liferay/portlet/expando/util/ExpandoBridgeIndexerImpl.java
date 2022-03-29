@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Document;
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -40,8 +41,6 @@ import com.liferay.portlet.expando.model.impl.ExpandoValueImpl;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.lang.ArrayUtils;
 
 /**
  * @author Raymond Augé
@@ -96,6 +95,8 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 
 		String fieldName = encodeFieldName(expandoColumn.getName(), indexType);
 
+		String indexedFieldName = encodeIndexedFieldName(expandoColumn);
+
 		ExpandoValue expandoValue = new ExpandoValueImpl();
 
 		expandoValue.setColumnId(expandoColumn.getColumnId());
@@ -130,29 +131,59 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 			document.addDate(fieldName, expandoValue.getDate());
 		}
 		else if (type == ExpandoColumnConstants.DOUBLE) {
-			document.addNumberSortable(fieldName, expandoValue.getDouble());
+			Field field = new Field(
+				indexedFieldName, String.valueOf(expandoValue.getDouble()));
+
+			field.setNumeric(true);
+			field.setNumericClass(Double.class);
+
+			document.add(field);
+
+			document.addKeyword(fieldName, expandoValue.getDouble());
 		}
 		else if (type == ExpandoColumnConstants.DOUBLE_ARRAY) {
 			if (!defaultValue) {
-				document.addNumberSortable(
-					fieldName,
-					ArrayUtils.toObject(expandoValue.getDoubleArray()));
+				Field field = new Field(
+					indexedFieldName,
+					ArrayUtil.toStringArray(expandoValue.getDoubleArray()));
+
+				field.setNumeric(true);
+				field.setNumericClass(Double.class);
+
+				document.add(field);
+
+				document.addKeyword(fieldName, expandoValue.getDoubleArray());
 			}
 			else {
-				document.addNumberSortable(fieldName, new Double[0]);
+				document.addKeyword(fieldName, new double[0]);
 			}
 		}
 		else if (type == ExpandoColumnConstants.FLOAT) {
-			document.addNumberSortable(fieldName, expandoValue.getFloat());
+			Field field = new Field(
+				indexedFieldName, String.valueOf(expandoValue.getFloat()));
+
+			field.setNumeric(true);
+			field.setNumericClass(Float.class);
+
+			document.add(field);
+
+			document.addKeyword(fieldName, expandoValue.getFloat());
 		}
 		else if (type == ExpandoColumnConstants.FLOAT_ARRAY) {
 			if (!defaultValue) {
-				document.addNumberSortable(
-					fieldName,
-					ArrayUtils.toObject(expandoValue.getFloatArray()));
+				Field field = new Field(
+					indexedFieldName,
+					ArrayUtil.toStringArray(expandoValue.getFloatArray()));
+
+				field.setNumeric(true);
+				field.setNumericClass(Float.class);
+
+				document.add(field);
+
+				document.addKeyword(fieldName, expandoValue.getFloatArray());
 			}
 			else {
-				document.addNumberSortable(fieldName, new Float[0]);
+				document.addKeyword(fieldName, new float[0]);
 			}
 		}
 		else if (type == ExpandoColumnConstants.GEOLOCATION) {
@@ -165,65 +196,122 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 				fieldName.concat("_geolocation"), latitude, longitude);
 		}
 		else if (type == ExpandoColumnConstants.INTEGER) {
-			document.addNumberSortable(fieldName, expandoValue.getInteger());
+			Field field = new Field(
+				indexedFieldName, String.valueOf(expandoValue.getInteger()));
+
+			field.setNumeric(true);
+			field.setNumericClass(Integer.class);
+
+			document.add(field);
+
+			document.addKeyword(fieldName, expandoValue.getInteger());
 		}
 		else if (type == ExpandoColumnConstants.INTEGER_ARRAY) {
 			if (!defaultValue) {
-				document.addNumberSortable(
-					fieldName,
-					ArrayUtils.toObject(expandoValue.getIntegerArray()));
+				Field field = new Field(
+					indexedFieldName,
+					ArrayUtil.toStringArray(expandoValue.getIntegerArray()));
+
+				field.setNumeric(true);
+				field.setNumericClass(Float.class);
+
+				document.add(field);
+
+				document.addKeyword(fieldName, expandoValue.getIntegerArray());
 			}
 			else {
-				document.addNumberSortable(fieldName, new Integer[0]);
+				document.addKeyword(fieldName, new int[0]);
 			}
 		}
 		else if (type == ExpandoColumnConstants.LONG) {
-			document.addNumberSortable(fieldName, expandoValue.getLong());
+			Field field = new Field(
+				indexedFieldName, String.valueOf(expandoValue.getLong()));
+
+			field.setNumeric(true);
+			field.setNumericClass(Long.class);
+
+			document.add(field);
+
+			document.addKeyword(fieldName, expandoValue.getLong());
 		}
 		else if (type == ExpandoColumnConstants.LONG_ARRAY) {
 			if (!defaultValue) {
-				document.addNumberSortable(
-					fieldName,
-					ArrayUtil.toLongArray(expandoValue.getLongArray()));
+				Field field = new Field(
+					indexedFieldName,
+					ArrayUtil.toStringArray(expandoValue.getLongArray()));
+
+				field.setNumeric(true);
+				field.setNumericClass(Long.class);
+
+				document.add(field);
+
+				document.addKeyword(fieldName, expandoValue.getLongArray());
 			}
 			else {
-				document.addNumberSortable(fieldName, new Long[0]);
+				document.addKeyword(fieldName, new long[0]);
 			}
 		}
 		else if (type == ExpandoColumnConstants.NUMBER) {
 			Number number = expandoValue.getNumber();
 
-			document.addNumberSortable(fieldName, number.longValue());
+			Field field = new Field(
+				indexedFieldName, String.valueOf(number.longValue()));
+
+			field.setNumeric(true);
+			field.setNumericClass(Long.class);
+
+			document.add(field);
+
+			document.addKeyword(
+				fieldName, String.valueOf(expandoValue.getNumber()));
 		}
 		else if (type == ExpandoColumnConstants.NUMBER_ARRAY) {
 			if (!defaultValue) {
-				document.addNumberSortable(
+				String[] stringValues = ArrayUtil.toStringArray(
+					expandoValue.getNumberArray());
+
+				Field field = new Field(
+					indexedFieldName, String.valueOf(stringValues));
+
+				field.setNumeric(true);
+				field.setNumericClass(Long.class);
+
+				document.add(field);
+
+				document.addKeyword(
 					fieldName,
-					ArrayUtil.toLongArray(expandoValue.getNumberArray()));
+					ArrayUtil.toStringArray(expandoValue.getNumberArray()));
 			}
 			else {
-				document.addNumberSortable(fieldName, new Long[0]);
+				document.addKeyword(fieldName, new long[0]);
 			}
 		}
 		else if (type == ExpandoColumnConstants.SHORT) {
-			document.addNumberSortable(
-				fieldName, Integer.valueOf(expandoValue.getShort()));
+			Field field = new Field(
+				indexedFieldName, String.valueOf(expandoValue.getShort()));
+
+			field.setNumeric(true);
+			field.setNumericClass(Short.class);
+
+			document.add(field);
+
+			document.addKeyword(fieldName, expandoValue.getShort());
 		}
 		else if (type == ExpandoColumnConstants.SHORT_ARRAY) {
 			if (!defaultValue) {
-				Short[] shortArray = ArrayUtils.toObject(
-					expandoValue.getShortArray());
+				Field field = new Field(
+					indexedFieldName,
+					ArrayUtil.toStringArray(expandoValue.getShortArray()));
 
-				Integer[] integerArray = new Integer[shortArray.length];
+				field.setNumeric(true);
+				field.setNumericClass(Short.class);
 
-				for (int i = 0; i < integerArray.length; i++) {
-					integerArray[i] = Integer.valueOf(shortArray[i]);
-				}
+				document.add(field);
 
-				document.addNumberSortable(fieldName, integerArray);
+				document.addKeyword(fieldName, expandoValue.getShortArray());
 			}
 			else {
-				document.addNumberSortable(fieldName, new Integer[0]);
+				document.addKeyword(fieldName, new short[0]);
 			}
 		}
 		else if (type == ExpandoColumnConstants.STRING) {
