@@ -172,20 +172,20 @@ public class OrganizationExpandoColumnModelListener
 
 		String encodedName = _encodeName(expandoColumn);
 
-		String encodedIndexedFieldName =
+		String encodedSortableFieldName =
 			_expandoBridgeIndexer.encodeSortableFieldName(expandoColumn);
 
 		EntityField entityField = null;
 
 		if (expandoColumn.getType() == ExpandoColumnConstants.BOOLEAN) {
 			entityField = new BooleanEntityField(
-				encodedName, locale -> encodedIndexedFieldName);
+				encodedName, locale -> encodedSortableFieldName);
 		}
 		else if (expandoColumn.getType() == ExpandoColumnConstants.DATE) {
 			entityField = new DateTimeEntityField(
 				encodedName,
-				locale -> Field.getSortableFieldName(encodedIndexedFieldName),
-				locale -> encodedIndexedFieldName);
+				locale -> Field.getSortableFieldName(encodedSortableFieldName),
+				locale -> encodedSortableFieldName);
 		}
 		else if ((expandoColumn.getType() == ExpandoColumnConstants.DOUBLE) ||
 				 (expandoColumn.getType() ==
@@ -195,7 +195,7 @@ public class OrganizationExpandoColumnModelListener
 					 ExpandoColumnConstants.FLOAT_ARRAY)) {
 
 			entityField = new DoubleEntityField(
-				encodedName, locale -> encodedIndexedFieldName);
+				encodedName, locale -> encodedSortableFieldName);
 		}
 		else if ((expandoColumn.getType() == ExpandoColumnConstants.INTEGER) ||
 				 (expandoColumn.getType() ==
@@ -208,7 +208,7 @@ public class OrganizationExpandoColumnModelListener
 					 ExpandoColumnConstants.SHORT_ARRAY)) {
 
 			entityField = new IntegerEntityField(
-				encodedName, locale -> encodedIndexedFieldName);
+				encodedName, locale -> encodedSortableFieldName);
 		}
 		else if (expandoColumn.getType() ==
 					ExpandoColumnConstants.STRING_LOCALIZED) {
@@ -216,11 +216,11 @@ public class OrganizationExpandoColumnModelListener
 			entityField = new StringEntityField(
 				encodedName,
 				locale -> Field.getLocalizedName(
-					locale, encodedIndexedFieldName));
+					locale, encodedSortableFieldName));
 		}
 		else {
 			entityField = new StringEntityField(
-				encodedName, locale -> encodedIndexedFieldName);
+				encodedName, locale -> encodedSortableFieldName);
 		}
 
 		return Optional.of(entityField);
