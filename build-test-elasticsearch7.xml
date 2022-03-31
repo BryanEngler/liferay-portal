@@ -22,6 +22,16 @@
 		</else>
 	</if>
 
+	<if>
+		<isset property="try.local.network" />
+		<then>
+			<property name="try.local.network" value="${try.local.network}" />
+		</then>
+		<else>
+			<property name="try.local.network" value="true" />
+		</else>
+	</if>
+
 	<property name="elastic.kibana.dir" value="${app.server.parent.dir}/kibana-${elasticsearch.version}" />
 	<property name="elastic.kibana.tar.name.linux" value="kibana-${elasticsearch.version}-linux-x86_64.tar.gz" />
 	<property name="elastic.kibana.tar.name.mac" value="kibana-${elasticsearch.version}-darwin-x86_64.tar.gz" />
@@ -525,6 +535,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 						dest="${elasticsearch.dir}/${elasticsearch.analysis-icu.zip.name}"
 						skipChecksum="true"
 						src="${elasticsearch.analysis-icu.zip.url}"
+						tryLocalNetwork="${try.local.network}"
 					/>
 				</then>
 			</if>
@@ -538,6 +549,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 						dest="${elasticsearch.dir}/${elasticsearch.analysis-kuromoji.zip.name}"
 						skipChecksum="true"
 						src="${elasticsearch.analysis-kuromoji.zip.url}"
+						tryLocalNetwork="${try.local.network}"
 					/>
 				</then>
 			</if>
@@ -551,6 +563,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 						dest="${elasticsearch.dir}/${elasticsearch.analysis-smartcn.zip.name}"
 						skipChecksum="true"
 						src="${elasticsearch.analysis-smartcn.zip.url}"
+						tryLocalNetwork="${try.local.network}"
 					/>
 				</then>
 			</if>
@@ -564,6 +577,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 						dest="${elasticsearch.dir}/${elasticsearch.analysis-stempel.zip.name}"
 						skipChecksum="true"
 						src="${elasticsearch.analysis-stempel.zip.url}"
+						tryLocalNetwork="${try.local.network}"
 					/>
 				</then>
 			</if>
@@ -616,6 +630,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 						dest="${elasticsearch.dir}/${elasticsearch.ltr.zip.name}"
 						skipChecksum="true"
 						src="https://github.com/o19s/elasticsearch-learning-to-rank/releases/download/v${ltr.plugin.version}-es${elasticsearch.version}/${elasticsearch.ltr.zip.name}"
+						tryLocalNetwork="${try.local.network}"
 					/>
 				</then>
 			</if>
@@ -829,6 +844,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 						dest="${liferay.home}/${boston-dataset-index.zip.name}"
 						skipChecksum="true"
 						src="http://files.liferay.com/private/apps/elastic/elasticsearch/${boston-dataset-index.zip.name}"
+						tryLocalNetwork="${try.local.network}"
 					/>
 				</then>
 			</if>
@@ -856,6 +872,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 								dest="${app.server.parent.dir}/${elasticsearch.tar.name.mac}"
 								skipChecksum="true"
 								src="${elasticsearch.tar.url.mac}"
+								tryLocalNetwork="${try.local.network}"
 							/>
 						</then>
 					</if>
@@ -885,6 +902,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 								dest="${app.server.parent.dir}/${elasticsearch.tar.name.linux}"
 								skipChecksum="true"
 								src="${elasticsearch.tar.url.linux}"
+								tryLocalNetwork="${try.local.network}"
 							/>
 						</then>
 					</if>
@@ -909,6 +927,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 								dest="${app.server.parent.dir}/${elasticsearch.zip.name.windows}"
 								skipChecksum="true"
 								src="${elasticsearch.zip.url.windows}"
+								tryLocalNetwork="${try.local.network}"
 							/>
 						</then>
 					</if>
@@ -948,6 +967,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 								dest="${app.server.parent.dir}/${elastic.kibana.tar.name.mac}"
 								skipChecksum="true"
 								src="${elastic.kibana.tar.url.mac}"
+								tryLocalNetwork="${try.local.network}"
 							/>
 						</then>
 					</if>
@@ -976,6 +996,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 								dest="${app.server.parent.dir}/${elastic.kibana.tar.name.linux}"
 								skipChecksum="true"
 								src="${elastic.kibana.tar.url.linux}"
+								tryLocalNetwork="${try.local.network}"
 							/>
 						</then>
 					</if>
@@ -1005,6 +1026,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 								dest="${app.server.parent.dir}/${elastic.kibana.zip.name.windows}"
 								skipChecksum="true"
 								src="${elastic.kibana.zip.url.windows}"
+								tryLocalNetwork="${try.local.network}"
 							/>
 						</then>
 					</if>
@@ -1046,6 +1068,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 						dest="${liferay.home}/${ltr-linear-regression-model.zip.name}"
 						skipChecksum="true"
 						src="http://files.liferay.com/private/apps/elastic/elasticsearch/${ltr-linear-regression-model.zip.name}"
+						tryLocalNetwork="${try.local.network}"
 					/>
 				</then>
 			</if>
@@ -1084,30 +1107,35 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 			dest="${liferay.home}"
 			skipChecksum="true"
 			src="${elasticsearch.sidecar.analysis-icu.zip.url}"
+			tryLocalNetwork="${try.local.network}"
 		/>
 
 		<mirrors-get
 			dest="${liferay.home}"
 			skipChecksum="true"
 			src="${elasticsearch.sidecar.analysis-kuromoji.zip.url}"
+			tryLocalNetwork="${try.local.network}"
 		/>
 
 		<mirrors-get
 			dest="${liferay.home}"
 			skipChecksum="true"
 			src="${elasticsearch.sidecar.analysis-smartcn.zip.url}"
+			tryLocalNetwork="${try.local.network}"
 		/>
 
 		<mirrors-get
 			dest="${liferay.home}"
 			skipChecksum="true"
 			src="${elasticsearch.sidecar.analysis-stempel.zip.url}"
+			tryLocalNetwork="${try.local.network}"
 		/>
 
 		<mirrors-get
 			dest="${liferay.home}"
 			skipChecksum="true"
 			src="${elasticsearch.sidecar.no.jdk.tar.url}"
+			tryLocalNetwork="${try.local.network}"
 		/>
 	</target>
 
