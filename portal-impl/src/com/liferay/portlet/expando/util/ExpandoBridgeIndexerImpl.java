@@ -63,11 +63,11 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 
 	@Override
 	public String encodeFieldName(String columnName, int indexType) {
-		return _encodeIndexedFieldName(columnName, 0, indexType);
+		return _encodeSortableFieldName(columnName, 0, indexType);
 	}
 
 	@Override
-	public String encodeIndexedFieldName(ExpandoColumn expandoColumn) {
+	public String encodeSortableFieldName(ExpandoColumn expandoColumn) {
 		UnicodeProperties unicodeProperties =
 			expandoColumn.getTypeSettingsProperties();
 
@@ -78,7 +78,7 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 			return StringPool.BLANK;
 		}
 
-		return _encodeIndexedFieldName(
+		return _encodeSortableFieldName(
 			expandoColumn.getName(), expandoColumn.getType(), indexType);
 	}
 
@@ -95,7 +95,7 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 
 		String fieldName = encodeFieldName(expandoColumn.getName(), indexType);
 
-		String indexedFieldName = encodeIndexedFieldName(expandoColumn);
+		String indexedFieldName = encodeSortableFieldName(expandoColumn);
 
 		ExpandoValue expandoValue = new ExpandoValueImpl();
 
@@ -406,7 +406,7 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 
 	protected static final String FIELD_NAMESPACE = "expando";
 
-	private String _encodeIndexedFieldName(
+	private String _encodeSortableFieldName(
 		String columnName, int columnType, int indexType) {
 
 		StringBundler sb = new StringBundler(7);

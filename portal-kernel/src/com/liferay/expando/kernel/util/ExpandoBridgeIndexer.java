@@ -30,6 +30,6 @@ public interface ExpandoBridgeIndexer {
 
 	public String encodeFieldName(String columnName, int indexType);
 
-	public String encodeIndexedFieldName(ExpandoColumn expandoColumn);
+	public String encodeSortableFieldName(ExpandoColumn expandoColumn);
 
 }
