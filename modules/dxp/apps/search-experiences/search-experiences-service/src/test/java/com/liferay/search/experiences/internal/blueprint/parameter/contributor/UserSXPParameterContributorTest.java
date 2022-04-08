@@ -93,13 +93,13 @@ public class UserSXPParameterContributorTest {
 
 	@Test
 	public void testActiveSegmentEntryIds() throws Exception {
-		long[] values = _randomLongArray(2);
+		long[] segmentsEntryIds = _randomLongArray(2);
 
 		_userSXPParameterContributor = new UserSXPParameterContributor(
 			_createExpandoColumnLocalService(Collections.emptyList()),
 			_createExpandoValueLocalService(Collections.emptyList()), _language,
 			_createRoleLocalService(Collections.emptyList()),
-			_createSegmentsEntryRetriever(values),
+			_createSegmentsEntryRetriever(segmentsEntryIds),
 			_createUserGroupGroupRoleLocalService(Collections.emptyList()),
 			_createUserGroupLocalService(Collections.emptyList()),
 			_createUserGroupRoleLocalService(Collections.emptyList()),
@@ -111,7 +111,8 @@ public class UserSXPParameterContributorTest {
 		Assert.assertTrue(
 			_sxpParameterExists(
 				"user.active_segment_entry_ids",
-				x -> Arrays.equals(ArrayUtils.toPrimitive((Long[])x), values)));
+				value -> Arrays.equals(
+					ArrayUtils.toPrimitive((Long[])value), segmentsEntryIds)));
 	}
 
 	@Test
@@ -160,14 +161,12 @@ public class UserSXPParameterContributorTest {
 
 	@Test
 	public void testCurrentSiteRoleIds() throws Exception {
-		long[] values = {
-			RandomTestUtil.randomLong(), RandomTestUtil.randomLong()
-		};
+		long[] roleIds = _randomLongArray(2);
 
 		UserGroupRole userGroupRole1 = Mockito.mock(UserGroupRole.class);
 
 		Mockito.doReturn(
-			values[0]
+			roleIds[0]
 		).when(
 			userGroupRole1
 		).getRoleId();
@@ -175,7 +174,7 @@ public class UserSXPParameterContributorTest {
 		UserGroupRole userGroupRole2 = Mockito.mock(UserGroupRole.class);
 
 		Mockito.doReturn(
-			values[1]
+			roleIds[1]
 		).when(
 			userGroupRole2
 		).getRoleId();
@@ -197,7 +196,8 @@ public class UserSXPParameterContributorTest {
 		Assert.assertTrue(
 			_sxpParameterExists(
 				"user.current_site_role_ids",
-				x -> Arrays.equals(ArrayUtils.toPrimitive((Long[])x), values)));
+				value -> Arrays.equals(
+					ArrayUtils.toPrimitive((Long[])value), roleIds)));
 	}
 
 	@Test
@@ -252,9 +252,9 @@ public class UserSXPParameterContributorTest {
 	public void testEmailDomain() throws Exception {
 		_testSXPParameter(
 			x -> {
-				String[] array = StringUtil.split(_user.getEmailAddress(), "@");
+				String[] parts = StringUtil.split(_user.getEmailAddress(), "@");
 
-				return x.equals(array[1]);
+				return x.equals(parts[1]);
 			},
 			"user.email_domain");
 	}
