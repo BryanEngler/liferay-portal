@@ -83,8 +83,9 @@ public class UserSXPParameterContributorTest {
 
 		_locale = LocaleUtil.US;
 
-		_setUpUser(RandomTestUtil.randomLong());
 		_setUpLanguage();
+		_setUpUser(RandomTestUtil.randomLong());
+
 		_setUpSearchContext();
 
 		_sxpParameters = new HashSet<>();
