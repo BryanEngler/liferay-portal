@@ -32,6 +32,8 @@ import com.liferay.portal.kernel.scheduler.Trigger;
 import com.liferay.portal.kernel.scheduler.TriggerFactory;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
@@ -85,6 +87,17 @@ public class CheckAssetEntryMessageListener extends BaseMessageListener {
 		_assetEntriesCheckerUtil.checkAssetEntries();
 	}
 
+	private Date _getFutureDate() {
+		Calendar calendar = Calendar.getInstance();
+
+		calendar.setLenient(true);
+		calendar.setTime(new Date());
+
+		calendar.add(Calendar.MINUTE, 10);
+
+		return calendar.getTime();
+	}
+
 	private Trigger _getTrigger(String checkCronExpression, int checkInterval) {
 		Trigger trigger = null;
 
@@ -95,7 +108,8 @@ public class CheckAssetEntryMessageListener extends BaseMessageListener {
 		if (Validator.isNotNull(checkCronExpression)) {
 			try {
 				trigger = _triggerFactory.createTrigger(
-					className, className, null, null, checkCronExpression);
+					className, className, _getFutureDate(), null,
+					checkCronExpression);
 			}
 			catch (RuntimeException runtimeException) {
 				if (_log.isWarnEnabled()) {
@@ -106,7 +120,8 @@ public class CheckAssetEntryMessageListener extends BaseMessageListener {
 
 		if (trigger == null) {
 			trigger = _triggerFactory.createTrigger(
-				className, className, null, null, checkInterval, TimeUnit.HOUR);
+				className, className, _getFutureDate(), null, checkInterval,
+				TimeUnit.HOUR);
 		}
 
 		return trigger;
