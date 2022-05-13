@@ -28,10 +28,12 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.Searcher;
+import com.liferay.portal.search.web.constants.SearchBarPortletKeys;
 import com.liferay.portal.search.web.internal.display.context.PortletRequestThemeDisplaySupplier;
 import com.liferay.portal.search.web.internal.display.context.ThemeDisplaySupplier;
 import com.liferay.portal.search.web.internal.portlet.preferences.PortletPreferencesLookup;
@@ -218,6 +220,18 @@ public class PortletSharedSearchRequestImpl
 			(LayoutTypePortlet)layout.getLayoutType();
 
 		List<Portlet> portlets = layoutTypePortlet.getAllPortlets(false);
+
+		if (!ListUtil.exists(
+				portlets,
+				portlet -> Objects.equals(
+					portlet.getRootPortletId(),
+					SearchBarPortletKeys.SEARCH_BAR))) {
+
+			Portlet searchBarPortlet = portletLocalService.fetchPortletById(
+				companyId, SearchBarPortletKeys.SEARCH_BAR);
+
+			portlets.add(searchBarPortlet);
+		}
 
 		if (Objects.equals(layout.getType(), LayoutConstants.TYPE_PORTLET)) {
 			return portlets;
