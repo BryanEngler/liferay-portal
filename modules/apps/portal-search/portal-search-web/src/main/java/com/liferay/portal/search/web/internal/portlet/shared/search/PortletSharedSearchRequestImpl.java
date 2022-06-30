@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.Searcher;
 import com.liferay.portal.search.web.constants.SearchBarPortletKeys;
+import com.liferay.portal.search.web.constants.SearchResultsPortletKeys;
 import com.liferay.portal.search.web.internal.display.context.PortletRequestThemeDisplaySupplier;
 import com.liferay.portal.search.web.internal.display.context.ThemeDisplaySupplier;
 import com.liferay.portal.search.web.internal.portlet.preferences.PortletPreferencesLookup;
@@ -225,7 +226,12 @@ public class PortletSharedSearchRequestImpl
 				portlets,
 				portlet -> Objects.equals(
 					portlet.getRootPortletId(),
-					SearchBarPortletKeys.SEARCH_BAR))) {
+					SearchBarPortletKeys.SEARCH_BAR)) &&
+			ListUtil.exists(
+				portlets,
+				portlet -> Objects.equals(
+					portlet.getRootPortletId(),
+					SearchResultsPortletKeys.SEARCH_RESULTS))) {
 
 			Portlet searchBarPortlet = portletLocalService.fetchPortletById(
 				companyId, SearchBarPortletKeys.SEARCH_BAR);
