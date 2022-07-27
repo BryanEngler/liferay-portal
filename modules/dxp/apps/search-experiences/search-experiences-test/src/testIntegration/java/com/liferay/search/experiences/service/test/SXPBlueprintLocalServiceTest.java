@@ -80,6 +80,8 @@ public class SXPBlueprintLocalServiceTest {
 
 		try {
 			_addSXPBlueprint(sxpBlueprint.getUserId());
+
+			Assert.fail();
 		}
 		catch (DuplicateSXPBlueprintExternalReferenceCodeException
 					duplicateSXPBlueprintExternalReferenceCodeException) {
