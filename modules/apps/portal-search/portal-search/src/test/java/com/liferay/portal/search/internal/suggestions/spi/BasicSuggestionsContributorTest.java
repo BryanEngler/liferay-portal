@@ -33,6 +33,7 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.search.document.Document;
 import com.liferay.portal.search.hits.SearchHit;
 import com.liferay.portal.search.hits.SearchHits;
+import com.liferay.portal.search.internal.suggestions.SuggestionBuilderFactoryImpl;
 import com.liferay.portal.search.rest.dto.v1_0.SuggestionsContributorConfiguration;
 import com.liferay.portal.search.searcher.SearchRequest;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
@@ -47,6 +48,7 @@ import com.liferay.portal.search.suggestions.SuggestionsContributorResultsBuilde
 import com.liferay.portal.search.suggestions.SuggestionsContributorResultsBuilderFactory;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 import javax.portlet.MutableRenderParameters;
@@ -91,7 +93,7 @@ public class BasicSuggestionsContributorTest {
 			_basicSuggestionsContributor, "_searcher", _searcher);
 		ReflectionTestUtil.setFieldValue(
 			_basicSuggestionsContributor, "_suggestionBuilderFactory",
-			_suggestionBuilderFactory);
+			new SuggestionBuilderFactoryImpl());
 		ReflectionTestUtil.setFieldValue(
 			_basicSuggestionsContributor,
 			"_suggestionsContributorResultsBuilderFactory",
@@ -145,17 +147,22 @@ public class BasicSuggestionsContributorTest {
 		).toString();
 
 		SuggestionsContributorResults suggestionsContributorResults =
-			Mockito.mock(SuggestionsContributorResults.class);
-
-		_setUpSuggestionsContributorResultsBuilderFactory(
-			suggestionsContributorResults);
-
-		Assert.assertEquals(
-			suggestionsContributorResults,
 			_basicSuggestionsContributor.getSuggestionsContributorResults(
 				_liferayPortletRequest, liferayPortletResponse,
 				Mockito.mock(SearchContext.class),
 				Mockito.mock(SuggestionsContributorConfiguration.class)));
+
+		Assert.assertEquals(
+			suggestionsContributorResults.getDisplayGroupName(), "test");
+
+		List<Suggestion> suggestions =
+			suggestionsContributorResults.getSuggestions();
+
+		Suggestion suggestion = suggestions.get(0);
+
+		Assert.assertEquals(suggestion.getText(), "suggestion one");
+		Assert.assertEquals(suggestion.getScore(), 2.5);
+		//Assert.assertEquals(suggestion.getAttribute("fields"), HashMap);
 
 		Mockito.verify(
 			_assetRendererFactory, Mockito.times(1)
@@ -368,7 +375,7 @@ public class BasicSuggestionsContributorTest {
 	}
 
 	private void _setUpSuggestionBuilderFactory() {
-		SuggestionBuilder suggestionBuilder = Mockito.mock(
+		SuggestionBuilder suggestionBuilder = Mockito.mock( //dont mock
 			SuggestionBuilder.class);
 
 		Mockito.doReturn(
@@ -412,7 +419,7 @@ public class BasicSuggestionsContributorTest {
 		SuggestionsContributorResults suggestionsContributorResults) {
 
 		SuggestionsContributorResultsBuilder
-			suggestionsContributorResultsBuilder = Mockito.mock(
+			suggestionsContributorResultsBuilder = Mockito.mock( //dont mock
 				SuggestionsContributorResultsBuilder.class);
 
 		Mockito.doReturn(
