@@ -14,11 +14,13 @@
 
 package com.liferay.search.experiences.internal.upgrade.registry;
 
+import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.portal.kernel.upgrade.BaseExternalReferenceCodeUpgradeProcess;
 import com.liferay.portal.kernel.upgrade.UpgradeProcessFactory;
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Petteri Karttunen
@@ -63,6 +65,14 @@ public class SXPServiceUpgradeStepRegistrator
 			"1.3.0", "1.3.1",
 			new com.liferay.search.experiences.internal.upgrade.v1_3_1.
 				SXPBlueprintUpgradeProcess());
+
+		registry.register(
+			"1.3.1", "1.4.0",
+			new com.liferay.search.experiences.internal.upgrade.v1_4_0.
+				SXPUpgradeProcess(_assetCategoryLocalService));
 	}
+
+	@Reference
+	private AssetCategoryLocalService _assetCategoryLocalService;
 
 }
