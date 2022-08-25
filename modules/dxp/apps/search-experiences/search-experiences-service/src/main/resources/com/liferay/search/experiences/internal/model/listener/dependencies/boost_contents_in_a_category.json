@@ -30,7 +30,7 @@
 				{
 					"fields": [
 						{
-							"label": "Asset Category Names (ID)",
+							"label": "Asset Category IDs",
 							"name": "asset_category_ids",
 							"type": "categorySelector",
 							"typeOptions": {
