@@ -42,6 +42,7 @@ public interface CategoryFacetSearchContributor {
 		public CategoryFacetBuilder selectedCategoryIds(
 			long... selectedCategoryIds);
 
+		public CategoryFacetBuilder vocabularyIds(String[] vocabularyIds);
 	}
 
 }
