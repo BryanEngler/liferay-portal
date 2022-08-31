@@ -14,7 +14,6 @@
 
 package com.liferay.portal.search.internal.facet.category;
 
-import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.search.facet.Facet;
 import com.liferay.portal.search.facet.FacetFactory;
@@ -33,12 +32,12 @@ public class CategoryFacetFactoryImpl implements CategoryFacetFactory {
 
 	@Override
 	public String getFacetClassName() {
-		return Field.ASSET_CATEGORY_IDS;
+		return "assetVocabularyCategoryIds";
 	}
 
 	@Override
 	public Facet newInstance(SearchContext searchContext) {
-		return new FacetImpl(Field.ASSET_CATEGORY_IDS, searchContext);
+		return new FacetImpl("assetVocabularyCategoryIds", searchContext);
 	}
 
 }
