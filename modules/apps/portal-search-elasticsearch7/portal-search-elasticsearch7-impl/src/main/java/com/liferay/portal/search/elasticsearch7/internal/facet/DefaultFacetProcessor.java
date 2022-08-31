@@ -23,6 +23,7 @@ import java.util.Optional;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.IncludeExclude;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 import org.osgi.service.component.annotations.Component;
@@ -59,6 +60,13 @@ public class DefaultFacetProcessor
 
 		if (size > 0) {
 			termsAggregationBuilder.size(size);
+		}
+
+		String include = dataJSONObject.getString("include", null);
+
+		if (include != null) {
+			termsAggregationBuilder.includeExclude(
+				new IncludeExclude(include, null));
 		}
 
 		return Optional.of(termsAggregationBuilder);
