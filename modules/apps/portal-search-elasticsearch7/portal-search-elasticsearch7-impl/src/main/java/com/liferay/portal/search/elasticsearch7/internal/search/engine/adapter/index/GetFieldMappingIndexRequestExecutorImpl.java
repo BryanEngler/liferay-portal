@@ -54,36 +54,33 @@ public class GetFieldMappingIndexRequestExecutorImpl
 			_getGetFieldMappingsResponse(
 				getFieldMappingsRequest, getFieldMappingIndexRequest);
 
-		Map
-			<String,
-			 Map
-				 <String,
-				  Map<String, GetFieldMappingsResponse.FieldMappingMetadata>>>
-					mappings = getFieldMappingsResponse.mappings();
+		String[] fields = getFieldMappingIndexRequest.getFields();
+		String[] indexes = getFieldMappingIndexRequest.getIndexNames();
+		String type = getFieldMappingIndexRequest.getMappingName();
 
 		Map<String, String> fieldMappings = new HashMap<>();
 
-		for (String indexName : getFieldMappingIndexRequest.getIndexNames()) {
-			Map
-				<String,
-				 Map<String, GetFieldMappingsResponse.FieldMappingMetadata>>
-					map1 = mappings.get(indexName);
-
-			Map<String, GetFieldMappingsResponse.FieldMappingMetadata> map2 =
-				map1.get(getFieldMappingIndexRequest.getMappingName());
-
+		for (String index : indexes) {
 			JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
-			for (String fieldName : getFieldMappingIndexRequest.getFields()) {
+			for (String field : fields) {
 				GetFieldMappingsResponse.FieldMappingMetadata
-					fieldMappingMetadata = map2.get(fieldName);
+					fieldMappingMetadata =
+						getFieldMappingsResponse.fieldMappings(
+							index, type, field);
+
+				if (fieldMappingMetadata == null) {
+					jsonObject.put(field, "{}");
+
+					continue;
+				}
 
 				Map<String, Object> source = fieldMappingMetadata.sourceAsMap();
 
-				jsonObject.put(fieldName, source);
+				jsonObject.put(field, source);
 			}
 
-			fieldMappings.put(indexName, jsonObject.toString());
+			fieldMappings.put(index, jsonObject.toString());
 		}
 
 		return new GetFieldMappingIndexResponse(fieldMappings);

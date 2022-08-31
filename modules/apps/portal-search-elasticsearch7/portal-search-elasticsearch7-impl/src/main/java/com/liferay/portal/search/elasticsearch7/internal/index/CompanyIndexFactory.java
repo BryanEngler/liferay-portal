@@ -26,6 +26,7 @@ import com.liferay.portal.search.elasticsearch7.internal.connection.Elasticsearc
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionNotInitializedException;
 import com.liferay.portal.search.elasticsearch7.internal.helper.SearchLogHelperUtil;
 import com.liferay.portal.search.elasticsearch7.internal.index.contributor.IndexContributorReceiver;
+import com.liferay.portal.search.elasticsearch7.internal.index.field.initializer.AssetVocabularyCategoryIdsInitializationBackgroundTaskExecutor;
 import com.liferay.portal.search.elasticsearch7.internal.settings.SettingsBuilder;
 import com.liferay.portal.search.elasticsearch7.internal.util.ResourceUtil;
 import com.liferay.portal.search.index.IndexNameBuilder;
@@ -90,6 +91,10 @@ public class CompanyIndexFactory
 		String indexName = getIndexName(companyId);
 
 		if (hasIndex(indicesClient, indexName)) {
+			_assetVocabularyCategoryIdsInitializationBackgroundTaskExecutor.
+				initialize(
+					companyId, indexName, _elasticsearchConnectionManager);
+
 			return;
 		}
 
@@ -260,6 +265,16 @@ public class CompanyIndexFactory
 		IndexSettingsContributor indexSettingsContributor) {
 
 		_indexSettingsContributors.remove(indexSettingsContributor);
+	}
+
+	@Reference(unbind = "-")
+	protected void
+		setAssetVocabularyCategoryIdsInitializationBackgroundTaskExecutor(
+			AssetVocabularyCategoryIdsInitializationBackgroundTaskExecutor
+				assetVocabularyCategoryIdsInitializationBackgroundTaskExecutor) {
+
+		_assetVocabularyCategoryIdsInitializationBackgroundTaskExecutor =
+			assetVocabularyCategoryIdsInitializationBackgroundTaskExecutor;
 	}
 
 	@Reference(unbind = "-")
@@ -523,6 +538,8 @@ public class CompanyIndexFactory
 	private static final Log _log = LogFactoryUtil.getLog(
 		CompanyIndexFactory.class);
 
+	private AssetVocabularyCategoryIdsInitializationBackgroundTaskExecutor
+		_assetVocabularyCategoryIdsInitializationBackgroundTaskExecutor;
 	private final Set<Long> _companyIds = new HashSet<>();
 	private volatile ElasticsearchConfigurationWrapper
 		_elasticsearchConfigurationWrapper;
