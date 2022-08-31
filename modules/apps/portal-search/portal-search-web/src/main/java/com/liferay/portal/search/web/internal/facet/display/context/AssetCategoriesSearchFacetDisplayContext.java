@@ -23,6 +23,7 @@ import com.liferay.portal.search.web.internal.category.facet.configuration.Categ
 import java.io.Serializable;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -92,7 +93,18 @@ public class AssetCategoriesSearchFacetDisplayContext implements Serializable {
 	public List<AssetCategoriesSearchFacetTermDisplayContext>
 		getTermDisplayContexts() {
 
-		return _assetCategoriesSearchFacetTermDisplayContext;
+		return _assetCategoriesSearchFacetTermDisplayContexts;
+	}
+
+	public List<AssetCategoriesSearchFacetTermDisplayContext>
+		getTermDisplayContexts(String vocabularyName) {
+
+		return _assetCategoriesSearchFacetTermDisplayContextMap.get(
+			vocabularyName);
+	}
+
+	public List<String> getVocabularyNames() {
+		return _vocabularyNames;
 	}
 
 	public boolean isCloud() {
@@ -139,14 +151,28 @@ public class AssetCategoriesSearchFacetDisplayContext implements Serializable {
 
 	public void setTermDisplayContexts(
 		List<AssetCategoriesSearchFacetTermDisplayContext>
-			assetCategoriesSearchFacetTermDisplayContext) {
+			assetCategoriesSearchFacetTermDisplayContexts) {
 
-		_assetCategoriesSearchFacetTermDisplayContext =
-			assetCategoriesSearchFacetTermDisplayContext;
+		_assetCategoriesSearchFacetTermDisplayContexts =
+			assetCategoriesSearchFacetTermDisplayContexts;
 	}
 
+	public void setTermDisplayContextsMap(
+		Map<String, List<AssetCategoriesSearchFacetTermDisplayContext>>
+			assetCategoriesSearchFacetTermDisplayContextMap) {
+
+		_assetCategoriesSearchFacetTermDisplayContextMap =
+			assetCategoriesSearchFacetTermDisplayContextMap;
+	}
+
+	public void setVocabularyNames(List<String> vocabularyNames) {
+		_vocabularyNames = vocabularyNames;
+	}
+
+	private Map<String, List<AssetCategoriesSearchFacetTermDisplayContext>>
+		_assetCategoriesSearchFacetTermDisplayContextMap;
 	private List<AssetCategoriesSearchFacetTermDisplayContext>
-		_assetCategoriesSearchFacetTermDisplayContext;
+		_assetCategoriesSearchFacetTermDisplayContexts;
 	private final CategoryFacetPortletInstanceConfiguration
 		_categoryFacetPortletInstanceConfiguration;
 	private boolean _cloud;
@@ -158,5 +184,6 @@ public class AssetCategoriesSearchFacetDisplayContext implements Serializable {
 	private String _parameterValue;
 	private List<String> _parameterValues;
 	private boolean _renderNothing;
+	private List<String> _vocabularyNames;
 
 }
