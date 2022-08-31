@@ -14,6 +14,8 @@
 
 package com.liferay.portal.search.web.internal.category.facet.portlet;
 
+import java.util.Optional;
+
 /**
  * @author Lino Alves
  */
@@ -32,6 +34,8 @@ public interface CategoryFacetPortletPreferences {
 
 	public static final String PREFERENCE_KEY_PARAMETER_NAME = "parameterName";
 
+	public static final String PREFERENCE_VOCABULARY_IDS = "vocabularyIds";
+
 	public String getDisplayStyle();
 
 	public int getFrequencyThreshold();
@@ -41,5 +45,7 @@ public interface CategoryFacetPortletPreferences {
 	public String getParameterName();
 
 	public boolean isFrequenciesVisible();
+
+	public String[] getVocabularyIds();
 
 }
