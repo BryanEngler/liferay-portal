@@ -42,7 +42,7 @@
 						{
 							"label": "Asset Category ID",
 							"name": "asset_category_id",
-							"type": "number"
+							"type": "categorySelector"
 						},
 						{
 							"label": "Date: From",

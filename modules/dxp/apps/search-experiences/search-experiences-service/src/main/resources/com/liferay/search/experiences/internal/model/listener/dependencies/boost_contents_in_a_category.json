@@ -32,7 +32,10 @@
 						{
 							"label": "Asset Category IDs",
 							"name": "asset_category_ids",
-							"type": "multiselect"
+							"type": "categorySelector",
+							"typeOptions": {
+								"format": "array"
+							}
 						},
 						{
 							"defaultValue": 10,
