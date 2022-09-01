@@ -21,6 +21,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.search.facet.Facet;
 import com.liferay.portal.search.facet.category.CategoryFacetFactory;
 import com.liferay.portal.search.facet.category.CategoryFacetSearchContributor;
@@ -153,6 +154,10 @@ public class CategoryFacetSearchContributorImpl
 		}
 
 		private String _getIncludeRegexString() {
+			if (ArrayUtil.isEmpty(_vocabularyIds)) {
+				return null;
+			}
+
 			StringBundler sb = new StringBundler(_vocabularyIds.length * 5);
 
 			for (String vocabularyId : _vocabularyIds) {
