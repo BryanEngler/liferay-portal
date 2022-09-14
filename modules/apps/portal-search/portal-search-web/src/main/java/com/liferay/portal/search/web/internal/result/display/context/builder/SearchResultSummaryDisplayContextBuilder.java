@@ -575,8 +575,13 @@ public class SearchResultSummaryDisplayContextBuilder {
 	private void _buildCreatorUserName(
 		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext) {
 
-		User user = _userLocalService.fetchUser(
-			_getFieldValueLong(Field.USER_ID));
+		long userId = _getFieldValueLong(Field.USER_ID);
+
+		User user = null;
+
+		if (userId != 0) {
+			user = _userLocalService.fetchUser(userId);
+		}
 
 		if (user != null) {
 			searchResultSummaryDisplayContext.setCreatorUserName(
@@ -588,8 +593,13 @@ public class SearchResultSummaryDisplayContextBuilder {
 	private void _buildCreatorUserPortrait(
 		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext) {
 
-		String creatorUserPortraitUrlString = _getPortraitURLString(
-			_getFieldValueLong(Field.USER_ID));
+		long userId = _getFieldValueLong(Field.USER_ID);
+
+		String creatorUserPortraitUrlString = null;
+
+		if (userId != 0) {
+			creatorUserPortraitUrlString = _getPortraitURLString(userId);
+		}
 
 		if (creatorUserPortraitUrlString != null) {
 			searchResultSummaryDisplayContext.setCreatorUserPortraitURLString(
@@ -845,8 +855,13 @@ public class SearchResultSummaryDisplayContextBuilder {
 	private void _buildModifiedByUserName(
 		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext) {
 
-		User user = _userLocalService.fetchUser(
-			_getFieldValueLong("statusByUserId"));
+		long statusByUserId = _getFieldValueLong("statusByUserId");
+
+		User user = null;
+
+		if (statusByUserId != 0) {
+			user = _userLocalService.fetchUser(statusByUserId);
+		}
 
 		if (user != null) {
 			searchResultSummaryDisplayContext.setModifiedByUserName(
@@ -859,8 +874,14 @@ public class SearchResultSummaryDisplayContextBuilder {
 	private void _buildModifiedByUserPortrait(
 		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext) {
 
-		String modifiedByUserPortraitURLString = _getPortraitURLString(
-			_getFieldValueLong("statusByUserId"));
+		long statusByUserId = _getFieldValueLong("statusByUserId");
+
+		String modifiedByUserPortraitURLString = null;
+
+		if (statusByUserId != 0) {
+			modifiedByUserPortraitURLString = _getPortraitURLString(
+				statusByUserId);
+		}
 
 		if (modifiedByUserPortraitURLString != null) {
 			searchResultSummaryDisplayContext.
