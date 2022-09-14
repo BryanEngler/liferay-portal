@@ -105,7 +105,7 @@ public class SearchResultsPortletTest {
 		SearchResultsPortletDisplayContext searchResultsPortletDisplayContext =
 			_getDisplayContext();
 
-		Assert.assertEquals(
+		Assert.assertEquals(//here
 			Arrays.asList(expectedDocuments),
 			searchResultsPortletDisplayContext.getDocuments());
 	}
