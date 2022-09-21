@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.index;
 
-import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.engine.adapter.index.GetFieldMappingIndexRequest;
@@ -58,24 +58,14 @@ public class GetFieldMappingIndexRequestExecutorImpl
 
 		Map<String, String> fieldMappings = new HashMap<>();
 
-		for (String indexName : getFieldMappingIndexRequest.getIndexNames()) {
-			Map
-				<String,
-				 Map<String, GetFieldMappingsResponse.FieldMappingMetadata>>
-					map1 = mappings.get(indexName);
-
-			Map<String, GetFieldMappingsResponse.FieldMappingMetadata> map2 =
-				map1.get(getFieldMappingIndexRequest.getMappingName());
-
-			JSONObject jsonObject = _jsonFactory.createJSONObject();
 		for (String index : indexes) {
 			JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
 			for (String field : fields) {
 				GetFieldMappingsResponse.FieldMappingMetadata
 					fieldMappingMetadata =
-						getFieldMappingsResponse.fieldMappings(
-							index, type, field);
+					getFieldMappingsResponse.fieldMappings(
+						index, type, field);
 
 				if (fieldMappingMetadata == null) {
 					jsonObject.put(field, "{}");
@@ -131,8 +121,5 @@ public class GetFieldMappingIndexRequestExecutorImpl
 
 	@Reference
 	private ElasticsearchClientResolver _elasticsearchClientResolver;
-
-	@Reference
-	private JSONFactory _jsonFactory;
 
 }
