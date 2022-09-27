@@ -39,6 +39,8 @@ public interface TagFacetSearchContributor {
 
 		public TagFacetBuilder maxTerms(int maxTerms);
 
+		public TagFacetBuilder order(String order);
+
 		public TagFacetBuilder selectedTagNames(String... selectedTagNames);
 
 	}
