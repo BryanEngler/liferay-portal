@@ -51,6 +51,8 @@ public class TagFacetPortletSharedSearchContributor
 				tagFacetPortletPreferences.getFrequencyThreshold()
 			).maxTerms(
 				tagFacetPortletPreferences.getMaxTerms()
+			).order(
+				tagFacetPortletPreferences.getOrder()
 			).selectedTagNames(
 				portletSharedSearchSettings.getParameterValues(
 					tagFacetPortletPreferences.getParameterName())

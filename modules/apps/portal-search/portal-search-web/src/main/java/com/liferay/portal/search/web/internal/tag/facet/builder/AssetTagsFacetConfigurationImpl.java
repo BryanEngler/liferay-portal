@@ -40,6 +40,11 @@ public class AssetTagsFacetConfigurationImpl
 	}
 
 	@Override
+	public String getOrder() {
+		return _jsonObject.getString("order");
+	}
+
+	@Override
 	public void setFrequencyThreshold(int frequencyThreshold) {
 		_jsonObject.put("frequencyThreshold", frequencyThreshold);
 	}
@@ -47,6 +52,11 @@ public class AssetTagsFacetConfigurationImpl
 	@Override
 	public void setMaxTerms(int maxTerms) {
 		_jsonObject.put("maxTerms", maxTerms);
+	}
+
+	@Override
+	public void setOrder(String order) {
+		_jsonObject.put("order", order);
 	}
 
 	private final JSONObject _jsonObject;

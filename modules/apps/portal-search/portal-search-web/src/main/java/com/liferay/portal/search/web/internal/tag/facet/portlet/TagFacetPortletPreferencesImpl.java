@@ -51,6 +51,11 @@ public class TagFacetPortletPreferencesImpl
 			TagFacetPortletPreferences.PREFERENCE_KEY_MAX_TERMS, 10);
 	}
 
+	public String getOrder() {
+		return _portletPreferencesHelper.getString(
+			TagFacetPortletPreferences.PREFERENCE_KEY_ORDER, "count:desc");
+	}
+
 	@Override
 	public String getParameterName() {
 		return _portletPreferencesHelper.getString(

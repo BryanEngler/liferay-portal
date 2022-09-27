@@ -128,6 +128,8 @@ public class TagFacetPortlet extends MVCPortlet {
 			assetTagsFacetConfiguration.getFrequencyThreshold());
 		assetTagsSearchFacetDisplayContextBuilder.setMaxTerms(
 			assetTagsFacetConfiguration.getMaxTerms());
+		assetTagsSearchFacetDisplayContextBuilder.setOrder(
+			assetTagsFacetConfiguration.getOrder());
 		assetTagsSearchFacetDisplayContextBuilder.
 			setPaginationStartParameterName(
 				_getPaginationStartParameterName(portletSharedSearchResponse));

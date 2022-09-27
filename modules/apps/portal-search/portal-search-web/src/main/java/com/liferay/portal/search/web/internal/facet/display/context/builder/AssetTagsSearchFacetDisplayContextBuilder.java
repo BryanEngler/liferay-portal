@@ -31,6 +31,7 @@ import com.liferay.portal.search.web.internal.tag.facet.configuration.TagFacetPo
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -111,6 +112,10 @@ public class AssetTagsSearchFacetDisplayContextBuilder {
 
 	public void setMaxTerms(int maxTerms) {
 		_maxTerms = maxTerms;
+	}
+
+	public void setOrder(String order) {
+		_order = order;
 	}
 
 	public void setPaginationStartParameterName(
@@ -241,6 +246,21 @@ public class AssetTagsSearchFacetDisplayContextBuilder {
 			}
 		}
 
+		if (_order.equals("count:asc")) {
+			assetTagsSearchFacetTermDisplayContexts.sort(
+				_COMPARATOR_FREQUENCY_ASC);
+		}
+		else if (_order.equals("count:desc")) {
+			assetTagsSearchFacetTermDisplayContexts.sort(
+				_COMPARATOR_FREQUENCY_DESC);
+		}
+		else if (_order.equals("key:asc")) {
+			assetTagsSearchFacetTermDisplayContexts.sort(_COMPARATOR_TERM_ASC);
+		}
+		else if (_order.equals("key:desc")) {
+			assetTagsSearchFacetTermDisplayContexts.sort(_COMPARATOR_TERM_DESC);
+		}
+
 		return assetTagsSearchFacetTermDisplayContexts;
 	}
 
@@ -318,6 +338,12 @@ public class AssetTagsSearchFacetDisplayContextBuilder {
 		return false;
 	}
 
+	private static int _compareDisplayNames(
+		String displayName1, String displayName2) {
+
+		return displayName1.compareTo(displayName2);
+	}
+
 	private String _getFacetLabel() {
 		if (_facet != null) {
 			FacetConfiguration facetConfiguration =
@@ -341,11 +367,105 @@ public class AssetTagsSearchFacetDisplayContextBuilder {
 		return false;
 	}
 
+	private static final Comparator<AssetTagsSearchFacetTermDisplayContext>
+		_COMPARATOR_FREQUENCY_ASC =
+			new Comparator<AssetTagsSearchFacetTermDisplayContext>() {
+
+				public int compare(
+					AssetTagsSearchFacetTermDisplayContext displayContext1,
+					AssetTagsSearchFacetTermDisplayContext displayContext2) {
+
+					int result =
+						displayContext1.getFrequency() -
+							displayContext2.getFrequency();
+
+					if (result == 0) {
+						return _compareDisplayNames(
+							displayContext1.getDisplayName(),
+							displayContext2.getDisplayName());
+					}
+
+					return result;
+				}
+
+			};
+
+	private static final Comparator<AssetTagsSearchFacetTermDisplayContext>
+		_COMPARATOR_FREQUENCY_DESC =
+			new Comparator<AssetTagsSearchFacetTermDisplayContext>() {
+
+				@Override
+				public int compare(
+					AssetTagsSearchFacetTermDisplayContext displayContext1,
+					AssetTagsSearchFacetTermDisplayContext displayContext2) {
+
+					int result =
+						displayContext2.getFrequency() -
+							displayContext1.getFrequency();
+
+					if (result == 0) {
+						return _compareDisplayNames(
+							displayContext1.getDisplayName(),
+							displayContext2.getDisplayName());
+					}
+
+					return result;
+				}
+
+			};
+
+	private static final Comparator<AssetTagsSearchFacetTermDisplayContext>
+		_COMPARATOR_TERM_ASC =
+			new Comparator<AssetTagsSearchFacetTermDisplayContext>() {
+
+				@Override
+				public int compare(
+					AssetTagsSearchFacetTermDisplayContext displayContext1,
+					AssetTagsSearchFacetTermDisplayContext displayContext2) {
+
+					int result = _compareDisplayNames(
+						displayContext1.getDisplayName(),
+						displayContext2.getDisplayName());
+
+					if (result == 0) {
+						return displayContext2.getFrequency() -
+							displayContext1.getFrequency();
+					}
+
+					return result;
+				}
+
+			};
+
+	private static final Comparator<AssetTagsSearchFacetTermDisplayContext>
+		_COMPARATOR_TERM_DESC =
+			new Comparator<AssetTagsSearchFacetTermDisplayContext>() {
+
+				@Override
+				public int compare(
+					AssetTagsSearchFacetTermDisplayContext displayContext1,
+					AssetTagsSearchFacetTermDisplayContext displayContext2) {
+
+					int result = _compareDisplayNames(
+						displayContext2.getDisplayName(),
+						displayContext1.getDisplayName());
+
+					if (result == 0) {
+						return displayContext2.getFrequency() -
+							displayContext1.getFrequency();
+					}
+
+					return result;
+				}
+
+			};
+
 	private String _displayStyle;
 	private Facet _facet;
 	private boolean _frequenciesVisible;
 	private int _frequencyThreshold;
 	private int _maxTerms;
+	private String _order;
 	private String _paginationStartParameterName;
 	private String _parameterName;
 	private List<String> _selectedTags = Collections.emptyList();
