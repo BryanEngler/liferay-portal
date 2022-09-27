@@ -14,13 +14,13 @@
 
 package com.liferay.portal.search.web.internal.facet.display.context;
 
-import java.io.Serializable;
-
 /**
  * @author Lino Alves
  */
-public class FolderSearchFacetTermDisplayContext implements Serializable {
+public class FolderSearchFacetTermDisplayContext
+	extends SearchFacetTermDisplayContext {
 
+	@Override
 	public String getDisplayName() {
 		return _displayName;
 	}
@@ -29,6 +29,7 @@ public class FolderSearchFacetTermDisplayContext implements Serializable {
 		return _folderId;
 	}
 
+	@Override
 	public int getFrequency() {
 		return _frequency;
 	}
