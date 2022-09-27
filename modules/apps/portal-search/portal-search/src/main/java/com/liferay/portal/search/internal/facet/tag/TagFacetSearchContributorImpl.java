@@ -96,6 +96,13 @@ public class TagFacetSearchContributorImpl
 		}
 
 		@Override
+		public TagFacetBuilder order(String order) {
+			_order = order;
+
+			return this;
+		}
+
+		@Override
 		public TagFacetBuilder selectedTagNames(String... selectedTagNames) {
 			_selectedTagNames = selectedTagNames;
 
@@ -108,6 +115,7 @@ public class TagFacetSearchContributorImpl
 			facetConfiguration.setFieldName(facet.getFieldName());
 			facetConfiguration.setLabel("any-tag");
 			facetConfiguration.setOrder("OrderHitsDesc");
+			facetConfiguration.setOrder("_order");
 			facetConfiguration.setStatic(false);
 			facetConfiguration.setWeight(1.4);
 
@@ -117,6 +125,8 @@ public class TagFacetSearchContributorImpl
 				"frequencyThreshold", _frequencyThreshold
 			).put(
 				"maxTerms", _maxTerms
+			).put(
+				"order", _order
 			);
 
 			return facetConfiguration;
@@ -125,6 +135,7 @@ public class TagFacetSearchContributorImpl
 		private String _aggregationName;
 		private int _frequencyThreshold;
 		private int _maxTerms;
+		private String _order;
 		private final SearchContext _searchContext;
 		private String[] _selectedTagNames;
 
