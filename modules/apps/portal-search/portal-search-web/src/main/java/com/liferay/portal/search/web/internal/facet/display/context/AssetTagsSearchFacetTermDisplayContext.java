@@ -17,12 +17,15 @@ package com.liferay.portal.search.web.internal.facet.display.context;
 /**
  * @author André de Oliveira
  */
-public class AssetTagsSearchFacetTermDisplayContext {
+public class AssetTagsSearchFacetTermDisplayContext
+	extends SearchFacetTermDisplayContext {
 
+	@Override
 	public String getDisplayName() {
 		return _value;
 	}
 
+	@Override
 	public int getFrequency() {
 		return _frequency;
 	}
