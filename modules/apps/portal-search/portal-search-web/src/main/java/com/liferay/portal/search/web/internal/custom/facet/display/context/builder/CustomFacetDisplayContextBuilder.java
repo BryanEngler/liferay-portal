@@ -73,10 +73,6 @@ public class CustomFacetDisplayContextBuilder {
 		return customFacetDisplayContext;
 	}
 
-	public String getOrder() {
-		return _order;
-	}
-
 	public CustomFacetDisplayContextBuilder setCustomDisplayCaption(
 		Optional<String> customDisplayCaptionOptional) {
 
