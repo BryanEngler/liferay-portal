@@ -218,6 +218,7 @@ public class AssetTagsSearchFacetDisplayContextTest {
 		assetTagsSearchFacetDisplayContextBuilder.setFrequenciesVisible(true);
 		assetTagsSearchFacetDisplayContextBuilder.setFrequencyThreshold(0);
 		assetTagsSearchFacetDisplayContextBuilder.setMaxTerms(0);
+		assetTagsSearchFacetDisplayContextBuilder.setOrder("count:asc");
 		assetTagsSearchFacetDisplayContextBuilder.setParameterName(
 			_facet.getFieldId());
 		assetTagsSearchFacetDisplayContextBuilder.setParameterValue(facetParam);
