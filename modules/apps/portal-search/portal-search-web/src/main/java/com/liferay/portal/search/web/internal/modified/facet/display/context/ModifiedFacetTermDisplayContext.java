@@ -19,7 +19,7 @@ import java.io.Serializable;
 /**
  * @author Lino Alves
  */
-public class ModifiedFacetTermDisplayContext implements Serializable {
+public class ModifiedFacetTermDisplayContext implements Serializable {//delete this class and use BucketDisplayContext instead
 
 	public int getFrequency() {
 		return _frequency;
@@ -61,10 +61,11 @@ public class ModifiedFacetTermDisplayContext implements Serializable {
 		_selected = selected;
 	}
 
-	private int _frequency;
-	private String _label;
-	private String _range;
-	private String _rangeURL;
-	private boolean _selected;
+	//could maybe add/use _frequencyVisible in base
+	private int _frequency;//base
+	private String _label;//bucketText
+	private String _range;//delete
+	private String _rangeURL;//filterValue
+	private boolean _selected;//base
 
 }

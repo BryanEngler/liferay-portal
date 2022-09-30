@@ -19,7 +19,7 @@ import java.io.Serializable;
 /**
  * @author Lino Alves
  */
-public class FolderSearchFacetTermDisplayContext implements Serializable {
+public class FolderSearchFacetTermDisplayContext implements Serializable {//delete this class and use BucketDisplayContext instead
 
 	public String getDisplayName() {
 		return _displayName;
@@ -61,10 +61,10 @@ public class FolderSearchFacetTermDisplayContext implements Serializable {
 		_selected = selected;
 	}
 
-	private String _displayName;
-	private long _folderId;
-	private int _frequency;
-	private boolean _frequencyVisible;
-	private boolean _selected;
+	private String _displayName;//bucketText
+	private long _folderId;//filterValue
+	private int _frequency;//base
+	private boolean _frequencyVisible;//base
+	private boolean _selected;//base
 
 }
