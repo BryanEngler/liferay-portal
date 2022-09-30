@@ -206,6 +206,7 @@ public class CustomFacetDisplayContextTest {
 		Assert.assertEquals(
 			customFacetTermDisplayContexts.toString(),
 			"alpha:1|charlie:2|bravo:3|delta:4", nameFrequencyString);
+			//"alpha:1|bravo:2|charlie:2|delta:4"
 	}
 
 	@Test
@@ -228,6 +229,7 @@ public class CustomFacetDisplayContextTest {
 		Assert.assertEquals(
 			customFacetTermDisplayContexts.toString(),
 			"delta:4|bravo:3|charlie:2|alpha:1", nameFrequencyString);
+			//"delta:4|bravo:2|charlie:2|alpha:1"
 	}
 
 	private String _buildNameFrequencyString(
