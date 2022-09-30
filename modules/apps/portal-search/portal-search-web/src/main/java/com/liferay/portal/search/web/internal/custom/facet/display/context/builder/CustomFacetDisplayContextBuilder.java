@@ -281,7 +281,7 @@ public class CustomFacetDisplayContextBuilder {
 
 		return _parameterValues.get(0);
 	}
-
+//add other Comparators
 	private static final Comparator<CustomFacetTermDisplayContext>
 		_COMPARATOR_FREQUENCY_ASC =
 			new Comparator<CustomFacetTermDisplayContext>() {

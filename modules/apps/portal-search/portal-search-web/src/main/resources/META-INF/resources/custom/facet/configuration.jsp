@@ -92,6 +92,8 @@ CustomFacetPortletPreferences customFacetPortletPreferences = new CustomFacetPor
 				<aui:select label="order-terms-by" name="<%= PortletPreferencesJspUtil.getInputName(CustomFacetPortletPreferences.PREFERENCE_KEY_ORDER) %>" value="<%= customFacetPortletPreferences.getOrder() %>">
 					<aui:option label="term-frequency-descending" value="count:desc" />
 					<aui:option label="term-frequency-ascending" value="count:asc" />
+					<aui:option label="term-value-ascending" value="key:asc" />
+					<aui:option label="term-value-descending" value="key:desc" />
 				</aui:select>
 
 				<aui:input helpMessage="enter-the-key-of-an-alternate-search-this-widget-is-participating-on-if-not-set-widget-participates-on-default-search" label="federated-search-key" name="<%= PortletPreferencesJspUtil.getInputName(CustomFacetPortletPreferences.PREFERENCE_KEY_FEDERATED_SEARCH_KEY) %>" type="text" value="<%= customFacetPortletPreferences.getFederatedSearchKeyString() %>" />
