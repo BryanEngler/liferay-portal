@@ -19,7 +19,7 @@ import java.io.Serializable;
 /**
  * @author Lino Alves
  */
-public class UserSearchFacetTermDisplayContext implements Serializable {
+public class UserSearchFacetTermDisplayContext implements Serializable {//extend BucketDisplayContext
 
 	public int getFrequency() {
 		return _frequency;
@@ -53,9 +53,9 @@ public class UserSearchFacetTermDisplayContext implements Serializable {
 		_userName = userName;
 	}
 
-	private int _frequency;
-	private boolean _frequencyVisible;
-	private boolean _selected;
-	private String _userName;
+	private int _frequency;//base
+	private boolean _frequencyVisible;//base
+	private boolean _selected;//base
+	private String _userName; //bucketText & filterValue
 
 }

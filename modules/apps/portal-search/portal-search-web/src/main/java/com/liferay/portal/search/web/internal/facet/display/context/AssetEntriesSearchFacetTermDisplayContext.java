@@ -19,7 +19,7 @@ import java.io.Serializable;
 /**
  * @author Lino Alves
  */
-public class AssetEntriesSearchFacetTermDisplayContext implements Serializable {
+public class AssetEntriesSearchFacetTermDisplayContext implements Serializable { //extend BucketDisplayContext
 
 	public String getAssetType() {
 		return _assetType;
@@ -61,10 +61,10 @@ public class AssetEntriesSearchFacetTermDisplayContext implements Serializable {
 		_typeName = typeName;
 	}
 
-	private String _assetType;
-	private int _frequency;
-	private boolean _frequencyVisible;
-	private boolean _selected;
-	private String _typeName;
+	private String _assetType;//filterValue
+	private int _frequency;//base
+	private boolean _frequencyVisible;//base
+	private boolean _selected;//base
+	private String _typeName;//bucketText
 
 }

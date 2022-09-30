@@ -19,7 +19,7 @@ import java.io.Serializable;
 /**
  * @author Lino Alves
  */
-public class AssetCategoriesSearchFacetTermDisplayContext
+public class AssetCategoriesSearchFacetTermDisplayContext //extend BucketDisplayContext
 	implements Serializable {
 
 	public long getAssetCategoryId() {
@@ -70,11 +70,11 @@ public class AssetCategoriesSearchFacetTermDisplayContext
 		_selected = selected;
 	}
 
-	private long _assetCategoryId;
-	private String _displayName;
-	private int _frequency;
-	private boolean _frequencyVisible;
-	private int _popularity;
-	private boolean _selected;
+	private long _assetCategoryId;//_filterValue
+	private String _displayName;//_bucketText
+	private int _frequency;//base
+	private boolean _frequencyVisible;//base
+	private int _popularity;//base
+	private boolean _selected;//base
 
 }

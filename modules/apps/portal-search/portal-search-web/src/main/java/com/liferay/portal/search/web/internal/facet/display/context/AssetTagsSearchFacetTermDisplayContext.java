@@ -17,7 +17,7 @@ package com.liferay.portal.search.web.internal.facet.display.context;
 /**
  * @author André de Oliveira
  */
-public class AssetTagsSearchFacetTermDisplayContext {
+public class AssetTagsSearchFacetTermDisplayContext { //extend BucketDisplayContext
 
 	public String getDisplayName() {
 		return _value;
@@ -63,10 +63,10 @@ public class AssetTagsSearchFacetTermDisplayContext {
 		_value = value;
 	}
 
-	private int _frequency;
-	private boolean _frequencyVisible;
-	private int _popularity;
-	private boolean _selected;
-	private String _value;
+	private int _frequency;//base
+	private boolean _frequencyVisible;//base
+	private int _popularity;//base
+	private boolean _selected;//base
+	private String _value;//bucketText & filterValue
 
 }
