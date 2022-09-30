@@ -104,23 +104,20 @@ public class FolderFacetPortlet extends MVCPortlet {
 		PortletSharedSearchResponse portletSharedSearchResponse,
 		RenderRequest renderRequest) {
 
-		Facet facet = portletSharedSearchResponse.getFacet(
-			_getAggregationName(renderRequest));
-
-		FolderTitleLookup folderTitleLookup = new FolderTitleLookupImpl(
-			new FolderSearcher(), portal.getHttpServletRequest(renderRequest));
-
-		FolderFacetConfiguration folderFacetConfiguration =
-			new FolderFacetConfigurationImpl(facet.getFacetConfiguration());
+		FolderSearchFacetDisplayContextBuilder
+			folderSearchFacetDisplayContextBuilder =
+				_createFolderSearchFacetDisplayContextBuilder(renderRequest);
 
 		FolderFacetPortletPreferences folderFacetPortletPreferences =
 			new FolderFacetPortletPreferencesImpl(
 				portletSharedSearchResponse.getPortletPreferences(
 					renderRequest));
 
-		FolderSearchFacetDisplayContextBuilder
-			folderSearchFacetDisplayContextBuilder =
-				_createFolderSearchFacetDisplayContextBuilder(renderRequest);
+		Facet facet = portletSharedSearchResponse.getFacet(
+			_getAggregationName(renderRequest));
+
+		FolderTitleLookup folderTitleLookup = new FolderTitleLookupImpl(
+			new FolderSearcher(), portal.getHttpServletRequest(renderRequest));
 
 		folderSearchFacetDisplayContextBuilder.setFacet(facet);
 		folderSearchFacetDisplayContextBuilder.setFolderTitleLookup(
@@ -128,11 +125,11 @@ public class FolderFacetPortlet extends MVCPortlet {
 		folderSearchFacetDisplayContextBuilder.setFrequenciesVisible(
 			folderFacetPortletPreferences.isFrequenciesVisible());
 		folderSearchFacetDisplayContextBuilder.setFrequencyThreshold(
-			folderFacetConfiguration.getFrequencyThreshold());
+			folderFacetPortletPreferences.getFrequencyThreshold());
 		folderSearchFacetDisplayContextBuilder.setMaxTerms(
-			folderFacetConfiguration.getMaxTerms());
+			folderFacetPortletPreferences.getMaxTerms());
 		folderSearchFacetDisplayContextBuilder.setOrder(
-			folderFacetConfiguration.getOrder());
+			folderFacetPortletPreferences.getOrder());
 		folderSearchFacetDisplayContextBuilder.setPaginationStartParameterName(
 			_getPaginationStartParameterName(portletSharedSearchResponse));
 
