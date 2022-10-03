@@ -89,10 +89,8 @@ public class AssetCategoriesSearchFacetDisplayContext implements Serializable {
 		return _parameterValues;
 	}
 
-	public List<AssetCategoriesSearchFacetTermDisplayContext>
-		getTermDisplayContexts() {
-
-		return _assetCategoriesSearchFacetTermDisplayContext;
+	public List<BucketDisplayContext> getBucketDisplayContexts() {
+		return _bucketDisplayContexts;
 	}
 
 	public boolean isCloud() {
@@ -137,20 +135,17 @@ public class AssetCategoriesSearchFacetDisplayContext implements Serializable {
 		_renderNothing = renderNothing;
 	}
 
-	public void setTermDisplayContexts(
-		List<AssetCategoriesSearchFacetTermDisplayContext>
-			assetCategoriesSearchFacetTermDisplayContext) {
+	public void setBucketDisplayContexts(
+		List<BucketDisplayContext> bucketDisplayContexts) {
 
-		_assetCategoriesSearchFacetTermDisplayContext =
-			assetCategoriesSearchFacetTermDisplayContext;
+		_bucketDisplayContexts = bucketDisplayContexts;
 	}
 
-	private List<AssetCategoriesSearchFacetTermDisplayContext>
-		_assetCategoriesSearchFacetTermDisplayContext;
 	private final CategoryFacetPortletInstanceConfiguration
 		_categoryFacetPortletInstanceConfiguration;
 	private boolean _cloud;
 	private long _displayStyleGroupId;
+	private List<BucketDisplayContext> _bucketDisplayContexts;
 	private final HttpServletRequest _httpServletRequest;
 	private boolean _nothingSelected;
 	private String _paginationStartParameterName;
