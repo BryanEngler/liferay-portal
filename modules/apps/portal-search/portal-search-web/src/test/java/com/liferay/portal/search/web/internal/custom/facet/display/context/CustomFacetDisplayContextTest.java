@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.internal.custom.facet.display.context.builder.CustomFacetDisplayContextBuilder;
+import com.liferay.portal.search.web.internal.facet.display.context.BucketDisplayContext;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import java.util.Collections;
@@ -68,7 +69,7 @@ public class CustomFacetDisplayContextTest {
 				customDisplayCaption, fieldToAggregate, parameterValue);
 
 		List<BucketDisplayContext> bucketDisplayContexts =
-			customFacetDisplayContext.getTermDisplayContexts();
+			customFacetDisplayContext.getBucketDisplayContexts();
 
 		Assert.assertEquals(
 			bucketDisplayContexts.toString(), 0,
@@ -91,7 +92,7 @@ public class CustomFacetDisplayContextTest {
 				"customDisplayCaption", "fieldToAggregate", parameterValue);
 
 		List<BucketDisplayContext> bucketDisplayContexts =
-			customFacetDisplayContext.getTermDisplayContexts();
+			customFacetDisplayContext.getBucketDisplayContexts();
 
 		Assert.assertEquals(
 			bucketDisplayContexts.toString(), 1,
@@ -128,7 +129,7 @@ public class CustomFacetDisplayContextTest {
 				"customDisplayCaption", "fieldToAggregate", parameterValue);
 
 		List<BucketDisplayContext> bucketDisplayContexts =
-			customFacetDisplayContext.getTermDisplayContexts();
+			customFacetDisplayContext.getBucketDisplayContexts();
 
 		Assert.assertEquals(
 			bucketDisplayContexts.toString(), 1,
@@ -166,7 +167,7 @@ public class CustomFacetDisplayContextTest {
 				"customDisplayCaption", "fieldToAggregate", parameterValue);
 
 		List<BucketDisplayContext> bucketDisplayContexts =
-			customFacetDisplayContext.getTermDisplayContexts();
+			customFacetDisplayContext.getBucketDisplayContexts();
 
 		Assert.assertEquals(
 			bucketDisplayContexts.toString(), 1,
