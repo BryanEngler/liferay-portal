@@ -22,7 +22,7 @@ import com.liferay.portal.kernel.search.facet.collector.TermCollector;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.web.internal.custom.facet.display.context.CustomFacetDisplayContext;
-import com.liferay.portal.search.web.internal.custom.facet.display.context.CustomFacetTermDisplayContext;
+import com.liferay.portal.search.web.internal.custom.facet.display.context.BucketDisplayContext;
 import com.liferay.portal.search.web.internal.util.SearchStringUtil;
 
 import java.util.ArrayList;
@@ -194,13 +194,13 @@ public class CustomFacetDisplayContextBuilder {
 		return false;
 	}
 
-	private CustomFacetTermDisplayContext _buildTermDisplayContext(
+	private BucketDisplayContext _buildTermDisplayContext(
 		TermCollector termCollector) {
 
 		String term = GetterUtil.getString(termCollector.getTerm());
 
-		CustomFacetTermDisplayContext customFacetTermDisplayContext =
-			new CustomFacetTermDisplayContext();
+		BucketDisplayContext customFacetTermDisplayContext =
+			new BucketDisplayContext();
 
 		customFacetTermDisplayContext.setFrequency(
 			termCollector.getFrequency());
@@ -212,14 +212,14 @@ public class CustomFacetDisplayContextBuilder {
 		return customFacetTermDisplayContext;
 	}
 
-	private List<CustomFacetTermDisplayContext> _buildTermDisplayContexts(
+	private List<BucketDisplayContext> _buildTermDisplayContexts(
 		List<TermCollector> termCollectors) {
 
 		if (termCollectors.isEmpty()) {
 			return _getEmptyTermDisplayContexts();
 		}
 
-		List<CustomFacetTermDisplayContext> customFacetTermDisplayContexts =
+		List<BucketDisplayContext> customFacetTermDisplayContexts =
 			new ArrayList<>(termCollectors.size());
 
 		for (int i = 0; i < termCollectors.size(); i++) {
@@ -239,13 +239,13 @@ public class CustomFacetDisplayContextBuilder {
 		return customFacetTermDisplayContexts;
 	}
 
-	private List<CustomFacetTermDisplayContext> _getEmptyTermDisplayContexts() {
+	private List<BucketDisplayContext> _getEmptyTermDisplayContexts() {
 		if (_parameterValues.isEmpty()) {
 			return Collections.emptyList();
 		}
 
-		CustomFacetTermDisplayContext customFacetTermDisplayContext =
-			new CustomFacetTermDisplayContext();
+		BucketDisplayContext customFacetTermDisplayContext =
+			new BucketDisplayContext();
 
 		customFacetTermDisplayContext.setFrequency(0);
 		customFacetTermDisplayContext.setFrequencyVisible(_frequenciesVisible);

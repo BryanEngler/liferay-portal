@@ -67,7 +67,7 @@ public class CustomFacetDisplayContextTest {
 			_createDisplayContext(
 				customDisplayCaption, fieldToAggregate, parameterValue);
 
-		List<CustomFacetTermDisplayContext> customFacetTermDisplayContexts =
+		List<BucketDisplayContext> customFacetTermDisplayContexts =
 			customFacetDisplayContext.getTermDisplayContexts();
 
 		Assert.assertEquals(
@@ -90,14 +90,14 @@ public class CustomFacetDisplayContextTest {
 			_createDisplayContext(
 				"customDisplayCaption", "fieldToAggregate", parameterValue);
 
-		List<CustomFacetTermDisplayContext> customFacetTermDisplayContexts =
+		List<BucketDisplayContext> customFacetTermDisplayContexts =
 			customFacetDisplayContext.getTermDisplayContexts();
 
 		Assert.assertEquals(
 			customFacetTermDisplayContexts.toString(), 1,
 			customFacetTermDisplayContexts.size());
 
-		CustomFacetTermDisplayContext customFacetTermDisplayContext =
+		BucketDisplayContext customFacetTermDisplayContext =
 			customFacetTermDisplayContexts.get(0);
 
 		Assert.assertEquals(0, customFacetTermDisplayContext.getFrequency());
@@ -127,14 +127,14 @@ public class CustomFacetDisplayContextTest {
 			_createDisplayContext(
 				"customDisplayCaption", "fieldToAggregate", parameterValue);
 
-		List<CustomFacetTermDisplayContext> customFacetTermDisplayContexts =
+		List<BucketDisplayContext> customFacetTermDisplayContexts =
 			customFacetDisplayContext.getTermDisplayContexts();
 
 		Assert.assertEquals(
 			customFacetTermDisplayContexts.toString(), 1,
 			customFacetTermDisplayContexts.size());
 
-		CustomFacetTermDisplayContext customFacetTermDisplayContext =
+		BucketDisplayContext customFacetTermDisplayContext =
 			customFacetTermDisplayContexts.get(0);
 
 		Assert.assertEquals(
@@ -165,14 +165,14 @@ public class CustomFacetDisplayContextTest {
 			_createDisplayContext(
 				"customDisplayCaption", "fieldToAggregate", parameterValue);
 
-		List<CustomFacetTermDisplayContext> customFacetTermDisplayContexts =
+		List<BucketDisplayContext> customFacetTermDisplayContexts =
 			customFacetDisplayContext.getTermDisplayContexts();
 
 		Assert.assertEquals(
 			customFacetTermDisplayContexts.toString(), 1,
 			customFacetTermDisplayContexts.size());
 
-		CustomFacetTermDisplayContext customFacetTermDisplayContext =
+		BucketDisplayContext customFacetTermDisplayContext =
 			customFacetTermDisplayContexts.get(0);
 
 		Assert.assertEquals(

@@ -28,7 +28,7 @@ page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
 page import="com.liferay.portal.search.web.internal.custom.facet.configuration.CustomFacetPortletInstanceConfiguration" %><%@
 page import="com.liferay.portal.search.web.internal.custom.facet.display.context.CustomFacetDisplayContext" %><%@
-page import="com.liferay.portal.search.web.internal.custom.facet.display.context.CustomFacetTermDisplayContext" %>
+page import="com.liferay.portal.search.web.internal.custom.facet.display.context.BucketDisplayContext" %>
 
 <portlet:defineObjects />
 
@@ -49,7 +49,7 @@ CustomFacetPortletInstanceConfiguration customFacetPortletInstanceConfiguration 
 			<aui:input cssClass="start-parameter-name" name="start-parameter-name" type="hidden" value="<%= customFacetDisplayContext.getPaginationStartParameterName() %>" />
 
 			<liferay-ddm:template-renderer
-				className="<%= CustomFacetTermDisplayContext.class.getName() %>"
+				className="<%= BucketDisplayContext.class.getName() %>"
 				contextObjects='<%=
 					HashMapBuilder.<String, Object>put(
 						"customFacetDisplayContext", customFacetDisplayContext
@@ -81,7 +81,7 @@ CustomFacetPortletInstanceConfiguration customFacetPortletInstanceConfiguration 
 								<%
 								int i = 0;
 
-								for (CustomFacetTermDisplayContext customFacetTermDisplayContext : customFacetDisplayContext.getTermDisplayContexts()) {
+								for (BucketDisplayContext customFacetTermDisplayContext : customFacetDisplayContext.getTermDisplayContexts()) {
 									i++;
 								%>
 
