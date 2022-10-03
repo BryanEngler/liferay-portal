@@ -28,7 +28,7 @@ page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
 page import="com.liferay.portal.search.web.internal.custom.facet.configuration.CustomFacetPortletInstanceConfiguration" %><%@
 page import="com.liferay.portal.search.web.internal.custom.facet.display.context.CustomFacetDisplayContext" %><%@
-page import="com.liferay.portal.search.web.internal.custom.facet.display.context.BucketDisplayContext" %>
+page import="com.liferay.portal.search.web.internal.facet.display.context.BucketDisplayContext" %>
 
 <portlet:defineObjects />
 
@@ -59,7 +59,7 @@ CustomFacetPortletInstanceConfiguration customFacetPortletInstanceConfiguration 
 				%>'
 				displayStyle="<%= customFacetPortletInstanceConfiguration.displayStyle() %>"
 				displayStyleGroupId="<%= customFacetDisplayContext.getDisplayStyleGroupId() %>"
-				entries="<%= customFacetDisplayContext.getTermDisplayContexts() %>"
+				entries="<%= customFacetDisplayContext.getBucketDisplayContexts() %>"
 			>
 				<liferay-ui:panel-container
 					extended="<%= true %>"
@@ -81,7 +81,7 @@ CustomFacetPortletInstanceConfiguration customFacetPortletInstanceConfiguration 
 								<%
 								int i = 0;
 
-								for (BucketDisplayContext bucketDisplayContext : customFacetDisplayContext.getTermDisplayContexts()) {
+								for (BucketDisplayContext bucketDisplayContext : customFacetDisplayContext.getBucketDisplayContexts()) {
 									i++;
 								%>
 

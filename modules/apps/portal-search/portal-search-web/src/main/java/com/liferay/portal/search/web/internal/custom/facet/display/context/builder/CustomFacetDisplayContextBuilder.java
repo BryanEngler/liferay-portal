@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.web.internal.custom.facet.display.context.CustomFacetDisplayContext;
 import com.liferay.portal.search.web.internal.custom.facet.display.context.BucketDisplayContext;
+import com.liferay.portal.search.web.internal.facet.display.context.BucketDisplayContext;
 import com.liferay.portal.search.web.internal.util.SearchStringUtil;
 
 import java.util.ArrayList;
@@ -66,8 +67,8 @@ public class CustomFacetDisplayContextBuilder {
 		customFacetDisplayContext.setParameterValue(_getFirstParameterValue());
 		customFacetDisplayContext.setParameterValues(_parameterValues);
 		customFacetDisplayContext.setRenderNothing(renderNothing);
-		customFacetDisplayContext.setTermDisplayContexts(
-			_buildTermDisplayContexts(termCollectors));
+		customFacetDisplayContext.setBucketDisplayContexts(
+			_buildBucketDisplayContexts(termCollectors));
 
 		return customFacetDisplayContext;
 	}
@@ -194,7 +195,7 @@ public class CustomFacetDisplayContextBuilder {
 		return false;
 	}
 
-	private BucketDisplayContext _buildTermDisplayContext(
+	private BucketDisplayContext _buildBucketDisplayContext(
 		TermCollector termCollector) {
 
 		String term = GetterUtil.getString(termCollector.getTerm());
@@ -212,11 +213,11 @@ public class CustomFacetDisplayContextBuilder {
 		return bucketDisplayContext;
 	}
 
-	private List<BucketDisplayContext> _buildTermDisplayContexts(
+	private List<BucketDisplayContext> _buildBucketDisplayContexts(
 		List<TermCollector> termCollectors) {
 
 		if (termCollectors.isEmpty()) {
-			return _getEmptyTermDisplayContexts();
+			return _getEmptyBucketDisplayContexts();
 		}
 
 		List<BucketDisplayContext> bucketDisplayContexts =
@@ -233,13 +234,13 @@ public class CustomFacetDisplayContextBuilder {
 			}
 
 			bucketDisplayContexts.add(
-				_buildTermDisplayContext(termCollector));
+				_buildBucketDisplayContext(termCollector));
 		}
 
 		return bucketDisplayContexts;
 	}
 
-	private List<BucketDisplayContext> _getEmptyTermDisplayContexts() {
+	private List<BucketDisplayContext> _getEmptyBucketDisplayContexts() {
 		if (_parameterValues.isEmpty()) {
 			return Collections.emptyList();
 		}

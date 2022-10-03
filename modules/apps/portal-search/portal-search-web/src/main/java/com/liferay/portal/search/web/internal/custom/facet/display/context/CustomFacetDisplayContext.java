@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.internal.custom.facet.configuration.CustomFacetPortletInstanceConfiguration;
+import com.liferay.portal.search.web.internal.facet.display.context.BucketDisplayContext;
 
 import java.util.List;
 
@@ -86,7 +87,7 @@ public class CustomFacetDisplayContext {
 		return _parameterValues;
 	}
 
-	public List<BucketDisplayContext> getTermDisplayContexts() {
+	public List<BucketDisplayContext> getBucketDisplayContexts() {
 		return _bucketDisplayContexts;
 	}
 
@@ -128,7 +129,7 @@ public class CustomFacetDisplayContext {
 		_renderNothing = renderNothing;
 	}
 
-	public void setTermDisplayContexts(
+	public void setBucketDisplayContexts(
 		List<BucketDisplayContext> bucketDisplayContexts) {
 
 		_bucketDisplayContexts = bucketDisplayContexts;
