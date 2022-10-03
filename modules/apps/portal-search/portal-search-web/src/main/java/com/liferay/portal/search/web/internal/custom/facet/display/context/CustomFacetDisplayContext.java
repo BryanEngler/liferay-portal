@@ -87,7 +87,7 @@ public class CustomFacetDisplayContext {
 	}
 
 	public List<BucketDisplayContext> getTermDisplayContexts() {
-		return _customFacetTermDisplayContexts;
+		return _bucketDisplayContexts;
 	}
 
 	public boolean isNothingSelected() {
@@ -129,14 +129,14 @@ public class CustomFacetDisplayContext {
 	}
 
 	public void setTermDisplayContexts(
-		List<BucketDisplayContext> customFacetTermDisplayContexts) {
+		List<BucketDisplayContext> bucketDisplayContexts) {
 
-		_customFacetTermDisplayContexts = customFacetTermDisplayContexts;
+		_bucketDisplayContexts = bucketDisplayContexts;
 	}
 
 	private final CustomFacetPortletInstanceConfiguration
 		_customFacetPortletInstanceConfiguration;
-	private List<BucketDisplayContext> _customFacetTermDisplayContexts;
+	private List<BucketDisplayContext> _bucketDisplayContexts;
 	private String _displayCaption;
 	private long _displayStyleGroupId;
 	private boolean _nothingSelected;

@@ -67,12 +67,12 @@ public class CustomFacetDisplayContextTest {
 			_createDisplayContext(
 				customDisplayCaption, fieldToAggregate, parameterValue);
 
-		List<BucketDisplayContext> customFacetTermDisplayContexts =
+		List<BucketDisplayContext> bucketDisplayContexts =
 			customFacetDisplayContext.getTermDisplayContexts();
 
 		Assert.assertEquals(
-			customFacetTermDisplayContexts.toString(), 0,
-			customFacetTermDisplayContexts.size());
+			bucketDisplayContexts.toString(), 0,
+			bucketDisplayContexts.size());
 
 		Assert.assertTrue(customFacetDisplayContext.isNothingSelected());
 		Assert.assertTrue(customFacetDisplayContext.isRenderNothing());
@@ -90,23 +90,23 @@ public class CustomFacetDisplayContextTest {
 			_createDisplayContext(
 				"customDisplayCaption", "fieldToAggregate", parameterValue);
 
-		List<BucketDisplayContext> customFacetTermDisplayContexts =
+		List<BucketDisplayContext> bucketDisplayContexts =
 			customFacetDisplayContext.getTermDisplayContexts();
 
 		Assert.assertEquals(
-			customFacetTermDisplayContexts.toString(), 1,
-			customFacetTermDisplayContexts.size());
+			bucketDisplayContexts.toString(), 1,
+			bucketDisplayContexts.size());
 
-		BucketDisplayContext customFacetTermDisplayContext =
-			customFacetTermDisplayContexts.get(0);
+		BucketDisplayContext bucketDisplayContext =
+			bucketDisplayContexts.get(0);
 
-		Assert.assertEquals(0, customFacetTermDisplayContext.getFrequency());
+		Assert.assertEquals(0, bucketDisplayContext.getFrequency());
 		Assert.assertEquals(
-			fieldName, customFacetTermDisplayContext.getBucketText());
+			fieldName, bucketDisplayContext.getBucketText());
 		Assert.assertEquals(
-			fieldName, customFacetTermDisplayContext.getFilterValue());
-		Assert.assertTrue(customFacetTermDisplayContext.isSelected());
-		Assert.assertTrue(customFacetTermDisplayContext.isFrequencyVisible());
+			fieldName, bucketDisplayContext.getFilterValue());
+		Assert.assertTrue(bucketDisplayContext.isSelected());
+		Assert.assertTrue(bucketDisplayContext.isFrequencyVisible());
 
 		Assert.assertEquals(
 			parameterValue, customFacetDisplayContext.getParameterValue());
@@ -127,24 +127,24 @@ public class CustomFacetDisplayContextTest {
 			_createDisplayContext(
 				"customDisplayCaption", "fieldToAggregate", parameterValue);
 
-		List<BucketDisplayContext> customFacetTermDisplayContexts =
+		List<BucketDisplayContext> bucketDisplayContexts =
 			customFacetDisplayContext.getTermDisplayContexts();
 
 		Assert.assertEquals(
-			customFacetTermDisplayContexts.toString(), 1,
-			customFacetTermDisplayContexts.size());
+			bucketDisplayContexts.toString(), 1,
+			bucketDisplayContexts.size());
 
-		BucketDisplayContext customFacetTermDisplayContext =
-			customFacetTermDisplayContexts.get(0);
+		BucketDisplayContext bucketDisplayContext =
+			bucketDisplayContexts.get(0);
 
 		Assert.assertEquals(
-			count, customFacetTermDisplayContext.getFrequency());
+			count, bucketDisplayContext.getFrequency());
 		Assert.assertEquals(
-			fieldName, customFacetTermDisplayContext.getBucketText());
+			fieldName, bucketDisplayContext.getBucketText());
 		Assert.assertEquals(
-			fieldName, customFacetTermDisplayContext.getFilterValue());
-		Assert.assertFalse(customFacetTermDisplayContext.isSelected());
-		Assert.assertTrue(customFacetTermDisplayContext.isFrequencyVisible());
+			fieldName, bucketDisplayContext.getFilterValue());
+		Assert.assertFalse(bucketDisplayContext.isSelected());
+		Assert.assertTrue(bucketDisplayContext.isFrequencyVisible());
 
 		Assert.assertEquals(
 			parameterValue, customFacetDisplayContext.getParameterValue());
@@ -165,24 +165,24 @@ public class CustomFacetDisplayContextTest {
 			_createDisplayContext(
 				"customDisplayCaption", "fieldToAggregate", parameterValue);
 
-		List<BucketDisplayContext> customFacetTermDisplayContexts =
+		List<BucketDisplayContext> bucketDisplayContexts =
 			customFacetDisplayContext.getTermDisplayContexts();
 
 		Assert.assertEquals(
-			customFacetTermDisplayContexts.toString(), 1,
-			customFacetTermDisplayContexts.size());
+			bucketDisplayContexts.toString(), 1,
+			bucketDisplayContexts.size());
 
-		BucketDisplayContext customFacetTermDisplayContext =
-			customFacetTermDisplayContexts.get(0);
+		BucketDisplayContext bucketDisplayContext =
+			bucketDisplayContexts.get(0);
 
 		Assert.assertEquals(
-			count, customFacetTermDisplayContext.getFrequency());
+			count, bucketDisplayContext.getFrequency());
 		Assert.assertEquals(
-			fieldName, customFacetTermDisplayContext.getBucketText());
+			fieldName, bucketDisplayContext.getBucketText());
 		Assert.assertEquals(
-			fieldName, customFacetTermDisplayContext.getFilterValue());
-		Assert.assertTrue(customFacetTermDisplayContext.isSelected());
-		Assert.assertTrue(customFacetTermDisplayContext.isFrequencyVisible());
+			fieldName, bucketDisplayContext.getFilterValue());
+		Assert.assertTrue(bucketDisplayContext.isSelected());
+		Assert.assertTrue(bucketDisplayContext.isFrequencyVisible());
 
 		Assert.assertEquals(
 			parameterValue, customFacetDisplayContext.getParameterValue());
