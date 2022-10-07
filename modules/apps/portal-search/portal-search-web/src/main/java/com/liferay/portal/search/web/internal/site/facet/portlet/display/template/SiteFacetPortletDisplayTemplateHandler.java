@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.search.web.internal.facet.display.context.ScopeSearchFacetDisplayContext;
 import com.liferay.portal.search.web.internal.facet.display.context.ScopeSearchFacetTermDisplayContext;
 import com.liferay.portal.search.web.internal.site.facet.constants.SiteFacetPortletKeys;
+import com.liferay.portal.search.web.internal.site.facet.portlet.SiteFacetPortlet;
 import com.liferay.portlet.display.template.constants.PortletDisplayTemplateConstants;
 
 import java.util.List;
@@ -48,7 +49,7 @@ public class SiteFacetPortletDisplayTemplateHandler
 
 	@Override
 	public String getClassName() {
-		return ScopeSearchFacetTermDisplayContext.class.getName();
+		return SiteFacetPortlet.class.getName();
 	}
 
 	@Override
