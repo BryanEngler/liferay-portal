@@ -14,47 +14,22 @@
 
 package com.liferay.portal.search.web.internal.facet.display.context;
 
-import java.io.Serializable;
-
 /**
  * @author Lino Alves
  */
-public class AssetEntriesSearchFacetTermDisplayContext implements Serializable {
+public class AssetEntriesSearchFacetTermDisplayContext
+	extends BucketDisplayContext {
 
 	public String getAssetType() {
 		return _assetType;
-	}
-
-	public int getFrequency() {
-		return _frequency;
 	}
 
 	public String getTypeName() {
 		return _typeName;
 	}
 
-	public boolean isFrequencyVisible() {
-		return _frequencyVisible;
-	}
-
-	public boolean isSelected() {
-		return _selected;
-	}
-
 	public void setAssetType(String assetType) {
 		_assetType = assetType;
-	}
-
-	public void setFrequency(int frequency) {
-		_frequency = frequency;
-	}
-
-	public void setFrequencyVisible(boolean frequencyVisible) {
-		_frequencyVisible = frequencyVisible;
-	}
-
-	public void setSelected(boolean selected) {
-		_selected = selected;
 	}
 
 	public void setTypeName(String typeName) {
@@ -62,9 +37,6 @@ public class AssetEntriesSearchFacetTermDisplayContext implements Serializable {
 	}
 
 	private String _assetType;
-	private int _frequency;
-	private boolean _frequencyVisible;
-	private boolean _selected;
 	private String _typeName;
 
 }
