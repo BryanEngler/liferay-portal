@@ -158,7 +158,7 @@ public class AssetTagsSearchFacetDisplayContextBuilder {
 			_frequenciesVisible);
 		assetTagsSearchFacetTermDisplayContext.setPopularity(popularity);
 		assetTagsSearchFacetTermDisplayContext.setSelected(isSelected(value));
-		assetTagsSearchFacetTermDisplayContext.setValue(value);
+		assetTagsSearchFacetTermDisplayContext.setBucketText(value);
 		assetTagsSearchFacetTermDisplayContext.setFilterValue(value);
 
 		return assetTagsSearchFacetTermDisplayContext;
@@ -261,7 +261,8 @@ public class AssetTagsSearchFacetDisplayContextBuilder {
 			_frequenciesVisible);
 		assetTagsSearchFacetTermDisplayContext.setPopularity(0);
 		assetTagsSearchFacetTermDisplayContext.setSelected(true);
-		assetTagsSearchFacetTermDisplayContext.setValue(_selectedTags.get(0));
+		assetTagsSearchFacetTermDisplayContext.setBucketText(
+			_selectedTags.get(0));
 		assetTagsSearchFacetTermDisplayContext.setFilterValue(
 			_selectedTags.get(0));
 
