@@ -94,7 +94,7 @@ TypeFacetPortletInstanceConfiguration typeFacetPortletInstanceConfiguration = as
 											<label class="facet-checkbox-label" for="<portlet:namespace />term_<%= i %>">
 												<input
 													class="custom-control-input facet-term"
-													data-term-id="<%= assetEntriesSearchFacetTermDisplayContext.getAssetType() %>"
+													data-term-id="<%= assetEntriesSearchFacetTermDisplayContext.getFilterValue() %>"
 													disabled
 													id="<portlet:namespace />term_<%= i %>"
 													name="<portlet:namespace />term_<%= i %>"
