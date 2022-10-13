@@ -101,7 +101,7 @@
 							cssClassTreeItem="tree-item-category"
 							frequency=termDisplayContext.getFrequency()
 							frequencyVisible=termDisplayContext.isFrequencyVisible()
-							id=termDisplayContext.getAssetCategoryId()
+							id=termDisplayContext.getFilterValue()
 							name=htmlUtil.escape(termDisplayContext.getDisplayName())
 							selectable=true
 							selected=termDisplayContext.isSelected()
