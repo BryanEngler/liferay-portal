@@ -19,15 +19,4 @@ package com.liferay.portal.search.web.internal.facet.display.context;
  */
 public class AssetEntriesSearchFacetTermDisplayContext
 	extends BucketDisplayContext {
-
-	public String getTypeName() {
-		return _typeName;
-	}
-
-	public void setTypeName(String typeName) {
-		_typeName = typeName;
-	}
-
-	private String _typeName;
-
 }
