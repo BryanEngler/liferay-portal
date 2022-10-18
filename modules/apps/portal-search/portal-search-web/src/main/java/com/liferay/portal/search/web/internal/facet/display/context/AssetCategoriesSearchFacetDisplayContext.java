@@ -24,6 +24,7 @@ import com.liferay.portal.search.web.internal.category.facet.configuration.Categ
 
 import java.io.Serializable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -206,6 +207,6 @@ public class AssetCategoriesSearchFacetDisplayContext implements Serializable {
 	private String _parameterValue;
 	private List<String> _parameterValues;
 	private boolean _renderNothing;
-	private List<String> _vocabularyNames;
+	private List<String> _vocabularyNames = new ArrayList<>();
 
 }
