@@ -69,6 +69,13 @@ public class SearchIndexResourceImpl extends BaseSearchIndexResourceImpl {
 			}
 		}
 
+		/*
+		TODO
+		 Get "external" indexes that are searchable by contextCompany (as
+		 defined by a new configuration or some other mechanism) and add them to
+		 searchIndexes with external = true;
+		*/
+
 		return searchIndexes;
 	}
 
