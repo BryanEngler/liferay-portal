@@ -17,10 +17,12 @@ package com.liferay.search.experiences.internal.blueprint.search.request.body.co
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TimeZoneUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.search.experiences.internal.blueprint.parameter.SXPParameterData;
 import com.liferay.search.experiences.rest.dto.v1_0.Configuration;
 import com.liferay.search.experiences.rest.dto.v1_0.GeneralConfiguration;
+import com.liferay.search.experiences.rest.dto.v1_0.IndexConfiguration;
 
 /**
  * @author André de Oliveira
@@ -40,7 +42,9 @@ public class GeneralSXPSearchRequestBodyContributor
 			return;
 		}
 
-		if (generalConfiguration.getClauseContributorsExcludes() != null) {
+		if ((generalConfiguration.getClauseContributorsExcludes() != null) &&
+			!_hasIndexConfiguration(configuration)) {
+
 			searchRequestBuilder.withSearchContext(
 				searchContext -> searchContext.setAttribute(
 					"search.full.query.clause.contributors.excludes",
@@ -48,7 +52,9 @@ public class GeneralSXPSearchRequestBodyContributor
 						generalConfiguration.getClauseContributorsExcludes())));
 		}
 
-		if (generalConfiguration.getClauseContributorsIncludes() != null) {
+		if ((generalConfiguration.getClauseContributorsIncludes() != null) &&
+			!_hasIndexConfiguration(configuration)) {
+
 			searchRequestBuilder.withSearchContext(
 				searchContext -> searchContext.setAttribute(
 					"search.full.query.clause.contributors.includes",
@@ -75,7 +81,9 @@ public class GeneralSXPSearchRequestBodyContributor
 				generalConfiguration.getQueryString());
 		}
 
-		if (generalConfiguration.getSearchableAssetTypes() != null) {
+		if ((generalConfiguration.getSearchableAssetTypes() != null) &&
+			!_hasIndexConfiguration(configuration)) {
+
 			searchRequestBuilder.entryClassNames(
 				generalConfiguration.getSearchableAssetTypes());
 			searchRequestBuilder.modelIndexerClassNames(
@@ -99,6 +107,19 @@ public class GeneralSXPSearchRequestBodyContributor
 	@Override
 	public String getName() {
 		return "generalConfiguration";
+	}
+
+	private boolean _hasIndexConfiguration(Configuration configuration) {
+		IndexConfiguration indexConfiguration =
+			configuration.getIndexConfiguration();
+
+		if ((indexConfiguration == null) ||
+			Validator.isBlank(indexConfiguration.getIndexName())) {
+
+			return false;
+		}
+
+		return true;
 	}
 
 }
