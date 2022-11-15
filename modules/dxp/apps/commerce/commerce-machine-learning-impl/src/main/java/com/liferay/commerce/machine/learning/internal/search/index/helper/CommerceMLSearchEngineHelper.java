@@ -20,11 +20,14 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.search.engine.SearchEngineInformation;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.index.CreateIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.DeleteIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.IndicesExistsIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.IndicesExistsIndexResponse;
+
+import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -36,6 +39,12 @@ import org.osgi.service.component.annotations.Reference;
 public class CommerceMLSearchEngineHelper {
 
 	public void createIndex(String indexName, String indexMappingFileName) {
+		if (Objects.equals(
+				_searchEngineInformation.getVendorString(), "Solr")) {
+
+			return;
+		}
+
 		if (_indicesExists(indexName)) {
 			if (_log.isDebugEnabled()) {
 				_log.debug(String.format("Index %s already exist", indexName));
@@ -73,6 +82,12 @@ public class CommerceMLSearchEngineHelper {
 	}
 
 	public void dropIndex(String indexName) {
+		if (Objects.equals(
+				_searchEngineInformation.getVendorString(), "Solr")) {
+
+			return;
+		}
+
 		if (!_indicesExists(indexName)) {
 			if (_log.isDebugEnabled()) {
 				_log.debug(String.format("Index %s does not exist", indexName));
@@ -110,5 +125,8 @@ public class CommerceMLSearchEngineHelper {
 
 	@Reference
 	private JSONFactory _jsonFactory;
+
+	@Reference
+	private SearchEngineInformation _searchEngineInformation;
 
 }
