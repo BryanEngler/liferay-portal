@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.util.HashMapDictionary;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.search.capabilities.SearchCapabilities;
 
 import java.io.Serializable;
 
@@ -41,6 +42,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -269,9 +271,15 @@ public class ConfigurationEntryRetrieverImpl
 				new ConfigurationCategorySectionDisplay(
 					curConfigurationCategory.getCategorySection());
 
-			configurationCategorySectionDisplaysMap.put(
-				curConfigurationCategory.getCategorySection(),
-				configurationCategorySectionDisplay);
+			if (!_searchCapabilities.isCommerceSupported() &&
+				Objects.equals(
+					curConfigurationCategory.getCategorySection(),
+					"commerce")) {
+
+				configurationCategorySectionDisplaysMap.put(
+					curConfigurationCategory.getCategorySection(),
+					configurationCategorySectionDisplay);
+			}
 		}
 
 		ConfigurationCategoryDisplay configurationCategoryDisplay =
@@ -307,6 +315,9 @@ public class ConfigurationEntryRetrieverImpl
 
 	@Reference
 	private ResourceBundleLoaderProvider _resourceBundleLoaderProvider;
+
+	@Reference
+	private SearchCapabilities _searchCapabilities;
 
 	private static class ConfigurationCategorySectionDisplayComparator
 		implements Comparator<ConfigurationCategorySectionDisplay> {
