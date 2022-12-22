@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.model.UserConstants;
+import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -44,8 +45,9 @@ import com.liferay.portal.search.aggregation.AggregationResult;
 import com.liferay.portal.search.aggregation.Aggregations;
 import com.liferay.portal.search.aggregation.bucket.Bucket;
 import com.liferay.portal.search.aggregation.bucket.TermsAggregationResult;
+import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.search.document.DocumentBuilder;
-import com.liferay.portal.search.document.DocumentBuilderFactory;
+import com.liferay.portal.search.legacy.document.DocumentBuilderFactory;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch7.internal.index.constants.LiferayTypeMappingsConstants;
 import com.liferay.portal.search.elasticsearch7.internal.util.DocumentTypes;
@@ -76,7 +78,9 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.core.TimeValue;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.ExistsQueryBuilder;
+import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.search.Scroll;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -105,7 +109,7 @@ public class AssetVocabularyCategoryIdsInitializationBackgroundTaskExecutor
 	}
 
 	@Override
-	public BackgroundTaskResult execute(BackgroundTask backgroundTask)
+	public BackgroundTaskResult execute(BackgroundTask backgroundTask) //receive a background task
 		throws Exception {
 
 		Map<String, Serializable> taskContextMap =
@@ -158,7 +162,7 @@ public class AssetVocabularyCategoryIdsInitializationBackgroundTaskExecutor
 			).build();
 
 		try {
-			_backgroundTaskManager.addBackgroundTask(
+			_backgroundTaskManager.addBackgroundTask( //how to create a background task
 				UserConstants.USER_ID_DEFAULT, CompanyConstants.SYSTEM,
 				"indexAssetVocabularyCategoryIds-" + companyId,
 				AssetVocabularyCategoryIdsInitializationBackgroundTaskExecutor.
@@ -221,7 +225,28 @@ public class AssetVocabularyCategoryIdsInitializationBackgroundTaskExecutor
 
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
-		searchSourceBuilder.query(new ExistsQueryBuilder("assetCategoryIds"));
+		BoolQueryBuilder existsBoolQueryBuilder = new BoolQueryBuilder();
+
+		List<String> languageIds = Arrays.asList(
+			semanticSearchConfiguration.languageIds());
+
+		for (String lang: languageIds) {
+			existsBoolQueryBuilder.should(new ExistsQueryBuilder("text_embed_384_" + lang));
+			existsBoolQueryBuilder.should(new ExistsQueryBuilder("text_embed_512_" + lang));
+			existsBoolQueryBuilder.should(new ExistsQueryBuilder("text_embed_768_" + lang));
+		}
+
+		BoolQueryBuilder classnameBoolQueryBuilder = new BoolQueryBuilder();
+
+		List<String> classNames = Arrays.asList(
+			semanticSearchConfiguration.assetEntryClassNames());
+
+		for (String name: classNames) {
+			classnameBoolQueryBuilder.should(new TermQueryBuilder("entryClassName", name));
+		}
+
+		searchSourceBuilder.query(new BoolQueryBuilder().must(existsBoolQueryBuilder).must(classnameBoolQueryBuilder));
+
 		searchSourceBuilder.size(1000);
 		searchSourceBuilder.storedFields(
 			Arrays.asList(
@@ -372,26 +397,34 @@ public class AssetVocabularyCategoryIdsInitializationBackgroundTaskExecutor
 				Field.ENTRY_CLASS_PK);
 			DocumentField uidDocumentField = fields.get(Field.UID);
 
-			List<AssetCategory> assetCategories =
-				_assetCategoryLocalService.getCategories(
-					entryClassNameDocumentField.getValue(),
-					GetterUtil.getLong(entryClassPKDocumentField.getValue()));
+//			List<AssetCategory> assetCategories =
+//				_assetCategoryLocalService.getCategories(
+//					entryClassNameDocumentField.getValue(),
+//					GetterUtil.getLong(entryClassPKDocumentField.getValue()));
+//
+//			String[] assetVocabularyCategoryIds =
+//				new String[assetCategories.size()];
+//
+//			for (int i = 0; i < assetCategories.size(); i++) {
+//				AssetCategory assetCategory = assetCategories.get(i);
+//
+//				assetVocabularyCategoryIds[i] =
+//					assetCategory.getVocabularyId() + StringPool.DASH +
+//						assetCategory.getCategoryId();
+//			}
 
-			String[] assetVocabularyCategoryIds =
-				new String[assetCategories.size()];
+			Document document = new DocumentImpl();
 
-			for (int i = 0; i < assetCategories.size(); i++) {
-				AssetCategory assetCategory = assetCategories.get(i);
+			if (entryClassNameDocumentField.equals("journal")) {
+				JournalArticle ja = JALS.fetchJA(entryClassPKDocumentField); //this code will need to be in search-experiences-service module. probably a lot of refactoring going to happen
 
-				assetVocabularyCategoryIds[i] =
-					assetCategory.getVocabularyId() + StringPool.DASH +
-						assetCategory.getCategoryId();
+				JournalArticleSentenceEmbeddingModelDocumentContributor.contrib(document, ja);
 			}
 
-			DocumentBuilder documentBuilder = _documentBuilderFactory.builder();
+			DocumentBuilder documentBuilder = _documentBuilderFactory.builder(document);
 
-			documentBuilder.setStrings(
-				"assetVocabularyCategoryIds", assetVocabularyCategoryIds);
+//			documentBuilder.setStrings(
+//				"assetVocabularyCategoryIds", assetVocabularyCategoryIds);
 
 			UpdateDocumentRequest updateDocumentRequest =
 				new UpdateDocumentRequest(
