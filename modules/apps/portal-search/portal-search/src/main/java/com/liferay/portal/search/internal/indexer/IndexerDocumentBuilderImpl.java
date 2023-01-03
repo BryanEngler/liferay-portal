@@ -29,6 +29,7 @@ import com.liferay.portal.search.permission.SearchPermissionDocumentContributor;
 import com.liferay.portal.search.spi.model.index.contributor.ModelDocumentContributor;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Michael C. Han
@@ -66,6 +67,10 @@ public class IndexerDocumentBuilderImpl implements IndexerDocumentBuilder {
 			GetterUtil.getLong(document.get(Field.COMPANY_ID)), document);
 
 		_postProcessDocument(document, baseModel);
+
+		Optional<String> optional = Optional.empty();
+
+		System.out.println(optional.get());
 
 		return document;
 	}
