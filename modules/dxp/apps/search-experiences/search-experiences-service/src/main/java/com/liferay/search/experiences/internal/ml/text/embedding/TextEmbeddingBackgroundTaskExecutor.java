@@ -156,7 +156,24 @@ public class TextEmbeddingBackgroundTaskExecutor
 		List<SearchHit> hits = searchHits.getSearchHits();
 
 		while (!hits.isEmpty()) {
+			// Maybe it works but not sure, need to test
+			// I would test the SolrIndexSearcher way to do it
 			_updateDocuments(hits, indexName);
+
+			searchSearchRequest.setStart(searchSearchRequest.getStart() + 10000);
+
+			searchSearchResponse =
+				_searchEngineAdapter.execute(searchSearchRequest);
+
+			searchHits = searchSearchResponse.getSearchHits();
+
+			hits = searchHits.getSearchHits();
+
+			if (_log.isInfoEnabled()) {
+				_log.info(
+					"Indexed " + searchSearchRequest.getStart() +
+						" documents");
+			}
 		}
 
 		if (_log.isInfoEnabled()) {

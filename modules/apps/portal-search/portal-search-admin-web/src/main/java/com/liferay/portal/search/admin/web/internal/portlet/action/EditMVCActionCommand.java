@@ -241,6 +241,11 @@ public class EditMVCActionCommand extends BaseMVCActionCommand {
 
 	private void _reindexTextEmbeddings(ActionRequest actionRequest)
 		throws Exception {
+		// how can I connect to the background task manager in search
+		// experiences module?
+
+		// Bryan give the idea to use a interface TextEmbeddingHelper but
+		// I dont know exactly how to use it
 	}
 
 	@Reference

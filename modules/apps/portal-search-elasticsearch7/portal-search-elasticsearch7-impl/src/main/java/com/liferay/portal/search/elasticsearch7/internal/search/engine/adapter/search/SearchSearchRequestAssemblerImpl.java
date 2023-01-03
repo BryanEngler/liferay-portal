@@ -61,6 +61,7 @@ public class SearchSearchRequestAssemblerImpl
 		_commonSearchSourceBuilderAssembler.assemble(
 			searchSourceBuilder, searchSearchRequest, searchRequest);
 
+		_setSearchAfter(searchSourceBuilder, searchSearchRequest);
 		_setFetchSource(searchSourceBuilder, searchSearchRequest);
 		_setGroupBy(searchSourceBuilder, searchSearchRequest);
 		_setGroupByRequests(searchSourceBuilder, searchSearchRequest);
@@ -74,6 +75,15 @@ public class SearchSearchRequestAssemblerImpl
 		_setVersion(searchSourceBuilder, searchSearchRequest);
 
 		searchRequest.source(searchSourceBuilder);
+	}
+
+	public void _setSearchAfter(
+		SearchSourceBuilder searchSourceBuilder,
+		SearchSearchRequest searchSearchRequest) {
+
+		// need to implement and test that way
+		// it will be necessary to implement the method in the interface to
+		// get the parameter to the searchAfter method
 	}
 
 	protected GroupByRequest translate(GroupBy groupBy) {
