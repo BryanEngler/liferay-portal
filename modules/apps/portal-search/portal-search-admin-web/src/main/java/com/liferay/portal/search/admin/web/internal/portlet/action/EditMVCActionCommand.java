@@ -103,6 +103,9 @@ public class EditMVCActionCommand extends BaseMVCActionCommand {
 		else if (cmd.equals("reindexIndexReindexer")) {
 			_reindexIndexReindexer(actionRequest);
 		}
+		else if (cmd.equals("reindexTextEmbeddings")) {
+			_reindexTextEmbeddings(actionRequest); //create background task in this method
+		}
 
 		String redirect = ParamUtil.getString(actionRequest, "redirect");
 
@@ -234,6 +237,10 @@ public class EditMVCActionCommand extends BaseMVCActionCommand {
 			indexReindexer.reindex(
 				ParamUtil.getLongValues(actionRequest, "companyIds"));
 		}
+	}
+
+	private void _reindexTextEmbeddings(ActionRequest actionRequest)
+		throws Exception {
 	}
 
 	@Reference
