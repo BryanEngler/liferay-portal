@@ -14,7 +14,6 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.index.field.initializer;
 
-import com.liferay.asset.entry.rel.service.AssetEntryAssetCategoryRelLocalService;
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.petra.string.StringBundler;
@@ -300,7 +299,7 @@ public class AssetVocabularyCategoryIdsInitializationBackgroundTaskExecutor
 		String fieldMapping = fieldMappings.get(indexName);
 
 		try {
-			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+			JSONObject jsonObject = _jsonFactoryUtil.createJSONObject(
 				fieldMapping);
 
 			JSONObject assetVocabularyCategoryIdsJSONObject1 =
@@ -417,10 +416,6 @@ public class AssetVocabularyCategoryIdsInitializationBackgroundTaskExecutor
 	private AssetCategoryLocalService _assetCategoryLocalService;
 
 	@Reference
-	private AssetEntryAssetCategoryRelLocalService
-		_assetEntryAssetCategoryRelLocalService;
-
-	@Reference
 	private BackgroundTaskManager _backgroundTaskManager;
 
 	@Reference
@@ -428,6 +423,9 @@ public class AssetVocabularyCategoryIdsInitializationBackgroundTaskExecutor
 
 	@Reference
 	private ElasticsearchConnectionManager _elasticsearchConnectionManager;
+
+	@Reference
+	private JSONFactoryUtil _jsonFactoryUtil;
 
 	@Reference
 	private Queries _queries;
