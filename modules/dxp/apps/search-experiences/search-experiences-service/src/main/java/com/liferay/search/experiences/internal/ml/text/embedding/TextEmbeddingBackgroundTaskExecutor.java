@@ -14,8 +14,13 @@
 
 package com.liferay.search.experiences.internal.ml.text.embedding;
 
+import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
+import com.liferay.knowledge.base.model.KBArticle;
+import com.liferay.message.boards.model.MBMessage;
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskExecutor;
@@ -27,9 +32,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.search.document.DocumentBuilder;
-import com.liferay.portal.search.document.DocumentBuilderFactory;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.document.BulkDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.UpdateDocumentRequest;
@@ -38,12 +41,14 @@ import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
 import com.liferay.portal.search.hits.SearchHit;
 import com.liferay.portal.search.hits.SearchHits;
 import com.liferay.portal.search.index.TextEmbeddigHelper;
+import com.liferay.portal.search.legacy.document.DocumentBuilderFactory;
 import com.liferay.portal.search.query.BooleanQuery;
 import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.Searcher;
+import com.liferay.portal.search.spi.model.index.contributor.ModelDocumentContributor;
 import com.liferay.search.experiences.configuration.SemanticSearchConfiguration;
-import com.liferay.search.experiences.internal.search.spi.model.index.contributor.JournalArticleTextEmbeddingModelDocumentContributor;
+import com.liferay.wiki.model.WikiPage;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -52,6 +57,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -98,6 +105,11 @@ public class TextEmbeddingBackgroundTaskExecutor
 		BackgroundTask backgroundTask) {
 
 		return null;
+	}
+
+	@Activate
+	protected void activate(BundleContext bundleContext) {
+		_bundleContext = bundleContext;
 	}
 
 	private void _indexTextEmbbeding(String indexName) throws IOException {
@@ -190,50 +202,118 @@ public class TextEmbeddingBackgroundTaskExecutor
 			com.liferay.portal.search.document.Document portalSearchDocument = // that type change will cause problems?
 				hit.getDocument();
 
-			Map<String, com.liferay.portal.search.document.Field> fields =
-				portalSearchDocument.getFields();
+			String entryClassName = portalSearchDocument.getString(
+				Field.ENTRY_CLASS_NAME);
+			long entryClassPK = portalSearchDocument.getLong(
+				Field.ENTRY_CLASS_PK);
+			String uid = portalSearchDocument.getString(Field.UID);
 
-			com.liferay.portal.search.document.Field entryClassNameField =
-				fields.get(Field.ENTRY_CLASS_NAME);
-			com.liferay.portal.search.document.Field entryClassPKField =
-				fields.get(Field.ENTRY_CLASS_PK);
-			com.liferay.portal.search.document.Field uidField = fields.get(
-				Field.UID);
+			Document portalKernelDocument = new DocumentImpl();
 
-			Object entryClassNameDocumentFieldValue =
-				entryClassNameField.getValue();
+			ServiceTrackerList<ModelDocumentContributor>
+				modelDocumentContributors =
+					ServiceTrackerListFactory.open(
+						_bundleContext, ModelDocumentContributor.class,
+						"(&(indexer.class.name=" + entryClassName +
+							")(text.embedding.contributor=true)");
 
-			if (entryClassNameDocumentFieldValue.equals(
-					JournalArticle.class.getName())) {
-
-				Document portalKernelDocument = new DocumentImpl();
-
+			if (entryClassName.equals(BlogsEntry.class.getName())) {
+//				List<JournalArticle> journalArticles =
+//					_journalArticleLocalService.getArticlesByResourcePrimKey(
+//						GetterUtil.getLong(entryClassPKField.getValue()));
+//
+//				modelDocumentContributors.forEach(
+//					modelDocumentContributor -> {
+//						for (JournalArticle journalArticle : journalArticles) {
+//							String articleId = journalArticle.getArticleId();
+//
+//							if (articleId.equals(entryClassPKField.getValue())) {
+//								modelDocumentContributor.contribute(
+//									portalKernelDocument, journalArticle);
+//							}
+//						}
+//					}
+//				);
+			}
+			else if (entryClassName.equals(JournalArticle.class.getName())) {
 				List<JournalArticle> journalArticles =
 					_journalArticleLocalService.getArticlesByResourcePrimKey(
-						GetterUtil.getLong(entryClassPKField.getValue()));
+						entryClassPK);
 
-				JournalArticleTextEmbeddingModelDocumentContributor
-					articleTextEmbeddingModelDocumentContributor =
-						new JournalArticleTextEmbeddingModelDocumentContributor();
+				modelDocumentContributors.forEach(
+					modelDocumentContributor -> {
+						for (JournalArticle journalArticle : journalArticles) {
+							String articleId = journalArticle.getArticleId();
 
-				for (JournalArticle journalArticle : journalArticles) {
-					String articleId = journalArticle.getArticleId();
-
-					if (articleId.equals(entryClassPKField.getValue())) {
-						articleTextEmbeddingModelDocumentContributor.contribute(
-							portalKernelDocument, journalArticle);
+							if (articleId.equals(String.valueOf(entryClassPK))) {
+								modelDocumentContributor.contribute(
+									portalKernelDocument, journalArticle);
+							}
+						}
 					}
-				}
+				);
+			}
+			else if (entryClassName.equals(KBArticle.class.getName())) {
+//				List<JournalArticle> journalArticles =
+//					_journalArticleLocalService.getArticlesByResourcePrimKey(
+//						GetterUtil.getLong(entryClassPKField.getValue()));
+//
+//				modelDocumentContributors.forEach(
+//					modelDocumentContributor -> {
+//						for (JournalArticle journalArticle : journalArticles) {
+//							String articleId = journalArticle.getArticleId();
+//
+//							if (articleId.equals(entryClassPKField.getValue())) {
+//								modelDocumentContributor.contribute(
+//									portalKernelDocument, journalArticle);
+//							}
+//						}
+//					}
+//				);
+			}
+			else if (entryClassName.equals(MBMessage.class.getName())) {
+//				List<JournalArticle> journalArticles =
+//					_journalArticleLocalService.getArticlesByResourcePrimKey(
+//						GetterUtil.getLong(entryClassPKField.getValue()));
+//
+//				modelDocumentContributors.forEach(
+//					modelDocumentContributor -> {
+//						for (JournalArticle journalArticle : journalArticles) {
+//							String articleId = journalArticle.getArticleId();
+//
+//							if (articleId.equals(entryClassPKField.getValue())) {
+//								modelDocumentContributor.contribute(
+//									portalKernelDocument, journalArticle);
+//							}
+//						}
+//					}
+//				);
+			}
+			else if (entryClassName.equals(WikiPage.class.getName())) {
+//				List<JournalArticle> journalArticles =
+//					_journalArticleLocalService.getArticlesByResourcePrimKey(
+//						GetterUtil.getLong(entryClassPKField.getValue()));
+//
+//				modelDocumentContributors.forEach(
+//					modelDocumentContributor -> {
+//						for (JournalArticle journalArticle : journalArticles) {
+//							String articleId = journalArticle.getArticleId();
+//
+//							if (articleId.equals(entryClassPKField.getValue())) {
+//								modelDocumentContributor.contribute(
+//									portalKernelDocument, journalArticle);
+//							}
+//						}
+//					}
+//				);
 			}
 
-			DocumentBuilder documentBuilder = _documentBuilderFactory.builder();
-
-			Object uidFieldValue = uidField.getValue();
+			DocumentBuilder documentBuilder = _documentBuilderFactory.builder(
+				portalKernelDocument);
 
 			UpdateDocumentRequest updateDocumentRequest =
 				new UpdateDocumentRequest(
-					indexName, uidFieldValue.toString(), // is that toString right?
-					documentBuilder.build());
+					indexName, uid, documentBuilder.build());
 
 			updateDocumentRequest.setType("LiferayDocumentType");
 
@@ -246,6 +326,8 @@ public class TextEmbeddingBackgroundTaskExecutor
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		TextEmbeddingBackgroundTaskExecutor.class);
+
+	private BundleContext _bundleContext;
 
 	@Reference
 	private DocumentBuilderFactory _documentBuilderFactory;
