@@ -83,9 +83,14 @@ public class SearcherImpl implements Searcher {
 			searchResponseBuilderFactory.builder(
 				searchRequestImpl.getSearchContext());
 
-		_smartSearch(searchRequestImpl, searchResponseBuilder);
+		if (emptySearchEnabled) {
+			_smartSearch(searchRequestImpl, searchResponseBuilder);
 
-		_federatedSearches(searchRequestImpl, searchResponseBuilder);
+			_federatedSearches(searchRequestImpl, searchResponseBuilder);
+		}
+		else {
+			searchResponseBuilder.hits(new HitsImpl());
+		}
 
 		SearchContext searchContext = searchRequestImpl.getSearchContext();
 
