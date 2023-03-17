@@ -98,7 +98,7 @@ public class SortFieldBuilderImpl implements SortFieldBuilder {
 	private Set<String> _defaultSortableTextFields;
 
 	@Reference
-	private IndexerRegistry _indexerRegistry;
+	private IndexerRegistry _indexerRegistry; //like this
 
 	@Reference
 	private Props _props;

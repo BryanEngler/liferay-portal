@@ -58,7 +58,7 @@ public class SortFieldBuilderImplTest {
 		);
 
 		ReflectionTestUtil.setFieldValue(
-			_sortFieldBuilderImpl, "_indexerRegistry", _indexerRegistry);
+			_sortFieldBuilderImpl, "_indexerRegistry", _indexerRegistry); //like this
 		ReflectionTestUtil.setFieldValue(
 			_sortFieldBuilderImpl, "_props",
 			PropsTestUtil.setProps(

@@ -133,7 +133,7 @@ public class SearcherImpl implements Searcher {
 	}
 
 	@Reference(unbind = "-")
-	protected void setIndexerRegistry(IndexerRegistry indexerRegistry) {
+	protected void setIndexerRegistry(IndexerRegistry indexerRegistry) { //not like this
 		_indexerRegistry = indexerRegistry;
 	}
 

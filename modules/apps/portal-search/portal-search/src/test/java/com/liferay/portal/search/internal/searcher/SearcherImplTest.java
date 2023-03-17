@@ -65,7 +65,7 @@ public class SearcherImplTest {
 
 		_searcherImpl = new SearcherImpl();
 
-		_searcherImpl.setIndexerRegistry(_indexerRegistry);
+		_searcherImpl.setIndexerRegistry(_indexerRegistry); //not like this
 		_searcherImpl.setSearchResponseBuilderFactory(
 			new SearchResponseBuilderFactoryImpl());
 	}
