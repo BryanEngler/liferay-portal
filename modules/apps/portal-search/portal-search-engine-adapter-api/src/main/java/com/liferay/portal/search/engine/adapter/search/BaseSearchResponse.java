@@ -91,10 +91,6 @@ public abstract class BaseSearchResponse implements SearchResponse {
 		_executionTime = executionTime;
 	}
 
-	public void setScrollId(String scrollId) {
-		_scrollId = scrollId;
-	}
-
 	public void setSearchRequestString(String searchRequestString) {
 		_searchRequestString = searchRequestString;
 	}
@@ -120,7 +116,6 @@ public abstract class BaseSearchResponse implements SearchResponse {
 	private long _count;
 	private Map<String, String> _executionProfile;
 	private long _executionTime;
-	private String _scrollId;
 	private String _searchRequestString;
 	private String _searchResponseString;
 	private SearchTimeValue _searchTimeValue;
