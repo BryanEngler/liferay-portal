@@ -58,13 +58,22 @@ import com.liferay.portal.search.engine.adapter.snapshot.SnapshotRepositoryDetai
 import com.liferay.portal.search.engine.adapter.snapshot.SnapshotState;
 import com.liferay.portal.search.index.IndexNameBuilder;
 
+import java.io.IOException;
+
+import java.nio.charset.StandardCharsets;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.elasticsearch.action.ingest.PutPipelineRequest;
+import org.elasticsearch.client.IngestClient;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.Strings;
+import org.elasticsearch.common.bytes.BytesArray;
+import org.elasticsearch.xcontent.XContentType;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -133,6 +142,8 @@ public class ElasticsearchSearchEngine implements SearchEngine {
 
 		RestHighLevelClient restHighLevelClient =
 			_elasticsearchConnectionManager.getRestHighLevelClient();
+
+		_putTimestampPipeline(restHighLevelClient);
 
 		_indexFactory.createIndices(restHighLevelClient.indices(), companyId);
 
@@ -335,6 +346,30 @@ public class ElasticsearchSearchEngine implements SearchEngine {
 		}
 
 		return true;
+	}
+
+	private void _putTimestampPipeline(
+		RestHighLevelClient restHighLevelClient) {
+
+		String source =
+			"{\"description\":\"Adds timestamp to documents\",\"processors\":" +
+				"[{\"set\":{\"field\":\"_source.timestamp\",\"value\":" +
+					"\"{{{_ingest.timestamp}}}\"}}]}";
+
+		PutPipelineRequest putPipelineRequest = new PutPipelineRequest(
+			"timestamp",
+			new BytesArray(source.getBytes(StandardCharsets.UTF_8)),
+			XContentType.JSON);
+
+		IngestClient ingestClient = restHighLevelClient.ingest();
+
+		try {
+			ingestClient.putPipeline(
+				putPipelineRequest, RequestOptions.DEFAULT);
+		}
+		catch (IOException ioException) {
+			_log.error("Unable to put timestamp pipline", ioException);
+		}
 	}
 
 	private void _validateBackupName(String backupName) throws SearchException {
