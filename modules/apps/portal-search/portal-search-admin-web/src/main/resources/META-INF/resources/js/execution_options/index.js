@@ -25,6 +25,7 @@ const EXECUTE_BUTTON_QUERY_SELECTOR = '.save-server-button';
 const EXECUTION_MODES = {
 	CONCURRENT: 'concurrent',
 	REGULAR: 'regular',
+	SYNC: 'sync',
 };
 
 const SCOPES = {
@@ -86,7 +87,7 @@ function ExecutionOptions({
 
 	return (
 		<div className="execution-scope-sheet sheet sheet-lg">
-			{Liferay.FeatureFlags['LPS-177664'] && isConcurrentModeSupported && (
+			{Liferay.FeatureFlags['LPS-177664'] && Liferay.FeatureFlags['LPS-177668'] && isConcurrentModeSupported && (
 				<div className="sheet-section">
 					<h2 className="sheet-title">
 						{Liferay.Language.get('execution-mode')}
@@ -105,6 +106,11 @@ function ExecutionOptions({
 						<ClayRadio
 							label={Liferay.Language.get('concurrent')}
 							value={EXECUTION_MODES.CONCURRENT}
+						/>
+
+						<ClayRadio
+							label={Liferay.Language.get('sync')}
+							value={EXECUTION_MODES.SYNC}
 						/>
 					</ClayRadioGroup>
 				</div>
