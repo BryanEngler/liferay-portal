@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.search.capabilities.SearchCapabilities;
 import com.liferay.portal.search.index.SyncReindexManager;
 import com.liferay.portal.search.spi.reindexer.IndexReindexer;
 import com.liferay.portal.search.tuning.rankings.web.internal.index.name.RankingIndexName;
@@ -52,6 +53,10 @@ public class RankingIndexReindexer implements IndexReindexer {
 	@Override
 	public void reindex(long[] companyIds, String executionMode)
 		throws Exception {
+
+		if (!searchCapabilities.isResultRankingsSupported()) {
+			return;
+		}
 
 		for (long companyId : companyIds) {
 			List<Long> classPKs = jsonStorageEntryLocalService.getClassPKs(
@@ -125,6 +130,9 @@ public class RankingIndexReindexer implements IndexReindexer {
 
 	@Reference
 	protected RankingIndexWriter rankingIndexWriter;
+
+	@Reference
+	protected SearchCapabilities searchCapabilities;
 
 	private Ranking _buildRanking(long classPK) throws Exception {
 		JSONObject jsonObject = jsonStorageEntryLocalService.getJSONObject(
