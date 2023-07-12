@@ -17,8 +17,10 @@ package com.liferay.commerce.product.internal.search.spi.model.index.contributor
 import com.liferay.commerce.product.constants.CPField;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPInstance;
+import com.liferay.commerce.product.model.CPInstanceUnitOfMeasure;
 import com.liferay.commerce.product.model.CommerceCatalog;
 import com.liferay.commerce.product.service.CPDefinitionLocalService;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Document;
@@ -103,6 +105,23 @@ public class CPInstanceModelDocumentContributor
 				document.addKeyword(
 					"commerceCatalogId",
 					commerceCatalog.getCommerceCatalogId());
+			}
+
+			List<CPInstanceUnitOfMeasure> cpInstanceUnitOfMeasures =
+				cpInstance.getCPInstanceUnitOfMeasures(
+					QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+
+			if (!cpInstanceUnitOfMeasures.isEmpty()) {
+				for (CPInstanceUnitOfMeasure cpInstanceUnitOfMeasure :
+						cpInstanceUnitOfMeasures) {
+
+					document.addKeyword(
+						"cpInstanceUnitOfMeasureId",
+						cpInstanceUnitOfMeasure.getCPInstanceUnitOfMeasureId());
+					document.addKeyword(
+						"cpInstanceUnitOfMeasureKey",
+						cpInstanceUnitOfMeasure.getKey());
+				}
 			}
 
 			if (_log.isDebugEnabled()) {
