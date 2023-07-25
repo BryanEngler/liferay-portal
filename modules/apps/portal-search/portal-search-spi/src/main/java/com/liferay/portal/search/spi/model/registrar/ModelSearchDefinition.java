@@ -48,4 +48,6 @@ public interface ModelSearchDefinition {
 
 	public void setStagingAware(boolean stagingAware);
 
+	public void setPermissionAware(boolean permissionAware);
+
 }

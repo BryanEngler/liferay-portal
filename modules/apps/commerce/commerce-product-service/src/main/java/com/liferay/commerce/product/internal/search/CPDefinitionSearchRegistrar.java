@@ -55,6 +55,7 @@ public class CPDefinitionSearchRegistrar {
 					_modelSummaryContributor);
 				modelSearchDefinition.setSearchResultPermissionFilterSuppressed(
 					true);
+				modelSearchDefinition.setPermissionAware(false);
 			});
 	}
 

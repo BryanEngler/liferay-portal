@@ -111,5 +111,14 @@ public class ModelSearchSettingsImpl implements ModelSearchSettings {
 	private boolean _searchResultPermissionFilterSuppressed;
 	private boolean _selectAllLocales;
 	private boolean _stagingAware = true;
+	private boolean _permissionAware = true;
 
+	@Override
+	public boolean isPermissionAware() {
+		return _permissionAware;
+	}
+
+	public void setPermissionAware(boolean permissionAware) {
+		_permissionAware = permissionAware;
+	}
 }

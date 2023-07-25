@@ -38,4 +38,6 @@ public interface ModelSearchSettings {
 
 	public boolean isStagingAware();
 
+	public boolean isPermissionAware();
+
 }

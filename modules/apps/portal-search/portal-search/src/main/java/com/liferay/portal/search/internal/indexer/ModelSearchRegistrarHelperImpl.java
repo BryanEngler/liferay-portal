@@ -129,6 +129,11 @@ public class ModelSearchRegistrarHelperImpl
 			_modelSearchSettingsImpl.setStagingAware(stagingAware);
 		}
 
+		@Override
+		public void setPermissionAware(boolean permissionAware) {
+			_modelSearchSettingsImpl.setPermissionAware(permissionAware);
+		}
+
 		private ModelIndexerWriterContributor<?> _modelIndexWriterContributor;
 		private final ModelSearchSettingsImpl _modelSearchSettingsImpl;
 		private ModelSummaryContributor _modelSummaryContributor;
