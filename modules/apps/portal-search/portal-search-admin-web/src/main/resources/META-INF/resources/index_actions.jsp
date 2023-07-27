@@ -12,9 +12,12 @@
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
 taglib uri="http://liferay.com/tld/clay" prefix="clay" %><%@
 taglib uri="http://liferay.com/tld/react" prefix="react" %><%@
+taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
-<%@ page import="com.liferay.petra.string.StringPool" %><%@
+<%@ page import="com.liferay.object.model.ObjectDefinition" %><%@
+page import="com.liferay.object.service.ObjectDefinitionLocalServiceUtil" %><%@
+page import="com.liferay.petra.string.StringPool" %><%@
 page import="com.liferay.portal.kernel.backgroundtask.BackgroundTask" %><%@
 page import="com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil" %><%@
 page import="com.liferay.portal.kernel.backgroundtask.constants.BackgroundTaskConstants" %><%@
@@ -26,6 +29,7 @@ page import="com.liferay.portal.kernel.search.Indexer" %><%@
 page import="com.liferay.portal.kernel.search.IndexerClassNameComparator" %><%@
 page import="com.liferay.portal.kernel.search.IndexerRegistryUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
+page import="com.liferay.portal.kernel.util.StringUtil" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
 page import="com.liferay.portal.search.admin.web.internal.constants.SearchAdminWebKeys" %><%@
 page import="com.liferay.portal.search.admin.web.internal.display.context.IndexActionsDisplayContext" %><%@
@@ -39,6 +43,8 @@ page import="java.util.Collections" %><%@
 page import="java.util.HashMap" %><%@
 page import="java.util.List" %><%@
 page import="java.util.Map" %>
+
+<liferay-theme:defineObjects />
 
 <portlet:defineObjects />
 
@@ -156,12 +162,24 @@ page import="java.util.Map" %>
 
 						for (Indexer<?> indexer : indexers) {
 							backgroundTaskDisplay = classNameToBackgroundTaskDisplayMap.get(indexer.getClassName());
+
+							String className = indexer.getClassName();
+
+							if (className.startsWith(ObjectDefinition.class.getName() + "#")) {
+								String[] parts = StringUtil.split(className, "#");
+
+								String objectDefinitionId = parts[1];
+
+								ObjectDefinition objectDefinition = ObjectDefinitionLocalServiceUtil.fetchObjectDefinition(Long.valueOf(objectDefinitionId));
+
+								className = className.replaceFirst(objectDefinitionId, objectDefinition.getLabel(themeDisplay.getLocale()));
+							}
 						%>
 
 							<li class="list-group-item list-group-item-flex">
 								<div class="autofit-col autofit-col-expand">
 									<p class="list-group-title">
-										<liferay-ui:message arguments="<%= indexer.getClassName() %>" key="reindex-x" />
+										<liferay-ui:message arguments="<%= className %>" key="reindex-x" />
 									</p>
 								</div>
 
