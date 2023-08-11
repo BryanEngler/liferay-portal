@@ -230,7 +230,7 @@ public class CompanyIndexFactoryHelper {
 			_log.error(
 				StringBundler.concat(
 					"Unable to apply contributor ", indexContributor,
-					"to index ", indexName),
+					" after creating index ", indexName),
 				throwable);
 		}
 	}
@@ -245,7 +245,7 @@ public class CompanyIndexFactoryHelper {
 			_log.error(
 				StringBundler.concat(
 					"Unable to apply contributor ", indexContributor,
-					" when removing index ", indexName),
+					" before deleting index ", indexName),
 				throwable);
 		}
 	}
