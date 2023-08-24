@@ -15,10 +15,6 @@ public class LiferayTypeMappingsConstants {
 
 	public static final String LIFERAY_DOCUMENT_TYPE = "_doc";
 
-	public static final String
-		LIFERAY_DOCUMENT_TYPE_MAPPING_DEFAULT_TEMPLATE_FILE_NAME =
-			"/META-INF/mappings/liferay-type-mappings-default-template.json";
-
 	public static final String LIFERAY_DOCUMENT_TYPE_MAPPING_FILE_NAME =
 		"/META-INF/mappings/liferay-type-mappings.json";
 
