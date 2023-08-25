@@ -27,7 +27,6 @@ import com.liferay.portal.kernel.version.Version;
 import com.liferay.portal.search.ccr.CrossClusterReplicationHelper;
 import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
-import com.liferay.portal.search.elasticsearch7.internal.index.IndexConfigurationDynamicUpdatesExecutor;
 import com.liferay.portal.search.elasticsearch7.internal.index.IndexFactory;
 import com.liferay.portal.search.engine.ConnectionInformation;
 import com.liferay.portal.search.engine.NodeInformation;
@@ -139,8 +138,6 @@ public class ElasticsearchSearchEngine implements SearchEngine {
 		_indexFactory.createIndices(restHighLevelClient.indices(), companyId);
 
 		_indexFactory.registerCompanyId(companyId);
-
-		_indexConfigurationDynamicUpdatesExecutor.execute(companyId);
 
 		_waitForYellowStatus();
 
@@ -450,10 +447,6 @@ public class ElasticsearchSearchEngine implements SearchEngine {
 
 	@Reference
 	private ElasticsearchConnectionManager _elasticsearchConnectionManager;
-
-	@Reference
-	private IndexConfigurationDynamicUpdatesExecutor
-		_indexConfigurationDynamicUpdatesExecutor;
 
 	@Reference
 	private IndexFactory _indexFactory;
