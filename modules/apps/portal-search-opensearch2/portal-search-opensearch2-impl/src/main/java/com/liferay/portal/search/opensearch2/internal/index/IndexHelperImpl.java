@@ -99,11 +99,6 @@ public class IndexHelperImpl implements IndexHelper {
 	}
 
 	@Override
-	public List<CompanyIndexListener> getCompanyIndexListeners() {
-		return _companyIndexListenerServiceTrackerList.toList();
-	}
-
-	@Override
 	public String getIndexName(long companyId) {
 		return _indexNameBuilder.getIndexName(companyId);
 	}
@@ -393,7 +388,7 @@ public class IndexHelperImpl implements IndexHelper {
 		catch (Throwable throwable) {
 			_log.error(
 				StringBundler.concat(
-					"Unable to apply contributor ", companyIndexListener,
+					"Unable to apply listener ", companyIndexListener,
 					" after creating index ", indexName),
 				throwable);
 		}
@@ -408,7 +403,7 @@ public class IndexHelperImpl implements IndexHelper {
 		catch (Throwable throwable) {
 			_log.error(
 				StringBundler.concat(
-					"Unable to apply contributor ", companyIndexListener,
+					"Unable to apply listener ", companyIndexListener,
 					" before deleting index ", indexName),
 				throwable);
 		}
@@ -425,7 +420,7 @@ public class IndexHelperImpl implements IndexHelper {
 
 	private void _executeCompanyIndexListenersBeforeDelete(String indexName) {
 		for (CompanyIndexListener companyIndexListener :
-				getCompanyIndexListeners()) {
+				_companyIndexListenerServiceTrackerList) {
 
 			_executeCompanyIndexListenerBeforeDelete(
 				companyIndexListener, indexName);
