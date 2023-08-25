@@ -260,7 +260,12 @@ public class CompanyIndexFactoryHelper {
 			_elasticsearchConfigurationWrapper.additionalIndexConfigurations());
 	}
 
-	private void _loadDefaultIndexSettings(SettingsBuilder settingsBuilder) {
+	private void _loadDefaultIndexSettings(
+		SettingsBuilder settingsBuilder,
+		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
+
+		liferayDocumentTypeFactory.loadDefaultAnalyzers(settingsBuilder);
+
 		String defaultIndexSettings = ResourceUtil.getResourceAsString(
 			getClass(), "/META-INF/settings/index-settings-defaults.json");
 
@@ -407,9 +412,7 @@ public class CompanyIndexFactoryHelper {
 		SettingsBuilder settingsBuilder = new SettingsBuilder(
 			Settings.builder());
 
-		liferayDocumentTypeFactory.loadDefaultAnalyzers(settingsBuilder);
-
-		_loadDefaultIndexSettings(settingsBuilder);
+		_loadDefaultIndexSettings(settingsBuilder, liferayDocumentTypeFactory);
 
 		_loadTestModeIndexSettings(settingsBuilder);
 
