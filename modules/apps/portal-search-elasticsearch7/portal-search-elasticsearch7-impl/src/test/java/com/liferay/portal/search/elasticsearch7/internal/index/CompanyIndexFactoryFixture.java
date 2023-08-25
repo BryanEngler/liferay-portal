@@ -56,7 +56,7 @@ public class CompanyIndexFactoryFixture {
 		RestHighLevelClient restHighLevelClient =
 			_elasticsearchClientResolver.getRestHighLevelClient();
 
-		companyIndexFactory.createIndices(
+		companyIndexFactory.initializeIndex(
 			restHighLevelClient.indices(), RandomTestUtil.randomLong());
 	}
 
@@ -66,7 +66,7 @@ public class CompanyIndexFactoryFixture {
 		RestHighLevelClient restHighLevelClient =
 			_elasticsearchClientResolver.getRestHighLevelClient();
 
-		companyIndexFactory.deleteIndices(
+		companyIndexFactory.deleteIndex(
 			restHighLevelClient.indices(), RandomTestUtil.randomLong());
 	}
 
