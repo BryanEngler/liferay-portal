@@ -5,10 +5,6 @@
 
 package com.liferay.portal.search.opensearch2.internal.index;
 
-import com.liferay.portal.search.spi.index.listener.CompanyIndexListener;
-
-import java.util.List;
-
 import org.opensearch.client.opensearch.indices.OpenSearchIndicesClient;
 
 /**
@@ -20,8 +16,6 @@ public interface IndexHelper {
 		long companyId, String indexName,
 		OpenSearchIndicesClient openSearchIndicesClient,
 		boolean resetBothIndexNames);
-
-	public List<CompanyIndexListener> getCompanyIndexListeners();
 
 	public String getIndexName(long companyId);
 
