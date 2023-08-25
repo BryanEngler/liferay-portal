@@ -135,7 +135,7 @@ public class ElasticsearchSearchEngine implements SearchEngine {
 
 		_putTimestampPipeline(restHighLevelClient);
 
-		_indexFactory.createIndices(restHighLevelClient.indices(), companyId);
+		_indexFactory.initializeIndex(restHighLevelClient.indices(), companyId);
 
 		_indexFactory.registerCompanyId(companyId);
 
@@ -176,8 +176,7 @@ public class ElasticsearchSearchEngine implements SearchEngine {
 			RestHighLevelClient restHighLevelClient =
 				_elasticsearchConnectionManager.getRestHighLevelClient();
 
-			_indexFactory.deleteIndices(
-				restHighLevelClient.indices(), companyId);
+			_indexFactory.deleteIndex(restHighLevelClient.indices(), companyId);
 
 			_indexFactory.unregisterCompanyId(companyId);
 		}
