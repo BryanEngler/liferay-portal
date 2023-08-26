@@ -160,7 +160,8 @@ public class CompanyIndexFactoryHelper {
 							indexConfigurationContributor =
 								bundleContext.getService(serviceReference);
 
-						_processContributions(indexConfigurationContributor);
+						_processIndexConfigurationContributor(
+							indexConfigurationContributor);
 
 						return indexConfigurationContributor;
 					}
@@ -264,7 +265,9 @@ public class CompanyIndexFactoryHelper {
 		settingsBuilder.loadFromSource(defaultIndexSettings);
 	}
 
-	private void _loadIndexConfigurations(SettingsBuilder settingsBuilder) {
+	private void _loadConfigurationIndexSettings(
+		SettingsBuilder settingsBuilder) {
+
 		settingsBuilder.put(
 			"index.number_of_replicas",
 			_elasticsearchConfigurationWrapper.indexNumberOfReplicas());
@@ -300,7 +303,7 @@ public class CompanyIndexFactoryHelper {
 	}
 
 	private void _loadUserDefinedSettings(SettingsBuilder settingsBuilder) {
-		_loadIndexConfigurations(settingsBuilder);
+		_loadConfigurationIndexSettings(settingsBuilder);
 
 		_loadAdditionalIndexConfigurations(settingsBuilder);
 
@@ -324,7 +327,7 @@ public class CompanyIndexFactoryHelper {
 		}
 	}
 
-	private void _processContributions(
+	private void _processIndexConfigurationContributor(
 		IndexConfigurationContributor indexConfigurationContributor) {
 
 		RestHighLevelClient restHighLevelClient = null;
