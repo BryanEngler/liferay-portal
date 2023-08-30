@@ -38,7 +38,6 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.xcontent.XContentType;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -275,12 +274,10 @@ public class CompanyIndexFactoryHelper {
 	}
 
 	private void _loadDefaultIndexSettings(SettingsBuilder settingsBuilder) {
-		Settings.Builder builder = settingsBuilder.getBuilder();
-
 		String defaultIndexSettings = ResourceUtil.getResourceAsString(
 			getClass(), "/META-INF/settings/index-settings-defaults.json");
 
-		builder.loadFromSource(defaultIndexSettings, XContentType.JSON);
+		settingsBuilder.loadFromSource(defaultIndexSettings);
 	}
 
 	private void _loadIndexConfigurations(SettingsBuilder settingsBuilder) {
@@ -297,12 +294,13 @@ public class CompanyIndexFactoryHelper {
 	}
 
 	private void _loadIndexConfigurationContributors(
-		Settings.Builder builder) {
+		SettingsBuilder settingsBuilder) {
 
 		for (IndexConfigurationContributor indexConfigurationContributor :
 				_indexConfigurationContributorServiceTrackerList) {
 
-			indexConfigurationContributor.contributeSettings(builder::put);
+			indexConfigurationContributor.contributeSettings(
+				settingsBuilder::put);
 		}
 	}
 
@@ -370,11 +368,11 @@ public class CompanyIndexFactoryHelper {
 		CreateIndexRequest createIndexRequest,
 		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
 
-		Settings.Builder builder = Settings.builder();
+		SettingsBuilder settingsBuilder = new SettingsBuilder(
+			Settings.builder());
 
-		liferayDocumentTypeFactory.createRequiredDefaultAnalyzers(builder);
-
-		SettingsBuilder settingsBuilder = new SettingsBuilder(builder);
+		liferayDocumentTypeFactory.createRequiredDefaultAnalyzers(
+			settingsBuilder);
 
 		_loadDefaultIndexSettings(settingsBuilder);
 
@@ -384,13 +382,15 @@ public class CompanyIndexFactoryHelper {
 
 		_loadAdditionalIndexConfigurations(settingsBuilder);
 
-		_loadIndexConfigurationContributors(builder);
+		_loadIndexConfigurationContributors(settingsBuilder);
 
-		if (Validator.isNotNull(builder.get("index.number_of_replicas"))) {
-			builder.put("index.auto_expand_replicas", false);
+		if (Validator.isNotNull(
+			settingsBuilder.get("index.number_of_replicas"))) {
+
+			settingsBuilder.put("index.auto_expand_replicas", false);
 		}
 
-		createIndexRequest.settings(builder);
+		createIndexRequest.settings(settingsBuilder.getBuilder());
 	}
 
 	private void _updateLiferayDocumentType(
