@@ -253,18 +253,6 @@ public class CompanyIndexFactoryHelper {
 			_elasticsearchConfigurationWrapper.additionalIndexConfigurations());
 	}
 
-	private void _loadDefaultIndexSettings(
-		SettingsBuilder settingsBuilder,
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
-
-		liferayDocumentTypeFactory.loadDefaultAnalyzers(settingsBuilder);
-
-		String defaultIndexSettings = ResourceUtil.getResourceAsString(
-			getClass(), "/META-INF/settings/index-settings-defaults.json");
-
-		settingsBuilder.loadFromSource(defaultIndexSettings);
-	}
-
 	private void _loadConfigurationIndexSettings(
 		SettingsBuilder settingsBuilder) {
 
@@ -278,6 +266,18 @@ public class CompanyIndexFactoryHelper {
 			"index.max_result_window",
 			String.valueOf(
 				_elasticsearchConfigurationWrapper.indexMaxResultWindow()));
+	}
+
+	private void _loadDefaultIndexSettings(
+		SettingsBuilder settingsBuilder,
+		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
+
+		liferayDocumentTypeFactory.loadDefaultAnalyzers(settingsBuilder);
+
+		String defaultIndexSettings = ResourceUtil.getResourceAsString(
+			getClass(), "/META-INF/settings/index-settings-defaults.json");
+
+		settingsBuilder.loadFromSource(defaultIndexSettings);
 	}
 
 	private void _loadIndexConfigurationContributors(
@@ -313,17 +313,6 @@ public class CompanyIndexFactoryHelper {
 				settingsBuilder.get("index.number_of_replicas"))) {
 
 			settingsBuilder.put("index.auto_expand_replicas", false);
-		}
-	}
-
-	private void _putContributedTypeMappings(
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
-
-		for (IndexConfigurationContributor indexConfigurationContributor :
-				_indexConfigurationContributorServiceTrackerList) {
-
-			indexConfigurationContributor.contributeMappings(
-				liferayDocumentTypeFactory);
 		}
 	}
 
@@ -412,6 +401,17 @@ public class CompanyIndexFactoryHelper {
 
 		liferayDocumentTypeFactory.putTypeMappings(
 			_elasticsearchConfigurationWrapper.additionalTypeMappings());
+	}
+
+	private void _putContributedTypeMappings(
+		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
+
+		for (IndexConfigurationContributor indexConfigurationContributor :
+				_indexConfigurationContributorServiceTrackerList) {
+
+			indexConfigurationContributor.contributeMappings(
+				liferayDocumentTypeFactory);
+		}
 	}
 
 	private void _setMappings(
