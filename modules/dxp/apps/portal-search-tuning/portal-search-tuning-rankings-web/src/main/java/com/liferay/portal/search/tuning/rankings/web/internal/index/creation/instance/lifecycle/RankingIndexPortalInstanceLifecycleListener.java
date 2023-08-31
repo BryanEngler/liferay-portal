@@ -42,6 +42,7 @@ public class RankingIndexPortalInstanceLifecycleListener
 		}
 
 		if (_singleIndexToMultipleIndexImporter.needImport()) {
+			//execute in background task?
 			_singleIndexToMultipleIndexImporter.importRankings(
 				company.getCompanyId());
 		}
