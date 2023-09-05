@@ -8,7 +8,6 @@ package com.liferay.portal.search.internal.facet.user;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.search.facet.Facet;
 import com.liferay.portal.search.facet.user.UserFacetFactory;
 import com.liferay.portal.search.facet.user.UserFacetSearchContributor;
@@ -68,7 +67,7 @@ public class UserFacetSearchContributorImpl
 			facet.setFacetConfiguration(buildFacetConfiguration(facet));
 
 			if (_selectedUserIds != null) {
-				facet.select(ArrayUtil.toStringArray(_selectedUserIds));
+				facet.select(_selectedUserIds);
 			}
 
 			return facet;
@@ -89,7 +88,7 @@ public class UserFacetSearchContributorImpl
 		}
 
 		@Override
-		public UserFacetBuilder selectedUserIds(long... selectedUserIds) {
+		public UserFacetBuilder selectedUserIds(String... selectedUserIds) {
 			_selectedUserIds = selectedUserIds;
 
 			return this;
@@ -119,7 +118,7 @@ public class UserFacetSearchContributorImpl
 		private int _frequencyThreshold;
 		private int _maxTerms;
 		private final SearchContext _searchContext;
-		private long[] _selectedUserIds;
+		private String[] _selectedUserIds;
 
 	}
 
