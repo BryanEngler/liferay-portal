@@ -31,10 +31,8 @@ import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.portlet.RenderRequest;
@@ -60,8 +58,6 @@ public class AssetEntriesSearchFacetDisplayContextBuilder
 	}
 
 	public AssetEntriesSearchFacetDisplayContext build() {
-		setTypeNames(getTypeNames());
-
 		List<BucketDisplayContext> bucketDisplayContexts =
 			buildBucketDisplayContexts();
 
@@ -92,12 +88,12 @@ public class AssetEntriesSearchFacetDisplayContextBuilder
 	}
 
 	public BucketDisplayContext buildBucketDisplayContext(
-		String typeName, boolean selected, String assetType, int frequency) {
+		boolean selected, String className, int frequency) {
 
 		BucketDisplayContext bucketDisplayContext = new BucketDisplayContext();
 
-		bucketDisplayContext.setBucketText(typeName);
-		bucketDisplayContext.setFilterValue(assetType);
+		bucketDisplayContext.setBucketText(getDisplayName(className));
+		bucketDisplayContext.setFilterValue(className);
 		bucketDisplayContext.setFrequency(frequency);
 		bucketDisplayContext.setFrequencyVisible(_frequenciesVisible);
 		bucketDisplayContext.setSelected(selected);
@@ -118,20 +114,20 @@ public class AssetEntriesSearchFacetDisplayContextBuilder
 
 		List<BucketDisplayContext> bucketDisplayContexts = new ArrayList<>();
 
-		List<String> assetTypes = new SortedArrayList<>(
+		List<String> classNames = new SortedArrayList<>(
 			new ModelResourceComparator(_locale));
 
 		for (String className : _classNames) {
-			if (assetTypes.contains(className)) {
+			if (classNames.contains(className)) {
 				continue;
 			}
 
-			assetTypes.add(className);
+			classNames.add(className);
 		}
 
-		for (String assetType : assetTypes) {
+		for (String className : classNames) {
 			TermCollector termCollector = facetCollector.getTermCollector(
-				assetType);
+				className);
 
 			int frequency = 0;
 
@@ -149,15 +145,8 @@ public class AssetEntriesSearchFacetDisplayContextBuilder
 				selected = _parameterValues.contains(termCollector.getTerm());
 			}
 
-			String typeName = _typeNames.get(assetType);
-
-			if (Validator.isBlank(typeName)) {
-				typeName = assetType;
-			}
-
 			BucketDisplayContext bucketDisplayContext =
-				buildBucketDisplayContext(
-					typeName, selected, assetType, frequency);
+				buildBucketDisplayContext(selected, className, frequency);
 
 			bucketDisplayContexts.add(bucketDisplayContext);
 		}
@@ -236,10 +225,6 @@ public class AssetEntriesSearchFacetDisplayContextBuilder
 		_parameterValues = ListUtil.fromArray(paramValues);
 	}
 
-	public void setTypeNames(Map<String, String> typeNames) {
-		_typeNames = typeNames;
-	}
-
 	protected long getDisplayStyleGroupId() {
 		long displayStyleGroupId =
 			_typeFacetPortletInstanceConfiguration.displayStyleGroupId();
@@ -259,44 +244,35 @@ public class AssetEntriesSearchFacetDisplayContextBuilder
 		return _parameterValues.get(0);
 	}
 
-	protected Map<String, String> getTypeNames() {
-		Map<String, String> assetTypesTypeNames = new HashMap<>();
+	protected String getDisplayName(String className) {
+		String displayName = StringPool.BLANK;
 
-		if (_classNames == null) {
-			return assetTypesTypeNames;
+		AssetRendererFactory<?> assetRendererFactory =
+			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
+				className);
+
+		if (assetRendererFactory != null) {
+			displayName = assetRendererFactory.getTypeName(
+				_themeDisplay.getLocale());
 		}
+		else if (className.startsWith(ObjectDefinition.class.getName() + "#")) {
+			String[] parts = StringUtil.split(className, "#");
 
-		for (String className : _classNames) {
-			String typeName = className;
+			ObjectDefinition objectDefinition =
+				ObjectDefinitionLocalServiceUtil.fetchObjectDefinition(
+					Long.valueOf(parts[1]));
 
-			AssetRendererFactory<?> assetRendererFactory =
-				AssetRendererFactoryRegistryUtil.
-					getAssetRendererFactoryByClassName(className);
-
-			if (assetRendererFactory != null) {
-				typeName = assetRendererFactory.getTypeName(
+			if (objectDefinition != null) {
+				displayName = objectDefinition.getLabel(
 					_themeDisplay.getLocale());
 			}
-			else if (className.startsWith(
-						ObjectDefinition.class.getName() + "#")) {
-
-				String[] parts = StringUtil.split(className, "#");
-
-				ObjectDefinition objectDefinition =
-					ObjectDefinitionLocalServiceUtil.fetchObjectDefinition(
-						Long.valueOf(parts[1]));
-
-				if (objectDefinition == null) {
-					continue;
-				}
-
-				typeName = objectDefinition.getLabel(_themeDisplay.getLocale());
-			}
-
-			assetTypesTypeNames.put(className, typeName);
 		}
 
-		return assetTypesTypeNames;
+		if (Validator.isBlank(displayName)) {
+			displayName = className;
+		}
+
+		return displayName;
 	}
 
 	private String[] _classNames;
@@ -311,6 +287,5 @@ public class AssetEntriesSearchFacetDisplayContextBuilder
 	private final ThemeDisplay _themeDisplay;
 	private final TypeFacetPortletInstanceConfiguration
 		_typeFacetPortletInstanceConfiguration;
-	private Map<String, String> _typeNames = Collections.emptyMap();
 
 }
