@@ -17,6 +17,15 @@ public class BucketDisplayContextComparatorFactoryUtil {
 	public static Comparator<BucketDisplayContext>
 		getBucketDisplayContextComparator(String order) {
 
+		return getBucketDisplayContextComparator(order, null);
+	}
+
+	public static Comparator<BucketDisplayContext>
+		getBucketDisplayContextComparator(
+			String order, Comparator<String> customBucketTextComparator) {
+
+		_customBucketTextComparator = customBucketTextComparator;
+
 		if (order.equals("count:asc")) {
 			return _COMPARATOR_FREQUENCY_ASC;
 		}
@@ -35,6 +44,11 @@ public class BucketDisplayContextComparatorFactoryUtil {
 
 	private static int _compareBucketText(
 		String bucketText1, String bucketText2) {
+
+		if (_customBucketTextComparator != null) {
+			return _customBucketTextComparator.compare(
+				bucketText1, bucketText2);
+		}
 
 		return bucketText1.compareTo(bucketText2);
 	}
@@ -127,5 +141,7 @@ public class BucketDisplayContextComparatorFactoryUtil {
 			}
 
 		};
+
+	private static Comparator<String> _customBucketTextComparator;
 
 }

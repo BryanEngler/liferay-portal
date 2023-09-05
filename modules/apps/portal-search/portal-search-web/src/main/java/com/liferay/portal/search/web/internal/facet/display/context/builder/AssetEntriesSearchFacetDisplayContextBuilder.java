@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.security.permission.comparator.ModelResourceCom
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ListUtil;
-import com.liferay.portal.kernel.util.SortedArrayList;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -114,18 +113,7 @@ public class AssetEntriesSearchFacetDisplayContextBuilder
 
 		List<BucketDisplayContext> bucketDisplayContexts = new ArrayList<>();
 
-		List<String> classNames = new SortedArrayList<>(
-			new ModelResourceComparator(_locale));
-
 		for (String className : _classNames) {
-			if (classNames.contains(className)) {
-				continue;
-			}
-
-			classNames.add(className);
-		}
-
-		for (String className : classNames) {
 			TermCollector termCollector = facetCollector.getTermCollector(
 				className);
 
@@ -154,7 +142,8 @@ public class AssetEntriesSearchFacetDisplayContextBuilder
 		if (_order != null) {
 			bucketDisplayContexts.sort(
 				BucketDisplayContextComparatorFactoryUtil.
-					getBucketDisplayContextComparator(_order));
+					getBucketDisplayContextComparator(
+						_order, new ModelResourceComparator(_locale)));
 		}
 
 		return bucketDisplayContexts;
