@@ -88,7 +88,7 @@ public class ScopeSearchFacetDisplayContextBuilder {
 	}
 
 	public void setFrequencyThreshold(int frequencyThreshold) {
-		_countThreshold = frequencyThreshold;
+		_frequencyThreshold = frequencyThreshold;
 	}
 
 	public void setGroupLocalService(GroupLocalService groupLocalService) {
@@ -186,7 +186,7 @@ public class ScopeSearchFacetDisplayContextBuilder {
 
 			int count = termCollector.getFrequency();
 
-			if (_countThreshold <= count) {
+			if ((count >= _frequencyThreshold) && (_frequencyThreshold > 0)) {
 				bucketDisplayContexts.add(
 					buildBucketDisplayContext(termCollector, count));
 			}
@@ -312,9 +312,9 @@ public class ScopeSearchFacetDisplayContextBuilder {
 		return false;
 	}
 
-	private int _countThreshold;
 	private Facet _facet;
 	private long[] _filteredGroupIds = {};
+	private int _frequencyThreshold;
 	private GroupLocalService _groupLocalService;
 	private HttpServletRequest _httpServletRequest;
 	private Language _language;
