@@ -149,14 +149,6 @@ public class AssetEntriesSearchFacetDisplayContextBuilder
 		return bucketDisplayContexts;
 	}
 
-	public int getPopularity(
-		int frequency, int maxCount, int minCount, double multiplier) {
-
-		int popularity = maxCount - (maxCount - (frequency - minCount));
-
-		return (int)(1 + (popularity * multiplier));
-	}
-
 	public boolean isNothingSelected() {
 		if (_parameterValues.isEmpty()) {
 			return true;
