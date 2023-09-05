@@ -132,14 +132,14 @@ public class UserSearchFacetDisplayContextBuilder {
 
 		BucketDisplayContext bucketDisplayContext = new BucketDisplayContext();
 
-		long userId = GetterUtil.getLong(termCollector.getTerm());
+		String userId = GetterUtil.getString(termCollector.getTerm());
 
 		bucketDisplayContext.setBucketText(_getDisplayName(userId));
-		bucketDisplayContext.setFilterValue(String.valueOf(userId));
+		bucketDisplayContext.setFilterValue(userId);
 
 		bucketDisplayContext.setFrequency(termCollector.getFrequency());
 		bucketDisplayContext.setFrequencyVisible(_frequenciesVisible);
-		bucketDisplayContext.setSelected(isSelected(String.valueOf(userId)));
+		bucketDisplayContext.setSelected(isSelected(userId));
 
 		return bucketDisplayContext;
 	}
@@ -195,7 +195,7 @@ public class UserSearchFacetDisplayContextBuilder {
 		BucketDisplayContext bucketDisplayContext = new BucketDisplayContext();
 
 		bucketDisplayContext.setBucketText(
-			_getDisplayName(GetterUtil.getLong(_paramValues.get(0))));
+			_getDisplayName(_paramValues.get(0)));
 		bucketDisplayContext.setFilterValue(_paramValues.get(0));
 		bucketDisplayContext.setFrequency(0);
 		bucketDisplayContext.setFrequencyVisible(_frequenciesVisible);
@@ -234,8 +234,8 @@ public class UserSearchFacetDisplayContextBuilder {
 		return false;
 	}
 
-	private String _getDisplayName(long userId) {
-		User user = _userLocalService.fetchUser(userId);
+	private String _getDisplayName(String userId) {
+		User user = _userLocalService.fetchUser(GetterUtil.getLong(userId));
 
 		if (user == null) {
 			return "[" + userId + "]";
