@@ -117,8 +117,7 @@ public class TypeFacetPortlet extends MVCPortlet {
 			renderRequest);
 
 		assetEntriesSearchFacetDisplayContextBuilder.setClassNames(
-			_getAssetTypesClassNames(
-				typeFacetPortletPreferences, themeDisplay));
+			_getClassNames(typeFacetPortletPreferences, themeDisplay));
 
 		assetEntriesSearchFacetDisplayContextBuilder.setFacet(
 			portletSharedSearchResponse.getFacet(
@@ -163,7 +162,7 @@ public class TypeFacetPortlet extends MVCPortlet {
 		return portal.getPortletId(renderRequest);
 	}
 
-	private String[] _getAssetTypesClassNames(
+	private String[] _getClassNames(
 		TypeFacetPortletPreferences typeFacetPortletPreferences,
 		ThemeDisplay themeDisplay) {
 
