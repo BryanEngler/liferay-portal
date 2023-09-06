@@ -158,18 +158,6 @@ public class ScopeSearchFacetDisplayContextBuilder {
 	}
 
 	protected BucketDisplayContext buildBucketDisplayContext(
-		TermCollector termCollector) {
-
-		int count = termCollector.getFrequency();
-
-		if ((_countThreshold > 0) && (_countThreshold > count)) {
-			return null;
-		}
-
-		return buildBucketDisplayContext(termCollector, count);
-	}
-
-	protected BucketDisplayContext buildBucketDisplayContext(
 		TermCollector termCollector, int count) {
 
 		long groupId = GetterUtil.getLong(termCollector.getTerm());
