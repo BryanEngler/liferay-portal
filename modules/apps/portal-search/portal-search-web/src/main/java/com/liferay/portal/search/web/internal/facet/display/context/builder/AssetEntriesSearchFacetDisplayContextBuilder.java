@@ -225,25 +225,6 @@ public class AssetEntriesSearchFacetDisplayContextBuilder
 		_parameterValues = ListUtil.fromArray(paramValues);
 	}
 
-	protected long getDisplayStyleGroupId() {
-		long displayStyleGroupId =
-			_typeFacetPortletInstanceConfiguration.displayStyleGroupId();
-
-		if (displayStyleGroupId <= 0) {
-			displayStyleGroupId = _themeDisplay.getScopeGroupId();
-		}
-
-		return displayStyleGroupId;
-	}
-
-	protected String getFirstParameterValue() {
-		if (_parameterValues.isEmpty()) {
-			return StringPool.BLANK;
-		}
-
-		return _parameterValues.get(0);
-	}
-
 	protected String getDisplayName(String className) {
 		String displayName = StringPool.BLANK;
 
@@ -273,6 +254,25 @@ public class AssetEntriesSearchFacetDisplayContextBuilder
 		}
 
 		return displayName;
+	}
+
+	protected long getDisplayStyleGroupId() {
+		long displayStyleGroupId =
+			_typeFacetPortletInstanceConfiguration.displayStyleGroupId();
+
+		if (displayStyleGroupId <= 0) {
+			displayStyleGroupId = _themeDisplay.getScopeGroupId();
+		}
+
+		return displayStyleGroupId;
+	}
+
+	protected String getFirstParameterValue() {
+		if (_parameterValues.isEmpty()) {
+			return StringPool.BLANK;
+		}
+
+		return _parameterValues.get(0);
 	}
 
 	private String[] _classNames;
