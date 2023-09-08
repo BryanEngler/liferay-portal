@@ -6,13 +6,15 @@
 package com.liferay.portal.search.internal.background.task;
 
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskExecutor;
-import com.liferay.portal.kernel.backgroundtask.constants.BackgroundTaskConstants;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.background.task.ReindexBackgroundTaskConstants;
 import com.liferay.portal.kernel.search.background.task.ReindexStatusMessageSender;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.spi.reindexer.IndexReindexer;
 import com.liferay.portal.search.spi.reindexer.IndexReindexerRegistry;
@@ -35,10 +37,6 @@ import org.osgi.service.component.annotations.Reference;
 public class ReindexIndexReindexerBackgroundTaskExecutor
 	extends BaseReindexBackgroundTaskExecutor {
 
-	public ReindexIndexReindexerBackgroundTaskExecutor() {
-		setIsolationLevel(BackgroundTaskConstants.ISOLATION_LEVEL_TASK_NAME);
-	}
-
 	@Override
 	public BackgroundTaskExecutor clone() {
 		return this;
@@ -49,13 +47,14 @@ public class ReindexIndexReindexerBackgroundTaskExecutor
 		Map<String, Serializable> taskContextMap =
 			backgroundTask.getTaskContextMap();
 
-		String className = (String)taskContextMap.get("className");
+		String className = GetterUtil.getString(
+			taskContextMap.get(ReindexBackgroundTaskConstants.CLASS_NAME));
+		long[] companyIds = GetterUtil.getLongValues(
+			taskContextMap.get(ReindexBackgroundTaskConstants.COMPANY_IDS));
 
-		if (Validator.isNotNull(className)) {
-			return className;
-		}
-
-		return super.generateLockKey(backgroundTask);
+		return StringBundler.concat(
+			"reindexIndexReindexer#", className, StringPool.POUND,
+			StringUtil.merge(companyIds));
 	}
 
 	@Override
