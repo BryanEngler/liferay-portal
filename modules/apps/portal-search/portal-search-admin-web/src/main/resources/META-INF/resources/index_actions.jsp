@@ -28,6 +28,7 @@ page import="com.liferay.portal.kernel.search.Indexer" %><%@
 page import="com.liferay.portal.kernel.search.IndexerClassNameComparator" %><%@
 page import="com.liferay.portal.kernel.search.IndexerRegistryUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
+page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
 page import="com.liferay.portal.search.admin.web.internal.constants.SearchAdminWebKeys" %><%@
 page import="com.liferay.portal.search.admin.web.internal.display.context.IndexActionsDisplayContext" %><%@
@@ -69,8 +70,6 @@ page import="java.util.Map" %>
 
 	List<BackgroundTask> reindexSingleBackgroundTasks = BackgroundTaskManagerUtil.getBackgroundTasks(CompanyConstants.SYSTEM, "com.liferay.portal.search.internal.background.task.ReindexSingleIndexerBackgroundTaskExecutor", BackgroundTaskConstants.STATUS_IN_PROGRESS);
 
-	List<BackgroundTask> indexReindexerBackgroundTasks = BackgroundTaskManagerUtil.getBackgroundTasks(CompanyConstants.SYSTEM, "com.liferay.portal.search.internal.background.task.ReindexIndexReindexerBackgroundTaskExecutor", BackgroundTaskConstants.STATUS_IN_PROGRESS);
-
 	if (!reindexSingleBackgroundTasks.isEmpty()) {
 		for (BackgroundTask backgroundTask : reindexSingleBackgroundTasks) {
 			Map<String, Serializable> taskContextMap = backgroundTask.getTaskContextMap();
@@ -81,13 +80,22 @@ page import="java.util.Map" %>
 		}
 	}
 
-	if (!indexReindexerBackgroundTasks.isEmpty()) {
-		for (BackgroundTask backgroundTask : indexReindexerBackgroundTasks) {
+	BackgroundTask allTypesIndexReindexerBackgroundTask = null;
+
+	List<BackgroundTask> reindexIndexReindexerBackgroundTasks = BackgroundTaskManagerUtil.getBackgroundTasks(CompanyConstants.SYSTEM, "com.liferay.portal.search.internal.background.task.ReindexIndexReindexerBackgroundTaskExecutor", BackgroundTaskConstants.STATUS_IN_PROGRESS);
+
+	if (!reindexIndexReindexerBackgroundTasks.isEmpty()) {
+		for (BackgroundTask backgroundTask : reindexIndexReindexerBackgroundTasks) {
 			Map<String, Serializable> taskContextMap = backgroundTask.getTaskContextMap();
 
 			String className = (String)taskContextMap.get("className");
 
-			classNameToBackgroundTaskDisplayMap.put(className, BackgroundTaskDisplayFactoryUtil.getBackgroundTaskDisplay(backgroundTask));
+			if (Validator.isBlank(className)) {
+				allTypesIndexReindexerBackgroundTask = backgroundTask;
+			}
+			else {
+				classNameToBackgroundTaskDisplayMap.put(className, BackgroundTaskDisplayFactoryUtil.getBackgroundTaskDisplay(backgroundTask));
+			}
 		}
 	}
 
@@ -121,31 +129,31 @@ page import="java.util.Map" %>
 
 							<ul class="list-group">
 								<li class="list-group-header">
-									<h3 class="list-group-header-title">
-										<liferay-ui:message key="global" />
+									<h3 class="list-group-detail">
+										<liferay-ui:message key="company-and-system-index-types" />
 									</h3>
 								</li>
 								<li class="list-group-item list-group-item-flex">
 									<div class="autofit-col autofit-col-expand">
 										<p class="list-group-title">
-											<liferay-ui:message key="all-search-indexes" />
+											<liferay-ui:message key="reindex-all-types" />
 										</p>
 									</div>
 
 									<%
-									BackgroundTask backgroundTask = null;
-									BackgroundTaskDisplay backgroundTaskDisplay = null;
+									BackgroundTask allTypesBackgroundTask = null;
+									BackgroundTaskDisplay allTypesBackgroundTaskDisplay = null;
 
 									if (!reindexPortalBackgroundTasks.isEmpty()) {
-										backgroundTask = reindexPortalBackgroundTasks.get(0);
+										allTypesBackgroundTask = reindexPortalBackgroundTasks.get(0);
 
-										backgroundTaskDisplay = BackgroundTaskDisplayFactoryUtil.getBackgroundTaskDisplay(backgroundTask);
+										allTypesBackgroundTaskDisplay = BackgroundTaskDisplayFactoryUtil.getBackgroundTaskDisplay(allTypesBackgroundTask);
 									}
 									%>
 
 									<div class="autofit-col index-action-wrapper" data-type="portal">
 										<c:choose>
-											<c:when test="<%= (backgroundTaskDisplay == null) || !backgroundTaskDisplay.hasPercentage() %>">
+											<c:when test="<%= (allTypesBackgroundTaskDisplay == null) || !allTypesBackgroundTaskDisplay.hasPercentage() %>">
 
 												<%
 												long timeout = ParamUtil.getLong(request, "timeout");
@@ -154,20 +162,9 @@ page import="java.util.Map" %>
 												<aui:button cssClass="save-server-button" data-blocking='<%= ParamUtil.getBoolean(request, "blocking") %>' data-cmd="reindex" data-timeout="<%= (timeout == 0) ? StringPool.BLANK : timeout %>" disabled="<%= !reindexSingleBackgroundTasks.isEmpty() %>" value="execute" />
 											</c:when>
 											<c:otherwise>
-												<%= backgroundTaskDisplay.renderDisplayTemplate() %>
+												<%= allTypesBackgroundTaskDisplay.renderDisplayTemplate() %>
 											</c:otherwise>
 										</c:choose>
-									</div>
-								</li>
-								<li class="list-group-item list-group-item-flex">
-									<div class="autofit-col autofit-col-expand">
-										<p class="list-group-title">
-											<liferay-ui:message key="all-spell-check-dictionaries" />
-										</p>
-									</div>
-
-									<div class="autofit-col index-action-wrapper" data-type="spellCheck">
-										<aui:button cssClass="save-server-button" data-cmd="reindexDictionaries" data-concurrent-disabled="<%= true %>" disabled="<%= !reindexPortalBackgroundTasks.isEmpty() %>" value="execute" />
 									</div>
 								</li>
 
@@ -186,7 +183,7 @@ page import="java.util.Map" %>
 
 									<%
 									for (Indexer<?> indexer : indexers) {
-										backgroundTaskDisplay = classNameToBackgroundTaskDisplayMap.get(indexer.getClassName());
+										BackgroundTaskDisplay indexerBackgroundTaskDisplay = classNameToBackgroundTaskDisplayMap.get(indexer.getClassName());
 									%>
 
 										<li class="list-group-item list-group-item-flex">
@@ -198,11 +195,11 @@ page import="java.util.Map" %>
 
 											<div class="autofit-col index-action-wrapper" data-type="<%= indexer.getClassName() %>">
 												<c:choose>
-													<c:when test="<%= (backgroundTaskDisplay == null) || !backgroundTaskDisplay.hasPercentage() %>">
-														<aui:button cssClass="save-server-button" data-classname="<%= indexer.getClassName() %>" data-cmd="reindex" data-concurrent-disabled="<%= true %>" data-displayname='<%= LanguageUtil.get(request, "model.resource." + indexer.getClassName()) %>' disabled="<%= !indexer.isIndexerEnabled() || !reindexPortalBackgroundTasks.isEmpty() %>" value="execute" />
+													<c:when test="<%= (indexerBackgroundTaskDisplay == null) || !indexerBackgroundTaskDisplay.hasPercentage() %>">
+														<aui:button cssClass="save-server-button" data-classname="<%= indexer.getClassName() %>" data-cmd="reindex" data-concurrent-disabled="<%= true %>" data-displayname='<%= LanguageUtil.get(request, "model.resource." + indexer.getClassName()) %>' disabled="<%= !indexer.isIndexerEnabled() || (allTypesBackgroundTask != null) %>" value="execute" />
 													</c:when>
 													<c:otherwise>
-														<%= backgroundTaskDisplay.renderDisplayTemplate() %>
+														<%= indexerBackgroundTaskDisplay.renderDisplayTemplate() %>
 													</c:otherwise>
 												</c:choose>
 											</div>
@@ -213,17 +210,61 @@ page import="java.util.Map" %>
 								}
 								%>
 
+							</ul>
+
+							<ul class="list-group">
 								<li class="list-group-header">
-									<h3 class="list-group-header-title">
-										<liferay-ui:message key="search-tuning" />
+									<h3 class="list-group-detail">
+										<liferay-ui:message key="spell-check" />
 									</h3>
+								</li>
+								<li class="list-group-item list-group-item-flex">
+									<div class="autofit-col autofit-col-expand">
+										<p class="list-group-title">
+											<liferay-ui:message key="reindex-spell-check-dictionaries" />
+										</p>
+									</div>
+
+									<div class="autofit-col index-action-wrapper" data-type="spellCheck">
+										<aui:button cssClass="save-server-button" data-cmd="reindexDictionaries" data-concurrent-disabled="<%= true %>" disabled="<%= !reindexPortalBackgroundTasks.isEmpty() %>" value="execute" />
+									</div>
+								</li>
+							</ul>
+
+							<ul class="list-group">
+								<li class="list-group-header">
+									<h3 class="list-group-detail">
+										<liferay-ui:message key="application-and-external-index-types" />
+									</h3>
+								</li>
+								<li class="list-group-item list-group-item-flex">
+									<div class="autofit-col autofit-col-expand">
+										<p class="list-group-title">
+											<liferay-ui:message key="reindex-all-types" />
+										</p>
+									</div>
+
+									<%
+									BackgroundTaskDisplay allTypesIndexReindexerBackgroundTaskDisplay = BackgroundTaskDisplayFactoryUtil.getBackgroundTaskDisplay(allTypesIndexReindexerBackgroundTask);
+									%>
+
+									<div class="autofit-col index-action-wrapper" data-type="portal">
+										<c:choose>
+											<c:when test="<%= (allTypesIndexReindexerBackgroundTaskDisplay == null) || !allTypesIndexReindexerBackgroundTaskDisplay.hasPercentage() %>">
+												<aui:button cssClass="save-server-button" data-cmd="reindexIndexReindexer" data-concurrent-disabled="<%= true %>" disabled="<%= !reindexIndexReindexerBackgroundTasks.isEmpty() %>" value="execute" />
+											</c:when>
+											<c:otherwise>
+												<%= allTypesIndexReindexerBackgroundTaskDisplay.renderDisplayTemplate() %>
+											</c:otherwise>
+										</c:choose>
+									</div>
 								</li>
 
 								<%
 								List<String> indexReindexerClassNames = searchAdminDisplayContext.getIndexReindexerClassNames();
 
 								for (String indexReindexerClassName : indexReindexerClassNames) {
-									backgroundTaskDisplay = classNameToBackgroundTaskDisplayMap.get(indexReindexerClassName);
+									BackgroundTaskDisplay indexReindexerBackgroundTaskDisplay = classNameToBackgroundTaskDisplayMap.get(indexReindexerClassName);
 								%>
 
 									<li class="list-group-item list-group-item-flex">
@@ -235,11 +276,11 @@ page import="java.util.Map" %>
 
 										<div class="autofit-col index-action-wrapper" data-type="<%= indexReindexerClassName %>">
 											<c:choose>
-												<c:when test="<%= (backgroundTaskDisplay == null) || !backgroundTaskDisplay.hasPercentage() %>">
-													<aui:button cssClass="save-server-button" data-classname="<%= indexReindexerClassName %>" data-cmd="reindexIndexReindexer" data-concurrent-disabled="<%= true %>" data-displayname='<%= LanguageUtil.get(request, "model.resource." + indexReindexerClassName) %>' disabled="<%= !reindexPortalBackgroundTasks.isEmpty() %>" value="execute" />
+												<c:when test="<%= (indexReindexerBackgroundTaskDisplay == null) || !indexReindexerBackgroundTaskDisplay.hasPercentage() %>">
+													<aui:button cssClass="save-server-button" data-classname="<%= indexReindexerClassName %>" data-cmd="reindexIndexReindexer" data-concurrent-disabled="<%= true %>" data-displayname='<%= LanguageUtil.get(request, "model.resource." + indexReindexerClassName) %>' disabled="<%= allTypesIndexReindexerBackgroundTask != null %>" value="execute" />
 												</c:when>
 												<c:otherwise>
-													<%= backgroundTaskDisplay.renderDisplayTemplate() %>
+													<%= indexReindexerBackgroundTaskDisplay.renderDisplayTemplate() %>
 												</c:otherwise>
 											</c:choose>
 										</div>
