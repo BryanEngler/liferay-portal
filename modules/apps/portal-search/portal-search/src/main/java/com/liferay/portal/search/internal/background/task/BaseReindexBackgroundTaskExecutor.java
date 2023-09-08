@@ -5,6 +5,8 @@
 
 package com.liferay.portal.search.internal.background.task;
 
+import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskResult;
 import com.liferay.portal.kernel.backgroundtask.BaseBackgroundTaskExecutor;
@@ -12,6 +14,7 @@ import com.liferay.portal.kernel.backgroundtask.constants.BackgroundTaskConstant
 import com.liferay.portal.kernel.backgroundtask.display.BackgroundTaskDisplay;
 import com.liferay.portal.kernel.search.background.task.ReindexBackgroundTaskConstants;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.internal.background.task.display.ReindexBackgroundTaskDisplay;
 
 import java.io.Serializable;
@@ -27,7 +30,7 @@ public abstract class BaseReindexBackgroundTaskExecutor
 	public BaseReindexBackgroundTaskExecutor() {
 		setBackgroundTaskStatusMessageTranslator(
 			new ReindexBackgroundTaskStatusMessageTranslator());
-		setIsolationLevel(BackgroundTaskConstants.ISOLATION_LEVEL_COMPANY);
+		setIsolationLevel(BackgroundTaskConstants.ISOLATION_LEVEL_CUSTOM);
 	}
 
 	@Override
@@ -47,6 +50,21 @@ public abstract class BaseReindexBackgroundTaskExecutor
 		reindex(className, companyIds, executionMode);
 
 		return BackgroundTaskResult.SUCCESS;
+	}
+
+	@Override
+	public String generateLockKey(BackgroundTask backgroundTask) {
+		Map<String, Serializable> taskContextMap =
+			backgroundTask.getTaskContextMap();
+
+		String className = GetterUtil.getString(
+			taskContextMap.get(ReindexBackgroundTaskConstants.CLASS_NAME));
+		long[] companyIds = GetterUtil.getLongValues(
+			taskContextMap.get(ReindexBackgroundTaskConstants.COMPANY_IDS));
+
+		return StringBundler.concat(
+			"reindex#", className, StringPool.POUND,
+			StringUtil.merge(companyIds));
 	}
 
 	@Override
