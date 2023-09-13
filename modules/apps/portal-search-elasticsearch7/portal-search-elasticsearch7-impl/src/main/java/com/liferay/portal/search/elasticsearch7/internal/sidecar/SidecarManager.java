@@ -52,7 +52,7 @@ public class SidecarManager implements ElasticsearchConfigurationObserver {
 	}
 
 	@Override
-	public void onElasticsearchConfigurationUpdate() {
+	public void onElasticsearchConfigurationUpdate(Object object) {
 		applyConfigurations();
 	}
 

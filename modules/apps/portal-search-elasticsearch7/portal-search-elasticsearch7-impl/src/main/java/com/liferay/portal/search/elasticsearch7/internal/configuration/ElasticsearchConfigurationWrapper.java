@@ -22,6 +22,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -273,7 +274,11 @@ public class ElasticsearchConfigurationWrapper
 
 	@Activate
 	@Modified
-	protected void activate(Map<String, Object> map) {
+	protected void activate(
+		BundleContext bundleContext, Map<String, Object> map) {
+
+		//get orig value from bundleContext?
+
 		Map<String, Object> propsMap = _getPropsMap(
 			_PROPS_KEYS, ElasticsearchConfiguration.class, _props);
 
@@ -283,9 +288,19 @@ public class ElasticsearchConfigurationWrapper
 			ElasticsearchConfiguration.class, propsMap);
 		_propsMap = propsMap;
 
+		//get new value from config?
+
+		//compare and pass result to onElasticsearchConfigurationUpdate() in
+		//some kind of container object
+
+		Object object = new Object();
+
 		_elasticsearchConfigurationObservers.forEach(
-			ElasticsearchConfigurationObserver::
-				onElasticsearchConfigurationUpdate);
+			elasticsearchConfigurationObserver ->
+				elasticsearchConfigurationObserver.
+					onElasticsearchConfigurationUpdate(object));
+
+		//write new value to bundle context
 	}
 
 	protected void setElasticsearchConfiguration(
