@@ -138,6 +138,40 @@ public class DateRangeFactoryUtil {
 		}
 	}
 
+	public static void validateRangeSyntax(String ranges)
+		throws JSONException, ParseException {
+
+		JSONArray rangesJSONArray = JSONFactoryUtil.createJSONArray(ranges);
+
+		for (int i = 0; i < rangesJSONArray.length(); i++) {
+			String range = rangesJSONArray.getJSONObject(
+				i
+			).getString(
+				"range"
+			);
+
+			if (!StringUtil.contains(range, " TO ") ||
+				!StringUtil.startsWith(range, "[") ||
+				!StringUtil.endsWith(range, "]")) {
+
+				throw new IllegalArgumentException(
+					"Invalid range syntax " + range);
+			}
+
+			String from = range.split("TO")[0].trim();
+
+			from = from.substring(1);
+
+			_validateDateFormat(from);
+
+			String to = range.split("TO")[1].trim();
+
+			to = to.substring(0, to.length() - 1);
+
+			_validateDateFormat(to);
+		}
+	}
+
 	private static String _normalizeRangeBoundary(
 		String dateString, String pad) {
 
