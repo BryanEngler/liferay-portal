@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.uuid.PortalUUID;
 import com.liferay.portal.search.admin.web.internal.constants.SearchAdminPortletKeys;
@@ -88,6 +89,12 @@ public class EditMVCActionCommand extends BaseMVCActionCommand {
 
 		if (cmd.equals("reindex")) {
 			_reindex(actionRequest);
+
+			if (Validator.isBlank(
+				ParamUtil.getString(actionRequest, "className"))) {
+
+				_reindexIndexReindexer(actionRequest);
+			}
 		}
 		else if (cmd.equals("reindexDictionaries")) {
 			_reindexDictionaries(actionRequest);
