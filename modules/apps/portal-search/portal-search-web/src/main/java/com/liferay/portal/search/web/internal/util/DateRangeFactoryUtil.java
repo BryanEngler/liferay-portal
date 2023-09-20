@@ -150,8 +150,7 @@ public class DateRangeFactoryUtil {
 				"range"
 			);
 
-			if (!StringUtil.contains(range, " TO ") ||
-				!StringUtil.startsWith(range, "[") ||
+			if (!range.contains(" TO ") || !StringUtil.startsWith(range, "[") ||
 				!StringUtil.endsWith(range, "]")) {
 
 				throw new IllegalArgumentException(
