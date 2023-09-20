@@ -233,7 +233,7 @@ public class DateFacetDisplayContextBuilder implements Serializable {
 
 			String label = jsonObject.getString("label");
 
-			if (StringUtil.startsWith(label, "___custom-range___")) {
+			if (label.equals("custom-range")) {
 				continue;
 			}
 
@@ -245,7 +245,7 @@ public class DateFacetDisplayContextBuilder implements Serializable {
 				continue;
 			}
 
-			bucketDisplayContexts.add(_buildTermDisplayContext(label));
+			bucketDisplayContexts.add(_buildBucketDisplayContext(label));
 		}
 
 		if (!_order.equals("OrderHitsDesc")) {
@@ -309,7 +309,7 @@ public class DateFacetDisplayContextBuilder implements Serializable {
 		return bucketDisplayContext;
 	}
 
-	private BucketDisplayContext _buildTermDisplayContext(String label) {
+	private BucketDisplayContext _buildBucketDisplayContext(String label) {
 		BucketDisplayContext bucketDisplayContext = new BucketDisplayContext();
 
 		bucketDisplayContext.setBucketText(label);

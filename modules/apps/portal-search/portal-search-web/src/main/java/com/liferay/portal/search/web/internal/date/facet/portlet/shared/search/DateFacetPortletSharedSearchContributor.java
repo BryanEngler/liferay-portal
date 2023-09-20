@@ -124,7 +124,7 @@ public class DateFacetPortletSharedSearchContributor
 		if (!Validator.isBlank(selectedCustomRangeString)) {
 			rangesJSONArray.put(
 				JSONUtil.put(
-					"label", "___custom-range___" + StringUtil.randomString(5)
+					"label", "custom-range"
 				).put(
 					"range", selectedCustomRangeString
 				));
