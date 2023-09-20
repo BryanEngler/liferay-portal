@@ -219,6 +219,44 @@ public class DateFacetDisplayContextBuilder implements Serializable {
 		return isNothingSelected();
 	}
 
+	private List<BucketDisplayContext> _buildBucketDisplayContexts() {
+		JSONArray rangesJSONArray = _getRangesJSONArray();
+
+		if (rangesJSONArray == null) {
+			return null;
+		}
+
+		List<BucketDisplayContext> bucketDisplayContexts = new ArrayList<>();
+
+		for (int i = 0; i < rangesJSONArray.length(); i++) {
+			JSONObject jsonObject = rangesJSONArray.getJSONObject(i);
+
+			String label = jsonObject.getString("label");
+
+			if (StringUtil.startsWith(label, "___custom-range___")) {
+				continue;
+			}
+
+			String range = jsonObject.getString("range");
+
+			if ((_frequencyThreshold > 0) &&
+				(_frequencyThreshold > getFrequency(getTermCollector(range)))) {
+
+				continue;
+			}
+
+			bucketDisplayContexts.add(_buildTermDisplayContext(label));
+		}
+
+		if (!_order.equals("OrderHitsDesc")) {
+			bucketDisplayContexts.sort(
+				BucketDisplayContextComparatorFactoryUtil.
+					getBucketDisplayContextComparator(_order));
+		}
+
+		return bucketDisplayContexts;
+	}
+
 	private DateFacetCalendarDisplayContext _buildCalendarDisplayContext() {
 		DateFacetCalendarDisplayContextBuilder
 			dateFacetCalendarDisplayContextBuilder =
@@ -282,44 +320,6 @@ public class DateFacetDisplayContextBuilder implements Serializable {
 		bucketDisplayContext.setSelected(_selectedRanges.contains(label));
 
 		return bucketDisplayContext;
-	}
-
-	private List<BucketDisplayContext> _buildBucketDisplayContexts() {
-		JSONArray rangesJSONArray = _getRangesJSONArray();
-
-		if (rangesJSONArray == null) {
-			return null;
-		}
-
-		List<BucketDisplayContext> bucketDisplayContexts = new ArrayList<>();
-
-		for (int i = 0; i < rangesJSONArray.length(); i++) {
-			JSONObject jsonObject = rangesJSONArray.getJSONObject(i);
-
-			String label = jsonObject.getString("label");
-
-			if (StringUtil.startsWith(label, "___custom-range___")) {
-				continue;
-			}
-
-			String range = jsonObject.getString("range");
-
-			if ((_frequencyThreshold > 0) &&
-				(_frequencyThreshold > getFrequency(getTermCollector(range)))) {
-
-				continue;
-			}
-
-			bucketDisplayContexts.add(_buildTermDisplayContext(label));
-		}
-
-		if (!_order.equals("OrderHitsDesc")) {
-			bucketDisplayContexts.sort(
-				BucketDisplayContextComparatorFactoryUtil.
-					getBucketDisplayContextComparator(_order));
-		}
-
-		return bucketDisplayContexts;
 	}
 
 	private TermCollector _getCustomRangeTermCollector(boolean selected) {

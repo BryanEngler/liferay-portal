@@ -191,6 +191,54 @@ public class ModifiedFacetDisplayContextBuilder implements Serializable {
 		return isNothingSelected();
 	}
 
+	private BucketDisplayContext _buildBucketDisplayContext(String label) {
+		BucketDisplayContext bucketDisplayContext = new BucketDisplayContext();
+
+		bucketDisplayContext.setBucketText(label);
+		bucketDisplayContext.setFilterValue(_getLabeledRangeURL(label));
+		bucketDisplayContext.setFrequency(
+			getFrequency(getTermCollector(label)));
+		bucketDisplayContext.setFrequencyVisible(_frequenciesVisible);
+		bucketDisplayContext.setSelected(_selectedRanges.contains(label));
+
+		return bucketDisplayContext;
+	}
+
+	private List<BucketDisplayContext> _buildBucketDisplayContexts() {
+		JSONArray rangesJSONArray = _getRangesJSONArray();
+
+		if (rangesJSONArray == null) {
+			return null;
+		}
+
+		List<BucketDisplayContext> bucketDisplayContexts = new ArrayList<>();
+
+		for (int i = 0; i < rangesJSONArray.length(); i++) {
+			JSONObject jsonObject = rangesJSONArray.getJSONObject(i);
+
+			String range = jsonObject.getString("range");
+
+			// check label?
+
+			if ((_frequencyThreshold > 0) &&
+				(_frequencyThreshold > getFrequency(getTermCollector(range)))) {
+
+				continue;
+			}
+
+			bucketDisplayContexts.add(
+				_buildBucketDisplayContext(jsonObject.getString("label")));
+		}
+
+		if (!_order.equals("OrderHitsDesc")) {
+			bucketDisplayContexts.sort(
+				BucketDisplayContextComparatorFactoryUtil.
+					getBucketDisplayContextComparator(_order));
+		}
+
+		return bucketDisplayContexts;
+	}
+
 	private ModifiedFacetCalendarDisplayContext _buildCalendarDisplayContext() {
 		ModifiedFacetCalendarDisplayContextBuilder
 			modifiedFacetCalendarDisplayContextBuilder =
@@ -241,52 +289,6 @@ public class ModifiedFacetDisplayContextBuilder implements Serializable {
 		bucketDisplayContext.setSelected(true);
 
 		return bucketDisplayContext;
-	}
-
-	private BucketDisplayContext _buildBucketDisplayContext(String label) {
-		BucketDisplayContext bucketDisplayContext = new BucketDisplayContext();
-
-		bucketDisplayContext.setBucketText(label);
-		bucketDisplayContext.setFilterValue(_getLabeledRangeURL(label));
-		bucketDisplayContext.setFrequency(
-			getFrequency(getTermCollector(label)));
-		bucketDisplayContext.setFrequencyVisible(_frequenciesVisible);
-		bucketDisplayContext.setSelected(_selectedRanges.contains(label));
-
-		return bucketDisplayContext;
-	}
-
-	private List<BucketDisplayContext> _buildBucketDisplayContexts() {
-		JSONArray rangesJSONArray = _getRangesJSONArray();
-
-		if (rangesJSONArray == null) {
-			return null;
-		}
-
-		List<BucketDisplayContext> bucketDisplayContexts = new ArrayList<>();
-
-		for (int i = 0; i < rangesJSONArray.length(); i++) {
-			JSONObject jsonObject = rangesJSONArray.getJSONObject(i);
-
-			String range = jsonObject.getString("range");
-//check label?
-			if ((_frequencyThreshold > 0) &&
-				(_frequencyThreshold > getFrequency(getTermCollector(range)))) {
-
-				continue;
-			}
-
-			bucketDisplayContexts.add(
-				_buildBucketDisplayContext(jsonObject.getString("label")));
-		}
-
-		if (!_order.equals("OrderHitsDesc")) {
-			bucketDisplayContexts.sort(
-				BucketDisplayContextComparatorFactoryUtil.
-					getBucketDisplayContextComparator(_order));
-		}
-
-		return bucketDisplayContexts;
 	}
 
 	private TermCollector _getCustomRangeTermCollector(boolean selected) {
