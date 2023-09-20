@@ -18,7 +18,7 @@ import com.liferay.portal.kernel.util.Validator;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.bucket.range.RangeAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.range.AbstractRangeBuilder;
 import org.elasticsearch.search.aggregations.bucket.range.RangeAggregator;
 
 import org.osgi.service.component.annotations.Component;
@@ -43,25 +43,36 @@ public class RangeFacetProcessor
 	public AggregationBuilder processFacet(Facet facet) {
 		FacetConfiguration facetConfiguration = facet.getFacetConfiguration();
 
-		RangeAggregationBuilder rangeAggregationBuilder =
-			AggregationBuilders.range(FacetUtil.getAggregationName(facet));
+		AbstractRangeBuilder abstractRangeBuilder = getRangeBuilder(
+			FacetUtil.getAggregationName(facet));
 
-		rangeAggregationBuilder.field(facetConfiguration.getFieldName());
+		abstractRangeBuilder.field(facetConfiguration.getFieldName());
 
-		_addConfigurationRanges(facetConfiguration, rangeAggregationBuilder);
+		JSONObject jsonObject = facetConfiguration.getData();
 
-		_addCustomRange(facet, rangeAggregationBuilder);
+		String format = jsonObject.getString("format");
 
-		if (ListUtil.isEmpty(rangeAggregationBuilder.ranges())) {
+		if (Validator.isNotNull(format)) {
+			abstractRangeBuilder.format(format);
+		}
+
+		_addConfigurationRanges(facetConfiguration, abstractRangeBuilder);
+		_addCustomRange(facet, abstractRangeBuilder);
+
+		if (ListUtil.isEmpty(abstractRangeBuilder.ranges())) {
 			return null;
 		}
 
-		return rangeAggregationBuilder;
+		return abstractRangeBuilder;
+	}
+
+	protected AbstractRangeBuilder getRangeBuilder(String name) {
+		return AggregationBuilders.range(name);
 	}
 
 	private void _addConfigurationRanges(
 		FacetConfiguration facetConfiguration,
-		RangeAggregationBuilder rangeAggregationBuilder) {
+		AbstractRangeBuilder abstractRangeBuilder) {
 
 		JSONObject jsonObject = facetConfiguration.getData();
 
@@ -76,14 +87,12 @@ public class RangeFacetProcessor
 
 			String rangeString = rangeJSONObject.getString("range");
 
-			String[] range = RangeParserUtil.parserRange(rangeString);
-
-			rangeAggregationBuilder.addRange(_createRange(rangeString, range));
+			_addRange(abstractRangeBuilder, rangeString);
 		}
 	}
 
 	private void _addCustomRange(
-		Facet facet, RangeAggregationBuilder rangeAggregationBuilder) {
+		Facet facet, AbstractRangeBuilder abstractRangeBuilder) {
 
 		SearchContext searchContext = facet.getSearchContext();
 
@@ -94,13 +103,16 @@ public class RangeFacetProcessor
 			return;
 		}
 
-		String[] range = RangeParserUtil.parserRange(rangeString);
-
-		rangeAggregationBuilder.addRange(_createRange(rangeString, range));
+		_addRange(abstractRangeBuilder, rangeString);
 	}
 
-	private RangeAggregator.Range _createRange(String key, String[] range) {
-		return new RangeAggregator.Range(key, range[0], range[1]);
+	private void _addRange(
+		AbstractRangeBuilder abstractRangeBuilder, String rangeString) {
+
+		String[] range = RangeParserUtil.parserRange(rangeString);
+
+		abstractRangeBuilder.addRange(
+			new RangeAggregator.Range(rangeString, range[0], range[1]));
 	}
 
 }
