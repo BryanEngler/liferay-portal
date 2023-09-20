@@ -48,7 +48,7 @@ import org.osgi.service.component.annotations.Reference;
 	property = {
 		"com.liferay.portlet.add-default-resource=true",
 		"com.liferay.portlet.css-class-wrapper=portlet-date-facet",
-		"com.liferay.portlet.display-category=category.hidden",
+		"com.liferay.portlet.display-category=category.search",
 		"com.liferay.portlet.header-portlet-css=/css/main.css",
 		"com.liferay.portlet.icon=/icons/search.png",
 		"com.liferay.portlet.instanceable=true",
