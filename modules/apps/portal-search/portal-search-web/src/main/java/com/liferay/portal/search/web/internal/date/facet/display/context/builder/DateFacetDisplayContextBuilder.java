@@ -219,6 +219,19 @@ public class DateFacetDisplayContextBuilder implements Serializable {
 		return isNothingSelected();
 	}
 
+	private BucketDisplayContext _buildBucketDisplayContext(String label) {
+		BucketDisplayContext bucketDisplayContext = new BucketDisplayContext();
+
+		bucketDisplayContext.setBucketText(label);
+		bucketDisplayContext.setFilterValue(_getLabeledRangeURL(label));
+		bucketDisplayContext.setFrequency(
+			getFrequency(getTermCollector(label)));
+		bucketDisplayContext.setFrequencyVisible(_frequenciesVisible);
+		bucketDisplayContext.setSelected(_selectedRanges.contains(label));
+
+		return bucketDisplayContext;
+	}
+
 	private List<BucketDisplayContext> _buildBucketDisplayContexts() {
 		JSONArray rangesJSONArray = _getRangesJSONArray();
 
@@ -305,19 +318,6 @@ public class DateFacetDisplayContextBuilder implements Serializable {
 
 		bucketDisplayContext.setBucketText(label);
 		bucketDisplayContext.setSelected(true);
-
-		return bucketDisplayContext;
-	}
-
-	private BucketDisplayContext _buildBucketDisplayContext(String label) {
-		BucketDisplayContext bucketDisplayContext = new BucketDisplayContext();
-
-		bucketDisplayContext.setBucketText(label);
-		bucketDisplayContext.setFilterValue(_getLabeledRangeURL(label));
-		bucketDisplayContext.setFrequency(
-			getFrequency(getTermCollector(label)));
-		bucketDisplayContext.setFrequencyVisible(_frequenciesVisible);
-		bucketDisplayContext.setSelected(_selectedRanges.contains(label));
 
 		return bucketDisplayContext;
 	}
