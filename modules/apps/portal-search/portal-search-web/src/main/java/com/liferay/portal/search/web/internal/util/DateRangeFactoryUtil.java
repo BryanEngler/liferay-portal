@@ -39,17 +39,17 @@ public class DateRangeFactoryUtil {
 	public static String getRangeString(String from, String to, TimeZone timeZone) {
 		DateFormat dateFormat = _dateFormatFactory.getSimpleDateFormat(
 			"yyyyMMddHHmmss", TimeZoneUtil.GMT);
-		DateFormat timeZoneDateFormat = _dateFormatFactory.getSimpleDateFormat(
-			"yyyyMMddHHmmss", timeZone);
+		DateFormat userTimeZoneDateFormat =
+			_dateFormatFactory.getSimpleDateFormat("yyyyMMddHHmmss", timeZone);
 
 		String normalizedFrom = _normalizeRangeBoundary(from, "000000");
 		String normalizedTo = _normalizeRangeBoundary(to, "235959");
 
 		try {
 			String fromUTC = dateFormat.format(
-				timeZoneDateFormat.parse(normalizedFrom));
+				userTimeZoneDateFormat.parse(normalizedFrom));
 			String toUTC = dateFormat.format(
-				timeZoneDateFormat.parse(normalizedTo));
+				userTimeZoneDateFormat.parse(normalizedTo));
 
 			return StringBundler.concat("[", fromUTC, " TO ", toUTC, "]");
 		}
