@@ -81,7 +81,7 @@ public class DateFacetPortletConfigurationAction
 			DateRangeFactory dateRangeFactory = new DateRangeFactory(
 				DateFormatFactoryUtil.getDateFormatFactory());
 
-			dateRangeFactory.validateRangeSyntax(ranges);
+			//dateRangeFactory.validateRangeSyntax(ranges);
 		}
 		catch (Exception exception) {
 			SessionErrors.add(actionRequest, "unparsableSyntax");
