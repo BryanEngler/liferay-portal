@@ -5,6 +5,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.facet;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.SearchContext;
@@ -112,6 +113,14 @@ public class RangeFacetProcessor
 		String rangeString) {
 
 		String[] range = RangeParserUtil.parserRange(rangeString);
+
+		if (range[0].equals(StringPool.TILDE)) {
+			range[0] = null;
+		}
+
+		if (range[1].equals(StringPool.TILDE)) {
+			range[1] = null;
+		}
 
 		abstractRangeBuilder.addRange(
 			new RangeAggregator.Range(key, range[0], range[1]));
