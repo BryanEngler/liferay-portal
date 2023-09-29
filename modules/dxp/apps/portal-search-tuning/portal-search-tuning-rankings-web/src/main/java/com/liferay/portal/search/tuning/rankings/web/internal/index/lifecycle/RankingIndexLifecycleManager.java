@@ -6,6 +6,8 @@
 package com.liferay.portal.search.tuning.rankings.web.internal.index.lifecycle;
 
 import com.liferay.portal.kernel.model.CompanyConstants;
+import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.search.index.creation.IndexCreationManager;
 import com.liferay.portal.search.spi.index.lifecycle.IndexLifecycleManager;
 import com.liferay.portal.search.tuning.rankings.web.internal.index.RankingIndexCreator;
 import com.liferay.portal.search.tuning.rankings.web.internal.index.RankingIndexReader;
@@ -13,6 +15,7 @@ import com.liferay.portal.search.tuning.rankings.web.internal.index.importer.Sin
 import com.liferay.portal.search.tuning.rankings.web.internal.index.name.RankingIndexName;
 import com.liferay.portal.search.tuning.rankings.web.internal.index.name.RankingIndexNameBuilder;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -53,6 +56,20 @@ public class RankingIndexLifecycleManager implements IndexLifecycleManager {
 
 		_rankingIndexCreator.delete(rankingIndexName);
 	}
+
+	@Activate
+	protected void activate() {
+		if (_indexCreationManager.shouldCreateIndexes()) {
+			_companyLocalService.forEachCompanyId(
+				companyId -> createIndex(companyId));
+		}
+	}
+
+	@Reference
+	private CompanyLocalService _companyLocalService;
+
+	@Reference
+	private IndexCreationManager _indexCreationManager;
 
 	@Reference
 	private RankingIndexCreator _rankingIndexCreator;
