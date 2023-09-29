@@ -38,6 +38,7 @@ Export-Package:\
 	com.liferay.portal.search.highlight,\
 	com.liferay.portal.search.hits,\
 	com.liferay.portal.search.index,\
+	com.liferay.portal.search.index.creation,\
 	com.liferay.portal.search.indexer,\
 	com.liferay.portal.search.legacy.document,\
 	com.liferay.portal.search.legacy.groupby,\
