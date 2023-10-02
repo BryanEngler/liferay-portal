@@ -23,13 +23,11 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Bryan Engler
  */
-@Component(service = {})
 public abstract class BaseIndexPortalInstanceLifecycleListener
 	extends BasePortalInstanceLifecycleListener {
 
