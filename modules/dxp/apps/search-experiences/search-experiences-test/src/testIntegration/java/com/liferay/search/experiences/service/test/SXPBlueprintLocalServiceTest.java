@@ -7,7 +7,10 @@ package com.liferay.search.experiences.service.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -32,7 +35,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -51,6 +56,19 @@ public class SXPBlueprintLocalServiceTest {
 			new LiferayIntegrationTestRule(),
 			PermissionCheckerMethodTestRule.INSTANCE);
 
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		_company = CompanyTestUtil.addCompany();
+
+		_user = UserTestUtil.addUser(_company);
+	}
+
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+		PrincipalThreadLocal.setName(_user.getUserId());
+		_companyLocalService.deleteCompany(_company.getCompanyId());
+	}
+
 	@Test
 	public void testAddSXPBlueprint() throws Exception {
 		String externalReferenceCode = RandomTestUtil.randomString();
@@ -63,11 +81,8 @@ public class SXPBlueprintLocalServiceTest {
 
 		// Duplicate external reference code in a different company
 
-		User user = UserTestUtil.addCompanyAdminUser(
-			CompanyTestUtil.addCompany());
-
 		SXPBlueprint differentCompanySXPBlueprint = _addSXPBlueprint(
-			sxpBlueprint.getExternalReferenceCode(), user.getUserId(),
+			sxpBlueprint.getExternalReferenceCode(), _user.getUserId(),
 			Collections.singletonMap(LocaleUtil.US, StringPool.BLANK),
 			Collections.singletonMap(
 				LocaleUtil.US, RandomTestUtil.randomString()),
@@ -232,6 +247,13 @@ public class SXPBlueprintLocalServiceTest {
 
 		return sxpBlueprint;
 	}
+
+	private static Company _company;
+
+	@Inject
+	private static CompanyLocalService _companyLocalService;
+
+	private static User _user;
 
 	@Inject
 	private SXPBlueprintLocalService _sxpBlueprintLocalService;
