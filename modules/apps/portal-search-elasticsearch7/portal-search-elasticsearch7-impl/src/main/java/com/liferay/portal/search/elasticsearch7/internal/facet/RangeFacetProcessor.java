@@ -85,9 +85,10 @@ public class RangeFacetProcessor
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject rangeJSONObject = jsonArray.getJSONObject(i);
 
+			String label = rangeJSONObject.getString("label");
 			String rangeString = rangeJSONObject.getString("range");
 
-			_addRange(abstractRangeBuilder, rangeString);
+			_addRange(abstractRangeBuilder, label, rangeString);
 		}
 	}
 
@@ -103,16 +104,17 @@ public class RangeFacetProcessor
 			return;
 		}
 
-		_addRange(abstractRangeBuilder, rangeString);
+		_addRange(abstractRangeBuilder, "custom-range", rangeString);
 	}
 
 	private void _addRange(
-		AbstractRangeBuilder abstractRangeBuilder, String rangeString) {
+		AbstractRangeBuilder abstractRangeBuilder, String key,
+		String rangeString) {
 
 		String[] range = RangeParserUtil.parserRange(rangeString);
 
 		abstractRangeBuilder.addRange(
-			new RangeAggregator.Range(rangeString, range[0], range[1]));
+			new RangeAggregator.Range(key, range[0], range[1]));
 	}
 
 }

@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.search.web.internal.date.DateRangeFactory;
 import com.liferay.portal.search.web.internal.date.facet.configuration.DateFacetPortletInstanceConfiguration;
 import com.liferay.portal.search.web.internal.date.facet.display.context.DateFacetCalendarDisplayContext;
 import com.liferay.portal.search.web.internal.date.facet.display.context.DateFacetDisplayContext;
@@ -53,8 +52,6 @@ public class DateFacetDisplayContextBuilder implements Serializable {
 
 		_dateFormatFactory = dateFormatFactory;
 
-		_dateRangeFactory = new DateRangeFactory(dateFormatFactory);
-
 		_themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
@@ -70,13 +67,13 @@ public class DateFacetDisplayContextBuilder implements Serializable {
 		dateFacetDisplayContext.setCalendarDisplayContext(
 			_buildCalendarDisplayContext());
 
-		if ((_dateFormatFactory != null) && (_dateRangeFactory != null)) {
+		if (_dateFormatFactory != null) {
 			dateFacetDisplayContext.setCustomRangeBucketDisplayContext(
-				_buildCustomRangeDateTermDisplayContext());
+				_buildCustomRangeBucketDisplayContext());
 		}
 
 		dateFacetDisplayContext.setBucketDisplayContexts(
-			_buildTermDisplayContexts());
+			_buildBucketDisplayContexts());
 		dateFacetDisplayContext.setDefaultBucketDisplayContext(
 			_buildDefaultBucketDisplayContext());
 		dateFacetDisplayContext.setDisplayCaption(getDisplayCaption());
@@ -190,7 +187,7 @@ public class DateFacetDisplayContextBuilder implements Serializable {
 		return 0;
 	}
 
-	protected TermCollector getTermCollector(String range) {
+	protected TermCollector getTermCollector(String key) {
 		if (_facet == null) {
 			return null;
 		}
@@ -201,7 +198,7 @@ public class DateFacetDisplayContextBuilder implements Serializable {
 			return null;
 		}
 
-		return facetCollector.getTermCollector(range);
+		return facetCollector.getTermCollector(key);
 	}
 
 	protected boolean isNothingSelected() {
@@ -242,7 +239,7 @@ public class DateFacetDisplayContextBuilder implements Serializable {
 		return dateFacetCalendarDisplayContextBuilder.build();
 	}
 
-	private BucketDisplayContext _buildCustomRangeDateTermDisplayContext() {
+	private BucketDisplayContext _buildCustomRangeBucketDisplayContext() {
 		boolean selected = _isCustomRangeSelected();
 
 		BucketDisplayContext bucketDisplayContext = new BucketDisplayContext();
@@ -274,22 +271,20 @@ public class DateFacetDisplayContextBuilder implements Serializable {
 		return bucketDisplayContext;
 	}
 
-	private BucketDisplayContext _buildTermDisplayContext(
-		String label, String range) {
-
+	private BucketDisplayContext _buildTermDisplayContext(String label) {
 		BucketDisplayContext bucketDisplayContext = new BucketDisplayContext();
 
 		bucketDisplayContext.setBucketText(label);
 		bucketDisplayContext.setFilterValue(_getLabeledRangeURL(label));
 		bucketDisplayContext.setFrequency(
-			getFrequency(getTermCollector(range)));
+			getFrequency(getTermCollector(label)));
 		bucketDisplayContext.setFrequencyVisible(_frequenciesVisible);
 		bucketDisplayContext.setSelected(_selectedRanges.contains(label));
 
 		return bucketDisplayContext;
 	}
 
-	private List<BucketDisplayContext> _buildTermDisplayContexts() {
+	private List<BucketDisplayContext> _buildBucketDisplayContexts() {
 		JSONArray rangesJSONArray = _getRangesJSONArray();
 
 		if (rangesJSONArray == null) {
@@ -315,7 +310,7 @@ public class DateFacetDisplayContextBuilder implements Serializable {
 				continue;
 			}
 
-			bucketDisplayContexts.add(_buildTermDisplayContext(label, range));
+			bucketDisplayContexts.add(_buildTermDisplayContext(label));
 		}
 
 		if (!_order.equals("OrderHitsDesc")) {
@@ -334,8 +329,7 @@ public class DateFacetDisplayContextBuilder implements Serializable {
 
 		FacetCollector facetCollector = _facet.getFacetCollector();
 
-		return facetCollector.getTermCollector(
-			_dateRangeFactory.getRangeString(_from, _to));
+		return facetCollector.getTermCollector("custom-range");
 	}
 
 	private String _getCustomRangeURL() {
@@ -401,7 +395,6 @@ public class DateFacetDisplayContextBuilder implements Serializable {
 	private final DateFacetPortletInstanceConfiguration
 		_dateFacetPortletInstanceConfiguration;
 	private final DateFormatFactory _dateFormatFactory;
-	private final DateRangeFactory _dateRangeFactory;
 	private Facet _facet;
 	private String _fieldToAggregate;
 	private boolean _frequenciesVisible;
