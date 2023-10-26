@@ -77,7 +77,7 @@ public class DateFacetPortletConfigurationAction
 		String ranges = unicodeProperties.getProperty("ranges");
 
 		try {
-			DateRangeFactoryUtil.validateRangeSyntax(ranges); //breaks datemath
+			DateRangeFactoryUtil.validateRangeSyntax(ranges); //breaks datemath here
 		}
 		catch (Exception exception) {
 			SessionErrors.add(actionRequest, "unparsableSyntax");

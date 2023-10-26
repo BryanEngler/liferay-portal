@@ -215,7 +215,7 @@ public class ModifiedFacetDisplayContextBuilder implements Serializable {
 
 			String range = jsonObject.getString("range");
 
-			// check label?
+			// check label? here
 
 			if ((_frequencyThreshold > 0) &&
 				(_frequencyThreshold > getFrequency(getTermCollector(range)))) {
