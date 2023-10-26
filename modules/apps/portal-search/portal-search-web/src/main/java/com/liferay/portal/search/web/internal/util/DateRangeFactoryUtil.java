@@ -36,11 +36,14 @@ public class DateRangeFactoryUtil {
 		return replaceAliases(_rangeMap.get(label), calendar);
 	}
 
-	public static String getRangeString(String from, String to, TimeZone timeZone) {
-		DateFormat dateFormat = _dateFormatFactory.getSimpleDateFormat(
+	public static String getRangeString(
+		String from, String to, TimeZone timeZone) {
+
+		DateFormat dateFormat = DateFormatFactoryUtil.getSimpleDateFormat(
 			"yyyyMMddHHmmss", TimeZoneUtil.GMT);
 		DateFormat userTimeZoneDateFormat =
-			_dateFormatFactory.getSimpleDateFormat("yyyyMMddHHmmss", timeZone);
+			DateFormatFactoryUtil.getSimpleDateFormat(
+				"yyyyMMddHHmmss", timeZone);
 
 		String normalizedFrom = _normalizeRangeBoundary(from, "000000");
 		String normalizedTo = _normalizeRangeBoundary(to, "235959");
