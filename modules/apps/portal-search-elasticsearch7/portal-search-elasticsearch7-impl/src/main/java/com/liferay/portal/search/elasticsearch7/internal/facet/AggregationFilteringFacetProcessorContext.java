@@ -152,6 +152,7 @@ public class AggregationFilteringFacetProcessorContext
 		RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery(
 			fieldName);
 
+		//format?
 		rangeQueryBuilder.gte(ranges[0]);
 		rangeQueryBuilder.lte(ranges[1]);
 

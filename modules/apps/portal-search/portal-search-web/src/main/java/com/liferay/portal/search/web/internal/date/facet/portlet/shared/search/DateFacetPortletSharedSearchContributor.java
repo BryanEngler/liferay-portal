@@ -409,7 +409,7 @@ public class DateFacetPortletSharedSearchContributor
 				portletSharedSearchSettings.getSearchContext();
 
 			return _dateRangeFactory.getRangeString(
-				customRangeFrom, customRangeTo,	searchContext.getTimeZone());
+				customRangeFrom, customRangeTo, searchContext.getTimeZone());
 		}
 
 		return null;

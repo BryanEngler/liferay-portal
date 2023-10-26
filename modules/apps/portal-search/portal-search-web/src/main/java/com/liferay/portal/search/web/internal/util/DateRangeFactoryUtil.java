@@ -43,7 +43,7 @@ public class DateRangeFactoryUtil {
 			"yyyyMMddHHmmss", timeZone);
 
 		String normalizedFrom = _normalizeRangeBoundary(from, "000000");
-		String normalizedTo =_normalizeRangeBoundary(to, "235959");
+		String normalizedTo = _normalizeRangeBoundary(to, "235959");
 
 		try {
 			String fromUTC = dateFormat.format(
