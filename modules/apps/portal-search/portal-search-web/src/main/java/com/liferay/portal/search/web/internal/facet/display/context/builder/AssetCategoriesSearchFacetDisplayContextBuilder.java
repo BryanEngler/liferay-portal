@@ -70,7 +70,7 @@ public class AssetCategoriesSearchFacetDisplayContextBuilder
 		assetCategoriesSearchFacetDisplayContext.setRenderNothing(
 			isRenderNothing());
 
-		setTermDisplayContexts(assetCategoriesSearchFacetDisplayContext);
+		setBucketDisplayContexts(assetCategoriesSearchFacetDisplayContext);
 
 		return assetCategoriesSearchFacetDisplayContext;
 	}
@@ -227,7 +227,7 @@ public class AssetCategoriesSearchFacetDisplayContextBuilder
 		return false;
 	}
 
-	protected void setTermDisplayContexts(
+	protected void setBucketDisplayContexts(
 		AssetCategoriesSearchFacetDisplayContext
 			assetCategoriesSearchFacetDisplayContext) {
 

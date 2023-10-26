@@ -25,7 +25,6 @@ import com.liferay.portal.search.web.internal.facet.display.context.BucketDispla
 import com.liferay.portal.search.web.internal.modified.facet.configuration.ModifiedFacetPortletInstanceConfiguration;
 import com.liferay.portal.search.web.internal.modified.facet.display.context.ModifiedFacetCalendarDisplayContext;
 import com.liferay.portal.search.web.internal.modified.facet.display.context.ModifiedFacetDisplayContext;
-import com.liferay.portal.search.web.internal.util.DateRangeFactoryUtil;
 import com.liferay.portal.search.web.internal.util.comparator.BucketDisplayContextComparatorFactoryUtil;
 
 import java.io.Serializable;
@@ -62,14 +61,12 @@ public class ModifiedFacetDisplayContextBuilder implements Serializable {
 		ModifiedFacetDisplayContext modifiedFacetDisplayContext =
 			new ModifiedFacetDisplayContext();
 
-		modifiedFacetDisplayContext.setCalendarDisplayContext(
-			_buildCalendarDisplayContext());
-
-		modifiedFacetDisplayContext.setCustomRangeBucketDisplayContext(
-			_buildCustomRangeBucketDisplayContext());
-
 		modifiedFacetDisplayContext.setBucketDisplayContexts(
 			_buildBucketDisplayContexts());
+		modifiedFacetDisplayContext.setCalendarDisplayContext(
+			_buildCalendarDisplayContext());
+		modifiedFacetDisplayContext.setCustomRangeBucketDisplayContext(
+			_buildCustomRangeBucketDisplayContext());
 		modifiedFacetDisplayContext.setDefaultBucketDisplayContext(
 			_buildDefaultBucketDisplayContext());
 		modifiedFacetDisplayContext.setDisplayStyleGroupId(
