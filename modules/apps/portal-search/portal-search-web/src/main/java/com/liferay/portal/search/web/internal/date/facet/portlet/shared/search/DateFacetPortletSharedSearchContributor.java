@@ -20,7 +20,6 @@ import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
-import com.liferay.portal.kernel.util.DateFormatFactory;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.aggregation.Aggregation;
@@ -31,10 +30,10 @@ import com.liferay.portal.search.facet.date.range.DateRangeFacetSearchContributo
 import com.liferay.portal.search.facet.nested.NestedFacetSearchContributor;
 import com.liferay.portal.search.filter.DateRangeFilterBuilder;
 import com.liferay.portal.search.filter.FilterBuilders;
-import com.liferay.portal.search.web.internal.date.DateRangeFactory;
 import com.liferay.portal.search.web.internal.date.facet.constants.DateFacetPortletKeys;
 import com.liferay.portal.search.web.internal.date.facet.portlet.DateFacetPortletPreferences;
 import com.liferay.portal.search.web.internal.date.facet.portlet.DateFacetPortletPreferencesImpl;
+import com.liferay.portal.search.web.internal.util.DateRangeFactoryUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 
@@ -45,7 +44,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -107,11 +105,6 @@ public class DateFacetPortletSharedSearchContributor
 				dateFacetPortletPreferences, portletSharedSearchSettings,
 				rangesJSONArray, selectedRangeStrings);
 		}
-	}
-
-	@Activate
-	protected void activate() {
-		_dateRangeFactory = new DateRangeFactory(_dateFormatFactory);
 	}
 
 	private void _addSelectedRanges(
@@ -335,7 +328,8 @@ public class DateFacetPortletSharedSearchContributor
 	private JSONArray _getDefaultRangesJSONArray(Calendar calendar) {
 		JSONArray rangesJSONArray = _jsonFactory.createJSONArray();
 
-		Map<String, String> map = _dateRangeFactory.getRangeStrings(calendar);
+		Map<String, String> map = DateRangeFactoryUtil.getRangeStrings(
+			calendar);
 
 		map.forEach(
 			(key, value) -> rangesJSONArray.put(
@@ -365,7 +359,7 @@ public class DateFacetPortletSharedSearchContributor
 		Calendar calendar,
 		DateFacetPortletPreferences dateFacetPortletPreferences) {
 
-		JSONArray rangesJSONArray = _dateRangeFactory.replaceAliases(
+		JSONArray rangesJSONArray = DateRangeFactoryUtil.replaceAliases(
 			dateFacetPortletPreferences.getRangesJSONArray(),
 			CalendarFactoryUtil.getCalendar(), _jsonFactory);
 
@@ -408,7 +402,7 @@ public class DateFacetPortletSharedSearchContributor
 			SearchContext searchContext =
 				portletSharedSearchSettings.getSearchContext();
 
-			return _dateRangeFactory.getRangeString(
+			return DateRangeFactoryUtil.getRangeString(
 				customRangeFrom, customRangeTo, searchContext.getTimeZone());
 		}
 
@@ -438,7 +432,7 @@ public class DateFacetPortletSharedSearchContributor
 			}
 			else {
 				selectedRangeStrings.add(
-					_dateRangeFactory.getRangeString(
+					DateRangeFactoryUtil.getRangeString(
 						selectedRange, CalendarFactoryUtil.getCalendar()));
 			}
 		}
@@ -450,12 +444,7 @@ public class DateFacetPortletSharedSearchContributor
 	private Aggregations _aggregations;
 
 	@Reference
-	private DateFormatFactory _dateFormatFactory;
-
-	@Reference
 	private DateRangeFacetSearchContributor _dateRangeFacetSearchContributor;
-
-	private volatile DateRangeFactory _dateRangeFactory;
 
 	@Reference
 	private DDMIndexer _ddmIndexer;
