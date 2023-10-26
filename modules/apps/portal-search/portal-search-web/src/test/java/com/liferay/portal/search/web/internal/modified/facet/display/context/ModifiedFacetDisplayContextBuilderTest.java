@@ -106,7 +106,7 @@ public class ModifiedFacetDisplayContextBuilderTest
 		String to = "2018-01-31";
 
 		TermCollector termCollector = _mockTermCollector(
-			DateRangeFactoryUtil.getRangeString(from, to));
+			DateRangeFactoryUtil.getRangeString(from, to, TimeZoneUtil.GMT));
 
 		int frequency = RandomTestUtil.randomInt();
 

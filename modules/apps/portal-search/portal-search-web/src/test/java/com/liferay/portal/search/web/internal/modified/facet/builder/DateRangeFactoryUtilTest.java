@@ -5,6 +5,7 @@
 
 package com.liferay.portal.search.web.internal.modified.facet.builder;
 
+import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.portal.search.web.internal.util.DateRangeFactoryUtil;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
@@ -32,7 +33,8 @@ public class DateRangeFactoryUtilTest {
 	public void testBoundedRange() {
 		Assert.assertEquals(
 			"[20180131000000 TO 20180228235959]",
-			DateRangeFactoryUtil.getRangeString("2018-01-31", "2018-02-28"));
+			DateRangeFactoryUtil.getRangeString("2018-01-31", "2018-02-28",
+				TimeZoneUtil.GMT));
 	}
 
 	@Test(expected = ParseException.class)

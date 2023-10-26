@@ -16,6 +16,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.TimeZoneUtil;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -23,6 +24,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * @author Adam Brandizzi
@@ -34,10 +36,26 @@ public class DateRangeFactoryUtil {
 		return replaceAliases(_rangeMap.get(label), calendar);
 	}
 
-	public static String getRangeString(String from, String to) {
-		return StringBundler.concat(
-			"[", _normalizeRangeBoundary(from, "000000"), " TO ",
-			_normalizeRangeBoundary(to, "235959"), "]");
+	public static String getRangeString(String from, String to, TimeZone timeZone) {
+		DateFormat dateFormat = _dateFormatFactory.getSimpleDateFormat(
+			"yyyyMMddHHmmss", TimeZoneUtil.GMT);
+		DateFormat timeZoneDateFormat = _dateFormatFactory.getSimpleDateFormat(
+			"yyyyMMddHHmmss", timeZone);
+
+		String normalizedFrom = _normalizeRangeBoundary(from, "000000");
+		String normalizedTo =_normalizeRangeBoundary(to, "235959");
+
+		try {
+			String fromUTC = dateFormat.format(
+				timeZoneDateFormat.parse(normalizedFrom));
+			String toUTC = dateFormat.format(
+				timeZoneDateFormat.parse(normalizedTo));
+
+			return StringBundler.concat("[", fromUTC, " TO ", toUTC, "]");
+		}
+		catch (ParseException parseException) {
+			throw new RuntimeException(parseException);
+		}
 	}
 
 	public static Map<String, String> getRangeStrings(Calendar calendar) {

@@ -112,7 +112,7 @@ public class DateFacetDisplayContextTest
 		String to = "2018-01-31";
 
 		TermCollector termCollector = _mockTermCollector(
-			_dateRangeFactory.getRangeString(from, to));
+			_dateRangeFactory.getRangeString(from, to, TimeZoneUtil.GMT));
 
 		int frequency = RandomTestUtil.randomInt();
 

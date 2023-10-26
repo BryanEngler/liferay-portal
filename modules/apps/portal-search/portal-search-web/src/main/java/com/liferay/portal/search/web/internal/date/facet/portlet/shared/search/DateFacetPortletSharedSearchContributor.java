@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
+import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.util.RangeParserUtil;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
@@ -404,8 +405,11 @@ public class DateFacetPortletSharedSearchContributor
 		if (!Validator.isBlank(customRangeFrom) &&
 			!Validator.isBlank(customRangeTo)) {
 
+			SearchContext searchContext =
+				portletSharedSearchSettings.getSearchContext();
+
 			return _dateRangeFactory.getRangeString(
-				customRangeFrom, customRangeTo);
+				customRangeFrom, customRangeTo,	searchContext.getTimeZone());
 		}
 
 		return null;
