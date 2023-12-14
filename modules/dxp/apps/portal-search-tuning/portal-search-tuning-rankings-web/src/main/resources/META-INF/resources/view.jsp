@@ -28,8 +28,8 @@ page import="com.liferay.portal.search.tuning.rankings.web.internal.constants.Re
 page import="com.liferay.portal.search.tuning.rankings.web.internal.constants.ResultRankingsPortletKeys" %><%@
 page import="com.liferay.portal.search.tuning.rankings.web.internal.display.context.RankingEntryDisplayContext" %><%@
 page import="com.liferay.portal.search.tuning.rankings.web.internal.display.context.RankingPortletDisplayContext" %><%@
-page import="com.liferay.portal.search.tuning.rankings.web.internal.exception.NotApplicableStatusException" %><%@
 page import="com.liferay.portal.search.tuning.rankings.web.internal.exception.DuplicateQueryStringException" %><%@
+page import="com.liferay.portal.search.tuning.rankings.web.internal.exception.NotApplicableStatusException" %><%@
 page import="com.liferay.search.experiences.model.SXPBlueprint" %><%@
 page import="com.liferay.search.experiences.service.SXPBlueprintLocalServiceUtil" %>
 

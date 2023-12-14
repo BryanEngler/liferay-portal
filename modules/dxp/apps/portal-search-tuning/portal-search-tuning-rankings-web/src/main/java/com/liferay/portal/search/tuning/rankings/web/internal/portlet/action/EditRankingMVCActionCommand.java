@@ -27,9 +27,9 @@ import com.liferay.portal.search.tuning.rankings.web.internal.configuration.Defa
 import com.liferay.portal.search.tuning.rankings.web.internal.configuration.ResultRankingsConfiguration;
 import com.liferay.portal.search.tuning.rankings.web.internal.constants.ResultRankingsConstants;
 import com.liferay.portal.search.tuning.rankings.web.internal.constants.ResultRankingsPortletKeys;
-import com.liferay.portal.search.tuning.rankings.web.internal.exception.NotApplicableStatusException;
 import com.liferay.portal.search.tuning.rankings.web.internal.exception.DuplicateAliasStringException;
 import com.liferay.portal.search.tuning.rankings.web.internal.exception.DuplicateQueryStringException;
+import com.liferay.portal.search.tuning.rankings.web.internal.exception.NotApplicableStatusException;
 import com.liferay.portal.search.tuning.rankings.web.internal.index.DuplicateQueryStringsDetector;
 import com.liferay.portal.search.tuning.rankings.web.internal.index.Ranking;
 import com.liferay.portal.search.tuning.rankings.web.internal.index.RankingIndexReader;
@@ -223,17 +223,17 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 				editRankingMVCActionRequest.getRedirect());
 		}
 		catch (Exception exception) {
-			if (exception instanceof NotApplicableStatusException) {
-				SessionErrors.add(
-					actionRequest, NotApplicableStatusException.class);
-			}
-			else if (exception instanceof DuplicateAliasStringException) {
+			if (exception instanceof DuplicateAliasStringException) {
 				SessionErrors.add(
 					actionRequest, DuplicateAliasStringException.class);
 			}
 			else if (exception instanceof DuplicateQueryStringException) {
 				SessionErrors.add(
 					actionRequest, DuplicateQueryStringException.class);
+			}
+			else if (exception instanceof NotApplicableStatusException) {
+				SessionErrors.add(
+					actionRequest, NotApplicableStatusException.class);
 			}
 			else {
 				SessionErrors.add(actionRequest, Exception.class);
