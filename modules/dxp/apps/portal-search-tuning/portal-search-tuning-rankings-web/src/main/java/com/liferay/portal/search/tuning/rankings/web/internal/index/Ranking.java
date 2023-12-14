@@ -27,13 +27,13 @@ public class Ranking {
 		_aliases = new ArrayList<>(ranking._aliases);
 		_groupExternalReferenceCode = ranking._groupExternalReferenceCode;
 		_hiddenDocumentIds = new LinkedHashSet<>(ranking._hiddenDocumentIds);
-		_status = ranking._status;
 		_indexName = ranking._indexName;
 		_name = ranking._name;
 		_pinnedDocumentIds = new HashSet<>(ranking._pinnedDocumentIds);
 		_pins = new ArrayList<>(ranking._pins);
 		_queryString = ranking._queryString;
 		_rankingDocumentId = ranking._rankingDocumentId;
+		_status = ranking._status;
 		_sxpBlueprintExternalReferenceCode =
 			ranking._sxpBlueprintExternalReferenceCode;
 	}
