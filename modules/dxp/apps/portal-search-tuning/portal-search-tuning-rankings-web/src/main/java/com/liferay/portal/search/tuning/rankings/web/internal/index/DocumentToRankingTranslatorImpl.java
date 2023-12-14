@@ -26,6 +26,18 @@ public class DocumentToRankingTranslatorImpl
 
 	@Override
 	public Ranking translate(Document document, String rankingDocumentId) {
+		if (!Validator.isBlank(document.getString("inactive"))) {
+			throw YouNeedToReindexException(); // =)
+			//OR
+			//set status based on the value of inactive?
+			//this would kind of be a backward compatible "under the hood" fix...
+		}
+
+		//OR
+		if (Validator.isBlank(document.getString(RankingFields.STATUS))) {
+			throw YouNeedToReindexException();
+		}
+
 		return builder(
 		).aliases(
 			_getAliases(document)
