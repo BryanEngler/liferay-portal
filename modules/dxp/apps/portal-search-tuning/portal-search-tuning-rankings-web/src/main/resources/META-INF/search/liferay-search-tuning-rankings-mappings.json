@@ -58,7 +58,7 @@
 		},
 		"status": {
 			"store": true,
-			"type": "text"
+			"type": "keyword"
 		},
 		"sxpBlueprintExternalReferenceCode": {
 			"store": true,
