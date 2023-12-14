@@ -69,10 +69,9 @@ public class RankingUtil {
 
 	public static List<String> translateDocumentIds(List<String> documentIds) {
 		List<String> ids = new ArrayList<>();
-		String id;
 
 		for (String documentId : documentIds) {
-			id = getDocumentId(documentId);
+			String id = getDocumentId(documentId);
 
 			if (!Validator.isBlank(id)) {
 				ids.add(id);
