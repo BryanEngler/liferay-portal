@@ -34,7 +34,8 @@ public class RankingEntryDisplayContextTest {
 		_rankingEntryDisplayContext.setIndex("index");
 		_rankingEntryDisplayContext.setKeywords("keywords");
 		_rankingEntryDisplayContext.setPinnedResultsCount("pinnedResultsCount");
-		_rankingEntryDisplayContext.setStatus(ResultRankingsConstants.STATUS_ACTIVE);
+		_rankingEntryDisplayContext.setStatus(
+			ResultRankingsConstants.STATUS_ACTIVE);
 		_rankingEntryDisplayContext.setSXPBlueprintExternalReferenceCode(
 			"sxpBlueprintExternalReferenceCode");
 		_rankingEntryDisplayContext.setUid("uid");

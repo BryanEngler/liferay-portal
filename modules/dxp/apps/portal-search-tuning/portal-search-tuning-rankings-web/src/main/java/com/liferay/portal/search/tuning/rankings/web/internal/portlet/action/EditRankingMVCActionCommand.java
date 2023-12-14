@@ -464,7 +464,8 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 		}
 
 		if (Objects.equals(
-				ranking.getStatus(), ResultRankingsConstants.STATUS_NOT_APPLICABLE)) {
+				ranking.getStatus(),
+				ResultRankingsConstants.STATUS_NOT_APPLICABLE)) {
 
 			throw new NotApplicableStatusException();
 		}

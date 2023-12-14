@@ -229,7 +229,8 @@ public class DuplicateQueryStringsDetectorImpl
 			queries.term(
 				RankingFields.STATUS, ResultRankingsConstants.STATUS_INACTIVE),
 			queries.term(
-				RankingFields.STATUS, ResultRankingsConstants.STATUS_NOT_APPLICABLE),
+				RankingFields.STATUS,
+				ResultRankingsConstants.STATUS_NOT_APPLICABLE),
 			_getUnlessRankingIdQuery(criteria));
 
 		return booleanQuery;

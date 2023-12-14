@@ -40,7 +40,8 @@ public class EditRankingDisplayContextTest {
 		editRankingDisplayContext.setKeywords("keywords");
 		editRankingDisplayContext.setRedirect("redirect");
 		editRankingDisplayContext.setResultsRankingUid("resultsRankingUid");
-		editRankingDisplayContext.setStatus(ResultRankingsConstants.STATUS_ACTIVE);
+		editRankingDisplayContext.setStatus(
+			ResultRankingsConstants.STATUS_ACTIVE);
 
 		Assert.assertEquals(111L, editRankingDisplayContext.getCompanyId());
 		Assert.assertEquals("backURL", editRankingDisplayContext.getBackURL());
