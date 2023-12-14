@@ -89,14 +89,14 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 		else if (editRankingMVCActionRequest.isCmd(
 					ResultRankingsConstants.DEACTIVATE)) {
 
-			_deactivate(
+			_updateStatus(
 				actionRequest, actionResponse, editRankingMVCActionRequest,
 				ResultRankingsConstants.INACTIVE);
 		}
 		else if (editRankingMVCActionRequest.isCmd(
 					ResultRankingsConstants.ACTIVATE)) {
 
-			_deactivate(
+			_updateStatus(
 				actionRequest, actionResponse, editRankingMVCActionRequest,
 				ResultRankingsConstants.ACTIVE);
 		}
@@ -209,14 +209,14 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 		return rankingIndexReader.fetch(id, rankingIndexName);
 	}
 
-	private void _deactivate(
+	private void _updateStatus(
 			ActionRequest actionRequest, ActionResponse actionResponse,
 			EditRankingMVCActionRequest editRankingMVCActionRequest,
 			String status)
 		throws Exception {
 
 		try {
-			_deactivate(actionRequest, editRankingMVCActionRequest, status);
+			_updateStatus(actionRequest, editRankingMVCActionRequest, status);
 
 			sendRedirect(
 				actionRequest, actionResponse,
@@ -245,7 +245,7 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 		}
 	}
 
-	private void _deactivate(
+	private void _updateStatus(
 			ActionRequest actionRequest,
 			EditRankingMVCActionRequest editRankingMVCActionRequest,
 			String status)
@@ -258,14 +258,14 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 			_guardDuplicateQueryStrings(editRankingMVCActionRequest, rankings);
 		}
 
-		boolean notApplicableStatus = false;
+		boolean foundNotApplicableStatus = false;
 
 		for (Ranking ranking : rankings) {
 			if (Objects.equals(
 					ranking.getStatus(),
 					ResultRankingsConstants.NOT_APPLICABLE)) {
 
-				notApplicableStatus = true;
+				foundNotApplicableStatus = true;
 
 				continue;
 			}
@@ -279,7 +279,7 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 				rankingBuilder.build(), getRankingIndexName());
 		}
 
-		if (notApplicableStatus) {
+		if (foundNotApplicableStatus) {
 			throw new NotApplicableStatusException();
 		}
 	}
