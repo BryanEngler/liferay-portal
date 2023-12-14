@@ -209,81 +209,6 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 		return rankingIndexReader.fetch(id, rankingIndexName);
 	}
 
-	private void _updateStatus(
-			ActionRequest actionRequest, ActionResponse actionResponse,
-			EditRankingMVCActionRequest editRankingMVCActionRequest,
-			String status)
-		throws Exception {
-
-		try {
-			_updateStatus(actionRequest, editRankingMVCActionRequest, status);
-
-			sendRedirect(
-				actionRequest, actionResponse,
-				editRankingMVCActionRequest.getRedirect());
-		}
-		catch (Exception exception) {
-			if (exception instanceof DuplicateAliasStringException) {
-				SessionErrors.add(
-					actionRequest, DuplicateAliasStringException.class);
-			}
-			else if (exception instanceof DuplicateQueryStringException) {
-				SessionErrors.add(
-					actionRequest, DuplicateQueryStringException.class);
-			}
-			else if (exception instanceof NotApplicableStatusException) {
-				SessionErrors.add(
-					actionRequest, NotApplicableStatusException.class);
-			}
-			else {
-				SessionErrors.add(actionRequest, Exception.class);
-			}
-
-			hideDefaultErrorMessage(actionRequest);
-
-			sendRedirect(actionRequest, actionResponse);
-		}
-	}
-
-	private void _updateStatus(
-			ActionRequest actionRequest,
-			EditRankingMVCActionRequest editRankingMVCActionRequest,
-			String status)
-		throws PortalException {
-
-		List<Ranking> rankings = _getRankings(
-			actionRequest, editRankingMVCActionRequest);
-
-		if (status.equals(ResultRankingsConstants.ACTIVE)) {
-			_guardDuplicateQueryStrings(editRankingMVCActionRequest, rankings);
-		}
-
-		boolean foundNotApplicableStatus = false;
-
-		for (Ranking ranking : rankings) {
-			if (Objects.equals(
-					ranking.getStatus(),
-					ResultRankingsConstants.NOT_APPLICABLE)) {
-
-				foundNotApplicableStatus = true;
-
-				continue;
-			}
-
-			Ranking.RankingBuilder rankingBuilder = new Ranking.RankingBuilder(
-				ranking);
-
-			rankingBuilder.status(status);
-
-			rankingStorageAdapter.update(
-				rankingBuilder.build(), getRankingIndexName());
-		}
-
-		if (foundNotApplicableStatus) {
-			throw new NotApplicableStatusException();
-		}
-	}
-
 	private void _delete(
 			ActionRequest actionRequest, ActionResponse actionResponse,
 			EditRankingMVCActionRequest editRankingMVCActionRequest)
@@ -611,6 +536,81 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 		hiddenIdsUpdated.removeAll(Arrays.asList(removedHiddenIds));
 
 		return hiddenIdsUpdated;
+	}
+
+	private void _updateStatus(
+			ActionRequest actionRequest, ActionResponse actionResponse,
+			EditRankingMVCActionRequest editRankingMVCActionRequest,
+			String status)
+		throws Exception {
+
+		try {
+			_updateStatus(actionRequest, editRankingMVCActionRequest, status);
+
+			sendRedirect(
+				actionRequest, actionResponse,
+				editRankingMVCActionRequest.getRedirect());
+		}
+		catch (Exception exception) {
+			if (exception instanceof DuplicateAliasStringException) {
+				SessionErrors.add(
+					actionRequest, DuplicateAliasStringException.class);
+			}
+			else if (exception instanceof DuplicateQueryStringException) {
+				SessionErrors.add(
+					actionRequest, DuplicateQueryStringException.class);
+			}
+			else if (exception instanceof NotApplicableStatusException) {
+				SessionErrors.add(
+					actionRequest, NotApplicableStatusException.class);
+			}
+			else {
+				SessionErrors.add(actionRequest, Exception.class);
+			}
+
+			hideDefaultErrorMessage(actionRequest);
+
+			sendRedirect(actionRequest, actionResponse);
+		}
+	}
+
+	private void _updateStatus(
+			ActionRequest actionRequest,
+			EditRankingMVCActionRequest editRankingMVCActionRequest,
+			String status)
+		throws PortalException {
+
+		List<Ranking> rankings = _getRankings(
+			actionRequest, editRankingMVCActionRequest);
+
+		if (status.equals(ResultRankingsConstants.ACTIVE)) {
+			_guardDuplicateQueryStrings(editRankingMVCActionRequest, rankings);
+		}
+
+		boolean foundNotApplicableStatus = false;
+
+		for (Ranking ranking : rankings) {
+			if (Objects.equals(
+					ranking.getStatus(),
+					ResultRankingsConstants.NOT_APPLICABLE)) {
+
+				foundNotApplicableStatus = true;
+
+				continue;
+			}
+
+			Ranking.RankingBuilder rankingBuilder = new Ranking.RankingBuilder(
+				ranking);
+
+			rankingBuilder.status(status);
+
+			rankingStorageAdapter.update(
+				rankingBuilder.build(), getRankingIndexName());
+		}
+
+		if (foundNotApplicableStatus) {
+			throw new NotApplicableStatusException();
+		}
 	}
 
 	private static final String _UPDATE_SPECIAL = StringPool.GREATER_THAN;
