@@ -27,7 +27,7 @@ import com.liferay.portal.search.tuning.rankings.web.internal.configuration.Defa
 import com.liferay.portal.search.tuning.rankings.web.internal.configuration.ResultRankingsConfiguration;
 import com.liferay.portal.search.tuning.rankings.web.internal.constants.ResultRankingsConstants;
 import com.liferay.portal.search.tuning.rankings.web.internal.constants.ResultRankingsPortletKeys;
-import com.liferay.portal.search.tuning.rankings.web.internal.exception.ArchivedRankingStatusChangeException;
+import com.liferay.portal.search.tuning.rankings.web.internal.exception.NotApplicableStatusException;
 import com.liferay.portal.search.tuning.rankings.web.internal.exception.DuplicateAliasStringException;
 import com.liferay.portal.search.tuning.rankings.web.internal.exception.DuplicateQueryStringException;
 import com.liferay.portal.search.tuning.rankings.web.internal.index.DuplicateQueryStringsDetector;
@@ -223,9 +223,9 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 				editRankingMVCActionRequest.getRedirect());
 		}
 		catch (Exception exception) {
-			if (exception instanceof ArchivedRankingStatusChangeException) {
+			if (exception instanceof NotApplicableStatusException) {
 				SessionErrors.add(
-					actionRequest, ArchivedRankingStatusChangeException.class);
+					actionRequest, NotApplicableStatusException.class);
 			}
 			else if (exception instanceof DuplicateAliasStringException) {
 				SessionErrors.add(
@@ -280,7 +280,7 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 		}
 
 		if (notApplicableStatus) {
-			throw new ArchivedRankingStatusChangeException();
+			throw new NotApplicableStatusException();
 		}
 	}
 
@@ -541,7 +541,7 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 		if (Objects.equals(
 				ranking.getStatus(), ResultRankingsConstants.NOT_APPLICABLE)) {
 
-			throw new ArchivedRankingStatusChangeException();
+			throw new NotApplicableStatusException();
 		}
 
 		_guardDuplicateQueryStrings(editRankingMVCActionRequest, ranking);

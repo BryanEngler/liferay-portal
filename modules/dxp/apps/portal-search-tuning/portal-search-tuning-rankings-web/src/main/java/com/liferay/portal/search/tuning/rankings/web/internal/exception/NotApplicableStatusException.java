@@ -8,5 +8,5 @@ package com.liferay.portal.search.tuning.rankings.web.internal.exception;
 /**
  * @author Almir Ferreira
  */
-public class ArchivedRankingStatusChangeException extends RuntimeException {
+public class NotApplicableStatusException extends RuntimeException {
 }

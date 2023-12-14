@@ -28,7 +28,7 @@ page import="com.liferay.portal.search.tuning.rankings.web.internal.constants.Re
 page import="com.liferay.portal.search.tuning.rankings.web.internal.constants.ResultRankingsPortletKeys" %><%@
 page import="com.liferay.portal.search.tuning.rankings.web.internal.display.context.RankingEntryDisplayContext" %><%@
 page import="com.liferay.portal.search.tuning.rankings.web.internal.display.context.RankingPortletDisplayContext" %><%@
-page import="com.liferay.portal.search.tuning.rankings.web.internal.exception.ArchivedRankingStatusChangeException" %><%@
+page import="com.liferay.portal.search.tuning.rankings.web.internal.exception.NotApplicableStatusException" %><%@
 page import="com.liferay.portal.search.tuning.rankings.web.internal.exception.DuplicateQueryStringException" %><%@
 page import="com.liferay.search.experiences.model.SXPBlueprint" %><%@
 page import="com.liferay.search.experiences.service.SXPBlueprintLocalServiceUtil" %>
@@ -43,7 +43,7 @@ page import="com.liferay.search.experiences.service.SXPBlueprintLocalServiceUtil
 
 <liferay-ui:error embed="<%= false %>" exception="<%= DuplicateQueryStringException.class %>" message="active-search-queries-and-aliases-must-be-unique-across-all-rankings" />
 
-<c:if test="<%= SessionErrors.contains(renderRequest, ArchivedRankingStatusChangeException.class) %>">
+<c:if test="<%= SessionErrors.contains(renderRequest, NotApplicableStatusException.class) %>">
 	<aui:script>
 		Liferay.Util.openToast({
 			message:
