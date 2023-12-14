@@ -109,11 +109,10 @@ public class RankingEntryDisplayContextBuilderTest {
 		Assert.assertEquals(
 			"1", rankingEntryDisplayContext.getPinnedResultsCount());
 		Assert.assertEquals(
-			"rankingDocumentId", rankingEntryDisplayContext.getUid());
-
-		Assert.assertEquals(
 			ResultRankingsConstants.ACTIVE,
 			rankingEntryDisplayContext.getStatus());
+		Assert.assertEquals(
+			"rankingDocumentId", rankingEntryDisplayContext.getUid());
 	}
 
 	private final Ranking _ranking = Mockito.mock(Ranking.class);

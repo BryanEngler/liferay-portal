@@ -37,17 +37,14 @@ public class EditRankingDisplayContextTest {
 		editRankingDisplayContext.setBackURL("backURL");
 		editRankingDisplayContext.setData(data);
 		editRankingDisplayContext.setFormName("formName");
-		editRankingDisplayContext.setStatus(ResultRankingsConstants.ACTIVE);
 		editRankingDisplayContext.setKeywords("keywords");
 		editRankingDisplayContext.setRedirect("redirect");
 		editRankingDisplayContext.setResultsRankingUid("resultsRankingUid");
+		editRankingDisplayContext.setStatus(ResultRankingsConstants.ACTIVE);
 
 		Assert.assertEquals(111L, editRankingDisplayContext.getCompanyId());
 		Assert.assertEquals("backURL", editRankingDisplayContext.getBackURL());
 		Assert.assertEquals(data, editRankingDisplayContext.getData());
-		Assert.assertEquals(
-			ResultRankingsConstants.ACTIVE,
-			editRankingDisplayContext.getStatus());
 		Assert.assertEquals(
 			"formName", editRankingDisplayContext.getFormName());
 		Assert.assertEquals(
@@ -57,6 +54,9 @@ public class EditRankingDisplayContextTest {
 		Assert.assertEquals(
 			"resultsRankingUid",
 			editRankingDisplayContext.getResultsRankingUid());
+		Assert.assertEquals(
+			ResultRankingsConstants.ACTIVE,
+			editRankingDisplayContext.getStatus());
 	}
 
 }
