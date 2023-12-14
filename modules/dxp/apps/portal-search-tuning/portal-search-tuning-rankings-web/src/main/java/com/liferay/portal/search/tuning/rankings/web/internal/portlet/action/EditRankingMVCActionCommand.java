@@ -487,12 +487,12 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 			_updateHiddenIds(
 				addedHiddenIds, ranking.getHiddenDocumentIds(),
 				removedHiddenIds)
-		).status(
-			editRankingMVCActionRequest.getStatus()
 		).indexName(
 			getIndexName(actionRequest)
 		).name(
 			_getNameForUpdate(ranking.getName(), editRankingMVCActionRequest)
+		).status(
+			editRankingMVCActionRequest.getStatus()
 		).sxpBlueprintExternalReferenceCode(
 			editRankingMVCActionRequest.getSXPBlueprintExternalReferenceCode()
 		);
@@ -631,11 +631,11 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 			_cmd = ParamUtil.getString(actionRequest, Constants.CMD);
 			_groupExternalReferenceCode = ParamUtil.getString(
 				actionRequest, "groupExternalReferenceCode");
-			_status = ParamUtil.getString(actionRequest, "status");
 			_queryString = ParamUtil.getString(actionRequest, PARAM_KEYWORDS);
 			_redirect = ParamUtil.getString(actionRequest, "redirect");
 			_resultsRankingUid = ParamUtil.getString(
 				actionRequest, "resultsRankingUid");
+			_status = ParamUtil.getString(actionRequest, "status");
 			_sxpBlueprintExternalReferenceCode = ParamUtil.getString(
 				actionRequest, "sxpBlueprintExternalReferenceCode");
 		}

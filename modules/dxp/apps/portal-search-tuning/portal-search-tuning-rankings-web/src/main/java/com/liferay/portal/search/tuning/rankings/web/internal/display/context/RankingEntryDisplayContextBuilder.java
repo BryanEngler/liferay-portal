@@ -27,10 +27,10 @@ public class RankingEntryDisplayContextBuilder {
 		_setAliases(rankingEntryDisplayContext);
 		_setGroupExternalReferenceCode(rankingEntryDisplayContext);
 		_setHiddenResultsCount(rankingEntryDisplayContext);
-		_setStatus(rankingEntryDisplayContext);
 		_setIndex(rankingEntryDisplayContext);
 		_setNameForDisplay(rankingEntryDisplayContext);
 		_setPinnedResultsCount(rankingEntryDisplayContext);
+		_setStatus(rankingEntryDisplayContext);
 		_setSXPBlueprintExternalReferenceCode(rankingEntryDisplayContext);
 		_setUid(rankingEntryDisplayContext);
 

@@ -58,10 +58,10 @@ public class EditRankingDisplayBuilder {
 		_setCompanyId(editRankingDisplayContext);
 		_setData(editRankingDisplayContext);
 		_setFormName(editRankingDisplayContext);
-		_setStatus(editRankingDisplayContext);
 		_setKeywords(editRankingDisplayContext);
 		_setRedirect(editRankingDisplayContext);
 		_setResultsRankingUid(editRankingDisplayContext);
+		_setStatus(editRankingDisplayContext);
 
 		return editRankingDisplayContext;
 	}

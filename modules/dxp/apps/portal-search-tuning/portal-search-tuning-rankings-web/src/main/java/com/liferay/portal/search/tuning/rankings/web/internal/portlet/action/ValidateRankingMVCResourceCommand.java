@@ -202,10 +202,10 @@ public class ValidateRankingMVCResourceCommand implements MVCResourceCommand {
 				ParamUtil.getStringValues(resourceRequest, "aliases"));
 			_groupExternalReferenceCode = ParamUtil.getString(
 				resourceRequest, "groupExternalReferenceCode");
-			_status = ParamUtil.getString(resourceRequest, "status");
 			_queryString = ParamUtil.getString(resourceRequest, "keywords");
 			_resultsRankingUid = ParamUtil.getString(
 				resourceRequest, "resultsRankingUid");
+			_status = ParamUtil.getString(resourceRequest, "status");
 			_sxpBlueprintExternalReferenceCode = ParamUtil.getString(
 				resourceRequest, "sxpBlueprintExternalReferenceCode");
 		}
