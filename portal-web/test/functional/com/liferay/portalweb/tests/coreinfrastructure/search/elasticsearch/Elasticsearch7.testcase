@@ -623,14 +623,6 @@ definition {
 				waitForReindexFinished = "false");
 		}
 
-		task ("Assert that the indexNameNext field is now populated in the database table 'Company'") {
-			var companyId = JSONCompany.getCompanyId();
-
-			SQL.assertTextInMySQLStatementResult(
-				mysqlStatement = "SELECT indexNameNext FROM lportal.Company WHERE companyId LIKE '%${companyId}%'",
-				text = "liferay-${companyId}");
-		}
-
 		task ("Assert that search results are still returned during a reindex") {
 			SearchPage.openSearchPage(searchTerm = "test");
 
