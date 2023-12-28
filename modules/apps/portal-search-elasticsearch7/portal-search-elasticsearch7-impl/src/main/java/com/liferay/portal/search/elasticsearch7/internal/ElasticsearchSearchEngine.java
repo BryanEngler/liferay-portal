@@ -151,16 +151,17 @@ public class ElasticsearchSearchEngine
 		RestHighLevelClient restHighLevelClient =
 			_elasticsearchConnectionManager.getRestHighLevelClient();
 
-		boolean created = _indexFactory.createIndices(
-			restHighLevelClient.indices(), companyId);
+		if (!_indexFactory.createIndices(
+				restHighLevelClient.indices(), companyId)) {
+
+			return;
+		}
 
 		_indexFactory.registerCompanyId(companyId);
 
 		_indexConfigurationDynamicUpdatesExecutor.execute(companyId);
 
-		if (created) {
-			_waitForYellowStatus();
-		}
+		_waitForYellowStatus();
 
 		CrossClusterReplicationHelper crossClusterReplicationHelper =
 			_crossClusterReplicationHelperSnapshot.get();
