@@ -518,6 +518,8 @@ definition {
 		task ("Assert that the indexNameCurrent field is still populated in the lportal.Company database table") {
 			var companyId = JSONCompany.getCompanyId();
 
+			WaitForConsoleTextPresent(value1 = "Finished reindexing company ${companyId} with execution mode concurrent");
+
 			SQL.assertTextInMySQLStatementResult(
 				mysqlStatement = "SELECT indexNameCurrent FROM lportal.Company WHERE companyId LIKE '%${companyId}%'",
 				text = "liferay-${companyId}");
@@ -608,6 +610,12 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
+		ServerAdministration.openServerAdmin();
+
+		ServerAdministration.addCategoryLogLevels(
+			categoryLevel = "DEBUG",
+			categoryName = "com.liferay.portal.search.elasticsearch7.internal.index.CompanyConcurrentReindexManager");
+
 		task ("Assert that indexNameCurrent and indexNameNext fields in the database table 'Company' are empty when a Concurrent reindex has not been executed yet") {
 			var companyId = JSONCompany.getCompanyId();
 
@@ -625,6 +633,10 @@ definition {
 
 		task ("Assert that the indexNameNext field is now populated in the database table 'Company'") {
 			var companyId = JSONCompany.getCompanyId();
+
+			WaitForConsoleTextPresent(value1 = "Creating next index liferay-${companyId}");
+
+			WaitForConsoleTextPresent(value1 = "Created next index liferay-${companyId}");
 
 			SQL.assertTextInMySQLStatementResult(
 				mysqlStatement = "SELECT indexNameNext FROM lportal.Company WHERE companyId LIKE '%${companyId}%'",
