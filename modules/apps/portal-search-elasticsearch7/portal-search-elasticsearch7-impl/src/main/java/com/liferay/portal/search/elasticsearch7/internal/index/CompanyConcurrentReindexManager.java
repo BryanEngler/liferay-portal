@@ -76,6 +76,10 @@ public class CompanyConcurrentReindexManager
 			newIndexName, restHighLevelClient.indices());
 
 		_companyLocalService.updateIndexNameNext(companyId, newIndexName);
+
+		if (_log.isDebugEnabled()) {
+			_log.debug("Created next index " + newIndexName);
+		}
 	}
 
 	@Override
