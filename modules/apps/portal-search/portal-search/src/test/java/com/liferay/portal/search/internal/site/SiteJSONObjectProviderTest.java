@@ -112,8 +112,8 @@ public class SiteJSONObjectProviderTest {
 
 		_setUpGroups(false, 3, new ArrayList<>());
 
-		JSONObject sitesJSONObject =
-			_siteJSONObjectProvider.getSitesJSONObject(_resourceRequest);
+		JSONObject sitesJSONObject = _siteJSONObjectProvider.getSitesJSONObject(
+			_resourceRequest);
 
 		JSONArray sitesJSONArray = sitesJSONObject.getJSONArray("items");
 
@@ -137,8 +137,8 @@ public class SiteJSONObjectProviderTest {
 				}
 			});
 
-		JSONObject sitesJSONObject =
-			_siteJSONObjectProvider.getSitesJSONObject(_resourceRequest);
+		JSONObject sitesJSONObject = _siteJSONObjectProvider.getSitesJSONObject(
+			_resourceRequest);
 
 		JSONArray sitesJSONArray = sitesJSONObject.getJSONArray("items");
 
@@ -155,8 +155,8 @@ public class SiteJSONObjectProviderTest {
 
 		_setUpGroups(true, 3, new ArrayList<>());
 
-		JSONObject sitesJSONObject =
-			_siteJSONObjectProvider.getSitesJSONObject(_resourceRequest);
+		JSONObject sitesJSONObject = _siteJSONObjectProvider.getSitesJSONObject(
+			_resourceRequest);
 
 		JSONArray sitesJSONArray = sitesJSONObject.getJSONArray("items");
 
@@ -170,8 +170,8 @@ public class SiteJSONObjectProviderTest {
 		_setUpPages(_resourceRequest, 5, 3);
 		_setUpGroups(true, 8, new ArrayList<>());
 
-		JSONObject sitesJSONObject =
-			_siteJSONObjectProvider.getSitesJSONObject(_resourceRequest);
+		JSONObject sitesJSONObject = _siteJSONObjectProvider.getSitesJSONObject(
+			_resourceRequest);
 
 		Assert.assertEquals(2, sitesJSONObject.getInt("lastPage"));
 
@@ -187,8 +187,8 @@ public class SiteJSONObjectProviderTest {
 		_setUpPages(_resourceRequest, 10, 1);
 		_setUpGroups(true, 8, new ArrayList<>());
 
-		JSONObject sitesJSONObject =
-			_siteJSONObjectProvider.getSitesJSONObject(_resourceRequest);
+		JSONObject sitesJSONObject = _siteJSONObjectProvider.getSitesJSONObject(
+			_resourceRequest);
 
 		Assert.assertEquals(1, sitesJSONObject.getInt("lastPage"));
 
@@ -204,8 +204,8 @@ public class SiteJSONObjectProviderTest {
 		_setUpPages(_resourceRequest, 5, 2);
 		_setUpGroups(true, 10, new ArrayList<>());
 
-		JSONObject sitesJSONObject =
-			_siteJSONObjectProvider.getSitesJSONObject(_resourceRequest);
+		JSONObject sitesJSONObject = _siteJSONObjectProvider.getSitesJSONObject(
+			_resourceRequest);
 
 		Assert.assertEquals(2, sitesJSONObject.getInt("lastPage"));
 
