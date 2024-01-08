@@ -20,9 +20,12 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.capabilities.SearchCapabilities;
 import com.liferay.portal.search.index.SyncReindexManager;
 import com.liferay.portal.search.spi.reindexer.IndexReindexer;
-import com.liferay.portal.search.tuning.rankings.web.internal.constants.ResultRankingsConstants;
-import com.liferay.portal.search.tuning.rankings.web.internal.index.name.RankingIndexName;
-import com.liferay.portal.search.tuning.rankings.web.internal.index.name.RankingIndexNameBuilder;
+import com.liferay.portal.search.tuning.rankings.constants.ResultRankingsConstants;
+import com.liferay.portal.search.tuning.rankings.index.Ranking;
+import com.liferay.portal.search.tuning.rankings.index.RankingBuilderFactory;
+import com.liferay.portal.search.tuning.rankings.index.RankingPinBuilderFactory;
+import com.liferay.portal.search.tuning.rankings.index.name.RankingIndexName;
+import com.liferay.portal.search.tuning.rankings.index.name.RankingIndexNameBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -116,6 +119,9 @@ public class RankingIndexReindexer implements IndexReindexer {
 	protected JSONStorageEntryLocalService jsonStorageEntryLocalService;
 
 	@Reference
+	protected RankingBuilderFactory rankingBuilderFactory;
+
+	@Reference
 	protected RankingIndexCreator rankingIndexCreator;
 
 	@Reference
@@ -125,13 +131,16 @@ public class RankingIndexReindexer implements IndexReindexer {
 	protected RankingIndexWriter rankingIndexWriter;
 
 	@Reference
+	protected RankingPinBuilderFactory rankingPinBuilderFactory;
+
+	@Reference
 	protected SearchCapabilities searchCapabilities;
 
 	private Ranking _buildRanking(long classPK) throws Exception {
 		JSONObject jsonObject = jsonStorageEntryLocalService.getJSONObject(
 			classNameLocalService.getClassNameId(Ranking.class), classPK);
 
-		Ranking.RankingBuilder rankingBuilder = new Ranking.RankingBuilder();
+		Ranking.Builder rankingBuilder = rankingBuilderFactory.builder();
 
 		rankingBuilder.aliases(
 			JSONUtil.toStringList(jsonObject.getJSONArray("aliases"))
@@ -161,12 +170,16 @@ public class RankingIndexReindexer implements IndexReindexer {
 	private List<Ranking.Pin> _getPins(JSONArray jsonArray) throws Exception {
 		List<Ranking.Pin> pins = new ArrayList<>();
 
+		Ranking.Pin.Builder builder = rankingPinBuilderFactory.builder();
+
 		JSONUtil.toList(
 			jsonArray,
 			jsonObject -> pins.add(
-				new Ranking.Pin(
-					jsonObject.getInt("position"),
-					jsonObject.getString("documentId"))));
+				builder.documentId(
+					jsonObject.getString("documentId")
+				).position(
+					jsonObject.getInt("position")
+				).build()));
 
 		return pins;
 	}

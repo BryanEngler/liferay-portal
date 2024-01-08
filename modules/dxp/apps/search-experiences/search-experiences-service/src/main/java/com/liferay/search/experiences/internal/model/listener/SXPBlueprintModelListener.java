@@ -3,17 +3,18 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-package com.liferay.portal.search.tuning.rankings.web.internal.model.listener;
+package com.liferay.search.experiences.internal.model.listener;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.ModelListener;
-import com.liferay.portal.search.tuning.rankings.web.internal.constants.ResultRankingsConstants;
-import com.liferay.portal.search.tuning.rankings.web.internal.index.Ranking;
-import com.liferay.portal.search.tuning.rankings.web.internal.index.RankingIndexReader;
-import com.liferay.portal.search.tuning.rankings.web.internal.index.name.RankingIndexName;
-import com.liferay.portal.search.tuning.rankings.web.internal.index.name.RankingIndexNameBuilder;
-import com.liferay.portal.search.tuning.rankings.web.internal.storage.RankingStorageAdapter;
+import com.liferay.portal.search.tuning.rankings.constants.ResultRankingsConstants;
+import com.liferay.portal.search.tuning.rankings.index.Ranking;
+import com.liferay.portal.search.tuning.rankings.index.RankingBuilderFactory;
+import com.liferay.portal.search.tuning.rankings.index.RankingIndexReader;
+import com.liferay.portal.search.tuning.rankings.index.name.RankingIndexName;
+import com.liferay.portal.search.tuning.rankings.index.name.RankingIndexNameBuilder;
+import com.liferay.portal.search.tuning.rankings.storage.RankingStorageAdapter;
 import com.liferay.search.experiences.model.SXPBlueprint;
 
 import java.util.List;
@@ -24,7 +25,7 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Almir Ferreira
  */
-@Component(service = ModelListener.class)
+@Component(enabled = false, service = ModelListener.class)
 public class SXPBlueprintModelListener extends BaseModelListener<SXPBlueprint> {
 
 	@Override
@@ -43,8 +44,8 @@ public class SXPBlueprintModelListener extends BaseModelListener<SXPBlueprint> {
 			}
 
 			for (Ranking ranking : rankings) {
-				Ranking.RankingBuilder rankingBuilder =
-					new Ranking.RankingBuilder(ranking);
+				Ranking.Builder rankingBuilder = _rankingBuilderFactory.builder(
+					ranking);
 
 				rankingBuilder.status(
 					ResultRankingsConstants.STATUS_NOT_APPLICABLE);
@@ -57,6 +58,9 @@ public class SXPBlueprintModelListener extends BaseModelListener<SXPBlueprint> {
 			throw new RuntimeException(portalException);
 		}
 	}
+
+	@Reference
+	private RankingBuilderFactory _rankingBuilderFactory;
 
 	@Reference
 	private RankingIndexNameBuilder _rankingIndexNameBuilder;

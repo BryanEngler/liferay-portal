@@ -6,9 +6,11 @@
 package com.liferay.portal.search.tuning.rankings.web.internal.storage;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.search.tuning.rankings.web.internal.index.Ranking;
+import com.liferay.portal.search.tuning.rankings.index.Ranking;
+import com.liferay.portal.search.tuning.rankings.index.RankingBuilderFactory;
+import com.liferay.portal.search.tuning.rankings.index.name.RankingIndexName;
+import com.liferay.portal.search.tuning.rankings.storage.RankingStorageAdapter;
 import com.liferay.portal.search.tuning.rankings.web.internal.index.RankingIndexWriter;
-import com.liferay.portal.search.tuning.rankings.web.internal.index.name.RankingIndexName;
 import com.liferay.portal.search.tuning.rankings.web.internal.storage.helper.RankingJSONStorageHelper;
 
 import org.osgi.service.component.annotations.Component;
@@ -18,14 +20,13 @@ import org.osgi.service.component.annotations.Reference;
  * @author Bryan Engler
  */
 @Component(service = RankingStorageAdapter.class)
-public class RankingStorageAdapter {
+public class RankingStorageAdapterImpl implements RankingStorageAdapter {
 
 	public String create(Ranking ranking, RankingIndexName rankingIndexName) {
 		String rankingDocumentId = rankingJSONStorageHelper.addJSONStorageEntry(
 			ranking);
 
-		Ranking.RankingBuilder rankingBuilder = new Ranking.RankingBuilder(
-			ranking);
+		Ranking.Builder rankingBuilder = rankingBuilderFactory.builder(ranking);
 
 		rankingBuilder.rankingDocumentId(rankingDocumentId);
 
@@ -50,6 +51,9 @@ public class RankingStorageAdapter {
 
 		rankingIndexWriter.update(rankingIndexName, ranking);
 	}
+
+	@Reference
+	protected RankingBuilderFactory rankingBuilderFactory;
 
 	@Reference
 	protected RankingIndexWriter rankingIndexWriter;

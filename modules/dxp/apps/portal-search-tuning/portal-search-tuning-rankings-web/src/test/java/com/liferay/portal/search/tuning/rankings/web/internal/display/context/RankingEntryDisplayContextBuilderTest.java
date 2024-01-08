@@ -5,8 +5,9 @@
 
 package com.liferay.portal.search.tuning.rankings.web.internal.display.context;
 
-import com.liferay.portal.search.tuning.rankings.web.internal.constants.ResultRankingsConstants;
-import com.liferay.portal.search.tuning.rankings.web.internal.index.Ranking;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.search.tuning.rankings.constants.ResultRankingsConstants;
+import com.liferay.portal.search.tuning.rankings.index.Ranking;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import java.util.Arrays;
@@ -32,7 +33,7 @@ public class RankingEntryDisplayContextBuilderTest {
 	@Before
 	public void setUp() throws Exception {
 		_rankingEntryDisplayContextBuilder =
-			new RankingEntryDisplayContextBuilder(_ranking);
+			new RankingEntryDisplayContextBuilder(_ranking, StringPool.BLANK);
 	}
 
 	@Test

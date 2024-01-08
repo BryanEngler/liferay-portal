@@ -7,7 +7,7 @@ package com.liferay.portal.search.tuning.rankings.web.internal.display.context;
 
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.search.tuning.rankings.web.internal.index.Ranking;
+import com.liferay.portal.search.tuning.rankings.index.Ranking;
 
 import java.util.List;
 
@@ -16,8 +16,11 @@ import java.util.List;
  */
 public class RankingEntryDisplayContextBuilder {
 
-	public RankingEntryDisplayContextBuilder(Ranking ranking) {
+	public RankingEntryDisplayContextBuilder(
+		Ranking ranking, String sxpBlueprintTitle) {
+
 		_ranking = ranking;
+		_sxpBlueprintTitle = sxpBlueprintTitle;
 	}
 
 	public RankingEntryDisplayContext build() {
@@ -32,6 +35,7 @@ public class RankingEntryDisplayContextBuilder {
 		_setPinnedResultsCount(rankingEntryDisplayContext);
 		_setStatus(rankingEntryDisplayContext);
 		_setSXPBlueprintExternalReferenceCode(rankingEntryDisplayContext);
+		_setSXPBlueprintTitle(rankingEntryDisplayContext);
 		_setUid(rankingEntryDisplayContext);
 
 		return rankingEntryDisplayContext;
@@ -95,6 +99,12 @@ public class RankingEntryDisplayContextBuilder {
 			_ranking.getSXPBlueprintExternalReferenceCode());
 	}
 
+	private void _setSXPBlueprintTitle(
+		RankingEntryDisplayContext rankingEntryDisplayContext) {
+
+		rankingEntryDisplayContext.setSXPBlueprintTitle(_sxpBlueprintTitle);
+	}
+
 	private void _setUid(
 		RankingEntryDisplayContext rankingEntryDisplayContext) {
 
@@ -102,5 +112,6 @@ public class RankingEntryDisplayContextBuilder {
 	}
 
 	private final Ranking _ranking;
+	private final String _sxpBlueprintTitle;
 
 }
