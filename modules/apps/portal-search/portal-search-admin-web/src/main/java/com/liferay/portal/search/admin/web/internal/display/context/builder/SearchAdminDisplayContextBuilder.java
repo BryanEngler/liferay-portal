@@ -52,26 +52,27 @@ public class SearchAdminDisplayContextBuilder {
 		PermissionChecker permissionChecker =
 			themeDisplay.getPermissionChecker();
 
+		String selectedTab = getSelectedTab(permissionChecker);
+
 		if (permissionChecker.isOmniadmin()) {
 			_addNavigationItemList(
 				navigationItemList, SearchAdminConstants.TAB_CONNECTIONS,
-				getSelectedTab());
+				selectedTab);
 		}
 
 		_addNavigationItemList(
 			navigationItemList, SearchAdminConstants.TAB_INDEX_ACTIONS,
-			SearchAdminConstants.TAB_INDEX_ACTIONS);
+			selectedTab);
 
 		if (_isIndexInformationAvailable() && permissionChecker.isOmniadmin()) {
 			_addNavigationItemList(
 				navigationItemList, SearchAdminConstants.TAB_FIELD_MAPPINGS,
-				SearchAdminConstants.TAB_INDEX_ACTIONS);
+				selectedTab);
 		}
 
 		searchAdminDisplayContext.setNavigationItemList(navigationItemList);
 
-		searchAdminDisplayContext.setSelectedTab(
-			SearchAdminConstants.TAB_INDEX_ACTIONS);
+		searchAdminDisplayContext.setSelectedTab(selectedTab);
 
 		return searchAdminDisplayContext;
 	}
@@ -86,7 +87,11 @@ public class SearchAdminDisplayContextBuilder {
 		_indexReindexerClassNames = indexReindexerClassNames;
 	}
 
-	protected String getSelectedTab() {
+	protected String getSelectedTab(PermissionChecker permissionChecker) {
+		if (!permissionChecker.isOmniadmin()) {
+			return SearchAdminConstants.TAB_INDEX_ACTIONS;
+		}
+
 		String selectedTab = ParamUtil.getString(
 			_renderRequest, "tabs1", SearchAdminConstants.TAB_CONNECTIONS);
 
