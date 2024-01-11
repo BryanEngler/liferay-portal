@@ -13,6 +13,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.admin.web.internal.display.context.SearchAdminDisplayContext;
+import com.liferay.portal.search.constants.SearchAdminConstants;
 import com.liferay.portal.search.index.IndexInformation;
 
 import java.util.List;
@@ -53,20 +54,24 @@ public class SearchAdminDisplayContextBuilder {
 
 		if (permissionChecker.isOmniadmin()) {
 			_addNavigationItemList(
-				navigationItemList, "connections", getSelectedTab());
+				navigationItemList, SearchAdminConstants.TAB_CONNECTIONS,
+				getSelectedTab());
 		}
 
 		_addNavigationItemList(
-			navigationItemList, "index-actions", "index-actions");
+			navigationItemList, SearchAdminConstants.TAB_INDEX_ACTIONS,
+			SearchAdminConstants.TAB_INDEX_ACTIONS);
 
 		if (_isIndexInformationAvailable() && permissionChecker.isOmniadmin()) {
 			_addNavigationItemList(
-				navigationItemList, "field-mappings", "index-actions");
+				navigationItemList, SearchAdminConstants.TAB_FIELD_MAPPINGS,
+				SearchAdminConstants.TAB_INDEX_ACTIONS);
 		}
 
 		searchAdminDisplayContext.setNavigationItemList(navigationItemList);
 
-		searchAdminDisplayContext.setSelectedTab("index-actions");
+		searchAdminDisplayContext.setSelectedTab(
+			SearchAdminConstants.TAB_INDEX_ACTIONS);
 
 		return searchAdminDisplayContext;
 	}
@@ -83,19 +88,23 @@ public class SearchAdminDisplayContextBuilder {
 
 	protected String getSelectedTab() {
 		String selectedTab = ParamUtil.getString(
-			_renderRequest, "tabs1", "connections");
+			_renderRequest, "tabs1", SearchAdminConstants.TAB_CONNECTIONS);
 
-		if (!Objects.equals(selectedTab, "field-mappings") &&
-			!Objects.equals(selectedTab, "index-actions") &&
-			!Objects.equals(selectedTab, "connections")) {
+		if (!Objects.equals(
+				selectedTab, SearchAdminConstants.TAB_FIELD_MAPPINGS) &&
+			!Objects.equals(
+				selectedTab, SearchAdminConstants.TAB_INDEX_ACTIONS) &&
+			!Objects.equals(
+				selectedTab, SearchAdminConstants.TAB_CONNECTIONS)) {
 
-			return "connections";
+			return SearchAdminConstants.TAB_CONNECTIONS;
 		}
 
-		if (Objects.equals(selectedTab, "field-mappings") &&
+		if (Objects.equals(
+				selectedTab, SearchAdminConstants.TAB_FIELD_MAPPINGS) &&
 			!_isIndexInformationAvailable()) {
 
-			return "connections";
+			return SearchAdminConstants.TAB_CONNECTIONS;
 		}
 
 		return selectedTab;
