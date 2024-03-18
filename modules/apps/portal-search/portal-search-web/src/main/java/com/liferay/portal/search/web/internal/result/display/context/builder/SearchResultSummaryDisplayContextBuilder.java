@@ -587,13 +587,13 @@ public class SearchResultSummaryDisplayContextBuilder {
 	private void _buildDocumentForm(
 		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext) {
 
-		//if (_searchResultPreferences.isDisplayResultsInDocumentForm()) {
+		if (_searchResultPreferences.isAlwaysBuildDocumentForm()) {
 			searchResultSummaryDisplayContext.
 				setDocumentFormFieldDisplayContexts(
 					_buildFieldDisplayContexts(_getAllFieldNames()));
 			searchResultSummaryDisplayContext.setDocumentFormVisible(
 				_searchResultPreferences.isDisplayResultsInDocumentForm());
-		//}
+		}
 	}
 
 	private List<SearchResultFieldDisplayContext> _buildFieldDisplayContexts(
