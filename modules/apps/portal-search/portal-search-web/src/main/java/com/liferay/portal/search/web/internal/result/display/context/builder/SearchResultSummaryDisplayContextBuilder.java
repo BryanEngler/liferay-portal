@@ -375,6 +375,8 @@ public class SearchResultSummaryDisplayContextBuilder {
 		_buildCreatorUserName(searchResultSummaryDisplayContext);
 		_buildCreatorUserPortrait(searchResultSummaryDisplayContext);
 		_buildDocumentForm(searchResultSummaryDisplayContext);
+		_buildFieldsToDisplayFieldDisplayContexts(
+			searchResultSummaryDisplayContext);
 		_buildImage(
 			assetRenderer, assetRendererFactory,
 			searchResultSummaryDisplayContext);
@@ -593,6 +595,17 @@ public class SearchResultSummaryDisplayContextBuilder {
 					_buildFieldDisplayContexts(_getAllFieldNames()));
 			searchResultSummaryDisplayContext.setDocumentFormVisible(true);
 		}
+	}
+
+	private void _buildFieldsToDisplayFieldDisplayContexts(
+		SearchResultSummaryDisplayContext searchResultSummaryDisplayContext) {
+
+		searchResultSummaryDisplayContext.setFieldDisplayContexts(
+			_buildFieldDisplayContexts(
+				Arrays.asList(
+					SearchStringUtil.splitAndUnquote(
+						_searchResultPreferences.getFieldsToDisplay())))
+		);
 	}
 
 	private List<SearchResultFieldDisplayContext> _buildFieldDisplayContexts(
