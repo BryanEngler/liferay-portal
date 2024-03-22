@@ -95,8 +95,10 @@ public class SearchResultsPortletDisplayTemplateHandler
 			"creation-date", SearchResultSummaryDisplayContext.class,
 			PortletDisplayTemplateConstants.ENTRY, "getCreationDateString()");
 		templateVariableGroup.addCollectionVariable(
-			"documents", List.class, PortletDisplayTemplateConstants.ENTRIES,
-			"document", SearchResultSummaryDisplayContext.class,
+			"search-result-summary-display-contexts", List.class,
+			PortletDisplayTemplateConstants.ENTRIES,
+			"search-result-summary-display-context",
+			SearchResultSummaryDisplayContext.class,
 			PortletDisplayTemplateConstants.ENTRY, "getHighlightedTitle()");
 		templateVariableGroup.addVariable(
 			"download-file-size", SearchResultSummaryDisplayContext.class,
@@ -123,7 +125,7 @@ public class SearchResultsPortletDisplayTemplateHandler
 		templateVariableGroup.addVariable(
 			"search-container", SearchContainer.class, "searchContainer");
 		templateVariableGroup.addVariable(
-			"search-results-display-context",
+			"search-results-portlet-display-context",
 			SearchResultsPortletDisplayContext.class,
 			"searchResultsPortletDisplayContext");
 		templateVariableGroup.addVariable(

@@ -7,6 +7,7 @@ package com.liferay.portal.search.elasticsearch7.internal.hits;
 
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.search.document.Document;
 import com.liferay.portal.search.document.DocumentBuilder;
 import com.liferay.portal.search.document.DocumentBuilderFactory;
@@ -22,6 +23,8 @@ import com.liferay.portal.search.hits.SearchHitsBuilder;
 import com.liferay.portal.search.hits.SearchHitsBuilderFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -86,6 +89,45 @@ public class SearchHitsTranslator {
 		).build();
 	}
 
+	private Map<String, Object> _translateSource(
+		Map<String, Object> sourceAsMap) {
+
+		if (MapUtil.isEmpty(sourceAsMap)) {
+			return Collections.emptyMap();
+		}
+
+		Map<String, Object> map = new HashMap<>();
+
+		for (String name : sourceAsMap.keySet()) {
+			if (name.startsWith("ddmFieldArray")) {
+				List<Map> fields = (ArrayList) sourceAsMap.get(name);
+
+				for (Map<String, Object> field : fields) {
+					String fieldName = (String) field.get("ddmFieldName");
+					String valueField = (String) field.get("ddmValueFieldName");
+					Object fieldValue = field.get(valueField);
+
+					map.put(fieldName, fieldValue);
+				}
+			}
+			else if (name.startsWith("nestedFieldArray")) {
+				List<Map> fields = (ArrayList) sourceAsMap.get(name);
+
+				for (Map<String, Object> field : fields) {
+					String fieldName = (String) field.get("fieldName");
+					String valueField = (String) field.get("valueFieldName");
+					Object fieldValue = field.get(valueField);
+
+					map.put(fieldName, fieldValue);
+				}
+			}
+		}
+
+		sourceAsMap.putAll(map);
+
+		return sourceAsMap;
+	}
+
 	protected SearchHit translate(
 		org.elasticsearch.search.SearchHit elasticsearchSearchHit,
 		String alternateUidFieldName) {
@@ -96,7 +138,7 @@ public class SearchHitsTranslator {
 		return searchHitBuilder.addHighlightFields(
 			_translateHighlightFields(elasticsearchSearchHit)
 		).addSources(
-			elasticsearchSearchHit.getSourceAsMap()
+			_translateSource(elasticsearchSearchHit.getSourceAsMap())
 		).document(
 			_translateDocument(elasticsearchSearchHit, alternateUidFieldName)
 		).explanation(

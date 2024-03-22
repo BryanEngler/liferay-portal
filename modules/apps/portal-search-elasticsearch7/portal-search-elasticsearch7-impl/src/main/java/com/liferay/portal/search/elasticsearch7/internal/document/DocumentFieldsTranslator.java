@@ -10,12 +10,12 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.document.DocumentBuilder;
 import com.liferay.portal.search.geolocation.GeoBuilders;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-
 import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.common.geo.GeoPoint;
-
 /**
  * @author Bryan Engler
  */
@@ -90,6 +90,28 @@ public class DocumentFieldsTranslator {
 		if (name.endsWith(_GEOPOINT_SUFFIX)) {
 			documentBuilder.setGeoLocationPoint(
 				name, _geoBuilders.geoLocationPoint((String)value));
+		}
+		else if (name.startsWith("ddmFieldArray")) {
+			List<Map> fields = (ArrayList) value;
+
+			for (Map<String, Object> field : fields) {
+				String fieldName = (String) field.get("ddmFieldName");
+				String valueField = (String) field.get("ddmValueFieldName");
+				Object fieldValue = field.get(valueField);
+
+				documentBuilder.setValue(fieldName, fieldValue);
+			}
+		}
+		else if (name.startsWith("nestedFieldArray")) {
+			List<Map> fields = (ArrayList) value;
+
+			for (Map<String, Object> field : fields) {
+				String fieldName = (String) field.get("fieldName");
+				String valueField = (String) field.get("valueFieldName");
+				Object fieldValue = field.get(valueField);
+
+				documentBuilder.setValue(fieldName, fieldValue);
+			}
 		}
 		else {
 			if (value instanceof Collection) {
