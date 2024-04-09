@@ -6,6 +6,7 @@
 package com.liferay.portal.search.internal.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistry;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -15,6 +16,9 @@ import com.liferay.portal.search.test.util.SearchTestRule;
 import com.liferay.portal.search.test.util.TestIndexer;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+
+import java.util.Locale;
+import java.util.Set;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -75,6 +79,21 @@ public class IndexerRegistryImplTest {
 		Assert.assertEquals(_CLASS_NAME, testIndexer.getClassName());
 	}
 
+	@Test
+	public void testModelResourcesExist() {
+		Set<Indexer<?>> indexers = _indexerRegistry.getIndexers();
+
+		for (Indexer<?> indexer : indexers) {
+			String className = indexer.getClassName();
+
+			for (Locale locale : _language.getAvailableLocales()) {
+				Assert.assertNotNull(
+					className + " " + locale,
+					_language.get(locale, "model.resource." + className, null));
+			}
+		}
+	}
+
 	@Rule
 	public SearchTestRule searchTestRule = new SearchTestRule();
 
@@ -84,5 +103,8 @@ public class IndexerRegistryImplTest {
 
 	@Inject
 	private IndexerRegistry _indexerRegistry;
+
+	@Inject
+	private Language _language;
 
 }
