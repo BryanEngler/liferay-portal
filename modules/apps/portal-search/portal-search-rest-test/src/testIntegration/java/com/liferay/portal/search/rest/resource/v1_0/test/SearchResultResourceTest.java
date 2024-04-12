@@ -12,6 +12,7 @@ import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
+import com.liferay.blogs.test.util.BlogsTestUtil;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.journal.constants.JournalFolderConstants;
@@ -110,6 +111,10 @@ public class SearchResultResourceTest extends BaseSearchResultResourceTestCase {
 
 		_assetCategory = _addAssetCategory(_serviceContext, _user);
 		_assetTag = _addAssetTag(_serviceContext, _user);
+
+		BlogsTestUtil.addEntryWithWorkflow(
+			_user.getUserId(), StringUtil.randomString(), true,
+			_serviceContext);
 
 		_journalArticle = _addJournalArticle(
 			_assetCategory, _assetTag, _serviceContext, _user);
