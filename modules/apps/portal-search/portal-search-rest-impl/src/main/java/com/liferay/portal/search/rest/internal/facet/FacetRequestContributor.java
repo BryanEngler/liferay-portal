@@ -389,6 +389,9 @@ public class FacetRequestContributor {
 		FacetConfiguration facetConfiguration,
 		SearchRequestBuilder searchRequestBuilder) {
 
+		searchRequestBuilder.entryClassNames(
+			_getEntryClassNamesAttribute(facetConfiguration));
+
 		_typeFacetSearchContributor.contribute(
 			searchRequestBuilder,
 			typeFacetBuilder -> typeFacetBuilder.aggregationName(
@@ -494,6 +497,20 @@ public class FacetRequestContributor {
 			indexType, _getLocaleFromSuffix(suffix));
 
 		return valueFieldName + "_date";
+	}
+
+	private String[] _getEntryClassNamesAttribute(
+		FacetConfiguration facetConfiguration) {
+
+		if (!_hasAttributes(facetConfiguration, "entryClassNames")) {
+			return new String[0];
+		}
+
+		Map<String, Object> attributes = facetConfiguration.getAttributes();
+
+		List<String> entryClassNames = (List)attributes.get("entryClassNames");
+
+		return entryClassNames.toArray(new String[0]);
 	}
 
 	private Locale _getLocaleFromSuffix(String string) {

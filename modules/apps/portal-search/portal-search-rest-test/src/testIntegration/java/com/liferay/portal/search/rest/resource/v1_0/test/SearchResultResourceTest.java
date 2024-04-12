@@ -660,9 +660,16 @@ public class SearchResultResourceTest extends BaseSearchResultResourceTestCase {
 		throws Exception {
 
 		_assertFacetConfiguration(
-			false, null, "type", StringPool.BLANK,
-			JournalArticle.class.getName(), JournalFolder.class.getName(),
-			User.class.getName());
+			false,
+			HashMapBuilder.<String, Object>put(
+				"entryClassNames",
+				new String[] {
+					JournalArticle.class.getName(),
+					JournalFolder.class.getName(), User.class.getName()
+				}
+			).build(),
+			"type", StringPool.BLANK, JournalArticle.class.getName(),
+			JournalFolder.class.getName(), User.class.getName());
 	}
 
 	private void _testPostSearchPageWithUserFacetConfiguration()
