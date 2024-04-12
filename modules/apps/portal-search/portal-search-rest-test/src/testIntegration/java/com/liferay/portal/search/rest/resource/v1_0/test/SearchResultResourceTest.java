@@ -259,7 +259,7 @@ public class SearchResultResourceTest extends BaseSearchResultResourceTestCase {
 				new FacetConfiguration() {
 					{
 						attributes = facetAttributes;
-						frequencyThreshold = 1;
+						frequencyThreshold = 1; //threshold should be set to 1
 						name = facetName;
 						values = new Object[] {facetValues};
 					}

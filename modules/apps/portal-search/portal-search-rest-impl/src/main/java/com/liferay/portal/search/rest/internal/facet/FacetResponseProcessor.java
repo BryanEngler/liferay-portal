@@ -238,7 +238,8 @@ public class FacetResponseProcessor {
 				AssetRendererFactoryRegistryUtil.
 					getAssetRendererFactoryByClassName(className);
 
-			if (assetRendererFactory != null) {
+			if (assetRendererFactory != null) { //for some reason this is null for most classes, but not for blogs
+
 				return assetRendererFactory.getTypeName(locale);
 			}
 		}
@@ -345,7 +346,7 @@ public class FacetResponseProcessor {
 		for (int i = 0; i < termCollectors.size(); i++) {
 			TermCollector termCollector = termCollectors.get(i);
 
-			if ((facetConfiguration.getFrequencyThreshold() >
+			if ((facetConfiguration.getFrequencyThreshold() > //frequency threshold is 0 here. should be 1?
 					termCollector.getFrequency()) ||
 				(i >= facetConfiguration.getMaxTerms())) {
 
