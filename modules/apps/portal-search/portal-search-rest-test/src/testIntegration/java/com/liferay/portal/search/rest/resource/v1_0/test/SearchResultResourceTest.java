@@ -254,8 +254,20 @@ public class SearchResultResourceTest extends BaseSearchResultResourceTestCase {
 			String facetName, Object facetValues, String... expectedValues)
 		throws Exception {
 
+		return _assertFacetConfiguration(
+			anyMatch, null, facetAttributes, facetName, facetValues,
+			expectedValues);
+	}
+
+	private SearchPage<SearchResult> _assertFacetConfiguration(
+			boolean anyMatch, String entryClassNames,
+			Map<String, Object> facetAttributes, String facetName,
+			Object facetValues, String... expectedValues)
+		throws Exception {
+
 		SearchPage<SearchResult> searchPage =
 			_postSearchPageWithFacetConfiguration(
+				entryClassNames,
 				new FacetConfiguration() {
 					{
 						attributes = facetAttributes;
@@ -414,10 +426,8 @@ public class SearchResultResourceTest extends BaseSearchResultResourceTestCase {
 	}
 
 	private SearchPage<SearchResult> _postSearchPageWithFacetConfiguration(
-			FacetConfiguration facetConfiguration)
+			String entryClassNames, FacetConfiguration facetConfiguration)
 		throws Exception {
-
-		facetConfiguration.setFrequencyThreshold(0);
 
 		SearchRequestBody searchRequestBody = new SearchRequestBody() {
 			{
@@ -432,8 +442,9 @@ public class SearchResultResourceTest extends BaseSearchResultResourceTestCase {
 		};
 
 		return _postSearchPage(
-			null, "groupIds/any(g:g eq " + testGroup.getGroupId() + ")", null,
-			null, searchRequestBody);
+			entryClassNames,
+			"groupIds/any(g:g eq " + testGroup.getGroupId() + ")", null, null,
+			searchRequestBody);
 	}
 
 	private SearchPage<SearchResult>
@@ -659,10 +670,14 @@ public class SearchResultResourceTest extends BaseSearchResultResourceTestCase {
 	private void _testPostSearchPageWithTypeFacetConfiguration()
 		throws Exception {
 
-		_assertFacetConfiguration(
-			false, null, "type", StringPool.BLANK,
+		String[] entryClassNames = {
 			JournalArticle.class.getName(), JournalFolder.class.getName(),
-			User.class.getName());
+			User.class.getName()
+		};
+
+		_assertFacetConfiguration(
+			false, StringUtil.merge(entryClassNames), null, "type",
+			StringPool.BLANK, entryClassNames);
 	}
 
 	private void _testPostSearchPageWithUserFacetConfiguration()
