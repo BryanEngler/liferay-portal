@@ -7,7 +7,7 @@ package com.liferay.portal.search.elasticsearch7.internal.connection.helper;
 
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
-import com.liferay.portal.search.elasticsearch7.internal.index.LiferayDocumentTypeFactory;
+import com.liferay.portal.search.elasticsearch7.internal.index.MappingsHelperImpl;
 import com.liferay.portal.search.elasticsearch7.internal.settings.SettingsBuilder;
 
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
@@ -26,29 +26,27 @@ public class LiferayIndexCreationHelper implements IndexCreationHelper {
 
 	@Override
 	public void contribute(CreateIndexRequest createIndexRequest) {
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory =
-			_getLiferayDocumentTypeFactory();
+		MappingsHelperImpl mappingsHelperImpl = _getMappingsHelperImpl();
 
-		liferayDocumentTypeFactory.setMappings(createIndexRequest);
+		mappingsHelperImpl.setMappings(createIndexRequest);
 	}
 
 	@Override
 	public void contributeIndexSettings(SettingsBuilder settingsBuilder) {
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory =
-			_getLiferayDocumentTypeFactory();
+		MappingsHelperImpl mappingsHelperImpl = _getMappingsHelperImpl();
 
-		liferayDocumentTypeFactory.loadDefaultAnalyzers(settingsBuilder);
+		mappingsHelperImpl.loadDefaultAnalyzers(settingsBuilder);
 	}
 
 	@Override
 	public void whenIndexCreated(String indexName) {
 	}
 
-	private LiferayDocumentTypeFactory _getLiferayDocumentTypeFactory() {
+	private MappingsHelperImpl _getMappingsHelperImpl() {
 		RestHighLevelClient restHighLevelClient =
 			_elasticsearchClientResolver.getRestHighLevelClient();
 
-		return new LiferayDocumentTypeFactory(
+		return new MappingsHelperImpl(
 			null, restHighLevelClient.indices(), new JSONFactoryImpl());
 	}
 
