@@ -57,13 +57,12 @@ public class CompanyIndexFactoryHelper {
 		CreateIndexRequest createIndexRequest = new CreateIndexRequest(
 			indexName);
 
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory =
-			new LiferayDocumentTypeFactory(
-				indexName, indicesClient, _jsonFactory);
+		MappingsHelperImpl mappingsHelperImpl = new MappingsHelperImpl(
+			indexName, indicesClient, _jsonFactory);
 
-		_setSettings(createIndexRequest, liferayDocumentTypeFactory);
+		_setSettings(createIndexRequest, mappingsHelperImpl);
 
-		_setMappings(createIndexRequest, liferayDocumentTypeFactory);
+		_setMappings(createIndexRequest, mappingsHelperImpl);
 
 		try {
 			ActionResponse actionResponse = indicesClient.create(
@@ -75,7 +74,7 @@ public class CompanyIndexFactoryHelper {
 			throw new RuntimeException(ioException);
 		}
 
-		_updateMappings(liferayDocumentTypeFactory);
+		_updateMappings(mappingsHelperImpl);
 
 		_executeCompanyIndexListenersAfterCreate(indexName);
 	}
@@ -130,7 +129,7 @@ public class CompanyIndexFactoryHelper {
 		_updateSettings(indexName, indicesClient);
 
 		_updateMappings(
-			new LiferayDocumentTypeFactory(
+			new MappingsHelperImpl(
 				indexName, indicesClient, _jsonFactory));
 	}
 
@@ -265,10 +264,10 @@ public class CompanyIndexFactoryHelper {
 	}
 
 	private void _loadDefaultIndexSettings(
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory,
+		MappingsHelperImpl mappingsHelperImpl,
 		SettingsBuilder settingsBuilder) {
 
-		liferayDocumentTypeFactory.loadDefaultAnalyzers(settingsBuilder);
+		mappingsHelperImpl.loadDefaultAnalyzers(settingsBuilder);
 
 		String defaultIndexSettings = ResourceUtil.getResourceAsString(
 			getClass(),
@@ -378,7 +377,7 @@ public class CompanyIndexFactoryHelper {
 
 				if (contributeMappings) {
 					indexConfigurationContributor.contributeMappings(
-						new LiferayDocumentTypeFactory(
+						new MappingsHelperImpl(
 							indexName, indicesClient, _jsonFactory));
 				}
 			},
@@ -386,7 +385,7 @@ public class CompanyIndexFactoryHelper {
 	}
 
 	private void _putAdditionalTypeMappings(
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
+		MappingsHelperImpl mappingsHelperImpl) {
 
 		if (Validator.isNull(
 				_elasticsearchConfigurationWrapper.additionalTypeMappings())) {
@@ -394,38 +393,38 @@ public class CompanyIndexFactoryHelper {
 			return;
 		}
 
-		liferayDocumentTypeFactory.putMappings(
+		mappingsHelperImpl.putMappings(
 			_elasticsearchConfigurationWrapper.additionalTypeMappings());
 	}
 
 	private void _putContributedTypeMappings(
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
+		MappingsHelperImpl mappingsHelperImpl) {
 
 		for (IndexConfigurationContributor indexConfigurationContributor :
 				_indexConfigurationContributorServiceTrackerList) {
 
 			indexConfigurationContributor.contributeMappings(
-				liferayDocumentTypeFactory);
+				mappingsHelperImpl);
 		}
 	}
 
 	private void _setMappings(
 		CreateIndexRequest createIndexRequest,
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
+		MappingsHelperImpl mappingsHelperImpl) {
 
-		liferayDocumentTypeFactory.setMappings(
+		mappingsHelperImpl.setMappings(
 			createIndexRequest,
 			_elasticsearchConfigurationWrapper.overrideTypeMappings());
 	}
 
 	private void _setSettings(
 		CreateIndexRequest createIndexRequest,
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
+		MappingsHelperImpl mappingsHelperImpl) {
 
 		SettingsBuilder settingsBuilder = new SettingsBuilder(
 			Settings.builder());
 
-		_loadDefaultIndexSettings(liferayDocumentTypeFactory, settingsBuilder);
+		_loadDefaultIndexSettings(mappingsHelperImpl, settingsBuilder);
 
 		_loadTestModeIndexSettings(settingsBuilder);
 
@@ -434,18 +433,16 @@ public class CompanyIndexFactoryHelper {
 		createIndexRequest.settings(settingsBuilder.getBuilder());
 	}
 
-	private void _updateMappings(
-		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
-
+	private void _updateMappings(MappingsHelperImpl mappingsHelperImpl) {
 		if (Validator.isNotNull(
 				_elasticsearchConfigurationWrapper.overrideTypeMappings())) {
 
 			return;
 		}
 
-		_putAdditionalTypeMappings(liferayDocumentTypeFactory);
+		_putAdditionalTypeMappings(mappingsHelperImpl);
 
-		_putContributedTypeMappings(liferayDocumentTypeFactory);
+		_putContributedTypeMappings(mappingsHelperImpl);
 	}
 
 	private void _updateSettings(

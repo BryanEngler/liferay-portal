@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-FileCopyrightText: (c) 2024 Liferay, Inc. https://liferay.com
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
@@ -39,9 +39,9 @@ import org.elasticsearch.xcontent.XContentType;
 /**
  * @author André de Oliveira
  */
-public class LiferayDocumentTypeFactory implements MappingsHelper {
+public class MappingsHelperImpl implements MappingsHelper {
 
-	public LiferayDocumentTypeFactory(
+	public MappingsHelperImpl(
 		String indexName, IndicesClient indicesClient,
 		JSONFactory jsonFactory) {
 
@@ -223,7 +223,7 @@ public class LiferayDocumentTypeFactory implements MappingsHelper {
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		LiferayDocumentTypeFactory.class);
+		MappingsHelperImpl.class);
 
 	private final String _indexName;
 	private final IndicesClient _indicesClient;
