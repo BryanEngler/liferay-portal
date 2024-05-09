@@ -7,7 +7,6 @@ package com.liferay.portal.search.elasticsearch7.internal.index;
 
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.module.util.SystemBundleUtil;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
@@ -27,24 +26,18 @@ import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import java.io.IOException;
 
-import java.nio.charset.StandardCharsets;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.elasticsearch.action.ingest.PutPipelineRequest;
 import org.elasticsearch.client.IndicesClient;
-import org.elasticsearch.client.IngestClient;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.GetIndexResponse;
 import org.elasticsearch.cluster.metadata.MappingMetadata;
-import org.elasticsearch.common.bytes.BytesArray;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.xcontent.XContentType;
 
 import org.hamcrest.CoreMatchers;
 
@@ -80,8 +73,6 @@ public class CompanyIndexFactoryTest {
 			CompanyIndexFactoryTest.class.getSimpleName());
 
 		_elasticsearchFixture.setUp();
-
-		_putTimestampPipeline(_elasticsearchFixture.getRestHighLevelClient());
 	}
 
 	@AfterClass
@@ -678,34 +669,6 @@ public class CompanyIndexFactoryTest {
 		public void contributeSettings(SettingsHelper settingsHelper) {
 		}
 
-	}
-
-	private static void _putTimestampPipeline(
-			RestHighLevelClient restHighLevelClient)
-		throws Exception {
-
-		IngestClient ingestClient = restHighLevelClient.ingest();
-
-		String source = JSONUtil.put(
-			"description", "Adds timestamp to documents"
-		).put(
-			"processors",
-			JSONUtil.put(
-				JSONUtil.put(
-					"set",
-					JSONUtil.put(
-						"field", "_source.timestamp"
-					).put(
-						"value", "{{{_ingest.timestamp}}}"
-					)))
-		).toString();
-
-		PutPipelineRequest putPipelineRequest = new PutPipelineRequest(
-			"timestamp",
-			new BytesArray(source.getBytes(StandardCharsets.UTF_8)),
-			XContentType.JSON);
-
-		ingestClient.putPipeline(putPipelineRequest, RequestOptions.DEFAULT);
 	}
 
 	private void _assertAdditionalTypeMappings() throws Exception {
