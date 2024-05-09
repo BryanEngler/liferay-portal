@@ -22,7 +22,7 @@ import com.liferay.portal.search.elasticsearch7.internal.connection.Elasticsearc
 import com.liferay.portal.search.elasticsearch7.internal.helper.SearchLogHelperUtil;
 import com.liferay.portal.search.elasticsearch7.internal.index.constants.IndexSettingsConstants;
 import com.liferay.portal.search.elasticsearch7.internal.index.util.IndexFactoryCompanyIdRegistryUtil;
-import com.liferay.portal.search.elasticsearch7.internal.settings.SettingsBuilder;
+import com.liferay.portal.search.elasticsearch7.internal.settings.SettingsHelperImpl;
 import com.liferay.portal.search.elasticsearch7.internal.util.ResourceUtil;
 import com.liferay.portal.search.index.IndexNameBuilder;
 import com.liferay.portal.search.spi.index.configuration.contributor.CompanyIndexConfigurationContributor;
@@ -33,10 +33,12 @@ import java.io.IOException;
 import org.elasticsearch.action.ActionResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.open.OpenIndexRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.CloseIndexRequest;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.settings.Settings;
 
@@ -60,7 +62,7 @@ public class CompanyIndexFactoryHelper {
 		MappingsHelperImpl mappingsHelperImpl = new MappingsHelperImpl(
 			indexName, indicesClient, _jsonFactory);
 
-		_setSettings(createIndexRequest, mappingsHelperImpl);
+		_setSettings(createIndexRequest);
 
 		_setMappings(createIndexRequest, mappingsHelperImpl);
 
@@ -242,76 +244,77 @@ public class CompanyIndexFactoryHelper {
 		}
 	}
 
-	private void _loadAdditionalIndexConfigurations(
-		SettingsBuilder settingsBuilder) {
+	private void _loadAdditionalSettings(
+		SettingsHelperImpl settingsHelperImpl,
+		boolean includeStaticProperties) {
 
-		settingsBuilder.loadFromSource(
-			_elasticsearchConfigurationWrapper.additionalIndexConfigurations());
+		_loadContributedSettings(settingsHelperImpl);
+
+		_loadConfigurationSettings(settingsHelperImpl, includeStaticProperties);
+
+		if (Validator.isNotNull(
+				settingsHelperImpl.get("index.number_of_replicas"))) {
+
+			settingsHelperImpl.put("index.auto_expand_replicas", false);
+		}
 	}
 
-	private void _loadConfigurationIndexSettings(
-		SettingsBuilder settingsBuilder) {
+	private void _loadConfigurationSettings(
+		SettingsHelperImpl settingsHelperImpl,
+		boolean includeStaticProperties) {
 
-		settingsBuilder.put(
+		settingsHelperImpl.put(
 			"index.number_of_replicas",
 			_elasticsearchConfigurationWrapper.indexNumberOfReplicas());
-		settingsBuilder.put(
-			"index.number_of_shards",
-			_elasticsearchConfigurationWrapper.indexNumberOfShards());
-		settingsBuilder.put(
+		settingsHelperImpl.put(
 			"index.max_result_window",
 			String.valueOf(
 				_elasticsearchConfigurationWrapper.indexMaxResultWindow()));
+
+		if (includeStaticProperties) {
+			settingsHelperImpl.put(
+				"index.number_of_shards",
+				_elasticsearchConfigurationWrapper.indexNumberOfShards());
+		}
+
+		settingsHelperImpl.loadFromSource(
+			_elasticsearchConfigurationWrapper.additionalIndexConfigurations());
 	}
 
-	private void _loadDefaultIndexSettings(
-		SettingsBuilder settingsBuilder,
-		MappingsHelperImpl mappingsHelperImpl) {
-
-		mappingsHelperImpl.loadDefaultAnalyzers(settingsBuilder);
-
-		String defaultIndexSettings = ResourceUtil.getResourceAsString(
-			getClass(),
-			IndexSettingsConstants.INDEX_SETTINGS_DEFAULTS_FILE_NAME);
-
-		settingsBuilder.loadFromSource(defaultIndexSettings);
-	}
-
-	private void _loadIndexConfigurationContributors(
-		SettingsBuilder settingsBuilder) {
+	private void _loadContributedSettings(
+		SettingsHelperImpl settingsHelperImpl) {
 
 		for (CompanyIndexConfigurationContributor
 				companyIndexConfigurationContributor :
 					_companyIndexConfigurationContributorServiceTrackerList) {
 
 			companyIndexConfigurationContributor.contributeSettings(
-				settingsBuilder::put);
+				settingsHelperImpl);
 		}
 	}
 
-	private void _loadTestModeIndexSettings(SettingsBuilder settingsBuilder) {
+	private void _loadDefaultSettings(SettingsHelperImpl settingsHelperImpl) {
+		settingsHelperImpl.loadFromSource(
+			ResourceUtil.getResourceAsString(
+				getClass(),
+				IndexSettingsConstants.INDEX_SETTINGS_ANALYSIS_FILE_NAME));
+
+		settingsHelperImpl.put("index.auto_expand_replicas", "0-all");
+		settingsHelperImpl.put("index.default_pipeline", "timestamp");
+		settingsHelperImpl.put("index.mapping.total_fields.limit", "7500");
+	}
+
+	private void _loadTestModeSettings(SettingsHelperImpl settingsHelperImpl) {
 		if (!PortalRunMode.isTestMode()) {
 			return;
 		}
 
-		settingsBuilder.put("index.refresh_interval", "1ms");
-		settingsBuilder.put("index.search.slowlog.threshold.fetch.warn", "-1");
-		settingsBuilder.put("index.search.slowlog.threshold.query.warn", "-1");
-		settingsBuilder.put("index.translog.sync_interval", "100ms");
-	}
-
-	private void _loadUserDefinedSettings(SettingsBuilder settingsBuilder) {
-		_loadIndexConfigurationContributors(settingsBuilder);
-
-		_loadConfigurationIndexSettings(settingsBuilder);
-
-		_loadAdditionalIndexConfigurations(settingsBuilder);
-
-		if (Validator.isNotNull(
-				settingsBuilder.get("index.number_of_replicas"))) {
-
-			settingsBuilder.put("index.auto_expand_replicas", false);
-		}
+		settingsHelperImpl.put("index.refresh_interval", "1ms");
+		settingsHelperImpl.put(
+			"index.search.slowlog.threshold.fetch.warn", "-1");
+		settingsHelperImpl.put(
+			"index.search.slowlog.threshold.query.warn", "-1");
+		settingsHelperImpl.put("index.translog.sync_interval", "100ms");
 	}
 
 	private void _processCompanyIndexConfigurationContributor(
@@ -336,13 +339,13 @@ public class CompanyIndexFactoryHelper {
 			return;
 		}
 
-		SettingsBuilder settingsBuilder = new SettingsBuilder(
+		SettingsHelperImpl settingsHelperImpl = new SettingsHelperImpl(
 			Settings.builder());
 
 		companyIndexConfigurationContributor.contributeSettings(
-			settingsBuilder::put);
+			settingsHelperImpl);
 
-		Settings settings = settingsBuilder.build();
+		Settings settings = settingsHelperImpl.build();
 
 		if (!settings.isEmpty()) {
 			IndicesClient indicesClient = restHighLevelClient.indices();
@@ -390,9 +393,7 @@ public class CompanyIndexFactoryHelper {
 		}
 	}
 
-	private void _putAdditionalTypeMappings(
-		MappingsHelperImpl mappingsHelperImpl) {
-
+	private void _putAdditionalMappings(MappingsHelperImpl mappingsHelperImpl) {
 		if (Validator.isNull(
 				_elasticsearchConfigurationWrapper.additionalTypeMappings())) {
 
@@ -403,7 +404,7 @@ public class CompanyIndexFactoryHelper {
 			_elasticsearchConfigurationWrapper.additionalTypeMappings());
 	}
 
-	private void _putContributedTypeMappings(
+	private void _putContributedMappings(
 		MappingsHelperImpl mappingsHelperImpl) {
 
 		for (CompanyIndexConfigurationContributor
@@ -424,50 +425,59 @@ public class CompanyIndexFactoryHelper {
 			_elasticsearchConfigurationWrapper.overrideTypeMappings());
 	}
 
-	private void _setSettings(
-		CreateIndexRequest createIndexRequest,
-		MappingsHelperImpl mappingsHelperImpl) {
-
-		SettingsBuilder settingsBuilder = new SettingsBuilder(
+	private void _setSettings(CreateIndexRequest createIndexRequest) {
+		SettingsHelperImpl settingsHelperImpl = new SettingsHelperImpl(
 			Settings.builder());
 
-		_loadDefaultIndexSettings(settingsBuilder, mappingsHelperImpl);
+		_loadDefaultSettings(settingsHelperImpl);
 
-		_loadTestModeIndexSettings(settingsBuilder);
+		_loadTestModeSettings(settingsHelperImpl);
 
-		_loadUserDefinedSettings(settingsBuilder);
+		_loadAdditionalSettings(settingsHelperImpl, true);
 
-		createIndexRequest.settings(settingsBuilder.getBuilder());
+		createIndexRequest.settings(settingsHelperImpl.getBuilder());
 	}
 
 	private void _updateMappings(MappingsHelperImpl mappingsHelperImpl) {
+		mappingsHelperImpl.putMappings(
+			mappingsHelperImpl.getMappings(
+				_elasticsearchConfigurationWrapper.overrideTypeMappings()));
+
 		if (Validator.isNotNull(
 				_elasticsearchConfigurationWrapper.overrideTypeMappings())) {
 
 			return;
 		}
 
-		_putAdditionalTypeMappings(mappingsHelperImpl);
+		_putAdditionalMappings(mappingsHelperImpl);
 
-		_putContributedTypeMappings(mappingsHelperImpl);
+		_putContributedMappings(mappingsHelperImpl);
 	}
 
 	private void _updateSettings(
 		String indexName, IndicesClient indicesClient) {
 
-		SettingsBuilder settingsBuilder = new SettingsBuilder(
+		SettingsHelperImpl settingsHelperImpl = new SettingsHelperImpl(
 			Settings.builder());
 
-		_loadUserDefinedSettings(settingsBuilder);
+		_loadDefaultSettings(settingsHelperImpl);
+
+		_loadAdditionalSettings(settingsHelperImpl, false);
 
 		UpdateSettingsRequest updateSettingsRequest = new UpdateSettingsRequest(
 			indexName);
 
-		updateSettingsRequest.settings(settingsBuilder.getBuilder());
+		updateSettingsRequest.settings(settingsHelperImpl.getBuilder());
 
 		try {
+			indicesClient.close(
+				new CloseIndexRequest(indexName), RequestOptions.DEFAULT);
+
 			indicesClient.putSettings(
 				updateSettingsRequest, RequestOptions.DEFAULT);
+
+			indicesClient.open(
+				new OpenIndexRequest(indexName), RequestOptions.DEFAULT);
 		}
 		catch (Exception exception) {
 			_log.error(
