@@ -25,7 +25,7 @@ import com.liferay.portal.search.elasticsearch7.internal.index.util.IndexFactory
 import com.liferay.portal.search.elasticsearch7.internal.settings.SettingsBuilder;
 import com.liferay.portal.search.elasticsearch7.internal.util.ResourceUtil;
 import com.liferay.portal.search.index.IndexNameBuilder;
-import com.liferay.portal.search.spi.index.configuration.contributor.IndexConfigurationContributor;
+import com.liferay.portal.search.spi.index.configuration.contributor.CompanyIndexConfigurationContributor;
 import com.liferay.portal.search.spi.index.listener.CompanyIndexListener;
 
 import java.io.IOException;
@@ -139,42 +139,42 @@ public class CompanyIndexFactoryHelper {
 			ServiceTrackerListFactory.open(
 				bundleContext, CompanyIndexListener.class);
 
-		_indexConfigurationContributorServiceTrackerList =
+		_companyIndexConfigurationContributorServiceTrackerList =
 			ServiceTrackerListFactory.open(
-				bundleContext, IndexConfigurationContributor.class, null,
+				bundleContext, CompanyIndexConfigurationContributor.class, null,
 				new EagerServiceTrackerCustomizer
-					<IndexConfigurationContributor,
-					 IndexConfigurationContributor>() {
+					<CompanyIndexConfigurationContributor,
+					 CompanyIndexConfigurationContributor>() {
 
 					@Override
-					public IndexConfigurationContributor addingService(
-						ServiceReference<IndexConfigurationContributor>
+					public CompanyIndexConfigurationContributor addingService(
+						ServiceReference<CompanyIndexConfigurationContributor>
 							serviceReference) {
 
-						IndexConfigurationContributor
-							indexConfigurationContributor =
+						CompanyIndexConfigurationContributor
+							companyIndexConfigurationContributor =
 								bundleContext.getService(serviceReference);
 
-						_processIndexConfigurationContributor(
-							indexConfigurationContributor);
+						_processCompanyIndexConfigurationContributor(
+							companyIndexConfigurationContributor);
 
-						return indexConfigurationContributor;
+						return companyIndexConfigurationContributor;
 					}
 
 					@Override
 					public void modifiedService(
-						ServiceReference<IndexConfigurationContributor>
+						ServiceReference<CompanyIndexConfigurationContributor>
 							serviceReference,
-						IndexConfigurationContributor
-							indexConfigurationContributor) {
+						CompanyIndexConfigurationContributor
+							companyIndexConfigurationContributor) {
 					}
 
 					@Override
 					public void removedService(
-						ServiceReference<IndexConfigurationContributor>
+						ServiceReference<CompanyIndexConfigurationContributor>
 							serviceReference,
-						IndexConfigurationContributor
-							indexConfigurationContributor) {
+						CompanyIndexConfigurationContributor
+							companyIndexConfigurationContributor) {
 
 						bundleContext.ungetService(serviceReference);
 					}
@@ -188,8 +188,8 @@ public class CompanyIndexFactoryHelper {
 			_companyIndexListenerServiceTrackerList.close();
 		}
 
-		if (_indexConfigurationContributorServiceTrackerList != null) {
-			_indexConfigurationContributorServiceTrackerList.close();
+		if (_companyIndexConfigurationContributorServiceTrackerList != null) {
+			_companyIndexConfigurationContributorServiceTrackerList.close();
 		}
 	}
 
@@ -279,10 +279,11 @@ public class CompanyIndexFactoryHelper {
 	private void _loadIndexConfigurationContributors(
 		SettingsBuilder settingsBuilder) {
 
-		for (IndexConfigurationContributor indexConfigurationContributor :
-				_indexConfigurationContributorServiceTrackerList) {
+		for (CompanyIndexConfigurationContributor
+				companyIndexConfigurationContributor :
+					_companyIndexConfigurationContributorServiceTrackerList) {
 
-			indexConfigurationContributor.contributeSettings(
+			companyIndexConfigurationContributor.contributeSettings(
 				settingsBuilder::put);
 		}
 	}
@@ -312,8 +313,9 @@ public class CompanyIndexFactoryHelper {
 		}
 	}
 
-	private void _processIndexConfigurationContributor(
-		IndexConfigurationContributor indexConfigurationContributor) {
+	private void _processCompanyIndexConfigurationContributor(
+		CompanyIndexConfigurationContributor
+			companyIndexConfigurationContributor) {
 
 		boolean contributeMappings = Validator.isNull(
 			_elasticsearchConfigurationWrapper.overrideTypeMappings());
@@ -321,7 +323,8 @@ public class CompanyIndexFactoryHelper {
 		SettingsBuilder settingsBuilder = new SettingsBuilder(
 			Settings.builder());
 
-		indexConfigurationContributor.contributeSettings(settingsBuilder::put);
+		companyIndexConfigurationContributor.contributeSettings(
+			settingsBuilder::put);
 
 		Settings settings = settingsBuilder.build();
 
@@ -329,7 +332,7 @@ public class CompanyIndexFactoryHelper {
 			if (_log.isWarnEnabled()) {
 				_log.warn(
 					"No mappings or settings to contribute from " +
-						indexConfigurationContributor);
+						companyIndexConfigurationContributor);
 			}
 
 			return;
@@ -370,13 +373,13 @@ public class CompanyIndexFactoryHelper {
 							StringBundler.concat(
 								"Unable to put settings for index ", indexName,
 								" with contributor ",
-								indexConfigurationContributor),
+								companyIndexConfigurationContributor),
 							exception);
 					}
 				}
 
 				if (contributeMappings) {
-					indexConfigurationContributor.contributeMappings(
+					companyIndexConfigurationContributor.contributeMappings(
 						new MappingsHelperImpl(
 							indexName, indicesClient, _jsonFactory));
 				}
@@ -400,10 +403,11 @@ public class CompanyIndexFactoryHelper {
 	private void _putContributedTypeMappings(
 		MappingsHelperImpl mappingsHelperImpl) {
 
-		for (IndexConfigurationContributor indexConfigurationContributor :
-				_indexConfigurationContributorServiceTrackerList) {
+		for (CompanyIndexConfigurationContributor
+				companyIndexConfigurationContributor :
+					_companyIndexConfigurationContributorServiceTrackerList) {
 
-			indexConfigurationContributor.contributeMappings(
+			companyIndexConfigurationContributor.contributeMappings(
 				mappingsHelperImpl);
 		}
 	}
@@ -471,6 +475,8 @@ public class CompanyIndexFactoryHelper {
 	private static final Log _log = LogFactoryUtil.getLog(
 		CompanyIndexFactoryHelper.class);
 
+	private ServiceTrackerList<CompanyIndexConfigurationContributor>
+		_companyIndexConfigurationContributorServiceTrackerList;
 	private ServiceTrackerList<CompanyIndexListener>
 		_companyIndexListenerServiceTrackerList;
 
@@ -483,9 +489,6 @@ public class CompanyIndexFactoryHelper {
 
 	@Reference
 	private ElasticsearchConnectionManager _elasticsearchConnectionManager;
-
-	private ServiceTrackerList<IndexConfigurationContributor>
-		_indexConfigurationContributorServiceTrackerList;
 
 	@Reference
 	private IndexNameBuilder _indexNameBuilder;
