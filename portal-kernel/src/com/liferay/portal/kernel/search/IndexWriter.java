@@ -14,9 +14,19 @@ import java.util.Collection;
  */
 public interface IndexWriter extends SpellCheckIndexWriter {
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #indexDocument(SearchContext, Document)}
+	 */
+	@Deprecated
 	public void addDocument(SearchContext searchContext, Document document)
 		throws SearchException;
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #indexDocuments(SearchContext, Collection)}
+	 */
+	@Deprecated
 	public void addDocuments(
 			SearchContext searchContext, Collection<Document> documents)
 		throws SearchException;
@@ -34,6 +44,13 @@ public interface IndexWriter extends SpellCheckIndexWriter {
 			SearchContext searchContext, String className)
 		throws SearchException;
 
+	public void indexDocument(SearchContext searchContext, Document document)
+		throws SearchException;
+
+	public void indexDocuments(
+			SearchContext searchContext, Collection<Document> documents)
+		throws SearchException;
+
 	public void partiallyUpdateDocument(
 			SearchContext searchContext, Document document)
 		throws SearchException;
@@ -42,9 +59,19 @@ public interface IndexWriter extends SpellCheckIndexWriter {
 			SearchContext searchContext, Collection<Document> documents)
 		throws SearchException;
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #indexDocument(SearchContext, Document)}
+	 */
+	@Deprecated
 	public void updateDocument(SearchContext searchContext, Document document)
 		throws SearchException;
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #indexDocuments(SearchContext, Collection)}
+	 */
+	@Deprecated
 	public void updateDocuments(
 			SearchContext searchContext, Collection<Document> documents)
 		throws SearchException;
