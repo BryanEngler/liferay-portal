@@ -325,14 +325,6 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 		}
 
 		for (String indexName : _getIndexNames(searchContext)) {
-			DeleteDocumentRequest deleteDocumentRequest =
-				new DeleteDocumentRequest(indexName, document.getUID());
-
-			deleteDocumentRequest.setType(DocumentTypes.LIFERAY);
-
-			bulkDocumentRequest.addBulkableDocumentRequest(
-				deleteDocumentRequest);
-
 			IndexDocumentRequest indexDocumentRequest =
 				new IndexDocumentRequest(indexName, document);
 
@@ -368,14 +360,6 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 		for (String indexName : _getIndexNames(searchContext)) {
 			documents.forEach(
 				document -> {
-					DeleteDocumentRequest deleteDocumentRequest =
-						new DeleteDocumentRequest(indexName, document.getUID());
-
-					deleteDocumentRequest.setType(DocumentTypes.LIFERAY);
-
-					bulkDocumentRequest.addBulkableDocumentRequest(
-						deleteDocumentRequest);
-
 					IndexDocumentRequest indexDocumentRequest =
 						new IndexDocumentRequest(indexName, document);
 
