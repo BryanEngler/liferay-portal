@@ -460,6 +460,41 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 		}
 	}
 
+	public void removeFieldsFromDocuments(
+			long companyId, Collection<Document> documents,
+			boolean commitImmediately, String... fieldNames)
+		throws SearchException {
+
+		_enforceStandardUID(documents);
+
+		if (_indexStatusManager.isIndexReadOnly() || (documents == null) ||
+			documents.isEmpty()) {
+
+			return;
+		}
+
+		SearchEngine searchEngine = _searchEngineHelper.getSearchEngine();
+
+		IndexWriter indexWriter = searchEngine.getIndexWriter();
+
+		for (Document document : documents) {
+			if (_log.isDebugEnabled()) {
+				_log.debug("Document " + document.toString());
+			}
+
+			_searchPermissionChecker.addPermissionFields(companyId, document);
+		}
+
+		SearchContext searchContext = new SearchContext();
+
+		searchContext.setCompanyId(companyId);
+
+		_setCommitImmediately(searchContext, commitImmediately);
+
+		indexWriter.removeFieldsFromDocuments(
+			searchContext, documents, fieldNames);
+	}
+
 	/**
 	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             IndexStatusManager#setIndexReadOnly(boolean)}
