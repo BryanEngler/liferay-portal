@@ -38,6 +38,9 @@ import com.liferay.portal.search.engine.adapter.document.IndexDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.UpdateDocumentRequest;
 import com.liferay.portal.search.engine.adapter.index.RefreshIndexRequest;
 import com.liferay.portal.search.index.IndexNameBuilder;
+import com.liferay.portal.search.script.Script;
+import com.liferay.portal.search.script.ScriptType;
+import com.liferay.portal.search.script.Scripts;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -317,6 +320,65 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 		}
 	}
 
+	@Override
+	public void removeFieldsFromDocument(
+			SearchContext searchContext, Document document, String... fields)
+		throws SearchException {
+
+		removeFieldsFromDocuments(
+			searchContext, Collections.singleton(document), fields);
+	}
+
+	@Override
+	public void removeFieldsFromDocuments(
+			SearchContext searchContext, Collection<Document> documents,
+			String... fields)
+		throws SearchException {
+
+		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
+
+		if (PortalRunMode.isTestMode() || searchContext.isCommitImmediately()) {
+			bulkDocumentRequest.setRefresh(true);
+		}
+
+		Script script = _scripts.builder(
+		).idOrCode(
+			"for (field in params.fields) { ctx._source.remove(field) }"
+		).language(
+			"painless"
+		).putParameter(
+			"fields", fields
+		).scriptType(
+			ScriptType.INLINE
+		).build();
+
+		for (String indexName : _getIndexNames(searchContext)) {
+			documents.forEach(
+				document -> {
+					UpdateDocumentRequest updateDocumentRequest =
+						new UpdateDocumentRequest(
+							indexName, document.getUID(), script);
+
+					updateDocumentRequest.setType(DocumentTypes.LIFERAY);
+
+					bulkDocumentRequest.addBulkableDocumentRequest(
+						updateDocumentRequest);
+				});
+		}
+
+		BulkDocumentResponse bulkDocumentResponse =
+			_searchEngineAdapter.execute(bulkDocumentRequest);
+
+		if (bulkDocumentResponse.hasErrors()) {
+			if (_elasticsearchConfigurationWrapper.logExceptionsOnly()) {
+				_log.error("Bulk partial update failed");
+			}
+			else {
+				throw new SystemException("Bulk partial update failed");
+			}
+		}
+	}
+
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
 	 *             #indexDocument(SearchContext, Document)}
@@ -389,6 +451,9 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 
 	@Reference
 	private IndexNameBuilder _indexNameBuilder;
+
+	@Reference
+	private Scripts _scripts;
 
 	@Reference(target = "(search.engine.impl=Elasticsearch)")
 	private SearchEngineAdapter _searchEngineAdapter;

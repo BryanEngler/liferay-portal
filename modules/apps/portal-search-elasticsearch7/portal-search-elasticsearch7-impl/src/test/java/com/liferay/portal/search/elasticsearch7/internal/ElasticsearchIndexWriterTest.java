@@ -12,6 +12,7 @@ import com.liferay.portal.kernel.search.IndexWriter;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.generic.MatchQuery;
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.search.elasticsearch7.internal.indexing.LiferayElasticsearchIndexingFixtureFactory;
 import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
 import com.liferay.portal.search.test.util.indexing.DocumentFixture;
@@ -102,6 +103,29 @@ public class ElasticsearchIndexWriterTest extends BaseIndexingTestCase {
 
 		_assertOnlyOne(Field.CONTENT, "example");
 		_assertOnlyOne(Field.TITLE, "text");
+	}
+
+	@Test
+	public void testRemoveFieldsFromDocument() throws SearchException {
+		ReflectionTestUtil.setFieldValue(_indexWriter, "_scripts", scripts);
+
+		Document document = addDocument("alpha", "one", "bravo", "two");
+
+		document.add(new Field("charlie", "three"));
+
+		_indexWriter.indexDocument(createSearchContext(), document);
+
+		_assertOnlyOne("alpha", "one");
+		_assertOnlyOne("bravo", "two");
+		_assertOnlyOne("charlie", "three");
+
+		_indexWriter.removeFieldsFromDocument(
+			createSearchContext(), document, "alpha", "charlie");
+
+		_assertNone("alpha", "one");
+		_assertNone("charlie", "three");
+
+		_assertOnlyOne("bravo", "two");
 	}
 
 	@Test
