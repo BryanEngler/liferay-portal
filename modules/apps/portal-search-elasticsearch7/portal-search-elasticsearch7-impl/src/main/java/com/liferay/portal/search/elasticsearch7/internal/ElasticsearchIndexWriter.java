@@ -28,7 +28,6 @@ import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.util.PortalRunMode;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
-import com.liferay.portal.search.elasticsearch7.internal.logging.ElasticsearchExceptionHandler;
 import com.liferay.portal.search.elasticsearch7.internal.util.DocumentTypes;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.document.BulkDocumentItemResponse;
@@ -105,54 +104,14 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 
 	@Override
 	public void deleteDocument(SearchContext searchContext, String uid) {
-		for (String indexName : _getIndexNames(searchContext)) {
-			DeleteDocumentRequest deleteDocumentRequest =
-				new DeleteDocumentRequest(indexName, uid);
-
-			if (PortalRunMode.isTestMode() ||
-				searchContext.isCommitImmediately()) {
-
-				deleteDocumentRequest.setRefresh(true);
-			}
-
-			deleteDocumentRequest.setType(DocumentTypes.LIFERAY);
-
-			try {
-				_searchEngineAdapter.execute(deleteDocumentRequest);
-			}
-			catch (RuntimeException runtimeException) {
-				ElasticsearchExceptionHandler elasticsearchExceptionHandler =
-					new ElasticsearchExceptionHandler(
-						_log,
-						_elasticsearchConfigurationWrapper.logExceptionsOnly());
-
-				elasticsearchExceptionHandler.handleDeleteDocumentException(
-					runtimeException);
-			}
-		}
+		_deleteDocuments(searchContext, Collections.singleton(uid), true);
 	}
 
 	@Override
 	public void deleteDocuments(
 		SearchContext searchContext, Collection<String> uids) {
 
-		BulkDocumentRequest bulkDocumentRequest = _getBulkDocumentRequest(
-			searchContext);
-
-		for (String indexName : _getIndexNames(searchContext)) {
-			uids.forEach(
-				uid -> {
-					DeleteDocumentRequest deleteDocumentRequest =
-						new DeleteDocumentRequest(indexName, uid);
-
-					deleteDocumentRequest.setType(DocumentTypes.LIFERAY);
-
-					bulkDocumentRequest.addBulkableDocumentRequest(
-						deleteDocumentRequest);
-				});
-		}
-
-		_execute(bulkDocumentRequest);
+		_deleteDocuments(searchContext, uids, false);
 	}
 
 	@Override
@@ -332,7 +291,36 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 		return _spellCheckIndexWriter;
 	}
 
+	private void _deleteDocuments(
+		SearchContext searchContext, Collection<String> uids,
+		boolean singleDeleteRequest) {
+
+		BulkDocumentRequest bulkDocumentRequest = _getBulkDocumentRequest(
+			searchContext);
+
+		for (String indexName : _getIndexNames(searchContext)) {
+			uids.forEach(
+				uid -> {
+					DeleteDocumentRequest deleteDocumentRequest =
+						new DeleteDocumentRequest(indexName, uid);
+
+					deleteDocumentRequest.setType(DocumentTypes.LIFERAY);
+
+					bulkDocumentRequest.addBulkableDocumentRequest(
+						deleteDocumentRequest);
+				});
+		}
+
+		_execute(bulkDocumentRequest, singleDeleteRequest);
+	}
+
 	private void _execute(BulkDocumentRequest bulkDocumentRequest) {
+		_execute(bulkDocumentRequest, false);
+	}
+
+	private void _execute(
+		BulkDocumentRequest bulkDocumentRequest, boolean singleDeleteRequest) {
+
 		BulkDocumentResponse bulkDocumentResponse =
 			_searchEngineAdapter.execute(bulkDocumentRequest);
 
@@ -340,13 +328,22 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 			String failureMessages = _getBulkDocumentResponseFailureMessages(
 				bulkDocumentResponse);
 
-			String errorMessage = "Bulk request failed: " + failureMessages;
+			if (singleDeleteRequest &&
+				failureMessages.contains(_INDEX_NOT_FOUND_EXCEPTION_MESSAGE)) {
 
-			if (_elasticsearchConfigurationWrapper.logExceptionsOnly()) {
-				_log.error(errorMessage);
+				if (_log.isInfoEnabled()) {
+					_log.info(failureMessages);
+				}
 			}
 			else {
-				throw new SystemException(errorMessage);
+				String errorMessage = "Bulk request failed: " + failureMessages;
+
+				if (_elasticsearchConfigurationWrapper.logExceptionsOnly()) {
+					_log.error(errorMessage);
+				}
+				else {
+					throw new SystemException(errorMessage);
+				}
 			}
 		}
 	}
@@ -415,6 +412,9 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 
 		return indexNames;
 	}
+
+	private static final String _INDEX_NOT_FOUND_EXCEPTION_MESSAGE =
+		"type=index_not_found_exception";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ElasticsearchIndexWriter.class);
