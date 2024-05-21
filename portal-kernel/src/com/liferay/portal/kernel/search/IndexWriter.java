@@ -59,6 +59,15 @@ public interface IndexWriter extends SpellCheckIndexWriter {
 			SearchContext searchContext, Collection<Document> documents)
 		throws SearchException;
 
+	public void removeFieldsFromDocument(
+			SearchContext searchContext, Document document, String... fields)
+		throws SearchException;
+
+	public void removeFieldsFromDocuments(
+			SearchContext searchContext, Collection<Document> documents,
+			String... fields)
+		throws SearchException;
+
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
 	 *             #indexDocument(SearchContext, Document)}
