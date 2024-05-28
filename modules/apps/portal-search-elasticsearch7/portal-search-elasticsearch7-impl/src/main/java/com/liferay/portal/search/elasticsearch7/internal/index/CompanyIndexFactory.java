@@ -115,49 +115,52 @@ public class CompanyIndexFactory
 	}
 
 	private synchronized void _initializeCompanyIndexes() {
-		for (Long companyId :
-				IndexFactoryCompanyIdRegistryUtil.getCompanyIds()) {
+		_companyLocalService.forEachCompanyId(
+			companyId -> {
+				try {
+					RestHighLevelClient restHighLevelClient =
+						_elasticsearchConnectionManager.
+							getRestHighLevelClient();
 
-			try {
-				RestHighLevelClient restHighLevelClient =
-					_elasticsearchConnectionManager.getRestHighLevelClient();
-
-				initializeIndex(restHighLevelClient.indices(), companyId);
-			}
-			catch (Exception exception) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(
-						"Unable to reinitialize index for company " + companyId,
-						exception);
+					initializeIndex(restHighLevelClient.indices(), companyId);
 				}
-			}
-		}
+				catch (Exception exception) {
+					if (_log.isWarnEnabled()) {
+						_log.warn(
+							"Unable to reinitialize index for company " +
+								companyId,
+							exception);
+					}
+				}
+			},
+			IndexFactoryCompanyIdRegistryUtil.getCompanyIds());
 	}
 
 	private void _updateMaxResultWindow() {
 		int maxResultWindow =
 			_elasticsearchConfigurationWrapper.indexMaxResultWindow();
 
-		for (Long companyId :
-				IndexFactoryCompanyIdRegistryUtil.getCompanyIds()) {
+		_companyLocalService.forEachCompanyId(
+			companyId -> {
+				String indexName = _indexNameBuilder.getIndexName(companyId);
 
-			String indexName = _indexNameBuilder.getIndexName(companyId);
+				UpdateIndexSettingsIndexRequest
+					updateIndexSettingsIndexRequest =
+						new UpdateIndexSettingsIndexRequest(indexName);
 
-			UpdateIndexSettingsIndexRequest updateIndexSettingsIndexRequest =
-				new UpdateIndexSettingsIndexRequest(indexName);
+				updateIndexSettingsIndexRequest.setSettings(
+					"{\"index.max_result_window\": " + maxResultWindow + "}");
 
-			updateIndexSettingsIndexRequest.setSettings(
-				"{\"index.max_result_window\": " + maxResultWindow + "}");
+				_searchEngineAdapter.execute(updateIndexSettingsIndexRequest);
 
-			_searchEngineAdapter.execute(updateIndexSettingsIndexRequest);
-
-			if (_log.isInfoEnabled()) {
-				_log.info(
-					StringBundler.concat(
-						"Updated index.max_result_window to ", maxResultWindow,
-						" for index ", indexName));
-			}
-		}
+				if (_log.isInfoEnabled()) {
+					_log.info(
+						StringBundler.concat(
+							"Updated index.max_result_window to ",
+							maxResultWindow, " for index ", indexName));
+				}
+			},
+			IndexFactoryCompanyIdRegistryUtil.getCompanyIds());
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
