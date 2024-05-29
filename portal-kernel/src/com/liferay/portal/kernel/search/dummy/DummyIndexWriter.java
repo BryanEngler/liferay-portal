@@ -8,6 +8,7 @@ package com.liferay.portal.kernel.search.dummy;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.IndexWriter;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.SearchException;
 
 import java.util.Collection;
 
@@ -41,7 +42,16 @@ public class DummyIndexWriter implements IndexWriter {
 	}
 
 	@Override
+	public void commit(long companyId) {
+	}
+
+	@Override
 	public void deleteDocument(SearchContext searchContext, String uid) {
+	}
+
+	@Override
+	public void deleteDocument(
+		long companyId, boolean commitImmediately, String uid) {
 	}
 
 	@Override
@@ -50,8 +60,31 @@ public class DummyIndexWriter implements IndexWriter {
 	}
 
 	@Override
+	public void deleteDocuments(
+		long companyId, boolean commitImmediately, Collection<String> uids) {
+	}
+
+	@Override
 	public void deleteEntityDocuments(
 		SearchContext searchContext, String className) {
+	}
+
+	@Override
+	public void deleteEntityDocuments(
+		long companyId, boolean commitImmediately, String className) {
+	}
+
+	@Override
+	public void indexDocument(
+			long companyId, boolean commitImmediately, Document document)
+		throws SearchException {
+	}
+
+	@Override
+	public void indexDocuments(
+			long companyId, boolean commitImmediately,
+			Collection<Document> documents)
+		throws SearchException {
 	}
 
 	@Override
@@ -81,8 +114,33 @@ public class DummyIndexWriter implements IndexWriter {
 	}
 
 	@Override
+	public void partiallyUpdateDocument(
+		long companyId, boolean commitImmediately, Document document) {
+	}
+
+	@Override
 	public void partiallyUpdateDocuments(
 		SearchContext searchContext, Collection<Document> documents) {
+	}
+
+	@Override
+	public void partiallyUpdateDocuments(
+		long companyId, boolean commitImmediately,
+		Collection<Document> documents) {
+	}
+
+	@Override
+	public void removeFieldsFromDocument(
+			long companyId, boolean commitImmediately, Document document,
+			String... fields)
+		throws SearchException {
+	}
+
+	@Override
+	public void removeFieldsFromDocuments(
+			long companyId, boolean commitImmediately,
+			Collection<Document> documents, String... fields)
+		throws SearchException {
 	}
 
 	@Override
