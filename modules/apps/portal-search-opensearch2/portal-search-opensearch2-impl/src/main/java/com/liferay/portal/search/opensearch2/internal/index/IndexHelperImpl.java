@@ -464,7 +464,7 @@ public class IndexHelperImpl implements IndexHelper {
 						settingsJSONObject.toString());
 
 					try {
-						_searchEngineAdapter.execute(
+						_searchEngineAdapter.execute( //use openSearchIndicesClient here?
 							updateIndexSettingsIndexRequest);
 					}
 					catch (Exception exception) {
