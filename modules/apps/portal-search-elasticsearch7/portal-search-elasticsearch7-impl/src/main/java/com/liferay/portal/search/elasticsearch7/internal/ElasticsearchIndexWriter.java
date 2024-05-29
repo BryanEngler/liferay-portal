@@ -5,6 +5,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal;
 
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -30,6 +31,7 @@ import com.liferay.portal.search.elasticsearch7.internal.configuration.Elasticse
 import com.liferay.portal.search.elasticsearch7.internal.logging.ElasticsearchExceptionHandler;
 import com.liferay.portal.search.elasticsearch7.internal.util.DocumentTypes;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
+import com.liferay.portal.search.engine.adapter.document.BulkDocumentItemResponse;
 import com.liferay.portal.search.engine.adapter.document.BulkDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.BulkDocumentResponse;
 import com.liferay.portal.search.engine.adapter.document.DeleteByQueryDocumentRequest;
@@ -134,11 +136,8 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 	public void deleteDocuments(
 		SearchContext searchContext, Collection<String> uids) {
 
-		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
-
-		if (PortalRunMode.isTestMode() || searchContext.isCommitImmediately()) {
-			bulkDocumentRequest.setRefresh(true);
-		}
+		BulkDocumentRequest bulkDocumentRequest = _getBulkDocumentRequest(
+			searchContext);
 
 		for (String indexName : _getIndexNames(searchContext)) {
 			uids.forEach(
@@ -153,17 +152,7 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 				});
 		}
 
-		BulkDocumentResponse bulkDocumentResponse =
-			_searchEngineAdapter.execute(bulkDocumentRequest);
-
-		if (bulkDocumentResponse.hasErrors()) {
-			if (_elasticsearchConfigurationWrapper.logExceptionsOnly()) {
-				_log.error("Bulk delete failed");
-			}
-			else {
-				throw new SystemException("Bulk delete failed");
-			}
-		}
+		_execute(bulkDocumentRequest);
 	}
 
 	@Override
@@ -218,11 +207,8 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 	public void indexDocuments(
 		SearchContext searchContext, Collection<Document> documents) {
 
-		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
-
-		if (PortalRunMode.isTestMode() || searchContext.isCommitImmediately()) {
-			bulkDocumentRequest.setRefresh(true);
-		}
+		BulkDocumentRequest bulkDocumentRequest = _getBulkDocumentRequest(
+			searchContext);
 
 		for (String indexName : _getIndexNames(searchContext)) {
 			documents.forEach(
@@ -237,61 +223,23 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 				});
 		}
 
-		BulkDocumentResponse bulkDocumentResponse =
-			_searchEngineAdapter.execute(bulkDocumentRequest);
-
-		if (bulkDocumentResponse.hasErrors()) {
-			if (_elasticsearchConfigurationWrapper.logExceptionsOnly()) {
-				_log.error("Bulk add failed");
-			}
-			else {
-				throw new SystemException("Bulk add failed");
-			}
-		}
+		_execute(bulkDocumentRequest);
 	}
 
 	@Override
 	public void partiallyUpdateDocument(
 		SearchContext searchContext, Document document) {
 
-		for (String indexName : _getIndexNames(searchContext)) {
-			UpdateDocumentRequest updateDocumentRequest =
-				new UpdateDocumentRequest(
-					indexName, document.getUID(), document);
-
-			updateDocumentRequest.setType(DocumentTypes.LIFERAY);
-
-			if (PortalRunMode.isTestMode() ||
-				searchContext.isCommitImmediately()) {
-
-				updateDocumentRequest.setRefresh(true);
-			}
-
-			updateDocumentRequest.setUpsert(true);
-
-			try {
-				_searchEngineAdapter.execute(updateDocumentRequest);
-			}
-			catch (RuntimeException runtimeException) {
-				if (_elasticsearchConfigurationWrapper.logExceptionsOnly()) {
-					_log.error(runtimeException);
-				}
-				else {
-					throw runtimeException;
-				}
-			}
-		}
+		partiallyUpdateDocuments(
+			searchContext, Collections.singleton(document));
 	}
 
 	@Override
 	public void partiallyUpdateDocuments(
 		SearchContext searchContext, Collection<Document> documents) {
 
-		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
-
-		if (PortalRunMode.isTestMode() || searchContext.isCommitImmediately()) {
-			bulkDocumentRequest.setRefresh(true);
-		}
+		BulkDocumentRequest bulkDocumentRequest = _getBulkDocumentRequest(
+			searchContext);
 
 		for (String indexName : _getIndexNames(searchContext)) {
 			documents.forEach(
@@ -301,23 +249,14 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 							indexName, document.getUID(), document);
 
 					updateDocumentRequest.setType(DocumentTypes.LIFERAY);
+					updateDocumentRequest.setUpsert(true);
 
 					bulkDocumentRequest.addBulkableDocumentRequest(
 						updateDocumentRequest);
 				});
 		}
 
-		BulkDocumentResponse bulkDocumentResponse =
-			_searchEngineAdapter.execute(bulkDocumentRequest);
-
-		if (bulkDocumentResponse.hasErrors()) {
-			if (_elasticsearchConfigurationWrapper.logExceptionsOnly()) {
-				_log.error("Bulk partial update failed");
-			}
-			else {
-				throw new SystemException("Bulk partial update failed");
-			}
-		}
+		_execute(bulkDocumentRequest);
 	}
 
 	@Override
@@ -335,11 +274,8 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 			String... fields)
 		throws SearchException {
 
-		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
-
-		if (PortalRunMode.isTestMode() || searchContext.isCommitImmediately()) {
-			bulkDocumentRequest.setRefresh(true);
-		}
+		BulkDocumentRequest bulkDocumentRequest = _getBulkDocumentRequest(
+			searchContext);
 
 		Script script = _scripts.builder(
 		).idOrCode(
@@ -366,17 +302,7 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 				});
 		}
 
-		BulkDocumentResponse bulkDocumentResponse =
-			_searchEngineAdapter.execute(bulkDocumentRequest);
-
-		if (bulkDocumentResponse.hasErrors()) {
-			if (_elasticsearchConfigurationWrapper.logExceptionsOnly()) {
-				_log.error("Bulk partial update failed");
-			}
-			else {
-				throw new SystemException("Bulk partial update failed");
-			}
-		}
+		_execute(bulkDocumentRequest);
 	}
 
 	/**
@@ -404,6 +330,57 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 	@Override
 	protected SpellCheckIndexWriter getSpellCheckIndexWriter() {
 		return _spellCheckIndexWriter;
+	}
+
+	private void _execute(BulkDocumentRequest bulkDocumentRequest) {
+		BulkDocumentResponse bulkDocumentResponse =
+			_searchEngineAdapter.execute(bulkDocumentRequest);
+
+		if (bulkDocumentResponse.hasErrors()) {
+			String failureMessages = _getBulkDocumentResponseFailureMessages(
+				bulkDocumentResponse);
+
+			String errorMessage = "Bulk request failed: " + failureMessages;
+
+			if (_elasticsearchConfigurationWrapper.logExceptionsOnly()) {
+				_log.error(errorMessage);
+			}
+			else {
+				throw new SystemException(errorMessage);
+			}
+		}
+	}
+
+	private BulkDocumentRequest _getBulkDocumentRequest(
+		SearchContext searchContext) {
+
+		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
+
+		if (PortalRunMode.isTestMode() || searchContext.isCommitImmediately()) {
+			bulkDocumentRequest.setRefresh(true);
+		}
+
+		return bulkDocumentRequest;
+	}
+
+	private String _getBulkDocumentResponseFailureMessages(
+		BulkDocumentResponse bulkDocumentResponse) {
+
+		StringBundler sb = new StringBundler();
+
+		for (BulkDocumentItemResponse bulkDocumentItemResponse :
+				bulkDocumentResponse.getBulkDocumentItemResponses()) {
+
+			if (bulkDocumentItemResponse.getFailureMessage() != null) {
+				if (sb.length() > 0) {
+					sb.append(", ");
+				}
+
+				sb.append(bulkDocumentItemResponse.getFailureMessage());
+			}
+		}
+
+		return sb.toString();
 	}
 
 	private String _getIndexNameNext(long companyId) {
