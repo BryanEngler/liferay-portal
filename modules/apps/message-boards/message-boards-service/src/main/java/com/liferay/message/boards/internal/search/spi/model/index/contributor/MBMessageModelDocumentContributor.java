@@ -51,6 +51,15 @@ public class MBMessageModelDocumentContributor
 
 	@Override
 	public void contribute(Document document, MBMessage mbMessage) {
+		if (_log.isDebugEnabled()) {
+			_log.debug(
+				"Contributing fields for message " + mbMessage.getMessageId());
+		}
+
+		if (_log.isTraceEnabled()) {
+			_log.trace("Content: " + mbMessage.getBody());
+		}
+
 		document.addKeyword(Field.CATEGORY_ID, mbMessage.getCategoryId());
 
 		for (Locale locale :
