@@ -37,6 +37,16 @@ public class KBArticleModelDocumentContributor
 
 	@Override
 	public void contribute(Document document, KBArticle kbArticle) {
+		if (_log.isDebugEnabled()) {
+			_log.debug(
+				"Contributing fields for article " +
+					kbArticle.getKbArticleId());
+		}
+
+		if (_log.isTraceEnabled()) {
+			_log.trace("Content: " + kbArticle.getContent());
+		}
+
 		document.addText(
 			Field.CONTENT, _htmlParser.extractText(kbArticle.getContent()));
 		document.addText(Field.DESCRIPTION, kbArticle.getDescription());
