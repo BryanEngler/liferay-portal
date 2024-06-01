@@ -7,6 +7,8 @@ package com.liferay.blogs.internal.search.spi.model.index.contributor;
 
 import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.util.HtmlParser;
@@ -31,6 +33,16 @@ public class BlogsEntryModelDocumentContributor
 
 	@Override
 	public void contribute(Document document, BlogsEntry blogsEntry) {
+		if (_log.isDebugEnabled()) {
+			_log.debug(
+				"Contributing fields for blogs entry " +
+					blogsEntry.getEntryId());
+		}
+
+		if (_log.isTraceEnabled()) {
+			_log.trace("Content: " + blogsEntry.getContent());
+		}
+
 		document.addText(Field.CAPTION, blogsEntry.getCoverImageCaption());
 
 		String content = _htmlParser.extractText(blogsEntry.getContent());
@@ -57,6 +69,9 @@ public class BlogsEntryModelDocumentContributor
 				blogsEntry.getTitle());
 		}
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		BlogsEntryModelDocumentContributor.class);
 
 	@Reference
 	private HtmlParser _htmlParser;
