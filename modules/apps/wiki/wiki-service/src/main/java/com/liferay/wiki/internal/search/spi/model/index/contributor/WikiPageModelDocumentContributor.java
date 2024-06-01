@@ -39,6 +39,15 @@ public class WikiPageModelDocumentContributor
 
 	@Override
 	public void contribute(Document document, WikiPage wikiPage) {
+		if (_log.isDebugEnabled()) {
+			_log.debug(
+				"Contributing fields for wiki page " + wikiPage.getPageId());
+		}
+
+		if (_log.isTraceEnabled()) {
+			_log.trace("Content: " + wikiPage.getContent());
+		}
+
 		uidFactory.setUID(wikiPage, document);
 
 		String content = null;
