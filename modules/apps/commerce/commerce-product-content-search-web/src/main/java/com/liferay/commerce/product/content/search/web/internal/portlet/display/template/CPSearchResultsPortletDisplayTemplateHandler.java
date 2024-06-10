@@ -51,6 +51,8 @@ public class CPSearchResultsPortletDisplayTemplateHandler
 		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
 			"content.Language", locale, getClass());
 
+		sb.append(_language.get(locale, "commerce"));
+		sb.append(StringPool.SPACE);
 		sb.append(
 			_portal.getPortletTitle(
 				CPPortletKeys.CP_SEARCH_RESULTS, resourceBundle));
