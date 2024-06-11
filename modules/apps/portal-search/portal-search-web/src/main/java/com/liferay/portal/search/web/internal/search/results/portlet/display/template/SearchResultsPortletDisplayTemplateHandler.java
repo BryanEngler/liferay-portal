@@ -19,6 +19,7 @@ import com.liferay.portal.search.web.internal.search.results.portlet.SearchResul
 import com.liferay.portlet.display.template.BasePortletDisplayTemplateHandler;
 import com.liferay.portlet.display.template.constants.PortletDisplayTemplateConstants;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -80,6 +81,16 @@ public class SearchResultsPortletDisplayTemplateHandler
 			templateVariableGroups.get("fields");
 
 		templateVariableGroup.empty();
+
+		List<String> fields = Arrays.asList(
+			"entryClassPK", "entryClassName");
+
+		for (String field : fields) {
+			templateVariableGroup.addVariable(
+				field, SearchResultSummaryDisplayContext.class,
+				PortletDisplayTemplateConstants.ENTRY,
+				"getFieldValue(\"" + field + "\")");
+		}
 
 		templateVariableGroup.addVariable(
 			"content", SearchResultSummaryDisplayContext.class,

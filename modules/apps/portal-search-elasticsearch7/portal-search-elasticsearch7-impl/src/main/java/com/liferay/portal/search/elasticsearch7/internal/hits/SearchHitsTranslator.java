@@ -118,7 +118,7 @@ public class SearchHitsTranslator {
 					String valueField = (String) field.get("valueFieldName");
 					Object fieldValue = field.get(valueField);
 
-					map.put(fieldName, fieldValue);
+					map.put((String) sourceAsMap.get("objectDefinitionId")+fieldName, fieldValue);
 				}
 			}
 		}

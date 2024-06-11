@@ -7,7 +7,9 @@ package com.liferay.portal.search.web.internal.result.display.context;
 
 import java.io.Serializable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.portlet.PortletURL;
 
@@ -18,6 +20,10 @@ public class SearchResultSummaryDisplayContext implements Serializable {
 
 	public long getAssetEntryUserId() {
 		return _assetEntryUserId;
+	}
+
+	public String getFieldValue(String field) {
+		return _fieldDisplayContextsMap.get(field).getValuesToString();
 	}
 
 	public long getAssetRendererDownloadSize() {
@@ -293,6 +299,13 @@ public class SearchResultSummaryDisplayContext implements Serializable {
 		List<SearchResultFieldDisplayContext> fieldDisplayContexts) {
 
 		_fieldDisplayContexts = fieldDisplayContexts;
+
+		for (SearchResultFieldDisplayContext fieldDisplayContext :
+			fieldDisplayContexts) {
+
+			_fieldDisplayContextsMap.put(
+				fieldDisplayContext.getName(), fieldDisplayContext);
+		}
 	}
 
 	public void setFieldsVisible(boolean fieldsVisible) {
@@ -426,6 +439,8 @@ public class SearchResultSummaryDisplayContext implements Serializable {
 	private String _fieldAssetCategoryIds;
 	private String _fieldAssetTagNames;
 	private List<SearchResultFieldDisplayContext> _fieldDisplayContexts;
+	private Map<String, SearchResultFieldDisplayContext>
+		_fieldDisplayContextsMap = new HashMap<>();
 	private boolean _fieldsVisible;
 	private String _highlightedTitle;
 	private String _iconId;
