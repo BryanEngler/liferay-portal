@@ -77,13 +77,8 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 
 		_searchPermissionChecker.addPermissionFields(companyId, document);
 
-		SearchContext searchContext = new SearchContext();
-
-		searchContext.setCompanyId(companyId);
-
-		_setCommitImmediately(searchContext, commitImmediately);
-
-		indexWriter.addDocument(searchContext, document);
+		indexWriter.indexDocument(
+			companyId, _getCommitImmediately(commitImmediately), document);
 	}
 
 	@Override
@@ -112,13 +107,8 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 			_searchPermissionChecker.addPermissionFields(companyId, document);
 		}
 
-		SearchContext searchContext = new SearchContext();
-
-		searchContext.setCompanyId(companyId);
-
-		_setCommitImmediately(searchContext, commitImmediately);
-
-		indexWriter.addDocuments(searchContext, documents);
+		indexWriter.indexDocuments(
+			companyId, _getCommitImmediately(commitImmediately), documents);
 	}
 
 	@Override
@@ -142,11 +132,7 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 
 		IndexWriter indexWriter = searchEngine.getIndexWriter();
 
-		SearchContext searchContext = new SearchContext();
-
-		searchContext.setCompanyId(companyId);
-
-		indexWriter.commit(searchContext);
+		indexWriter.commit(companyId);
 	}
 
 	@Override
@@ -162,13 +148,8 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 
 		IndexWriter indexWriter = searchEngine.getIndexWriter();
 
-		SearchContext searchContext = new SearchContext();
-
-		searchContext.setCompanyId(companyId);
-
-		_setCommitImmediately(searchContext, commitImmediately);
-
-		indexWriter.deleteDocument(searchContext, uid);
+		indexWriter.deleteDocument(
+			companyId, _getCommitImmediately(commitImmediately), uid);
 	}
 
 	@Override
@@ -186,13 +167,8 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 
 		IndexWriter indexWriter = searchEngine.getIndexWriter();
 
-		SearchContext searchContext = new SearchContext();
-
-		searchContext.setCompanyId(companyId);
-
-		_setCommitImmediately(searchContext, commitImmediately);
-
-		indexWriter.deleteDocuments(searchContext, uids);
+		indexWriter.deleteDocuments(
+			companyId, _getCommitImmediately(commitImmediately), uids);
 	}
 
 	@Override
@@ -212,13 +188,8 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 
 		IndexWriter indexWriter = searchEngine.getIndexWriter();
 
-		SearchContext searchContext = new SearchContext();
-
-		searchContext.setCompanyId(companyId);
-
-		_setCommitImmediately(searchContext, commitImmediately);
-
-		indexWriter.deleteEntityDocuments(searchContext, className);
+		indexWriter.deleteEntityDocuments(
+			companyId, _getCommitImmediately(commitImmediately), className);
 	}
 
 	@Override
@@ -356,13 +327,8 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 
 		_searchPermissionChecker.addPermissionFields(companyId, document);
 
-		SearchContext searchContext = new SearchContext();
-
-		searchContext.setCompanyId(companyId);
-
-		_setCommitImmediately(searchContext, commitImmediately);
-
-		indexWriter.partiallyUpdateDocument(searchContext, document);
+		indexWriter.partiallyUpdateDocument(
+			companyId, _getCommitImmediately(commitImmediately), document);
 	}
 
 	@Override
@@ -391,13 +357,8 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 			_searchPermissionChecker.addPermissionFields(companyId, document);
 		}
 
-		SearchContext searchContext = new SearchContext();
-
-		searchContext.setCompanyId(companyId);
-
-		_setCommitImmediately(searchContext, commitImmediately);
-
-		indexWriter.partiallyUpdateDocuments(searchContext, documents);
+		indexWriter.partiallyUpdateDocuments(
+			companyId, _getCommitImmediately(commitImmediately), documents);
 	}
 
 	@Override
@@ -485,14 +446,9 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 			_searchPermissionChecker.addPermissionFields(companyId, document);
 		}
 
-		SearchContext searchContext = new SearchContext();
-
-		searchContext.setCompanyId(companyId);
-
-		_setCommitImmediately(searchContext, commitImmediately);
-
 		indexWriter.removeFieldsFromDocuments(
-			searchContext, documents, fieldNames);
+			companyId, _getCommitImmediately(commitImmediately), documents,
+			fieldNames);
 	}
 
 	/**
@@ -535,13 +491,8 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 
 		_searchPermissionChecker.addPermissionFields(companyId, document);
 
-		SearchContext searchContext = new SearchContext();
-
-		searchContext.setCompanyId(companyId);
-
-		_setCommitImmediately(searchContext, _commitImmediately);
-
-		indexWriter.updateDocument(searchContext, document);
+		indexWriter.indexDocument(
+			companyId, _getCommitImmediately(_commitImmediately), document);
 	}
 
 	@Override
@@ -570,13 +521,8 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 			_searchPermissionChecker.addPermissionFields(companyId, document);
 		}
 
-		SearchContext searchContext = new SearchContext();
-
-		searchContext.setCompanyId(companyId);
-
-		_setCommitImmediately(searchContext, commitImmediately);
-
-		indexWriter.updateDocuments(searchContext, documents);
+		indexWriter.indexDocuments(
+			companyId, _getCommitImmediately(commitImmediately), documents);
 	}
 
 	@Override
@@ -622,15 +568,12 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 		return names[0];
 	}
 
-	private void _setCommitImmediately(
-		SearchContext searchContext, boolean commitImmediately) {
-
+	private boolean _getCommitImmediately(boolean commitImmediately) {
 		if (!commitImmediately) {
-			searchContext.setCommitImmediately(_commitImmediately);
+			return _commitImmediately;
 		}
-		else {
-			searchContext.setCommitImmediately(true);
-		}
+
+		return true;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
