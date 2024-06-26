@@ -62,29 +62,42 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #indexDocument(SearchContext, Document)}
+	 *             #indexDocument(long, boolean, Document)}
 	 */
 	@Deprecated
 	@Override
 	public void addDocument(SearchContext searchContext, Document document) {
-		indexDocument(searchContext, document);
+		indexDocument(
+			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
+			document);
 	}
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #indexDocuments(SearchContext, Collection)}
+	 *             #indexDocuments(long, boolean, Collection)}
 	 */
 	@Deprecated
 	@Override
 	public void addDocuments(
 		SearchContext searchContext, Collection<Document> documents) {
 
-		indexDocuments(searchContext, documents);
+		indexDocuments(
+			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
+			documents);
+	}
+
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #commit(long)}
+	 */
+	@Deprecated
+	@Override
+	public void commit(SearchContext searchContext) {
+		commit(searchContext.getCompanyId());
 	}
 
 	@Override
-	public void commit(SearchContext searchContext) {
-		for (String indexName : _getIndexNames(searchContext)) {
+	public void commit(long companyId) {
+		for (String indexName : _getIndexNames(companyId)) {
 			RefreshIndexRequest refreshIndexRequest = new RefreshIndexRequest(
 				indexName);
 
@@ -102,23 +115,65 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 		}
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #deleteDocument(long, boolean, String)}
+	 */
+	@Deprecated
 	@Override
 	public void deleteDocument(SearchContext searchContext, String uid) {
-		_deleteDocuments(searchContext, Collections.singleton(uid), true);
+		deleteDocument(
+			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
+			uid);
 	}
 
+	@Override
+	public void deleteDocument(
+		long companyId, boolean commitImmediately, String uid) {
+
+		_deleteDocuments(
+			companyId, commitImmediately, Collections.singleton(uid), true);
+	}
+
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #deleteDocuments(long, boolean, Collection)}
+	 */
+	@Deprecated
 	@Override
 	public void deleteDocuments(
 		SearchContext searchContext, Collection<String> uids) {
 
-		_deleteDocuments(searchContext, uids, false);
+		deleteDocuments(
+			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
+			uids);
 	}
 
+	@Override
+	public void deleteDocuments(
+		long companyId, boolean commitImmediately, Collection<String> uids) {
+
+		_deleteDocuments(companyId, commitImmediately, uids, false);
+	}
+
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #deleteEntityDocuments(long, boolean, String)}
+	 */
 	@Override
 	public void deleteEntityDocuments(
 		SearchContext searchContext, String className) {
 
-		for (String indexName : _getIndexNames(searchContext)) {
+		deleteEntityDocuments(
+			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
+			className);
+	}
+
+	@Override
+	public void deleteEntityDocuments(
+		long companyId, boolean commitImmediately, String className) {
+
+		for (String indexName : _getIndexNames(companyId)) {
 			try {
 				BooleanQuery booleanQuery = new BooleanQueryImpl();
 
@@ -135,9 +190,7 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 				DeleteByQueryDocumentRequest deleteByQueryDocumentRequest =
 					new DeleteByQueryDocumentRequest(booleanQuery, indexName);
 
-				if (PortalRunMode.isTestMode() ||
-					searchContext.isCommitImmediately()) {
-
+				if (PortalRunMode.isTestMode() || commitImmediately) {
 					deleteByQueryDocumentRequest.setRefresh(true);
 				}
 
@@ -158,18 +211,22 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
-	public void indexDocument(SearchContext searchContext, Document document) {
-		indexDocuments(searchContext, Collections.singleton(document));
+	public void indexDocument(
+		long companyId, boolean commitImmediately, Document document) {
+
+		indexDocuments(
+			companyId, commitImmediately, Collections.singleton(document));
 	}
 
 	@Override
 	public void indexDocuments(
-		SearchContext searchContext, Collection<Document> documents) {
+		long companyId, boolean commitImmediately,
+		Collection<Document> documents) {
 
 		BulkDocumentRequest bulkDocumentRequest = _getBulkDocumentRequest(
-			searchContext);
+			commitImmediately);
 
-		for (String indexName : _getIndexNames(searchContext)) {
+		for (String indexName : _getIndexNames(companyId)) {
 			documents.forEach(
 				document -> {
 					IndexDocumentRequest indexDocumentRequest =
@@ -185,22 +242,51 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 		_execute(bulkDocumentRequest);
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #partiallyUpdateDocument(long, boolean, Document)}
+	 */
+	@Deprecated
 	@Override
 	public void partiallyUpdateDocument(
 		SearchContext searchContext, Document document) {
 
-		partiallyUpdateDocuments(
-			searchContext, Collections.singleton(document));
+		partiallyUpdateDocument(
+			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
+			document);
 	}
 
+	@Override
+	public void partiallyUpdateDocument(
+		long companyId, boolean commitImmediately, Document document) {
+
+		partiallyUpdateDocuments(
+			companyId, commitImmediately, Collections.singleton(document));
+	}
+
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #partiallyUpdateDocuments(long, boolean, Collection)}
+	 */
+	@Deprecated
 	@Override
 	public void partiallyUpdateDocuments(
 		SearchContext searchContext, Collection<Document> documents) {
 
-		BulkDocumentRequest bulkDocumentRequest = _getBulkDocumentRequest(
-			searchContext);
+		partiallyUpdateDocuments(
+			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
+			documents);
+	}
 
-		for (String indexName : _getIndexNames(searchContext)) {
+	@Override
+	public void partiallyUpdateDocuments(
+		long companyId, boolean commitImmediately,
+		Collection<Document> documents) {
+
+		BulkDocumentRequest bulkDocumentRequest = _getBulkDocumentRequest(
+			commitImmediately);
+
+		for (String indexName : _getIndexNames(companyId)) {
 			documents.forEach(
 				document -> {
 					UpdateDocumentRequest updateDocumentRequest =
@@ -220,21 +306,23 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 
 	@Override
 	public void removeFieldsFromDocument(
-			SearchContext searchContext, Document document, String... fields)
+			long companyId, boolean commitImmediately, Document document,
+			String... fields)
 		throws SearchException {
 
 		removeFieldsFromDocuments(
-			searchContext, Collections.singleton(document), fields);
+			companyId, commitImmediately, Collections.singleton(document),
+			fields);
 	}
 
 	@Override
 	public void removeFieldsFromDocuments(
-			SearchContext searchContext, Collection<Document> documents,
-			String... fields)
+			long companyId, boolean commitImmediately,
+			Collection<Document> documents, String... fields)
 		throws SearchException {
 
 		BulkDocumentRequest bulkDocumentRequest = _getBulkDocumentRequest(
-			searchContext);
+			commitImmediately);
 
 		Script script = _scripts.builder(
 		).idOrCode(
@@ -247,7 +335,7 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 			ScriptType.INLINE
 		).build();
 
-		for (String indexName : _getIndexNames(searchContext)) {
+		for (String indexName : _getIndexNames(companyId)) {
 			documents.forEach(
 				document -> {
 					UpdateDocumentRequest updateDocumentRequest =
@@ -266,24 +354,28 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #indexDocument(SearchContext, Document)}
+	 *             #indexDocument(long, boolean, Document)}
 	 */
 	@Deprecated
 	@Override
 	public void updateDocument(SearchContext searchContext, Document document) {
-		indexDocument(searchContext, document);
+		indexDocument(
+			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
+			document);
 	}
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #indexDocuments(SearchContext, Collection)}
+	 *             #indexDocuments(long, boolean, Collection)}
 	 */
 	@Deprecated
 	@Override
 	public void updateDocuments(
 		SearchContext searchContext, Collection<Document> documents) {
 
-		indexDocuments(searchContext, documents);
+		indexDocuments(
+			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
+			documents);
 	}
 
 	@Override
@@ -292,13 +384,13 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 	}
 
 	private void _deleteDocuments(
-		SearchContext searchContext, Collection<String> uids,
+		long companyId, boolean commitImmediately, Collection<String> uids,
 		boolean singleDeleteRequest) {
 
 		BulkDocumentRequest bulkDocumentRequest = _getBulkDocumentRequest(
-			searchContext);
+			commitImmediately);
 
-		for (String indexName : _getIndexNames(searchContext)) {
+		for (String indexName : _getIndexNames(companyId)) {
 			uids.forEach(
 				uid -> {
 					DeleteDocumentRequest deleteDocumentRequest =
@@ -349,11 +441,11 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 	}
 
 	private BulkDocumentRequest _getBulkDocumentRequest(
-		SearchContext searchContext) {
+		boolean isCommitImmediately) {
 
 		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
 
-		if (PortalRunMode.isTestMode() || searchContext.isCommitImmediately()) {
+		if (PortalRunMode.isTestMode() || isCommitImmediately) {
 			bulkDocumentRequest.setRefresh(true);
 		}
 
@@ -396,15 +488,14 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 		return indexNameNext;
 	}
 
-	private Set<String> _getIndexNames(SearchContext searchContext) {
+	private Set<String> _getIndexNames(long companyId) {
 		Set<String> indexNames = new HashSet<>();
 
-		String indexNameCurrent = _indexNameBuilder.getIndexName(
-			searchContext.getCompanyId());
+		String indexNameCurrent = _indexNameBuilder.getIndexName(companyId);
 
 		indexNames.add(indexNameCurrent);
 
-		String indexNameNext = _getIndexNameNext(searchContext.getCompanyId());
+		String indexNameNext = _getIndexNameNext(companyId);
 
 		if (indexNameNext != null) {
 			indexNames.add(indexNameNext);
