@@ -152,8 +152,7 @@ public class BufferedIndexerInvocationHandler implements InvocationHandler {
 				classedModels.add((ClassedModel)object);
 			}
 
-			bufferBulkRequest(
-				methodKey, classedModels, indexerRequestBuffer);
+			bufferBulkRequest(methodKey, classedModels, indexerRequestBuffer);
 		}
 
 		return null;

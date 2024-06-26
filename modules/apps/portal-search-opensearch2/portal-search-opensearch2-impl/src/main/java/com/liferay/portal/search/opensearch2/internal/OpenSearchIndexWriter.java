@@ -111,6 +111,10 @@ public class OpenSearchIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
+	public void commit(long companyId) {
+	}
+
+	@Override
 	public void commit(SearchContext searchContext) {
 		for (String indexName : _getIndexNames(searchContext)) {
 			try {
@@ -129,8 +133,8 @@ public class OpenSearchIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
-	public void commit(long companyId) {
-		
+	public void deleteDocument(
+		long companyId, boolean commitImmediately, String uid) {
 	}
 
 	@Override
@@ -161,9 +165,8 @@ public class OpenSearchIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
-	public void deleteDocument(
-		long companyId, boolean commitImmediately, String uid) {
-
+	public void deleteDocuments(
+		long companyId, boolean commitImmediately, Collection<String> uids) {
 	}
 
 	@Override
@@ -196,9 +199,8 @@ public class OpenSearchIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
-	public void deleteDocuments(
-		long companyId, boolean commitImmediately, Collection<String> uids) {
-
+	public void deleteEntityDocuments(
+		long companyId, boolean commitImmediately, String className) {
 	}
 
 	@Override
@@ -245,23 +247,21 @@ public class OpenSearchIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
-	public void deleteEntityDocuments(
-		long companyId, boolean commitImmediately, String className) {
-
-	}
-
-	@Override
 	public void indexDocument(
-		long companyId, boolean commitImmediately, Document document)
+			long companyId, boolean commitImmediately, Document document)
 		throws SearchException {
-
 	}
 
 	@Override
 	public void indexDocuments(
-		long companyId, boolean commitImmediately,
-		Collection<Document> documents) throws SearchException {
+			long companyId, boolean commitImmediately,
+			Collection<Document> documents)
+		throws SearchException {
+	}
 
+	@Override
+	public void partiallyUpdateDocument(
+		long companyId, boolean commitImmediately, Document document) {
 	}
 
 	@Override
@@ -294,9 +294,9 @@ public class OpenSearchIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
-	public void partiallyUpdateDocument(
-		long companyId, boolean commitImmediately, Document document) {
-
+	public void partiallyUpdateDocuments(
+		long companyId, boolean commitImmediately,
+		Collection<Document> documents) {
 	}
 
 	@Override
@@ -330,25 +330,17 @@ public class OpenSearchIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
-	public void partiallyUpdateDocuments(
-		long companyId, boolean commitImmediately,
-		Collection<Document> documents) {
-
-	}
-
-	@Override
 	public void removeFieldsFromDocument(
-		long companyId, boolean commitImmediately, Document document,
-		String... fields) throws SearchException {
-
+			long companyId, boolean commitImmediately, Document document,
+			String... fields)
+		throws SearchException {
 	}
 
 	@Override
 	public void removeFieldsFromDocuments(
-		long companyId, boolean commitImmediately,
-		Collection<Document> documents, String... fields)
+			long companyId, boolean commitImmediately,
+			Collection<Document> documents, String... fields)
 		throws SearchException {
-
 	}
 
 	@Override

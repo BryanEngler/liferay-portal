@@ -31,13 +31,16 @@ public interface IndexWriter extends SpellCheckIndexWriter {
 			SearchContext searchContext, Collection<Document> documents)
 		throws SearchException;
 
+	public void commit(long companyId);
+
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #commit(long)}
 	 */
 	@Deprecated
 	public void commit(SearchContext searchContext) throws SearchException;
 
-	public void commit(long companyId);
+	public void deleteDocument(
+		long companyId, boolean commitImmediately, String uid);
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
@@ -47,8 +50,8 @@ public interface IndexWriter extends SpellCheckIndexWriter {
 	public void deleteDocument(SearchContext searchContext, String uid)
 		throws SearchException;
 
-	public void deleteDocument(
-		long companyId, boolean commitImmediately, String uid);
+	public void deleteDocuments(
+		long companyId, boolean commitImmediately, Collection<String> uids);
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
@@ -59,8 +62,8 @@ public interface IndexWriter extends SpellCheckIndexWriter {
 			SearchContext searchContext, Collection<String> uids)
 		throws SearchException;
 
-	public void deleteDocuments(
-		long companyId, boolean commitImmediately, Collection<String> uids);
+	public void deleteEntityDocuments(
+		long companyId, boolean commitImmediately, String className);
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
@@ -71,9 +74,6 @@ public interface IndexWriter extends SpellCheckIndexWriter {
 			SearchContext searchContext, String className)
 		throws SearchException;
 
-	public void deleteEntityDocuments(
-		long companyId, boolean commitImmediately, String className);
-
 	public void indexDocument(
 			long companyId, boolean commitImmediately, Document document)
 		throws SearchException;
@@ -82,6 +82,9 @@ public interface IndexWriter extends SpellCheckIndexWriter {
 			long companyId, boolean commitImmediately,
 			Collection<Document> documents)
 		throws SearchException;
+
+	public void partiallyUpdateDocument(
+		long companyId, boolean commitImmediately, Document document);
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
@@ -92,8 +95,9 @@ public interface IndexWriter extends SpellCheckIndexWriter {
 			SearchContext searchContext, Document document)
 		throws SearchException;
 
-	public void partiallyUpdateDocument(
-		long companyId, boolean commitImmediately, Document document);
+	public void partiallyUpdateDocuments(
+		long companyId, boolean commitImmediately,
+		Collection<Document> documents);
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
@@ -103,10 +107,6 @@ public interface IndexWriter extends SpellCheckIndexWriter {
 	public void partiallyUpdateDocuments(
 			SearchContext searchContext, Collection<Document> documents)
 		throws SearchException;
-
-	public void partiallyUpdateDocuments(
-		long companyId, boolean commitImmediately,
-		Collection<Document> documents);
 
 	public void removeFieldsFromDocument(
 			long companyId, boolean commitImmediately, Document document,

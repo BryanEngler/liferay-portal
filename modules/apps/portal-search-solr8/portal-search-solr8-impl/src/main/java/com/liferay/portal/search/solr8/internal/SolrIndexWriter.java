@@ -121,11 +121,6 @@ public class SolrIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
-	public void commit(SearchContext searchContext) {
-		commit(searchContext.getCompanyId());
-	}
-
-	@Override
 	public void commit(long companyId) {
 		RefreshIndexRequest refreshIndexRequest = new RefreshIndexRequest(
 			_defaultCollection);
@@ -144,10 +139,8 @@ public class SolrIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
-	public void deleteDocument(SearchContext searchContext, String uid) {
-		deleteDocument(
-			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
-			uid);
+	public void commit(SearchContext searchContext) {
+		commit(searchContext.getCompanyId());
 	}
 
 	@Override
@@ -175,12 +168,10 @@ public class SolrIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
-	public void deleteDocuments(
-		SearchContext searchContext, Collection<String> uids) {
-
-		deleteDocuments(
+	public void deleteDocument(SearchContext searchContext, String uid) {
+		deleteDocument(
 			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
-			uids);
+			uid);
 	}
 
 	@Override
@@ -226,12 +217,12 @@ public class SolrIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
-	public void deleteEntityDocuments(
-		SearchContext searchContext, String className) {
+	public void deleteDocuments(
+		SearchContext searchContext, Collection<String> uids) {
 
-		deleteEntityDocuments(
+		deleteDocuments(
 			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
-			className);
+			uids);
 	}
 
 	@Override
@@ -277,28 +268,31 @@ public class SolrIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
+	public void deleteEntityDocuments(
+		SearchContext searchContext, String className) {
+
+		deleteEntityDocuments(
+			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
+			className);
+	}
+
+	@Override
 	public void indexDocument(
-		long companyId, boolean commitImmediately, Document document)
+			long companyId, boolean commitImmediately, Document document)
 		throws SearchException {
 
-		//TODO
+		// TODO
+
 	}
 
 	@Override
 	public void indexDocuments(
-		long companyId, boolean commitImmediately,
-		Collection<Document> documents) throws SearchException {
+			long companyId, boolean commitImmediately,
+			Collection<Document> documents)
+		throws SearchException {
 
-		//TODO
-	}
+		// TODO
 
-	@Override
-	public void partiallyUpdateDocument(
-		SearchContext searchContext, Document document) {
-
-		partiallyUpdateDocument(
-			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
-			document);
 	}
 
 	@Override
@@ -327,12 +321,12 @@ public class SolrIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
-	public void partiallyUpdateDocuments(
-		SearchContext searchContext, Collection<Document> documents) {
+	public void partiallyUpdateDocument(
+		SearchContext searchContext, Document document) {
 
-		partiallyUpdateDocuments(
+		partiallyUpdateDocument(
 			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
-			documents);
+			document);
 	}
 
 	@Override
@@ -380,20 +374,32 @@ public class SolrIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
-	public void removeFieldsFromDocument(
-		long companyId, boolean commitImmediately, Document document,
-		String... fields) throws SearchException {
+	public void partiallyUpdateDocuments(
+		SearchContext searchContext, Collection<Document> documents) {
 
-		//TODO
+		partiallyUpdateDocuments(
+			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
+			documents);
+	}
+
+	@Override
+	public void removeFieldsFromDocument(
+			long companyId, boolean commitImmediately, Document document,
+			String... fields)
+		throws SearchException {
+
+		// TODO
+
 	}
 
 	@Override
 	public void removeFieldsFromDocuments(
-		long companyId, boolean commitImmediately,
-		Collection<Document> documents, String... fields)
+			long companyId, boolean commitImmediately,
+			Collection<Document> documents, String... fields)
 		throws SearchException {
 
-		//TODO
+		// TODO
+
 	}
 
 	@Override

@@ -78,7 +78,7 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 		_searchPermissionChecker.addPermissionFields(companyId, document);
 
 		indexWriter.indexDocument(
-			companyId, _getCommitImmediately(commitImmediately), document);
+			companyId, _isCommitImmediately(commitImmediately), document);
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 		}
 
 		indexWriter.indexDocuments(
-			companyId, _getCommitImmediately(commitImmediately), documents);
+			companyId, _isCommitImmediately(commitImmediately), documents);
 	}
 
 	@Override
@@ -149,7 +149,7 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 		IndexWriter indexWriter = searchEngine.getIndexWriter();
 
 		indexWriter.deleteDocument(
-			companyId, _getCommitImmediately(commitImmediately), uid);
+			companyId, _isCommitImmediately(commitImmediately), uid);
 	}
 
 	@Override
@@ -168,7 +168,7 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 		IndexWriter indexWriter = searchEngine.getIndexWriter();
 
 		indexWriter.deleteDocuments(
-			companyId, _getCommitImmediately(commitImmediately), uids);
+			companyId, _isCommitImmediately(commitImmediately), uids);
 	}
 
 	@Override
@@ -189,7 +189,7 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 		IndexWriter indexWriter = searchEngine.getIndexWriter();
 
 		indexWriter.deleteEntityDocuments(
-			companyId, _getCommitImmediately(commitImmediately), className);
+			companyId, _isCommitImmediately(commitImmediately), className);
 	}
 
 	@Override
@@ -328,7 +328,7 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 		_searchPermissionChecker.addPermissionFields(companyId, document);
 
 		indexWriter.partiallyUpdateDocument(
-			companyId, _getCommitImmediately(commitImmediately), document);
+			companyId, _isCommitImmediately(commitImmediately), document);
 	}
 
 	@Override
@@ -358,7 +358,7 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 		}
 
 		indexWriter.partiallyUpdateDocuments(
-			companyId, _getCommitImmediately(commitImmediately), documents);
+			companyId, _isCommitImmediately(commitImmediately), documents);
 	}
 
 	@Override
@@ -447,7 +447,7 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 		}
 
 		indexWriter.removeFieldsFromDocuments(
-			companyId, _getCommitImmediately(commitImmediately), documents,
+			companyId, _isCommitImmediately(commitImmediately), documents,
 			fieldNames);
 	}
 
@@ -492,7 +492,7 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 		_searchPermissionChecker.addPermissionFields(companyId, document);
 
 		indexWriter.indexDocument(
-			companyId, _getCommitImmediately(_commitImmediately), document);
+			companyId, _isCommitImmediately(_commitImmediately), document);
 	}
 
 	@Override
@@ -522,7 +522,7 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 		}
 
 		indexWriter.indexDocuments(
-			companyId, _getCommitImmediately(commitImmediately), documents);
+			companyId, _isCommitImmediately(commitImmediately), documents);
 	}
 
 	@Override
@@ -568,7 +568,7 @@ public class IndexWriterHelperImpl implements IndexWriterHelper {
 		return names[0];
 	}
 
-	private boolean _getCommitImmediately(boolean commitImmediately) {
+	private boolean _isCommitImmediately(boolean commitImmediately) {
 		if (!commitImmediately) {
 			return _commitImmediately;
 		}

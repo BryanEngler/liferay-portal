@@ -148,8 +148,8 @@ public class IndexerWriterImpl<T extends BaseModel<?>>
 			T baseModel = baseModelsList.get(i);
 
 			if (i == 0) {
-				companyId =
-					_modelIndexerWriterContributor.getCompanyId(baseModel);
+				companyId = _modelIndexerWriterContributor.getCompanyId(
+					baseModel);
 				indexerWriterMode = _getIndexerWriterMode(baseModel);
 			}
 

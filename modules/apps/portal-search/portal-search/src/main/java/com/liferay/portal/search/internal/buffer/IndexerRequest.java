@@ -38,19 +38,6 @@ public class IndexerRequest {
 	}
 
 	public IndexerRequest(
-		Method method, List<ClassedModel> classedModels, Indexer<?> indexer) {
-
-		_method = method;
-		_classedModels = classedModels;
-
-		_indexer = new NoAutoCommitIndexer<>(indexer);
-
-		_classedModel = null;
-		_modelClassName = null;
-		_modelPrimaryKey = null;
-	}
-
-	public IndexerRequest(
 		Method method, Indexer<?> indexer, String modelClassName,
 		Long modelPrimaryKey) {
 
@@ -61,6 +48,19 @@ public class IndexerRequest {
 
 		_classedModel = null;
 		_classedModels = null;
+	}
+
+	public IndexerRequest(
+		Method method, List<ClassedModel> classedModels, Indexer<?> indexer) {
+
+		_method = method;
+		_classedModels = classedModels;
+
+		_indexer = new NoAutoCommitIndexer<>(indexer);
+
+		_classedModel = null;
+		_modelClassName = null;
+		_modelPrimaryKey = null;
 	}
 
 	@Override

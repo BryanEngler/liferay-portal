@@ -86,15 +86,6 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 			documents);
 	}
 
-	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #commit(long)}
-	 */
-	@Deprecated
-	@Override
-	public void commit(SearchContext searchContext) {
-		commit(searchContext.getCompanyId());
-	}
-
 	@Override
 	public void commit(long companyId) {
 		for (String indexName : _getIndexNames(companyId)) {
@@ -116,6 +107,23 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 	}
 
 	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #commit(long)}
+	 */
+	@Deprecated
+	@Override
+	public void commit(SearchContext searchContext) {
+		commit(searchContext.getCompanyId());
+	}
+
+	@Override
+	public void deleteDocument(
+		long companyId, boolean commitImmediately, String uid) {
+
+		_deleteDocuments(
+			companyId, commitImmediately, Collections.singleton(uid), true);
+	}
+
+	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
 	 *             #deleteDocument(long, boolean, String)}
 	 */
@@ -128,11 +136,10 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
-	public void deleteDocument(
-		long companyId, boolean commitImmediately, String uid) {
+	public void deleteDocuments(
+		long companyId, boolean commitImmediately, Collection<String> uids) {
 
-		_deleteDocuments(
-			companyId, commitImmediately, Collections.singleton(uid), true);
+		_deleteDocuments(companyId, commitImmediately, uids, false);
 	}
 
 	/**
@@ -147,26 +154,6 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 		deleteDocuments(
 			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
 			uids);
-	}
-
-	@Override
-	public void deleteDocuments(
-		long companyId, boolean commitImmediately, Collection<String> uids) {
-
-		_deleteDocuments(companyId, commitImmediately, uids, false);
-	}
-
-	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #deleteEntityDocuments(long, boolean, String)}
-	 */
-	@Override
-	public void deleteEntityDocuments(
-		SearchContext searchContext, String className) {
-
-		deleteEntityDocuments(
-			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
-			className);
 	}
 
 	@Override
@@ -210,6 +197,20 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 		}
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #deleteEntityDocuments(long, boolean, String)}
+	 */
+	@Deprecated
+	@Override
+	public void deleteEntityDocuments(
+		SearchContext searchContext, String className) {
+
+		deleteEntityDocuments(
+			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
+			className);
+	}
+
 	@Override
 	public void indexDocument(
 		long companyId, boolean commitImmediately, Document document) {
@@ -242,6 +243,14 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 		_execute(bulkDocumentRequest);
 	}
 
+	@Override
+	public void partiallyUpdateDocument(
+		long companyId, boolean commitImmediately, Document document) {
+
+		partiallyUpdateDocuments(
+			companyId, commitImmediately, Collections.singleton(document));
+	}
+
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
 	 *             #partiallyUpdateDocument(long, boolean, Document)}
@@ -254,28 +263,6 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 		partiallyUpdateDocument(
 			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
 			document);
-	}
-
-	@Override
-	public void partiallyUpdateDocument(
-		long companyId, boolean commitImmediately, Document document) {
-
-		partiallyUpdateDocuments(
-			companyId, commitImmediately, Collections.singleton(document));
-	}
-
-	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #partiallyUpdateDocuments(long, boolean, Collection)}
-	 */
-	@Deprecated
-	@Override
-	public void partiallyUpdateDocuments(
-		SearchContext searchContext, Collection<Document> documents) {
-
-		partiallyUpdateDocuments(
-			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
-			documents);
 	}
 
 	@Override
@@ -302,6 +289,20 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 		}
 
 		_execute(bulkDocumentRequest);
+	}
+
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #partiallyUpdateDocuments(long, boolean, Collection)}
+	 */
+	@Deprecated
+	@Override
+	public void partiallyUpdateDocuments(
+		SearchContext searchContext, Collection<Document> documents) {
+
+		partiallyUpdateDocuments(
+			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
+			documents);
 	}
 
 	@Override
@@ -441,11 +442,11 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 	}
 
 	private BulkDocumentRequest _getBulkDocumentRequest(
-		boolean isCommitImmediately) {
+		boolean commitImmediately) {
 
 		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
 
-		if (PortalRunMode.isTestMode() || isCommitImmediately) {
+		if (PortalRunMode.isTestMode() || commitImmediately) {
 			bulkDocumentRequest.setRefresh(true);
 		}
 

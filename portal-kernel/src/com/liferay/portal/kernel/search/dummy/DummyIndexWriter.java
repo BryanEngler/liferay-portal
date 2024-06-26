@@ -38,15 +38,11 @@ public class DummyIndexWriter implements IndexWriter {
 	}
 
 	@Override
-	public void commit(SearchContext searchContext) {
-	}
-
-	@Override
 	public void commit(long companyId) {
 	}
 
 	@Override
-	public void deleteDocument(SearchContext searchContext, String uid) {
+	public void commit(SearchContext searchContext) {
 	}
 
 	@Override
@@ -55,8 +51,7 @@ public class DummyIndexWriter implements IndexWriter {
 	}
 
 	@Override
-	public void deleteDocuments(
-		SearchContext searchContext, Collection<String> uids) {
+	public void deleteDocument(SearchContext searchContext, String uid) {
 	}
 
 	@Override
@@ -65,13 +60,18 @@ public class DummyIndexWriter implements IndexWriter {
 	}
 
 	@Override
-	public void deleteEntityDocuments(
-		SearchContext searchContext, String className) {
+	public void deleteDocuments(
+		SearchContext searchContext, Collection<String> uids) {
 	}
 
 	@Override
 	public void deleteEntityDocuments(
 		long companyId, boolean commitImmediately, String className) {
+	}
+
+	@Override
+	public void deleteEntityDocuments(
+		SearchContext searchContext, String className) {
 	}
 
 	@Override
@@ -110,23 +110,23 @@ public class DummyIndexWriter implements IndexWriter {
 
 	@Override
 	public void partiallyUpdateDocument(
-		SearchContext searchContext, Document document) {
-	}
-
-	@Override
-	public void partiallyUpdateDocument(
 		long companyId, boolean commitImmediately, Document document) {
 	}
 
 	@Override
-	public void partiallyUpdateDocuments(
-		SearchContext searchContext, Collection<Document> documents) {
+	public void partiallyUpdateDocument(
+		SearchContext searchContext, Document document) {
 	}
 
 	@Override
 	public void partiallyUpdateDocuments(
 		long companyId, boolean commitImmediately,
 		Collection<Document> documents) {
+	}
+
+	@Override
+	public void partiallyUpdateDocuments(
+		SearchContext searchContext, Collection<Document> documents) {
 	}
 
 	@Override
