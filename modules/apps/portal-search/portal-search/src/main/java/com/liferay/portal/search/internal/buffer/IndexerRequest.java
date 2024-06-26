@@ -10,9 +10,11 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.ClassedModel;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.util.ClassUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 
 import java.lang.reflect.Method;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -31,6 +33,21 @@ public class IndexerRequest {
 
 		_modelClassName = classedModel.getModelClassName();
 		_modelPrimaryKey = (Long)classedModel.getPrimaryKeyObj();
+
+		_classedModels = null;
+	}
+
+	public IndexerRequest(
+		Method method, List<ClassedModel> classedModels, Indexer<?> indexer) {
+
+		_method = method;
+		_classedModels = classedModels;
+
+		_indexer = new NoAutoCommitIndexer<>(indexer);
+
+		_classedModel = null;
+		_modelClassName = null;
+		_modelPrimaryKey = null;
 	}
 
 	public IndexerRequest(
@@ -43,6 +60,7 @@ public class IndexerRequest {
 		_modelPrimaryKey = modelPrimaryKey;
 
 		_classedModel = null;
+		_classedModels = null;
 	}
 
 	@Override
@@ -74,7 +92,10 @@ public class IndexerRequest {
 	public void execute() throws Exception {
 		Class<?>[] parameterTypes = _method.getParameterTypes();
 
-		if (parameterTypes.length == 1) {
+		if (ListUtil.isNotEmpty(_classedModels)) {
+			_method.invoke(_indexer, _classedModels);
+		}
+		else if (parameterTypes.length == 1) {
 			_method.invoke(_indexer, _classedModel);
 		}
 		else {
@@ -86,6 +107,7 @@ public class IndexerRequest {
 	public int hashCode() {
 		int hashCode = HashUtil.hash(0, _method.getName());
 
+		hashCode = HashUtil.hash(hashCode, _classedModels);
 		hashCode = HashUtil.hash(hashCode, _modelClassName);
 		hashCode = HashUtil.hash(hashCode, _modelPrimaryKey);
 
@@ -95,13 +117,14 @@ public class IndexerRequest {
 	@Override
 	public String toString() {
 		return StringBundler.concat(
-			"{classModel=", _classedModel, ", indexer=",
-			ClassUtil.getClassName(_indexer), ", method=", _method,
-			", modelClassName=", _modelClassName, ", modelPrimaryKey=",
+			"{classModel=", _classedModel, ", _classedModels=", _classedModels,
+			", indexer=", ClassUtil.getClassName(_indexer), ", method=",
+			_method, ", modelClassName=", _modelClassName, ", modelPrimaryKey=",
 			_modelPrimaryKey, "}");
 	}
 
 	private final ClassedModel _classedModel;
+	private final List<ClassedModel> _classedModels;
 	private final Indexer<?> _indexer;
 	private final Method _method;
 	private final String _modelClassName;

@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.search.batch.BatchIndexingActionable;
@@ -34,6 +35,9 @@ import com.liferay.portal.search.spi.model.index.contributor.helper.IndexerWrite
 import com.liferay.portal.search.spi.model.registrar.ModelSearchSettings;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Michael C. Han
@@ -134,8 +138,55 @@ public class IndexerWriterImpl<T extends BaseModel<?>>
 			return;
 		}
 
+		List<T> baseModelsList = ListUtil.fromCollection(baseModels);
+		long companyId = 0;
+		Set<Document> documents = new HashSet<>();
+		IndexerWriterMode indexerWriterMode = null;
+		Set<String> uids = new HashSet<>();
+
+		for (int i = 0; i < baseModelsList.size(); i++) {
+			T baseModel = baseModelsList.get(i);
+
+			if (i == 0) {
+				companyId =
+					_modelIndexerWriterContributor.getCompanyId(baseModel);
+				indexerWriterMode = _getIndexerWriterMode(baseModel);
+			}
+
+			if ((indexerWriterMode == IndexerWriterMode.UPDATE) ||
+				(indexerWriterMode == IndexerWriterMode.PARTIAL_UPDATE)) {
+
+				documents.add(_indexerDocumentBuilder.getDocument(baseModel));
+			}
+			else if (indexerWriterMode == IndexerWriterMode.DELETE) {
+				uids.add(_indexerDocumentBuilder.getDocumentUID(baseModel));
+			}
+		}
+
+		if (indexerWriterMode == IndexerWriterMode.UPDATE) {
+			_updateDocumentIndexWriter.updateDocuments(
+				companyId, documents, false);
+		}
+		else if (indexerWriterMode == IndexerWriterMode.PARTIAL_UPDATE) {
+			_updateDocumentIndexWriter.updateDocumentsPartially(
+				companyId, documents, false);
+		}
+		else if (indexerWriterMode == IndexerWriterMode.DELETE) {
+			try {
+				_indexWriterHelper.deleteDocuments(companyId, uids, false);
+			}
+			catch (SearchException searchException) {
+				throw new RuntimeException(searchException);
+			}
+		}
+		else if (indexerWriterMode == IndexerWriterMode.SKIP) {
+			if (_log.isDebugEnabled()) {
+				_log.debug("Skipping models");
+			}
+		}
+
 		for (T baseModel : baseModels) {
-			reindex(baseModel);
+			_modelIndexerWriterContributor.modelIndexed(baseModel);
 		}
 	}
 
@@ -213,14 +264,15 @@ public class IndexerWriterImpl<T extends BaseModel<?>>
 
 		IndexerWriterMode indexerWriterMode = _getIndexerWriterMode(baseModel);
 
-		if ((indexerWriterMode == IndexerWriterMode.UPDATE) ||
-			(indexerWriterMode == IndexerWriterMode.PARTIAL_UPDATE)) {
-
-			Document document = _indexerDocumentBuilder.getDocument(baseModel);
-
+		if (indexerWriterMode == IndexerWriterMode.UPDATE) {
 			_updateDocumentIndexWriter.updateDocument(
 				_modelIndexerWriterContributor.getCompanyId(baseModel),
-				document);
+				_indexerDocumentBuilder.getDocument(baseModel));
+		}
+		else if (indexerWriterMode == IndexerWriterMode.PARTIAL_UPDATE) {
+			_updateDocumentIndexWriter.updateDocumentPartially(
+				_modelIndexerWriterContributor.getCompanyId(baseModel),
+				_indexerDocumentBuilder.getDocument(baseModel), false);
 		}
 		else if (indexerWriterMode == IndexerWriterMode.DELETE) {
 			long companyId = _modelIndexerWriterContributor.getCompanyId(

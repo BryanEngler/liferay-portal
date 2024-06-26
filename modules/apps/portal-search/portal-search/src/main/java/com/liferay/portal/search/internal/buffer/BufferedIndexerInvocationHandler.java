@@ -12,6 +12,7 @@ import com.liferay.portal.kernel.model.ClassedModel;
 import com.liferay.portal.kernel.search.Bufferable;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MethodKey;
 import com.liferay.portal.search.configuration.IndexerRegistryConfiguration;
 import com.liferay.portal.search.index.IndexStatusManager;
@@ -22,8 +23,10 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -128,24 +131,29 @@ public class BufferedIndexerInvocationHandler implements InvocationHandler {
 		}
 		else {
 			MethodKey methodKey = new MethodKey(
-				Indexer.class, method.getName(), Object.class);
+				Indexer.class, method.getName(), Collection.class);
 
-			Collection<Object> objects = null;
+			List<Object> objects = null;
 
 			if (args0Class.isArray()) {
 				objects = Arrays.asList((Object[])args[0]);
 			}
 			else {
-				objects = (Collection<Object>)args[0];
+				objects = ListUtil.fromCollection((Collection<Object>)args[0]);
 			}
+
+			List<ClassedModel> classedModels = new ArrayList<>();
 
 			for (Object object : objects) {
 				if (!(object instanceof ClassedModel)) {
 					return method.invoke(_indexer, args);
 				}
 
-				bufferRequest(methodKey, object, indexerRequestBuffer);
+				classedModels.add((ClassedModel)object);
 			}
+
+			bufferBulkRequest(
+				methodKey, classedModels, indexerRequestBuffer);
 		}
 
 		return null;
@@ -163,6 +171,17 @@ public class BufferedIndexerInvocationHandler implements InvocationHandler {
 
 		_indexerRequestBufferOverflowHandler =
 			indexerRequestBufferOverflowHandler;
+	}
+
+	protected void bufferBulkRequest(
+			MethodKey methodKey, List<ClassedModel> classedModels,
+			IndexerRequestBuffer indexerRequestBuffer)
+		throws Exception {
+
+		IndexerRequest indexerRequest = new IndexerRequest(
+			methodKey.getMethod(), classedModels, _indexer);
+
+		_bufferRequest(indexerRequest, indexerRequestBuffer);
 	}
 
 	protected void bufferRequest(
