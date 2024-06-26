@@ -17,6 +17,7 @@ import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.IndexWriter;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 import com.liferay.portal.kernel.search.suggest.SpellCheckIndexWriter;
@@ -121,6 +122,11 @@ public class SolrIndexWriter extends BaseIndexWriter {
 
 	@Override
 	public void commit(SearchContext searchContext) {
+		commit(searchContext.getCompanyId());
+	}
+
+	@Override
+	public void commit(long companyId) {
 		RefreshIndexRequest refreshIndexRequest = new RefreshIndexRequest(
 			_defaultCollection);
 
@@ -139,10 +145,19 @@ public class SolrIndexWriter extends BaseIndexWriter {
 
 	@Override
 	public void deleteDocument(SearchContext searchContext, String uid) {
+		deleteDocument(
+			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
+			uid);
+	}
+
+	@Override
+	public void deleteDocument(
+		long companyId, boolean commitImmediately, String uid) {
+
 		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest(
 			_defaultCollection, uid);
 
-		if (PortalRunMode.isTestMode() || searchContext.isCommitImmediately()) {
+		if (PortalRunMode.isTestMode() || commitImmediately) {
 			deleteDocumentRequest.setRefresh(true);
 		}
 
@@ -163,12 +178,19 @@ public class SolrIndexWriter extends BaseIndexWriter {
 	public void deleteDocuments(
 		SearchContext searchContext, Collection<String> uids) {
 
+		deleteDocuments(
+			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
+			uids);
+	}
+
+	@Override
+	public void deleteDocuments(
+		long companyId, boolean commitImmediately, Collection<String> uids) {
+
 		try {
 			BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
 
-			if (PortalRunMode.isTestMode() ||
-				searchContext.isCommitImmediately()) {
-
+			if (PortalRunMode.isTestMode() || commitImmediately) {
 				bulkDocumentRequest.setRefresh(true);
 			}
 
@@ -207,10 +229,17 @@ public class SolrIndexWriter extends BaseIndexWriter {
 	public void deleteEntityDocuments(
 		SearchContext searchContext, String className) {
 
+		deleteEntityDocuments(
+			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
+			className);
+	}
+
+	@Override
+	public void deleteEntityDocuments(
+		long companyId, boolean commitImmediately, String className) {
+
 		try {
 			BooleanQuery booleanQuery = new BooleanQueryImpl();
-
-			long companyId = searchContext.getCompanyId();
 
 			if (companyId > 0) {
 				booleanQuery.add(
@@ -227,9 +256,7 @@ public class SolrIndexWriter extends BaseIndexWriter {
 				new DeleteByQueryDocumentRequest(
 					booleanQuery, _defaultCollection);
 
-			if (PortalRunMode.isTestMode() ||
-				searchContext.isCommitImmediately()) {
-
+			if (PortalRunMode.isTestMode() || commitImmediately) {
 				deleteByQueryDocumentRequest.setRefresh(true);
 			}
 
@@ -250,17 +277,40 @@ public class SolrIndexWriter extends BaseIndexWriter {
 	}
 
 	@Override
+	public void indexDocument(
+		long companyId, boolean commitImmediately, Document document)
+		throws SearchException {
+
+		//TODO
+	}
+
+	@Override
+	public void indexDocuments(
+		long companyId, boolean commitImmediately,
+		Collection<Document> documents) throws SearchException {
+
+		//TODO
+	}
+
+	@Override
 	public void partiallyUpdateDocument(
 		SearchContext searchContext, Document document) {
+
+		partiallyUpdateDocument(
+			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
+			document);
+	}
+
+	@Override
+	public void partiallyUpdateDocument(
+		long companyId, boolean commitImmediately, Document document) {
 
 		try {
 			UpdateDocumentRequest updateDocumentRequest =
 				new UpdateDocumentRequest(
 					_defaultCollection, document.getUID(), document);
 
-			if (PortalRunMode.isTestMode() ||
-				searchContext.isCommitImmediately()) {
-
+			if (PortalRunMode.isTestMode() || commitImmediately) {
 				updateDocumentRequest.setRefresh(true);
 			}
 
@@ -280,12 +330,20 @@ public class SolrIndexWriter extends BaseIndexWriter {
 	public void partiallyUpdateDocuments(
 		SearchContext searchContext, Collection<Document> documents) {
 
+		partiallyUpdateDocuments(
+			searchContext.getCompanyId(), searchContext.isCommitImmediately(),
+			documents);
+	}
+
+	@Override
+	public void partiallyUpdateDocuments(
+		long companyId, boolean commitImmediately,
+		Collection<Document> documents) {
+
 		try {
 			BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
 
-			if (PortalRunMode.isTestMode() ||
-				searchContext.isCommitImmediately()) {
-
+			if (PortalRunMode.isTestMode() || commitImmediately) {
 				bulkDocumentRequest.setRefresh(true);
 			}
 
@@ -319,6 +377,23 @@ public class SolrIndexWriter extends BaseIndexWriter {
 				throw runtimeException;
 			}
 		}
+	}
+
+	@Override
+	public void removeFieldsFromDocument(
+		long companyId, boolean commitImmediately, Document document,
+		String... fields) throws SearchException {
+
+		//TODO
+	}
+
+	@Override
+	public void removeFieldsFromDocuments(
+		long companyId, boolean commitImmediately,
+		Collection<Document> documents, String... fields)
+		throws SearchException {
+
+		//TODO
 	}
 
 	@Override
