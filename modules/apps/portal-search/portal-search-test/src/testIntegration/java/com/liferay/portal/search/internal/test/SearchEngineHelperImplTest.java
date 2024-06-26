@@ -17,6 +17,7 @@ import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchEngine;
 import com.liferay.portal.kernel.search.SearchEngineHelper;
+import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.suggest.Suggester;
 import com.liferay.portal.kernel.search.suggest.SuggesterResults;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -268,7 +269,19 @@ public class SearchEngineHelperImplTest {
 		}
 
 		@Override
+		public void commit(long companyId) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
 		public void deleteDocument(SearchContext searchContext, String uid) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void deleteDocument(
+			long companyId, boolean commitImmediately, String uid) {
+
 			throw new UnsupportedOperationException();
 		}
 
@@ -280,8 +293,39 @@ public class SearchEngineHelperImplTest {
 		}
 
 		@Override
+		public void deleteDocuments(
+			long companyId, boolean commitImmediately,
+			Collection<String> uids) {
+
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
 		public void deleteEntityDocuments(
 			SearchContext searchContext, String className) {
+
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void deleteEntityDocuments(
+			long companyId, boolean commitImmediately, String className) {
+
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void indexDocument(
+			long companyId, boolean commitImmediately, Document document)
+			throws SearchException {
+
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void indexDocuments(
+			long companyId, boolean commitImmediately,
+			Collection<Document> documents) throws SearchException {
 
 			throw new UnsupportedOperationException();
 		}
@@ -325,8 +369,40 @@ public class SearchEngineHelperImplTest {
 		}
 
 		@Override
+		public void partiallyUpdateDocument(
+			long companyId, boolean commitImmediately, Document document) {
+
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
 		public void partiallyUpdateDocuments(
 			SearchContext searchContext, Collection<Document> documents) {
+
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void partiallyUpdateDocuments(
+			long companyId, boolean commitImmediately,
+			Collection<Document> documents) {
+
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void removeFieldsFromDocument(
+			long companyId, boolean commitImmediately, Document document,
+			String... fields) throws SearchException {
+
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void removeFieldsFromDocuments(
+			long companyId, boolean commitImmediately,
+			Collection<Document> documents, String... fields)
+			throws SearchException {
 
 			throw new UnsupportedOperationException();
 		}
