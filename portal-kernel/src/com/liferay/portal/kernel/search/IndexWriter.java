@@ -16,7 +16,7 @@ public interface IndexWriter extends SpellCheckIndexWriter {
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #indexDocument(SearchContext, Document)}
+	 *             #indexDocument(long, boolean, Document)}
 	 */
 	@Deprecated
 	public void addDocument(SearchContext searchContext, Document document)
@@ -24,53 +24,103 @@ public interface IndexWriter extends SpellCheckIndexWriter {
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #indexDocuments(SearchContext, Collection)}
+	 *             #indexDocuments(long, boolean, Collection)}
 	 */
 	@Deprecated
 	public void addDocuments(
 			SearchContext searchContext, Collection<Document> documents)
 		throws SearchException;
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #commit(long)}
+	 */
+	@Deprecated
 	public void commit(SearchContext searchContext) throws SearchException;
 
+	public void commit(long companyId);
+
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #deleteDocument(long, boolean, String)}
+	 */
+	@Deprecated
 	public void deleteDocument(SearchContext searchContext, String uid)
 		throws SearchException;
 
+	public void deleteDocument(
+		long companyId, boolean commitImmediately, String uid);
+
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #deleteDocuments(long, boolean, Collection)}
+	 */
+	@Deprecated
 	public void deleteDocuments(
 			SearchContext searchContext, Collection<String> uids)
 		throws SearchException;
 
+	public void deleteDocuments(
+		long companyId, boolean commitImmediately, Collection<String> uids);
+
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #deleteEntityDocuments(long, boolean, String)}
+	 */
+	@Deprecated
 	public void deleteEntityDocuments(
 			SearchContext searchContext, String className)
 		throws SearchException;
 
-	public void indexDocument(SearchContext searchContext, Document document)
+	public void deleteEntityDocuments(
+		long companyId, boolean commitImmediately, String className);
+
+	public void indexDocument(
+			long companyId, boolean commitImmediately, Document document)
 		throws SearchException;
 
 	public void indexDocuments(
-			SearchContext searchContext, Collection<Document> documents)
-		throws SearchException;
-
-	public void partiallyUpdateDocument(
-			SearchContext searchContext, Document document)
-		throws SearchException;
-
-	public void partiallyUpdateDocuments(
-			SearchContext searchContext, Collection<Document> documents)
-		throws SearchException;
-
-	public void removeFieldsFromDocument(
-			SearchContext searchContext, Document document, String... fields)
-		throws SearchException;
-
-	public void removeFieldsFromDocuments(
-			SearchContext searchContext, Collection<Document> documents,
-			String... fields)
+			long companyId, boolean commitImmediately,
+			Collection<Document> documents)
 		throws SearchException;
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #indexDocument(SearchContext, Document)}
+	 *             #partiallyUpdateDocument(long, boolean, Document)}
+	 */
+	@Deprecated
+	public void partiallyUpdateDocument(
+			SearchContext searchContext, Document document)
+		throws SearchException;
+
+	public void partiallyUpdateDocument(
+		long companyId, boolean commitImmediately, Document document);
+
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #partiallyUpdateDocuments(long, boolean, Collection)}
+	 */
+	@Deprecated
+	public void partiallyUpdateDocuments(
+			SearchContext searchContext, Collection<Document> documents)
+		throws SearchException;
+
+	public void partiallyUpdateDocuments(
+		long companyId, boolean commitImmediately,
+		Collection<Document> documents);
+
+	public void removeFieldsFromDocument(
+			long companyId, boolean commitImmediately, Document document,
+			String... fields)
+		throws SearchException;
+
+	public void removeFieldsFromDocuments(
+			long companyId, boolean commitImmediately,
+			Collection<Document> documents, String... fields)
+		throws SearchException;
+
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 *             #indexDocument(long, boolean, Document)}
 	 */
 	@Deprecated
 	public void updateDocument(SearchContext searchContext, Document document)
@@ -78,7 +128,7 @@ public interface IndexWriter extends SpellCheckIndexWriter {
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #indexDocuments(SearchContext, Collection)}
+	 *             #indexDocuments(long, boolean, Collection)}
 	 */
 	@Deprecated
 	public void updateDocuments(
