@@ -59,12 +59,13 @@ public class CompanyIndexFactoryHelper {
 		CreateIndexRequest createIndexRequest = new CreateIndexRequest(
 			indexName);
 
-		MappingsHelperImpl mappingsHelperImpl = new MappingsHelperImpl(
-			indexName, indicesClient, _jsonFactory);
-
 		_setSettings(createIndexRequest);
 
-		_setMappings(createIndexRequest, mappingsHelperImpl);
+		MappingsHelperImpl mappingsHelperImpl = new MappingsHelperImpl(
+			indexName, indicesClient, _jsonFactory,
+			_elasticsearchConfigurationWrapper.overrideTypeMappings());
+
+		mappingsHelperImpl.setDefaultOrOverrideMappings(createIndexRequest);
 
 		try {
 			ActionResponse actionResponse = indicesClient.create(
@@ -76,7 +77,7 @@ public class CompanyIndexFactoryHelper {
 			throw new RuntimeException(ioException);
 		}
 
-		_updateMappings(mappingsHelperImpl);
+		_putAllOrOverrideMappings(mappingsHelperImpl);
 
 		_executeCompanyIndexListenersAfterCreate(indexName);
 	}
@@ -130,9 +131,10 @@ public class CompanyIndexFactoryHelper {
 	public void updateIndex(String indexName, IndicesClient indicesClient) {
 		_updateSettings(indexName, indicesClient);
 
-		_updateMappings(
+		_putAllOrOverrideMappings(
 			new MappingsHelperImpl(
-				indexName, indicesClient, _jsonFactory));
+				indexName, indicesClient, _jsonFactory,
+				_elasticsearchConfigurationWrapper.overrideTypeMappings()));
 	}
 
 	@Activate
@@ -384,7 +386,7 @@ public class CompanyIndexFactoryHelper {
 				if (contributeMappings) {
 					companyIndexConfigurationContributor.contributeMappings(
 						new MappingsHelperImpl(
-							indexName, indicesClient, _jsonFactory));
+							indexName, indicesClient, _jsonFactory, null));
 				}
 			},
 			IndexFactoryCompanyIdRegistryUtil.getCompanyIds());
@@ -401,6 +403,22 @@ public class CompanyIndexFactoryHelper {
 			_elasticsearchConfigurationWrapper.additionalTypeMappings());
 	}
 
+	private void _putAllOrOverrideMappings(
+		MappingsHelperImpl mappingsHelperImpl) {
+
+		mappingsHelperImpl.putDefaultOrOverrideMappings();
+
+		if (Validator.isNotNull(
+				_elasticsearchConfigurationWrapper.overrideTypeMappings())) {
+
+			return;
+		}
+
+		_putContributedMappings(mappingsHelperImpl);
+
+		_putAdditionalMappings(mappingsHelperImpl);
+	}
+
 	private void _putContributedMappings(
 		MappingsHelperImpl mappingsHelperImpl) {
 
@@ -411,15 +429,6 @@ public class CompanyIndexFactoryHelper {
 			companyIndexConfigurationContributor.contributeMappings(
 				mappingsHelperImpl);
 		}
-	}
-
-	private void _setMappings(
-		CreateIndexRequest createIndexRequest,
-		MappingsHelperImpl mappingsHelperImpl) {
-
-		mappingsHelperImpl.setMappings(
-			createIndexRequest,
-			_elasticsearchConfigurationWrapper.overrideTypeMappings());
 	}
 
 	private void _setSettings(CreateIndexRequest createIndexRequest) {
@@ -435,24 +444,11 @@ public class CompanyIndexFactoryHelper {
 		createIndexRequest.settings(settingsHelperImpl.getBuilder());
 	}
 
-	private void _updateMappings(MappingsHelperImpl mappingsHelperImpl) {
-		mappingsHelperImpl.putMappings(
-			mappingsHelperImpl.getMappings(
-				_elasticsearchConfigurationWrapper.overrideTypeMappings()));
-
-		if (Validator.isNotNull(
-			_elasticsearchConfigurationWrapper.overrideTypeMappings())) {
-
-			return;
-		}
-
-		_putContributedMappings(mappingsHelperImpl);
-
-		_putAdditionalMappings(mappingsHelperImpl);
-	}
-
 	private void _updateSettings(
 		String indexName, IndicesClient indicesClient) {
+
+		UpdateSettingsRequest updateSettingsRequest = new UpdateSettingsRequest(
+			indexName);
 
 		SettingsHelperImpl settingsHelperImpl = new SettingsHelperImpl(
 			Settings.builder());
@@ -460,9 +456,6 @@ public class CompanyIndexFactoryHelper {
 		_loadDefaultSettings(settingsHelperImpl);
 
 		_loadAdditionalSettings(settingsHelperImpl, false);
-
-		UpdateSettingsRequest updateSettingsRequest = new UpdateSettingsRequest(
-			indexName);
 
 		updateSettingsRequest.settings(settingsHelperImpl.getBuilder());
 

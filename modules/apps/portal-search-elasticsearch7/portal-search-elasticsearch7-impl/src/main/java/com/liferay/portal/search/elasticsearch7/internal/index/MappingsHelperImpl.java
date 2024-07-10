@@ -40,67 +40,33 @@ import org.elasticsearch.xcontent.XContentType;
 public class MappingsHelperImpl implements MappingsHelper {
 
 	public MappingsHelperImpl(
-		String indexName, IndicesClient indicesClient,
-		JSONFactory jsonFactory) {
+		String indexName, IndicesClient indicesClient, JSONFactory jsonFactory,
+		String overrideMappings) {
 
 		_indexName = indexName;
 		_indicesClient = indicesClient;
 		_jsonFactory = jsonFactory;
+		_overrideMappings = overrideMappings;
 	}
 
-	public String getMappings(String overrideMappings) {
-		if (Validator.isNotNull(overrideMappings)) {
-			JSONObject jsonObject = _removeLegacyDocumentType(overrideMappings);
-
-			return jsonObject.toString();
-		}
-
-		String defaultMappings = ResourceUtil.getResourceAsString(
-			getClass(),
-			LiferayTypeMappingsConstants.
-				LIFERAY_DOCUMENT_TYPE_MAPPING_FILE_NAME);
-		String defaultMappingTemplate = ResourceUtil.getResourceAsString(
-			getClass(),
-			LiferayTypeMappingsConstants.
-				LIFERAY_DOCUMENT_TYPE_MAPPING_DEFAULT_TEMPLATE_FILE_NAME);
-
-		return _getMappingsToPutWithMergedDynamicTemplates(
-			defaultMappingTemplate, defaultMappings);
+	public void putDefaultOrOverrideMappings() {
+		_putMappings(_getDefaultOrOverrideMappings());
 	}
 
 	@Override
 	public void putMappings(String source) {
-		PutMappingRequest putMappingRequest = new PutMappingRequest(_indexName);
-
-		putMappingRequest.source(
-			_getMappingsToPutWithMergedDynamicTemplates(
-				_getCurrentMappings(_indexName), source),
-			XContentType.JSON);
-
-		try {
-			ActionResponse actionResponse = _indicesClient.putMapping(
-				putMappingRequest, RequestOptions.DEFAULT);
-
-			SearchLogHelperUtil.logActionResponse(_log, actionResponse);
+		if (Validator.isNotNull(_overrideMappings)) {
+			return;
 		}
-		catch (Exception exception) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(
-					StringBundler.concat(
-						"The attempted mappings update for index ", _indexName,
-						" is not compatiable with its current mappings. ",
-						"Please recreate the index, or modify the attempted ",
-						"updates"),
-					exception);
-			}
-		}
+
+		_putMappings(source);
 	}
 
-	public void setMappings(
-		CreateIndexRequest createIndexRequest, String overrideMappings) {
+	public void setDefaultOrOverrideMappings(
+		CreateIndexRequest createIndexRequest) {
 
 		createIndexRequest.mapping(
-			getMappings(overrideMappings), XContentType.JSON);
+			_getDefaultOrOverrideMappings(), XContentType.JSON);
 	}
 
 	private JSONObject _createJSONObject(String mappings) {
@@ -134,6 +100,27 @@ public class MappingsHelperImpl implements MappingsHelper {
 		CompressedXContent compressedXContent = mappingMetadata.source();
 
 		return compressedXContent.toString();
+	}
+
+	private String _getDefaultOrOverrideMappings() {
+		if (Validator.isNotNull(_overrideMappings)) {
+			JSONObject jsonObject = _removeLegacyDocumentType(
+				_overrideMappings);
+
+			return jsonObject.toString();
+		}
+
+		String defaultMappings = ResourceUtil.getResourceAsString(
+			getClass(),
+			LiferayTypeMappingsConstants.
+				LIFERAY_DOCUMENT_TYPE_MAPPING_FILE_NAME);
+		String defaultMappingTemplate = ResourceUtil.getResourceAsString(
+			getClass(),
+			LiferayTypeMappingsConstants.
+				LIFERAY_DOCUMENT_TYPE_MAPPING_DEFAULT_TEMPLATE_FILE_NAME);
+
+		return _getMappingsToPutWithMergedDynamicTemplates(
+			defaultMappingTemplate, defaultMappings);
 	}
 
 	private String _getMappingsToPutWithMergedDynamicTemplates(
@@ -206,6 +193,33 @@ public class MappingsHelperImpl implements MappingsHelper {
 		}
 	}
 
+	private void _putMappings(String source) {
+		PutMappingRequest putMappingRequest = new PutMappingRequest(_indexName);
+
+		putMappingRequest.source(
+			_getMappingsToPutWithMergedDynamicTemplates(
+				_getCurrentMappings(_indexName), source),
+			XContentType.JSON);
+
+		try {
+			ActionResponse actionResponse = _indicesClient.putMapping(
+				putMappingRequest, RequestOptions.DEFAULT);
+
+			SearchLogHelperUtil.logActionResponse(_log, actionResponse);
+		}
+		catch (Exception exception) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					StringBundler.concat(
+						"The attempted mappings update for index ", _indexName,
+						" is not compatiable with its current mappings. ",
+						"Please recreate the index, or modify the attempted ",
+						"updates"),
+					exception);
+			}
+		}
+	}
+
 	private JSONObject _removeLegacyDocumentType(String source) {
 		JSONObject jsonObject = _createJSONObject(source);
 
@@ -225,5 +239,6 @@ public class MappingsHelperImpl implements MappingsHelper {
 	private final String _indexName;
 	private final IndicesClient _indicesClient;
 	private final JSONFactory _jsonFactory;
+	private final String _overrideMappings;
 
 }

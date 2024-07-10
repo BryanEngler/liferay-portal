@@ -32,9 +32,9 @@ public class LiferayIndexCreationHelper implements IndexCreationHelper {
 			_elasticsearchClientResolver.getRestHighLevelClient();
 
 		MappingsHelperImpl mappingsHelperImpl = new MappingsHelperImpl(
-			null, restHighLevelClient.indices(), new JSONFactoryImpl());
+			null, restHighLevelClient.indices(), new JSONFactoryImpl(), null);
 
-		mappingsHelperImpl.setMappings(createIndexRequest, null);
+		mappingsHelperImpl.setDefaultOrOverrideMappings(createIndexRequest);
 	}
 
 	@Override
