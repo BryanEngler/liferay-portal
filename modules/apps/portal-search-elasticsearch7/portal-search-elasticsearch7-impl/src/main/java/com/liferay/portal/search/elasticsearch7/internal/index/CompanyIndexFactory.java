@@ -75,13 +75,14 @@ public class CompanyIndexFactory
 		if (_companyIndexFactoryHelper.hasIndex(indicesClient, indexName)) {
 			if (_elasticsearchConfigurationWrapper.isProductionModeEnabled()) {
 				_companyIndexFactoryHelper.updateIndex(
-					indexName, indicesClient);
+					companyId, indexName, indicesClient);
 			}
 
 			return false;
 		}
 
-		_companyIndexFactoryHelper.createIndex(indexName, indicesClient);
+		_companyIndexFactoryHelper.createIndex(
+			companyId, indexName, indicesClient);
 
 		return true;
 	}
