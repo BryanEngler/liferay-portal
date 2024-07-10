@@ -161,12 +161,12 @@ public class CompanyIndexFactoryTest {
 
 					@Override
 					public void contributeMappings(
-						MappingsHelper mappingsHelper) {
+						long companyId, MappingsHelper mappingsHelper) {
 					}
 
 					@Override
 					public void contributeSettings(
-						SettingsHelper settingsHelper) {
+						long companyId, SettingsHelper settingsHelper) {
 
 						settingsHelper.put("index.number_of_replicas", "3");
 						settingsHelper.put("index.number_of_shards", "4");
@@ -387,12 +387,12 @@ public class CompanyIndexFactoryTest {
 
 					@Override
 					public void contributeMappings(
-						MappingsHelper mappingsHelper) {
+						long companyId, MappingsHelper mappingsHelper) {
 					}
 
 					@Override
 					public void contributeSettings(
-						SettingsHelper settingsHelper) {
+						long companyId, SettingsHelper settingsHelper) {
 
 						settingsHelper.put("index.number_of_replicas", "2");
 						settingsHelper.put("index.number_of_shards", "3");
@@ -422,7 +422,7 @@ public class CompanyIndexFactoryTest {
 
 					@Override
 					public void contributeMappings(
-						MappingsHelper mappingsHelper) {
+						long companyId, MappingsHelper mappingsHelper) {
 
 						mappingsHelper.putMappings(
 							_replaceAnalyzer(mappings, "brazilian"));
@@ -430,7 +430,7 @@ public class CompanyIndexFactoryTest {
 
 					@Override
 					public void contributeSettings(
-						SettingsHelper settingsHelper) {
+						long companyId, SettingsHelper settingsHelper) {
 					}
 
 				},
@@ -662,11 +662,13 @@ public class CompanyIndexFactoryTest {
 		implements CompanyIndexConfigurationContributor {
 
 		@Override
-		public void contributeMappings(MappingsHelper mappingsHelper) {
+		public void contributeMappings(
+			long companyId, MappingsHelper mappingsHelper) {
 		}
 
 		@Override
-		public void contributeSettings(SettingsHelper settingsHelper) {
+		public void contributeSettings(
+			long companyId, SettingsHelper settingsHelper) {
 		}
 
 	}

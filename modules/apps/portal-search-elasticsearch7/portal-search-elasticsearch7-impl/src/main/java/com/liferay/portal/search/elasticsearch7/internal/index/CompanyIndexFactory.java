@@ -79,13 +79,14 @@ public class CompanyIndexFactory
 				FeatureFlagManagerUtil.isEnabled(companyId, "LPD-7822")) {
 
 				_companyIndexFactoryHelper.updateIndex(
-					indexName, indicesClient);
+					companyId, indexName, indicesClient);
 			}
 
 			return false;
 		}
 
-		_companyIndexFactoryHelper.createIndex(indexName, indicesClient);
+		_companyIndexFactoryHelper.createIndex(
+			companyId, indexName, indicesClient);
 
 		return true;
 	}
