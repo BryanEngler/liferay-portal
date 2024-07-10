@@ -160,6 +160,45 @@ public class CompanyIndexFactoryTest {
 	}
 
 	@Test
+	public void testAdditionalIndexConfigurationsOverridesIndexConfigurationContributor()
+		throws Exception {
+
+		_serviceRegistrations.add(
+			_bundleContext.registerService(
+				CompanyIndexConfigurationContributor.class,
+				new CompanyIndexConfigurationContributor() {
+
+					@Override
+					public void contributeMappings(
+						MappingsHelper mappingsHelper) {
+					}
+
+					@Override
+					public void contributeSettings(
+						SettingsHelper settingsHelper) {
+
+						settingsHelper.put("index.number_of_replicas", "3");
+						settingsHelper.put("index.number_of_shards", "4");
+					}
+
+				},
+				null));
+
+		Mockito.when(
+			_elasticsearchConfigurationWrapper.additionalIndexConfigurations()
+		).thenReturn(
+			"index.number_of_replicas: 1\nindex.number_of_shards: 2"
+		);
+
+		createIndices();
+
+		Settings settings = _getIndexSettings();
+
+		Assert.assertEquals("1", settings.get("index.number_of_replicas"));
+		Assert.assertEquals("2", settings.get("index.number_of_shards"));
+	}
+
+	@Test
 	public void testAdditionalTypeMappings() throws Exception {
 		Mockito.when(
 			_elasticsearchConfigurationWrapper.additionalTypeMappings()
@@ -371,12 +410,6 @@ public class CompanyIndexFactoryTest {
 
 				},
 				null));
-
-		Mockito.when(
-			_elasticsearchConfigurationWrapper.additionalIndexConfigurations()
-		).thenReturn(
-			"index.number_of_replicas: 0\nindex.number_of_shards: 0"
-		);
 
 		createIndices();
 
