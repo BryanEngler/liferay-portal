@@ -206,12 +206,12 @@ public class CompanyIndexFactoryTest extends BaseOpenSearchTestCase {
 
 					@Override
 					public void contributeMappings(
-						MappingsHelper mappingsHelper) {
+						long companyId, MappingsHelper mappingsHelper) {
 					}
 
 					@Override
 					public void contributeSettings(
-						SettingsHelper settingsHelper) {
+						long companyId, SettingsHelper settingsHelper) {
 
 						settingsHelper.put("index.number_of_replicas", "2");
 						settingsHelper.put("index.number_of_shards", "3");
@@ -253,7 +253,7 @@ public class CompanyIndexFactoryTest extends BaseOpenSearchTestCase {
 
 					@Override
 					public void contributeMappings(
-						MappingsHelper mappingsHelper) {
+						long companyId, MappingsHelper mappingsHelper) {
 
 						mappingsHelper.putMappings(
 							_replaceAnalyzer("brazilian", mappings));
@@ -261,7 +261,7 @@ public class CompanyIndexFactoryTest extends BaseOpenSearchTestCase {
 
 					@Override
 					public void contributeSettings(
-						SettingsHelper settingsHelper) {
+						long companyId, SettingsHelper settingsHelper) {
 					}
 
 				},
@@ -660,11 +660,13 @@ public class CompanyIndexFactoryTest extends BaseOpenSearchTestCase {
 		implements CompanyIndexConfigurationContributor {
 
 		@Override
-		public void contributeMappings(MappingsHelper mappingsHelper) {
+		public void contributeMappings(
+			long companyId, MappingsHelper mappingsHelper) {
 		}
 
 		@Override
-		public void contributeSettings(SettingsHelper settingsHelper) {
+		public void contributeSettings(
+			long companyId, SettingsHelper settingsHelper) {
 		}
 
 	}
