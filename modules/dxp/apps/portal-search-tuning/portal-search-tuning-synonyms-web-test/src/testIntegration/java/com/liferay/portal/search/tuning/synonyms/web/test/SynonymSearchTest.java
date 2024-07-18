@@ -104,6 +104,8 @@ public class SynonymSearchTest {
 			addSynonymSet("maison,logement");
 		}
 
+		_waitForConfigurationsToApply();
+
 		addJournalArticles();
 	}
 
@@ -292,6 +294,10 @@ public class SynonymSearchTest {
 		}
 
 		return _CONFIGURATION_PID_ELASTICSEARCH;
+	}
+
+	private static void _waitForConfigurationsToApply() throws Exception {
+		Thread.sleep(60000);
 	}
 
 	private static final String _CONFIGURATION_PID_ELASTICSEARCH =
