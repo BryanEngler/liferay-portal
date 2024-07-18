@@ -20,14 +20,17 @@ public class RedirectCompanyIndexConfigurationContributor
 	implements CompanyIndexConfigurationContributor {
 
 	@Override
-	public void contributeMappings(MappingsHelper mappingsHelper) {
+	public void contributeMappings(
+		long companyId, MappingsHelper mappingsHelper) {
+
 		mappingsHelper.putMappings(
 			StringUtil.read(
 				getClass(), "dependencies/additional-type-mappings.json"));
 	}
 
 	@Override
-	public void contributeSettings(SettingsHelper settingsHelper) {
+	public void contributeSettings(
+		long companyId, SettingsHelper settingsHelper) {
 	}
 
 }
