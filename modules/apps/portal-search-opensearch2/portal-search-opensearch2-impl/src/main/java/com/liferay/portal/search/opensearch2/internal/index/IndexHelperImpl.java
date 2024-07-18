@@ -127,7 +127,8 @@ public class IndexHelperImpl implements IndexHelper {
 
 	@Override
 	public void initializeIndex(
-		String indexName, OpenSearchIndicesClient openSearchIndicesClient) {
+		long companyId, String indexName,
+		OpenSearchIndicesClient openSearchIndicesClient) {
 
 		MappingsFactory mappingsFactory = new MappingsFactory(
 			indexName, _jsonFactory, openSearchIndicesClient,
@@ -137,13 +138,13 @@ public class IndexHelperImpl implements IndexHelper {
 			_jsonFactory, _openSearchConfigurationWrapper);
 
 		_createIndex(
-			indexName, mappingsFactory, openSearchIndicesClient,
+			companyId, indexName, mappingsFactory, openSearchIndicesClient,
 			settingsFactory);
 
 		if (Validator.isNull(
 				_openSearchConfigurationWrapper.overrideTypeMappings())) {
 
-			_executeMappingsContributors(mappingsFactory);
+			_executeMappingsContributors(companyId, mappingsFactory);
 
 			mappingsFactory.addOptionalDefaultMappings();
 		}
@@ -296,7 +297,7 @@ public class IndexHelperImpl implements IndexHelper {
 	}
 
 	private void _createIndex(
-		String indexName, MappingsFactory mappingsFactory,
+		long companyId, String indexName, MappingsFactory mappingsFactory,
 		OpenSearchIndicesClient openSearchIndicesClient,
 		SettingsFactory settingsFactory) {
 
@@ -304,7 +305,8 @@ public class IndexHelperImpl implements IndexHelper {
 			JSONUtil.put(
 				"mappings", mappingsFactory.getMappingsJSONObject()
 			).put(
-				"settings", _createSettingsJSONObject(settingsFactory)
+				"settings",
+				_createSettingsJSONObject(companyId, settingsFactory)
 			));
 
 		builder.index(indexName);
@@ -315,11 +317,12 @@ public class IndexHelperImpl implements IndexHelper {
 	}
 
 	private JSONObject _createSettingsJSONObject(
-		SettingsFactory settingsFactory) {
+		long companyId, SettingsFactory settingsFactory) {
 
 		JSONObject settingsJSONObject = settingsFactory.getSettingsJSONObject();
 
-		_executeCompanyIndexConfigurationContributors(settingsJSONObject);
+		_executeCompanyIndexConfigurationContributors(
+			companyId, settingsJSONObject);
 
 		JSONObject indexJSONObject = settingsJSONObject.getJSONObject("index");
 
@@ -359,7 +362,7 @@ public class IndexHelperImpl implements IndexHelper {
 	}
 
 	private void _executeCompanyIndexConfigurationContributors(
-		JSONObject indexSettingsJSONObject) {
+		long companyId, JSONObject indexSettingsJSONObject) {
 
 		Map<String, String> contributedSettings = new HashMap<>();
 
@@ -368,7 +371,7 @@ public class IndexHelperImpl implements IndexHelper {
 					_companyIndexConfigurationContributorServiceTrackerList) {
 
 			companyIndexConfigurationContributor.contributeSettings(
-				contributedSettings::put);
+				companyId, contributedSettings::put);
 		}
 
 		if (MapUtil.isEmpty(contributedSettings)) {
@@ -428,13 +431,15 @@ public class IndexHelperImpl implements IndexHelper {
 		}
 	}
 
-	private void _executeMappingsContributors(MappingsFactory mappingsFactory) {
+	private void _executeMappingsContributors(
+		long companyId, MappingsFactory mappingsFactory) {
+
 		for (CompanyIndexConfigurationContributor
 				companyIndexConfigurationContributor :
 					_companyIndexConfigurationContributorServiceTrackerList) {
 
 			companyIndexConfigurationContributor.contributeMappings(
-				mappingsFactory);
+				companyId, mappingsFactory);
 		}
 	}
 
@@ -453,27 +458,6 @@ public class IndexHelperImpl implements IndexHelper {
 	private void _processContributions(
 		CompanyIndexConfigurationContributor
 			companyIndexConfigurationContributor) {
-
-		JSONObject settingsJSONObject = _jsonFactory.createJSONObject();
-
-		companyIndexConfigurationContributor.contributeSettings(
-			settingsJSONObject::put);
-
-		boolean contributeMappings = Validator.isNull(
-			_openSearchConfigurationWrapper.overrideTypeMappings());
-
-		if (!contributeMappings &&
-			settingsJSONObject.keySet(
-			).isEmpty()) {
-
-			if (_log.isWarnEnabled()) {
-				_log.warn(
-					"No mappings or settings to contribute from " +
-						companyIndexConfigurationContributor);
-			}
-
-			return;
-		}
 
 		OpenSearchClient openSearchClient = null;
 
@@ -496,6 +480,11 @@ public class IndexHelperImpl implements IndexHelper {
 			companyId -> {
 				String indexName = getIndexName(companyId);
 
+				JSONObject settingsJSONObject = _jsonFactory.createJSONObject();
+
+				companyIndexConfigurationContributor.contributeSettings(
+					companyId, settingsJSONObject::put);
+
 				if (!settingsJSONObject.keySet(
 					).isEmpty()) {
 
@@ -514,12 +503,11 @@ public class IndexHelperImpl implements IndexHelper {
 					}
 				}
 
-				if (contributeMappings) {
-					companyIndexConfigurationContributor.contributeMappings(
-						new MappingsFactory(
-							indexName, _jsonFactory, openSearchIndicesClient,
-							_openSearchConfigurationWrapper));
-				}
+				companyIndexConfigurationContributor.contributeMappings(
+					companyId,
+					new MappingsFactory(
+						indexName, _jsonFactory, openSearchIndicesClient,
+						_openSearchConfigurationWrapper));
 			},
 			IndexFactoryCompanyIdRegistryUtil.getCompanyIds());
 	}

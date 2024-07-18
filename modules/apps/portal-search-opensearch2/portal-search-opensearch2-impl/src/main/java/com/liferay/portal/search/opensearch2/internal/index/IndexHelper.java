@@ -29,7 +29,8 @@ public interface IndexHelper {
 		String indexName, OpenSearchIndicesClient openSearchIndicesClient);
 
 	public void initializeIndex(
-		String indexName, OpenSearchIndicesClient openSearchIndicesClient);
+		long companyId, String indexName,
+		OpenSearchIndicesClient openSearchIndicesClient);
 
 	public void updateMaxResultWindow();
 
