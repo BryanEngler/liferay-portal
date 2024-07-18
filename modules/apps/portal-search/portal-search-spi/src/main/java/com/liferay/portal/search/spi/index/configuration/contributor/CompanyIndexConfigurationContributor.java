@@ -13,8 +13,10 @@ import com.liferay.portal.search.spi.index.configuration.contributor.helper.Sett
  */
 public interface CompanyIndexConfigurationContributor {
 
-	public void contributeMappings(MappingsHelper mappingsHelper);
+	public void contributeMappings(
+		long companyId, MappingsHelper mappingsHelper);
 
-	public void contributeSettings(SettingsHelper settingsHelper);
+	public void contributeSettings(
+		long companyId, SettingsHelper settingsHelper);
 
 }
