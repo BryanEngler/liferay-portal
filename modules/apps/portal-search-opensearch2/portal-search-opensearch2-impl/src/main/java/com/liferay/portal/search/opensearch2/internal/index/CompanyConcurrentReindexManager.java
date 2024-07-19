@@ -46,7 +46,9 @@ public class CompanyConcurrentReindexManager
 		OpenSearchClient openSearchClient =
 			_openSearchConnectionManager.getOpenSearchClient();
 
-		if (_indexHelper.hasIndex(indexNameNext, openSearchClient.indices())) {
+		if (_companyIndexHelper.hasIndex(
+				indexNameNext, openSearchClient.indices())) {
+
 			return;
 		}
 
@@ -54,7 +56,7 @@ public class CompanyConcurrentReindexManager
 			_log.info("Creating next index " + indexNameNext);
 		}
 
-		_indexHelper.initializeIndex(
+		_companyIndexHelper.initializeIndex(
 			companyId, indexNameNext, openSearchClient.indices());
 
 		_companyLocalService.updateIndexNameNext(companyId, indexNameNext);
@@ -78,7 +80,7 @@ public class CompanyConcurrentReindexManager
 				_log.info("Deleting next index " + indexName);
 			}
 
-			_indexHelper.deleteIndex(
+			_companyIndexHelper.deleteIndex(
 				companyId, indexName, openSearchClient.indices(), false);
 		}
 	}
@@ -138,7 +140,7 @@ public class CompanyConcurrentReindexManager
 			openSearchClient.indices();
 
 		AliasesFactory aliasesFactory = new AliasesFactory(
-			_indexHelper, openSearchIndicesClient);
+			_companyIndexHelper, openSearchIndicesClient);
 
 		aliasesFactory.updateConcurrentReindexingAliases(
 			baseIndexName, company, openSearchIndicesClient);
@@ -153,10 +155,10 @@ public class CompanyConcurrentReindexManager
 			null, true);
 
 	@Reference
-	private CompanyLocalService _companyLocalService;
+	private CompanyIndexHelper _companyIndexHelper;
 
 	@Reference
-	private IndexHelper _indexHelper;
+	private CompanyLocalService _companyLocalService;
 
 	@Reference
 	private IndexNameBuilder _indexNameBuilder;

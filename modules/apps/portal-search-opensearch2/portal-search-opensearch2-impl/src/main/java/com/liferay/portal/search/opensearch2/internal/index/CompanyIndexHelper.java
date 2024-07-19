@@ -38,7 +38,6 @@ import java.io.InputStream;
 
 import java.nio.charset.StandardCharsets;
 
-import java.util.List;
 import java.util.Map;
 
 import org.opensearch.client.json.JsonpMapper;
@@ -64,10 +63,9 @@ import org.osgi.service.component.annotations.Reference;
  * @author Joao Victor Alves
  * @author Petteri Karttunen
  */
-@Component(service = IndexHelper.class)
-public class IndexHelperImpl implements IndexHelper {
+@Component(service = CompanyIndexHelper.class)
+public class CompanyIndexHelper {
 
-	@Override
 	public void deleteIndex(
 		long companyId, String indexName,
 		OpenSearchIndicesClient openSearchIndicesClient,
@@ -98,12 +96,10 @@ public class IndexHelperImpl implements IndexHelper {
 		}
 	}
 
-	@Override
 	public String getIndexName(long companyId) {
 		return _indexNameBuilder.getIndexName(companyId);
 	}
 
-	@Override
 	public boolean hasIndex(
 		String indexName, OpenSearchIndicesClient openSearchIndicesClient) {
 
@@ -119,7 +115,6 @@ public class IndexHelperImpl implements IndexHelper {
 		}
 	}
 
-	@Override
 	public void initializeIndex(
 		long companyId, String indexName,
 		OpenSearchIndicesClient openSearchIndicesClient) {
@@ -152,7 +147,6 @@ public class IndexHelperImpl implements IndexHelper {
 		}
 	}
 
-	@Override
 	public void updateMaxResultWindow() {
 		int maxResultWindow =
 			_openSearchConfigurationWrapper.indexMaxResultWindow();
@@ -562,7 +556,7 @@ public class IndexHelperImpl implements IndexHelper {
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		IndexHelperImpl.class);
+		CompanyIndexHelper.class);
 
 	private ServiceTrackerList<CompanyIndexConfigurationContributor>
 		_companyIndexConfigurationContributorServiceTrackerList;

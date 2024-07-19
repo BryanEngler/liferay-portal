@@ -43,7 +43,7 @@ public class CompanyIndexFactory
 	public boolean deleteIndex(
 		long companyId, OpenSearchIndicesClient openSearchIndicesClient) {
 
-		String indexName = _indexHelper.getIndexName(companyId);
+		String indexName = _companyIndexHelper.getIndexName(companyId);
 
 		Company company = _companyLocalService.fetchCompany(companyId);
 
@@ -53,11 +53,11 @@ public class CompanyIndexFactory
 			indexName = company.getIndexNameCurrent();
 		}
 
-		if (!_indexHelper.hasIndex(indexName, openSearchIndicesClient)) {
+		if (!_companyIndexHelper.hasIndex(indexName, openSearchIndicesClient)) {
 			return false;
 		}
 
-		_indexHelper.deleteIndex(
+		_companyIndexHelper.deleteIndex(
 			companyId, indexName, openSearchIndicesClient, true);
 
 		return true;
@@ -72,13 +72,13 @@ public class CompanyIndexFactory
 	public boolean initializeIndex(
 		long companyId, OpenSearchIndicesClient openSearchIndicesClient) {
 
-		String indexName = _indexHelper.getIndexName(companyId);
+		String indexName = _companyIndexHelper.getIndexName(companyId);
 
-		if (_indexHelper.hasIndex(indexName, openSearchIndicesClient)) {
+		if (_companyIndexHelper.hasIndex(indexName, openSearchIndicesClient)) {
 			return false;
 		}
 
-		_indexHelper.initializeIndex(
+		_companyIndexHelper.initializeIndex(
 			companyId, indexName, openSearchIndicesClient);
 
 		return true;
@@ -88,7 +88,7 @@ public class CompanyIndexFactory
 	public void onOpenSearchConfigurationUpdate() {
 		_createCompanyIndexes();
 
-		_indexHelper.updateMaxResultWindow();
+		_companyIndexHelper.updateMaxResultWindow();
 	}
 
 	@Override
@@ -139,10 +139,10 @@ public class CompanyIndexFactory
 		CompanyIndexFactory.class);
 
 	@Reference
-	private CompanyLocalService _companyLocalService;
+	private CompanyIndexHelper _companyIndexHelper;
 
 	@Reference
-	private IndexHelper _indexHelper;
+	private CompanyLocalService _companyLocalService;
 
 	@Reference
 	private OpenSearchConfigurationWrapper _openSearchConfigurationWrapper;
