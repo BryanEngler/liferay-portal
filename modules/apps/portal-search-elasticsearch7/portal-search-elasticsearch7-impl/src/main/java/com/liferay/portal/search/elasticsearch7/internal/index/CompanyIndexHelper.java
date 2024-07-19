@@ -52,8 +52,8 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Joao Victor Alves
  */
-@Component(service = CompanyIndexFactoryHelper.class)
-public class CompanyIndexFactoryHelper {
+@Component(service = CompanyIndexHelper.class)
+public class CompanyIndexHelper {
 
 	public void createIndex(
 		long companyId, String indexName, IndicesClient indicesClient) {
@@ -474,7 +474,7 @@ public class CompanyIndexFactoryHelper {
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		CompanyIndexFactoryHelper.class);
+		CompanyIndexHelper.class);
 
 	private ServiceTrackerList<CompanyIndexConfigurationContributor>
 		_companyIndexConfigurationContributorServiceTrackerList;

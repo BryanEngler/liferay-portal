@@ -62,7 +62,7 @@ public class CompanyConcurrentReindexManager
 		RestHighLevelClient restHighLevelClient =
 			_elasticsearchConnectionManager.getRestHighLevelClient();
 
-		if (_companyIndexFactoryHelper.hasIndex(
+		if (_companyIndexHelper.hasIndex(
 				restHighLevelClient.indices(), newIndexName)) {
 
 			return;
@@ -72,7 +72,7 @@ public class CompanyConcurrentReindexManager
 			_log.info("Creating next index " + newIndexName);
 		}
 
-		_companyIndexFactoryHelper.createIndex(
+		_companyIndexHelper.createIndex(
 			companyId, newIndexName, restHighLevelClient.indices());
 
 		_companyLocalService.updateIndexNameNext(companyId, newIndexName);
@@ -96,7 +96,7 @@ public class CompanyConcurrentReindexManager
 				_log.info("Deleting next index " + indexName);
 			}
 
-			_companyIndexFactoryHelper.deleteIndex(
+			_companyIndexHelper.deleteIndex(
 				indexName, restHighLevelClient.indices(), companyId, false);
 		}
 	}
@@ -167,7 +167,7 @@ public class CompanyConcurrentReindexManager
 			baseIndexName, indicesClient);
 
 		if (removeIndexNames.isEmpty() &&
-			_companyIndexFactoryHelper.hasIndex(indicesClient, baseIndexName)) {
+			_companyIndexHelper.hasIndex(indicesClient, baseIndexName)) {
 
 			removeIndexNames.add(baseIndexName);
 		}
@@ -227,7 +227,7 @@ public class CompanyConcurrentReindexManager
 			null, true);
 
 	@Reference
-	private CompanyIndexFactoryHelper _companyIndexFactoryHelper;
+	private CompanyIndexHelper _companyIndexHelper;
 
 	@Reference
 	private CompanyLocalService _companyLocalService;
