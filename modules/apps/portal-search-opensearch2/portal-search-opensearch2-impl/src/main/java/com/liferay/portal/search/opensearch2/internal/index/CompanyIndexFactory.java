@@ -78,7 +78,7 @@ public class CompanyIndexFactory
 			return false;
 		}
 
-		_companyIndexHelper.initializeIndex(
+		_companyIndexHelper.createIndex(
 			companyId, indexName, openSearchIndicesClient);
 
 		return true;
