@@ -43,9 +43,9 @@ public class CompanyIndexFactory
 	public boolean deleteIndex(
 		long companyId, OpenSearchIndicesClient openSearchIndicesClient) {
 
-		Company company = _companyLocalService.fetchCompany(companyId);
-
 		String indexName = _indexHelper.getIndexName(companyId);
+
+		Company company = _companyLocalService.fetchCompany(companyId);
 
 		if ((company != null) &&
 			!Validator.isBlank(company.getIndexNameCurrent())) {
