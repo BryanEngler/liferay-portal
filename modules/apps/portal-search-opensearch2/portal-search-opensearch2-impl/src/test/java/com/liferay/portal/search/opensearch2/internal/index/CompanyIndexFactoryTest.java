@@ -611,7 +611,7 @@ public class CompanyIndexFactoryTest extends BaseOpenSearchTestCase {
 		OpenSearchIndicesClient openSearchIndicesClient =
 			openSearchClient.indices();
 
-		_companyIndexFactory.createIndices(
+		_companyIndexFactory.initializeIndex(
 			RandomTestUtil.randomLong(), openSearchIndicesClient);
 	}
 
@@ -622,7 +622,7 @@ public class CompanyIndexFactoryTest extends BaseOpenSearchTestCase {
 		OpenSearchIndicesClient openSearchIndicesClient =
 			openSearchClient.indices();
 
-		_companyIndexFactory.deleteIndices(
+		_companyIndexFactory.deleteIndex(
 			RandomTestUtil.randomLong(), openSearchIndicesClient);
 	}
 
