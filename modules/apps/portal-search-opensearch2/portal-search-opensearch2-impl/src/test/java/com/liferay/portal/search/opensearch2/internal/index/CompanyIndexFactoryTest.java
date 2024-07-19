@@ -95,12 +95,13 @@ public class CompanyIndexFactoryTest extends BaseOpenSearchTestCase {
 		_companyIndexFactory =
 			_companyIndexFactoryFixture.getCompanyIndexFactory();
 
-		IndexHelper indexHelper = _companyIndexFactoryFixture.getIndexHelper();
+		CompanyIndexHelper companyIndexHelper =
+			_companyIndexFactoryFixture.getCompanyIndexHelper();
 
 		Mockito.reset(_openSearchConfigurationWrapper);
 
 		ReflectionTestUtil.setFieldValue(
-			indexHelper, "_openSearchConfigurationWrapper",
+			companyIndexHelper, "_openSearchConfigurationWrapper",
 			_openSearchConfigurationWrapper);
 
 		ReflectionTestUtil.setFieldValue(
@@ -290,7 +291,7 @@ public class CompanyIndexFactoryTest extends BaseOpenSearchTestCase {
 			_companyIndexFactoryFixture, "_indexName", "other");
 
 		ReflectionTestUtil.setFieldValue(
-			_companyIndexFactoryFixture.getIndexHelper(),
+			_companyIndexFactoryFixture.getCompanyIndexHelper(),
 			"_companyIndexListenerServiceTrackerList",
 			ServiceTrackerListFactory.open(
 				_bundleContext, CompanyIndexListener.class, null,
