@@ -66,6 +66,38 @@ import org.osgi.service.component.annotations.Reference;
 @Component(service = CompanyIndexHelper.class)
 public class CompanyIndexHelper {
 
+	public void createIndex(
+		long companyId, String indexName,
+		OpenSearchIndicesClient openSearchIndicesClient) {
+
+		MappingsFactory mappingsFactory = new MappingsFactory(
+			indexName, _jsonFactory, openSearchIndicesClient,
+			_openSearchConfigurationWrapper);
+
+		SettingsFactory settingsFactory = new SettingsFactory(
+			_jsonFactory, _openSearchConfigurationWrapper);
+
+		_createIndex(
+			companyId, indexName, mappingsFactory, openSearchIndicesClient,
+			settingsFactory);
+
+		if (Validator.isNull(
+				_openSearchConfigurationWrapper.overrideTypeMappings())) {
+
+			_executeMappingsContributors(companyId, mappingsFactory);
+
+			mappingsFactory.addOptionalDefaultMappings();
+		}
+
+		_executeCompanyIndexListenersAfterCreate(indexName);
+
+		if (PortalRunMode.isTestMode()) {
+			_setTestModeIndexSettings(
+				settingsFactory.getTestModeIndexSettings(),
+				openSearchIndicesClient);
+		}
+	}
+
 	public void deleteIndex(
 		long companyId, String indexName,
 		OpenSearchIndicesClient openSearchIndicesClient,
@@ -112,38 +144,6 @@ public class CompanyIndexHelper {
 		}
 		catch (IOException ioException) {
 			throw new RuntimeException(ioException);
-		}
-	}
-
-	public void createIndex(
-		long companyId, String indexName,
-		OpenSearchIndicesClient openSearchIndicesClient) {
-
-		MappingsFactory mappingsFactory = new MappingsFactory(
-			indexName, _jsonFactory, openSearchIndicesClient,
-			_openSearchConfigurationWrapper);
-
-		SettingsFactory settingsFactory = new SettingsFactory(
-			_jsonFactory, _openSearchConfigurationWrapper);
-
-		_createIndex(
-			companyId, indexName, mappingsFactory, openSearchIndicesClient,
-			settingsFactory);
-
-		if (Validator.isNull(
-				_openSearchConfigurationWrapper.overrideTypeMappings())) {
-
-			_executeMappingsContributors(companyId, mappingsFactory);
-
-			mappingsFactory.addOptionalDefaultMappings();
-		}
-
-		_executeCompanyIndexListenersAfterCreate(indexName);
-
-		if (PortalRunMode.isTestMode()) {
-			_setTestModeIndexSettings(
-				settingsFactory.getTestModeIndexSettings(),
-				openSearchIndicesClient);
 		}
 	}
 
