@@ -43,7 +43,7 @@ public class CompanyIndexFactory
 
 	@Override
 	public boolean deleteIndex(IndicesClient indicesClient, long companyId) {
-		String indexName = _companyIndexFactoryHelper.getIndexName(companyId);
+		String indexName = _companyIndexHelper.getIndexName(companyId);
 
 		Company company = _companyLocalService.fetchCompany(companyId);
 
@@ -53,11 +53,11 @@ public class CompanyIndexFactory
 			indexName = company.getIndexNameCurrent();
 		}
 
-		if (!_companyIndexFactoryHelper.hasIndex(indicesClient, indexName)) {
+		if (!_companyIndexHelper.hasIndex(indicesClient, indexName)) {
 			return false;
 		}
 
-		_companyIndexFactoryHelper.deleteIndex(
+		_companyIndexHelper.deleteIndex(
 			indexName, indicesClient, companyId, true);
 
 		return true;
@@ -72,21 +72,20 @@ public class CompanyIndexFactory
 	public boolean initializeIndex(
 		IndicesClient indicesClient, long companyId) {
 
-		String indexName = _companyIndexFactoryHelper.getIndexName(companyId);
+		String indexName = _companyIndexHelper.getIndexName(companyId);
 
-		if (_companyIndexFactoryHelper.hasIndex(indicesClient, indexName)) {
+		if (_companyIndexHelper.hasIndex(indicesClient, indexName)) {
 			if ((companyId == CompanyConstants.SYSTEM) ||
 				FeatureFlagManagerUtil.isEnabled(companyId, "LPD-7822")) {
 
-				_companyIndexFactoryHelper.updateIndex(
+				_companyIndexHelper.updateIndex(
 					companyId, indexName, indicesClient);
 			}
 
 			return false;
 		}
 
-		_companyIndexFactoryHelper.createIndex(
-			companyId, indexName, indicesClient);
+		_companyIndexHelper.createIndex(companyId, indexName, indicesClient);
 
 		return true;
 	}
@@ -142,7 +141,7 @@ public class CompanyIndexFactory
 		CompanyIndexFactory.class);
 
 	@Reference
-	private CompanyIndexFactoryHelper _companyIndexFactoryHelper;
+	private CompanyIndexHelper _companyIndexHelper;
 
 	@Reference
 	private CompanyLocalService _companyLocalService;

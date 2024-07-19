@@ -88,18 +88,17 @@ public class CompanyIndexFactoryTest {
 		_companyIndexFactory =
 			_companyIndexFactoryFixture.getCompanyIndexFactory();
 
-		CompanyIndexFactoryHelper companyIndexFactoryHelper =
-			_companyIndexFactoryFixture.getCompanyIndexFactoryHelper();
+		CompanyIndexHelper companyIndexHelper =
+			_companyIndexFactoryFixture.getCompanyIndexHelper();
 
 		Mockito.reset(_elasticsearchConfigurationWrapper);
 
 		ReflectionTestUtil.setFieldValue(
-			companyIndexFactoryHelper, "_elasticsearchConfigurationWrapper",
+			companyIndexHelper, "_elasticsearchConfigurationWrapper",
 			_elasticsearchConfigurationWrapper);
 
 		ReflectionTestUtil.setFieldValue(
-			_companyIndexFactory, "_companyIndexFactoryHelper",
-			companyIndexFactoryHelper);
+			_companyIndexFactory, "_companyIndexHelper", companyIndexHelper);
 		ReflectionTestUtil.setFieldValue(
 			_companyIndexFactory, "_elasticsearchConfigurationWrapper",
 			_elasticsearchConfigurationWrapper);
@@ -234,7 +233,7 @@ public class CompanyIndexFactoryTest {
 			_companyIndexFactoryFixture, "_indexName", "other");
 
 		ReflectionTestUtil.setFieldValue(
-			_companyIndexFactoryFixture.getCompanyIndexFactoryHelper(),
+			_companyIndexFactoryFixture.getCompanyIndexHelper(),
 			"_companyIndexListenerServiceTrackerList",
 			ServiceTrackerListFactory.open(
 				_bundleContext, CompanyIndexListener.class, null,
