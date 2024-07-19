@@ -115,7 +115,7 @@ public class CompanyIndexHelper {
 		}
 	}
 
-	public void initializeIndex(
+	public void createIndex(
 		long companyId, String indexName,
 		OpenSearchIndicesClient openSearchIndicesClient) {
 
