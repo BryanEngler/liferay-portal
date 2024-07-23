@@ -5,6 +5,8 @@
 
 package com.liferay.portal.search.opensearch2.internal.settings;
 
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.search.spi.index.configuration.contributor.helper.SettingsHelper;
 
@@ -28,18 +30,22 @@ public class SettingsHelperImpl implements SettingsHelper {
 
 	@Override
 	public void loadFromSource(String source) {
+		try {
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(source);
+
+			for (String key : jsonObject.keySet()) {
+				_settings.put(key, jsonObject.getString(key));
+			}
+		}
+		catch (JSONException jsonException) {
+			throw new RuntimeException(jsonException);
+		}
 	}
 
 	@Override
 	public void put(String key, String value) {
 		if (!StringUtils.isBlank(value)) {
 			_settings.put(key, value);
-		}
-	}
-
-	public void putAll(JSONObject jsonObject) {
-		for (String key : jsonObject.keySet()) {
-			_settings.put(key, jsonObject.getString(key));
 		}
 	}
 
