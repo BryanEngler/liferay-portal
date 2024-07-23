@@ -481,23 +481,22 @@ public class IndexHelperImpl implements IndexHelper {
 			companyId -> {
 				String indexName = getIndexName(companyId);
 
-				JSONObject settingsJSONObject = _jsonFactory.createJSONObject();
-
 				SettingsHelperImpl settingsHelperImpl =
 					new SettingsHelperImpl();
-
-				settingsHelperImpl.putAll(settingsJSONObject);
 
 				companyIndexConfigurationContributor.contributeSettings(
 					companyId, settingsHelperImpl);
 
-				if (!settingsJSONObject.keySet(
-					).isEmpty()) {
+				Map<String, String> settings = settingsHelperImpl.getSettings();
 
+				if (!settings.isEmpty()) {
 					try {
+						JSONObject jsonObject =
+							_dotNotationSettingsToJSONObject(settings);
+
 						openSearchIndicesClient.putSettings(
 							_buildPutIndicesSettingsRequest(
-								indexName, settingsJSONObject.toString()));
+								indexName, jsonObject.toString()));
 					}
 					catch (Exception exception) {
 						_log.error(
