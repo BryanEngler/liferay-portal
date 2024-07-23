@@ -6,7 +6,7 @@
 package com.liferay.object.internal.search.spi.index.configuration.contributor;
 
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.search.spi.index.configuration.contributor.IndexConfigurationContributor;
+import com.liferay.portal.search.spi.index.configuration.contributor.CompanyIndexConfigurationContributor;
 import com.liferay.portal.search.spi.index.configuration.contributor.helper.MappingsHelper;
 import com.liferay.portal.search.spi.index.configuration.contributor.helper.SettingsHelper;
 
@@ -15,9 +15,9 @@ import org.osgi.service.component.annotations.Component;
 /**
  * @author Murilo Stodolni
  */
-@Component(service = IndexConfigurationContributor.class)
-public class ObjectIndexConfigurationContributor
-	implements IndexConfigurationContributor {
+@Component(service = CompanyIndexConfigurationContributor.class)
+public class ObjectCompanyIndexConfigurationContributor
+	implements CompanyIndexConfigurationContributor {
 
 	@Override
 	public void contributeMappings(MappingsHelper mappingsHelper) {
