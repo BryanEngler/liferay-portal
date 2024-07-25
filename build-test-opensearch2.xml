@@ -33,7 +33,7 @@
 				<available file="${liferay.home}/data/opensearch2/repo" type="dir" />
 			</not>
 			<then>
-				<mkdir dir="${liferay.home}/data/opensearch2/repo" />
+				<mkdir dir="${liferay.home}/data/opensearch2/repo/opensearch_backup" />
 			</then>
 		</if>
 
