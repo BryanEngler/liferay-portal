@@ -273,6 +273,14 @@ public class ScopeSearchFacetDisplayContextBuilder {
 		for (int i = 0; i < limit; i++) {
 			TermCollector termCollector = termCollectors.get(i);
 
+			long groupId = GetterUtil.getLong(termCollector.getTerm());
+
+			Group group = _groupLocalService.fetchGroup(groupId);
+
+			if (!group.isSite()) {
+				continue;
+			}
+
 			int count = termCollector.getFrequency();
 
 			if (_countThreshold <= count) {
