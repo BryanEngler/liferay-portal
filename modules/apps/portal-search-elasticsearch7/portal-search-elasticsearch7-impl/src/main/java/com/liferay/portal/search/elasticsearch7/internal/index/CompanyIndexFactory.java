@@ -73,7 +73,7 @@ public class CompanyIndexFactory
 		String indexName = _companyIndexHelper.getIndexName(companyId);
 
 		if (_companyIndexHelper.hasIndex(indicesClient, indexName)) {
-			if (_elasticsearchConfigurationWrapper.isProductionModeEnabled()) {
+			if (_elasticsearchConfigurationWrapper.isDevelopmentModeEnabled()) {
 				_companyIndexHelper.updateIndex(
 					companyId, indexName, indicesClient);
 			}
