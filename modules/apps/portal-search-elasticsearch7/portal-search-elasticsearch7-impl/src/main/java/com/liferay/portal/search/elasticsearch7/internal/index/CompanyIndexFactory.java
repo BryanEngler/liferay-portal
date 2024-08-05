@@ -6,6 +6,7 @@
 package com.liferay.portal.search.elasticsearch7.internal.index;
 
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
@@ -77,7 +78,7 @@ public class CompanyIndexFactory
 		String indexName = _companyIndexFactoryHelper.getIndexName(companyId);
 
 		if (_companyIndexFactoryHelper.hasIndex(indicesClient, indexName)) {
-			if (_elasticsearchConfigurationWrapper.isProductionModeEnabled()) {
+			if (FeatureFlagManagerUtil.isEnabled(companyId, "LPD-7822")) {
 				_companyIndexFactoryHelper.updateIndex(
 					indexName, indicesClient);
 			}
