@@ -7,6 +7,7 @@ package com.liferay.portal.search.internal;
 
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
@@ -17,6 +18,7 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.ResourcePermission;
+import com.liferay.portal.kernel.model.ResourcePermissionModel;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.role.RoleConstants;
@@ -536,7 +538,9 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 					ActionKeys.VIEW));
 
 			groupsTermsFilter.addValues(
-				_getPrimKeyStringArray(resourcePermissions));
+				TransformUtil.transformToArray(
+					resourcePermissions, ResourcePermissionModel::getPrimKey,
+					String.class));
 		}
 		else {
 			for (long searchGroupId : groupIds) {
