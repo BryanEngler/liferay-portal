@@ -7,6 +7,7 @@ package com.liferay.portal.search.internal;
 
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
@@ -531,7 +532,10 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 			}
 
 			groupsTermsFilter.addValues(
-				_getPrimKeyStringArray(resourcePermissions));
+				TransformUtil.transformToArray(
+					resourcePermissions,
+					resourcePermission -> resourcePermission.getPrimKey(),
+					String.class));
 		}
 		else {
 			for (long searchGroupId : groupIds) {
@@ -570,20 +574,6 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 
 		return GetterUtil.getString(
 			searchContext.getAttribute("resourcePermissionName"), defaultValue);
-	}
-
-	private String[] _getPrimKeyStringArray(
-		List<ResourcePermission> resourcePermissions) {
-
-		String[] primKeys = new String[resourcePermissions.size()];
-
-		for (int i = 0; i < resourcePermissions.size(); i++) {
-			primKeys[i] = resourcePermissions.get(
-				i
-			).getPrimKey();
-		}
-
-		return primKeys;
 	}
 
 	private static final String _NULL_SEARCH_PERMISSION_CONTEXT =
