@@ -805,10 +805,11 @@ public class ResourcePermissionLocalServiceImpl
 
 	@Override
 	public List<ResourcePermission> getResourcePermissions(
-		long companyId, String name, int scope, long roleId) {
+		long companyId, String name, int scope, long roleId,
+		boolean viewActionId) {
 
-		return resourcePermissionPersistence.findByC_N_S_R(
-			companyId, name, scope, roleId);
+		return resourcePermissionPersistence.findByC_N_S_R_V(
+			companyId, name, scope, roleId, viewActionId);
 	}
 
 	/**
