@@ -555,10 +555,11 @@ public class ResourcePermissionLocalServiceUtil {
 	}
 
 	public static List<ResourcePermission> getResourcePermissions(
-		long companyId, String name, int scope, long roleId) {
+		long companyId, String name, int scope, long roleId,
+		boolean viewActionId) {
 
 		return getService().getResourcePermissions(
-			companyId, name, scope, roleId);
+			companyId, name, scope, roleId, viewActionId);
 	}
 
 	/**

@@ -497,7 +497,8 @@ public interface ResourcePermissionLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<ResourcePermission> getResourcePermissions(
-		long companyId, String name, int scope, long roleId);
+		long companyId, String name, int scope, long roleId,
+		boolean viewActionId);
 
 	/**
 	 * Returns all the resource permissions at the scope of the type.

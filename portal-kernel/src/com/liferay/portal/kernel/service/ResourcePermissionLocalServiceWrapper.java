@@ -611,10 +611,11 @@ public class ResourcePermissionLocalServiceWrapper
 
 	@Override
 	public java.util.List<ResourcePermission> getResourcePermissions(
-		long companyId, String name, int scope, long roleId) {
+		long companyId, String name, int scope, long roleId,
+		boolean viewActionId) {
 
 		return _resourcePermissionLocalService.getResourcePermissions(
-			companyId, name, scope, roleId);
+			companyId, name, scope, roleId, viewActionId);
 	}
 
 	/**
