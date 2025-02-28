@@ -8,6 +8,8 @@ package com.liferay.search.experiences.internal.util;
 import com.liferay.petra.string.CharPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -51,6 +53,8 @@ public class SXPElementUtil {
 			externalReferenceCodes.add(sxpElement.getExternalReferenceCode());
 		}
 
+		Set<SXPElement> missingSXPElements = new HashSet<>();
+
 		for (SXPElement sxpElement : _getOrCreateSXPElements()) {
 			if ((!FeatureFlagManagerUtil.isEnabled("LPS-122920") &&
 				 Objects.equals(
@@ -60,6 +64,22 @@ public class SXPElementUtil {
 					sxpElement.getExternalReferenceCode())) {
 
 				continue;
+			}
+
+			missingSXPElements.add(sxpElement);
+		}
+
+		if (_log.isDebugEnabled()) {
+			for (SXPElement sxpElement : missingSXPElements) {
+				_log.debug(
+					"Element with external reference code " +
+						sxpElement.getExternalReferenceCode() + " is missing");
+			}
+		}
+
+		for (SXPElement sxpElement : missingSXPElements) {
+			if (_log.isDebugEnabled()) {
+				_log.debug("Adding " + sxpElement.getExternalReferenceCode());
 			}
 
 			User user = company.getGuestUser();
@@ -133,6 +153,8 @@ public class SXPElementUtil {
 			StringUtil.extractLast(SXPElement.class.getName(), ".v"),
 			CharPool.PERIOD),
 		CharPool.UNDERLINE, CharPool.PERIOD);
+
+	private static final Log _log = LogFactoryUtil.getLog(SXPElementUtil.class);
 
 	private static List<SXPElement> _sxpElements;
 
