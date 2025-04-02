@@ -83,6 +83,12 @@ public interface ElasticsearchConnectionConfiguration {
 	public int maxConnectionsPerRoute();
 
 	@Meta.AD(
+		deflt = "120000", description = "socket-timeout-help",
+		name = "socket-timeout", required = false
+	)
+	public int socketTimeout();
+
+	@Meta.AD(
 		deflt = "pkcs12", description = "truststore-type-help",
 		name = "truststore-type", required = false
 	)

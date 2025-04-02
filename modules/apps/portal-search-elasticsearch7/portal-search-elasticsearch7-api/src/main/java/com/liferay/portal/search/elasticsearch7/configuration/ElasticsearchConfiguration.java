@@ -269,6 +269,12 @@ public interface ElasticsearchConfiguration {
 	public int maxConnectionsPerRoute();
 
 	@Meta.AD(
+		deflt = "120000", description = "socket-timeout-help",
+		name = "socket-timeout", required = false
+	)
+	public int socketTimeout();
+
+	@Meta.AD(
 		deflt = "false", description = "sidecar-debug-help",
 		name = "sidecar-debug", required = false
 	)
