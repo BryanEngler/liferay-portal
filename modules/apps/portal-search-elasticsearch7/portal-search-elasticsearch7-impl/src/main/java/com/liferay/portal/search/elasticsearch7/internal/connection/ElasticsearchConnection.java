@@ -123,6 +123,10 @@ public class ElasticsearchConnection {
 		_proxyConfig = proxyConfig;
 	}
 
+	public void setSocketTimeout(int socketTimeout) {
+		_socketTimeout = socketTimeout;
+	}
+
 	public void setTruststorePassword(String truststorePassword) {
 		_truststorePassword = truststorePassword;
 	}
@@ -157,6 +161,8 @@ public class ElasticsearchConnection {
 			_truststorePassword
 		).proxyConfig(
 			_proxyConfig
+		).socketTimeout(
+			_socketTimeout
 		).truststorePath(
 			_truststorePath
 		).truststoreType(
@@ -183,6 +189,7 @@ public class ElasticsearchConnection {
 		_preConnectElasticsearchConnectionConsumer;
 	private ProxyConfig _proxyConfig;
 	private RestHighLevelClient _restHighLevelClient;
+	private int _socketTimeout;
 	private String _truststorePassword;
 	private String _truststorePath;
 	private String _truststoreType;

@@ -52,6 +52,8 @@ public class ElasticsearchConnectionConfigurationActivationHandler {
 			elasticsearchConnectionConfiguration.password()
 		).proxyConfig(
 			createProxyConfig(elasticsearchConnectionConfiguration)
+		).socketTimeout(
+			elasticsearchConnectionConfiguration.socketTimeout()
 		).truststorePassword(
 			elasticsearchConnectionConfiguration.truststorePassword()
 		).truststorePath(

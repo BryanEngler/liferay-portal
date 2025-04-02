@@ -131,6 +131,12 @@ public class RestHighLevelClientFactory {
 			return this;
 		}
 
+		public Builder socketTimeout(int socketTimeout) {
+			_restHighLevelClientFactory._socketTimeout = socketTimeout;
+
+			return this;
+		}
+
 		public Builder truststorePassword(String truststorePassword) {
 			_restHighLevelClientFactory._truststorePassword =
 				truststorePassword;
@@ -179,6 +185,7 @@ public class RestHighLevelClientFactory {
 		_truststorePassword = restHighLevelClientFactory._truststorePassword;
 		_truststorePath = restHighLevelClientFactory._truststorePath;
 		_truststoreType = restHighLevelClientFactory._truststoreType;
+		_socketTimeout = restHighLevelClientFactory._socketTimeout;
 		_proxyConfig = restHighLevelClientFactory._proxyConfig;
 		_userName = restHighLevelClientFactory._userName;
 	}
@@ -320,7 +327,7 @@ public class RestHighLevelClientFactory {
 	private RequestConfig.Builder _customizeRequestConfig(
 		RequestConfig.Builder requestConfigBuilder) {
 
-		return requestConfigBuilder.setSocketTimeout(120000);
+		return requestConfigBuilder.setSocketTimeout(_socketTimeout);
 	}
 
 	private HttpHost[] _getHttpHosts() {
@@ -335,6 +342,7 @@ public class RestHighLevelClientFactory {
 	private String[] _networkHostAddresses;
 	private String _password;
 	private ProxyConfig _proxyConfig;
+	private int _socketTimeout;
 	private String _truststorePassword;
 	private String _truststorePath;
 	private String _truststoreType;

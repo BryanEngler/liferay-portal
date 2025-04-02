@@ -44,6 +44,7 @@ public class ElasticsearchConnectionBuilder {
 		elasticsearchConnection.setPreConnectElasticsearchConnectionConsumer(
 			_preConnectElasticsearchConnectionConsumer);
 		elasticsearchConnection.setProxyConfig(_proxyConfig);
+		elasticsearchConnection.setSocketTimeout(_socketTimeout);
 		elasticsearchConnection.setTruststorePassword(_truststorePassword);
 		elasticsearchConnection.setTruststorePath(_truststorePath);
 		elasticsearchConnection.setTruststoreType(_truststoreType);
@@ -119,6 +120,12 @@ public class ElasticsearchConnectionBuilder {
 		return this;
 	}
 
+	public ElasticsearchConnectionBuilder socketTimeout(int socketTimeout) {
+		_socketTimeout = socketTimeout;
+
+		return this;
+	}
+
 	public ElasticsearchConnectionBuilder truststorePassword(
 		String truststorePassword) {
 
@@ -161,6 +168,7 @@ public class ElasticsearchConnectionBuilder {
 	private Consumer<ElasticsearchConnection>
 		_preConnectElasticsearchConnectionConsumer;
 	private ProxyConfig _proxyConfig;
+	private int _socketTimeout;
 	private String _truststorePassword;
 	private String _truststorePath;
 	private String _truststoreType;

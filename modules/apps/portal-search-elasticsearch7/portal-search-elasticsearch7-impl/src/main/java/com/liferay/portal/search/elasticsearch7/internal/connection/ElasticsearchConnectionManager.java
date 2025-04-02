@@ -433,6 +433,8 @@ public class ElasticsearchConnectionManager
 			elasticsearchConfigurationWrapper.password()
 		).proxyConfig(
 			createProxyConfig()
+		).socketTimeout(
+			elasticsearchConfigurationWrapper.socketTimeout()
 		).truststorePassword(
 			elasticsearchConfigurationWrapper.truststorePassword()
 		).truststorePath(

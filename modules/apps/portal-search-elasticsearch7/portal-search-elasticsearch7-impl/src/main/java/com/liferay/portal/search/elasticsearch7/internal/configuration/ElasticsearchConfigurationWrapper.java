@@ -258,6 +258,10 @@ public class ElasticsearchConfigurationWrapper
 		return _elasticsearchConfiguration.sidecarShutdownTimeout();
 	}
 
+	public int socketTimeout() {
+		return _elasticsearchConfiguration.socketTimeout();
+	}
+
 	public boolean trackTotalHits() {
 		return _elasticsearchConfiguration.trackTotalHits();
 	}
