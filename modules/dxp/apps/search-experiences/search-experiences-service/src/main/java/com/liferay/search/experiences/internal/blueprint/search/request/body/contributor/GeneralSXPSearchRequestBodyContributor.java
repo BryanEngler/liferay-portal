@@ -11,6 +11,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.search.asset.ModelIdentifier;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.search.experiences.internal.blueprint.parameter.SXPParameterData;
 import com.liferay.search.experiences.rest.dto.v1_0.Configuration;
@@ -85,57 +86,53 @@ public class GeneralSXPSearchRequestBodyContributor
 			String[] searchableAssetTypes =
 				generalConfiguration.getSearchableAssetTypes();
 
-			Set<String> assetTypeNameSet = new HashSet<>();
+			Set<String> classNamesSet = new HashSet<>();
 
 			for (String searchableAssetType : searchableAssetTypes) {
-				String[] assetTypeIdentifier = StringUtil.split(
-					searchableAssetType, "&&");
+				ModelIdentifier modelIdentifier = _getModelIdentifier(
+					searchableAssetType);
 
-				assetTypeNameSet.add(assetTypeIdentifier[0]);
+				classNamesSet.add(modelIdentifier.getClassName());
 			}
 
-			String[] assetTypeNames = assetTypeNameSet.toArray(new String[0]);
+			String[] classNames = classNamesSet.toArray(new String[0]);
 
-			searchRequestBuilder.entryClassNames(assetTypeNames);
-			searchRequestBuilder.modelIndexerClassNames(assetTypeNames);
+			searchRequestBuilder.entryClassNames(classNames);
+			searchRequestBuilder.modelIndexerClassNames(classNames);
 
 			if (FeatureFlagManagerUtil.isEnabled("LPS-129412")) {
-				HashMap<String, List<String[]>> assetSubtypeNameHashMap =
+				HashMap<String, List<ModelIdentifier>> modelIdentifiersMap =
 					new HashMap<>();
 
 				for (String searchableAssetType : searchableAssetTypes) {
-					String[] assetTypeIdentifier = StringUtil.split(
-						searchableAssetType, "&&");
+					ModelIdentifier modelIdentifier = _getModelIdentifier(
+						searchableAssetType);
 
-					if (assetTypeIdentifier.length <= 1) {
+					if (!modelIdentifier.hasERCInfo()) {
 						continue;
 					}
 
-					String assetTypeKey = assetTypeIdentifier[0];
+					String className = modelIdentifier.getClassName();
 
-					List<String[]> searchableAssetSubtypeIdentifiers;
+					List<ModelIdentifier> modelIdentifiers;
 
-					if (assetSubtypeNameHashMap.containsKey(assetTypeKey)) {
-						searchableAssetSubtypeIdentifiers =
-							assetSubtypeNameHashMap.get(assetTypeKey);
+					if (modelIdentifiersMap.containsKey(className)) {
+						modelIdentifiers = modelIdentifiersMap.get(className);
 
-						searchableAssetSubtypeIdentifiers.add(
-							assetTypeIdentifier);
+						modelIdentifiers.add(modelIdentifier);
 					}
 					else {
-						searchableAssetSubtypeIdentifiers = new ArrayList<>();
+						modelIdentifiers = new ArrayList<>();
 
-						searchableAssetSubtypeIdentifiers.add(
-							assetTypeIdentifier);
+						modelIdentifiers.add(modelIdentifier);
 					}
 
-					assetSubtypeNameHashMap.put(
-						assetTypeKey, searchableAssetSubtypeIdentifiers);
+					modelIdentifiersMap.put(className, modelIdentifiers);
 				}
 
 				searchRequestBuilder.withSearchContext(
 					searchContext -> searchContext.setAttribute(
-						"searchableAssetSubtypesMap", assetSubtypeNameHashMap));
+						"modelIdentifiersMap", modelIdentifiersMap));
 			}
 		}
 
@@ -151,6 +148,56 @@ public class GeneralSXPSearchRequestBodyContributor
 					TimeZoneUtil.getTimeZone(
 						generalConfiguration.getTimeZoneId())));
 		}
+	}
+
+	private ModelIdentifier _getModelIdentifier(String searchableAssetType) {
+		String[] modelIdentifierParts = StringUtil.split(
+			searchableAssetType, "&&");
+
+		ModelIdentifier modelIdentifier = new ModelIdentifier() {
+						@Override
+						public String getClassName() {
+							return null;
+						}
+
+						@Override
+						public String getEntityERC() {
+							return null;
+						}
+
+						@Override
+						public String getGroupERC() {
+							return null;
+						}
+
+						@Override
+						public boolean hasERCInfo() {
+							return false;
+						}
+
+						@Override
+						public void setClassName(String className) {
+						}
+
+						@Override
+						public void setEntityERC(String entityERC) {
+						}
+
+						@Override
+						public void setGroupERC(String groupERC) {
+						}
+		};//replace with builder
+
+		modelIdentifier.setClassName(modelIdentifierParts[0]); //possible out of bounds?
+
+		if (modelIdentifierParts.length <= 1) {
+			return modelIdentifier;
+		}
+
+		modelIdentifier.setEntityERC(modelIdentifierParts[2]);
+		modelIdentifier.setGroupERC(modelIdentifierParts[1]);
+
+		return modelIdentifier;
 	}
 
 	@Override

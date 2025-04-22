@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.search.asset.ModelIdentifier;
 import com.liferay.portal.search.spi.model.query.contributor.ModelPreFilterContributor;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchSettings;
 
@@ -173,29 +174,26 @@ public class DLFileEntryModelPreFilterContributor
 	private void _addSubtypeFilter(
 		BooleanFilter booleanFilter, SearchContext searchContext) {
 
-		HashMap<String, List<String[]>> searchableAssetSubtypesMap =
-			(HashMap<String, List<String[]>>)searchContext.getAttribute(
-				"searchableAssetSubtypesMap");
+		HashMap<String, List<ModelIdentifier>> modelIdentifiersMap =
+			(HashMap<String, List<ModelIdentifier>>)searchContext.getAttribute(
+				"modelIdentifiersMap");
 
-		if ((searchableAssetSubtypesMap == null) ||
-			!searchableAssetSubtypesMap.containsKey(
-				DLFileEntry.class.getName())) {
+		if ((modelIdentifiersMap == null) ||
+			!modelIdentifiersMap.containsKey(DLFileEntry.class.getName())) {
 
 			return;
 		}
 
 		BooleanFilter subtypeBooleanFilter = new BooleanFilter();
 
-		List<String[]> searchableAssetSubtypeIdentifiers =
-			searchableAssetSubtypesMap.get(DLFileEntry.class.getName());
+		List<ModelIdentifier> modelIdentifiers =
+			modelIdentifiersMap.get(DLFileEntry.class.getName());
 
-		for (String[] searchableAssetSubtypeIdentifier :
-				searchableAssetSubtypeIdentifiers) {
-
+		for (ModelIdentifier modelIdentifier : modelIdentifiers) {
 			try {
-				if (searchableAssetSubtypeIdentifier[1].equals(
-						StringPool.BLANK)) {
+				String className = modelIdentifier.getClassName();
 
+				if (className.equals(StringPool.BLANK)) {
 					subtypeBooleanFilter.addTerm("fileEntryTypeId", 0);
 
 					continue;
@@ -203,14 +201,13 @@ public class DLFileEntryModelPreFilterContributor
 
 				Group group =
 					_groupLocalService.getGroupByExternalReferenceCode(
-						searchableAssetSubtypeIdentifier[1],
+						modelIdentifier.getGroupERC(),
 						searchContext.getCompanyId());
 
 				DLFileEntryType dlFileEntryType =
 					_dlFileEntryTypeLocalService.
 						getDLFileEntryTypeByExternalReferenceCode(
-							searchableAssetSubtypeIdentifier[2],
-							group.getGroupId());
+							modelIdentifier.getEntityERC(), group.getGroupId());
 
 				subtypeBooleanFilter.addTerm(
 					"fileEntryTypeId", dlFileEntryType.getFileEntryTypeId());
