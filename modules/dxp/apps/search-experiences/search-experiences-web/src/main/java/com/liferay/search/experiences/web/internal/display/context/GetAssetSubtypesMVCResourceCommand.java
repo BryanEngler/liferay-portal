@@ -206,6 +206,14 @@ public class GetAssetSubtypesMVCResourceCommand implements MVCResourceCommand {
 		for (String assetSubtypeIdentifier : assetSubtypeIdentifiers) {
 			String[] assetSubtypeIdentifierArray = StringUtil.split(
 				assetSubtypeIdentifier, "&&");
+			//implement a reusable AssetSubtypeIdentifierBuilder in portal-search-api that is an osgi component
+			//builder can take the "3 part" string as input and return to us each part in the form of:
+			//an AssetSubtypeIdentifier object which can give us the
+				//1)classname
+				//2)wheter there is ERC information available or not
+				//3)the groupERC and subtypeERC
+
+			//implement AssetSubtypeIdentifierBuilderImpl and AssetSubtypeIdentifierImpl in portal-search
 
 			String entryClassName = assetSubtypeIdentifierArray[0];
 
