@@ -106,13 +106,10 @@ public class GeneralSXPSearchRequestBodyContributor
 					continue;
 				}
 
-				List<AssetSubtypeIdentifier> assetSubtypeIdentifiers;
+				List<AssetSubtypeIdentifier> assetSubtypeIdentifiers =
+					assetSubtypeIdentifiersMap.get(className);
 
-				if (assetSubtypeIdentifiersMap.containsKey(className)) {
-					assetSubtypeIdentifiers = assetSubtypeIdentifiersMap.get(
-						className);
-				}
-				else {
+				if (assetSubtypeIdentifiers == null) {
 					assetSubtypeIdentifiers = new ArrayList<>();
 				}
 
