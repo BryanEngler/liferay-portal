@@ -90,15 +90,15 @@ public class GeneralSXPSearchRequestBodyContributor
 			HashMap<String, List<AssetSubtypeIdentifier>>
 				assetSubtypeIdentifiersMap = new HashMap<>();
 
-			Set<String> entryClassNameSet = new HashSet<>();
+			Set<String> classNameSet = new HashSet<>();
 
 			for (String searchableAssetType : searchableAssetTypes) {
 				String[] assetSubtypeIdentifierParts = StringUtil.split(
 					searchableAssetType, "&&");
 
-				String entryClassName = assetSubtypeIdentifierParts[0];
+				String className = assetSubtypeIdentifierParts[0];
 
-				entryClassNameSet.add(entryClassName);
+				classNameSet.add(className);
 
 				if ((assetSubtypeIdentifierParts.length != 3) ||
 					!FeatureFlagManagerUtil.isEnabled("LPS-129412")) {
@@ -108,9 +108,9 @@ public class GeneralSXPSearchRequestBodyContributor
 
 				List<AssetSubtypeIdentifier> assetSubtypeIdentifiers;
 
-				if (assetSubtypeIdentifiersMap.containsKey(entryClassName)) {
+				if (assetSubtypeIdentifiersMap.containsKey(className)) {
 					assetSubtypeIdentifiers = assetSubtypeIdentifiersMap.get(
-						entryClassName);
+						className);
 				}
 				else {
 					assetSubtypeIdentifiers = new ArrayList<>();
@@ -122,18 +122,19 @@ public class GeneralSXPSearchRequestBodyContributor
 						assetSubtypeIdentifierParts[2]));
 
 				assetSubtypeIdentifiersMap.put(
-					entryClassName, assetSubtypeIdentifiers);
+					className, assetSubtypeIdentifiers);
 			}
 
-			String[] entryClassNames = entryClassNameSet.toArray(new String[0]);
+			String[] classNames = classNameSet.toArray(new String[0]);
 
-			searchRequestBuilder.entryClassNames(entryClassNames);
-			searchRequestBuilder.modelIndexerClassNames(entryClassNames);
+			searchRequestBuilder.entryClassNames(classNames);
+			searchRequestBuilder.modelIndexerClassNames(classNames);
 
 			if (FeatureFlagManagerUtil.isEnabled("LPS-129412")) {
 				searchRequestBuilder.withSearchContext(
 					searchContext -> searchContext.setAttribute(
-						"assetSubtypeIdentifiers", assetSubtypeIdentifiersMap));
+						"assetSubtypeIdentifiersMap",
+						assetSubtypeIdentifiersMap));
 			}
 		}
 
