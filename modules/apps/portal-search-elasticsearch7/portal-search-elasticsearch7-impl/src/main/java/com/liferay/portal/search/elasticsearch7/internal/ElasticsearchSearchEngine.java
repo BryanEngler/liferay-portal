@@ -63,6 +63,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.ServiceLoader;
 
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.cluster.settings.ClusterGetSettingsRequest;
@@ -77,6 +78,7 @@ import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.bytes.BytesArray;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.rest.RestStatus;
+import org.elasticsearch.xcontent.XContentBuilderExtension;
 import org.elasticsearch.xcontent.XContentType;
 
 import org.osgi.service.component.annotations.Activate;
@@ -331,10 +333,25 @@ public class ElasticsearchSearchEngine
 
 	@Activate
 	protected void activate(Map<String, Object> properties) {
+		boolean initXContentBuilder = false;
+
+		if (initXContentBuilder) {
+			try {
+				_searchEngineAdapter.execute(new HealthClusterRequest());
+			}
+			catch (Exception e) {
+				_log.error(e);
+			}
+		}
+
+		_log.error("hasNext before swap " + ServiceLoader.load(XContentBuilderExtension.class).iterator().hasNext());
+
 		_elasticsearchConfigurationWrapper.register(this);
 
 		try (SafeCloseable safeCloseable = ThreadContextClassLoaderUtil.swap(
 				ElasticsearchSearchEngine.class.getClassLoader())) {
+
+			_log.error("hasNext after swap " + ServiceLoader.load(XContentBuilderExtension.class).iterator().hasNext());
 
 			_checkNodeVersions();
 
