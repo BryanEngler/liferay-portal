@@ -58,7 +58,7 @@ public class GroupModelListener extends BaseModelListener<Group> {
 	}
 
 	private void _updateTypeSettings(
-		long groupId, AssetListEntry assetListEntry, long segmentsEntryId) {
+		AssetListEntry assetListEntry, long groupId, long segmentsEntryId) {
 
 		UnicodeProperties unicodeProperties = UnicodePropertiesBuilder.create(
 			true
@@ -113,7 +113,7 @@ public class GroupModelListener extends BaseModelListener<Group> {
 
 				for (long segmentsEntryId : segmentsEntryIds) {
 					_updateTypeSettings(
-						groupId, assetListEntry, segmentsEntryId);
+						assetListEntry, groupId, segmentsEntryId);
 				}
 			}
 		}
