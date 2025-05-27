@@ -38,11 +38,11 @@ public class GroupModelListener extends BaseModelListener<Group> {
 
 	@Override
 	public void onBeforeRemove(Group group) throws ModelListenerException {
-		_removeAssetEntriesFromAssetLists(group.getGroupId());
-		_removeGroupFromAssetLists(group.getGroupId());
+		_deleteAssetListEntries(group.getGroupId());
+		_updateTypeSettings(group.getGroupId());
 	}
 
-	private void _removeAssetEntriesFromAssetLists(long groupId) {
+	private void _deleteAssetListEntries(long groupId) {
 		try {
 			List<AssetListEntry> assetListEntries =
 				_assetListEntryLocalService.getAssetListEntries(groupId);
@@ -57,7 +57,7 @@ public class GroupModelListener extends BaseModelListener<Group> {
 		}
 	}
 
-	private void _removeFromTypeSettings(
+	private void _updateTypeSettings(
 		long groupId, AssetListEntry assetListEntry, long segmentsEntryId) {
 
 		UnicodeProperties unicodeProperties = UnicodePropertiesBuilder.create(
@@ -87,7 +87,7 @@ public class GroupModelListener extends BaseModelListener<Group> {
 		}
 	}
 
-	private void _removeGroupFromAssetLists(long groupId) {
+	private void _updateTypeSettings(long groupId) {
 		try {
 			List<AssetListEntry> assetListEntries =
 				_assetListEntryLocalService.getAssetListEntries(
@@ -112,7 +112,7 @@ public class GroupModelListener extends BaseModelListener<Group> {
 								getSegmentsEntryId()));
 
 				for (long segmentsEntryId : segmentsEntryIds) {
-					_removeFromTypeSettings(
+					_updateTypeSettings(
 						groupId, assetListEntry, segmentsEntryId);
 				}
 			}
