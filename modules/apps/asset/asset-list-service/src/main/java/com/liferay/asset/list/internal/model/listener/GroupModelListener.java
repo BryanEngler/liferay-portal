@@ -39,6 +39,7 @@ public class GroupModelListener extends BaseModelListener<Group> {
 	@Override
 	public void onBeforeRemove(Group group) throws ModelListenerException {
 		_deleteAssetListEntries(group.getGroupId());
+
 		_updateTypeSettings(group.getGroupId());
 	}
 
