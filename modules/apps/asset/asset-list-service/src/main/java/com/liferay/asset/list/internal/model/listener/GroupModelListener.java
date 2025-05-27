@@ -17,8 +17,6 @@ import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.ModelListener;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
@@ -67,19 +65,13 @@ public class GroupModelListener extends BaseModelListener<Group> {
 			assetListEntry.getTypeSettings(segmentsEntryId)
 		).build();
 
-		long[] storedGroupIds = GetterUtil.getLongValues(
-			StringUtil.split(
-				unicodeProperties.getProperty("groupIds", StringPool.BLANK)));
+		String[] groupIds = StringUtil.split(
+			unicodeProperties.getProperty("groupIds", StringPool.BLANK));
 
-		if (ArrayUtil.isEmpty(storedGroupIds)) {
-			return;
-		}
-
-		List<Long> storedGroupIdsList = ListUtil.fromArray(storedGroupIds);
-
-		if (storedGroupIdsList.remove(groupId)) {
+		if (ArrayUtil.contains(groupIds, groupId)) {
 			unicodeProperties.setProperty(
-				"groupIds", StringUtil.merge(storedGroupIdsList));
+				"groupIds",
+				StringUtil.merge(ArrayUtil.remove(groupIds, groupId)));
 
 			_assetListEntrySegmentsEntryRelLocalService.
 				updateAssetListEntrySegmentsEntryRelTypeSettings(
