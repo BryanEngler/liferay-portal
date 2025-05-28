@@ -36,7 +36,7 @@ public class AssetSubtypeIdentifierBuilderImpl
 		_className = assetSubtypeIdentifierParts[0];
 
 		if (assetSubtypeIdentifierParts.length != 3) {
-			_groupExternalReferenceCode = StringPool.BLANK;
+			_groupExternalReferenceCode = StringPool.BLANK; //i would just go with null here, then would have to update logic around usages of getGroupExternalReferenceCode() and getSubtypeExternalReferenceCode()
 			_subtypeExternalReferenceCode = StringPool.BLANK;
 
 			return this;
