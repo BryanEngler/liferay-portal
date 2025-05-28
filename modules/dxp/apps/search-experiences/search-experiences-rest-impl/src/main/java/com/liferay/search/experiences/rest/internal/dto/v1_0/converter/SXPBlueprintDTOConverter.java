@@ -93,8 +93,8 @@ public class SXPBlueprintDTOConverter
 				setCollectionProviderTypeName(
 					() -> _getTypeName(
 						sxpBlueprint.getCompanyId(),
-						dtoConverterContext.getLocale(),
-						sxpBlueprint.getConfigurationJSON()));
+						sxpBlueprint.getConfigurationJSON(),
+						dtoConverterContext.getLocale()));
 				setConfiguration(
 					() -> _toConfiguration(
 						sxpBlueprint.getConfigurationJSON()));
@@ -148,9 +148,9 @@ public class SXPBlueprintDTOConverter
 				setCollectionProviderTypeName(
 					() -> _getTypeName(
 						sxpBlueprint.getCompanyId(),
+						sxpBlueprint.getConfigurationJSON(),
 						LocaleUtil.fromLanguageId(
-							sxpBlueprint.getDefaultLanguageId()),
-						sxpBlueprint.getConfigurationJSON()));
+							sxpBlueprint.getDefaultLanguageId())));
 				setConfiguration(
 					() -> _toConfiguration(
 						sxpBlueprint.getConfigurationJSON()));
@@ -282,7 +282,7 @@ public class SXPBlueprintDTOConverter
 		return StringPool.BLANK;
 	}
 
-	private String _getTypeName(long companyId, Locale locale, String json) {
+	private String _getTypeName(long companyId, String json, Locale locale) {
 		AssetSubtypeIdentifier assetSubtypeIdentifier =
 			_getAssetSubtypeIdentifier(json);
 
