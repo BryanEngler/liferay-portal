@@ -88,7 +88,7 @@ public class SXPBlueprintInfoCollectionProviderSXPBlueprintModelListener
 	@Override
 	public void onAfterCreate(SXPBlueprint sxpBlueprint) {
 		if (!FeatureFlagManagerUtil.isEnabled("LPS-129412") ||
-			!_collectionProvider(sxpBlueprint)) {
+			!_isCollectionProvider(sxpBlueprint)) {
 
 			return;
 		}
@@ -147,7 +147,7 @@ public class SXPBlueprintInfoCollectionProviderSXPBlueprintModelListener
 		return _className;
 	}
 
-	private boolean _collectionProvider(SXPBlueprint sxpBlueprint) {
+	private boolean _isCollectionProvider(SXPBlueprint sxpBlueprint) {
 		Configuration configuration = Configuration.unsafeToDTO(
 			sxpBlueprint.getConfigurationJSON());
 
