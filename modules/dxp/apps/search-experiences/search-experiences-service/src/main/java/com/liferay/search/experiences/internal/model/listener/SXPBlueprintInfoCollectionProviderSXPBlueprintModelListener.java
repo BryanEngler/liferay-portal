@@ -147,21 +147,6 @@ public class SXPBlueprintInfoCollectionProviderSXPBlueprintModelListener
 		return _className;
 	}
 
-	private boolean _isCollectionProvider(SXPBlueprint sxpBlueprint) {
-		Configuration configuration = Configuration.unsafeToDTO(
-			sxpBlueprint.getConfigurationJSON());
-
-		GeneralConfiguration generalConfiguration =
-			configuration.getGeneralConfiguration();
-
-		if (generalConfiguration == null) {
-			return false;
-		}
-
-		return GetterUtil.getBoolean(
-			generalConfiguration.getCollectionProvider());
-	}
-
 	private String _getClassName(SXPBlueprint sxpBlueprint) {
 		Configuration configuration = Configuration.unsafeToDTO(
 			sxpBlueprint.getConfigurationJSON());
@@ -186,6 +171,21 @@ public class SXPBlueprintInfoCollectionProviderSXPBlueprintModelListener
 			).build();
 
 		return assetSubtypeIdentifier.getClassName();
+	}
+
+	private boolean _isCollectionProvider(SXPBlueprint sxpBlueprint) {
+		Configuration configuration = Configuration.unsafeToDTO(
+			sxpBlueprint.getConfigurationJSON());
+
+		GeneralConfiguration generalConfiguration =
+			configuration.getGeneralConfiguration();
+
+		if (generalConfiguration == null) {
+			return false;
+		}
+
+		return GetterUtil.getBoolean(
+			generalConfiguration.getCollectionProvider());
 	}
 
 	private final AssetHelper _assetHelper;
