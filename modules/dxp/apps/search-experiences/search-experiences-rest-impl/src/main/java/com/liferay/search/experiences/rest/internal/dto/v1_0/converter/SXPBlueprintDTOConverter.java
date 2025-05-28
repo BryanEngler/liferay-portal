@@ -216,7 +216,7 @@ public class SXPBlueprintDTOConverter
 
 		if ((assetSubtypeIdentifier == null) ||
 			Validator.isNull(
-				assetSubtypeIdentifier.getSubtypeExternalReferenceCode())) {
+				assetSubtypeIdentifier.getSubtypeExternalReferenceCode())) { //does this early return...
 
 			return StringPool.BLANK;
 		}
@@ -232,7 +232,7 @@ public class SXPBlueprintDTOConverter
 						assetSubtypeIdentifier.getGroupExternalReferenceCode(),
 						StringPool.BLANK)) {
 
-					dlFileEntryType =
+					dlFileEntryType = //...mean that this block is unreachable? if we have a SubtypeExternalReferenceCode, then do we also have a GroupExternalReferenceCode too? or is it possible to have the identifier string = "className&&&&subTypeERC"?
 						_dlFileEntryTypeLocalService.
 							getBasicDocumentDLFileEntryType();
 				}
