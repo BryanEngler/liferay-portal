@@ -10,7 +10,7 @@ import com.liferay.portal.search.aggregation.bucket.ChildrenAggregation;
 import com.liferay.portal.search.internal.aggregation.BaseFieldAggregation;
 
 /**
- * @author Michael C. Han
+ * @author Michael C. Hank
  */
 public class ChildrenAggregationImpl
 	extends BaseFieldAggregation implements ChildrenAggregation {
