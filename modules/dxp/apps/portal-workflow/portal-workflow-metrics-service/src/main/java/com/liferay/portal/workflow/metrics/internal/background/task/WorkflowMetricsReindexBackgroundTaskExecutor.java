@@ -81,8 +81,12 @@ public class WorkflowMetricsReindexBackgroundTaskExecutor
 			WorkflowMetricsIndex workflowMetricsIndex =
 				WorkflowMetricsIndex.toWorkflowMetricsIndex(indexEntityName);
 
-			workflowMetricsIndex.deleteAllDocuments(
-				_searchCapabilities, _searchEngineAdapter, _queries,
+			workflowMetricsIndex.removeIndex(
+				_searchCapabilities, _searchEngineAdapter,
+				_indexNameBuilder, backgroundTask.getCompanyId());
+
+			workflowMetricsIndex.createIndex(
+				_searchCapabilities, _searchEngineAdapter,
 				_indexNameBuilder, backgroundTask.getCompanyId());
 		}
 
