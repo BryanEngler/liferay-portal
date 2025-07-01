@@ -75,7 +75,8 @@ public interface ObjectEntryResource {
 		throws Exception;
 
 	public Page<ObjectEntry> getByExternalReferenceCodeVersionsPage(
-			String externalReferenceCode, Pagination pagination)
+			String externalReferenceCode, String search, Pagination pagination,
+			com.liferay.portal.kernel.search.Sort[] sorts)
 		throws Exception;
 
 	public Page<ObjectEntry> getObjectEntriesPage(
@@ -87,7 +88,8 @@ public interface ObjectEntryResource {
 		throws Exception;
 
 	public Page<ObjectEntry> getObjectEntriesVersionsPage(
-			Long objectEntryId, Pagination pagination)
+			Long objectEntryId, String search, Pagination pagination,
+			com.liferay.portal.kernel.search.Sort[] sorts)
 		throws Exception;
 
 	public ObjectEntry getObjectEntry(Long objectEntryId) throws Exception;
@@ -110,8 +112,9 @@ public interface ObjectEntryResource {
 
 	public Page<ObjectEntry>
 			getScopeScopeKeyByExternalReferenceCodeVersionsPage(
-				String scopeKey, String externalReferenceCode,
-				Pagination pagination)
+				String scopeKey, String externalReferenceCode, String search,
+				Pagination pagination,
+				com.liferay.portal.kernel.search.Sort[] sorts)
 		throws Exception;
 
 	public Page<ObjectEntry> getScopeScopeKeyPage(
