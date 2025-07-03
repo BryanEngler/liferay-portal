@@ -77,6 +77,7 @@ public class ObjectEntryVersionLocalServiceImpl
 		return objectEntryVersion;
 	}
 
+	@Override
 	public void checkObjectEntryVersions(long companyId)
 		throws PortalException {
 
