@@ -26,6 +26,8 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.search.Indexable;
+import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -182,6 +184,7 @@ public class ObjectEntryVersionLocalServiceImpl
 		objectEntryVersionPersistence.removeByObjectEntryId(objectEntryId);
 	}
 
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public ObjectEntryVersion expireObjectEntryVersion(
 			long userId, ObjectEntry objectEntry, int version,
@@ -194,6 +197,7 @@ public class ObjectEntryVersionLocalServiceImpl
 				objectEntry.getObjectEntryId(), version));
 	}
 
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public ObjectEntryVersion expireObjectEntryVersion(
 			long userId, ObjectEntryVersion objectEntryVersion)
@@ -258,6 +262,7 @@ public class ObjectEntryVersionLocalServiceImpl
 		return false;
 	}
 
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public ObjectEntryVersion updateLatestObjectEntryVersion(
 			ObjectEntry objectEntry)
