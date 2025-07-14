@@ -178,13 +178,26 @@ public class ObjectEntryVersionLocalServiceImpl
 	public void deleteObjectEntryVersionByObjectDefinitionId(
 		Long objectDefinitionId) {
 
-		objectEntryVersionPersistence.removeByObjectDefinitionId(
-			objectDefinitionId);
+		for (ObjectEntryVersion objectEntryVersion :
+				objectEntryVersionPersistence.findByObjectDefinitionId(
+					objectDefinitionId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					null)) {
+
+			objectEntryVersionLocalService.deleteObjectEntryVersion(
+				objectEntryVersion);
+		}
 	}
 
 	@Override
 	public void deleteObjectEntryVersions(long objectEntryId) {
-		objectEntryVersionPersistence.removeByObjectEntryId(objectEntryId);
+		for (ObjectEntryVersion objectEntryVersion :
+				objectEntryVersionPersistence.findByObjectEntryId(
+					objectEntryId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					null)) {
+
+			objectEntryVersionLocalService.deleteObjectEntryVersion(
+				objectEntryVersion);
+		}
 	}
 
 	@Indexable(type = IndexableType.REINDEX)
@@ -217,7 +230,7 @@ public class ObjectEntryVersionLocalServiceImpl
 		for (ObjectEntryVersion objectEntryVersion :
 				getObjectEntryVersions(objectEntry.getObjectEntryId())) {
 
-			expireObjectEntryVersion(
+			objectEntryVersionLocalService.expireObjectEntryVersion(
 				userId, objectEntry, objectEntryVersion.getVersion(),
 				serviceContext);
 		}
