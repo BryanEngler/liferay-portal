@@ -842,6 +842,10 @@ public class DefaultObjectEntryManagerImplTest
 				).labelMap(
 					LocalizedMapUtil.getLocalizedMap(
 						RandomTestUtil.randomString())
+				).indexed(
+					true
+				).indexedAsKeyword(
+					true
 				).name(
 					"textObjectFieldName"
 				).build()),
@@ -6203,7 +6207,7 @@ public class DefaultObjectEntryManagerImplTest
 			ListUtil.fromArray(objectEntry1));
 
 		objectEntry2 = _updateObjectEntryVersion(
-			_objectDefinition4, objectEntry1, 2);
+			_objectDefinition4, objectEntry1, "cat", 2);
 
 		page = _defaultObjectEntryManager.getVersionedObjectEntries(
 			dtoConverterContext, objectEntry2.getExternalReferenceCode(),
@@ -6215,6 +6219,50 @@ public class DefaultObjectEntryManagerImplTest
 		assertEquals(
 			(List<ObjectEntry>)page.getItems(),
 			ListUtil.fromArray(objectEntry1, objectEntry2));
+
+		page = _defaultObjectEntryManager.getVersionedObjectEntries(
+			dtoConverterContext, objectEntry2.getExternalReferenceCode(),
+			_objectDefinition4, _group.getGroupKey(), null, null,
+			new Sort[] {
+				SortFactoryUtil.create(
+					Field.getSortableFieldName("modified"), true)
+			});
+
+		assertEquals(
+			(List<ObjectEntry>)page.getItems(),
+			ListUtil.fromArray(objectEntry2, objectEntry1));
+
+		page = _defaultObjectEntryManager.getVersionedObjectEntries(
+			dtoConverterContext, objectEntry2.getExternalReferenceCode(),
+			_objectDefinition4, _group.getGroupKey(), null, null,
+			new Sort[] {
+				SortFactoryUtil.create(
+					Field.getSortableFieldName("version"), false)
+			});
+
+		assertEquals(
+			(List<ObjectEntry>)page.getItems(),
+			ListUtil.fromArray(objectEntry1, objectEntry2));
+
+		page = _defaultObjectEntryManager.getVersionedObjectEntries(
+			dtoConverterContext, objectEntry2.getExternalReferenceCode(),
+			_objectDefinition4, _group.getGroupKey(), null, null,
+			new Sort[] {
+				SortFactoryUtil.create(
+					Field.getSortableFieldName("version"), true)
+			});
+
+		assertEquals(
+			(List<ObjectEntry>)page.getItems(),
+			ListUtil.fromArray(objectEntry2, objectEntry1));
+
+		page = _defaultObjectEntryManager.getVersionedObjectEntries(
+			dtoConverterContext, objectEntry2.getExternalReferenceCode(),
+			_objectDefinition4, _group.getGroupKey(), "cat", null, null);
+
+		assertEquals(
+			(List<ObjectEntry>)page.getItems(),
+			ListUtil.fromArray(objectEntry2));
 	}
 
 	@FeatureFlag("LPD-53981")
@@ -9840,6 +9888,16 @@ public class DefaultObjectEntryManagerImplTest
 			int versionNumber)
 		throws Exception {
 
+		return _updateObjectEntryVersion(
+			objectDefinition, objectEntry, RandomTestUtil.randomString(),
+			versionNumber);
+	}
+
+	private ObjectEntry _updateObjectEntryVersion(
+			ObjectDefinition objectDefinition, ObjectEntry objectEntry,
+			String textObjectFieldNameValue, int versionNumber)
+		throws Exception {
+
 		_defaultObjectEntryManager.updateObjectEntry(
 			TestPropsValues.getCompanyId(), dtoConverterContext,
 			objectEntry.getExternalReferenceCode(), objectDefinition,
@@ -9847,7 +9905,7 @@ public class DefaultObjectEntryManagerImplTest
 				{
 					keywords = new String[] {RandomTestUtil.randomString()};
 					properties = HashMapBuilder.<String, Object>put(
-						"textObjectFieldName", RandomTestUtil.randomString()
+						"textObjectFieldName", textObjectFieldNameValue
 					).build();
 					systemProperties = new SystemProperties() {
 						{
