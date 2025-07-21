@@ -246,8 +246,19 @@ public class ObjectEntryEntityModel implements EntityModel {
 					new IntegerEntityField(
 						"taxonomyCategoryIds", locale -> "assetCategoryIds"))
 			).put(
+				"title",
+				new StringEntityField(
+					Field.TITLE,
+					locale -> Field.getSortableFieldName(
+						Field.getLocalizedName(locale, Field.TITLE)))
+			).put(
 				"userId",
 				new IntegerEntityField("userId", locale -> Field.USER_ID)
+			).put(
+				"version",
+				new IntegerEntityField(
+					Field.VERSION,
+					locale -> Field.getSortableFieldName(Field.VERSION))
 			).build();
 
 		for (ObjectField objectField : objectFields) {
