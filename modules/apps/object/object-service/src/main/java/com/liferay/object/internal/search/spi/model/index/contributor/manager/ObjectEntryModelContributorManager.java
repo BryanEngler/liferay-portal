@@ -349,6 +349,9 @@ public class ObjectEntryModelContributorManager {
 			"objectFolderExternalReferenceCode",
 			objectFolder.getExternalReferenceCode(), true);
 
+		document.addLocalizedKeyword(
+			Field.TITLE, objectEntry.getTitleMap(), false, true);
+
 		if (FeatureFlagManagerUtil.isEnabled(
 				objectEntry.getCompanyId(), "LPD-17564")) {
 
