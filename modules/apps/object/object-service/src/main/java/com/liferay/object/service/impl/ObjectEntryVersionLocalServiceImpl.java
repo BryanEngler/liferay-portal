@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -53,6 +54,7 @@ import org.osgi.service.component.annotations.Reference;
 public class ObjectEntryVersionLocalServiceImpl
 	extends ObjectEntryVersionLocalServiceBaseImpl {
 
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public ObjectEntryVersion addObjectEntryVersion(ObjectEntry objectEntry)
 		throws PortalException {
@@ -142,6 +144,7 @@ public class ObjectEntryVersionLocalServiceImpl
 		actionableDynamicQuery.performActions();
 	}
 
+	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public ObjectEntryVersion deleteObjectEntryVersion(
 			long objectEntryId, int version)
