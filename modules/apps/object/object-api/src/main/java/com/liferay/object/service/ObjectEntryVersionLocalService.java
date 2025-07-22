@@ -56,6 +56,7 @@ public interface ObjectEntryVersionLocalService
 	 *
 	 * Never modify this interface directly. Add custom service methods to <code>com.liferay.object.service.impl.ObjectEntryVersionLocalServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface. Consume the object entry version local service via injection or a <code>org.osgi.util.tracker.ServiceTracker</code>. Use {@link ObjectEntryVersionLocalServiceUtil} if injection and service tracking are not available.
 	 */
+	@Indexable(type = IndexableType.REINDEX)
 	public ObjectEntryVersion addObjectEntryVersion(ObjectEntry objectEntry)
 		throws PortalException;
 
@@ -107,6 +108,7 @@ public interface ObjectEntryVersionLocalService
 			long objectEntryVersionId)
 		throws PortalException;
 
+	@Indexable(type = IndexableType.DELETE)
 	public ObjectEntryVersion deleteObjectEntryVersion(
 			long objectEntryId, int version)
 		throws PortalException;
@@ -209,11 +211,13 @@ public interface ObjectEntryVersionLocalService
 	public long dynamicQueryCount(
 		DynamicQuery dynamicQuery, Projection projection);
 
+	@Indexable(type = IndexableType.REINDEX)
 	public ObjectEntryVersion expireObjectEntryVersion(
 			long userId, ObjectEntry objectEntry, int version,
 			ServiceContext serviceContext)
 		throws PortalException;
 
+	@Indexable(type = IndexableType.REINDEX)
 	public ObjectEntryVersion expireObjectEntryVersion(
 			long userId, ObjectEntryVersion objectEntryVersion)
 		throws PortalException;
@@ -327,6 +331,7 @@ public interface ObjectEntryVersionLocalService
 	public boolean isLatestObjectEntryVersion(long objectEntryId, int version)
 		throws PortalException;
 
+	@Indexable(type = IndexableType.REINDEX)
 	public ObjectEntryVersion updateLatestObjectEntryVersion(
 			ObjectEntry objectEntry)
 		throws PortalException;
