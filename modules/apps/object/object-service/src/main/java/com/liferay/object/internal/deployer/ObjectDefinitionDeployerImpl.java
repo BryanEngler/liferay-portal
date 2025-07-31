@@ -54,6 +54,7 @@ import com.liferay.object.service.ObjectDefinitionSettingLocalService;
 import com.liferay.object.service.ObjectEntryFolderLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectEntryService;
+import com.liferay.object.service.ObjectEntryVersionLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectFolderLocalService;
 import com.liferay.object.service.ObjectLayoutLocalService;
@@ -141,6 +142,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 		ObjectEntryFolderLocalService objectEntryFolderLocalService,
 		ObjectEntryLocalService objectEntryLocalService,
 		ObjectEntryService objectEntryService,
+		ObjectEntryVersionLocalService objectEntryVersionLocalService,
 		ObjectFieldLocalService objectFieldLocalService,
 		ObjectFolderLocalService objectFolderLocalService,
 		ObjectLayoutLocalService objectLayoutLocalService,
@@ -177,6 +179,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 		_objectEntryFolderLocalService = objectEntryFolderLocalService;
 		_objectEntryLocalService = objectEntryLocalService;
 		_objectEntryService = objectEntryService;
+		_objectEntryVersionLocalService = objectEntryVersionLocalService;
 		_objectFieldLocalService = objectFieldLocalService;
 		_objectFolderLocalService = objectFolderLocalService;
 		_objectLayoutLocalService = objectLayoutLocalService;
@@ -300,7 +303,8 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 					new ObjectEntryModelIndexerWriterContributor(
 						_dynamicQueryBatchIndexingActionableFactory,
 						objectDefinition.getObjectDefinitionId(),
-						_objectEntryLocalService);
+						_objectDefinitionLocalService, _objectEntryLocalService,
+						_objectEntryVersionLocalService);
 			ObjectEntryModelSummaryContributor
 				objectEntryModelSummaryContributor =
 					new ObjectEntryModelSummaryContributor();
@@ -665,6 +669,8 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 	private final ObjectEntryFolderLocalService _objectEntryFolderLocalService;
 	private final ObjectEntryLocalService _objectEntryLocalService;
 	private final ObjectEntryService _objectEntryService;
+	private final ObjectEntryVersionLocalService
+		_objectEntryVersionLocalService;
 	private final ObjectFieldLocalService _objectFieldLocalService;
 	private final ObjectFolderLocalService _objectFolderLocalService;
 	private final ObjectLayoutLocalService _objectLayoutLocalService;
