@@ -25,6 +25,8 @@ public interface ModelSearchSettings {
 
 	public boolean isPermissionAware();
 
+	public boolean isReindexEnabled();
+
 	public boolean isSearchResultPermissionFilterSuppressed();
 
 	public boolean isSelectAllLocales();

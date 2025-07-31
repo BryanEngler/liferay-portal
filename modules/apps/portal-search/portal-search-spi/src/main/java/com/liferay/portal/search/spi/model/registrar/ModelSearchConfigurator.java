@@ -50,6 +50,10 @@ public interface ModelSearchConfigurator<T extends BaseModel<?>> {
 		return true;
 	}
 
+	public default boolean isReindexEnabled() {
+		return true;
+	}
+
 	public default boolean isSearchResultPermissionFilterSuppressed() {
 		return false;
 	}

@@ -212,6 +212,11 @@ public class DefaultIndexer<T extends BaseModel<?>> implements Indexer<T> {
 	}
 
 	@Override
+	public boolean isReindexEnabled() {
+		return _modelSearchSettings.isReindexEnabled();
+	}
+
+	@Override
 	public boolean isStagingAware() {
 		return _modelSearchSettings.isStagingAware();
 	}

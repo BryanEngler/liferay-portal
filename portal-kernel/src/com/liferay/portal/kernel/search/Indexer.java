@@ -96,6 +96,10 @@ public interface Indexer<T> {
 	 */
 	public boolean isPermissionAware();
 
+	public default boolean isReindexEnabled() {
+		return true;
+	}
+
 	public boolean isStagingAware();
 
 	public boolean isVisible(long classPK, int status) throws Exception;

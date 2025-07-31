@@ -23,6 +23,7 @@ public class ModelSearchSettingsImpl implements ModelSearchSettings {
 		_defaultSelectedLocalizedFieldNames =
 			modelSearchConfigurator.getDefaultSelectedLocalizedFieldNames();
 		_permissionAware = modelSearchConfigurator.isPermissionAware();
+		_reindexEnabled = modelSearchConfigurator.isReindexEnabled();
 		_searchClassNames = new String[] {
 			modelSearchConfigurator.getClassName()
 		};
@@ -63,6 +64,11 @@ public class ModelSearchSettingsImpl implements ModelSearchSettings {
 	}
 
 	@Override
+	public boolean isReindexEnabled() {
+		return _reindexEnabled;
+	}
+
+	@Override
 	public boolean isSearchResultPermissionFilterSuppressed() {
 		return _searchResultPermissionFilterSuppressed;
 	}
@@ -82,6 +88,7 @@ public class ModelSearchSettingsImpl implements ModelSearchSettings {
 	private final String[] _defaultSelectedFieldNames;
 	private final String[] _defaultSelectedLocalizedFieldNames;
 	private final boolean _permissionAware;
+	private final boolean _reindexEnabled;
 	private final String[] _searchClassNames;
 	private final boolean _searchResultPermissionFilterSuppressed;
 	private final boolean _selectAllLocales;
