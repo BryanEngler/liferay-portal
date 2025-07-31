@@ -136,6 +136,10 @@ public class IndexActionsDisplayContextBuilder {
 					new IndexerClassNameModelResourceComparator(
 						true, _renderRequest.getLocale()))) {
 
+			if (!indexer.isReindexEnabled()) {
+				continue;
+			}
+
 			String key = "com.liferay.custom";
 
 			try {
