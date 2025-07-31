@@ -44,6 +44,11 @@ public class ObjectEntryVersionModelSearchConfigurator
 		return _modelIndexWriterContributor;
 	}
 
+	@Override
+	public boolean isReindexEnabled() {
+		return false;
+	}
+
 	@Activate
 	protected void activate() {
 		_modelIndexWriterContributor =
