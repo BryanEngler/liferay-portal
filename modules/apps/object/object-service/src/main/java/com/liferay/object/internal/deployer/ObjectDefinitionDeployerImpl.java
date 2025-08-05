@@ -322,11 +322,9 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 					ModelDocumentContributor.class,
 					new ObjectEntryModelDocumentContributor(
 						_accountEntryOrganizationRelLocalService,
-						objectDefinition.getClassName(),
 						_objectDefinitionLocalService,
 						_objectEntryFolderLocalService,
-						_objectEntryLocalService, _objectFieldLocalService,
-						_objectFolderLocalService),
+						_objectFieldLocalService, _objectFolderLocalService),
 					HashMapDictionaryBuilder.<String, Object>put(
 						"indexer.class.name", objectDefinition.getClassName()
 					).build()),
