@@ -5826,8 +5826,8 @@ public class ObjectEntryResourceTest {
 
 		Page<com.liferay.object.rest.dto.v1_0.ObjectEntry> objectEntryPage =
 			objectEntryResource1.getObjectEntriesVersionsPage(
-				objectEntry.getObjectEntryId(),
-				Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS));
+				objectEntry.getObjectEntryId(), null,
+				Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS), null);
 
 		Assert.assertEquals(2, objectEntryPage.getTotalCount());
 
@@ -5837,8 +5837,8 @@ public class ObjectEntryResourceTest {
 		AssertUtils.assertFailure(
 			NoSuchObjectEntryException.class, null,
 			() -> objectEntryResource2.getObjectEntriesVersionsPage(
-				objectEntry.getObjectEntryId(),
-				Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS)));
+				objectEntry.getObjectEntryId(), null,
+				Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS), null));
 	}
 
 	@Test
