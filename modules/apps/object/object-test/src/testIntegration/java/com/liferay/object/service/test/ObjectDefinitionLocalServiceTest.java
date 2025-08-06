@@ -219,6 +219,20 @@ public class ObjectDefinitionLocalServiceTest {
 				ObjectDefinitionConstants.STORAGE_TYPE_SALESFORCE,
 				Collections.emptyList(), Collections.emptyList()));
 
+		AssertUtils.assertFailure(
+			ObjectDefinitionEnableObjectEntryVersioningException.class,
+			"Enable object entry versioning is not allowed for non-indexed " +
+				"search object definitions",
+			() -> _objectDefinitionLocalService.addCustomObjectDefinition(
+				TestPropsValues.getUserId(), 0, null, false, true, false, false,
+				false, false, false, true, null,
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
+				ObjectDefinitionTestUtil.getRandomName(), null, null,
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
+				true, ObjectDefinitionConstants.SCOPE_COMPANY,
+				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
+				Collections.emptyList(), Collections.emptyList()));
+
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), 0, null, false, true, true, false,
@@ -2479,7 +2493,7 @@ public class ObjectDefinitionLocalServiceTest {
 	@FeatureFlag("LPD-17564")
 	@Test
 	public void testUpdateCustomObjectDefinition() throws Exception {
-		ObjectDefinition objectDefinition =
+		ObjectDefinition objectDefinition1 =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), 0, null, false, false, true, false,
 				false, true, true, true, null,
@@ -2489,23 +2503,24 @@ public class ObjectDefinitionLocalServiceTest {
 				ObjectDefinitionConstants.STORAGE_TYPE_SALESFORCE,
 				Collections.emptyList(), Collections.emptyList());
 
-		_assertLabelAndPluralLabel(objectDefinition, "Able", "Ables");
+		_assertLabelAndPluralLabel(objectDefinition1, "Able", "Ables");
 
-		Assert.assertFalse(objectDefinition.isActive());
-		Assert.assertFalse(objectDefinition.isEnableFriendlyURLCustomization());
-		Assert.assertTrue(objectDefinition.isEnableObjectEntrySchedule());
-		Assert.assertTrue(objectDefinition.isEnableObjectEntrySubscription());
-		Assert.assertTrue(objectDefinition.isEnableObjectEntryVersioning());
+		Assert.assertFalse(objectDefinition1.isActive());
+		Assert.assertFalse(
+			objectDefinition1.isEnableFriendlyURLCustomization());
+		Assert.assertTrue(objectDefinition1.isEnableObjectEntrySchedule());
+		Assert.assertTrue(objectDefinition1.isEnableObjectEntrySubscription());
+		Assert.assertTrue(objectDefinition1.isEnableObjectEntryVersioning());
 		Assert.assertTrue(
-			Validator.isBlank(objectDefinition.getFriendlyURLSeparator()));
-		Assert.assertEquals("C_Able", objectDefinition.getName());
+			Validator.isBlank(objectDefinition1.getFriendlyURLSeparator()));
+		Assert.assertEquals("C_Able", objectDefinition1.getName());
 		Assert.assertEquals(
 			ObjectDefinitionConstants.STORAGE_TYPE_SALESFORCE,
-			objectDefinition.getStorageType());
+			objectDefinition1.getStorageType());
 
-		long objectDefinitionId = objectDefinition.getObjectDefinitionId();
-		String scope = objectDefinition.getScope();
-		int status = objectDefinition.getStatus();
+		long objectDefinitionId = objectDefinition1.getObjectDefinitionId();
+		String scope = objectDefinition1.getScope();
+		int status = objectDefinition1.getStatus();
 
 		AssertUtils.assertFailure(
 			ObjectDefinitionEnableFriendlyURLCustomizationException.class,
@@ -2533,15 +2548,16 @@ public class ObjectDefinitionLocalServiceTest {
 				"Able", LocalizedMapUtil.getLocalizedMap("Ables"), scope,
 				status));
 
-		objectDefinition.setStorageType(
+		objectDefinition1.setStorageType(
 			ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT);
 
-		objectDefinition = _objectDefinitionLocalService.updateObjectDefinition(
-			objectDefinition);
+		objectDefinition1 =
+			_objectDefinitionLocalService.updateObjectDefinition(
+				objectDefinition1);
 
 		Assert.assertEquals(
 			ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
-			objectDefinition.getStorageType());
+			objectDefinition1.getStorageType());
 
 		AssertUtils.assertFailure(
 			NoSuchObjectFieldException.class, null,
@@ -2560,7 +2576,7 @@ public class ObjectDefinitionLocalServiceTest {
 			).name(
 				StringUtil.randomId()
 			).objectDefinitionId(
-				objectDefinition.getObjectDefinitionId()
+				objectDefinition1.getObjectDefinitionId()
 			).required(
 				true
 			).build());
@@ -2572,15 +2588,15 @@ public class ObjectDefinitionLocalServiceTest {
 				LocaleUtil.BRAZIL.getLanguage(), LocaleUtil.BRAZIL.getCountry(),
 				LocaleUtil.BRAZIL.getVariant());
 
-			String defaultLanguageId = objectDefinition.getDefaultLanguageId();
+			String defaultLanguageId = objectDefinition1.getDefaultLanguageId();
 
-			objectDefinition =
+			objectDefinition1 =
 				_objectDefinitionLocalService.updateCustomObjectDefinition(
-					null, objectDefinition.getObjectDefinitionId(), 0,
+					null, objectDefinition1.getObjectDefinitionId(), 0,
 					objectField.getObjectFieldId(), 0,
 					objectField.getObjectFieldId(), false,
-					objectDefinition.isActive(),
-					objectDefinition.getClassName(), true, false, false, true,
+					objectDefinition1.isActive(),
+					objectDefinition1.getClassName(), true, false, false, true,
 					false, false, false, false, false, false, null,
 					HashMapBuilder.put(
 						locale, RandomTestUtil.randomString()
@@ -2593,17 +2609,17 @@ public class ObjectDefinitionLocalServiceTest {
 					).put(
 						LocaleUtil.BRAZIL, RandomTestUtil.randomString()
 					).build(),
-					objectDefinition.getScope(), objectDefinition.getStatus(),
+					objectDefinition1.getScope(), objectDefinition1.getStatus(),
 					Collections.emptyList());
 
 			Assert.assertEquals(
 				objectField.getObjectFieldId(),
-				objectDefinition.getDescriptionObjectFieldId());
+				objectDefinition1.getDescriptionObjectFieldId());
 			Assert.assertEquals(
 				objectField.getObjectFieldId(),
-				objectDefinition.getTitleObjectFieldId());
+				objectDefinition1.getTitleObjectFieldId());
 			Assert.assertEquals(
-				defaultLanguageId, objectDefinition.getDefaultLanguageId());
+				defaultLanguageId, objectDefinition1.getDefaultLanguageId());
 		}
 		finally {
 			LocaleUtil.setDefault(
@@ -2614,69 +2630,73 @@ public class ObjectDefinitionLocalServiceTest {
 
 		ObjectFolder objectFolder = _addObjectFolder();
 
-		objectDefinition =
+		objectDefinition1 =
 			_objectDefinitionLocalService.updateCustomObjectDefinition(
-				externalReferenceCode, objectDefinition.getObjectDefinitionId(),
-				0, 0, objectFolder.getObjectFolderId(), 0, false,
-				objectDefinition.isActive(), objectDefinition.getClassName(),
+				externalReferenceCode,
+				objectDefinition1.getObjectDefinitionId(), 0, 0,
+				objectFolder.getObjectFolderId(), 0, false,
+				objectDefinition1.isActive(), objectDefinition1.getClassName(),
 				true, false, true, false, false, false, false, false, false,
 				false, "test", LocalizedMapUtil.getLocalizedMap("Able"), "Able",
 				null, null, false, LocalizedMapUtil.getLocalizedMap("Ables"),
-				objectDefinition.getScope(), objectDefinition.getStatus(),
+				objectDefinition1.getScope(), objectDefinition1.getStatus(),
 				Collections.emptyList());
 
 		Assert.assertEquals(
-			externalReferenceCode, objectDefinition.getExternalReferenceCode());
-		Assert.assertEquals(0, objectDefinition.getDescriptionObjectFieldId());
+			externalReferenceCode,
+			objectDefinition1.getExternalReferenceCode());
+		Assert.assertEquals(0, objectDefinition1.getDescriptionObjectFieldId());
 		Assert.assertEquals(
 			objectFolder.getObjectFolderId(),
-			objectDefinition.getObjectFolderId());
-		Assert.assertEquals(0, objectDefinition.getTitleObjectFieldId());
-		Assert.assertFalse(objectDefinition.isActive());
-		Assert.assertTrue(objectDefinition.isEnableFriendlyURLCustomization());
-		Assert.assertFalse(objectDefinition.isEnableIndexSearch());
-		Assert.assertFalse(objectDefinition.isEnableObjectEntryHistory());
-		Assert.assertFalse(objectDefinition.isEnableObjectEntrySchedule());
-		Assert.assertFalse(objectDefinition.isEnableObjectEntrySubscription());
-		Assert.assertFalse(objectDefinition.isEnableObjectEntryVersioning());
-		Assert.assertEquals("test", objectDefinition.getFriendlyURLSeparator());
+			objectDefinition1.getObjectFolderId());
+		Assert.assertEquals(0, objectDefinition1.getTitleObjectFieldId());
+		Assert.assertFalse(objectDefinition1.isActive());
+		Assert.assertTrue(objectDefinition1.isEnableFriendlyURLCustomization());
+		Assert.assertFalse(objectDefinition1.isEnableIndexSearch());
+		Assert.assertFalse(objectDefinition1.isEnableObjectEntryHistory());
+		Assert.assertFalse(objectDefinition1.isEnableObjectEntrySchedule());
+		Assert.assertFalse(objectDefinition1.isEnableObjectEntrySubscription());
+		Assert.assertFalse(objectDefinition1.isEnableObjectEntryVersioning());
+		Assert.assertEquals(
+			"test", objectDefinition1.getFriendlyURLSeparator());
 		Assert.assertEquals(
 			LocalizedMapUtil.getLocalizedMap("Able"),
-			objectDefinition.getLabelMap());
-		Assert.assertEquals("C_Able", objectDefinition.getName());
+			objectDefinition1.getLabelMap());
+		Assert.assertEquals("C_Able", objectDefinition1.getName());
 		Assert.assertEquals(
 			LocalizedMapUtil.getLocalizedMap("Ables"),
-			objectDefinition.getPluralLabelMap());
+			objectDefinition1.getPluralLabelMap());
 
-		objectDefinition =
+		objectDefinition1 =
 			_objectDefinitionLocalService.updateCustomObjectDefinition(
-				null, objectDefinition.getObjectDefinitionId(), 0, 0, 0, 0,
-				false, objectDefinition.isActive(), null, true, false, false,
+				null, objectDefinition1.getObjectDefinitionId(), 0, 0, 0, 0,
+				false, objectDefinition1.isActive(), null, true, false, false,
 				true, false, false, true, true, true, true,
 				FriendlyURLResolverConstants.URL_SEPARATOR_Y_OBJECT_ENTRY,
 				LocalizedMapUtil.getLocalizedMap("Baker"), "Baker", null, null,
 				false, LocalizedMapUtil.getLocalizedMap("Bakers"),
-				objectDefinition.getScope(), objectDefinition.getStatus(),
+				objectDefinition1.getScope(), objectDefinition1.getStatus(),
 				Collections.emptyList());
 
-		_assertLabelAndPluralLabel(objectDefinition, "Baker", "Bakers");
+		_assertLabelAndPluralLabel(objectDefinition1, "Baker", "Bakers");
 
-		Assert.assertFalse(objectDefinition.isActive());
-		Assert.assertFalse(objectDefinition.isEnableFriendlyURLCustomization());
-		Assert.assertTrue(objectDefinition.isEnableIndexSearch());
-		Assert.assertTrue(objectDefinition.isEnableObjectEntryHistory());
-		Assert.assertTrue(objectDefinition.isEnableObjectEntrySchedule());
-		Assert.assertTrue(objectDefinition.isEnableObjectEntrySubscription());
-		Assert.assertTrue(objectDefinition.isEnableObjectEntryVersioning());
+		Assert.assertFalse(objectDefinition1.isActive());
+		Assert.assertFalse(
+			objectDefinition1.isEnableFriendlyURLCustomization());
+		Assert.assertTrue(objectDefinition1.isEnableIndexSearch());
+		Assert.assertTrue(objectDefinition1.isEnableObjectEntryHistory());
+		Assert.assertTrue(objectDefinition1.isEnableObjectEntrySchedule());
+		Assert.assertTrue(objectDefinition1.isEnableObjectEntrySubscription());
+		Assert.assertTrue(objectDefinition1.isEnableObjectEntryVersioning());
 		Assert.assertEquals(
 			FriendlyURLResolverConstants.URL_SEPARATOR_Y_OBJECT_ENTRY,
-			objectDefinition.getFriendlyURLSeparator());
-		Assert.assertEquals("C_Baker", objectDefinition.getName());
+			objectDefinition1.getFriendlyURLSeparator());
+		Assert.assertEquals("C_Baker", objectDefinition1.getName());
 
-		objectDefinition =
+		objectDefinition1 =
 			_objectDefinitionLocalService.publishCustomObjectDefinition(
 				TestPropsValues.getUserId(),
-				objectDefinition.getObjectDefinitionId());
+				objectDefinition1.getObjectDefinitionId());
 
 		AssertUtils.assertFailure(
 			ObjectDefinitionEnableFriendlyURLCustomizationException.class,
@@ -2704,35 +2724,60 @@ public class ObjectDefinitionLocalServiceTest {
 				LocalizedMapUtil.getLocalizedMap("Charlie"), "Charlie",
 				LocalizedMapUtil.getLocalizedMap("Charlies"), scope, status));
 
-		objectDefinition =
+		objectDefinition1 =
 			_objectDefinitionLocalService.updateCustomObjectDefinition(
-				null, objectDefinition.getObjectDefinitionId(), 0, 0, 0, 0,
-				false, true, objectDefinition.getClassName(), true, false, true,
-				true, false, false, true, true, true, true, null,
+				null, objectDefinition1.getObjectDefinitionId(), 0, 0, 0, 0,
+				false, true, objectDefinition1.getClassName(), true, false,
+				true, true, false, false, true, true, true, true, null,
 				LocalizedMapUtil.getLocalizedMap("Charlie"), "Charlie", null,
 				null, false, LocalizedMapUtil.getLocalizedMap("Charlies"),
-				objectDefinition.getScope(), objectDefinition.getStatus(),
+				objectDefinition1.getScope(), objectDefinition1.getStatus(),
 				Collections.emptyList());
 
-		_assertLabelAndPluralLabel(objectDefinition, "Charlie", "Charlies");
+		_assertLabelAndPluralLabel(objectDefinition1, "Charlie", "Charlies");
 
-		Assert.assertTrue(objectDefinition.isActive());
-		Assert.assertTrue(objectDefinition.isEnableFriendlyURLCustomization());
-		Assert.assertTrue(objectDefinition.isEnableIndexSearch());
-		Assert.assertTrue(objectDefinition.isEnableObjectEntryHistory());
-		Assert.assertTrue(objectDefinition.isEnableObjectEntrySchedule());
-		Assert.assertTrue(objectDefinition.isEnableObjectEntrySubscription());
-		Assert.assertTrue(objectDefinition.isEnableObjectEntryVersioning());
+		Assert.assertTrue(objectDefinition1.isActive());
+		Assert.assertTrue(objectDefinition1.isEnableFriendlyURLCustomization());
+		Assert.assertTrue(objectDefinition1.isEnableIndexSearch());
+		Assert.assertTrue(objectDefinition1.isEnableObjectEntryHistory());
+		Assert.assertTrue(objectDefinition1.isEnableObjectEntrySchedule());
+		Assert.assertTrue(objectDefinition1.isEnableObjectEntrySubscription());
+		Assert.assertTrue(objectDefinition1.isEnableObjectEntryVersioning());
 		Assert.assertEquals(
-			"c_baker", objectDefinition.getFriendlyURLSeparator());
-		Assert.assertEquals("C_Baker", objectDefinition.getName());
+			"c_baker", objectDefinition1.getFriendlyURLSeparator());
+		Assert.assertEquals("C_Baker", objectDefinition1.getName());
 
 		_testUpdateCustomObjectDefinitionThrowsObjectFieldRelationshipTypeException(
-			objectDefinition);
+			objectDefinition1);
 
-		_objectDefinitionLocalService.deleteObjectDefinition(objectDefinition);
+		_objectDefinitionLocalService.deleteObjectDefinition(objectDefinition1);
 
 		_objectFolderLocalService.deleteObjectFolder(objectFolder);
+
+		ObjectDefinition objectDefinition2 =
+			_objectDefinitionLocalService.addCustomObjectDefinition(
+				TestPropsValues.getUserId(), 0, null, false, false, false,
+				false, false, true, true, false, null,
+				LocalizedMapUtil.getLocalizedMap("Able"), "Able", null, null,
+				LocalizedMapUtil.getLocalizedMap("Ables"), true,
+				ObjectDefinitionConstants.SCOPE_COMPANY,
+				ObjectDefinitionConstants.STORAGE_TYPE_SALESFORCE,
+				Collections.emptyList(), Collections.emptyList());
+
+		AssertUtils.assertFailure(
+			ObjectDefinitionEnableObjectEntryVersioningException.class,
+			"Enable object entry versioning is not allowed for non-indexed " +
+				"search object definitions",
+			() -> _objectDefinitionLocalService.updateCustomObjectDefinition(
+				null, objectDefinition2.getObjectDefinitionId(), 0, 0, 0, 0,
+				false, false, objectDefinition2.getClassName(), false, false,
+				false, false, false, false, false, true, true, true, null,
+				LocalizedMapUtil.getLocalizedMap("Able"), "Able", null, null,
+				false, LocalizedMapUtil.getLocalizedMap("Ables"),
+				objectDefinition2.getScope(), objectDefinition2.getStatus(),
+				Collections.emptyList()));
+
+		_objectDefinitionLocalService.deleteObjectDefinition(objectDefinition2);
 	}
 
 	@Test
