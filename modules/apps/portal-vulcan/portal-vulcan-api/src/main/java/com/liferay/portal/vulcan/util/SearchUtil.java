@@ -9,6 +9,7 @@ import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.search.BooleanClause;
 import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
@@ -179,6 +180,8 @@ public class SearchUtil {
 				FacetConfiguration facetConfiguration =
 					facet.getFacetConfiguration();
 
+				facetConfiguration.setDataJSONObject(
+					JSONUtil.put("maxTerms", 20));
 				facetConfiguration.setLabel(entry.getKey());
 
 				facet.setFieldName(entry.getValue());
