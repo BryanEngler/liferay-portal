@@ -226,6 +226,12 @@ public interface ElasticsearchConfiguration {
 	public boolean trackTotalHits();
 
 	@Meta.AD(
+		deflt = "2147483647", description = "track-total-hits-up-to-help",
+		name = "track-total-hits-up-to", required = false
+	)
+	public int trackTotalHitsUpTo(); //ignored when trackTotalHits == false
+
+	@Meta.AD(
 		deflt = "", description = "transport-tcp-port-help",
 		name = "transport-tcp-port", required = false
 	)

@@ -506,6 +506,13 @@ public class CommonSearchSourceBuilderAssemblerImpl
 			searchSourceBuilder.trackTotalHits(
 				baseSearchRequest.getTrackTotalHits());
 		}
+
+		if (baseSearchRequest.isTrackTotalHits() &&
+			baseSearchRequest.getTrackTotalHitsUpTo() != null) {
+
+			searchSourceBuilder.trackTotalHitsUpTo(
+				baseSearchRequest.getTrackTotalHitsUpTo());
+		}
 	}
 
 	private void _setTypes(

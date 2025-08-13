@@ -265,6 +265,10 @@ public class ElasticsearchConfigurationWrapper
 		return _elasticsearchConfiguration.trackTotalHits();
 	}
 
+	public int trackTotalHitsUpTo() {
+		return _elasticsearchConfiguration.trackTotalHitsUpTo();
+	}
+
 	public String transportTcpPort() {
 		return _elasticsearchConfiguration.transportTcpPort();
 	}
