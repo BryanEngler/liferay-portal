@@ -30,6 +30,13 @@ public interface ReindexConfiguration {
 	public String defaultReindexExecutionMode();
 
 	@Meta.AD(
+		deflt = "com.liferay.object.model.ObjectEntryVersion",
+		description = "excluded-class-names-help",
+		name = "excluded-class-names", required = false
+	)
+	public String[] excludedClassNames();
+
+	@Meta.AD(
 		deflt = "com.liferay.document.library.kernel.model.DLFileEntry=500",
 		description = "indexing-batch-sizes-help",
 		name = "indexing-batch-sizes", required = false

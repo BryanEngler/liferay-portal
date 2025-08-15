@@ -136,7 +136,10 @@ public class IndexActionsDisplayContextBuilder {
 					new IndexerClassNameModelResourceComparator(
 						true, _renderRequest.getLocale()))) {
 
-			if (!indexer.isReindexEnabled()) {
+			if (ArrayUtil.contains(
+					_reindexConfiguration.excludedClassNames(),
+					indexer.getClassName())) {
+
 				continue;
 			}
 
