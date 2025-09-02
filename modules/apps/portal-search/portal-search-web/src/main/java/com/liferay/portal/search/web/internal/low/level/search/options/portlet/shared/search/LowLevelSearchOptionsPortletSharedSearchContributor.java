@@ -6,10 +6,14 @@
 package com.liferay.portal.search.web.internal.low.level.search.options.portlet.shared.search;
 
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.search.engine.ConnectionInformation;
+import com.liferay.portal.search.engine.SearchEngineInformation;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.web.internal.low.level.search.options.constants.LowLevelSearchOptionsPortletKeys;
 import com.liferay.portal.search.web.internal.low.level.search.options.portlet.preferences.LowLevelSearchOptionsPortletPreferences;
@@ -21,6 +25,8 @@ import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSe
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.Serializable;
+
+import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -49,9 +55,37 @@ public class LowLevelSearchOptionsPortletSharedSearchContributor
 				lowLevelSearchOptionsPortletPreferences.
 					getFederatedSearchKey());
 
-		searchRequestBuilder.connectionId(
-			lowLevelSearchOptionsPortletPreferences.getConnectionId()
-		).excludeContributors(
+		boolean connectionIdNotFound = true;
+
+		for (ConnectionInformation connectionInformation :
+				_searchEngineInformation.getConnectionInformationList()) {
+
+			if (Objects.equals(
+					connectionInformation.getConnectionId(),
+					lowLevelSearchOptionsPortletPreferences.
+						getConnectionId())) {
+
+				searchRequestBuilder.connectionId(
+					lowLevelSearchOptionsPortletPreferences.getConnectionId());
+
+				connectionIdNotFound = false;
+
+				break;
+			}
+		}
+
+		if (connectionIdNotFound) {
+			if (_log.isWarnEnabled()) {
+				String connectionId =
+					lowLevelSearchOptionsPortletPreferences.getConnectionId();
+
+				_log.warn(
+					"Connection with ID " + connectionId +
+						" not found. Using default connection.");
+			}
+		}
+
+		searchRequestBuilder.excludeContributors(
 			SearchStringUtil.splitAndUnquote(
 				lowLevelSearchOptionsPortletPreferences.
 					getContributorsToExclude())
@@ -115,7 +149,13 @@ public class LowLevelSearchOptionsPortletSharedSearchContributor
 		}
 	}
 
+	private static final Log _log = LogFactoryUtil.getLog(
+		LowLevelSearchOptionsPortletSharedSearchContributor.class);
+
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private SearchEngineInformation _searchEngineInformation;
 
 }
