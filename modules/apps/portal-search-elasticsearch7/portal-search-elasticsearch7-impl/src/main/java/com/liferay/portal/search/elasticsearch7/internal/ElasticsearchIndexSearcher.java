@@ -552,6 +552,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		_setLegacyPostFilter(baseSearchRequest, query);
 		_setPipelineAggregations(baseSearchRequest, searchRequest);
 		setQuery(baseSearchRequest, searchRequest);
+		_setTrackTotalHitsUpTo(baseSearchRequest);
 	}
 
 	private Hits _search(
@@ -715,6 +716,17 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		for (PipelineAggregation aggregation : map.values()) {
 			baseSearchRequest.addPipelineAggregation(aggregation);
+		}
+	}
+
+	private void _setTrackTotalHitsUpTo(BaseSearchRequest baseSearchRequest) {
+		if (_elasticsearchConfigurationWrapper.trackTotalHits()) {
+			baseSearchRequest.setTrackTotalHitsUpTo(
+				_elasticsearchConfigurationWrapper.trackTotalHitsUpTo());
+		}
+		else {
+			baseSearchRequest.setTrackTotalHitsUpTo(
+				_elasticsearchConfigurationWrapper.indexMaxResultWindow());
 		}
 	}
 
