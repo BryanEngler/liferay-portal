@@ -122,6 +122,16 @@ public class ElasticsearchIndexSearcherTest {
 			searchContext, Mockito.mock(Query.class));
 	}
 
+	@Test
+	public void testTrackTotalHitsUpToWithTrackTotalHitsFalse() {
+		_testTrackTotalHitsUpTo(10000, false, 11000);
+	}
+
+	@Test
+	public void testTrackTotalHitsUpToWithTrackTotalHitsTrue() {
+		_testTrackTotalHitsUpTo(11000, true, 11000);
+	}
+
 	private ElasticsearchIndexSearcher _createElasticsearchIndexSearcher(
 		IndexNameBuilder indexNameBuilder,
 		SearchRequestBuilderFactory searchRequestBuilderFactory) {
@@ -158,6 +168,43 @@ public class ElasticsearchIndexSearcherTest {
 		);
 
 		return indexNameBuilder;
+	}
+
+	private void _testTrackTotalHitsUpTo(
+		Integer expectedTrackTotalHitsUpTo, boolean trackTotalHits,
+		int trackTotalHitsUpTo) {
+
+		Mockito.when(
+			_elasticsearchConfigurationWrapper.indexMaxResultWindow()
+		).thenReturn(
+			10000
+		);
+
+		Mockito.when(
+			_elasticsearchConfigurationWrapper.trackTotalHits()
+		).thenReturn(
+			trackTotalHits
+		);
+
+		Mockito.when(
+			_elasticsearchConfigurationWrapper.trackTotalHitsUpTo()
+		).thenReturn(
+			trackTotalHitsUpTo
+		);
+
+		SearchContext searchContext = new SearchContext();
+
+		SearchRequest searchRequest = _searchRequestBuilderFactory.builder(
+			searchContext
+		).build();
+
+		SearchSearchRequest searchSearchRequest =
+			_elasticsearchIndexSearcher.createSearchSearchRequest(
+				searchRequest, searchContext, Mockito.mock(Query.class));
+
+		Assert.assertEquals(
+			expectedTrackTotalHitsUpTo,
+			searchSearchRequest.getTrackTotalHitsUpTo());
 	}
 
 	private final DocumentFixture _documentFixture = new DocumentFixture();
