@@ -124,12 +124,12 @@ public class ElasticsearchIndexSearcherTest {
 
 	@Test
 	public void testTrackTotalHitsUpToWithTrackTotalHitsFalse() {
-		_testTrackTotalHitsUpTo(10000, false, 11000);
+		_testTrackTotalHitsUpTo(10000, false);
 	}
 
 	@Test
 	public void testTrackTotalHitsUpToWithTrackTotalHitsTrue() {
-		_testTrackTotalHitsUpTo(11000, true, 11000);
+		_testTrackTotalHitsUpTo(11000, true);
 	}
 
 	private ElasticsearchIndexSearcher _createElasticsearchIndexSearcher(
@@ -171,8 +171,7 @@ public class ElasticsearchIndexSearcherTest {
 	}
 
 	private void _testTrackTotalHitsUpTo(
-		Integer expectedTrackTotalHitsUpTo, boolean trackTotalHits,
-		int trackTotalHitsUpTo) {
+		Integer expectedTrackTotalHitsUpTo, boolean trackTotalHits) {
 
 		Mockito.when(
 			_elasticsearchConfigurationWrapper.indexMaxResultWindow()
@@ -189,7 +188,7 @@ public class ElasticsearchIndexSearcherTest {
 		Mockito.when(
 			_elasticsearchConfigurationWrapper.trackTotalHitsUpTo()
 		).thenReturn(
-			trackTotalHitsUpTo
+			11000
 		);
 
 		SearchContext searchContext = new SearchContext();
