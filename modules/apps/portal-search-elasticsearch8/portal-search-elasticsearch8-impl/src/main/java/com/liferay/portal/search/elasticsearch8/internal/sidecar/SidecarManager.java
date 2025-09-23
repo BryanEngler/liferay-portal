@@ -150,7 +150,7 @@ public class SidecarManager implements ElasticsearchConfigurationObserver {
 
 		Path workPath = Paths.get(PropsValues.LIFERAY_HOME);
 
-		Path dataPath = workPath.resolve("data/elasticsearch7");
+		Path dataPath = workPath.resolve("data/elasticsearch8");
 
 		return elasticsearchInstancePathsBuilder.configPath(
 			bundleDataPath.resolve("config")

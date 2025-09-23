@@ -123,7 +123,7 @@ public class ElasticsearchInstanceSettingsBuilder {
 
 		Path workPath = _elasticsearchInstancePaths.getWorkPath();
 
-		return workPath.resolve("data/elasticsearch7");
+		return workPath.resolve("data/elasticsearch8");
 	}
 
 	protected void load() {
@@ -215,7 +215,7 @@ public class ElasticsearchInstanceSettingsBuilder {
 	private void _configurePaths() {
 		Path workPath = _elasticsearchInstancePaths.getWorkPath();
 
-		Path dataParentPath = workPath.resolve("data/elasticsearch7");
+		Path dataParentPath = workPath.resolve("data/elasticsearch8");
 
 		Path homePath = getHomePath();
 

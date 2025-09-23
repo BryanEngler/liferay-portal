@@ -26,7 +26,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch8.internal.configuration.ElasticsearchConfigurationWrapper;
 import com.liferay.portal.search.elasticsearch8.internal.sidecar.constants.SidecarConstants;
 import com.liferay.portal.search.elasticsearch8.internal.util.ResourceUtil;
-import com.liferay.portal.search.elasticsearch7.sidecar.agent.SidecarAgent;
+import com.liferay.portal.search.elasticsearch8.sidecar.agent.SidecarAgent;
 
 import java.io.File;
 import java.io.IOException;
