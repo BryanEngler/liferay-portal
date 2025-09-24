@@ -28,13 +28,13 @@ cleanSidecar {
 }
 
 dependencies {
+	compileInclude group: "co.elastic.clients", name: "elasticsearch-java", version: elasticsearchClientVersion
 	compileInclude group: "com.carrotsearch", name: "hppc", version: "0.10.0"
 	compileInclude group: "com.fasterxml.jackson.dataformat", name: "jackson-dataformat-smile", version: "2.18.2"
 	compileInclude group: "com.fasterxml.jackson.dataformat", name: "jackson-dataformat-yaml", version: "2.18.2"
 	compileInclude group: "com.liferay", name: "org.apache.commons.logging", version: "1.2.LIFERAY-PATCHED-2"
 	compileInclude group: "com.liferay", name: "org.apache.logging.log4j", version: "2.17.1.LIFERAY-PATCHED-1"
 	compileInclude group: "com.liferay", name: "org.apache.logging.log4j.core", version: "2.17.1.LIFERAY-PATCHED-2"
-	compileInclude group: "com.liferay", name: "org.elasticsearch.plugin.legacy.geo", version: elasticsearchClientVersion
 	compileInclude group: "commons-lang", name: "commons-lang", version: "2.6"
 	compileInclude group: "org.apache.lucene", name: "lucene-core", version: luceneVersion
 	compileInclude group: "org.apache.lucene", name: "lucene-highlighter", version: luceneVersion
@@ -43,18 +43,7 @@ dependencies {
 	compileInclude group: "org.apache.lucene", name: "lucene-queryparser", version: luceneVersion
 	compileInclude group: "org.apache.lucene", name: "lucene-sandbox", version: luceneVersion
 	compileInclude group: "org.apache.lucene", name: "lucene-suggest", version: luceneVersion
-	compileInclude group: "org.elasticsearch", name: "elasticsearch", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch", name: "elasticsearch-cli", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch", name: "elasticsearch-core", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch", name: "elasticsearch-geo", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch", name: "elasticsearch-lz4", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch", name: "elasticsearch-x-content", version: elasticsearchClientVersion
 	compileInclude group: "org.elasticsearch.client", name: "elasticsearch-rest-client", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch.client", name: "elasticsearch-rest-high-level-client", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch.plugin", name: "lang-mustache-client", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch.plugin", name: "parent-join-client", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch.plugin", name: "percolator-client", version: elasticsearchClientVersion
-	compileInclude group: "org.elasticsearch.plugin", name: "rank-eval-client", version: elasticsearchClientVersion
 	compileInclude group: "org.locationtech.jts", name: "jts-core", version: "1.20.0"
 	compileInclude group: "org.locationtech.spatial4j", name: "spatial4j", version: "0.8"
 	compileInclude group: "org.yaml", name: "snakeyaml", version: "2.3"
