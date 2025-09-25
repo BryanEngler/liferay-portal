@@ -162,17 +162,6 @@ public interface ElasticsearchConfiguration {
 	)
 	public String sidecarHttpPort(); //upgrade this
 
-	/**
-	 * @deprecated As of Athanasius (7.3.x)
-	 */
-	@Deprecated
-	@Meta.AD(
-		deflt = "9300-9400",
-		description = "discovery-zen-ping-unicast-hosts-port-help",
-		name = "discovery-zen-ping-unicast-hosts-port", required = false
-	)
-	public String discoveryZenPingUnicastHostsPort();
-
 	@Meta.AD(
 		deflt = "", description = "network-host-help", name = "network-host",
 		required = false
