@@ -139,12 +139,6 @@ public interface ElasticsearchConfiguration {
 	public String minimumRequiredNodeVersion();
 
 	@Meta.AD(
-		deflt = "ERROR", description = "rest-client-logger-level-help",
-		name = "rest-client-logger-level", required = false
-	)
-	public RESTClientLoggerLevel restClientLoggerLevel();
-
-	@Meta.AD(
 		deflt = "LiferayElasticsearchCluster",
 		description = "cluster-name-help", name = "cluster-name",
 		required = false
