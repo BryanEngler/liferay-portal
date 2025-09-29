@@ -5,23 +5,30 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.aggregation.bucket;
 
-import com.liferay.portal.search.aggregation.bucket.BucketCountThresholds;
+import co.elastic.clients.elasticsearch._types.aggregations.TermsAggregation;
 
-import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregator;
+import com.liferay.portal.search.aggregation.bucket.BucketCountThresholds;
 
 /**
  * @author Michael C. Han
  */
 public class BucketCountThresholdsTranslator {
 
-	public TermsAggregator.BucketCountThresholds translate(
+	public TermsAggregation.Builder translate(
 		BucketCountThresholds bucketCountThresholds) {
 
-		return new TermsAggregator.BucketCountThresholds(
-			bucketCountThresholds.getMinDocCount(),
-			bucketCountThresholds.getShardMinDocCount(),
-			bucketCountThresholds.getRequiredSize(),
-			bucketCountThresholds.getShardSize());
+		TermsAggregation.Builder termsAggBuilder =
+			new TermsAggregation.Builder();
+
+		return termsAggBuilder.minDocCount(
+			(int)bucketCountThresholds.getMinDocCount()
+		).shardMinDocCount(
+			bucketCountThresholds.getShardMinDocCount()
+		).size(
+			bucketCountThresholds.getRequiredSize()
+		).shardSize(
+			bucketCountThresholds.getShardSize()
+		);
 	}
 
 }
