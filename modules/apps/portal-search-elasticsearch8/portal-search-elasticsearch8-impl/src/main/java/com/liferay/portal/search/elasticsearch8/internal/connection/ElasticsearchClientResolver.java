@@ -5,18 +5,18 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.connection;
 
-import org.elasticsearch.client.RestHighLevelClient;
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
 
 /**
  * @author André de Oliveira
  */
 public interface ElasticsearchClientResolver {
 
-	public RestHighLevelClient getRestHighLevelClient();
+	public ElasticsearchClient getElasticsearchClient();
 
-	public RestHighLevelClient getRestHighLevelClient(String connectionId);
+	public ElasticsearchClient getElasticsearchClient(String connectionId);
 
-	public RestHighLevelClient getRestHighLevelClient(
+	public ElasticsearchClient getElasticsearchClient(
 		String connectionId, boolean preferLocalCluster);
 
 }

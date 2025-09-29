@@ -5,6 +5,9 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.connection;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
+
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -36,7 +39,6 @@ import java.util.function.Supplier;
 import org.apache.http.HttpHost;
 
 import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -127,6 +129,73 @@ public class ElasticsearchConnectionManager
 			this, elasticsearchConfigurationObserver);
 	}
 
+	@Override
+	public ElasticsearchClient getElasticsearchClient() {
+		return getElasticsearchClient(null);
+	}
+
+	@Override
+	public ElasticsearchClient getElasticsearchClient(String connectionId) {
+		return getElasticsearchClient(connectionId, false);
+	}
+
+	@Override
+	public ElasticsearchClient getElasticsearchClient(
+		String connectionId, boolean preferLocalCluster) {
+
+		ElasticsearchConnection elasticsearchConnection =
+			getElasticsearchConnection(connectionId, preferLocalCluster);
+
+		if (elasticsearchConnection == null) {
+			throw new ElasticsearchConnectionNotInitializedException(
+				_getExceptionMessage(
+					"Elasticsearch connection not found.", connectionId,
+					preferLocalCluster));
+		}
+
+		ElasticsearchClient elasticsearchClient =
+			elasticsearchConnection.getElasticsearchClient();
+
+		if (elasticsearchClient == null) {
+			throw new ElasticsearchConnectionNotInitializedException(
+				_getExceptionMessage(
+					"Elasticsearch client not found.",
+					elasticsearchConnection.getConnectionId(),
+					preferLocalCluster));
+		}
+
+		try {
+			RestClientTransport restClientTransport =
+				elasticsearchConnection.getRestClientTransport();
+
+			RestClient restClient = restClientTransport.restClient();
+
+			Class<?> clazz = restClient.getClass();
+
+			Field blacklistField = clazz.getDeclaredField("blacklist");
+
+			blacklistField.setAccessible(true);
+
+			ConcurrentHashMap<HttpHost, Object> map =
+				(ConcurrentHashMap<HttpHost, Object>)blacklistField.get(
+					restClient);
+
+			for (HttpHost httpHost : map.keySet()) {
+				_log.error(
+					"The REST client network host address " +
+						httpHost.toString() + " is blacklisted");
+			}
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Unable to get REST client blacklist field", exception);
+			}
+		}
+
+		return elasticsearchClient;
+	}
+
 	public ElasticsearchConnection getElasticsearchConnection() {
 		return getElasticsearchConnection(null, false);
 	}
@@ -212,70 +281,6 @@ public class ElasticsearchConnectionManager
 	@Override
 	public int getPriority() {
 		return 2;
-	}
-
-	@Override
-	public RestHighLevelClient getRestHighLevelClient() {
-		return getRestHighLevelClient(null);
-	}
-
-	@Override
-	public RestHighLevelClient getRestHighLevelClient(String connectionId) {
-		return getRestHighLevelClient(connectionId, false);
-	}
-
-	@Override
-	public RestHighLevelClient getRestHighLevelClient(
-		String connectionId, boolean preferLocalCluster) {
-
-		ElasticsearchConnection elasticsearchConnection =
-			getElasticsearchConnection(connectionId, preferLocalCluster);
-
-		if (elasticsearchConnection == null) {
-			throw new ElasticsearchConnectionNotInitializedException(
-				_getExceptionMessage(
-					"Elasticsearch connection not found.", connectionId,
-					preferLocalCluster));
-		}
-
-		RestHighLevelClient restHighLevelClient =
-			elasticsearchConnection.getRestHighLevelClient();
-
-		if (restHighLevelClient == null) {
-			throw new ElasticsearchConnectionNotInitializedException(
-				_getExceptionMessage(
-					"REST high level client not found.",
-					elasticsearchConnection.getConnectionId(),
-					preferLocalCluster));
-		}
-
-		try {
-			RestClient restClient = restHighLevelClient.getLowLevelClient();
-
-			Class<?> clazz = restClient.getClass();
-
-			Field blacklistField = clazz.getDeclaredField("blacklist");
-
-			blacklistField.setAccessible(true);
-
-			ConcurrentHashMap<HttpHost, Object> map =
-				(ConcurrentHashMap<HttpHost, Object>)blacklistField.get(
-					restClient);
-
-			for (HttpHost httpHost : map.keySet()) {
-				_log.error(
-					"The REST client network host address " +
-						httpHost.toString() + " is blacklisted");
-			}
-		}
-		catch (Exception exception) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(
-					"Unable to get REST client blacklist field", exception);
-			}
-		}
-
-		return restHighLevelClient;
 	}
 
 	public boolean isCrossClusterReplicationEnabled() {
