@@ -160,7 +160,7 @@ public interface ElasticsearchConfiguration {
 		deflt = "9201", description = "sidecar-http-port-help",
 		name = "sidecar-http-port", required = false
 	)
-	public String sidecarHttpPort();
+	public String sidecarHttpPort(); //upgrade this
 
 	/**
 	 * @deprecated As of Athanasius (7.3.x)
