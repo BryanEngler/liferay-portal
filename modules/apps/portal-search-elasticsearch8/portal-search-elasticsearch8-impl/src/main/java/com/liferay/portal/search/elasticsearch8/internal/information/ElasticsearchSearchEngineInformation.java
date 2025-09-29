@@ -5,6 +5,14 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.information;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.Time;
+import co.elastic.clients.elasticsearch._types.TimeUnit;
+import co.elastic.clients.elasticsearch.nodes.ElasticsearchNodesClient;
+import co.elastic.clients.elasticsearch.nodes.NodesInfoRequest;
+import co.elastic.clients.elasticsearch.nodes.NodesInfoResponse;
+import co.elastic.clients.elasticsearch.nodes.info.NodeInfo;
+
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -37,14 +45,10 @@ import java.util.Dictionary;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.http.util.EntityUtils;
-
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
 
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -60,7 +64,7 @@ public class ElasticsearchSearchEngineInformation
 
 	@Override
 	public String getClientVersionString() {
-		return org.elasticsearch.Version.CURRENT.toString();
+		return co.elastic.clients.transport.Version.VERSION.toString();
 	}
 
 	@Override
@@ -144,14 +148,14 @@ public class ElasticsearchSearchEngineInformation
 	public String getNodesString() {
 		try {
 			String clusterNodesString = _getClusterNodesString(
-				elasticsearchConnectionManager.getRestHighLevelClient());
+				elasticsearchConnectionManager.getElasticsearchClient());
 
 			if (elasticsearchConfigurationWrapper.productionModeEnabled() &&
 				elasticsearchConnectionManager.
 					isCrossClusterReplicationEnabled()) {
 
 				String localClusterNodesString = _getClusterNodesString(
-					elasticsearchConnectionManager.getRestHighLevelClient(
+					elasticsearchConnectionManager.getElasticsearchClient(
 						null, true));
 
 				if (!Validator.isBlank(localClusterNodesString)) {
@@ -249,7 +253,7 @@ public class ElasticsearchSearchEngineInformation
 		try {
 			_setClusterAndNodeInformation(
 				connectionInformationBuilder, labels,
-				elasticsearchConnection.getRestHighLevelClient());
+				elasticsearchConnection.getElasticsearchClient());
 		}
 		catch (Exception exception) {
 			connectionInformationBuilder.error(exception.toString());
@@ -308,10 +312,10 @@ public class ElasticsearchSearchEngineInformation
 	}
 
 	private String _getClusterNodesString(
-		RestHighLevelClient restHighLevelClient) {
+		ElasticsearchClient elasticsearchClient) {
 
 		try {
-			if (restHighLevelClient == null) {
+			if (elasticsearchClient == null) {
 				return StringPool.BLANK;
 			}
 
@@ -321,7 +325,7 @@ public class ElasticsearchSearchEngineInformation
 
 			_setClusterAndNodeInformation(
 				connectionInformationBuilder, new LinkedHashSet<>(),
-				restHighLevelClient);
+				elasticsearchClient);
 
 			ConnectionInformation connectionInformation =
 				connectionInformationBuilder.build();
@@ -399,46 +403,37 @@ public class ElasticsearchSearchEngineInformation
 
 	private void _setClusterAndNodeInformation(
 			ConnectionInformationBuilder connectionInformationBuilder,
-			Set<String> labels, RestHighLevelClient restHighLevelClient)
+			Set<String> labels, ElasticsearchClient elasticsearchClient)
 		throws Exception {
 
-		RestClient restClient = restHighLevelClient.getLowLevelClient();
+		ElasticsearchNodesClient elasticsearchNodesClient =
+			elasticsearchClient.nodes();
 
-		String endpoint = "/_nodes";
-
-		Request request = new Request("GET", endpoint);
-
-		request.addParameter("timeout", "10000ms");
-
-		Response response = restClient.performRequest(request);
-
-		String responseBody = EntityUtils.toString(response.getEntity());
-
-		JSONObject responseJSONObject = _jsonFactory.createJSONObject(
-			responseBody);
+		NodesInfoResponse nodesInfoResponse = elasticsearchNodesClient.info(
+			NodesInfoRequest.of(
+				nodesInforequest -> nodesInforequest.timeout(
+					Time.of(
+						time -> time.time(
+							"10000" + TimeUnit.Milliseconds.jsonValue())))));
 
 		String clusterName = GetterUtil.getString(
-			responseJSONObject.get("cluster_name"));
+			nodesInfoResponse.clusterName());
 
 		connectionInformationBuilder.clusterName(clusterName);
 
-		JSONObject nodesJSONObject = responseJSONObject.getJSONObject("nodes");
-
-		Set<String> nodes = nodesJSONObject.keySet();
+		Map<String, NodeInfo> nodeInfos = nodesInfoResponse.nodes();
 
 		List<NodeInformation> nodeInformationList = new ArrayList<>();
 
-		for (String node : nodes) {
-			JSONObject nodeJSONObject = nodesJSONObject.getJSONObject(node);
+		for (Map.Entry<String, NodeInfo> entry : nodeInfos.entrySet()) {
+			NodeInfo nodeInfo = entry.getValue();
 
 			NodeInformationBuilder nodeInformationBuilder =
 				nodeInformationBuilderFactory.getNodeInformationBuilder();
 
-			nodeInformationBuilder.name(
-				GetterUtil.getString(nodeJSONObject.get("name")));
+			nodeInformationBuilder.name(nodeInfo.name());
 
-			Version version = Version.parseVersion(
-				GetterUtil.getString(nodeJSONObject.get("version")));
+			Version version = Version.parseVersion(nodeInfo.version());
 
 			nodeInformationBuilder.version(version.toString());
 
