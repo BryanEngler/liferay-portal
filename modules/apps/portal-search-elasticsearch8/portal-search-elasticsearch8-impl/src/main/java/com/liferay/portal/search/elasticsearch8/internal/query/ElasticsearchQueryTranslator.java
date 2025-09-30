@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.elasticsearch8.internal.geolocation.ElasticsearchShapeTranslator;
-import com.liferay.portal.search.elasticsearch8.internal.geolocation.GeoLocationPointTranslator;
 import com.liferay.portal.search.elasticsearch8.internal.query.function.score.ElasticsearchScoreFunctionTranslator;
 import com.liferay.portal.search.elasticsearch8.internal.query.geolocation.GeoExecTypeTranslator;
 import com.liferay.portal.search.elasticsearch8.internal.query.geolocation.GeoValidationMethodTranslator;

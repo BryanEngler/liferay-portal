@@ -84,6 +84,7 @@ import com.liferay.portal.search.aggregation.metrics.ValueCountAggregation;
 import com.liferay.portal.search.aggregation.metrics.WeightedAvgAggregation;
 import com.liferay.portal.search.aggregation.pipeline.PipelineAggregation;
 import com.liferay.portal.search.aggregation.pipeline.PipelineAggregationTranslator;
+import com.liferay.portal.search.elasticsearch8.internal.geolocation.GeoTranslator;
 import com.liferay.portal.search.elasticsearch8.internal.highlight.HighlightTranslator;
 import com.liferay.portal.search.elasticsearch8.internal.query.ElasticsearchQueryTranslator;
 import com.liferay.portal.search.elasticsearch8.internal.script.ScriptTranslator;

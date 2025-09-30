@@ -6,9 +6,6 @@
 package com.liferay.portal.search.elasticsearch8.internal.sort;
 
 import com.liferay.petra.function.transform.TransformUtil;
-import com.liferay.portal.search.elasticsearch8.internal.geolocation.DistanceUnitTranslator;
-import com.liferay.portal.search.elasticsearch8.internal.geolocation.GeoDistanceTypeTranslator;
-import com.liferay.portal.search.elasticsearch8.internal.geolocation.GeoLocationPointTranslator;
 import com.liferay.portal.search.elasticsearch8.internal.query.ElasticsearchQueryTranslator;
 import com.liferay.portal.search.elasticsearch8.internal.script.ScriptTranslator;
 import com.liferay.portal.search.query.QueryTranslator;

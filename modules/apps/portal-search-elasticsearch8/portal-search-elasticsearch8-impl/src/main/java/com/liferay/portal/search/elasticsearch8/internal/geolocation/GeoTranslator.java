@@ -5,19 +5,19 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.geolocation;
 
-import com.liferay.portal.search.geolocation.DistanceUnit;
-import com.liferay.portal.search.geolocation.GeoDistance;
-import com.liferay.portal.search.geolocation.GeoDistanceType;
-import com.liferay.portal.search.geolocation.GeoLocationPoint;
-import com.liferay.portal.search.query.geolocation.GeoExecType;
-import com.liferay.portal.search.query.geolocation.GeoValidationMethod;
-
 import co.elastic.clients.elasticsearch._types.GeoBounds;
 import co.elastic.clients.elasticsearch._types.GeoHashLocation;
 import co.elastic.clients.elasticsearch._types.GeoLocation;
 import co.elastic.clients.elasticsearch._types.LatLonGeoLocation;
 import co.elastic.clients.elasticsearch._types.TopLeftBottomRightGeoBounds;
 import co.elastic.clients.elasticsearch._types.query_dsl.GeoExecution;
+
+import com.liferay.portal.search.geolocation.DistanceUnit;
+import com.liferay.portal.search.geolocation.GeoDistance;
+import com.liferay.portal.search.geolocation.GeoDistanceType;
+import com.liferay.portal.search.geolocation.GeoLocationPoint;
+import com.liferay.portal.search.query.geolocation.GeoExecType;
+import com.liferay.portal.search.query.geolocation.GeoValidationMethod;
 
 /**
  * @author Michael C. Han
