@@ -10,9 +10,6 @@ import com.liferay.portal.search.aggregation.AggregationTranslator;
 import com.liferay.portal.search.aggregation.FieldAggregation;
 import com.liferay.portal.search.aggregation.pipeline.PipelineAggregationTranslator;
 
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.PipelineAggregationBuilder;
-import org.elasticsearch.search.aggregations.support.ValuesSourceAggregationBuilder;
 
 /**
  * @author André de Oliveira
@@ -20,7 +17,7 @@ import org.elasticsearch.search.aggregations.support.ValuesSourceAggregationBuil
 public class AggregationBuilderAssemblerImpl {
 
 	public AggregationBuilderAssemblerImpl(
-		AggregationTranslator<AggregationBuilder> aggregationTranslator,
+		AggregationTranslator<co.elastic.clients.elasticsearch._types.aggregations.Aggregation> aggregationTranslator,
 		PipelineAggregationTranslator<PipelineAggregationBuilder>
 			pipelineAggregationTranslator) {
 
@@ -28,14 +25,14 @@ public class AggregationBuilderAssemblerImpl {
 		_pipelineAggregationTranslator = pipelineAggregationTranslator;
 	}
 
-	public <AB extends AggregationBuilder> AB assembleAggregation(
-		AB aggregationBuilder, Aggregation aggregation) {
+	public <A extends co.elastic.clients.elasticsearch._types.aggregations.Aggregation> A assembleAggregation(
+		A elasticsearchAggregation, Aggregation aggregation) {
 
 		_baseAggregationTranslator.translate(
-			aggregationBuilder, aggregation, _aggregationTranslator,
+			elasticsearchAggregation, aggregation, _aggregationTranslator,
 			_pipelineAggregationTranslator);
 
-		return aggregationBuilder;
+		return elasticsearchAggregation;
 	}
 
 	public <VSAB extends ValuesSourceAggregationBuilder> VSAB
@@ -51,7 +48,7 @@ public class AggregationBuilderAssemblerImpl {
 		return valuesSourceAggregationBuilder;
 	}
 
-	private final AggregationTranslator<AggregationBuilder>
+	private final AggregationTranslator<co.elastic.clients.elasticsearch._types.aggregations.Aggregation>
 		_aggregationTranslator;
 	private final BaseAggregationTranslator _baseAggregationTranslator =
 		new BaseAggregationTranslator();

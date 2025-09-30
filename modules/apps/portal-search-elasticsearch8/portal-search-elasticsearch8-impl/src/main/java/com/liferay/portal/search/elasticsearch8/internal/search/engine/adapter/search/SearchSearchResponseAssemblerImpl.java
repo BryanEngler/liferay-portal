@@ -86,11 +86,11 @@ public class SearchSearchResponseAssemblerImpl
 
 		return new ElasticsearchAggregationResultTranslator(
 			elasticsearchAggregation, _aggregationResults,
-			new SearchHitsTranslator(
+			_geoBuilders, new SearchHitsTranslator(
 				_searchHitBuilderFactory, _searchHitsBuilderFactory,
 				_documentBuilderFactory, _highlightFieldBuilderFactory,
-				_geoBuilders),
-			_geoBuilders);
+				_geoBuilders)
+		);
 	}
 
 	@Override
@@ -143,8 +143,9 @@ public class SearchSearchResponseAssemblerImpl
 		ElasticsearchAggregationResultsTranslator
 			elasticsearchAggregationResultsTranslator =
 				new ElasticsearchAggregationResultsTranslator(
-					this, this, aggregationsMap::get,
-					pipelineAggregationsMap::get);
+					aggregationsMap::get, this, pipelineAggregationsMap::get,
+					this
+				);
 
 		List<AggregationResult> aggregationResults =
 			elasticsearchAggregationResultsTranslator.translate(

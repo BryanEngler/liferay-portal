@@ -18,27 +18,27 @@ import org.elasticsearch.search.aggregations.PipelineAggregationBuilder;
  */
 public class BaseAggregationTranslator {
 
-	public AggregationBuilder translate(
-		AggregationBuilder aggregationBuilder, Aggregation aggregation,
-		AggregationTranslator<AggregationBuilder> aggregationTranslator,
+	public co.elastic.clients.elasticsearch._types.aggregations.Aggregation translate(
+		co.elastic.clients.elasticsearch._types.aggregations.Aggregation elasticsearchAggregation, Aggregation aggregation,
+		AggregationTranslator<co.elastic.clients.elasticsearch._types.aggregations.Aggregation> aggregationTranslator,
 		PipelineAggregationTranslator<PipelineAggregationBuilder>
 			pipelineAggregationTranslator) {
 
 		for (Aggregation childAggregation :
 				aggregation.getChildrenAggregations()) {
 
-			aggregationBuilder.subAggregation(
+			elasticsearchAggregation.subAggregation(
 				aggregationTranslator.translate(childAggregation));
 		}
 
 		for (PipelineAggregation pipelineAggregation :
 				aggregation.getPipelineAggregations()) {
 
-			aggregationBuilder.subAggregation(
+			elasticsearchAggregation.subAggregation(
 				pipelineAggregationTranslator.translate(pipelineAggregation));
 		}
 
-		return aggregationBuilder;
+		return elasticsearchAggregation;
 	}
 
 }
