@@ -11,7 +11,6 @@ import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch8.configuration.ElasticsearchConfiguration;
-import com.liferay.portal.search.elasticsearch8.configuration.OperationMode;
 import com.liferay.portal.search.elasticsearch8.configuration.RESTClientLoggerLevel;
 
 import java.util.Collections;
@@ -120,24 +119,6 @@ public class ElasticsearchConfigurationWrapper
 		return _elasticsearchConfiguration.indexNumberOfShards();
 	}
 
-	public boolean isDevelopmentModeEnabled() {
-		return !isProductionModeEnabled();
-	}
-
-	public boolean isProductionModeEnabled() {
-		if (productionModeEnabled()) {
-			return true;
-		}
-
-		OperationMode operationMode = operationMode();
-
-		if (operationMode == OperationMode.REMOTE) {
-			return true;
-		}
-
-		return false;
-	}
-
 	public boolean logExceptionsOnly() {
 		return _elasticsearchConfiguration.logExceptionsOnly();
 	}
@@ -172,14 +153,6 @@ public class ElasticsearchConfigurationWrapper
 
 	public String nodeName() {
 		return _elasticsearchConfiguration.nodeName();
-	}
-
-	/**
-	 * @deprecated As of Athanasius (7.3.x)
-	 */
-	@Deprecated
-	public OperationMode operationMode() {
-		return _elasticsearchConfiguration.operationMode();
 	}
 
 	public String overrideTypeMappings() {
