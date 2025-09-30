@@ -5,9 +5,9 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.aggregation;
 
-import com.liferay.portal.search.aggregation.AggregationTranslator;
+import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
 
-import org.elasticsearch.search.aggregations.AggregationBuilder;
+import com.liferay.portal.search.aggregation.AggregationTranslator;
 
 /**
  * @author André de Oliveira
@@ -15,6 +15,6 @@ import org.elasticsearch.search.aggregations.AggregationBuilder;
 public interface AggregationBuilderAssemblerFactory {
 
 	public AggregationBuilderAssemblerImpl getAggregationBuilderAssembler(
-		AggregationTranslator<AggregationBuilder> aggregationTranslator);
+		AggregationTranslator<Aggregation> aggregationTranslator);
 
 }

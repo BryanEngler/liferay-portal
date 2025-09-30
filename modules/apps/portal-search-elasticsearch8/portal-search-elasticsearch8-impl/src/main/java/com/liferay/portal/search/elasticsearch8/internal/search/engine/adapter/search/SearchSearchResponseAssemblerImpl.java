@@ -85,12 +85,11 @@ public class SearchSearchResponseAssemblerImpl
 			elasticsearchAggregation) {
 
 		return new ElasticsearchAggregationResultTranslator(
-			elasticsearchAggregation, _aggregationResults,
-			_geoBuilders, new SearchHitsTranslator(
+			elasticsearchAggregation, _aggregationResults, _geoBuilders,
+			new SearchHitsTranslator(
 				_searchHitBuilderFactory, _searchHitsBuilderFactory,
 				_documentBuilderFactory, _highlightFieldBuilderFactory,
-				_geoBuilders)
-		);
+				_geoBuilders));
 	}
 
 	@Override
@@ -144,8 +143,7 @@ public class SearchSearchResponseAssemblerImpl
 			elasticsearchAggregationResultsTranslator =
 				new ElasticsearchAggregationResultsTranslator(
 					aggregationsMap::get, this, pipelineAggregationsMap::get,
-					this
-				);
+					this);
 
 		List<AggregationResult> aggregationResults =
 			elasticsearchAggregationResultsTranslator.translate(

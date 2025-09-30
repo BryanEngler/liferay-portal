@@ -5,24 +5,28 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.aggregation;
 
+import co.elastic.clients.elasticsearch._types.aggregations.PipelineAggregationBase;
+
 import com.liferay.portal.search.aggregation.Aggregation;
 import com.liferay.portal.search.aggregation.AggregationTranslator;
 import com.liferay.portal.search.aggregation.pipeline.PipelineAggregation;
 import com.liferay.portal.search.aggregation.pipeline.PipelineAggregationTranslator;
-
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.PipelineAggregationBuilder;
 
 /**
  * @author Michael C. Han
  */
 public class BaseAggregationTranslator {
 
-	public co.elastic.clients.elasticsearch._types.aggregations.Aggregation translate(
-		co.elastic.clients.elasticsearch._types.aggregations.Aggregation elasticsearchAggregation, Aggregation aggregation,
-		AggregationTranslator<co.elastic.clients.elasticsearch._types.aggregations.Aggregation> aggregationTranslator,
-		PipelineAggregationTranslator<PipelineAggregationBuilder>
-			pipelineAggregationTranslator) {
+	public co.elastic.clients.elasticsearch._types.aggregations.Aggregation
+		translate(
+			co.elastic.clients.elasticsearch._types.aggregations.Aggregation
+				elasticsearchAggregation,
+			Aggregation aggregation,
+			AggregationTranslator
+				<co.elastic.clients.elasticsearch._types.aggregations.
+					Aggregation> aggregationTranslator,
+			PipelineAggregationTranslator<PipelineAggregationBase>
+				pipelineAggregationTranslator) {
 
 		for (Aggregation childAggregation :
 				aggregation.getChildrenAggregations()) {

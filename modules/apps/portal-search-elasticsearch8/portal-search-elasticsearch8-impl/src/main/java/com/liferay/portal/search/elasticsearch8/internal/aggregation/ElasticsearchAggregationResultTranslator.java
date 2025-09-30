@@ -160,7 +160,7 @@ public class ElasticsearchAggregationResultTranslator
 
 		return new ElasticsearchAggregationResultTranslator(
 			aggregate, _aggregationResults, _geoBuilders,
-			_searchHitsTranslator);
+			_hitsMetadataTranslator);
 	}
 
 	@Override
@@ -763,8 +763,7 @@ public class ElasticsearchAggregationResultTranslator
 			elasticsearchAggregationResultsTranslator =
 				new ElasticsearchAggregationResultsTranslator(
 					aggregation::getChildAggregation, this,
-					aggregation::getPipelineAggregation, this
-				);
+					aggregation::getPipelineAggregation, this);
 
 		return elasticsearchAggregationResultsTranslator.translate(
 			aggregations);

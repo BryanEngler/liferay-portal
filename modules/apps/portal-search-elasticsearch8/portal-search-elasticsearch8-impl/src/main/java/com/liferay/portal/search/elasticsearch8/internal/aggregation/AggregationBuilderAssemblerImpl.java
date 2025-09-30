@@ -5,11 +5,12 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.aggregation;
 
+import co.elastic.clients.elasticsearch._types.aggregations.PipelineAggregationBase;
+
 import com.liferay.portal.search.aggregation.Aggregation;
 import com.liferay.portal.search.aggregation.AggregationTranslator;
 import com.liferay.portal.search.aggregation.FieldAggregation;
 import com.liferay.portal.search.aggregation.pipeline.PipelineAggregationTranslator;
-
 
 /**
  * @author André de Oliveira
@@ -17,16 +18,22 @@ import com.liferay.portal.search.aggregation.pipeline.PipelineAggregationTransla
 public class AggregationBuilderAssemblerImpl {
 
 	public AggregationBuilderAssemblerImpl(
-		AggregationTranslator<co.elastic.clients.elasticsearch._types.aggregations.Aggregation> aggregationTranslator,
-		PipelineAggregationTranslator<PipelineAggregationBuilder>
+		AggregationTranslator
+			<co.elastic.clients.elasticsearch._types.aggregations.Aggregation>
+				aggregationTranslator,
+		PipelineAggregationTranslator<PipelineAggregationBase>
 			pipelineAggregationTranslator) {
 
 		_aggregationTranslator = aggregationTranslator;
 		_pipelineAggregationTranslator = pipelineAggregationTranslator;
 	}
 
-	public <A extends co.elastic.clients.elasticsearch._types.aggregations.Aggregation> A assembleAggregation(
-		A elasticsearchAggregation, Aggregation aggregation) {
+	public
+		<A
+			 extends co.elastic.clients.elasticsearch._types.aggregations.
+						Aggregation> A assembleAggregation(
+							A elasticsearchAggregation,
+							Aggregation aggregation) {
 
 		_baseAggregationTranslator.translate(
 			elasticsearchAggregation, aggregation, _aggregationTranslator,
@@ -48,13 +55,14 @@ public class AggregationBuilderAssemblerImpl {
 		return valuesSourceAggregationBuilder;
 	}
 
-	private final AggregationTranslator<co.elastic.clients.elasticsearch._types.aggregations.Aggregation>
-		_aggregationTranslator;
+	private final AggregationTranslator
+		<co.elastic.clients.elasticsearch._types.aggregations.Aggregation>
+			_aggregationTranslator;
 	private final BaseAggregationTranslator _baseAggregationTranslator =
 		new BaseAggregationTranslator();
 	private final BaseFieldAggregationTranslator
 		_baseFieldAggregationTranslator = new BaseFieldAggregationTranslator();
-	private final PipelineAggregationTranslator<PipelineAggregationBuilder>
+	private final PipelineAggregationTranslator<PipelineAggregationBase>
 		_pipelineAggregationTranslator;
 
 }

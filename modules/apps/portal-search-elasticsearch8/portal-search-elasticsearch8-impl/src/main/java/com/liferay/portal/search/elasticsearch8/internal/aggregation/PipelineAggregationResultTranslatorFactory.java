@@ -5,9 +5,9 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.aggregation;
 
-import com.liferay.portal.search.aggregation.pipeline.PipelineAggregationResultTranslator;
-
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregate;
+
+import com.liferay.portal.search.aggregation.pipeline.PipelineAggregationResultTranslator;
 
 /**
  * @author André de Oliveira
