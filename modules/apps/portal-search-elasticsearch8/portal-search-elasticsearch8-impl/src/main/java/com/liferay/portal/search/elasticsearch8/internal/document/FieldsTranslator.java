@@ -5,15 +5,30 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.document;
 
+import co.elastic.clients.json.JsonData;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.document.DocumentBuilder;
+import com.liferay.portal.search.elasticsearch8.internal.util.JsonpUtil;
 import com.liferay.portal.search.geolocation.GeoBuilders;
 import com.liferay.portal.search.geolocation.GeoLocationPoint;
 
+import jakarta.json.JsonArray;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonString;
+import jakarta.json.JsonValue;
+
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,9 +38,9 @@ import org.elasticsearch.common.geo.GeoPoint;
 /**
  * @author Bryan Engler
  */
-public class DocumentFieldsTranslator {
+public class FieldsTranslator {
 
-	public DocumentFieldsTranslator(GeoBuilders geoBuilders) {
+	public FieldsTranslator(GeoBuilders geoBuilders) {
 		_geoBuilders = geoBuilders;
 	}
 
@@ -74,6 +89,22 @@ public class DocumentFieldsTranslator {
 				documentField, documentBuilder, documentFieldsMap));
 	}
 
+	public void translateSource(
+		DocumentBuilder documentBuilder, JsonData jsonData) {
+
+		if (jsonData == null) {
+			return;
+		}
+
+		JsonValue jsonValue = jsonData.toJson(JsonpUtil.getJsonpMapper());
+
+		JsonObject jsonObject = jsonValue.asJsonObject();
+
+		jsonObject.forEach(
+			(fieldName, value) -> translateSourceField(
+				documentBuilder, fieldName, value));
+	}
+
 	protected void translate(
 		DocumentField documentField, DocumentBuilder documentBuilder,
 		Map<String, DocumentField> documentFieldsMap) {
@@ -105,6 +136,29 @@ public class DocumentFieldsTranslator {
 		}
 	}
 
+	protected void translateSourceField(
+		DocumentBuilder documentBuilder, String fieldName,
+		JsonValue jsonValue) {
+
+		if (fieldName.endsWith(_GEOPOINT_SUFFIX)) {
+			documentBuilder.setGeoLocationPoint(
+				fieldName, _geoBuilders.geoLocationPoint(jsonValue.toString()));
+		}
+		else {
+			JsonValue.ValueType valueType = jsonValue.getValueType();
+
+			if ((valueType == JsonValue.ValueType.ARRAY) ||
+				(valueType == JsonValue.ValueType.OBJECT)) {
+
+				documentBuilder.setValues(
+					fieldName, _toCollectionValue(jsonValue));
+			}
+			else {
+				documentBuilder.setValue(fieldName, _toSingleValue(jsonValue));
+			}
+		}
+	}
+
 	private GeoLocationPoint _getGeoLocationPoint(
 		DocumentField documentField1, DocumentField documentField2) {
 
@@ -131,6 +185,66 @@ public class DocumentFieldsTranslator {
 		List<Double> list = (List<Double>)map.get("coordinates");
 
 		return _geoBuilders.geoLocationPoint(list.get(1), list.get(0));
+	}
+
+	private Collection<Object> _toCollectionValue(JsonValue jsonValue) {
+		List<Object> values = new ArrayList<>();
+
+		JsonValue.ValueType valueType = jsonValue.getValueType();
+
+		if (valueType == JsonValue.ValueType.ARRAY) {
+			JsonArray jsonArray = jsonValue.asJsonArray();
+
+			jsonArray.forEach(value -> values.add(_toSingleValue(value)));
+		}
+		else {
+			values.add(_toSingleValue(jsonValue));
+		}
+
+		return values;
+	}
+
+	private Map<String, Object> _toMap(JsonObject jsonObject) {
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+
+			TypeReference<HashMap<String, Object>> typeReference =
+				new TypeReference<HashMap<String, Object>>() {
+				};
+
+			return objectMapper.readValue(jsonObject.toString(), typeReference);
+		}
+		catch (JsonProcessingException jsonProcessingException) {
+			throw new RuntimeException(jsonProcessingException);
+		}
+	}
+
+	private Object _toSingleValue(JsonValue jsonValue) {
+		JsonValue.ValueType valueType = jsonValue.getValueType();
+
+		if ((valueType == JsonValue.ValueType.FALSE) ||
+			(valueType == JsonValue.ValueType.TRUE)) {
+
+			return Boolean.valueOf(jsonValue.toString());
+		}
+		else if (valueType == JsonValue.ValueType.NULL) {
+			return null;
+		}
+		else if (valueType == JsonValue.ValueType.NUMBER) {
+			JsonNumber jsonNumber = (JsonNumber)jsonValue;
+
+			return jsonNumber.numberValue();
+		}
+		else if (valueType == JsonValue.ValueType.OBJECT) {
+			return _toMap((JsonObject)jsonValue);
+		}
+		else if (valueType == JsonValue.ValueType.STRING) {
+			JsonString jsonString = (JsonString)jsonValue;
+
+			return jsonString.getString();
+		}
+
+		return jsonValue.toString();
 	}
 
 	private boolean _translateGeoLocationPoint(

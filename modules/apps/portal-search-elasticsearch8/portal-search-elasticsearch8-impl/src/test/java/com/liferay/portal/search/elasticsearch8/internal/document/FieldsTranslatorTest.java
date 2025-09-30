@@ -23,7 +23,7 @@ import org.junit.Test;
 /**
  * @author André de Oliveira
  */
-public class DocumentFieldsTranslatorTest {
+public class FieldsTranslatorTest {
 
 	@ClassRule
 	@Rule
@@ -32,8 +32,7 @@ public class DocumentFieldsTranslatorTest {
 
 	@Test
 	public void testDocumentSourceMapWithMultiValueField() {
-		DocumentFieldsTranslator documentFieldsTranslator =
-			new DocumentFieldsTranslator(null);
+		FieldsTranslator fieldsTranslator = new FieldsTranslator(null);
 
 		DocumentBuilder documentBuilder = new DocumentBuilderImpl();
 
@@ -42,7 +41,7 @@ public class DocumentFieldsTranslatorTest {
 		List<String> list1 = Arrays.asList(
 			RandomTestUtil.randomString(), RandomTestUtil.randomString());
 
-		documentFieldsTranslator.translate(
+		fieldsTranslator.translate(
 			documentBuilder, Collections.singletonMap(fieldName, list1));
 
 		Document document = documentBuilder.build();

@@ -62,7 +62,7 @@ public class PutMappingIndexRequestExecutor {
 				IndexUtil.getDynamicTemplatesMap(mappingJSONObject);
 
 			if (dynamicTemplates != null) {
-				builder.dynamicTemplates(null);
+				builder.dynamicTemplates(dynamicTemplates);
 			}
 
 			builder.index(

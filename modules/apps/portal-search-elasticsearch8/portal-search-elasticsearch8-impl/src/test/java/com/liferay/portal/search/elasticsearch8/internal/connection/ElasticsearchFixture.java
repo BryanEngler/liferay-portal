@@ -5,16 +5,16 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.connection;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.indices.ElasticsearchIndicesClient;
+import co.elastic.clients.elasticsearch.indices.GetIndexRequest;
+import co.elastic.clients.elasticsearch.indices.GetIndexResponse;
+
+import com.liferay.portal.search.engine.adapter.cluster.ClusterHealthStatus;
+
 import java.io.IOException;
 
 import java.util.Map;
-
-import org.elasticsearch.client.IndicesClient;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.indices.GetIndexRequest;
-import org.elasticsearch.client.indices.GetIndexResponse;
-import org.elasticsearch.cluster.health.ClusterHealthStatus;
 
 /**
  * @author André de Oliveira
@@ -58,6 +58,23 @@ public class ElasticsearchFixture implements ElasticsearchClientResolver {
 		this();
 	}
 
+	@Override
+	public ElasticsearchClient getElasticsearchClient() {
+		return _elasticsearchConnectionFixture.getElasticsearchClient();
+	}
+
+	@Override
+	public ElasticsearchClient getElasticsearchClient(String connectionId) {
+		return getElasticsearchClient();
+	}
+
+	@Override
+	public ElasticsearchClient getElasticsearchClient(
+		String connectionId, boolean preferLocalCluster) {
+
+		return getElasticsearchClient();
+	}
+
 	public Map<String, Object> getElasticsearchConfigurationProperties() {
 		return _elasticsearchConnectionFixture.
 			getElasticsearchConfigurationProperties();
@@ -68,35 +85,19 @@ public class ElasticsearchFixture implements ElasticsearchClientResolver {
 	}
 
 	public GetIndexResponse getIndex(String... indices) {
-		RestHighLevelClient restHighLevelClient = getRestHighLevelClient();
+		ElasticsearchClient elasticsearchClient = getElasticsearchClient();
 
-		IndicesClient indicesClient = restHighLevelClient.indices();
+		ElasticsearchIndicesClient elasticsearchIndicesClient =
+			elasticsearchClient.indices();
 
 		GetIndexRequest getIndexRequest = new GetIndexRequest(indices);
 
 		try {
-			return indicesClient.get(getIndexRequest, RequestOptions.DEFAULT);
+			return elasticsearchIndicesClient.get(getIndexRequest);
 		}
 		catch (IOException ioException) {
 			throw new RuntimeException(ioException);
 		}
-	}
-
-	@Override
-	public RestHighLevelClient getRestHighLevelClient() {
-		return _elasticsearchConnectionFixture.getRestHighLevelClient();
-	}
-
-	@Override
-	public RestHighLevelClient getRestHighLevelClient(String connectionId) {
-		return getRestHighLevelClient();
-	}
-
-	@Override
-	public RestHighLevelClient getRestHighLevelClient(
-		String connectionId, boolean preferLocalCluster) {
-
-		return getRestHighLevelClient();
 	}
 
 	public void setUp() throws Exception {

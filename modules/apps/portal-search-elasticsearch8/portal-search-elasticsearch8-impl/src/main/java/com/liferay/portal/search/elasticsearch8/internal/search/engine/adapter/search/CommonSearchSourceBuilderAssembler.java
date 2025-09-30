@@ -5,10 +5,9 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.search;
 
-import com.liferay.portal.search.engine.adapter.search.BaseSearchRequest;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
 
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
+import com.liferay.portal.search.engine.adapter.search.BaseSearchRequest;
 
 /**
  * @author Michael C. Han
@@ -16,7 +15,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 public interface CommonSearchSourceBuilderAssembler {
 
 	public void assemble(
-		SearchSourceBuilder searchSourceBuilder,
-		BaseSearchRequest baseSearchRequest, SearchRequest searchRequest);
+		BaseSearchRequest baseSearchRequest,
+		SearchRequest.Builder searchRequestBuilder);
 
 }

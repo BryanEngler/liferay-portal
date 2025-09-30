@@ -5,12 +5,19 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.facet;
 
+import co.elastic.clients.elasticsearch._types.aggregations.Buckets;
+import co.elastic.clients.elasticsearch._types.aggregations.DoubleTermsBucket;
+import co.elastic.clients.elasticsearch._types.aggregations.LongTermsBucket;
+import co.elastic.clients.elasticsearch._types.aggregations.MultiBucketAggregateBase;
+import co.elastic.clients.elasticsearch._types.aggregations.MultiBucketBase;
+import co.elastic.clients.elasticsearch._types.aggregations.MultiTermsBucket;
+import co.elastic.clients.elasticsearch._types.aggregations.StringTermsBucket;
+
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.List;
-
-import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
 
 /**
  * @author André de Oliveira
@@ -18,10 +25,11 @@ import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
 public class MultiBucketsAggregationFacetCollector implements FacetCollector {
 
 	public MultiBucketsAggregationFacetCollector(
-		MultiBucketsAggregation multiBucketsAggregation) {
+		MultiBucketAggregateBase multiBucketAggregateBase, String fieldName) {
 
-		_fieldName = multiBucketsAggregation.getName();
-		_termCollectorHolder = getTermCollectorHolder(multiBucketsAggregation);
+		_fieldName = fieldName;
+
+		_termCollectorHolder = getTermCollectorHolder(multiBucketAggregateBase);
 	}
 
 	@Override
@@ -40,17 +48,56 @@ public class MultiBucketsAggregationFacetCollector implements FacetCollector {
 	}
 
 	protected TermCollectorHolder getTermCollectorHolder(
-		MultiBucketsAggregation multiBucketsAggregation) {
+		MultiBucketAggregateBase multiBucketAggregateBase) {
 
-		List<? extends MultiBucketsAggregation.Bucket> buckets =
-			multiBucketsAggregation.getBuckets();
+		Buckets<? extends MultiBucketBase> buckets =
+			multiBucketAggregateBase.buckets();
+
+		List<? extends MultiBucketBase> multiBucketBases = buckets.array();
 
 		TermCollectorHolder termCollectorHolder = new TermCollectorHolder(
-			buckets.size());
+			multiBucketBases.size());
 
-		for (MultiBucketsAggregation.Bucket bucket : buckets) {
-			termCollectorHolder.add(
-				bucket.getKeyAsString(), (int)bucket.getDocCount());
+		for (MultiBucketBase multiBucketBase : multiBucketBases) {
+			if (multiBucketBase instanceof DoubleTermsBucket) {
+				DoubleTermsBucket doubleTermsBucket =
+					(DoubleTermsBucket)multiBucketBase;
+
+				String key = doubleTermsBucket.keyAsString();
+
+				if (Validator.isBlank(key)) {
+					key = String.valueOf(doubleTermsBucket.key());
+				}
+
+				termCollectorHolder.add(key, (int)doubleTermsBucket.docCount());
+			}
+			else if (multiBucketBase instanceof LongTermsBucket) {
+				LongTermsBucket longTermsBucket =
+					(LongTermsBucket)multiBucketBase;
+
+				String key = longTermsBucket.keyAsString();
+
+				if (Validator.isBlank(key)) {
+					key = longTermsBucket.key();
+				}
+
+				termCollectorHolder.add(key, (int)longTermsBucket.docCount());
+			}
+			else if (multiBucketBase instanceof MultiTermsBucket) {
+				MultiTermsBucket multiTermsBucket =
+					(MultiTermsBucket)multiBucketBase;
+
+				termCollectorHolder.add(
+					multiTermsBucket.keyAsString(),
+					(int)multiTermsBucket.docCount());
+			}
+			else if (multiBucketBase instanceof StringTermsBucket) {
+				StringTermsBucket stringTermsBucket =
+					(StringTermsBucket)multiBucketBase;
+
+				termCollectorHolder.add(
+					stringTermsBucket.key(), (int)stringTermsBucket.docCount());
+			}
 		}
 
 		return termCollectorHolder;

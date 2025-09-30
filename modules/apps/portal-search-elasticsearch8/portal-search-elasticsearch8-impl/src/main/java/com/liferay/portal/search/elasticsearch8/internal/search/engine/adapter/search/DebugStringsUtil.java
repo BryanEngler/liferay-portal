@@ -5,6 +5,8 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.search;
 
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
@@ -14,7 +16,6 @@ import java.io.IOException;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.common.Strings;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.xcontent.ToXContent;
 import org.elasticsearch.xcontent.XContentBuilder;
 import org.elasticsearch.xcontent.XContentFactory;
@@ -24,7 +25,9 @@ import org.elasticsearch.xcontent.XContentFactory;
  */
 public class DebugStringsUtil {
 
-	public static String getPrettyPrintedJSONString(ToXContent toXContent) {
+	public static String getPrettyPrintedJSONString(
+		SearchRequest.Builder builder) { //TODO figure this out
+
 		try {
 			XContentBuilder xContentBuilder = XContentFactory.jsonBuilder();
 
@@ -43,11 +46,9 @@ public class DebugStringsUtil {
 		}
 	}
 
-	public static String getSearchRequestString(
-		SearchSourceBuilder searchSourceBuilder) {
-
+	public static String getSearchRequestString(SearchRequest searchRequest) {
 		try {
-			return searchSourceBuilder.toString();
+			return searchRequest.toString(); //TODO check JsonpUtil?
 		}
 		catch (ElasticsearchException elasticsearchException) {
 			if (_log.isDebugEnabled()) {
@@ -56,6 +57,10 @@ public class DebugStringsUtil {
 
 			return elasticsearchException.getMessage();
 		}
+	}
+
+	public static String getSearchRequestString(SearchRequest.Builder builder) {
+		return getSearchRequestString(builder.build());
 	}
 
 	public static String getStackTraceString() {

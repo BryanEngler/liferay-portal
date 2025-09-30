@@ -5,10 +5,11 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.search;
 
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.json.JsonData;
+
 import com.liferay.portal.search.engine.adapter.search.BaseSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.BaseSearchResponse;
-
-import org.elasticsearch.action.search.SearchResponse;
 
 /**
  * @author Michael C. Han
@@ -18,6 +19,6 @@ public interface CommonSearchResponseAssembler {
 	public void assemble(
 		BaseSearchRequest baseSearchRequest,
 		BaseSearchResponse baseSearchResponse, String searchRequestString,
-		SearchResponse searchResponse);
+		SearchResponse<JsonData> searchResponse);
 
 }

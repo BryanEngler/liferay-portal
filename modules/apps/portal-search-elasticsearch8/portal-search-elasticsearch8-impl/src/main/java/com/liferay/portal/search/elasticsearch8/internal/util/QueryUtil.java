@@ -5,12 +5,22 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.util;
 
-import java.util.ArrayList;
-import java.util.List;
+import co.elastic.clients.elasticsearch._types.FieldValue;
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryVariant;
+import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.TermsQuery;
+import co.elastic.clients.json.JsonData;
 
-import org.elasticsearch.index.query.AbstractQueryBuilder;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.MapUtil;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Gustavo Lima
@@ -19,14 +29,59 @@ public class QueryUtil {
 
 	public static Integer maxTermsCount = 65536;
 
-	public static AbstractQueryBuilder<? extends AbstractQueryBuilder<?>>
-		translateTerms(String field, String[] terms) {
+	public static List<String> fieldsBoostsToFieldsWithBoosts(
+		Map<String, Float> fieldsBoosts) {
 
-		if (terms.length <= maxTermsCount) {
-			return QueryBuilders.termsQuery(field, terms);
+		if (MapUtil.isEmpty(fieldsBoosts)) {
+			return Collections.emptyList();
 		}
 
-		BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+		List<String> fieldsWithBoosts = new ArrayList<>();
+
+		MapUtil.isNotEmptyForEach(
+			fieldsBoosts,
+			(key, value) -> {
+				if (value == null) {
+					value = 1.0F;
+				}
+
+				fieldsWithBoosts.add(key + "^" + value);
+			});
+
+		return fieldsWithBoosts;
+	}
+
+	public static void setRanges(
+		RangeQuery.Builder builder, boolean includesLower,
+		boolean includesUpper, Object lowerTerm, Object upperTerm) {
+
+		if (lowerTerm != null) {
+			if (includesLower) {
+				builder.gte(JsonData.of(lowerTerm));
+			}
+			else {
+				builder.gt(JsonData.of(lowerTerm));
+			}
+		}
+
+		if (upperTerm != null) {
+			if (includesUpper) {
+				builder.lte(JsonData.of(upperTerm));
+			}
+			else {
+				builder.lt(JsonData.of(upperTerm));
+			}
+		}
+	}
+
+	public static QueryVariant translateTerms(
+		Float boost, String field, String[] terms) {
+
+		if (terms.length <= maxTermsCount) {
+			return _getTermsQuery(boost, field, terms);
+		}
+
+		BoolQuery.Builder builder = QueryBuilders.bool();
 
 		List<String> termsList = new ArrayList<>();
 
@@ -34,21 +89,48 @@ public class QueryUtil {
 			termsList.add(term);
 
 			if (termsList.size() == maxTermsCount) {
-				boolQueryBuilder.should(
-					QueryBuilders.termsQuery(
-						field, termsList.toArray(new String[0])));
+				builder.should(
+					_getTermsQuery(
+						boost, field, termsList.toArray(new String[0])
+					)._toQuery());
 
 				termsList.clear();
 			}
 		}
 
 		if (!termsList.isEmpty()) {
-			boolQueryBuilder.should(
-				QueryBuilders.termsQuery(
-					field, termsList.toArray(new String[0])));
+			builder.should(
+				_getTermsQuery(
+					boost, field, termsList.toArray(new String[0])
+				)._toQuery());
 		}
 
-		return boolQueryBuilder;
+		return builder.build();
+	}
+
+	private static TermsQuery _getTermsQuery(
+		Float boost, String field, String[] values) {
+
+		TermsQuery.Builder builder = QueryBuilders.terms();
+
+		if (boost != null) {
+			SetterUtil.setNotNullFloat(builder::boost, boost);
+		}
+
+		builder.field(field);
+
+		builder.terms(
+			termsQueryField -> {
+				List<FieldValue> fieldValues = new ArrayList<>();
+
+				ListUtil.isNotEmptyForEach(
+					Arrays.asList(values),
+					value -> fieldValues.add(FieldValue.of(value)));
+
+				return termsQueryField.value(fieldValues);
+			});
+
+		return builder.build();
 	}
 
 }
