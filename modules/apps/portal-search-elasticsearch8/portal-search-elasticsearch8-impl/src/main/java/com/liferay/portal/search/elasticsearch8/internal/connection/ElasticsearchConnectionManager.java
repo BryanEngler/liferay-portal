@@ -6,6 +6,8 @@
 package com.liferay.portal.search.elasticsearch8.internal.connection;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.json.JsonpMapper;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
 
 import com.liferay.petra.reflect.ReflectionUtil;
@@ -127,6 +129,26 @@ public class ElasticsearchConnectionManager
 
 		return elasticsearchConfigurationWrapper.compare(
 			this, elasticsearchConfigurationObserver);
+	}
+
+	public JsonpMapper getJsonpMapper(String connectionId) {
+		ElasticsearchConnection elasticsearchConnection;
+
+		if (connectionId == null) {
+			elasticsearchConnection = getElasticsearchConnection();
+		}
+		else {
+			elasticsearchConnection = getElasticsearchConnection(connectionId);
+		}
+
+		if (elasticsearchConnection != null) {
+			RestClientTransport restClientTransport =
+				elasticsearchConnection.getRestClientTransport();
+
+			return restClientTransport.jsonpMapper();
+		}
+
+		return new JacksonJsonpMapper();
 	}
 
 	@Override

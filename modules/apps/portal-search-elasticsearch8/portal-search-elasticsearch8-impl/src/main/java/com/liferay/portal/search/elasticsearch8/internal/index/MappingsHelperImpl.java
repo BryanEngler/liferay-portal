@@ -5,6 +5,13 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.index;
 
+import co.elastic.clients.elasticsearch._types.mapping.TypeMapping;
+import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
+import co.elastic.clients.elasticsearch.indices.ElasticsearchIndicesClient;
+import co.elastic.clients.elasticsearch.indices.PutMappingRequest;
+import co.elastic.clients.json.JsonpMapper;
+import jakarta.json.spi.JsonProvider;
+
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -21,21 +28,16 @@ import com.liferay.portal.search.elasticsearch8.internal.util.ResourceUtil;
 import com.liferay.portal.search.engine.SearchEngineInformation;
 import com.liferay.portal.search.spi.index.configuration.contributor.helper.MappingsHelper;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
+import java.nio.charset.StandardCharsets;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.elasticsearch.action.ActionResponse;
-import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.indices.CreateIndexRequest;
-import org.elasticsearch.client.indices.GetMappingsRequest;
-import org.elasticsearch.client.indices.GetMappingsResponse;
-import org.elasticsearch.client.indices.PutMappingRequest;
-import org.elasticsearch.cluster.metadata.MappingMetadata;
-import org.elasticsearch.common.compress.CompressedXContent;
-import org.elasticsearch.xcontent.XContentType;
 
 /**
  * @author André de Oliveira
@@ -43,12 +45,12 @@ import org.elasticsearch.xcontent.XContentType;
 public class MappingsHelperImpl implements MappingsHelper {
 
 	public MappingsHelperImpl(
-		String indexName, IndicesClient indicesClient, JSONFactory jsonFactory,
-		String overrideMappings,
+		String indexName, ElasticsearchIndicesClient elasticsearchIndicesClient,
+		JSONFactory jsonFactory, String overrideMappings,
 		SearchEngineInformation searchEngineInformation) {
 
 		_indexName = indexName;
-		_indicesClient = indicesClient;
+		_elasticsearchIndicesClient = elasticsearchIndicesClient;
 		_jsonFactory = jsonFactory;
 		_overrideMappings = overrideMappings;
 		_searchEngineInformation = searchEngineInformation;
@@ -70,13 +72,23 @@ public class MappingsHelperImpl implements MappingsHelper {
 	}
 
 	public void setDefaultOrOverrideMappings(
-		CreateIndexRequest createIndexRequest) {
+		CreateIndexRequest.Builder builder, JsonpMapper jsonpMapper) {
 
-		JSONObject mappingsJSONObject =
-			_getDefaultOrOverrideMappingsJSONObject();
+		String mappings = String.valueOf(
+			_getDefaultOrOverrideMappingsJSONObject());
 
-		createIndexRequest.mapping(
-			mappingsJSONObject.toString(), XContentType.JSON);
+		try (InputStream inputStream = new ByteArrayInputStream(
+				mappings.getBytes(StandardCharsets.UTF_8))) {
+
+			JsonProvider jsonProvider = jsonpMapper.jsonProvider();
+
+			builder.mappings(
+				TypeMapping._DESERIALIZER.deserialize(
+					jsonProvider.createParser(inputStream), jsonpMapper));
+		}
+		catch (IOException ioException) {
+			throw new RuntimeException(ioException);
+		}
 	}
 
 	private String _addTextEmbeddingDynamicTemplates(String mappings) {
@@ -128,7 +140,7 @@ public class MappingsHelperImpl implements MappingsHelper {
 		GetMappingsResponse getMappingsResponse = null;
 
 		try {
-			getMappingsResponse = _indicesClient.getMapping(
+			getMappingsResponse = _elasticsearchIndicesClient.getMapping(
 				getMappingsRequest, RequestOptions.DEFAULT);
 		}
 		catch (IOException ioException) {
@@ -234,7 +246,7 @@ public class MappingsHelperImpl implements MappingsHelper {
 			mappingsJSONObject.toString(), XContentType.JSON);
 
 		try {
-			ActionResponse actionResponse = _indicesClient.putMapping(
+			ActionResponse actionResponse = _elasticsearchIndicesClient.putMapping(
 				putMappingRequest, RequestOptions.DEFAULT);
 
 			SearchLogHelperUtil.logActionResponse(_log, actionResponse);
@@ -268,7 +280,7 @@ public class MappingsHelperImpl implements MappingsHelper {
 		MappingsHelperImpl.class);
 
 	private final String _indexName;
-	private final IndicesClient _indicesClient;
+	private final ElasticsearchIndicesClient _elasticsearchIndicesClient;
 	private final JSONFactory _jsonFactory;
 	private final String _overrideMappings;
 	private final SearchEngineInformation _searchEngineInformation;
