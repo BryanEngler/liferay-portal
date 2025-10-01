@@ -102,12 +102,12 @@ public class NestedFacetProcessor
 	}
 
 	private AggregationRange _createAggregationRange(
-		String from, String key, String to) {
+		String from, String key, String to) { //expect to receive from and to as double values
 
 		AggregationRange.Builder builder = new AggregationRange.Builder();
 
 		if (!Validator.isBlank(from)) {
-			builder.from(from);
+			builder.from(Double.valueOf(from)); //easy solution
 		}
 
 		if (!Validator.isBlank(key)) {
@@ -115,7 +115,7 @@ public class NestedFacetProcessor
 		}
 
 		if (!Validator.isBlank(to)) {
-			builder.to(to);
+			builder.to(Double.valueOf(to)); //easy solution
 		}
 
 		return builder.build();
@@ -178,7 +178,7 @@ public class NestedFacetProcessor
 			rangeAggregation.getRanges(),
 			range -> builder.ranges(
 				_createAggregationRange(
-					ElasticsearchStringUtil.getFirstStringValue(
+					ElasticsearchStringUtil.getFirstStringValue( //we are always returning a String, maybe the way we handle here could be different to pass a double value to _createAggregationRange
 						range::getFromAsString, range::getFrom),
 					range.getKey(),
 					ElasticsearchStringUtil.getFirstStringValue(
