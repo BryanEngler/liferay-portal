@@ -78,16 +78,16 @@ public class RangeFacetProcessor
 		}
 	}
 
-	private AggregationRange _createAggregationRange(String range) {
+	private AggregationRange _createAggregationRange(String range) { //maybe pass the double values in the parameters?
 		String[] rangeParts = RangeParserUtil.parserRange(range);
 
 		return AggregationRange.of(
 			aggregationRange -> aggregationRange.key(
 				range
 			).from(
-				rangeParts[0]
+				Double.valueOf(rangeParts[0])
 			).to(
-				rangeParts[1]
+				Double.valueOf(rangeParts[1])
 			));
 	}
 
