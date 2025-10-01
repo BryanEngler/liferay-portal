@@ -16,6 +16,6 @@ public class IndexMappingsConstants {
 	public static final String LEGACY_LIFERAY_DOCUMENT_TYPE =
 		"LiferayDocumentType";
 
-	public static final String LIFERAY_DOCUMENT_TYPE = "_doc";
+	public static final String LIFERAY_DOCUMENT_TYPE = "_doc"; //remove
 
 }
