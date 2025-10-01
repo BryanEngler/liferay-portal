@@ -78,7 +78,7 @@ public class MultiBucketsAggregationFacetCollector implements FacetCollector {
 				String key = longTermsBucket.keyAsString();
 
 				if (Validator.isBlank(key)) {
-					key = longTermsBucket.key();
+					key = String.valueOf(longTermsBucket.key());
 				}
 
 				termCollectorHolder.add(key, (int)longTermsBucket.docCount());
@@ -96,7 +96,8 @@ public class MultiBucketsAggregationFacetCollector implements FacetCollector {
 					(StringTermsBucket)multiBucketBase;
 
 				termCollectorHolder.add(
-					stringTermsBucket.key(), (int)stringTermsBucket.docCount());
+					String.valueOf(stringTermsBucket.key()),
+					(int)stringTermsBucket.docCount());
 			}
 		}
 
