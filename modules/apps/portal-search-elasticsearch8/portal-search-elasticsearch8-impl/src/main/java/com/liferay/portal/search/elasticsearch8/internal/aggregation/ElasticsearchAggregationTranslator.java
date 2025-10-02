@@ -92,7 +92,7 @@ import com.liferay.portal.search.elasticsearch8.internal.sort.ElasticsearchSortF
 import com.liferay.portal.search.elasticsearch8.internal.util.ConversionUtil;
 import com.liferay.portal.search.elasticsearch8.internal.util.ElasticsearchStringUtil;
 import com.liferay.portal.search.elasticsearch8.internal.util.SetterUtil;
-import com.liferay.portal.search.query.Query;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import com.liferay.portal.search.query.QueryTranslator;
 import com.liferay.portal.search.script.Script;
 import com.liferay.portal.search.significance.ChiSquareSignificanceHeuristic;
@@ -1357,7 +1357,7 @@ public class ElasticsearchAggregationTranslator
 					Aggregation.Builder();
 
 		co.elastic.clients.elasticsearch._types.aggregations.TopHitsAggregation.
-			Builder topHitsAggregationBuilder = AggregationBuilders.topHits();
+			Builder topHitsAggregationBuilder = AggregationBuilders.topHits(); //Elastic Builder is different from opensearch builder ()
 
 		SetterUtil.setNotEmptyStringList(
 			topHitsAggregationBuilder::docvalueFields,
@@ -1497,7 +1497,10 @@ public class ElasticsearchAggregationTranslator
 				weightedAverageAggregationBuilder.build()));
 	}
 
-	protected void setNotNullQuery(Consumer<Query> consumer, Query query) {
+	protected void setNotNullQuery(
+		Consumer<Query> consumer,
+		com.liferay.portal.search.query.Query query) {
+
 		if (query != null) {
 			consumer.accept(new Query(_queryTranslator.translate(query)));
 		}
