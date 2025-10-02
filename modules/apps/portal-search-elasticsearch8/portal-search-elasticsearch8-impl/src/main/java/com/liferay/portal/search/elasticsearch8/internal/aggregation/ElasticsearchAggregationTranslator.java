@@ -1592,7 +1592,7 @@ public class ElasticsearchAggregationTranslator
 		AggregationRange.Builder builder = new AggregationRange.Builder();
 
 		if (!Validator.isBlank(from)) {
-			builder.from(from);
+			builder.from(Double.valueOf(from));
 		}
 
 		if (!Validator.isBlank(key)) {
@@ -1600,7 +1600,7 @@ public class ElasticsearchAggregationTranslator
 		}
 
 		if (!Validator.isBlank(to)) {
-			builder.to(to);
+			builder.to(Double.valueOf(to));
 		}
 
 		return builder.build();
