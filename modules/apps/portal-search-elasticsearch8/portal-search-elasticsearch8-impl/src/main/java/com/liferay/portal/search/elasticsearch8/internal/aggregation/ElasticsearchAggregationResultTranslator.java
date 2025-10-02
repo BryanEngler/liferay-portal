@@ -861,7 +861,8 @@ public class ElasticsearchAggregationResultTranslator
 				buckets.array(),
 				stringTermsBucket -> {
 					Bucket bucket = bucketAggregationResult.addBucket(
-						stringTermsBucket.key(), stringTermsBucket.docCount());
+						String.valueOf(stringTermsBucket.key()),
+						stringTermsBucket.docCount());
 
 					_addBucketChildAggregationResults(
 						aggregation, stringTermsBucket.aggregations(), bucket);
@@ -872,7 +873,8 @@ public class ElasticsearchAggregationResultTranslator
 				buckets.keyed(),
 				(key, stringTermsBucket) -> {
 					Bucket bucket = bucketAggregationResult.addBucket(
-						stringTermsBucket.key(), stringTermsBucket.docCount());
+						String.valueOf(stringTermsBucket.key()),
+						stringTermsBucket.docCount());
 
 					_addBucketChildAggregationResults(
 						aggregation, stringTermsBucket.aggregations(), bucket);
