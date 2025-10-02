@@ -100,9 +100,9 @@ public class AggregationFilteringFacetProcessorContext
 	private static Query _createRangeQuery(
 		String fieldName, String format, String[] rangeParts) {
 
-		RangeQuery.Builder builder = new RangeQuery.Builder();
+		RangeQuery.Builder builder = new RangeQuery.Builder(); //Builder from elasticsearch is very different from opensearch, maybe we should change the implementation here
 
-		builder.field(fieldName);
+		builder.field(fieldName); //builder don't have field, gte, lte
 		builder.gte(JsonData.of(rangeParts[0]));
 		builder.lte(JsonData.of(rangeParts[1]));
 
