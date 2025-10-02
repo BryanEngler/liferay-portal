@@ -799,7 +799,8 @@ public class ElasticsearchAggregationResultTranslator
 				buckets.array(),
 				longTermsBucket -> {
 					Bucket bucket = bucketAggregationResult.addBucket(
-						longTermsBucket.key(), longTermsBucket.docCount());
+						longTermsBucket.keyAsString(),
+						longTermsBucket.docCount());
 
 					_addBucketChildAggregationResults(
 						aggregation, longTermsBucket.aggregations(), bucket);
@@ -810,7 +811,8 @@ public class ElasticsearchAggregationResultTranslator
 				buckets.keyed(),
 				(key, longTermsBucket) -> {
 					Bucket bucket = bucketAggregationResult.addBucket(
-						longTermsBucket.key(), longTermsBucket.docCount());
+						longTermsBucket.keyAsString(),
+						longTermsBucket.docCount());
 
 					_addBucketChildAggregationResults(
 						aggregation, longTermsBucket.aggregations(), bucket);
