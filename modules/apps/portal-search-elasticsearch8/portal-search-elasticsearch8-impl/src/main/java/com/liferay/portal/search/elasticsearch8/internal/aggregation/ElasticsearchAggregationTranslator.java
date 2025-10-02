@@ -1029,7 +1029,7 @@ public class ElasticsearchAggregationTranslator
 
 			if (includeExcludeClause.getIncludedValues() != null) {
 				significantTermsAggregationBuilder.include(
-					Arrays.asList(includeExcludeClause.getIncludedValues()));
+					(TermsInclude) Arrays.asList(includeExcludeClause.getIncludedValues())); //cast this works, but this is the right way to do it?
 			}
 		}
 
@@ -1145,7 +1145,7 @@ public class ElasticsearchAggregationTranslator
 
 			if (includeExcludeClause.getIncludedValues() != null) {
 				significantTextAggregationBuilder.include(
-					Arrays.asList(includeExcludeClause.getIncludedValues()));
+					(TermsInclude) Arrays.asList(includeExcludeClause.getIncludedValues()));  //cast this works, but this is the right way to do it?
 			}
 		}
 
