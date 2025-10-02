@@ -887,6 +887,6 @@ public class ElasticsearchAggregationResultTranslator
 	private final Aggregate _aggregate;
 	private final AggregationResults _aggregationResults;
 	private final GeoBuilders _geoBuilders;
-	private final HitsMetadataTranslator _hitsMetadataTranslator;
+	private final HitsMetadataTranslator _hitsMetadataTranslator; //we should implement this class, like on OpenSearch?
 
 }
