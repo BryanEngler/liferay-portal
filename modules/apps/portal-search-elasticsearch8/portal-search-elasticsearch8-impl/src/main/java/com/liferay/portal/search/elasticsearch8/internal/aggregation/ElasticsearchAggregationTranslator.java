@@ -59,6 +59,13 @@ import com.liferay.portal.search.elasticsearch8.internal.script.ScriptTranslator
 import com.liferay.portal.search.elasticsearch8.internal.sort.ElasticsearchSortFieldTranslator;
 import com.liferay.portal.search.query.QueryTranslator;
 import com.liferay.portal.search.script.ScriptField;
+import com.liferay.portal.search.significance.ChiSquareSignificanceHeuristic;
+import com.liferay.portal.search.significance.GNDSignificanceHeuristic;
+import com.liferay.portal.search.significance.JLHScoreSignificanceHeuristic;
+import com.liferay.portal.search.significance.MutualInformationSignificanceHeuristic;
+import com.liferay.portal.search.significance.PercentageScoreSignificanceHeuristic;
+import com.liferay.portal.search.significance.ScriptSignificanceHeuristic;
+import com.liferay.portal.search.significance.SignificanceHeuristic;
 import com.liferay.portal.search.sort.Sort;
 import com.liferay.portal.search.sort.SortFieldTranslator;
 
@@ -96,6 +103,12 @@ import org.elasticsearch.search.aggregations.bucket.terms.IncludeExclude;
 import org.elasticsearch.search.aggregations.bucket.terms.SignificantTermsAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.terms.SignificantTextAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.terms.heuristic.ChiSquare;
+import org.elasticsearch.search.aggregations.bucket.terms.heuristic.GND;
+import org.elasticsearch.search.aggregations.bucket.terms.heuristic.JLHScore;
+import org.elasticsearch.search.aggregations.bucket.terms.heuristic.MutualInformation;
+import org.elasticsearch.search.aggregations.bucket.terms.heuristic.PercentageScore;
+import org.elasticsearch.search.aggregations.bucket.terms.heuristic.ScriptHeuristic;
 import org.elasticsearch.search.aggregations.metrics.AvgAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.CardinalityAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.ExtendedStatsAggregationBuilder;
@@ -754,7 +767,7 @@ public class ElasticsearchAggregationTranslator
 
 		if (significantTermsAggregation.getSignificanceHeuristic() != null) {
 			significantTermsAggregationBuilder.significanceHeuristic(
-				_significanceHeuristicTranslator.translate(
+				_translate(
 					significantTermsAggregation.getSignificanceHeuristic()));
 		}
 
@@ -814,7 +827,7 @@ public class ElasticsearchAggregationTranslator
 
 		if (significantTextAggregation.getSignificanceHeuristic() != null) {
 			significantTextAggregationBuilder.significanceHeuristic(
-				_significanceHeuristicTranslator.translate(
+				_translate(
 					significantTextAggregation.getSignificanceHeuristic()));
 		}
 
@@ -1220,6 +1233,64 @@ public class ElasticsearchAggregationTranslator
 		return bucketOrders;
 	}
 
+	private org.elasticsearch.search.aggregations.bucket.terms.heuristic.
+		SignificanceHeuristic _translate(
+			SignificanceHeuristic significanceHeuristic) {
+
+		if (significanceHeuristic instanceof ChiSquareSignificanceHeuristic) {
+			ChiSquareSignificanceHeuristic chiSquareSignificanceHeuristic =
+				(ChiSquareSignificanceHeuristic)significanceHeuristic;
+
+			return new ChiSquare(
+				chiSquareSignificanceHeuristic.isIncludeNegatives(),
+				chiSquareSignificanceHeuristic.isBackgroundIsSuperset());
+		}
+
+		if (significanceHeuristic instanceof GNDSignificanceHeuristic) {
+			GNDSignificanceHeuristic gndSignificanceHeuristic =
+				(GNDSignificanceHeuristic)significanceHeuristic;
+
+			return new GND(gndSignificanceHeuristic.isBackgroundIsSuperset());
+		}
+
+		if (significanceHeuristic instanceof JLHScoreSignificanceHeuristic) {
+			return new JLHScore();
+		}
+
+		if (significanceHeuristic instanceof
+				MutualInformationSignificanceHeuristic) {
+
+			MutualInformationSignificanceHeuristic
+				mutualInformationSignificanceHeuristic =
+					(MutualInformationSignificanceHeuristic)
+						significanceHeuristic;
+
+			return new MutualInformation(
+				mutualInformationSignificanceHeuristic.isIncludeNegatives(),
+				mutualInformationSignificanceHeuristic.
+					isBackgroundIsSuperset());
+		}
+
+		if (significanceHeuristic instanceof
+				PercentageScoreSignificanceHeuristic) {
+
+			return new PercentageScore();
+		}
+
+		if (significanceHeuristic instanceof ScriptSignificanceHeuristic) {
+			ScriptSignificanceHeuristic scriptSignificanceHeuristic =
+				(ScriptSignificanceHeuristic)significanceHeuristic;
+
+			Script script = _scriptTranslator.translate(
+				scriptSignificanceHeuristic.getScript());
+
+			return new ScriptHeuristic(script);
+		}
+
+		throw new IllegalArgumentException(
+			"Invalid significance heuristic: " + significanceHeuristic);
+	}
+
 	private final DistanceUnitTranslator _distanceUnitTranslator =
 		new DistanceUnitTranslator();
 	private final GeoDistanceTypeTranslator _geoDistanceTypeTranslator =
@@ -1234,9 +1305,6 @@ public class ElasticsearchAggregationTranslator
 	private final QueryTranslator<QueryBuilder> _queryTranslator =
 		new ElasticsearchQueryTranslator();
 	private final ScriptTranslator _scriptTranslator = new ScriptTranslator();
-	private final SignificanceHeuristicTranslator
-		_significanceHeuristicTranslator =
-			new SignificanceHeuristicTranslator();
 	private final SortFieldTranslator<SortBuilder<?>> _sortFieldTranslator =
 		new ElasticsearchSortFieldTranslator();
 	private final ValueTypeTranslator _valueTypeTranslator =
