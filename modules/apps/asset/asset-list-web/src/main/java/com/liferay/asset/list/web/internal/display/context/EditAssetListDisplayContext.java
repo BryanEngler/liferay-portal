@@ -29,7 +29,6 @@ import com.liferay.asset.list.web.internal.constants.AssetListWebKeys;
 import com.liferay.asset.tags.item.selector.AssetTagsItemSelectorCriterion;
 import com.liferay.asset.tags.item.selector.AssetTagsItemSelectorReturnType;
 import com.liferay.asset.util.AssetRendererFactoryClassProvider;
-import com.liferay.asset.util.comparator.AssetRendererFactoryTypeNameComparator;
 import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemList;
@@ -166,7 +165,8 @@ public class EditAssetListDisplayContext {
 				unicodeProperties.getProperty("classNameIds", null)));
 
 		if (classNameIds.length == 0) {
-			classNameIds = _getDefaultClassNameIds();
+			classNameIds = ListUtil.toLongArray(
+				getAvailableClassNameIds(), Long::longValue);
 		}
 
 		for (long classNameId : classNameIds) {
@@ -208,11 +208,16 @@ public class EditAssetListDisplayContext {
 			ClassTypeReader classTypeReader =
 				assetRendererFactory.getClassTypeReader();
 
+			String[] classTypeIdsArray = StringUtil.split(
+				unicodeProperties.getProperty(
+					"classTypeIds" + clazz.getSimpleName(), null));
+
+			if (ArrayUtil.isEmpty(classTypeIdsArray)) {
+				classTypeIdsArray = null;
+			}
+
 			long[] classTypeIds = GetterUtil.getLongValues(
-				StringUtil.split(
-					unicodeProperties.getProperty(
-						"classTypeIds" + clazz.getSimpleName(), null)),
-				_getDefaultClassTypeIds(classTypeReader));
+				classTypeIdsArray, _getDefaultClassTypeIds(classTypeReader));
 
 			for (long classTypeId : classTypeIds) {
 				dropdownItemList.add(
@@ -1311,24 +1316,13 @@ public class EditAssetListDisplayContext {
 			classType.getName());
 	}
 
-	private long[] _getDefaultClassNameIds() {
-		List<AssetRendererFactory<?>> assetRendererFactories = ListUtil.sort(
-			AssetRendererFactoryRegistryUtil.getAssetRendererFactories(
-				_themeDisplay.getCompanyId(), true),
-			new AssetRendererFactoryTypeNameComparator(
-				_themeDisplay.getLocale()));
-
-		return ListUtil.toLongArray(
-			assetRendererFactories, AssetRendererFactory::getClassNameId);
-	}
-
 	private long[] _getDefaultClassTypeIds(ClassTypeReader classTypeReader)
 		throws Exception {
 
 		List<ClassType> assetAvailableClassTypes =
 			classTypeReader.getAvailableClassTypes(
 				PortalUtil.getCurrentAndAncestorSiteGroupIds(
-					_themeDisplay.getScopeGroupId()),
+					getReferencedModelsGroupIds()),
 				_themeDisplay.getLocale());
 
 		return ListUtil.toLongArray(
