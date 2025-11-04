@@ -100,10 +100,10 @@ public class ObjectDefinitionModelListener
 			typeSettings
 		).build();
 
-		String classNameIdsValue = unicodeProperties.getProperty(
+		String classNameIdsString = unicodeProperties.getProperty(
 			"classNameIds");
 
-		String[] classNameIdValues = StringUtil.split(classNameIdsValue);
+		String[] classNameIdValues = StringUtil.split(classNameIdsString);
 
 		if (ArrayUtil.isEmpty(classNameIdValues)) {
 			return;
