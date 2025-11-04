@@ -103,15 +103,15 @@ public class ObjectDefinitionModelListener
 		String classNameIdsString = unicodeProperties.getProperty(
 			"classNameIds");
 
-		String[] classNameIdValues = StringUtil.split(classNameIdsString);
+		String[] classNameIds = StringUtil.split(classNameIdsString);
 
-		if (ArrayUtil.isEmpty(classNameIdValues)) {
+		if (ArrayUtil.isEmpty(classNameIds)) {
 			return;
 		}
 
 		List<String> classNameIdsList = new LinkedList<>();
 
-		for (String curClassNameId : classNameIdValues) {
+		for (String curClassNameId : classNameIds) {
 			classNameIdsList.add(curClassNameId);
 		}
 
