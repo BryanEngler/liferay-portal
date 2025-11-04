@@ -76,7 +76,8 @@ public class ObjectDefinitionModelListener
 					assetListEntrySegmentsEntryRels) {
 
 				_removeClassNameIdFromTypeSettings(
-					assetListEntrySegmentsEntryRel, String.valueOf(classNameId));
+					assetListEntrySegmentsEntryRel,
+					String.valueOf(classNameId));
 			}
 		}
 		catch (PortalException portalException) {
@@ -102,8 +103,7 @@ public class ObjectDefinitionModelListener
 		String classNameIdsValue = unicodeProperties.getProperty(
 			"classNameIds");
 
-		String[] classNameIdValues =
-			StringUtil.split(classNameIdsValue);
+		String[] classNameIdValues = StringUtil.split(classNameIdsValue);
 
 		if (ArrayUtil.isEmpty(classNameIdValues)) {
 			return;
@@ -147,8 +147,7 @@ public class ObjectDefinitionModelListener
 			}
 
 			unicodeProperties.setProperty(
-				"classNameIds",
-				StringUtil.merge(classNameIds));
+				"classNameIds", StringUtil.merge(classNameIds));
 		}
 		else {
 			unicodeProperties.setProperty(
