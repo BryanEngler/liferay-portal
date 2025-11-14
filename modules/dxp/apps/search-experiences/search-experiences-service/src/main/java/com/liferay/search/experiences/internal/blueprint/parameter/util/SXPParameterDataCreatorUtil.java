@@ -149,10 +149,6 @@ public class SXPParameterDataCreatorUtil {
 
 		Object object = searchContext.getAttribute(name);
 
-		if (object == null) {
-			return;
-		}
-
 		SXPParameter sxpParameter = _getSXPParameter(
 			name, object, parameter, searchContext, parameter.getType());
 
