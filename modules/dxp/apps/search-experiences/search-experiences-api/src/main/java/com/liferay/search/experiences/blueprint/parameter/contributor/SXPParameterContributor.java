@@ -12,6 +12,7 @@ import java.beans.ExceptionListener;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -21,7 +22,8 @@ public interface SXPParameterContributor {
 
 	public void contribute(
 		ExceptionListener exceptionListener, SearchContext searchContext,
-		Set<SXPParameter> sxpParameters);
+		Set<SXPParameter> sxpParameters,
+		Map<String, SXPParameter> sxpParametersMap);
 
 	public String getSXPParameterCategoryNameKey();
 
