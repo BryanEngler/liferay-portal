@@ -9,8 +9,11 @@ import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoValueLocalService;
+import com.liferay.object.rest.manager.v1_0.ObjectEntryManagerRegistry;
+import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.UserGroupGroupRoleLocalService;
 import com.liferay.portal.kernel.service.UserGroupLocalService;
@@ -61,7 +64,9 @@ public class SXPParameterContributorProviderImpl
 				_expandoColumnLocalService, _expandoValueLocalService,
 				_groupLocalService, _language, _portal, _segmentsEntryRetriever,
 				_userGroupGroupRoleLocalService, _userGroupLocalService,
-				_userGroupRoleLocalService, _userLocalService, _uidFactory)
+				_userGroupRoleLocalService, _userLocalService, _uidFactory,
+				_objectDefinitionService, _objectEntryManagerRegistry,
+				_classNameLocalService)
 		};
 	}
 
@@ -115,5 +120,14 @@ public class SXPParameterContributorProviderImpl
 
 	@Reference
 	private UIDFactory _uidFactory;
+
+	@Reference
+	private ObjectDefinitionService _objectDefinitionService;
+
+	@Reference
+	private ObjectEntryManagerRegistry _objectEntryManagerRegistry;
+
+	@Reference
+	private ClassNameLocalService _classNameLocalService;
 
 }

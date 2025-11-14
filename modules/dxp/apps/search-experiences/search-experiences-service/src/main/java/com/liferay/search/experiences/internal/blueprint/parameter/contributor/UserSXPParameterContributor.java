@@ -16,12 +16,23 @@ import com.liferay.expando.kernel.model.ExpandoValue;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoValueLocalService;
 import com.liferay.expando.kernel.service.permission.ExpandoColumnPermissionUtil;
+import com.liferay.object.constants.ObjectDefinitionConstants;
+import com.liferay.object.exception.NoSuchObjectDefinitionException;
+import com.liferay.object.exception.NoSuchObjectEntryException;
+import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.rest.dto.v1_0.ObjectEntry;
+import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
+import com.liferay.object.rest.manager.v1_0.ObjectEntryManagerRegistry;
+import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -34,12 +45,14 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
+import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.UserGroupGroupRoleLocalService;
 import com.liferay.portal.kernel.service.UserGroupLocalService;
 import com.liferay.portal.kernel.service.UserGroupRoleLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -47,6 +60,7 @@ import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Tuple;
 import com.liferay.portal.search.model.uid.UIDFactory;
+import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.search.experiences.blueprint.parameter.SXPParameter;
 import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributor;
 import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributorDefinition;
@@ -74,6 +88,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -96,7 +111,10 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 		UserGroupGroupRoleLocalService userGroupGroupRoleLocalService,
 		UserGroupLocalService userGroupLocalService,
 		UserGroupRoleLocalService userGroupRoleLocalService,
-		UserLocalService userLocalService, UIDFactory uidFactory) {
+		UserLocalService userLocalService, UIDFactory uidFactory,
+		ObjectDefinitionService objectDefinitionService,
+		ObjectEntryManagerRegistry objectEntryManagerRegistry,
+		ClassNameLocalService classNameLocalService) {
 
 		_assetCategoryLocalService = assetCategoryLocalService;
 		_assetTagLocalService = assetTagLocalService;
@@ -111,6 +129,9 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 		_userGroupRoleLocalService = userGroupRoleLocalService;
 		_userLocalService = userLocalService;
 		_uidFactory = uidFactory;
+		_objectDefinitionService = objectDefinitionService;
+		_objectEntryManagerRegistry = objectEntryManagerRegistry;
+		_classNameLocalService = classNameLocalService;
 	}
 
 	@Override
@@ -122,7 +143,7 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 		try {
 			_contribute(searchContext, sxpParameters, sxpParametersMap);
 		}
-		catch (PortalException portalException) {
+		catch (Exception portalException) {
 			exceptionListener.exceptionThrown(portalException);
 
 			_log.error(portalException);
@@ -456,7 +477,7 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 	private void _contribute(
 			SearchContext searchContext, Set<SXPParameter> sxpParameters,
 			Map<String, SXPParameter> sxpParametersMap)
-		throws PortalException {
+		throws Exception {
 
 		long userId = searchContext.getUserId();
 
@@ -470,32 +491,8 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 			return;
 		}
 
-		String[] searchableAssetTypes = GetterUtil.getStringValues(
-			searchContext.getAttribute(
-				"search.experiences.searchable.asset.types"));
-
-		SXPParameter mostViewedAssetsCountSXPParameter =
-			sxpParametersMap.get("user.most_viewed_assets_count");
-
-		int size = GetterUtil.getInteger(
-			mostViewedAssetsCountSXPParameter.getValue());
-
-		//call AC endpoint with userId, searchableAssetTypes, size.
-		//should return List of ClassedModels or Tuple of className/classPKs etc
-
-		List<Tuple> tuples = _callACEndpoint(
-			user.getUserId(), searchableAssetTypes, size);
-
-		for (int i =0; i < tuples.size(); i++) {
-			Tuple tuple = tuples.get(i);
-
-			sxpParameters.add(
-				new StringSXPParameter(
-					"user.most_viewed_asset_" + (i + 1), true,
-					_uidFactory.getUID(
-						(String)tuple.getObject(0),
-						(Serializable)tuple.getObject(1), 0)));
-		}
+		_addUsersMostViewedAssetsParameters(
+			searchContext, sxpParameters, sxpParametersMap, user);
 
 		long[] segmentsEntryIds = new long[0];
 
@@ -613,6 +610,207 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 
 		_addAssetCategories(sxpParameters, user);
 		_addExpandoSXPParameters(searchContext, sxpParameters, user);
+	}
+
+	private void _addUsersMostViewedAssetsParameters(
+			SearchContext searchContext, Set<SXPParameter> sxpParameters,
+			Map<String, SXPParameter> sxpParametersMap, User user)
+		throws Exception {
+
+		String[] searchableAssetTypes = GetterUtil.getStringValues(
+			searchContext.getAttribute(
+				"search.experiences.searchable.asset.types"));
+
+		SXPParameter mostViewedAssetsCountSXPParameter =
+			sxpParametersMap.get("user.most_viewed_assets_count");
+
+		if (mostViewedAssetsCountSXPParameter == null) {
+			return;
+		}
+
+		int size = GetterUtil.getInteger(
+			mostViewedAssetsCountSXPParameter.getValue());
+
+		ObjectDefinition objectDefinition = null;
+
+		try {
+			objectDefinition =
+				_objectDefinitionService.
+					getObjectDefinitionByExternalReferenceCode(
+						"USERS_MOST_VIEWED_ASSETS",
+						searchContext.getCompanyId());
+		}
+		catch (NoSuchObjectDefinitionException noSuchObjectDefinitionException) {
+//			objectDefinition = _objectDefinitionService.addSystemObjectDefinition(
+//				"USERS_MOST_VIEWED_ASSETS",)
+		}
+
+		ObjectEntryManager objectEntryManager =
+			_objectEntryManagerRegistry.getObjectEntryManager(
+				objectDefinition.getCompanyId(),
+				objectDefinition.getStorageType());
+
+		ObjectEntry objectEntry = null;
+
+		try {
+			objectEntry = objectEntryManager.getObjectEntry(
+				searchContext.getCompanyId(),
+				new DefaultDTOConverterContext(
+					false, null, null, null, null,
+					Locale.US, null,
+					user), _getERC(user, searchableAssetTypes),
+				objectDefinition,
+				ObjectDefinitionConstants.SCOPE_COMPANY);
+		}
+		catch (NoSuchObjectEntryException noSuchObjectEntryException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"No object entry with ERC " +
+						_getERC(user, searchableAssetTypes));
+			}
+		}
+
+		List<Tuple> tuples = new ArrayList<>();
+
+		Date lastSyncDate = null;
+		int cachedSize = 0;
+
+		if (objectEntry != null) {
+			Map<String, Object> properties = objectEntry.getProperties();
+
+			cachedSize = GetterUtil.getInteger(properties.get("size"));
+
+			Object lastSyncDateObject = properties.get("lastSyncDate");
+
+			lastSyncDate = GetterUtil.getDate(
+				lastSyncDateObject, DateFormatFactoryUtil.getSimpleDateFormat(
+					"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+		}
+
+		int min = 60; //make config
+
+		Date validCacheDate = new Date(
+			System.currentTimeMillis() - min * 60 * 1000);
+
+		//test expired cached data
+		//lastSyncDate = new Date(System.currentTimeMillis() - min * 65 * 1000)
+
+		if (lastSyncDate == null ||
+			(lastSyncDate.before(validCacheDate) || (size > cachedSize))) {
+			//call AC endpoint with userId, searchableAssetTypes, size.
+			//should return List of ClassedModels or Tuple of className/classPKs etc
+
+			tuples = _callACEndpoint(
+				user.getUserId(), searchableAssetTypes, size);
+
+			lastSyncDate = new Date();
+
+			if (objectEntry == null) {
+				objectEntry = new ObjectEntry();
+
+				objectEntry.setExternalReferenceCode(
+					_getERC(user, searchableAssetTypes));
+
+				Map<String, Object> properties = new HashMap<>();
+
+				properties.put("lastSyncDate", lastSyncDate);
+
+				properties.put("size", size);
+
+				properties.put("mostViewedAssets", _getJSONArrayString(tuples));
+
+				objectEntry.setProperties(properties);
+
+				objectEntryManager.addObjectEntry(
+					new DefaultDTOConverterContext(
+						false, null, null, null, null,
+						Locale.US, null,
+						user),
+					objectDefinition, objectEntry,
+					ObjectDefinitionConstants.SCOPE_COMPANY);
+			}
+			else {
+				Map<String, Object> properties = objectEntry.getProperties();
+
+				properties.put("mostViewedAssets", _getJSONArrayString(tuples));
+
+				properties.put("lastSyncDate", lastSyncDate);
+
+				properties.put("size", size);
+
+				objectEntryManager.updateObjectEntry(
+					searchContext.getCompanyId(),
+					new DefaultDTOConverterContext(
+						false, null, null, null, null,
+						Locale.US, null,
+						user),
+					_getERC(user, searchableAssetTypes), objectDefinition,
+					objectEntry, ObjectDefinitionConstants.SCOPE_COMPANY);
+			}
+		}
+		else {
+			//use cached data
+			Map<String, Object> properties = objectEntry.getProperties();
+
+			JSONArray jsonArray =
+				JSONFactoryUtil.createJSONArray(
+					GetterUtil.getString(properties.get("mostViewedAssets")));
+
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+				tuples.add(
+					new Tuple(
+						jsonObject.getString("className"),
+						jsonObject.getString("classPK")));
+			}
+		}
+
+		for (int i = 0; i < tuples.size(); i++) {
+			Tuple tuple = tuples.get(i);
+
+			sxpParameters.add(
+				new StringSXPParameter(
+					"user.most_viewed_asset_" + (i + 1) + "_uid", true,
+					_uidFactory.getUID(
+						(String)tuple.getObject(0),
+						(Serializable)tuple.getObject(1), 0)));
+		}
+	}
+
+	private String _getJSONArrayString(List<Tuple> tuples) {
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		for (Tuple tuple : tuples) {
+			jsonArray.put(
+				JSONUtil.put(
+					"className", tuple.getObject(0)
+				).put(
+					"classPK", tuple.getObject(1)
+				));
+		}
+
+		return jsonArray.toString();
+	}
+
+	private String _getERC(User user, String[] searchableAssetTypes) {
+		List<Long> classNameIds = new ArrayList<>();
+
+		for (String searchableAssetType : searchableAssetTypes) {
+			classNameIds.add(
+				_classNameLocalService.getClassNameId(searchableAssetType));
+		}
+
+		Collections.sort(classNameIds);
+
+		StringBundler sb = new StringBundler(classNameIds.size() * 2);
+
+		for (long classNameId : classNameIds) {
+			sb.append(StringPool.DASH);
+			sb.append(classNameId);
+		}
+
+		return user.getUserId() + sb.toString();
 	}
 
 	private int _getAge(Date date) {
@@ -909,5 +1107,8 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 	private final UserGroupRoleLocalService _userGroupRoleLocalService;
 	private final UserLocalService _userLocalService;
 	private final UIDFactory _uidFactory;
+	private ObjectDefinitionService _objectDefinitionService;
+	private ObjectEntryManagerRegistry _objectEntryManagerRegistry;
+	private ClassNameLocalService _classNameLocalService;
 
 }
