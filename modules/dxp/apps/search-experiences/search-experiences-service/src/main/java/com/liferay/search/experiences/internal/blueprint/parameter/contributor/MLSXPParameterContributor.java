@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -48,7 +49,8 @@ public class MLSXPParameterContributor implements SXPParameterContributor {
 	@Override
 	public void contribute(
 		ExceptionListener exceptionListener, SearchContext searchContext,
-		Set<SXPParameter> sxpParameters) {
+		Set<SXPParameter> sxpParameters,
+		Map<String, SXPParameter> sxpParametersMap) {
 
 		_addTextEmbeddingParameters(
 			exceptionListener, searchContext, sxpParameters);

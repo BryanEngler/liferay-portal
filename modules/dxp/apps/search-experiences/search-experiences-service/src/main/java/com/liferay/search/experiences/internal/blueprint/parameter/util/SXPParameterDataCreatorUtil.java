@@ -38,6 +38,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
@@ -183,7 +184,8 @@ public class SXPParameterDataCreatorUtil {
 			Set<SXPParameter> set = new LinkedHashSet<>();
 
 			sxpParameterContributor.contribute(
-				exceptionListener, searchContext, set);
+				exceptionListener, searchContext, set,
+				Collections.unmodifiableMap(sxpParameters));
 
 			for (SXPParameter sxpParameter : set) {
 				_add(sxpParameter, sxpParameters);

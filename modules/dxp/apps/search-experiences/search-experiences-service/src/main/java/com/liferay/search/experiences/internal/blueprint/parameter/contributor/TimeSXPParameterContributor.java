@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -35,7 +36,8 @@ public class TimeSXPParameterContributor implements SXPParameterContributor {
 	@Override
 	public void contribute(
 		ExceptionListener exceptionListener, SearchContext searchContext,
-		Set<SXPParameter> sxpParameters) {
+		Set<SXPParameter> sxpParameters,
+		Map<String, SXPParameter> sxpParametersMap) {
 
 		TimeZone timeZone = searchContext.getTimeZone();
 

@@ -111,10 +111,11 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 	@Override
 	public void contribute(
 		ExceptionListener exceptionListener, SearchContext searchContext,
-		Set<SXPParameter> sxpParameters) {
+		Set<SXPParameter> sxpParameters,
+		Map<String, SXPParameter> sxpParametersMap) {
 
 		try {
-			_contribute(searchContext, sxpParameters);
+			_contribute(searchContext, sxpParameters, sxpParametersMap);
 		}
 		catch (PortalException portalException) {
 			exceptionListener.exceptionThrown(portalException);
@@ -422,7 +423,8 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 	}
 
 	private void _contribute(
-			SearchContext searchContext, Set<SXPParameter> sxpParameters)
+			SearchContext searchContext, Set<SXPParameter> sxpParameters,
+			Map<String, SXPParameter> sxpParametersMap)
 		throws PortalException {
 
 		long userId = searchContext.getUserId();

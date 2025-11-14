@@ -27,6 +27,7 @@ import java.beans.ExceptionListener;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -44,7 +45,8 @@ public class ContextSXPParameterContributor implements SXPParameterContributor {
 	@Override
 	public void contribute(
 		ExceptionListener exceptionListener, SearchContext searchContext,
-		Set<SXPParameter> sxpParameters) {
+		Set<SXPParameter> sxpParameters,
+		Map<String, SXPParameter> sxpParametersMap) {
 
 		long[] commerceAccountGroupIds = (long[])searchContext.getAttribute(
 			"commerceAccountGroupIds");
