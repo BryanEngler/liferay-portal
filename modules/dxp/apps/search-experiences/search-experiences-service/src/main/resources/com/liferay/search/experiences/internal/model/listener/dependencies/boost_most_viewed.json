@@ -1,0 +1,51 @@
+{
+	"description_i18n": {
+		"en_US": "boost-most-viewed-assets-description"
+	},
+	"elementDefinition": {
+		"category": "boost",
+		"configuration": {
+			"queryConfiguration": {
+				"queryEntries": [
+					{
+						"clauses": [
+							{
+								"context": "query",
+								"occur": "should",
+								"query": {
+									"bool": {
+									  "should": [
+										{
+										   "ids": {
+											"values": ["${user.most_viewed_asset_1}"],
+											"boost" : 30000
+										  }
+										},
+										{
+										   "ids": {
+											"values": ["${user.most_viewed_asset_2}"],
+											"boost" : 20000
+										  }
+										},
+										{
+										   "ids": {
+											"values": ["${user.most_viewed_asset_3}"],
+											"boost" : 10000
+										  }
+										}
+									  ]
+									}
+								}
+							}
+						]
+					}
+				]
+			}
+		},
+		"icon": "thumbs-up"
+	},
+	"externalReferenceCode": "BOOST_MOST_VIEWED_ASSETS",
+	"title_i18n": {
+		"en_US": "boost-most-viewed-assets"
+	}
+}
