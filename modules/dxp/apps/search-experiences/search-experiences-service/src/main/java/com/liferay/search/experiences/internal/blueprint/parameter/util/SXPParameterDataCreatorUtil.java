@@ -28,6 +28,7 @@ import com.liferay.search.experiences.internal.blueprint.parameter.SXPParameterD
 import com.liferay.search.experiences.internal.blueprint.parameter.StringArraySXPParameter;
 import com.liferay.search.experiences.internal.blueprint.parameter.StringSXPParameter;
 import com.liferay.search.experiences.rest.dto.v1_0.Configuration;
+import com.liferay.search.experiences.rest.dto.v1_0.GeneralConfiguration;
 import com.liferay.search.experiences.rest.dto.v1_0.Parameter;
 import com.liferay.search.experiences.rest.dto.v1_0.ParameterConfiguration;
 import com.liferay.search.experiences.rest.dto.v1_0.SXPBlueprint;
@@ -72,6 +73,13 @@ public class SXPParameterDataCreatorUtil {
 				configuration.getParameterConfiguration(), searchContext,
 				sxpParameters);
 		}
+
+		GeneralConfiguration generalConfiguration =
+			configuration.getGeneralConfiguration();
+
+		searchContext.setAttribute(
+			"search.experiences.searchable.asset.types",
+			generalConfiguration.getSearchableAssetTypes());
 
 		_contribute(
 			exceptionListener, searchContext, sxpParameters,

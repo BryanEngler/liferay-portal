@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.search.configuration.SemanticSearchConfigurationProvider;
 import com.liferay.portal.search.ml.embedding.text.TextEmbeddingRetriever;
+import com.liferay.portal.search.model.uid.UIDFactory;
 import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributor;
 import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributorProvider;
 import com.liferay.search.experiences.internal.blueprint.parameter.contributor.ContextSXPParameterContributor;
@@ -60,7 +61,7 @@ public class SXPParameterContributorProviderImpl
 				_expandoColumnLocalService, _expandoValueLocalService,
 				_groupLocalService, _language, _portal, _segmentsEntryRetriever,
 				_userGroupGroupRoleLocalService, _userGroupLocalService,
-				_userGroupRoleLocalService, _userLocalService)
+				_userGroupRoleLocalService, _userLocalService, _uidFactory)
 		};
 	}
 
@@ -111,5 +112,8 @@ public class SXPParameterContributorProviderImpl
 
 	@Reference
 	private UserLocalService _userLocalService;
+
+	@Reference
+	private UIDFactory _uidFactory;
 
 }

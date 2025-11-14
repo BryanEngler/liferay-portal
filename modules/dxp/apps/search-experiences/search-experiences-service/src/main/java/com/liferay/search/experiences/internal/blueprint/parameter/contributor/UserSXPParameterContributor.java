@@ -45,6 +45,8 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Tuple;
+import com.liferay.portal.search.model.uid.UIDFactory;
 import com.liferay.search.experiences.blueprint.parameter.SXPParameter;
 import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributor;
 import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributorDefinition;
@@ -65,6 +67,8 @@ import com.liferay.segments.SegmentsEntryRetriever;
 import com.liferay.segments.context.Context;
 
 import java.beans.ExceptionListener;
+
+import java.io.Serializable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -92,7 +96,7 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 		UserGroupGroupRoleLocalService userGroupGroupRoleLocalService,
 		UserGroupLocalService userGroupLocalService,
 		UserGroupRoleLocalService userGroupRoleLocalService,
-		UserLocalService userLocalService) {
+		UserLocalService userLocalService, UIDFactory uidFactory) {
 
 		_assetCategoryLocalService = assetCategoryLocalService;
 		_assetTagLocalService = assetTagLocalService;
@@ -106,6 +110,7 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 		_userGroupLocalService = userGroupLocalService;
 		_userGroupRoleLocalService = userGroupRoleLocalService;
 		_userLocalService = userLocalService;
+		_uidFactory = uidFactory;
 	}
 
 	@Override
@@ -422,6 +427,32 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 		}
 	}
 
+	private List<Tuple> _callACEndpoint(
+		long userId, String[] searchableAssetTypes, int size) {
+
+		List<Tuple> classNameClassPKs = new ArrayList<>();
+
+		classNameClassPKs.add(
+			new Tuple(
+				"com.liferay.object.model.ObjectDefinition#M5Y9","34881"));
+		classNameClassPKs.add(
+			new Tuple(
+				"com.liferay.object.model.ObjectDefinition#M5Y9","34890"));
+		classNameClassPKs.add(
+			new Tuple(
+				"com.liferay.object.model.ObjectDefinition#M5Y9","34899"));
+
+		List<Tuple> tuples = new ArrayList<>();
+
+		for (int i = 0; i < size; i++) {
+			Tuple tuple = classNameClassPKs.get(i);
+
+			tuples.add(tuple);
+		}
+
+		return tuples;
+	}
+
 	private void _contribute(
 			SearchContext searchContext, Set<SXPParameter> sxpParameters,
 			Map<String, SXPParameter> sxpParametersMap)
@@ -437,6 +468,33 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 
 		if (user == null) {
 			return;
+		}
+
+		String[] searchableAssetTypes = GetterUtil.getStringValues(
+			searchContext.getAttribute(
+				"search.experiences.searchable.asset.types"));
+
+		SXPParameter mostViewedAssetsCountSXPParameter =
+			sxpParametersMap.get("user.most_viewed_assets_count");
+
+		int size = GetterUtil.getInteger(
+			mostViewedAssetsCountSXPParameter.getValue());
+
+		//call AC endpoint with userId, searchableAssetTypes, size.
+		//should return List of ClassedModels or Tuple of className/classPKs etc
+
+		List<Tuple> tuples = _callACEndpoint(
+			user.getUserId(), searchableAssetTypes, size);
+
+		for (int i =0; i < tuples.size(); i++) {
+			Tuple tuple = tuples.get(i);
+
+			sxpParameters.add(
+				new StringSXPParameter(
+					"user.most_viewed_asset_" + (i + 1), true,
+					_uidFactory.getUID(
+						(String)tuple.getObject(0),
+						(Serializable)tuple.getObject(1), 0)));
 		}
 
 		long[] segmentsEntryIds = new long[0];
@@ -850,5 +908,6 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 	private final UserGroupLocalService _userGroupLocalService;
 	private final UserGroupRoleLocalService _userGroupRoleLocalService;
 	private final UserLocalService _userLocalService;
+	private final UIDFactory _uidFactory;
 
 }
