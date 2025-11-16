@@ -451,17 +451,21 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 	private List<Tuple> _callACEndpoint(
 		long userId, String[] searchableAssetTypes, int size) {
 
+		if (_log.isDebugEnabled()) {
+			_log.debug("*** Calling AC endpoint ***");
+		}
+
 		List<Tuple> classNameClassPKs = new ArrayList<>();
 
 		classNameClassPKs.add(
 			new Tuple(
-				"com.liferay.object.model.ObjectDefinition#M5Y9","34881"));
+				"com.liferay.object.model.ObjectDefinition#M5Y9","34881")); //Schedule an appointment
 		classNameClassPKs.add(
 			new Tuple(
-				"com.liferay.object.model.ObjectDefinition#M5Y9","34890"));
+				"com.liferay.object.model.ObjectDefinition#M5Y9","34890")); //Cancel my subscription
 		classNameClassPKs.add(
 			new Tuple(
-				"com.liferay.object.model.ObjectDefinition#M5Y9","34899"));
+				"com.liferay.object.model.ObjectDefinition#M5Y9","34899")); //Generate a report
 
 		List<Tuple> tuples = new ArrayList<>();
 
@@ -625,6 +629,12 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 			sxpParametersMap.get("user.most_viewed_assets_count");
 
 		if (mostViewedAssetsCountSXPParameter == null) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Not adding user.most_viewed_asset_X_uid parameters " +
+						"because user.most_viewed_assets_count is not defined");
+			}
+
 			return;
 		}
 
@@ -721,6 +731,11 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 
 				objectEntry.setProperties(properties);
 
+				if (_log.isDebugEnabled()) {
+					_log.debug(
+						"*** Adding USERS_MOST_VIEWED_ASSETS Object Entry ***");
+				}
+
 				objectEntryManager.addObjectEntry(
 					new DefaultDTOConverterContext(
 						false, null, null, null, null,
@@ -738,6 +753,11 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 
 				properties.put("size", size);
 
+				if (_log.isDebugEnabled()) {
+					_log.debug(
+						"*** Updating USERS_MOST_VIEWED_ASSETS Object Entry ***");
+				}
+
 				objectEntryManager.updateObjectEntry(
 					searchContext.getCompanyId(),
 					new DefaultDTOConverterContext(
@@ -749,6 +769,11 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 			}
 		}
 		else {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"*** Using cached data from object entry ***");
+			}
+
 			//use cached data
 			Map<String, Object> properties = objectEntry.getProperties();
 
