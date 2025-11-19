@@ -1,0 +1,134 @@
+{
+	"description_i18n": {
+		"en_US": "boost-most-tracked-contents-description"
+	},
+	"elementDefinition": {
+		"category": "boost",
+		"configuration": {
+			"queryConfiguration": {
+				"queryEntries": [
+					{
+						"clauses": [
+							{
+								"context": "query",
+								"occur": "should",
+								"query": "${configuration.query}"
+							}
+						]
+					}
+				]
+			}
+		},
+		"icon": "thumbs-up",
+		"uiConfiguration": {
+			"fieldSets": [
+				{
+					"fields": [
+						{
+							"helpText": "custom-event-name-help",
+							"label": "custom-event-name",
+							"name": "custom_event_name",
+							"type": "text"
+						},
+						{
+							"defaultValue": "365",
+							"helpText": "date-range-help",
+							"label": "date-range",
+							"name": "date_range",
+							"type": "select",
+							"typeOptions": {
+								"options": [
+									{
+										"label": "Past 24 hours",
+										"value": "0"
+									},
+									{
+										"label": "Past 7 days",
+										"value": "7"
+									},
+									{
+										"label": "Past 28 days",
+										"value": "28"
+									},
+									{
+										"label": "Past 30 days",
+										"value": "30"
+									},
+									{
+										"label": "Past 90 days",
+										"value": "90"
+									},
+									{
+										"label": "Past 180 days",
+										"value": "180"
+									},
+									{
+										"label": "Past year",
+										"value": "365"
+									}
+								]
+							}
+						},
+						{
+							"helpText": "filter-key-help",
+							"label": "filter-key",
+							"name": "filter_key",
+							"type": "text",
+							"typeOptions": {
+								"required": "false"
+							}
+						},
+						{
+							"helpText": "element-filter-value-help",
+							"label": "filter-value",
+							"name": "filter_value",
+							"type": "text",
+							"typeOptions": {
+								"required": "false"
+							}
+						},
+						{
+							"defaultValue": {
+								"bool": {
+									"should": [
+										{
+											"ids": {
+												"boost": 30,
+												"values": [
+													"${analytics.user_most_tracked_content_1_uid}"
+												]
+											}
+										},
+										{
+											"ids": {
+												"boost": 20,
+												"values": [
+													"${analytics.user_most_tracked_content_2_uid}"
+												]
+											}
+										},
+										{
+											"ids": {
+												"boost": 10,
+												"values": [
+													"${analytics.most_tracked_content_1_uid}"
+												]
+											}
+										}
+									]
+								}
+							},
+							"label": "query",
+							"name": "query",
+							"type": "json"
+						}
+					]
+				}
+			]
+		}
+	},
+	"externalReferenceCode": "BOOST_MOST_TRACKED_CONTENTS",
+	"title_i18n": {
+		"en_US": "boost-most-tracked-contents"
+	}
+}
