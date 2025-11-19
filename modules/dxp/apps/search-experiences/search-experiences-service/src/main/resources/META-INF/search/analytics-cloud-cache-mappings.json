@@ -1,0 +1,13 @@
+{
+	"properties": {
+		"lastSyncDate": {
+			"type": "keyword"
+		},
+		"mostViewedContents": {
+			"type": "keyword"
+		},
+		"size": {
+			"type": "keyword"
+		}
+	}
+}

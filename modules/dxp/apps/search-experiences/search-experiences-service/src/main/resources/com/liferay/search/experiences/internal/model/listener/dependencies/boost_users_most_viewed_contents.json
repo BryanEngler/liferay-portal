@@ -1,0 +1,113 @@
+{
+	"description_i18n": {
+		"en_US": "boost-users-most-viewed-contents-description"
+	},
+	"elementDefinition": {
+		"category": "boost",
+		"configuration": {
+			"queryConfiguration": {
+				"queryEntries": [
+					{
+						"clauses": [
+							{
+								"context": "query",
+								"occur": "should",
+								"query": "${configuration.query}"
+							}
+						]
+					}
+				]
+			}
+		},
+		"icon": "thumbs-up",
+		"uiConfiguration": {
+			"fieldSets": [
+				{
+					"fields": [
+						{
+							"defaultValue": "viewContent",
+							"helpText": "custom-event-name-help",
+							"label": "custom-event-name",
+							"name": "custom_event_name",
+							"type": "text"
+						},
+						{
+							"defaultValue": "365",
+							"helpText": "date-range-help",
+							"label": "date-range",
+							"name": "date_range",
+							"type": "select",
+							"typeOptions": {
+								"options": [
+									{
+										"label": "7",
+										"value": "7"
+									},
+									{
+										"label": "28",
+										"value": "28"
+									},
+									{
+										"label": "30",
+										"value": "30"
+									},
+									{
+										"label": "90",
+										"value": "90"
+									},
+									{
+										"label": "180",
+										"value": "180"
+									},
+									{
+										"label": "365",
+										"value": "365"
+									}
+								]
+							}
+						},
+						{
+							"defaultValue": {
+								"bool": {
+									"should": [
+										{
+											"ids": {
+												"boost": 30,
+												"values": [
+													"${user.most_viewed_content_1_uid}"
+												]
+											}
+										},
+										{
+											"ids": {
+												"boost": 20,
+												"values": [
+													"${user.most_viewed_content_2_uid}"
+												]
+											}
+										},
+										{
+											"ids": {
+												"boost": 10,
+												"values": [
+													"${user.most_viewed_content_3_uid}"
+												]
+											}
+										}
+									]
+								}
+							},
+							"label": "query",
+							"name": "query",
+							"type": "json"
+						}
+					]
+				}
+			]
+		}
+	},
+	"externalReferenceCode": "BOOST_USERS_MOST_VIEWED_CONTENTS",
+	"title_i18n": {
+		"en_US": "boost-users-most-viewed-contents"
+	}
+}
