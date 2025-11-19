@@ -5,15 +5,21 @@
 
 package com.liferay.search.experiences.internal.blueprint.search.request.enhancer;
 
+import com.liferay.analytics.settings.rest.manager.AnalyticsSettingsManager;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.service.ClassNameLocalService;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -22,10 +28,14 @@ import com.liferay.portal.search.aggregation.Aggregations;
 import com.liferay.portal.search.asset.AssetSubtypeIdentifierBuilder;
 import com.liferay.portal.search.collapse.CollapseBuilderFactory;
 import com.liferay.portal.search.collapse.InnerHitBuilderFactory;
+import com.liferay.portal.search.document.DocumentBuilderFactory;
+import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.filter.ComplexQueryPartBuilderFactory;
 import com.liferay.portal.search.geolocation.GeoBuilders;
 import com.liferay.portal.search.highlight.FieldConfigBuilderFactory;
 import com.liferay.portal.search.highlight.HighlightBuilderFactory;
+import com.liferay.portal.search.index.IndexNameBuilder;
+import com.liferay.portal.search.model.uid.UIDFactory;
 import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.search.rescore.RescoreBuilderFactory;
 import com.liferay.portal.search.script.Scripts;
@@ -40,6 +50,7 @@ import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParamet
 import com.liferay.search.experiences.blueprint.search.request.enhancer.SXPBlueprintSearchRequestEnhancer;
 import com.liferay.search.experiences.internal.blueprint.highlight.HighlightConverter;
 import com.liferay.search.experiences.internal.blueprint.parameter.SXPParameterData;
+import com.liferay.search.experiences.internal.blueprint.parameter.contributor.AsahSXPParameterContributor;
 import com.liferay.search.experiences.internal.blueprint.parameter.util.SXPParameterDataCreatorUtil;
 import com.liferay.search.experiences.internal.blueprint.property.PropertyExpander;
 import com.liferay.search.experiences.internal.blueprint.property.PropertyResolver;
@@ -54,6 +65,7 @@ import com.liferay.search.experiences.internal.blueprint.search.request.body.con
 import com.liferay.search.experiences.internal.blueprint.search.request.body.contributor.SortSXPSearchRequestBodyContributor;
 import com.liferay.search.experiences.internal.blueprint.search.request.body.contributor.SuggestSXPSearchRequestBodyContributor;
 import com.liferay.search.experiences.internal.blueprint.sort.SortConverter;
+import com.liferay.search.experiences.internal.configuration.AsahSXPElementsConfiguration;
 import com.liferay.search.experiences.rest.dto.v1_0.Clause;
 import com.liferay.search.experiences.rest.dto.v1_0.Configuration;
 import com.liferay.search.experiences.rest.dto.v1_0.ElementDefinition;
@@ -78,17 +90,22 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 import org.apache.commons.lang.StringUtils;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Petteri Karttunen
  */
-@Component(enabled = false, service = SXPBlueprintSearchRequestEnhancer.class)
+@Component(
+	configurationPid = "com.liferay.search.experiences.internal.configuration.AsahSXPElementsConfiguration",
+	enabled = false, service = SXPBlueprintSearchRequestEnhancer.class
+)
 public class SXPBlueprintSearchRequestEnhancerImpl
 	implements SXPBlueprintSearchRequestEnhancer {
 
@@ -111,7 +128,16 @@ public class SXPBlueprintSearchRequestEnhancerImpl
 	}
 
 	@Activate
-	protected void activate() {
+	@Modified
+	protected void activate(Map<String, Object> properties) {
+		_asahSXPParameterContributor = new AsahSXPParameterContributor(
+			_analyticsSettingsManager,
+			ConfigurableUtil.createConfigurable(
+				AsahSXPElementsConfiguration.class, properties),
+			_classNameLocalService, _documentBuilderFactory, _http,
+			_indexNameBuilder, _searchEngineAdapter, _uidFactory,
+			_userLocalService);
+
 		HighlightConverter highlightConverter = new HighlightConverter(
 			_fieldConfigBuilderFactory, _highlightBuilderFactory);
 
@@ -198,6 +224,19 @@ public class SXPBlueprintSearchRequestEnhancerImpl
 		ElementInstance elementInstance, int index,
 		SearchRequestBuilder searchRequestBuilder,
 		SXPParameterData sxpParameterData) {
+
+		_asahSXPParameterContributor.contribute(
+			elementInstance.getUiConfigurationValues(),
+			_getMaximumVariableNumber(
+				elementInstance.getConfigurationEntry(),
+				AsahSXPParameterContributor.
+					MOST_TRACKED_CONTENT_PARAMETER_PREFIX),
+			_getMaximumVariableNumber(
+				elementInstance.getConfigurationEntry(),
+				AsahSXPParameterContributor.
+					USER_MOST_TRACKED_CONTENT_PARAMETER_PREFIX),
+			searchRequestBuilder.withSearchContextGet(Function.identity()),
+			sxpParameterData.getSXPParameters());
 
 		Configuration configuration = _getConfiguration(
 			elementInstance, sxpParameterData);
@@ -378,6 +417,38 @@ public class SXPBlueprintSearchRequestEnhancerImpl
 		return null;
 	}
 
+	private int _getMaximumVariableNumber(
+		Configuration configurationEntry, String prefix) {
+
+		String json = String.valueOf(configurationEntry);
+
+		if (json == null) {
+			return 0;
+		}
+
+		int index1 = json.indexOf("${" + prefix);
+
+		if (index1 == -1) {
+			return 0;
+		}
+
+		int maximumVariableNumber = 0;
+
+		while (index1 != -1) {
+			json = json.substring(index1 + 2 + prefix.length());
+
+			int index2 = json.indexOf(StringPool.UNDERLINE);
+
+			maximumVariableNumber = Math.max(
+				maximumVariableNumber,
+				Integer.valueOf(json.substring(0, index2)));
+
+			index1 = json.indexOf("${" + prefix);
+		}
+
+		return maximumVariableNumber;
+	}
+
 	private String _getType(Field field) {
 		if (field != null) {
 			return field.getType();
@@ -530,13 +601,24 @@ public class SXPBlueprintSearchRequestEnhancerImpl
 	private Aggregations _aggregations;
 
 	@Reference
+	private AnalyticsSettingsManager _analyticsSettingsManager;
+
+	private volatile AsahSXPParameterContributor _asahSXPParameterContributor;
+
+	@Reference
 	private AssetSubtypeIdentifierBuilder _assetSubtypeIdentifierBuilder;
+
+	@Reference
+	private ClassNameLocalService _classNameLocalService;
 
 	@Reference
 	private CollapseBuilderFactory _collapseBuilderFactory;
 
 	@Reference
 	private ComplexQueryPartBuilderFactory _complexQueryPartBuilderFactory;
+
+	@Reference
+	private DocumentBuilderFactory _documentBuilderFactory;
 
 	@Reference
 	private DTOConverterRegistry _dtoConverterRegistry;
@@ -549,6 +631,12 @@ public class SXPBlueprintSearchRequestEnhancerImpl
 
 	@Reference
 	private HighlightBuilderFactory _highlightBuilderFactory;
+
+	@Reference
+	private Http _http;
+
+	@Reference
+	private IndexNameBuilder _indexNameBuilder;
 
 	@Reference
 	private InnerHitBuilderFactory _innerHitBuilderFactory;
@@ -566,6 +654,9 @@ public class SXPBlueprintSearchRequestEnhancerImpl
 	private Scripts _scripts;
 
 	@Reference
+	private SearchEngineAdapter _searchEngineAdapter;
+
+	@Reference
 	private SignificanceHeuristics _significanceHeuristics;
 
 	@Reference
@@ -574,7 +665,13 @@ public class SXPBlueprintSearchRequestEnhancerImpl
 	@Reference
 	private SXPParameterContributorProvider _sxpParameterContributorProvider;
 
-	private List<SXPSearchRequestBodyContributor>
+	private volatile List<SXPSearchRequestBodyContributor>
 		_sxpSearchRequestBodyContributors;
+
+	@Reference
+	private UIDFactory _uidFactory;
+
+	@Reference
+	private UserLocalService _userLocalService;
 
 }

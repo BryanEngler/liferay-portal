@@ -21,6 +21,7 @@ import com.liferay.portal.search.configuration.SemanticSearchConfigurationProvid
 import com.liferay.portal.search.ml.embedding.text.TextEmbeddingRetriever;
 import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributor;
 import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributorProvider;
+import com.liferay.search.experiences.internal.blueprint.parameter.contributor.AsahSXPParameterContributor;
 import com.liferay.search.experiences.internal.blueprint.parameter.contributor.ContextSXPParameterContributor;
 import com.liferay.search.experiences.internal.blueprint.parameter.contributor.IpstackSXPParameterContributor;
 import com.liferay.search.experiences.internal.blueprint.parameter.contributor.MLSXPParameterContributor;
@@ -48,6 +49,7 @@ public class SXPParameterContributorProviderImpl
 	@Activate
 	protected void activate() {
 		_sxpParameterContributors = new SXPParameterContributor[] {
+			new AsahSXPParameterContributor(),
 			new ContextSXPParameterContributor(_groupLocalService, _language),
 			new IpstackSXPParameterContributor(_configurationProvider),
 			new MLSXPParameterContributor(
