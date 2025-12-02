@@ -7,6 +7,7 @@ package com.liferay.search.experiences.internal.blueprint.parameter.contributor;
 
 import com.liferay.analytics.settings.configuration.AnalyticsConfiguration;
 import com.liferay.analytics.settings.rest.manager.AnalyticsSettingsManager;
+import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -21,7 +22,9 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Http;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.document.DocumentBuilderFactory;
@@ -282,31 +285,55 @@ public class AsahSXPParameterContributor {
 		String[] searchableAssetTypes,
 		Map<String, Object> uiConfigurationValues, long userId) {
 
-		List<Long> classNameIds = new ArrayList<>();
+		StringBundler sb = new StringBundler();
 
-		for (String searchableAssetType : searchableAssetTypes) {
-			classNameIds.add(
-				_classNameLocalService.getClassNameId(searchableAssetType));
-		}
-
-		Collections.sort(classNameIds);
-
-		StringBundler sb = new StringBundler(classNameIds.size() * 2);
-
-		for (long classNameId : classNameIds) {
-			sb.append(StringPool.DASH);
-			sb.append(classNameId);
-		}
-
-		String userIdString = StringPool.BLANK;
+		sb.append(uiConfigurationValues.get("custom_event_name"));
+		sb.append("-D");
+		sb.append(uiConfigurationValues.get("date_range"));
 
 		if (userId > 0) {
-			userIdString = "-U" + userId;
+			sb.append("-U");
+			sb.append(userId);
 		}
 
-		return StringBundler.concat(
-			uiConfigurationValues.get("custom_event_name"), "-D",
-			uiConfigurationValues.get("date_range"), userIdString, sb);
+		if (ArrayUtil.isNotEmpty(searchableAssetTypes)) {
+			sb.append("-C");
+
+			List<Long> classNameIds = new ArrayList<>();
+
+			for (String searchableAssetType : searchableAssetTypes) {
+				classNameIds.add(
+					_classNameLocalService.getClassNameId(searchableAssetType));
+			}
+
+			Collections.sort(classNameIds);
+
+			for (long classNameId : classNameIds) {
+				sb.append(StringPool.DASH);
+				sb.append(classNameId);
+			}
+		}
+
+		if (Validator.isNotNull(
+				uiConfigurationValues.get("filter_value"))) {
+
+			sb.append("-F");
+			sb.append(uiConfigurationValues.get("filter_key"));
+			sb.append("-V");
+
+			List<String> values = List.of(
+				StringUtil.split(
+					String.valueOf(uiConfigurationValues.get("filter_value"))));
+
+			Collections.sort(values);
+
+			for (String value : values) {
+				sb.append(StringPool.DASH);
+				sb.append(value);
+			}
+		}
+
+		return sb.toString();
 	}
 
 	private Http.Options _getOptions(
@@ -331,20 +358,36 @@ public class AsahSXPParameterContributor {
 		String searchableAssetTypes, int size,
 		Map<String, Object> uiConfigurationValues, long userId) {
 
-		StringBundler sb = new StringBundler(12);
+		StringBundler sb = new StringBundler(16);
 
 		sb.append(analyticsConfiguration.liferayAnalyticsFaroBackendURL());
 		sb.append("/api/1.0/asset-event-metrics?page=0");
 
 		if (!Validator.isBlank(searchableAssetTypes)) {
 			sb.append("&applicationIds=");
-			sb.append(StringUtil.replace(searchableAssetTypes, '#', "%23"));
+			sb.append(
+				StringUtil.replace(
+					searchableAssetTypes, CharPool.POUND, "%23"));
 		}
 
 		sb.append("&eventId=");
 		sb.append(uiConfigurationValues.get("custom_event_name"));
 		sb.append("&rangeKey=");
 		sb.append(uiConfigurationValues.get("date_range"));
+
+		if (Validator.isNotNull(
+				uiConfigurationValues.get("filter_value"))) {
+
+			sb.append(StringPool.AMPERSAND);
+			sb.append(uiConfigurationValues.get("filter_key"));
+			sb.append(StringPool.EQUAL);
+			sb.append(
+				StringUtil.replace(
+					String.valueOf(
+						uiConfigurationValues.get("filter_value")),
+					CharPool.POUND, "%23"));
+		}
+
 		sb.append("&size=");
 		sb.append(size);
 

@@ -1,6 +1,6 @@
 {
 	"description_i18n": {
-		"en_US": "boost-users-most-viewed-contents-description"
+		"en_US": "boost-contents-with-analytics-cloud-event-description"
 	},
 	"elementDefinition": {
 		"category": "boost",
@@ -40,35 +40,41 @@
 							"typeOptions": {
 								"options": [
 									{
-										"label": "0",
+										"label": "past-24-hours",
 										"value": "0"
 									},
 									{
-										"label": "7",
+										"label": "past-week",
 										"value": "7"
 									},
 									{
-										"label": "28",
-										"value": "28"
-									},
-									{
-										"label": "30",
+										"label": "past-month",
 										"value": "30"
 									},
 									{
-										"label": "90",
+										"label": "past-3-months",
 										"value": "90"
 									},
 									{
-										"label": "180",
+										"label": "past-6-months",
 										"value": "180"
 									},
 									{
-										"label": "365",
+										"label": "past-year",
 										"value": "365"
 									}
 								]
 							}
+						},
+						{
+							"label": "filter-key",
+							"name": "filter_key",
+							"type": "text"
+						},
+						{
+							"label": "filter-value",
+							"name": "filter_value",
+							"type": "text"
 						},
 						{
 							"defaultValue": {
