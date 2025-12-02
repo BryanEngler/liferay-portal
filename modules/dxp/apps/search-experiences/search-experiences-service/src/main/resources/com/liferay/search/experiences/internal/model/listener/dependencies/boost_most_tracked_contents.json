@@ -1,6 +1,6 @@
 {
 	"description_i18n": {
-		"en_US": "boost-contents-with-analytics-cloud-event-description"
+		"en_US": "boost-most-tracked-contents-description"
 	},
 	"elementDefinition": {
 		"category": "boost",
@@ -25,7 +25,6 @@
 				{
 					"fields": [
 						{
-							"defaultValue": "viewContent",
 							"helpText": "custom-event-name-help",
 							"label": "custom-event-name",
 							"name": "custom_event_name",
@@ -40,27 +39,31 @@
 							"typeOptions": {
 								"options": [
 									{
-										"label": "past-24-hours",
+										"label": "Last 24 hours",
 										"value": "0"
 									},
 									{
-										"label": "past-week",
+										"label": "Last 7 days",
 										"value": "7"
 									},
 									{
-										"label": "past-month",
+										"label": "Last 28 days",
+										"value": "28"
+									},,
+									{
+										"label": "Last 30 days",
 										"value": "30"
 									},
 									{
-										"label": "past-3-months",
+										"label": "Last 90 days",
 										"value": "90"
 									},
 									{
-										"label": "past-6-months",
+										"label": "Last 180 days",
 										"value": "180"
 									},
 									{
-										"label": "past-year",
+										"label": "Last year",
 										"value": "365"
 									}
 								]
@@ -69,12 +72,18 @@
 						{
 							"label": "filter-key",
 							"name": "filter_key",
-							"type": "text"
+							"type": "text",
+							"typeOptions": {
+								"required": "false"
+							}
 						},
 						{
 							"label": "filter-value",
 							"name": "filter_value",
-							"type": "text"
+							"type": "text",
+							"typeOptions": {
+								"required": "false"
+							}
 						},
 						{
 							"defaultValue": {
@@ -82,17 +91,9 @@
 									"should": [
 										{
 											"ids": {
-												"boost": 30,
-												"values": [
-													"${user.most_viewed_content_1_uid}"
-												]
-											}
-										},
-										{
-											"ids": {
 												"boost": 20,
 												"values": [
-													"${user.most_viewed_content_2_uid}"
+													"${user.most_tracked_content_1_uid}"
 												]
 											}
 										},
@@ -100,7 +101,7 @@
 											"ids": {
 												"boost": 10,
 												"values": [
-													"${user.most_viewed_content_3_uid}"
+													"${most_tracked_content_2_uid}"
 												]
 											}
 										}
@@ -116,8 +117,8 @@
 			]
 		}
 	},
-	"externalReferenceCode": "BOOST_USERS_MOST_VIEWED_CONTENTS",
+	"externalReferenceCode": "BOOST_MOST_TRACKED_CONTENTS",
 	"title_i18n": {
-		"en_US": "boost-users-most-viewed-contents"
+		"en_US": "boost-most-tracked-contents"
 	}
 }

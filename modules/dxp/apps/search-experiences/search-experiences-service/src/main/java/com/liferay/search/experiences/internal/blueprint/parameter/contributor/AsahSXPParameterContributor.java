@@ -34,6 +34,10 @@ import com.liferay.portal.search.engine.adapter.index.IndicesExistsIndexResponse
 import com.liferay.portal.search.index.IndexNameBuilder;
 import com.liferay.portal.search.model.uid.UIDFactory;
 import com.liferay.search.experiences.blueprint.parameter.SXPParameter;
+import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributor;
+import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributorDefinition;
+import com.liferay.search.experiences.internal.blueprint.parameter.BooleanSXPParameter;
+import com.liferay.search.experiences.internal.blueprint.parameter.LongSXPParameter;
 import com.liferay.search.experiences.internal.blueprint.parameter.StringSXPParameter;
 import com.liferay.search.experiences.internal.blueprint.parameter.index.AsahCacheEntry;
 import com.liferay.search.experiences.internal.blueprint.parameter.index.AsahCacheIndexCreator;
@@ -41,19 +45,24 @@ import com.liferay.search.experiences.internal.blueprint.parameter.index.AsahCac
 import com.liferay.search.experiences.internal.blueprint.parameter.index.AsahCacheIndexWriter;
 import com.liferay.search.experiences.internal.configuration.AsahSXPElementsConfiguration;
 
+import java.beans.ExceptionListener;
+
 import java.net.HttpURLConnection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 /**
  * @author Bryan Engler
  */
-public class AsahSXPParameterContributor {
+public class AsahSXPParameterContributor implements SXPParameterContributor {
 
 	public AsahSXPParameterContributor(
 		AnalyticsSettingsManager analyticsSettingsManager,
@@ -309,28 +318,32 @@ public class AsahSXPParameterContributor {
 			Collections.sort(classNameIds);
 
 			for (long classNameId : classNameIds) {
-				sb.append(StringPool.DASH);
 				sb.append(classNameId);
+				sb.append(StringPool.DASH);
 			}
+
+			sb.setIndex(sb.index() - 1);
 		}
 
 		if (Validator.isNotNull(
 				uiConfigurationValues.get("filter_value"))) {
 
-			sb.append("-F");
+			sb.append("-K");
 			sb.append(uiConfigurationValues.get("filter_key"));
 			sb.append("-V");
 
-			List<String> values = List.of(
+			List<String> values = ListUtil.fromArray(
 				StringUtil.split(
 					String.valueOf(uiConfigurationValues.get("filter_value"))));
 
 			Collections.sort(values);
 
 			for (String value : values) {
-				sb.append(StringPool.DASH);
 				sb.append(value);
+				sb.append(StringPool.DASH);
 			}
+
+			sb.setIndex(sb.index() - 1);
 		}
 
 		return sb.toString();
@@ -476,5 +489,31 @@ public class AsahSXPParameterContributor {
 	private final SearchEngineAdapter _searchEngineAdapter;
 	private final UIDFactory _uidFactory;
 	private final UserLocalService _userLocalService;
+
+	@Override
+	public void contribute(
+		ExceptionListener exceptionListener, SearchContext searchContext,
+		Set<SXPParameter> sxpParameters) {
+
+	}
+
+	@Override
+	public String getSXPParameterCategoryNameKey() {
+		return "analytics-cloud";
+	}
+
+	@Override
+	public List<SXPParameterContributorDefinition>
+		getSXPParameterContributorDefinitions(
+			long companyId, Locale locale) {
+
+		return Arrays.asList(
+			new SXPParameterContributorDefinition(
+				StringSXPParameter.class, "most-tracked-content-X-uid",
+				"most_tracked_content_X_uid"),
+			new SXPParameterContributorDefinition(
+				StringSXPParameter.class, "user-most-tracked-content-X-uid",
+				"user.most_tracked_content_X_uid"));
+	}
 
 }

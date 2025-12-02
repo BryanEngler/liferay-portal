@@ -142,6 +142,12 @@ public class SXPBlueprintSearchRequestEnhancerImpl
 		SortConverter sortConverter = new SortConverter(
 			_geoBuilders, queryConverter, scriptConverter, _sorts);
 
+		_asahSXPParameterContributor = new AsahSXPParameterContributor(
+			_analyticsSettingsManager, _asahSXPElementsConfiguration,
+			_classNameLocalService, _documentBuilderFactory, _http,
+			_indexNameBuilder, _searchEngineAdapter, _uidFactory,
+			_userLocalService);
+
 		_sxpSearchRequestBodyContributors = Arrays.asList(
 			new AdvancedSXPSearchRequestBodyContributor(
 				_collapseBuilderFactory, _innerHitBuilderFactory,
@@ -157,12 +163,6 @@ public class SXPBlueprintSearchRequestEnhancerImpl
 				_rescoreBuilderFactory),
 			new SuggestSXPSearchRequestBodyContributor(),
 			new SortSXPSearchRequestBodyContributor(sortConverter));
-
-		_asahSXPParameterContributor = new AsahSXPParameterContributor(
-			_analyticsSettingsManager, _asahSXPElementsConfiguration,
-			_classNameLocalService, _documentBuilderFactory, _http,
-			_indexNameBuilder, _searchEngineAdapter, _uidFactory,
-			_userLocalService);
 	}
 
 	private void _contributeSXPSearchRequestBodyContributors(
@@ -230,10 +230,10 @@ public class SXPBlueprintSearchRequestEnhancerImpl
 			elementInstance.getUiConfigurationValues(),
 			_getMaximumVariableNumber(
 				elementInstance.getConfigurationEntry(),
-				"most_viewed_content_"),
+				"most_tracked_content_"),
 			_getMaximumVariableNumber(
 				elementInstance.getConfigurationEntry(),
-				"user.most_viewed_content_"),
+				"user.most_tracked_content_"),
 			searchRequestBuilder.withSearchContextGet(Function.identity()),
 			sxpParameterData.getSXPParameters());
 
