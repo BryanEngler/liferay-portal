@@ -26,7 +26,7 @@ public class AggregationBuilderAssemblerFactoryImpl
 		AggregationTranslator<AggregationBuilder> aggregationTranslator) {
 
 		return new AggregationBuilderAssemblerImpl(
-			aggregationTranslator, _pipelineAggregationTranslator);
+			aggregationTranslator, _pipelineAggregationTranslator);asdf
 	}
 
 	@Reference(target = "(search.engine.impl=Elasticsearch)")
