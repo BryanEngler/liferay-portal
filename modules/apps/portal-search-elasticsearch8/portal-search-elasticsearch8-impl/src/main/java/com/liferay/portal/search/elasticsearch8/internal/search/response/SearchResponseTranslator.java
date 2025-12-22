@@ -300,9 +300,11 @@ public class SearchResponseTranslator {
 
 			groupedHits.setLength((int)totalHits.value());
 
-			hits.addGroupedHits(stringTermsBucket.key(), groupedHits);
+			hits.addGroupedHits(
+				String.valueOf(stringTermsBucket.key()), groupedHits);
 
-			groupByResponse.putHits(stringTermsBucket.key(), groupedHits);
+			groupByResponse.putHits(
+				String.valueOf(stringTermsBucket.key()), groupedHits);
 		}
 	}
 
