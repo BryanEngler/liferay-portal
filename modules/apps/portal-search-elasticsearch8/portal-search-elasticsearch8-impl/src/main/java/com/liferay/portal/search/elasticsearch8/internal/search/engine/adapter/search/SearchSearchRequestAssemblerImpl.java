@@ -5,6 +5,7 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.search;
 
+import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.Time;
 import co.elastic.clients.elasticsearch._types.TimeUnit;
@@ -42,7 +43,6 @@ import com.liferay.portal.search.stats.StatsRequest;
 import com.liferay.portal.search.stats.StatsRequestBuilder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -257,10 +257,13 @@ public class SearchSearchRequestAssemblerImpl
 		SearchSearchRequest searchSearchRequest) {
 
 		if (ArrayUtil.isNotEmpty(searchSearchRequest.getSearchAfter())) {
-			searchRequestBuilder.searchAfter(
-				Arrays.asList(
-					ArrayUtil.toStringArray(
-						searchSearchRequest.getSearchAfter())));
+			List<FieldValue> fieldValues = new ArrayList<>();
+
+			for (Object object : searchSearchRequest.getSearchAfter()) {
+				fieldValues.add(FieldValue.of(String.valueOf(object)));
+			}
+
+			searchRequestBuilder.searchAfter(fieldValues);
 		}
 	}
 
