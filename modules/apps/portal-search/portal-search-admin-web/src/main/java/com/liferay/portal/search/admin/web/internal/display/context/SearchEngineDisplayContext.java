@@ -34,6 +34,10 @@ public class SearchEngineDisplayContext {
 		return _missingSearchEngine;
 	}
 
+	public boolean isWarnAboutCrossClusterReplicationInitializing() {
+		return _warnAboutCrossClusterReplicationInitializing;
+	}
+
 	public boolean isWarnAboutDeprecatedConnection() {
 		return _warnAboutDeprecatedConnection;
 	}
@@ -64,6 +68,13 @@ public class SearchEngineDisplayContext {
 		_vendorString = vendorString;
 	}
 
+	public void setWarnAboutCrossClusterReplicationInitializing(
+		boolean warnAboutCrossClusterReplicationInitializing) {
+
+		_warnAboutCrossClusterReplicationInitializing =
+			warnAboutCrossClusterReplicationInitializing;
+	}
+
 	public void setWarnAboutDeprecatedConnection(
 		boolean warnAboutDeprecatedConnection) {
 
@@ -81,6 +92,7 @@ public class SearchEngineDisplayContext {
 	private boolean _missingSearchEngine;
 	private String _nodesString;
 	private String _vendorString;
+	private boolean _warnAboutCrossClusterReplicationInitializing;
 	private boolean _warnAboutDeprecatedConnection;
 	private boolean _warnAboutSidecarConnection;
 

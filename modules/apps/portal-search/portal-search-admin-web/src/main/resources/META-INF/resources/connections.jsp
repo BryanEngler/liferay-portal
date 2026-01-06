@@ -162,6 +162,26 @@ SearchEngineDisplayContext searchEngineDisplayContext = (SearchEngineDisplayCont
 						</div>
 					</c:if>
 
+					<c:if test="<%= searchEngineDisplayContext.isWarnAboutCrossClusterReplicationInitializing() %>">
+						<div class="alert alert-info alert-inline">
+							<div class="autofit-row">
+								<div class="autofit-col">
+									<div class="autofit-section c-mr-2">
+										<clay:icon
+											symbol="info-circle"
+										/>
+									</div>
+								</div>
+
+								<div class="autofit-col autofit-col-expand">
+									<div class="autofit-section">
+										<strong><liferay-ui:message key="info" /></strong>: <liferay-ui:message key="cross-cluster-replication-is-initializing-warning" />
+									</div>
+								</div>
+							</div>
+						</div>
+					</c:if>
+
 					<clay:sheet
 						cssClass="connection-info-item connection-info-item-header"
 					>

@@ -21,6 +21,7 @@ import com.liferay.portal.search.admin.web.internal.display.context.builder.Inde
 import com.liferay.portal.search.admin.web.internal.display.context.builder.SearchAdminDisplayContextBuilder;
 import com.liferay.portal.search.admin.web.internal.display.context.builder.SearchEngineDisplayContextBuilder;
 import com.liferay.portal.search.capabilities.SearchCapabilities;
+import com.liferay.portal.search.ccr.CrossClusterReplicationConfigurationHelper;
 import com.liferay.portal.search.cluster.StatsInformationFactory;
 import com.liferay.portal.search.configuration.ReindexConfiguration;
 import com.liferay.portal.search.engine.SearchEngineInformation;
@@ -103,6 +104,9 @@ public class SearchAdminPortlet extends MVCPortlet {
 				searchEngineDisplayContextBuilder =
 					new SearchEngineDisplayContextBuilder();
 
+			searchEngineDisplayContextBuilder.
+				setCrossClusterReplicationConfigurationHelper(
+					_crossClusterReplicationConfigurationHelperSnapshot.get());
 			searchEngineDisplayContextBuilder.setSearchEngineInformation(
 				_searchEngineInformationSnapshot.get());
 
@@ -156,6 +160,10 @@ public class SearchAdminPortlet extends MVCPortlet {
 			ReindexConfiguration.class, properties);
 	}
 
+	private static final Snapshot<CrossClusterReplicationConfigurationHelper>
+		_crossClusterReplicationConfigurationHelperSnapshot = new Snapshot<>(
+			SearchAdminPortlet.class,
+			CrossClusterReplicationConfigurationHelper.class, null, true);
 	private static final Snapshot<IndexInformation> _indexInformationSnapshot =
 		new Snapshot<>(
 			SearchAdminPortlet.class, IndexInformation.class, null, true);
