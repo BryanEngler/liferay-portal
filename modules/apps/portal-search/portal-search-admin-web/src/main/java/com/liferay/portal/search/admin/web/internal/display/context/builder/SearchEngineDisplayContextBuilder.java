@@ -6,6 +6,7 @@
 package com.liferay.portal.search.admin.web.internal.display.context.builder;
 
 import com.liferay.portal.search.admin.web.internal.display.context.SearchEngineDisplayContext;
+import com.liferay.portal.search.ccr.CrossClusterReplicationConfigurationHelper;
 import com.liferay.portal.search.engine.ConnectionInformation;
 import com.liferay.portal.search.engine.SearchEngineInformation;
 
@@ -20,6 +21,13 @@ public class SearchEngineDisplayContextBuilder {
 	public SearchEngineDisplayContext build() {
 		SearchEngineDisplayContext searchEngineDisplayContext =
 			new SearchEngineDisplayContext();
+
+		if (_crossClusterReplicationConfigurationHelper != null) {
+			searchEngineDisplayContext.
+				setWarnAboutCrossClusterReplicationInitializing(
+					_crossClusterReplicationConfigurationHelper.
+						isCrossClusterReplicationInitializing());
+		}
 
 		if (_searchEngineInformation != null) {
 			searchEngineDisplayContext.setClientVersionString(
@@ -61,12 +69,22 @@ public class SearchEngineDisplayContextBuilder {
 		return searchEngineDisplayContext;
 	}
 
+	public void setCrossClusterReplicationConfigurationHelper(
+		CrossClusterReplicationConfigurationHelper
+			crossClusterReplicationConfigurationHelper) {
+
+		_crossClusterReplicationConfigurationHelper =
+			crossClusterReplicationConfigurationHelper;
+	}
+
 	public void setSearchEngineInformation(
 		SearchEngineInformation searchEngineInformation) {
 
 		_searchEngineInformation = searchEngineInformation;
 	}
 
+	private CrossClusterReplicationConfigurationHelper
+		_crossClusterReplicationConfigurationHelper;
 	private SearchEngineInformation _searchEngineInformation;
 
 }

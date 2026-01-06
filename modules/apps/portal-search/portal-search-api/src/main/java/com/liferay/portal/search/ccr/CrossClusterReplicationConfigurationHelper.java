@@ -22,4 +22,6 @@ public interface CrossClusterReplicationConfigurationHelper {
 
 	public boolean isCrossClusterReplicationEnabled();
 
+	public boolean isCrossClusterReplicationInitializing();
+
 }
