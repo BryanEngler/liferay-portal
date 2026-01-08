@@ -614,7 +614,7 @@ function IndexActions({
 									({className, displayName}) => (
 										<IndexerListItem
 											className={className}
-											cmd="reindexIndexReindexer"
+											cmd="reindexIndexReindexers"
 											disabled={
 												executionMode ===
 													EXECUTION_MODES.CONCURRENT

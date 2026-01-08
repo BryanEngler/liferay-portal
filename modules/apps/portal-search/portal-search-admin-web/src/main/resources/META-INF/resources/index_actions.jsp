@@ -33,7 +33,7 @@ page import="java.util.Map" %>
 <%
 IndexActionsDisplayContext indexActionsDisplayContext = (IndexActionsDisplayContext)request.getAttribute(SearchAdminWebKeys.INDEX_ACTIONS_DISPLAY_CONTEXT);
 
-List<BackgroundTask> indexReindexerBackgroundTasks = BackgroundTaskManagerUtil.getBackgroundTasks(CompanyConstants.SYSTEM, "com.liferay.portal.search.internal.background.task.ReindexIndexReindexerBackgroundTaskExecutor", BackgroundTaskConstants.STATUS_IN_PROGRESS);
+List<BackgroundTask> indexReindexerBackgroundTasks = BackgroundTaskManagerUtil.getBackgroundTasks(CompanyConstants.SYSTEM, "com.liferay.portal.search.internal.background.task.ReindexIndexReindexersBackgroundTaskExecutor", BackgroundTaskConstants.STATUS_IN_PROGRESS);
 
 List<BackgroundTask> reindexPortalBackgroundTasks = BackgroundTaskManagerUtil.getBackgroundTasks(CompanyConstants.SYSTEM, "com.liferay.portal.search.internal.background.task.ReindexPortalBackgroundTaskExecutor", BackgroundTaskConstants.STATUS_IN_PROGRESS);
 

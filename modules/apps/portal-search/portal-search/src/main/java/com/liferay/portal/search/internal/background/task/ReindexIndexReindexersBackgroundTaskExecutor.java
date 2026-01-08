@@ -26,10 +26,10 @@ import org.osgi.service.component.annotations.Reference;
  * @author Gustavo Lima
  */
 @Component(
-	property = "background.task.executor.class.name=com.liferay.portal.search.internal.background.task.ReindexIndexReindexerBackgroundTaskExecutor",
+	property = "background.task.executor.class.name=com.liferay.portal.search.internal.background.task.ReindexIndexReindexersBackgroundTaskExecutor",
 	service = BackgroundTaskExecutor.class
 )
-public class ReindexIndexReindexerBackgroundTaskExecutor
+public class ReindexIndexReindexersBackgroundTaskExecutor
 	extends BaseReindexBackgroundTaskExecutor {
 
 	@Override
@@ -111,7 +111,7 @@ public class ReindexIndexReindexerBackgroundTaskExecutor
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		ReindexIndexReindexerBackgroundTaskExecutor.class);
+		ReindexIndexReindexersBackgroundTaskExecutor.class);
 
 	@Reference
 	private IndexReindexerRegistry _indexReindexerRegistry;

@@ -102,15 +102,15 @@ public class EditMVCActionCommand extends BaseMVCActionCommand {
 				ParamUtil.getLong(actionRequest, "timeout", Time.HOUR));
 
 			if (Validator.isBlank(className)) {
-				_reindexIndexReindexer(
-					className, companyIds, executionMode, themeDisplay);
+				_reindexIndexReindexers(
+					null, companyIds, executionMode, themeDisplay);
 			}
 		}
 		else if (cmd.equals("reindexDictionaries")) {
 			_reindexDictionaries(companyIds);
 		}
-		else if (cmd.equals("reindexIndexReindexer")) {
-			_reindexIndexReindexer(
+		else if (cmd.equals("reindexIndexReindexers")) {
+			_reindexIndexReindexers(
 				className, companyIds, executionMode, themeDisplay);
 		}
 
@@ -208,15 +208,15 @@ public class EditMVCActionCommand extends BaseMVCActionCommand {
 		dictionaryReindexer.reindexDictionaries(companyIds);
 	}
 
-	private void _reindexIndexReindexer(
+	private void _reindexIndexReindexers(
 			String className, long[] companyIds, String executionMode,
 			ThemeDisplay themeDisplay)
 		throws Exception {
 
 		_backgroundTaskManager.addBackgroundTask(
 			themeDisplay.getUserId(), BackgroundTaskConstants.GROUP_ID_DEFAULT,
-			"reindexIndexReindexer",
-			_CLASS_NAME_REINDEX_INDEX_REINDEXER_BACKGROUND_TASK_EXECUTOR,
+			"reindexIndexReindexers",
+			_CLASS_NAME_REINDEX_INDEX_REINDEXERS_BACKGROUND_TASK_EXECUTOR,
 			HashMapBuilder.<String, Serializable>put(
 				BackgroundTaskContextMapConstants.DELETE_ON_SUCCESS, true
 			).put(
@@ -230,9 +230,9 @@ public class EditMVCActionCommand extends BaseMVCActionCommand {
 	}
 
 	private static final String
-		_CLASS_NAME_REINDEX_INDEX_REINDEXER_BACKGROUND_TASK_EXECUTOR =
+		_CLASS_NAME_REINDEX_INDEX_REINDEXERS_BACKGROUND_TASK_EXECUTOR =
 			"com.liferay.portal.search.internal.background.task." +
-				"ReindexIndexReindexerBackgroundTaskExecutor";
+				"ReindexIndexReindexersBackgroundTaskExecutor";
 
 	@Reference
 	private BackgroundTaskManager _backgroundTaskManager;

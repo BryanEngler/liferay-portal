@@ -26,7 +26,7 @@ import org.mockito.Mockito;
 /**
  * @author Joshua Cords
  */
-public class ReindexIndexReindexerBackgroundTaskExecutorTest {
+public class ReindexIndexReindexersBackgroundTaskExecutorTest {
 
 	@ClassRule
 	@Rule
@@ -35,8 +35,8 @@ public class ReindexIndexReindexerBackgroundTaskExecutorTest {
 
 	@Before
 	public void setUp() {
-		_reindexIndexReindexerBackgroundTaskExecutor =
-			new ReindexIndexReindexerBackgroundTaskExecutor();
+		_reindexIndexReindexersBackgroundTaskExecutor =
+			new ReindexIndexReindexersBackgroundTaskExecutor();
 
 		Collection<IndexReindexer> indexReindexers = Arrays.asList(
 			_indexReindexer1, _indexReindexer2);
@@ -54,10 +54,10 @@ public class ReindexIndexReindexerBackgroundTaskExecutorTest {
 		);
 
 		ReflectionTestUtil.setFieldValue(
-			_reindexIndexReindexerBackgroundTaskExecutor,
+			_reindexIndexReindexersBackgroundTaskExecutor,
 			"_indexReindexerRegistry", _indexReindexerRegistry);
 		ReflectionTestUtil.setFieldValue(
-			_reindexIndexReindexerBackgroundTaskExecutor,
+			_reindexIndexReindexersBackgroundTaskExecutor,
 			"_reindexStatusMessageSender", _reindexStatusMessageSender);
 	}
 
@@ -77,13 +77,13 @@ public class ReindexIndexReindexerBackgroundTaskExecutorTest {
 			Mockito.anyLong(), Mockito.anyString()
 		);
 
-		_reindexIndexReindexerBackgroundTaskExecutor.reindex(
+		_reindexIndexReindexersBackgroundTaskExecutor.reindex(
 			"", _COMPANY_IDS, _EXECUTION_MODE);
 	}
 
 	@Test
 	public void testReindexAllClasses() throws Exception {
-		_reindexIndexReindexerBackgroundTaskExecutor.reindex(
+		_reindexIndexReindexersBackgroundTaskExecutor.reindex(
 			"", _COMPANY_IDS, _EXECUTION_MODE);
 
 		_verifyIndexerCalledOnceForEachCompany(_indexReindexer1);
@@ -92,7 +92,7 @@ public class ReindexIndexReindexerBackgroundTaskExecutorTest {
 
 	@Test
 	public void testReindexSingleClass() throws Exception {
-		_reindexIndexReindexerBackgroundTaskExecutor.reindex(
+		_reindexIndexReindexersBackgroundTaskExecutor.reindex(
 			"className", _COMPANY_IDS, _EXECUTION_MODE);
 
 		_verifyIndexerCalledOnceForEachCompany(_indexReindexer1);
@@ -133,8 +133,8 @@ public class ReindexIndexReindexerBackgroundTaskExecutorTest {
 		IndexReindexer.class);
 	private final IndexReindexerRegistry _indexReindexerRegistry = Mockito.mock(
 		IndexReindexerRegistry.class);
-	private ReindexIndexReindexerBackgroundTaskExecutor
-		_reindexIndexReindexerBackgroundTaskExecutor;
+	private ReindexIndexReindexersBackgroundTaskExecutor
+		_reindexIndexReindexersBackgroundTaskExecutor;
 	private final ReindexStatusMessageSender _reindexStatusMessageSender =
 		Mockito.mock(ReindexStatusMessageSender.class);
 
