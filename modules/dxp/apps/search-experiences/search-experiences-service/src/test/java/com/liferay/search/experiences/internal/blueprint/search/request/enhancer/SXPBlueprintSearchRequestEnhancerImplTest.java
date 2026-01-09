@@ -5,6 +5,7 @@
 
 package com.liferay.search.experiences.internal.blueprint.search.request.enhancer;
 
+import com.liferay.analytics.settings.rest.manager.AnalyticsSettingsManager;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.json.JSONFactoryImpl;
@@ -69,6 +70,7 @@ import com.liferay.search.experiences.rest.dto.v1_0.util.SXPBlueprintUtil;
 import java.io.InputStream;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -101,6 +103,9 @@ public class SXPBlueprintSearchRequestEnhancerImplTest {
 		ReflectionTestUtil.setFieldValue(
 			_sxpBlueprintSearchRequestEnhancerImpl, "_aggregations",
 			new AggregationsImpl());
+		ReflectionTestUtil.setFieldValue(
+			_sxpBlueprintSearchRequestEnhancerImpl, "_analyticsSettingsManager",
+			Mockito.mock(AnalyticsSettingsManager.class));
 		ReflectionTestUtil.setFieldValue(
 			_sxpBlueprintSearchRequestEnhancerImpl,
 			"_complexQueryPartBuilderFactory",
@@ -149,7 +154,7 @@ public class SXPBlueprintSearchRequestEnhancerImplTest {
 			"_sxpParameterContributorProvider",
 			sxpParameterContributorProviderImpl);
 
-		_sxpBlueprintSearchRequestEnhancerImpl.activate();
+		_sxpBlueprintSearchRequestEnhancerImpl.activate(Collections.emptyMap());
 
 		Mockito.doReturn(
 			"en_US"

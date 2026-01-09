@@ -1,0 +1,13 @@
+{
+	"properties": {
+		"lastSyncDate": {
+			"type": "keyword"
+		},
+		"mostTrackedContents": {
+			"type": "keyword"
+		},
+		"size": {
+			"type": "keyword"
+		}
+	}
+}
