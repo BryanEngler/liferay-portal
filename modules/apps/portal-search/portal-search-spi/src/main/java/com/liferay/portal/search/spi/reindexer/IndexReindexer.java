@@ -10,8 +10,27 @@ package com.liferay.portal.search.spi.reindexer;
  */
 public interface IndexReindexer {
 
+	/*
+	something like this that can maybe help standardize index names and also be
+	used to check if indexes exist or not
+	 */
+	public String getIndexNameSuffix();
+
+	@Deprecated
 	public void reindex(long companyId) throws Exception;
 
+	@Deprecated
 	public void reindex(long companyId, String executionMode) throws Exception;
+
+	public void reindex(long companyId, ExecutionMode executionMode)
+		throws Exception;
+
+	/*
+	create enum inststead of String so that developers know what the different
+	modes are
+	 */
+	public enum ExecutionMode {
+		CONCURRENT, FULL, SYNC
+	}
 
 }
