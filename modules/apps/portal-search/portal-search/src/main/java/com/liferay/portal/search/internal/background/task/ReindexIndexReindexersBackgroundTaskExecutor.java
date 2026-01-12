@@ -10,6 +10,7 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskExecutor;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.search.background.task.ReindexBackgroundTaskConstants;
 import com.liferay.portal.kernel.search.background.task.ReindexStatusMessageSender;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -75,6 +76,10 @@ public class ReindexIndexReindexersBackgroundTaskExecutor
 		throws Exception {
 
 		for (long companyId : companyIds) {
+			if (companyId == CompanyConstants.SYSTEM) {
+				continue;
+			}
+
 			try (SafeCloseable safeCloseable =
 					CompanyThreadLocal.setCompanyIdWithSafeCloseable(
 						companyId)) {
