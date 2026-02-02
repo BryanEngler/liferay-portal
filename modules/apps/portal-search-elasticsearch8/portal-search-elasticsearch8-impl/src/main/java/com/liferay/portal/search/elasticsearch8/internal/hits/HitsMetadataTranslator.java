@@ -11,10 +11,6 @@ import co.elastic.clients.elasticsearch.core.search.HitsMetadata;
 import co.elastic.clients.elasticsearch.core.search.TotalHits;
 import co.elastic.clients.json.JsonData;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -35,8 +31,6 @@ import com.liferay.portal.search.hits.SearchHitsBuilder;
 import com.liferay.portal.search.hits.SearchHitsBuilderFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -96,8 +90,8 @@ public class HitsMetadataTranslator {
 
 		return searchHitBuilder.addHighlightFields(
 			_translateHighlightFields(hit.highlight())
-		).addSources(
-			_translateSource(hit.source())
+		//).addSources(
+			//_translateSource(hit.source())
 		).document(
 			_translateDocument(alternateUidFieldName, hit)
 		).explanation(
@@ -160,25 +154,6 @@ public class HitsMetadataTranslator {
 		}
 
 		return highlightFields;
-	}
-
-	private Map<String, Object> _translateSource(JsonData jsonData) {
-		if (jsonData == null) {
-			return Collections.emptyMap();
-		}
-
-		try {
-			ObjectMapper objectMapper = new ObjectMapper();
-
-			TypeReference<HashMap<String, Object>> typeReference =
-				new TypeReference<HashMap<String, Object>>() {
-				};
-
-			return objectMapper.readValue(jsonData.toString(), typeReference);
-		}
-		catch (JsonProcessingException jsonProcessingException) {
-			throw new RuntimeException(jsonProcessingException);
-		}
 	}
 
 	private final DocumentBuilderFactory _documentBuilderFactory;
