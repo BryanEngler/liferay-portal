@@ -5,18 +5,24 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.index;
 
+import co.elastic.clients.elasticsearch._types.mapping.FieldMapping;
+import co.elastic.clients.elasticsearch._types.mapping.Property;
+import co.elastic.clients.elasticsearch._types.mapping.TextProperty;
+import co.elastic.clients.elasticsearch.indices.ElasticsearchIndicesClient;
+import co.elastic.clients.elasticsearch.indices.GetFieldMappingRequest;
+import co.elastic.clients.elasticsearch.indices.GetFieldMappingResponse;
+import co.elastic.clients.elasticsearch.indices.get_field_mapping.TypeFieldMappings;
+
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.search.elasticsearch8.internal.util.JsonpUtil;
 import com.liferay.portal.search.test.util.IdempotentRetryAssert;
 
 import java.io.IOException;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import org.elasticsearch.client.IndicesClient;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.indices.GetFieldMappingsRequest;
-import org.elasticsearch.client.indices.GetFieldMappingsResponse;
-import org.elasticsearch.client.indices.GetFieldMappingsResponse.FieldMappingMetadata;
 
 import org.junit.Assert;
 
@@ -28,79 +34,106 @@ public class FieldMappingAssert {
 
 	public static void assertAnalyzer(
 			String expectedValue, String field, String index,
-			IndicesClient indicesClient)
+			ElasticsearchIndicesClient elasticsearchIndicesClient)
 		throws Exception {
 
 		assertFieldMappingMetadata(
-			expectedValue, "analyzer", field, index, indicesClient);
+			expectedValue, "analyzer", field, index,
+			elasticsearchIndicesClient);
 	}
 
 	public static void assertFieldMappingMetadata(
 			String expectedValue, String key, String field, String index,
-			IndicesClient indicesClient)
+			ElasticsearchIndicesClient elasticsearchIndicesClient)
 		throws Exception {
 
 		IdempotentRetryAssert.retryAssert(
 			10, TimeUnit.SECONDS,
-			() -> _assertFieldMappingMetadata(
-				expectedValue, key, field, index, indicesClient));
+			() -> {
+				try {
+					_assertFieldMappingMetadata(
+						expectedValue, field, index, key,
+						elasticsearchIndicesClient);
+				}
+				catch (JSONException jsonException) {
+					throw new RuntimeException(jsonException);
+				}
+			});
 	}
 
 	public static void assertType(
 			String expectedValue, String field, String index,
-			IndicesClient indicesClient)
+			ElasticsearchIndicesClient elasticsearchIndicesClient)
 		throws Exception {
 
 		assertFieldMappingMetadata(
-			expectedValue, "type", field, index, indicesClient);
+			expectedValue, "type", field, index, elasticsearchIndicesClient);
 	}
 
 	private static void _assertFieldMappingMetadata(
-		String expectedValue, String key, String field, String index,
-		IndicesClient indicesClient) {
+			String expectedValue, String field, String index, String key,
+			ElasticsearchIndicesClient elasticsearchIndicesClient)
+		throws JSONException {
 
-		FieldMappingMetadata fieldMappingMetadata = _getFieldMapping(
-			field, index, indicesClient);
-
-		String value = _getFieldMappingMetadataValue(
-			fieldMappingMetadata, field, key);
-
-		Assert.assertEquals(expectedValue, value);
+		Assert.assertEquals(
+			expectedValue,
+			_getFieldMappingPropertyValue(
+				field, key,
+				_getTypeFieldMappings(
+					field, index, elasticsearchIndicesClient)));
 	}
 
-	private static FieldMappingMetadata _getFieldMapping(
-		String field, String index, IndicesClient indicesClient) {
+	private static String _getFieldMappingPropertyValue(
+			String field, String key, TypeFieldMappings typeFieldMappings)
+		throws JSONException {
 
-		GetFieldMappingsRequest getFieldMappingsRequest =
-			new GetFieldMappingsRequest();
+		Map<String, FieldMapping> fieldMappings = typeFieldMappings.mappings();
 
-		getFieldMappingsRequest.fields(field);
-		getFieldMappingsRequest.indices(index);
+		FieldMapping fieldMapping = fieldMappings.get(field);
+
+		if (fieldMapping == null) {
+			return null;
+		}
+
+		Map<String, Property> properties = fieldMapping.mapping();
+
+		Property property = properties.get(field);
+
+		if (key.equals("store") || key.equals("type")) {
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+				JsonpUtil.toString(property));
+
+			return jsonObject.getString(key);
+		}
+
+		if (!property.isText() || !key.equals("analyzer")) {
+			return null;
+		}
+
+		TextProperty textProperty = property.text();
+
+		return textProperty.analyzer();
+	}
+
+	private static TypeFieldMappings _getTypeFieldMappings(
+		String field, String index,
+		ElasticsearchIndicesClient elasticsearchIndicesClient) {
 
 		try {
-			GetFieldMappingsResponse getFieldMappingsResponse =
-				indicesClient.getFieldMapping(
-					getFieldMappingsRequest, RequestOptions.DEFAULT);
+			GetFieldMappingResponse getFieldMappingResponse =
+				elasticsearchIndicesClient.getFieldMapping(
+					GetFieldMappingRequest.of(
+						getFieldMappingRequest -> getFieldMappingRequest.fields(
+							field
+						).index(
+							index
+						)));
 
-			return getFieldMappingsResponse.fieldMappings(index, field);
+			return getFieldMappingResponse.get(index);
 		}
 		catch (IOException ioException) {
 			throw new RuntimeException(ioException);
 		}
-	}
-
-	private static String _getFieldMappingMetadataValue(
-		FieldMappingMetadata fieldMappingMetadata, String field, String key) {
-
-		if (fieldMappingMetadata == null) {
-			return null;
-		}
-
-		Map<String, Object> mappings = fieldMappingMetadata.sourceAsMap();
-
-		Map<String, Object> mapping = (Map<String, Object>)mappings.get(field);
-
-		return (String)mapping.get(key);
 	}
 
 }

@@ -5,6 +5,9 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.snapshot;
 
+import co.elastic.clients.elasticsearch.snapshot.RestoreRequest;
+
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.search.elasticsearch8.internal.connection.ElasticsearchFixture;
 import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.index.AnalyzeIndexRequestExecutorTest;
 import com.liferay.portal.search.engine.adapter.snapshot.RestoreSnapshotRequest;
@@ -52,32 +55,31 @@ public class RestoreSnapshotRequestExecutorImplTest {
 		RestoreSnapshotRequestExecutor restoreSnapshotRequestExecutor =
 			new RestoreSnapshotRequestExecutor(_elasticsearchFixture);
 
-		org.elasticsearch.action.admin.cluster.snapshots.restore.
-			RestoreSnapshotRequest elasticsearchRestoreSnapshotRequest =
-				restoreSnapshotRequestExecutor.createRestoreSnapshotRequest(
-					restoreSnapshotRequest);
+		RestoreRequest restoreRequest =
+			restoreSnapshotRequestExecutor.createRestoreRequest(
+				restoreSnapshotRequest);
 
-		Assert.assertArrayEquals(
-			restoreSnapshotRequest.getIndexNames(),
-			elasticsearchRestoreSnapshotRequest.indices());
 		Assert.assertEquals(
 			restoreSnapshotRequest.isIncludeAliases(),
-			elasticsearchRestoreSnapshotRequest.includeAliases());
-		Assert.assertEquals(
-			restoreSnapshotRequest.isPartialRestore(),
-			elasticsearchRestoreSnapshotRequest.partial());
-		Assert.assertEquals(
-			restoreSnapshotRequest.getRepositoryName(),
-			elasticsearchRestoreSnapshotRequest.repository());
+			restoreRequest.includeAliases());
 		Assert.assertEquals(
 			restoreSnapshotRequest.isRestoreGlobalState(),
-			elasticsearchRestoreSnapshotRequest.includeGlobalState());
+			restoreRequest.includeGlobalState());
+		Assert.assertArrayEquals(
+			restoreSnapshotRequest.getIndexNames(),
+			ArrayUtil.toStringArray(restoreRequest.indices()));
+		Assert.assertEquals(
+			restoreSnapshotRequest.isPartialRestore(),
+			restoreRequest.partial());
+		Assert.assertEquals(
+			restoreSnapshotRequest.getRepositoryName(),
+			restoreRequest.repository());
 		Assert.assertEquals(
 			restoreSnapshotRequest.getSnapshotName(),
-			elasticsearchRestoreSnapshotRequest.snapshot());
+			restoreRequest.snapshot());
 		Assert.assertEquals(
 			restoreSnapshotRequest.isWaitForCompletion(),
-			elasticsearchRestoreSnapshotRequest.waitForCompletion());
+			restoreRequest.waitForCompletion());
 	}
 
 	private ElasticsearchFixture _elasticsearchFixture;

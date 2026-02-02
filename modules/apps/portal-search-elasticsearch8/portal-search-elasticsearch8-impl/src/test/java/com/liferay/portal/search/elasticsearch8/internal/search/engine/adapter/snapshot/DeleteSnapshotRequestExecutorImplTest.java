@@ -46,17 +46,17 @@ public class DeleteSnapshotRequestExecutorImplTest {
 		DeleteSnapshotRequestExecutor deleteSnapshotRequestExecutor =
 			new DeleteSnapshotRequestExecutor(_elasticsearchFixture);
 
-		org.elasticsearch.action.admin.cluster.snapshots.delete.
-			DeleteSnapshotRequest elasticDeleteSnapshotRequest =
+		co.elastic.clients.elasticsearch.snapshot.DeleteSnapshotRequest
+			openSearchDeleteSnapshotRequest =
 				deleteSnapshotRequestExecutor.createDeleteSnapshotRequest(
 					deleteSnapshotRequest);
 
 		Assert.assertEquals(
 			deleteSnapshotRequest.getRepositoryName(),
-			elasticDeleteSnapshotRequest.repository());
+			openSearchDeleteSnapshotRequest.repository());
 		Assert.assertEquals(
 			deleteSnapshotRequest.getSnapshotName(),
-			elasticDeleteSnapshotRequest.snapshots()[0]);
+			openSearchDeleteSnapshotRequest.snapshot());
 	}
 
 	private ElasticsearchFixture _elasticsearchFixture;
