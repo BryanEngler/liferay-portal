@@ -332,7 +332,6 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 		_deleteIndex("test_index_2");
 	}
 
-	@Ignore
 	@Test
 	public void testExecuteDeleteIndexRequest() {
 		_createIndex("test_index_2");
@@ -388,7 +387,6 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 			fieldMapping.equals("{\"otherTestField\":{\"type\":\"keyword\"}}"));
 	}
 
-	@Ignore
 	@Test
 	public void testExecuteGetIndexIndexRequest() {
 		String mappingSource =
@@ -432,7 +430,6 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 		Assert.assertTrue(string.contains(mappingSource));
 	}
 
-	@Ignore
 	@Test
 	public void testExecuteIndicesExistsIndexRequest() {
 		IndicesExistsIndexRequest indicesExistsIndexRequest1 =
@@ -511,7 +508,6 @@ public class ElasticsearchSearchEngineAdapterIndexRequestTest {
 		Assert.assertEquals(0, refreshIndexResponse.getFailedShards());
 	}
 
-	@Ignore
 	@Test
 	public void testExecuteUpdateIndexSettingsIndexRequest() {
 		_createIndex("test_index_2");
