@@ -18,7 +18,6 @@ import org.elasticsearch.ElasticsearchStatusException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -48,7 +47,6 @@ public class LiferayTypeMappingsModifiedDateFieldTest {
 		_liferayIndexFixture.tearDown();
 	}
 
-	@Ignore
 	@Test
 	public void testDate() throws Exception {
 		expectedException.expect(ElasticsearchException.class);
@@ -66,7 +64,6 @@ public class LiferayTypeMappingsModifiedDateFieldTest {
 		_liferayIndexFixture.assertType("modified", "date");
 	}
 
-	@Ignore
 	@Test
 	public void testLongMalformed() throws Exception {
 		expectedException.expect(ElasticsearchException.class);
@@ -84,7 +81,6 @@ public class LiferayTypeMappingsModifiedDateFieldTest {
 		_liferayIndexFixture.assertType("modified", "date");
 	}
 
-	@Ignore
 	@Test
 	public void testStringMalformed() throws Exception {
 		expectedException.expect(ElasticsearchException.class);

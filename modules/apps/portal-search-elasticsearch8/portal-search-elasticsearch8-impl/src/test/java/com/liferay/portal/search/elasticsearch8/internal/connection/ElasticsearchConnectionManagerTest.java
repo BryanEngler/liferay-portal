@@ -21,7 +21,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -413,7 +412,6 @@ public class ElasticsearchConnectionManagerTest {
 			_elasticsearchConnectionManager.getElasticsearchConnection());
 	}
 
-	@Ignore
 	@Test
 	public void testGetExplicitElasticsearchClientWhenRestClientNull() {
 		try {

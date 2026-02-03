@@ -20,7 +20,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -45,7 +44,6 @@ public class PutMappingIndexRequestExecutorTest {
 		_elasticsearchFixture.tearDown();
 	}
 
-	@Ignore
 	@Test
 	public void testIndexRequestTranslation() throws Exception {
 		PutMappingIndexRequest putMappingIndexRequest =
