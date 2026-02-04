@@ -427,7 +427,7 @@ public class ElasticsearchConnectionManagerTest {
 				elasticsearchConnectionNotInitializedException.getMessage();
 
 			Assert.assertTrue(
-				message.contains("REST high level client not found"));
+				message.contains("Elasticsearch client not found"));
 		}
 	}
 

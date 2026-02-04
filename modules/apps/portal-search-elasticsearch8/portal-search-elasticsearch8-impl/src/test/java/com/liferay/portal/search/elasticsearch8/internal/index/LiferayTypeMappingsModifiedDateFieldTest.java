@@ -5,15 +5,15 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.index;
 
+import co.elastic.clients.elasticsearch._types.ElasticsearchException;
+import co.elastic.clients.elasticsearch._types.ErrorResponse;
+
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.search.elasticsearch8.internal.connection.IndexName;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import java.util.Collections;
 import java.util.Date;
-
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.ElasticsearchStatusException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -51,8 +51,7 @@ public class LiferayTypeMappingsModifiedDateFieldTest {
 	public void testDate() throws Exception {
 		expectedException.expect(ElasticsearchException.class);
 		expectedException.expectMessage(
-			"failed to parse date field [1970-01-18T12:08:26.556Z] with " +
-				"format [yyyyMMddHHmmss]");
+			"failed to parse field [modified] of type [date]");
 
 		index(new Date(1512506556L));
 	}
@@ -68,8 +67,7 @@ public class LiferayTypeMappingsModifiedDateFieldTest {
 	public void testLongMalformed() throws Exception {
 		expectedException.expect(ElasticsearchException.class);
 		expectedException.expectMessage(
-			"failed to parse date field [1512506556] with format " +
-				"[yyyyMMddHHmmss]");
+			"failed to parse field [modified] of type [date]");
 
 		index(1512506556L);
 	}
@@ -85,8 +83,7 @@ public class LiferayTypeMappingsModifiedDateFieldTest {
 	public void testStringMalformed() throws Exception {
 		expectedException.expect(ElasticsearchException.class);
 		expectedException.expectMessage(
-			"failed to parse date field [2017-11-15 05:04:02] with format " +
-				"[yyyyMMddHHmmss]");
+			"failed to parse field [modified] of type [date]");
 
 		index("2017-11-15 05:04:02");
 	}
@@ -102,8 +99,23 @@ public class LiferayTypeMappingsModifiedDateFieldTest {
 			_liferayIndexFixture.index(
 				Collections.singletonMap(Field.MODIFIED_DATE, value));
 		}
-		catch (ElasticsearchStatusException elasticsearchStatusException) {
-			throw (Exception)elasticsearchStatusException.getCause();
+		catch (ElasticsearchException elasticsearchException1) {
+			ErrorResponse originalErrorResponse =
+				elasticsearchException1.response();
+
+			ElasticsearchException elasticsearchException2 =
+				new ElasticsearchException(
+					elasticsearchException1.endpointId(),
+					ErrorResponse.of(
+						errorResponse -> errorResponse.error(
+							elasticsearchException1.error()
+						).status(
+							originalErrorResponse.status()
+						)));
+
+			elasticsearchException2.initCause(elasticsearchException1);
+
+			throw elasticsearchException2;
 		}
 	}
 

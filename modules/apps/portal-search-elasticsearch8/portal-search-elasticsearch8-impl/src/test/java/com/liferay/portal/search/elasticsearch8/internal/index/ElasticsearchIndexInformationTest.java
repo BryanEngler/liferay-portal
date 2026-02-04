@@ -121,6 +121,9 @@ public class ElasticsearchIndexInformationTest {
 			elasticsearchIndexInformation, "_elasticsearchClientResolver",
 			elasticsearchClientResolver);
 		ReflectionTestUtil.setFieldValue(
+			elasticsearchIndexInformation, "_jsonFactory",
+			new JSONFactoryImpl());
+		ReflectionTestUtil.setFieldValue(
 			elasticsearchIndexInformation, "_indexNameBuilder",
 			indexNameBuilder);
 
