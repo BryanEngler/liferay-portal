@@ -25,7 +25,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -77,7 +76,6 @@ public class ElasticsearchIndexInformationTest {
 		_indexFactoryFixture.tearDown();
 	}
 
-	@Ignore
 	@Test
 	public void testGetCompanyIndexName() throws Exception {
 		_indexFactoryFixture.createIndices();
@@ -89,7 +87,6 @@ public class ElasticsearchIndexInformationTest {
 			_elasticsearchIndexInformation.getCompanyIndexName(companyId));
 	}
 
-	@Ignore
 	@Test
 	public void testGetFieldMappings() throws Exception {
 		_indexFactoryFixture.createIndices();
@@ -101,7 +98,6 @@ public class ElasticsearchIndexInformationTest {
 					_indexFactoryFixture.getIndexName())));
 	}
 
-	@Ignore
 	@Test
 	public void testGetIndexNames() throws Exception {
 		_indexFactoryFixture.createIndices();
@@ -124,6 +120,9 @@ public class ElasticsearchIndexInformationTest {
 		ReflectionTestUtil.setFieldValue(
 			elasticsearchIndexInformation, "_elasticsearchClientResolver",
 			elasticsearchClientResolver);
+		ReflectionTestUtil.setFieldValue(
+			elasticsearchIndexInformation, "_jsonFactory",
+			new JSONFactoryImpl());
 		ReflectionTestUtil.setFieldValue(
 			elasticsearchIndexInformation, "_indexNameBuilder",
 			indexNameBuilder);
