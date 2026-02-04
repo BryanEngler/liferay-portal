@@ -9,6 +9,7 @@ import co.elastic.clients.elasticsearch._types.mapping.Property;
 import co.elastic.clients.elasticsearch.indices.PutMappingRequest;
 
 import com.liferay.portal.json.JSONFactoryImpl;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.search.elasticsearch8.internal.connection.ElasticsearchFixture;
 import com.liferay.portal.search.engine.adapter.index.PutMappingIndexRequest;
@@ -49,7 +50,12 @@ public class PutMappingIndexRequestExecutorTest {
 	@Test
 	public void testIndexRequestTranslation() throws Exception {
 		PutMappingIndexRequest putMappingIndexRequest =
-			new PutMappingIndexRequest(new String[] {_INDEX_NAME}, _FIELD_NAME);
+			new PutMappingIndexRequest(
+				new String[] {_INDEX_NAME},
+				JSONUtil.put(
+					"properties",
+					JSONUtil.put(_FIELD_NAME, JSONUtil.put("type", "text"))
+				).toString());
 
 		PutMappingIndexRequestExecutor putMappingIndexRequestExecutor =
 			new PutMappingIndexRequestExecutor(
