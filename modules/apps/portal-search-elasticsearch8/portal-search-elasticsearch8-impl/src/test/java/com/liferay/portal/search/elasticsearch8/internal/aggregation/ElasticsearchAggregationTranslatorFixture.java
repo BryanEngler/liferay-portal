@@ -16,7 +16,7 @@ import org.elasticsearch.search.aggregations.PipelineAggregationBuilder;
  */
 public class ElasticsearchAggregationTranslatorFixture {
 
-	public ElasticsearchAggregationTranslatorFixture() {
+	public ElasticsearchAggregationTranslatorFixture() { //test
 		ElasticsearchPipelineAggregationTranslatorFixture
 			pipelineAggregationTranslatorFixture =
 				new ElasticsearchPipelineAggregationTranslatorFixture();
