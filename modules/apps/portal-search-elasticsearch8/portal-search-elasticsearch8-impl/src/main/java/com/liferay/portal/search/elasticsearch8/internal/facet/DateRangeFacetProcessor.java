@@ -29,7 +29,8 @@ import org.osgi.service.component.annotations.Component;
 @Component(
 	property = {
 		"class.name=com.liferay.portal.kernel.search.facet.DateRangeFacet",
-		"class.name=com.liferay.portal.search.internal.facet.DateRangeFacetImpl"
+		"class.name=com.liferay.portal.search.internal.facet.DateRangeFacetImpl",
+		"class.name=com.liferay.portal.search.internal.facet.ModifiedFacetImpl"
 	},
 	service = FacetProcessor.class
 )
