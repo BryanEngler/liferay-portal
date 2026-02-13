@@ -6,23 +6,34 @@
 package com.liferay.portal.search.elasticsearch8.internal.configuration;
 
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.file.install.constants.FileInstallConstants;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch8.configuration.ElasticsearchConfiguration;
 
+import java.io.IOException;
+
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Bryan Engler
@@ -255,11 +266,51 @@ public class ElasticsearchConfigurationWrapper
 	@Activate
 	@Modified
 	protected void activate(Map<String, Object> map) {
+		Map<String, Object> mergedMap = new HashMap<>();
+
+		try {
+			Configuration configuration = _configurationAdmin.getConfiguration(
+				_ELASTICSEARCH_7_CONFIGURATION_CLASS_NAME, StringPool.QUESTION);
+
+			Dictionary<String, Object> properties =
+				configuration.getProperties();
+
+			if (properties != null) {
+				ElasticsearchConfigurationSanitizer.sanitizeProperties(
+					properties);
+
+				Enumeration<String> enumeration = properties.keys();
+
+				while (enumeration.hasMoreElements()) {
+					String key = enumeration.nextElement();
+
+					if (key.equals(
+							FileInstallConstants.FELIX_FILE_INSTALL_FILENAME) ||
+						key.startsWith("service.")) {
+
+						continue;
+					}
+
+					mergedMap.put(key, properties.get(key));
+				}
+			}
+		}
+		catch (IOException ioException) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Unable to get configuration for " +
+						_ELASTICSEARCH_7_CONFIGURATION_CLASS_NAME,
+					ioException);
+			}
+		}
+
+		mergedMap.putAll(map);
+
 		Map<String, Object> propsMap = _getPropsMap(
 			_PROPS_KEYS, ElasticsearchConfiguration.class);
 
 		_elasticsearchConfiguration = ConfigurableUtil.createConfigurable(
-			ElasticsearchConfiguration.class, map);
+			ElasticsearchConfiguration.class, mergedMap);
 		_propsElasticsearchConfiguration = ConfigurableUtil.createConfigurable(
 			ElasticsearchConfiguration.class, propsMap);
 		_propsMap = propsMap;
@@ -297,7 +348,17 @@ public class ElasticsearchConfigurationWrapper
 		return propsMap;
 	}
 
+	private static final String _ELASTICSEARCH_7_CONFIGURATION_CLASS_NAME =
+		"com.liferay.portal.search.elasticsearch7.configuration." +
+			"ElasticsearchConfiguration";
+
 	private static final String[] _PROPS_KEYS = {"sidecarJVMOptions"};
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		ElasticsearchConfigurationWrapper.class);
+
+	@Reference
+	private ConfigurationAdmin _configurationAdmin;
 
 	private volatile ElasticsearchConfiguration _elasticsearchConfiguration;
 	private final Set<ElasticsearchConfigurationObserver>

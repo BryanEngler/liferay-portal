@@ -13,6 +13,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.search.elasticsearch8.configuration.ElasticsearchConfiguration;
+import com.liferay.portal.search.elasticsearch8.internal.configuration.ElasticsearchConfigurationSanitizer;
 
 import java.util.Dictionary;
 import java.util.ResourceBundle;
@@ -34,11 +35,7 @@ public class ElasticsearchConfigurationModelListener
 		throws ConfigurationModelListenerException {
 
 		try {
-			if (!GetterUtil.getBoolean(properties.get("trackTotalHits"))) {
-				_log.error(
-					"The track total hits configuration is deprecated, use " +
-						"the track total hits limit instead");
-			}
+			ElasticsearchConfigurationSanitizer.sanitizeProperties(properties);
 
 			_validateTrackTotalHitsLimit(properties);
 		}
