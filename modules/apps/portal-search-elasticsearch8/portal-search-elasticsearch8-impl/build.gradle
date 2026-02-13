@@ -4,7 +4,7 @@ import com.liferay.gradle.util.StringUtil
 task cleanSidecar
 task deploySidecar(type: Copy)
 
-String elasticsearchClientVersion = "8.19.10"
+String elasticsearchClientVersion = "8.19.11"
 
 String sidecarElasticsearchServerVersion = file('src/main/resources/META-INF/sidecar/sidecar.version').text
 
@@ -71,7 +71,6 @@ dependencies {
 	compileOnly group: "org.apache.httpcomponents", name: "httpclient", version: "4.5.13"
 	compileOnly group: "org.apache.httpcomponents", name: "httpcore", version: "4.4.14"
 	compileOnly group: "org.apache.httpcomponents", name: "httpcore-nio", version: "4.4.14"
-	compileOnly group: "org.codehaus.woodstox", name: "stax2-api", version: "4.2.1"
 	compileOnly group: "org.osgi", name: "org.osgi.annotation.versioning", version: "1.1.0"
 	compileOnly group: "org.osgi", name: "org.osgi.service.cm", version: "1.6.0"
 	compileOnly group: "org.osgi", name: "org.osgi.service.component", version: "1.4.0"

@@ -5,9 +5,12 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.search;
 
-import co.elastic.clients.elasticsearch._types.ElasticsearchException;
-import co.elastic.clients.elasticsearch.core.SearchRequest;
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.json.JsonpMapper;
+import co.elastic.clients.json.JsonpSerializable;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -16,47 +19,56 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
-import java.io.IOException;
+import jakarta.json.spi.JsonProvider;
+import jakarta.json.stream.JsonGenerator;
+
+import java.io.StringWriter;
 
 /**
  * @author Bryan Engler
  */
 public class DebugStringsUtil {
 
-	public static String getPrettyPrintedJSONString(
-		SearchRequest searchRequest) {
+	public static String getPrettyPrintedSearchRequestString(
+		ElasticsearchClient elasticsearchClient,
+		JsonpSerializable jsonpSerializable) {
+
+		String requestString = getSearchRequestString(
+			elasticsearchClient, jsonpSerializable);
+
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
 		try {
-			ObjectMapper objectMapper = new ObjectMapper();
+			JsonNode jsonNode = objectMapper.readTree(requestString);
 
-			objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-
-			return objectMapper.writeValueAsString(searchRequest);
+			requestString = objectMapper.writeValueAsString(jsonNode);
 		}
-		catch (IOException ioException) {
+		catch (JsonProcessingException jsonProcessingException) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(ioException);
+				_log.debug(jsonProcessingException);
 			}
-
-			return ioException.getMessage();
 		}
+
+		return requestString;
 	}
 
-	public static String getSearchRequestString(SearchRequest searchRequest) {
-		try {
-			return searchRequest.toString();
-		}
-		catch (ElasticsearchException elasticsearchException) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(elasticsearchException);
-			}
+	public static String getSearchRequestString(
+		ElasticsearchClient elasticsearchClient,
+		JsonpSerializable jsonpSerializable) {
 
-			return elasticsearchException.getMessage();
-		}
-	}
+		JsonpMapper jsonpMapper = elasticsearchClient._jsonpMapper();
 
-	public static String getSearchRequestString(SearchRequest.Builder builder) {
-		return getSearchRequestString(builder.build());
+		JsonProvider jsonProvider = jsonpMapper.jsonProvider();
+
+		StringWriter writer = new StringWriter();
+
+		try (JsonGenerator generator = jsonProvider.createGenerator(writer)) {
+			jsonpMapper.serialize(jsonpSerializable, generator);
+		}
+
+		return writer.toString();
 	}
 
 	public static String getStackTraceString() {

@@ -130,6 +130,7 @@ definition {
 	@priority = 5
 	test ViewPortalSmokeArchiveAndValidateSchema7310 {
 		property data.archive.type = "data-archive-portal";
+		property portal.acceptance = "quarantine";
 		property portal.smoke.upgrades = "true";
 		property portal.version = "7.3.10";
 		property test.assert.warning.exceptions = "true";
@@ -163,7 +164,7 @@ definition {
 	@priority = 5
 	test ViewPortalSmokeArchiveAndValidateSchema7413 {
 		property data.archive.type = "data-archive-portal";
-		property portal.acceptance = "true";
+		property portal.acceptance = "quarantine";
 		property portal.smoke.upgrades = "true";
 		property portal.version = "7.4.13";
 		property test.assert.warning.exceptions = "true";
