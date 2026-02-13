@@ -34,6 +34,26 @@ public class ElasticsearchConfigurationModelListenerTest {
 	}
 
 	@Test
+	public void testOnBeforeSaveRemovesDeprecatedProperties() throws Exception {
+		Dictionary<String, Object> properties = new Hashtable<>();
+
+		properties.put("discoveryZenPingUnicastHostsPort", 1);
+		properties.put("embeddedHttpPort", 2);
+		properties.put("operationMode", 3);
+		properties.put("restClientLoggerLevel", 4);
+		properties.put("trackTotalHits", 5);
+
+		_elasticsearchConfigurationModelListener.onBeforeSave(
+			"pid", properties);
+
+		Assert.assertNull(properties.get("discoveryZenPingUnicastHostsPort"));
+		Assert.assertNull(properties.get("embeddedHttpPort"));
+		Assert.assertNull(properties.get("operationMode"));
+		Assert.assertNull(properties.get("restClientLoggerLevel"));
+		Assert.assertNull(properties.get("trackTotalHits"));
+	}
+
+	@Test
 	public void testOnBeforeSaveTrackTotalHitsLimitLessThanIndexMaxResultWindow() {
 		Dictionary<String, Object> properties = new Hashtable<>();
 
