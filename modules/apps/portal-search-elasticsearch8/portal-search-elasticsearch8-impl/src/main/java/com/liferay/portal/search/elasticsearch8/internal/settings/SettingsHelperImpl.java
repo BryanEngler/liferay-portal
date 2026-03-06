@@ -23,13 +23,36 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.xcontent.XContentType;
+
 /**
  * @author André de Oliveira
  */
 public class SettingsHelperImpl implements SettingsHelper {
 
+	public SettingsHelperImpl() {
+		this(null);
+	}
+
+	public SettingsHelperImpl(Settings.Builder builder) {
+		_builder = builder;
+	}
+
+	public Settings build() {
+		if (_builder != null) {
+			return _builder.build();
+		}
+
+		return null;
+	}
+
 	@Override
 	public String get(String key) {
+		if (_builder != null) {
+			return _builder.get(key);
+		}
+
 		String[] keyParts = key.split("\\.");
 
 		if (keyParts.length > 1) {
@@ -46,6 +69,10 @@ public class SettingsHelperImpl implements SettingsHelper {
 		return _settingsJSONObject.getString(key, null);
 	}
 
+	public Settings.Builder getBuilder() {
+		return _builder;
+	}
+
 	public JSONObject getSettingsJSONObject() {
 		return _settingsJSONObject;
 	}
@@ -57,6 +84,17 @@ public class SettingsHelperImpl implements SettingsHelper {
 		}
 
 		source = source.trim();
+
+		if (_builder != null) {
+			if (source.charAt(0) == CharPool.OPEN_CURLY_BRACE) {
+				_builder.loadFromSource(source, XContentType.JSON);
+			}
+			else {
+				_builder.loadFromSource(source, XContentType.YAML);
+			}
+
+			return;
+		}
 
 		if (source.charAt(0) == CharPool.OPEN_CURLY_BRACE) {
 			IndexUtil.mergeToJsonObject(
@@ -108,10 +146,22 @@ public class SettingsHelperImpl implements SettingsHelper {
 	}
 
 	public void put(String key, boolean value) {
+		if (_builder != null) {
+			_builder.put(key, value);
+
+			return;
+		}
+
 		put(key, String.valueOf(value));
 	}
 
 	public void put(String key, List<String> values) {
+		if (_builder != null) {
+			_builder.putList(key, values);
+
+			return;
+		}
+
 		JSONObject settingJSONObject = JSONFactoryUtil.createJSONObject();
 
 		String[] settingParts = key.split("\\.");
@@ -132,23 +182,31 @@ public class SettingsHelperImpl implements SettingsHelper {
 
 	@Override
 	public void put(String key, String value) {
-		if (!StringUtils.isBlank(value)) {
-			JSONObject settingJSONObject = JSONFactoryUtil.createJSONObject();
-
-			String[] settingParts = key.split("\\.");
-
-			for (int i = settingParts.length - 1; i >= 0; i--) {
-				if (i == (settingParts.length - 1)) {
-					settingJSONObject.put(settingParts[i], value);
-				}
-				else {
-					settingJSONObject = JSONUtil.put(
-						settingParts[i], settingJSONObject);
-				}
-			}
-
-			IndexUtil.mergeToJsonObject(_settingsJSONObject, settingJSONObject);
+		if (StringUtils.isBlank(value)) {
+			return;
 		}
+
+		if (_builder != null) {
+			_builder.put(key, value);
+
+			return;
+		}
+
+		JSONObject settingJSONObject = JSONFactoryUtil.createJSONObject();
+
+		String[] settingParts = key.split("\\.");
+
+		for (int i = settingParts.length - 1; i >= 0; i--) {
+			if (i == (settingParts.length - 1)) {
+				settingJSONObject.put(settingParts[i], value);
+			}
+			else {
+				settingJSONObject = JSONUtil.put(
+					settingParts[i], settingJSONObject);
+			}
+		}
+
+		IndexUtil.mergeToJsonObject(_settingsJSONObject, settingJSONObject);
 	}
 
 	private JSONObject _createJSONObject(String jsonString) {
@@ -160,6 +218,7 @@ public class SettingsHelperImpl implements SettingsHelper {
 		}
 	}
 
+	private final Settings.Builder _builder;
 	private final JSONObject _settingsJSONObject =
 		JSONFactoryUtil.createJSONObject();
 

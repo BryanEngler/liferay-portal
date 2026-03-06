@@ -85,6 +85,7 @@ Import-Package:\
 	!org.apache.kafka.clients.producer.*,\
 	!org.apache.log.*,\
 	!org.apache.lucene.*,\
+	!org.apache.lucene.analysis.*,\
 	!org.apache.lucene.backward_codecs.*,\
 	!org.apache.lucene.codecs.*,\
 	!org.apache.lucene.expressions.*,\
@@ -106,6 +107,7 @@ Import-Package:\
 	!org.eclipse.jetty.npn.*,\
 	\
 	!org.elasticsearch.*,\
+	!org.elasticsearch.entitlement.*,\
 	!org.elasticsearch.index.shard.service.*,\
 	!org.elasticsearch.plugins.loader.*,\
 	\
