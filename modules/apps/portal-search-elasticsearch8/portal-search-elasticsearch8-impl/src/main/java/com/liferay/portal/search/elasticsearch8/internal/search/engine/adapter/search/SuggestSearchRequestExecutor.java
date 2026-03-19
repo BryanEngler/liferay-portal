@@ -129,10 +129,14 @@ public class SuggestSearchRequestExecutor {
 		for (CompletionSuggestOption<JsonData> completionSuggestOption :
 				completionSuggest.options()) {
 
-			entry.addOption(
+			SuggestSearchResult.Entry.Option option =
 				new SuggestSearchResult.Entry.Option(
 					completionSuggestOption.text(),
-					ConversionUtil.toFloat(completionSuggestOption.score())));
+					ConversionUtil.toFloat(completionSuggestOption.score()));
+
+			option.setCollateMatch(completionSuggestOption.collateMatch());
+
+			entry.addOption(option);
 		}
 
 		return entry;
@@ -151,6 +155,8 @@ public class SuggestSearchRequestExecutor {
 				new SuggestSearchResult.Entry.Option(
 					phraseSuggestOption.text(),
 					ConversionUtil.toFloat(phraseSuggestOption.score()));
+
+			option.setCollateMatch(phraseSuggestOption.collateMatch());
 
 			SetterUtil.setNotBlankString(
 				option::setHighlightedText, phraseSuggestOption.highlighted());
@@ -196,6 +202,7 @@ public class SuggestSearchRequestExecutor {
 					termSuggestOption.text(),
 					ConversionUtil.toFloat(termSuggestOption.score()));
 
+			option.setCollateMatch(termSuggestOption.collateMatch());
 			option.setFrequency(Math.toIntExact(termSuggestOption.freq()));
 
 			entry.addOption(option);
