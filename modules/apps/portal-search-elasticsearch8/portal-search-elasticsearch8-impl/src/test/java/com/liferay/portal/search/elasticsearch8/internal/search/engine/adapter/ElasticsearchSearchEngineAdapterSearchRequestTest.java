@@ -28,6 +28,8 @@ import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.generic.MatchAllQuery;
+import com.liferay.portal.kernel.search.generic.MatchQuery;
+import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 import com.liferay.portal.kernel.search.suggest.CompletionSuggester;
 import com.liferay.portal.kernel.search.suggest.PhraseSuggester;
 import com.liferay.portal.kernel.search.suggest.Suggester;
@@ -57,6 +59,7 @@ import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import java.io.IOException;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -344,10 +347,35 @@ public class ElasticsearchSearchEngineAdapterSearchRequestTest {
 
 		phraseSuggester.setSize(2);
 
+		PhraseSuggester.Collate collate =
+			new PhraseSuggester.Collate(
+				new MatchQuery(_LOCALIZED_FIELD_NAME, "{{suggestion}}"));
+
+		collate.setPrune(true);
+
+		phraseSuggester.setCollate(collate);
+
 		suggestSearchRequest.addSuggester(phraseSuggester);
 
 		SuggestSearchResponse suggestSearchResponse =
 			_searchEngineAdapter.execute(suggestSearchRequest);
+
+		Collection<SuggestSearchResult> suggestSearchResults =
+			suggestSearchResponse.getSuggestSearchResults();
+
+		for (SuggestSearchResult suggestSearchResult : suggestSearchResults) {
+			 List<SuggestSearchResult.Entry> entries =
+				 suggestSearchResult.getEntries();
+
+			 for (SuggestSearchResult.Entry entry : entries) {
+				 List<SuggestSearchResult.Entry.Option> options =
+					 entry.getOptions();
+
+				 for (SuggestSearchResult.Entry.Option option : options) {
+					 Assert.assertTrue(option.isCollateMatch());
+				 }
+			 }
+		};
 
 		_assertSuggestion(
 			2, suggestSearchResponse.getSuggestSearchResultMap(),
