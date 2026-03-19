@@ -79,6 +79,14 @@ public class SuggestSearchResult {
 				return _text;
 			}
 
+			public Boolean isCollateMatch() {
+				return _collateMatch;
+			}
+
+			public void setCollateMatch(Boolean collateMatch) {
+				_collateMatch = collateMatch;
+			}
+
 			public void setFrequency(Integer frequency) {
 				_frequency = frequency;
 			}
@@ -87,10 +95,11 @@ public class SuggestSearchResult {
 				_highlightedText = highlightedText;
 			}
 
+			private Boolean _collateMatch;
 			private Integer _frequency;
 			private String _highlightedText;
 			private final float _score;
-			private String _text;
+			private final String _text;
 
 		}
 
