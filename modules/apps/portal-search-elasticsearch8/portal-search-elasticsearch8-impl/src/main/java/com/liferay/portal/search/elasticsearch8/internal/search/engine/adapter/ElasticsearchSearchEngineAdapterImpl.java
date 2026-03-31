@@ -23,6 +23,7 @@ import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.d
 import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.index.ElasticsearchIndexRequestExecutor;
 import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.search.ElasticsearchSearchRequestExecutor;
 import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.snapshot.ElasticsearchSnapshotRequestExecutor;
+import com.liferay.portal.search.engine.SearchEngineReady;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.ccr.CCRRequest;
 import com.liferay.portal.search.engine.adapter.ccr.CCRRequestExecutor;
@@ -306,6 +307,10 @@ public class ElasticsearchSearchEngineAdapterImpl
 	private ElasticsearchClientResolver _elasticsearchClientResolver;
 
 	private IndexRequestExecutor _indexRequestExecutor;
+
+	@Reference
+	private SearchEngineReady _searchEngineReady;
+
 	private SearchRequestExecutor _searchRequestExecutor;
 	private SnapshotRequestExecutor _snapshotRequestExecutor;
 	private boolean _throwOriginalExceptions;

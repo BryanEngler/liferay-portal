@@ -23,6 +23,7 @@ import com.liferay.portal.search.ccr.CrossClusterReplicationConfigurationHelper;
 import com.liferay.portal.search.elasticsearch8.internal.configuration.ElasticsearchConfigurationObserver;
 import com.liferay.portal.search.elasticsearch8.internal.configuration.ElasticsearchConfigurationWrapper;
 import com.liferay.portal.search.elasticsearch8.internal.connection.constants.ConnectionConstants;
+import com.liferay.portal.search.engine.SearchEngineReady;
 
 import java.net.InetSocketAddress;
 
@@ -114,6 +115,15 @@ public class ElasticsearchConnectionManager
 
 		_elasticsearchConnectionSuppliers.put(
 			connectionId, elasticsearchConnectionSupplier);
+
+		if (_searchEngineReadyServiceRegistration == null) {
+			_searchEngineReadyServiceRegistration =
+				_bundleContext.registerService(
+					SearchEngineReady.class,
+					new SearchEngineReady() {
+					},
+					null);
+		}
 	}
 
 	@Override
@@ -307,6 +317,8 @@ public class ElasticsearchConnectionManager
 
 	@Activate
 	protected void activate(BundleContext bundleContext) {
+		_bundleContext = bundleContext;
+
 		_serviceRegistration = bundleContext.registerService(
 			PortalInetSocketAddressEventListener.class,
 			new ElasticsearchPortalInetSocketAddressEventListener(), null);
@@ -361,6 +373,12 @@ public class ElasticsearchConnectionManager
 		}
 
 		_serviceRegistration.unregister();
+
+		if (_searchEngineReadyServiceRegistration != null) {
+			_searchEngineReadyServiceRegistration.unregister();
+
+			_searchEngineReadyServiceRegistration = null;
+		}
 	}
 
 	protected ElasticsearchConnection getElasticsearchConnection(
@@ -483,9 +501,12 @@ public class ElasticsearchConnectionManager
 			ElasticsearchConnectionManager.class,
 			CrossClusterReplicationConfigurationHelper.class, null, true);
 
+	private BundleContext _bundleContext;
 	private final Map<String, Supplier<ElasticsearchConnection>>
 		_elasticsearchConnectionSuppliers = new ConcurrentHashMap<>();
 	private volatile InetSocketAddress _portalInetSocketAddress;
+	private ServiceRegistration<SearchEngineReady>
+		_searchEngineReadyServiceRegistration;
 	private ServiceRegistration<?> _serviceRegistration;
 
 	private class ElasticsearchPortalInetSocketAddressEventListener
