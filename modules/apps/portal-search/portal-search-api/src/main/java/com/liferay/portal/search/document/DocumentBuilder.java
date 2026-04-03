@@ -130,8 +130,24 @@ public class DocumentBuilder {
 		return this;
 	}
 
+	public DocumentBuilder setValue(
+		FieldType fieldType, String name, Object value) {
+
+		_document.setFieldValue(name + fieldType.getMatchPatten(), value);
+
+		return this;
+	}
+
 	public DocumentBuilder setValues(String name, Collection<Object> values) {
 		_document.setFieldValues(name, values);
+
+		return this;
+	}
+
+	public DocumentBuilder setValues(
+		FieldType fieldType, String name, Collection<Object> values) {
+
+		_document.setFieldValues(name + fieldType.getMatchPatten(), values);
 
 		return this;
 	}
