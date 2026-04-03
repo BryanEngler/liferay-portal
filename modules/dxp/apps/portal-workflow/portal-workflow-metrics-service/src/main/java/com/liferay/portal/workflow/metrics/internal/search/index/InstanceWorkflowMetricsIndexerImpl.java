@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.search.document.Document;
 import com.liferay.portal.search.document.DocumentBuilder;
 import com.liferay.portal.search.document.DocumentBuilderFactory;
+import com.liferay.portal.search.document.FieldType;
 import com.liferay.portal.search.index.IndexNameBuilder;
 import com.liferay.portal.search.query.BooleanQuery;
 import com.liferay.portal.search.query.QueriesUtil;
@@ -51,8 +52,10 @@ public class InstanceWorkflowMetricsIndexerImpl
 			"className", className
 		).setLong(
 			"classPK", classPK
-		).setLong(
-			"companyId", companyId
+		).setValue(
+			FieldType.LONG, "companyId", companyId
+		).setValue(
+			FieldType.LONG_WITH_KEYWORD_MULTIFIELD, "instanceId", instanceId
 		).setValue(
 			"completed", completionDate != null
 		);
