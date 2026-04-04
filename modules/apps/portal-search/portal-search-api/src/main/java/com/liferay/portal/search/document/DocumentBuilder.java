@@ -135,6 +135,18 @@ public class DocumentBuilder {
 
 		_document.setFieldValue(name + fieldType.getMatchPatten(), value);
 
+		/*
+		Next is the hard part, theres a disconnect between the field name the
+		developer used, and the field name that was indexed. searches should
+		still work when using the developer field name, so we need something to
+		bridge the gap, such as a field registry that keeps track of the field
+		information and can be consulted when building queries and parsing results.
+		i would be concerned about performance of these repetitive actions, so
+		be aware of that
+		 */
+
+		//add field to field registry
+
 		return this;
 	}
 
