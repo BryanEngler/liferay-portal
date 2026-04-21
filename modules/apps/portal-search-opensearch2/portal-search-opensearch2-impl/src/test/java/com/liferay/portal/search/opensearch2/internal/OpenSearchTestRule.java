@@ -31,9 +31,13 @@ public class OpenSearchTestRule implements TestRule {
 	}
 
 	public boolean isUnitTestEnabled() {
-		return Boolean.valueOf(
+		boolean enabled = Boolean.valueOf(
 			System.getProperty(
 				"com.liferay.portal.search.opensearch2.test.unit.enabled"));
+
+		System.out.println("OpenSearchTestRule enabled: " + enabled);
+
+		return enabled;
 	}
 
 }

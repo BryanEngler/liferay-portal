@@ -11,9 +11,13 @@ package com.liferay.portal.search.solr8.internal;
 public class SolrUnitTestRequirements {
 
 	public static boolean isSolrExternallyStartedByDeveloper() {
-		return Boolean.valueOf(
+		boolean enabled = Boolean.valueOf(
 			System.getProperty(
 				"com.liferay.portal.search.solr8.test.unit.started"));
+
+		System.out.println("SolrUnitTestRequirements enabled: " + enabled);
+
+		return enabled;
 	}
 
 }
